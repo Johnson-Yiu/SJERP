@@ -48,6 +48,8 @@ def _encrypted_backup(service, *, media_root, destination, key, encryption, cryp
                        expected_sha256=backup["sha256"], decrypt=True, **encryption)
             result["plaintext_sha256"] = backup["sha256"]
             result["encryption_roundtrip_verified"] = True
+            if backup.get("staging_cleanup_warning"):
+                result["plaintext_staging_cleanup_warning"] = backup["staging_cleanup_warning"]
 
         if _file_identity(staging) != staging_identity:
             raise RuntimeError("Staging ciphertext changed before publication")
@@ -77,12 +79,12 @@ def _encrypted_backup(service, *, media_root, destination, key, encryption, cryp
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("operation", choices=("backup", "restore"))
+    parser.add_argument("operation", choices=("backup", "restore", "restore-encrypted-verify"))
     parser.add_argument("--config", required=True)
     args = parser.parse_args()
     try:
         config = json.loads(Path(args.config).read_text(encoding="utf-8"))
-        allowed = {"connection", "pg_bin", "expected_database", "expected_system_identifier", "app_sha", "media_root", "destination", "destination_directory", "archive", "expected_sha256", "media_parent", "encryption"}
+        allowed = {"connection", "pg_bin", "expected_database", "expected_system_identifier", "app_sha", "media_root", "destination", "destination_directory", "archive", "expected_sha256", "encrypted_sha256", "media_parent", "encryption", "receipt_signing", "receipt_output"}
         if not isinstance(config, dict) or set(config) - allowed:
             raise ValueError("Unsupported configuration")
         connection = config["connection"]
@@ -126,6 +128,38 @@ def main():
             else:
                 result = service.backup(media_root=config["media_root"], destination=destination)
             result["archive"] = str(destination)
+        elif args.operation == "restore-encrypted-verify":
+            from crm.services.operations_receipt import restore_and_sign
+            encryption = dict(config["encryption"])
+            if set(encryption) - {"key_file", "executable", "msys_paths"}:
+                raise ValueError("Unsupported encryption configuration")
+            key_path = Path(encryption.pop("key_file"))
+            if not key_path.is_absolute() or key_path.is_symlink() or not key_path.is_file():
+                raise ValueError("Separately provisioned key file required")
+            with key_path.open("rb") as stream:
+                key = stream.read(4097).rstrip(b"\r\n")
+            if len(key) > 4096:
+                raise ValueError("Invalid encryption key size")
+            signer = config["receipt_signing"]
+            if not isinstance(signer, dict) or set(signer) != {"executable", "private_key"}:
+                raise ValueError("Independent signing key configuration required")
+            receipt_path = Path(config["receipt_output"])
+            if not receipt_path.is_absolute() or receipt_path.is_symlink() or receipt_path.exists():
+                raise ValueError("New absolute receipt output required")
+            receipt, restored = restore_and_sign(service, encrypted_archive=config["archive"],
+                encrypted_sha256=config["encrypted_sha256"], plaintext_sha256=config["expected_sha256"],
+                media_parent=config["media_parent"], gpg_executable=encryption["executable"], encryption_key=key,
+                msys_paths=encryption.get("msys_paths", False), openssl_executable=signer["executable"], signing_key=signer["private_key"])
+            try:
+                from crm.services.operations_postgres import publish_archive
+                with publish_archive(receipt_path) as output:
+                    output.write(json.dumps(receipt, sort_keys=True).encode("utf-8"))
+            except Exception as error:
+                error.add_note("Verified restore exists; operator must inspect target " + restored["database"])
+                raise
+            result = {**restored, "receipt_file": str(receipt_path)}
+            if output.staging_cleanup_warning:
+                result["receipt_staging_cleanup_warning"] = output.staging_cleanup_warning
         else:
             result = service.restore(archive=config["archive"], expected_sha256=config["expected_sha256"], media_parent=config["media_parent"])
         print(json.dumps({"status": "VERIFIED", **result}, sort_keys=True))

@@ -31,6 +31,7 @@ from crm.services.operations_copy import digest
 from crm.services.operations_copy import verified_copy
 from crm.services.operations_crypto import crypt_file
 from crm.services.operations_retention import prune_verified
+from crm.services.operations_receipt import restore_and_sign, public_key_fingerprint, _openssl
 import psycopg
 
 
@@ -38,6 +39,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--postgres-bin", required=True)
     parser.add_argument("--gpg")
+    parser.add_argument("--openssl")
     parser.add_argument("--msys-paths", action="store_true")
     args = parser.parse_args()
     root = Path(tempfile.mkdtemp(prefix="sunjack-iss018-pg17-"))
@@ -133,10 +135,21 @@ def main():
             assert database_state(connection) == before
         retention_removed = None
         if args.gpg:
+            if not args.openssl:
+                raise ValueError("OpenSSL is required for signed restore receipt verification")
             backup_root, replica_root = root / "encrypted", root / "local-replicas"
-            backup_root.mkdir(); replica_root.mkdir()
+            backup_root.mkdir(mode=0o700); replica_root.mkdir(mode=0o700)
+            key_root = root / "receipt-key"
+            key_root.mkdir()
+            signing_key, public_key = key_root / "signing.pem", key_root / "verify.pem"
+            subprocess.run([args.openssl, "genpkey", "-algorithm", "EC", "-pkeyopt", "ec_paramgen_curve:P-256", "-out", str(signing_key)], check=True, capture_output=True)
+            signing_key.chmod(0o600)
+            public_key.write_bytes(_openssl(args.openssl, "pkey", "-in", signing_key, "-pubout"))
+            verification = {"executable": args.openssl, "public_key": str(public_key),
+                            "pinned_fingerprint": public_key_fingerprint(args.openssl, public_key), "max_age_seconds": 86400}
             owner = uuid.uuid4().hex
             (backup_root / ".sunjack-backup-owner").write_text(owner, encoding="ascii")
+            (backup_root / ".sunjack-backup-owner").chmod(0o600)
             key = secrets.token_hex(32).encode()
             receipts = []
             now = datetime.now(timezone.utc)
@@ -145,15 +158,24 @@ def main():
                 encrypted = backup_root / name
                 cipher = crypt_file(archive, encrypted, executable=args.gpg, key=key,
                                     expected_sha256=backup["sha256"], msys_paths=args.msys_paths)
+                synthetic_timestamp = (now-timedelta(days=age)).timestamp()
+                os.utime(encrypted, (synthetic_timestamp, synthetic_timestamp))
                 plaintext = root / ("verified-" + str(age) + ".zip")
                 crypt_file(encrypted, plaintext, executable=args.gpg, key=key, expected_sha256=backup["sha256"],
                            msys_paths=args.msys_paths, decrypt=True)
+                restore_receipt, receipt_restored = restore_and_sign(service, encrypted_archive=encrypted,
+                    encrypted_sha256=cipher["sha256"], plaintext_sha256=backup["sha256"], media_parent=root,
+                    gpg_executable=args.gpg, encryption_key=key, openssl_executable=args.openssl,
+                    signing_key=signing_key, msys_paths=args.msys_paths)
+                assert receipt_restored["verified"] and receipt_restored["audit_truncate_rejected"]
                 replica = replica_root / name
                 verified_copy(encrypted, replica, cipher["sha256"])
                 receipts.append({"name": name, "sha256": cipher["sha256"], "restore_verified_sha256": cipher["sha256"],
-                                 "replica": str(replica), "created_at": (now-timedelta(days=age)).isoformat()})
+                                 "restore_receipt": restore_receipt,
+                                 "replica": str(replica), "created_at": datetime.fromtimestamp(encrypted.stat().st_mtime_ns / 1_000_000_000, timezone.utc).isoformat()})
+            now = datetime.now(timezone.utc)
             retention = prune_verified(backup_root, owner_id=owner, receipts=receipts, keep=1,
-                                       minimum_age_seconds=86400, now=now, execute=True)
+                                       minimum_age_seconds=86400, now=now, receipt_verification=verification, execute=True)
             retention_removed = len(retention["removed"])
             assert retention_removed == 2 and len(list(replica_root.iterdir())) == 3
             assert (backup_root / receipts[0]["name"]).exists()

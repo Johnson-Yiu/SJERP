@@ -31,24 +31,46 @@ def publish_archive(destination):
     destination = Path(destination)
     partial = destination.parent / (".sunjack-" + uuid.uuid4().hex + ".partial")
     fd = os.open(partial, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    identity = os.fstat(fd)
     original = None
+    published = False
     try:
         with os.fdopen(fd, "wb") as output:
+            output.staging_cleanup_warning = None
             yield output
             output.flush()
             os.fsync(output.fileno())
+        info = partial.lstat()
+        if (info.st_dev, info.st_ino) != (identity.st_dev, identity.st_ino):
+            raise RuntimeError("Backup staging path identity changed")
         # Same-filesystem hard link gives exclusive publication, never replace.
-        os.link(partial, destination)
+        os.link(partial, destination, follow_symlinks=False)
+        published_info = destination.lstat()
+        if (published_info.st_dev, published_info.st_ino) != (identity.st_dev, identity.st_ino):
+            raise RuntimeError("Published backup identity changed")
+        published = True
     except Exception as error:
         original = error
         raise
     finally:
         try:
+            current = partial.lstat()
+            if (current.st_dev, current.st_ino) != (identity.st_dev, identity.st_ino):
+                raise RuntimeError("Refusing to remove a replaced staging path")
             partial.unlink()
+        except FileNotFoundError:
+            pass
         except OSError as cleanup_error:
+            if published and original is None:
+                output.staging_cleanup_warning = type(cleanup_error).__name__
+            elif original is None:
+                raise
+            else:
+                original.add_note("Partial archive cleanup failed: " + type(cleanup_error).__name__)
+        except RuntimeError as cleanup_error:
             if original is None:
                 raise
-            original.add_note("Partial archive cleanup failed: " + type(cleanup_error).__name__)
+            original.add_note(str(cleanup_error))
 
 
 def verify_media_references(connection, media):
@@ -201,7 +223,8 @@ class MaintenanceBackup:
                 for file in sorted(stage.rglob("*")):
                     if file.is_file():
                         archive.write(file, file.relative_to(stage).as_posix())
-        return {"sha256": digest(destination), "manifest": manifest}
+        return {"sha256": digest(destination), "manifest": manifest,
+                "staging_cleanup_warning": output.staging_cleanup_warning}
 
     def restore(self, *, archive, expected_sha256, media_parent):
         """Restore into a newly generated database and exclusively new media.

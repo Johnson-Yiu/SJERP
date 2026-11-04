@@ -6,6 +6,7 @@ import sys
 
 from crm.services.operations_crypto import crypt_file
 from crm.services.operations_retention import prune_verified
+from crm.services.operations_trust import load_receipt_trust
 
 
 def main():
@@ -17,8 +18,9 @@ def main():
     try:
         config = json.loads(Path(args.config).read_text(encoding="utf-8"))
         if args.operation == "prune":
-            if set(config) - {"root", "owner_id", "receipts", "keep", "minimum_age_seconds"}:
+            if set(config) != {"root", "owner_id", "receipts", "keep", "minimum_age_seconds", "receipt_trust_file"}:
                 raise ValueError("Unsupported retention configuration")
+            config["receipt_verification"] = load_receipt_trust(config.pop("receipt_trust_file"))
             result = prune_verified(**config, execute=args.execute_prune)
         else:
             if args.execute_prune or set(config) - {"source", "destination", "executable", "key_file", "expected_sha256", "msys_paths"}:

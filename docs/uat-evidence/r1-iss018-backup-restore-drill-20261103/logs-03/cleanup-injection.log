@@ -1,0 +1,7 @@
+test_original_failure_and_owned_leftover_are_reported (__main__.CleanupFailureTests.test_original_failure_and_owned_leftover_are_reported) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.019s
+
+OK
+SIMULATED_CLEANUP_FAILURE {"cleanup_error": "simulated lock", "error": "FileNotFoundError: [WinError 2] \u7cfb\u7edf\u627e\u4e0d\u5230\u6307\u5b9a\u7684\u6587\u4ef6\u3002: 'C:\\\\Users\\\\Johnson\\\\AppData\\\\Local\\\\Temp\\\\sunjack-iss018-pg17-jxuios7_\\\\missing-bin'", "leftover_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-iss018-pg17-jxuios7_", "status": "FAILED"}

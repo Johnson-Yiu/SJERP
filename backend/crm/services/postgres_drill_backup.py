@@ -273,9 +273,14 @@ class IsolatedPostgresDrill:
                     raise BackupRecoveryError("Restore media target already exists")
                 os.replace(stage / "media", media_target)
             return {"database": target, "media": str(media_target), "manifest": manifest}
-        except Exception:
+        except Exception as original:
             if created and target in self._owned_targets:
-                with self._connect("postgres", autocommit=True) as connection:
-                    connection.execute(sql.SQL("DROP DATABASE {}").format(sql.Identifier(target)))
-                self._owned_targets.remove(target)
+                try:
+                    with self._connect("postgres", autocommit=True) as connection:
+                        connection.execute(sql.SQL("DROP DATABASE {}").format(sql.Identifier(target)))
+                    self._owned_targets.remove(target)
+                except Exception as cleanup_error:
+                    raise BackupRecoveryError(
+                        f"Restore failed: {original}; cleanup failed for owned database {target}: {cleanup_error}"
+                    ) from original
             raise

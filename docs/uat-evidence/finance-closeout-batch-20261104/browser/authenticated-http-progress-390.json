@@ -2,7 +2,7 @@
   {
     "action": "accounts",
     "request": {
-      "code": "SYNTH-AUTH-B-390-1793787046461",
+      "code": "SYNTH-AUTH-B-390-1793788180565",
       "name": "合成核对银行-390",
       "account_type": "bank",
       "ownership": "own",
@@ -16,7 +16,7 @@
   {
     "action": "accounts",
     "request": {
-      "code": "SYNTH-AUTH-C-390-1793787046461",
+      "code": "SYNTH-AUTH-C-390-1793788180565",
       "name": "合成核对现金-390",
       "account_type": "cash",
       "ownership": "own",
@@ -30,9 +30,9 @@
   {
     "action": "instructions",
     "request": {
-      "request_key": "SYNTH-AUTH-390-1793787046461-2",
+      "request_key": "SYNTH-AUTH-390-1793788180565-2",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-2",
+      "source_key": "SYNTH-AUTH-390-1793788180565-2",
       "kind": "opening",
       "account": 3,
       "actual_date": "2026-02-01",
@@ -49,9 +49,9 @@
       "kind": "opening",
       "status": "pending",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-2",
+        "request_key": "SYNTH-AUTH-390-1793788180565-2",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-2",
+        "source_key": "SYNTH-AUTH-390-1793788180565-2",
         "kind": "opening",
         "account": 3,
         "actual_date": "2026-02-01",
@@ -69,7 +69,7 @@
         "user_id": 1
       },
       "approved_actor": {},
-      "created_at": "2026-11-04T10:10:46.630158Z",
+      "created_at": "2026-11-04T10:29:40.661704Z",
       "approved_at": null,
       "replaces": null
     }
@@ -103,9 +103,9 @@
       "kind": "opening",
       "status": "approved",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-2",
+        "request_key": "SYNTH-AUTH-390-1793788180565-2",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-2",
+        "source_key": "SYNTH-AUTH-390-1793788180565-2",
         "kind": "opening",
         "account": 3,
         "actual_date": "2026-02-01",
@@ -127,8 +127,8 @@
         "action": "approve",
         "user_id": 2
       },
-      "created_at": "2026-11-04T10:10:46.630158Z",
-      "approved_at": "2026-11-04T10:10:50.609835Z",
+      "created_at": "2026-11-04T10:29:40.661704Z",
+      "approved_at": "2026-11-04T10:29:44.470790Z",
       "replaces": null
     }
   },
@@ -155,7 +155,7 @@
       "voucher": 2,
       "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-2",
+      "source_key": "SYNTH-AUTH-390-1793788180565-2",
       "parent": null,
       "legacy_parent": null,
       "actor": {
@@ -163,7 +163,7 @@
         "action": "post",
         "user_id": 1
       },
-      "created_at": "2026-11-04T10:10:50.841162Z",
+      "created_at": "2026-11-04T10:29:44.678846Z",
       "company_flow_included": false,
       "flow_exclusion_reason": "opening",
       "classifications": []
@@ -172,9 +172,9 @@
   {
     "action": "instructions",
     "request": {
-      "request_key": "SYNTH-AUTH-390-1793787046461-7",
+      "request_key": "SYNTH-AUTH-390-1793788180565-7",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-7",
+      "source_key": "SYNTH-AUTH-390-1793788180565-7",
       "kind": "cash",
       "account": 3,
       "actual_date": "2026-02-02",
@@ -191,9 +191,9 @@
       "kind": "cash",
       "status": "pending",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-7",
+        "request_key": "SYNTH-AUTH-390-1793788180565-7",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-7",
+        "source_key": "SYNTH-AUTH-390-1793788180565-7",
         "kind": "cash",
         "account": 3,
         "actual_date": "2026-02-02",
@@ -211,7 +211,7 @@
         "user_id": 1
       },
       "approved_actor": {},
-      "created_at": "2026-11-04T10:10:50.922308Z",
+      "created_at": "2026-11-04T10:29:44.736637Z",
       "approved_at": null,
       "replaces": null
     }
@@ -239,7 +239,7 @@
       "voucher": 2,
       "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-7",
+      "source_key": "SYNTH-AUTH-390-1793788180565-7",
       "parent": null,
       "legacy_parent": null,
       "actor": {
@@ -247,7 +247,7 @@
         "action": "post",
         "user_id": 1
       },
-      "created_at": "2026-11-04T10:10:50.962795Z",
+      "created_at": "2026-11-04T10:29:44.798034Z",
       "company_flow_included": true,
       "flow_exclusion_reason": "",
       "classifications": []
@@ -256,9 +256,9 @@
   {
     "action": "instructions",
     "request": {
-      "request_key": "SYNTH-AUTH-390-1793787046461-9",
+      "request_key": "SYNTH-AUTH-390-1793788180565-9",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-9",
+      "source_key": "SYNTH-AUTH-390-1793788180565-9",
       "kind": "correction",
       "account": 3,
       "actual_date": "2026-02-03",
@@ -276,9 +276,9 @@
       "kind": "correction",
       "status": "pending",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-9",
+        "request_key": "SYNTH-AUTH-390-1793788180565-9",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-9",
+        "source_key": "SYNTH-AUTH-390-1793788180565-9",
         "kind": "correction",
         "account": 3,
         "actual_date": "2026-02-03",
@@ -297,7 +297,7 @@
         "user_id": 1
       },
       "approved_actor": {},
-      "created_at": "2026-11-04T10:10:50.993452Z",
+      "created_at": "2026-11-04T10:29:44.875594Z",
       "approved_at": null,
       "replaces": null
     }
@@ -313,9 +313,9 @@
       "kind": "correction",
       "status": "approved",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-9",
+        "request_key": "SYNTH-AUTH-390-1793788180565-9",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-9",
+        "source_key": "SYNTH-AUTH-390-1793788180565-9",
         "kind": "correction",
         "account": 3,
         "actual_date": "2026-02-03",
@@ -338,8 +338,8 @@
         "action": "approve",
         "user_id": 2
       },
-      "created_at": "2026-11-04T10:10:50.993452Z",
-      "approved_at": "2026-11-04T10:10:51.022115Z",
+      "created_at": "2026-11-04T10:29:44.875594Z",
+      "approved_at": "2026-11-04T10:29:44.994310Z",
       "replaces": null
     }
   },
@@ -366,7 +366,7 @@
       "voucher": 2,
       "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-9",
+      "source_key": "SYNTH-AUTH-390-1793788180565-9",
       "parent": 10,
       "legacy_parent": null,
       "actor": {
@@ -374,7 +374,7 @@
         "action": "post",
         "user_id": 1
       },
-      "created_at": "2026-11-04T10:10:51.060869Z",
+      "created_at": "2026-11-04T10:29:45.080448Z",
       "company_flow_included": true,
       "flow_exclusion_reason": "",
       "classifications": []
@@ -383,9 +383,9 @@
   {
     "action": "instructions",
     "request": {
-      "request_key": "SYNTH-AUTH-390-1793787046461-12",
+      "request_key": "SYNTH-AUTH-390-1793788180565-12",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-12",
+      "source_key": "SYNTH-AUTH-390-1793788180565-12",
       "kind": "refund_approval",
       "account": 3,
       "actual_date": "2026-02-02",
@@ -404,9 +404,9 @@
       "kind": "refund_approval",
       "status": "pending",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-12",
+        "request_key": "SYNTH-AUTH-390-1793788180565-12",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-12",
+        "source_key": "SYNTH-AUTH-390-1793788180565-12",
         "kind": "refund_approval",
         "account": 3,
         "actual_date": "2026-02-02",
@@ -426,7 +426,7 @@
         "user_id": 1
       },
       "approved_actor": {},
-      "created_at": "2026-11-04T10:10:51.098934Z",
+      "created_at": "2026-11-04T10:29:45.173579Z",
       "approved_at": null,
       "replaces": null
     }
@@ -442,9 +442,9 @@
       "kind": "refund_approval",
       "status": "approved",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-12",
+        "request_key": "SYNTH-AUTH-390-1793788180565-12",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-12",
+        "source_key": "SYNTH-AUTH-390-1793788180565-12",
         "kind": "refund_approval",
         "account": 3,
         "actual_date": "2026-02-02",
@@ -468,8 +468,8 @@
         "action": "approve",
         "user_id": 2
       },
-      "created_at": "2026-11-04T10:10:51.098934Z",
-      "approved_at": "2026-11-04T10:10:51.156304Z",
+      "created_at": "2026-11-04T10:29:45.173579Z",
+      "approved_at": "2026-11-04T10:29:45.331979Z",
       "replaces": null
     }
   },
@@ -487,9 +487,9 @@
   {
     "action": "instructions",
     "request": {
-      "request_key": "SYNTH-AUTH-390-1793787046461-15",
+      "request_key": "SYNTH-AUTH-390-1793788180565-15",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-15",
+      "source_key": "SYNTH-AUTH-390-1793788180565-15",
       "kind": "refund_payment",
       "account": 3,
       "actual_date": "2026-02-04",
@@ -507,9 +507,9 @@
       "kind": "refund_payment",
       "status": "pending",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-15",
+        "request_key": "SYNTH-AUTH-390-1793788180565-15",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-15",
+        "source_key": "SYNTH-AUTH-390-1793788180565-15",
         "kind": "refund_payment",
         "account": 3,
         "actual_date": "2026-02-04",
@@ -528,7 +528,7 @@
         "user_id": 1
       },
       "approved_actor": {},
-      "created_at": "2026-11-04T10:10:51.234518Z",
+      "created_at": "2026-11-04T10:29:45.802020Z",
       "approved_at": null,
       "replaces": null
     }
@@ -544,9 +544,9 @@
       "kind": "refund_payment",
       "status": "approved",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-15",
+        "request_key": "SYNTH-AUTH-390-1793788180565-15",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-15",
+        "source_key": "SYNTH-AUTH-390-1793788180565-15",
         "kind": "refund_payment",
         "account": 3,
         "actual_date": "2026-02-04",
@@ -569,8 +569,8 @@
         "action": "approve",
         "user_id": 2
       },
-      "created_at": "2026-11-04T10:10:51.234518Z",
-      "approved_at": "2026-11-04T10:10:51.269337Z",
+      "created_at": "2026-11-04T10:29:45.802020Z",
+      "approved_at": "2026-11-04T10:29:45.878902Z",
       "replaces": null
     }
   },
@@ -597,7 +597,7 @@
       "voucher": 2,
       "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-15",
+      "source_key": "SYNTH-AUTH-390-1793788180565-15",
       "parent": null,
       "legacy_parent": null,
       "actor": {
@@ -605,7 +605,7 @@
         "action": "post",
         "user_id": 1
       },
-      "created_at": "2026-11-04T10:10:51.356276Z",
+      "created_at": "2026-11-04T10:29:45.988749Z",
       "company_flow_included": true,
       "flow_exclusion_reason": "",
       "classifications": []
@@ -614,9 +614,9 @@
   {
     "action": "instructions",
     "request": {
-      "request_key": "SYNTH-AUTH-390-1793787046461-18",
+      "request_key": "SYNTH-AUTH-390-1793788180565-18",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-18",
+      "source_key": "SYNTH-AUTH-390-1793788180565-18",
       "kind": "refund_return",
       "account": 3,
       "actual_date": "2026-02-05",
@@ -634,9 +634,9 @@
       "kind": "refund_return",
       "status": "pending",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-18",
+        "request_key": "SYNTH-AUTH-390-1793788180565-18",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-18",
+        "source_key": "SYNTH-AUTH-390-1793788180565-18",
         "kind": "refund_return",
         "account": 3,
         "actual_date": "2026-02-05",
@@ -655,7 +655,7 @@
         "user_id": 1
       },
       "approved_actor": {},
-      "created_at": "2026-11-04T10:10:51.432237Z",
+      "created_at": "2026-11-04T10:29:46.065965Z",
       "approved_at": null,
       "replaces": null
     }
@@ -683,7 +683,7 @@
       "voucher": 2,
       "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-18",
+      "source_key": "SYNTH-AUTH-390-1793788180565-18",
       "parent": 12,
       "legacy_parent": null,
       "actor": {
@@ -691,7 +691,7 @@
         "action": "post",
         "user_id": 1
       },
-      "created_at": "2026-11-04T10:10:51.465987Z",
+      "created_at": "2026-11-04T10:29:46.194359Z",
       "company_flow_included": true,
       "flow_exclusion_reason": "",
       "classifications": []
@@ -700,9 +700,9 @@
   {
     "action": "instructions",
     "request": {
-      "request_key": "SYNTH-AUTH-390-1793787046461-20",
+      "request_key": "SYNTH-AUTH-390-1793788180565-20",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-20",
+      "source_key": "SYNTH-AUTH-390-1793788180565-20",
       "kind": "cash",
       "account": 3,
       "actual_date": "2026-02-06",
@@ -719,9 +719,9 @@
       "kind": "cash",
       "status": "pending",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-20",
+        "request_key": "SYNTH-AUTH-390-1793788180565-20",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-20",
+        "source_key": "SYNTH-AUTH-390-1793788180565-20",
         "kind": "cash",
         "account": 3,
         "actual_date": "2026-02-06",
@@ -739,7 +739,7 @@
         "user_id": 1
       },
       "approved_actor": {},
-      "created_at": "2026-11-04T10:10:51.493673Z",
+      "created_at": "2026-11-04T10:29:46.238943Z",
       "approved_at": null,
       "replaces": null
     }
@@ -767,7 +767,7 @@
       "voucher": 2,
       "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-20",
+      "source_key": "SYNTH-AUTH-390-1793788180565-20",
       "parent": null,
       "legacy_parent": null,
       "actor": {
@@ -775,7 +775,7 @@
         "action": "post",
         "user_id": 1
       },
-      "created_at": "2026-11-04T10:10:51.523715Z",
+      "created_at": "2026-11-04T10:29:46.281051Z",
       "company_flow_included": true,
       "flow_exclusion_reason": "",
       "classifications": []
@@ -784,9 +784,9 @@
   {
     "action": "instructions",
     "request": {
-      "request_key": "SYNTH-AUTH-390-1793787046461-22",
+      "request_key": "SYNTH-AUTH-390-1793788180565-22",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-22",
+      "source_key": "SYNTH-AUTH-390-1793788180565-22",
       "kind": "cash",
       "account": 4,
       "actual_date": "2026-02-07",
@@ -803,9 +803,9 @@
       "kind": "cash",
       "status": "pending",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-22",
+        "request_key": "SYNTH-AUTH-390-1793788180565-22",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-22",
+        "source_key": "SYNTH-AUTH-390-1793788180565-22",
         "kind": "cash",
         "account": 4,
         "actual_date": "2026-02-07",
@@ -823,7 +823,7 @@
         "user_id": 1
       },
       "approved_actor": {},
-      "created_at": "2026-11-04T10:10:51.558252Z",
+      "created_at": "2026-11-04T10:29:46.334044Z",
       "approved_at": null,
       "replaces": null
     }
@@ -851,7 +851,7 @@
       "voucher": 2,
       "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-22",
+      "source_key": "SYNTH-AUTH-390-1793788180565-22",
       "parent": null,
       "legacy_parent": null,
       "actor": {
@@ -859,7 +859,7 @@
         "action": "post",
         "user_id": 1
       },
-      "created_at": "2026-11-04T10:10:51.606158Z",
+      "created_at": "2026-11-04T10:29:46.391080Z",
       "company_flow_included": true,
       "flow_exclusion_reason": "",
       "classifications": []
@@ -909,9 +909,9 @@
   {
     "action": "instructions",
     "request": {
-      "request_key": "SYNTH-AUTH-390-1793787046461-27",
+      "request_key": "SYNTH-AUTH-390-1793788180565-27",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-27",
+      "source_key": "SYNTH-AUTH-390-1793788180565-27",
       "kind": "cash",
       "account": 3,
       "actual_date": "2026-02-08",
@@ -928,9 +928,9 @@
       "kind": "cash",
       "status": "pending",
       "payload": {
-        "request_key": "SYNTH-AUTH-390-1793787046461-27",
+        "request_key": "SYNTH-AUTH-390-1793788180565-27",
         "source_system": "SYNTH-AUTH-CHROME",
-        "source_key": "SYNTH-AUTH-390-1793787046461-27",
+        "source_key": "SYNTH-AUTH-390-1793788180565-27",
         "kind": "cash",
         "account": 3,
         "actual_date": "2026-02-08",
@@ -948,7 +948,7 @@
         "user_id": 1
       },
       "approved_actor": {},
-      "created_at": "2026-11-04T10:10:52.972162Z",
+      "created_at": "2026-11-04T10:29:47.318679Z",
       "approved_at": null,
       "replaces": null
     }
@@ -976,7 +976,7 @@
       "voucher": 2,
       "voucher_sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2",
       "source_system": "SYNTH-AUTH-CHROME",
-      "source_key": "SYNTH-AUTH-390-1793787046461-27",
+      "source_key": "SYNTH-AUTH-390-1793788180565-27",
       "parent": null,
       "legacy_parent": null,
       "actor": {
@@ -984,7 +984,7 @@
         "action": "post",
         "user_id": 1
       },
-      "created_at": "2026-11-04T10:10:53.061639Z",
+      "created_at": "2026-11-04T10:29:47.356081Z",
       "company_flow_included": true,
       "flow_exclusion_reason": "",
       "classifications": []

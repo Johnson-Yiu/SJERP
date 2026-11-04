@@ -1,5 +1,5 @@
 {
-  "source_head": "31866ed0121f67e4074959cc753fb8c8e617a5f9",
+  "source_head": "318c0b8d2715d5046034310bb57dee21f992d812",
   "logs": [
     {
       "original": "acceptance-backend-targeted.log",
@@ -132,6 +132,21 @@
       "published": "chrome-fourth.redacted.log"
     },
     {
+      "original": "chrome-locked-account.private.log",
+      "original_sha256": "8f55423af5bc8baeaaaf5e048c2c22f0857627d0e0c72d5815337ab792ea551b",
+      "published": "chrome-locked-account.redacted.log"
+    },
+    {
+      "original": "chrome-locked-auth.private.log",
+      "original_sha256": "e3dd52f69b85fc122bd4f3796f3567439545452d3d2e34d539249aa7869e9cff",
+      "published": "chrome-locked-auth.redacted.log"
+    },
+    {
+      "original": "chrome-locked-final.private.log",
+      "original_sha256": "f26759facff842f795ffa216c1e4bab9bbdc3e03bc4315331b4c3e94b7632527",
+      "published": "chrome-locked-final.redacted.log"
+    },
+    {
       "original": "chrome-second.private.log",
       "original_sha256": "e0044796af8c350bb2f2101e16419c2a6ec337b85561b69f5e3b78c19fa2fac5",
       "published": "chrome-second.redacted.log"
@@ -140,6 +155,11 @@
       "original": "chrome-third.private.log",
       "original_sha256": "1013bd9c2414584b7bdfeb98bf710679058c247934f6236df8a1ccaaca6fc8b4",
       "published": "chrome-third.redacted.log"
+    },
+    {
+      "original": "ci-postgres-first.private.log",
+      "original_sha256": "7a0b77f9b2a0b568e18062a0a2b35e3993daa41b9347ada0eb0e8995f3ae2dae",
+      "published": "ci-postgres-first.redacted.log"
     },
     {
       "original": "closeout-final-local.log",
@@ -170,6 +190,21 @@
       "original": "locked-environment.log",
       "original_sha256": "cd1693a64697eade56e9500d530d15880fd824ca57041b7b80d779ceb20026bb",
       "published": "locked-environment.redacted.log"
+    },
+    {
+      "original": "locked-migration-check.log",
+      "original_sha256": "93e6e2d5be3c054add80c0f19101608803f7ca8a7df1fa41f76bbb9a1f570f4a",
+      "published": "locked-migration-check.redacted.log"
+    },
+    {
+      "original": "locked-pip-final.log",
+      "original_sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "published": "locked-pip-final.redacted.log"
+    },
+    {
+      "original": "locked-system-check.log",
+      "original_sha256": "f87ceb15410bde28ff826ce26228e0576558258fa64d145847921a593a61ee63",
+      "published": "locked-system-check.redacted.log"
     },
     {
       "original": "migration-verification.log",
@@ -212,6 +247,16 @@
       "published": "postgres-acceptance.redacted.log"
     },
     {
+      "original": "postgres-ci-migration-fix.log",
+      "original_sha256": "d3b3f9ace94593288bfb9bbf1f4c56ce28582736bdf2cc56cee243e4afb41196",
+      "published": "postgres-ci-migration-fix.redacted.log"
+    },
+    {
+      "original": "postgres-ci-migration-verified.log",
+      "original_sha256": "b0a1031864104a7b967fa80ad45ddf0129781d5130a431e2ba15fb82cfc95c75",
+      "published": "postgres-ci-migration-verified.redacted.log"
+    },
+    {
       "original": "postgres-final.log",
       "original_sha256": "5f6c21e263456e45d53264d7473546bcac5bc94696e8d8a07348081122727328",
       "published": "postgres-final.redacted.log"
@@ -235,6 +280,11 @@
       "original": "private-bank-final.log",
       "original_sha256": "0237bc2a00c43e873bb38f1222c52384a1e434902ddc15aca559ad0fd9fda202",
       "published": "private-bank-final.redacted.log"
+    },
+    {
+      "original": "sqlite-ci-migration-verified.log",
+      "original_sha256": "16437e35cf8a9907ffeb8272235771339dd33223190992d05450938d822469f8",
+      "published": "sqlite-ci-migration-verified.redacted.log"
     },
     {
       "original": "system-check-final.log",
@@ -415,83 +465,83 @@
     },
     {
       "path": "browser/account-facts-1440.png",
-      "size": 143408,
-      "sha256": "ff5d1390e6a0c194b1083b2f4898878f9d0968c9c264115b2782f2895289c76d"
+      "size": 143974,
+      "sha256": "5d00c6d30231c4661f5abe915a8824abac0c9b81b8a0fae598565cb2b1455317"
     },
     {
       "path": "browser/account-facts-390.png",
-      "size": 131267,
-      "sha256": "39e697d5a667abf3f394921fec1ef7957899628d6ce27931fcc1996b0f19a0ae"
+      "size": 132809,
+      "sha256": "3b34b65f623e946d2db034bbc91c815f74d48d7626e686b37d8e31d9a0be1b54"
     },
     {
       "path": "browser/authenticated-facts-1440.csv",
       "size": 1862,
-      "sha256": "951bcd78e9af62ac0d3f505d258face86a3379a8f084fe49f2eb101654db2f36"
+      "sha256": "654575d633aa4c636739bdb16b66363eaf184c6db044f34fe873ce2042822a49"
     },
     {
       "path": "browser/authenticated-facts-390.csv",
       "size": 3539,
-      "sha256": "aea23168b3d2ee91031fe54ec9d8a1daa2ba94046ec27b600c1d9c46ea3834b1"
+      "sha256": "63f0fc46e9191093e3dd9be5eb5d49ec28f74f49b7da81a939439c3e81964ba2"
     },
     {
       "path": "browser/authenticated-http-1440.json",
       "size": 33380,
-      "sha256": "b86f940662e5b9eb20c2833775bed4135414c6e9b43734b2e28e4b2bfa2543b2"
+      "sha256": "b54643ccc0aa22853cd313854c46e1dc715901348bd83d13a466f1e911b930da"
     },
     {
       "path": "browser/authenticated-http-390.json",
       "size": 35798,
-      "sha256": "f6d2e193ee25a4917a55e219ff1562ad47a4d24c54ea8cc28d3b00f27272796b"
+      "sha256": "93e2bf647b95eae23939e92bcd9d9fdab4aeeeb123b6f9eec260b8d4d8482e3c"
     },
     {
       "path": "browser/authenticated-http-progress-1440.json",
       "size": 26716,
-      "sha256": "759dd1a75f20941975914fee9aba599b34f54ace688c8060b824a3b5aece310f"
+      "sha256": "0db98c6931057e2f225eb854bffae7ea15e7d3413f10979d3d7cd86d68cd1ad6"
     },
     {
       "path": "browser/authenticated-http-progress-390.json",
       "size": 26710,
-      "sha256": "c356169ca07813f13d29b52c5cfc99b0f993832ab6fcf2329d2a76ee828ff906"
+      "sha256": "a8d01f633f5d2bbc342f7fd7c6413b88468b1d865b4884d4c60b4e884107fb29"
     },
     {
       "path": "browser/facts-1440.csv",
       "size": 387,
-      "sha256": "69cd5ed1714c4a18341a57330a61b310b48c5f0dd947aa458ac53ca398221ba7"
+      "sha256": "2ffc87071eaf5eac5158d7f5e57a0226c8b6b2aa16b1e06680220be91b85e9ab"
     },
     {
       "path": "browser/facts-390.csv",
       "size": 596,
-      "sha256": "b0f930d7772001f3836f49808c6e68c72fffbed35c24e49548900a96d893502c"
+      "sha256": "d62dd311bcfaafa7688b0de2ce6723bdfb905ddc5397dcd1bbb2cc8539112165"
     },
     {
       "path": "browser/http-1440.json",
-      "size": 29256,
-      "sha256": "b8213be1d6c7acc4e649b7f3e5eaf0160b138a5fbc24a532fc4c8745a5b000cf"
+      "size": 26087,
+      "sha256": "2b15dcee2d9196804f0730b3d23ecd4051bf42c06d57c75c7e6d10cda5cd9019"
     },
     {
       "path": "browser/http-390.json",
-      "size": 66140,
-      "sha256": "cf7e413b792db9e537a9cc4eed93c76eadcd50cace8f6781e806e6ef9da8398c"
+      "size": 51074,
+      "sha256": "5253a2b1895ded778cfcb35f4ef3c5624459e9716f1ae1aff4babc5d9bef5f9f"
     },
     {
       "path": "browser/reconciliation-completed-1440.png",
-      "size": 135443,
-      "sha256": "2a0133ca73028e2a66e7d7bb594050e8f47d3b2fd97baed7ff3ce8ea1a4276a2"
+      "size": 135962,
+      "sha256": "c12a7b6d49ba33e817060f94c3207714c50bab805bb471c775474f97e495ed2c"
     },
     {
       "path": "browser/reconciliation-completed-390.png",
-      "size": 103367,
-      "sha256": "13e1a6181833af5d443f27a5be4b729c3f667e5f0262d38aaa2079919363fa0c"
+      "size": 101949,
+      "sha256": "72500f53f0cc36f6d3a27087e45c58f3c3c8a4194a80b8ae1a723fc7f609fdbb"
     },
     {
       "path": "browser/reconciliation-reopened-1440.png",
-      "size": 135807,
-      "sha256": "62758453bbafee4db4835078ec4e4c59543a64eb85cf0b22fb323a6a0dd7c6f8"
+      "size": 136314,
+      "sha256": "8de68726818d095c07c612ee948fefa781f52619b98a3bd03e532dcad7f3c513"
     },
     {
       "path": "browser/reconciliation-reopened-390.png",
-      "size": 103676,
-      "sha256": "110ac66f7566ece3b6e2442fb13cbd8907bb4fcf60231adc6e830d718a1ad043"
+      "size": 102270,
+      "sha256": "d1f10a8e0c2d062ba522ac1f51d941701e711e46184223432d67b77d69031d50"
     },
     {
       "path": "browser/synthetic-voucher-1440.pdf",
@@ -589,6 +639,21 @@
       "sha256": "90a3c0790dd0766909f20b8c1f7b143669849cac89efbfb04868729599383300"
     },
     {
+      "path": "chrome-locked-account.redacted.log",
+      "size": 17589,
+      "sha256": "a5f0516f19ac73fbccbcad1cd701843897a2b5a8e89c3850bd87d04f51860370"
+    },
+    {
+      "path": "chrome-locked-auth.redacted.log",
+      "size": 20435,
+      "sha256": "1e973f83e4e6670c7a78c346a7f9dfd8b5aa5b7c6f6b62d2ab6b76604658c4cf"
+    },
+    {
+      "path": "chrome-locked-final.redacted.log",
+      "size": 607,
+      "sha256": "20e6e9fd3c5488badf1a039698c4a12a33744a5c64c23149747f3ab3cd3d64c5"
+    },
+    {
       "path": "chrome-second.redacted.log",
       "size": 15445,
       "sha256": "2ad34b1b69957f40446a0bd812a1fb3952c1c2c2da3d1291d600aec9a6f2930e"
@@ -597,6 +662,11 @@
       "path": "chrome-third.redacted.log",
       "size": 8946,
       "sha256": "761bba1aea674b4de4a4b9431b2841fd17884976658da2483142f3ce2f15e5ee"
+    },
+    {
+      "path": "ci-postgres-first.redacted.log",
+      "size": 528537,
+      "sha256": "35fa1be070206ace0633a08fa691f631b635f1209a3e477e255005ebf49f46bc"
     },
     {
       "path": "closeout-final-local.redacted.log",
@@ -644,6 +714,21 @@
       "sha256": "b28faa2bf1a8967772a268956714a2fb5f887545e497bb230e5ec2efd5cfb107"
     },
     {
+      "path": "locked-migration-check.redacted.log",
+      "size": 20,
+      "sha256": "a2bfa7b376c38062f77ce2b1e703876aaa04662f96355cdf5dc9d0d075302b05"
+    },
+    {
+      "path": "locked-pip-final.redacted.log",
+      "size": 30,
+      "sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    {
+      "path": "locked-system-check.redacted.log",
+      "size": 48,
+      "sha256": "1e3e63f221bde88816c4a4ef7367691607b20cc1d194028a02ec9ae0586cf9b1"
+    },
+    {
       "path": "migration-verification.redacted.log",
       "size": 506,
       "sha256": "18d47137824f5bde0f7ac0e1d94ec10c7b3b1eec1e1e406b413204fccfcb0610"
@@ -684,6 +769,16 @@
       "sha256": "17763db022727b7ae443b5292868c0abae39eff14afe876bee8a6f9cec218263"
     },
     {
+      "path": "postgres-ci-migration-fix.redacted.log",
+      "size": 1175,
+      "sha256": "43f83fccb4685a5d6376c1c5202aa6d9166479b9d7b0213e773346052237cce6"
+    },
+    {
+      "path": "postgres-ci-migration-verified.redacted.log",
+      "size": 34801,
+      "sha256": "3318b2eea7eefaf723488f2830e3a42afa2f7ea9195c88a31a0ebe64a86a2ee6"
+    },
+    {
       "path": "postgres-final.redacted.log",
       "size": 21951,
       "sha256": "085b5416683d4a1051b6e8a83ee9b48ff6cd8d2b1788749baa07988e89c082bc"
@@ -715,18 +810,23 @@
     },
     {
       "path": "README.md",
-      "size": 11418,
-      "sha256": "5fa4bcc09e4c0ca5124205a3e3c8d3bd1af976e642fe7309b03ca4b4d879bfbe"
+      "size": 12370,
+      "sha256": "4293b631e3a289a0d54f1209d446a9b18080ebb08fff20d2250588096111c0cb"
     },
     {
       "path": "run-postgres-tests.py",
-      "size": 5471,
-      "sha256": "d67a8bfddc216fe9f2d54a6d525a0205492e12f2d6390d0875148f828e9945ce"
+      "size": 5525,
+      "sha256": "d6a69840f5b309fa3d1913c776d80575cfd9da3cea5a7ca638a92787b850e0de"
     },
     {
       "path": "seed_finance_browser.py",
       "size": 2102,
       "sha256": "2cdea1218380149ace74ccdefd623e743d82325f73b6476b3fbdcd0db2341778"
+    },
+    {
+      "path": "sqlite-ci-migration-verified.redacted.log",
+      "size": 10501,
+      "sha256": "bcc9f834ec41e0758ec8006408bc4b304931d5ce7708218dfa35a3b0e31ce73b"
     },
     {
       "path": "system-check-final.redacted.log",

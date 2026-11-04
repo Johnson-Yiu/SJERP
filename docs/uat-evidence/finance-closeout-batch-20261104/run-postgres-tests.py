@@ -67,7 +67,7 @@ def main():
         for name in ("ISS018_COMMAND_PG_BIN", "ISS018_DRILL_ROOT", "ISS018_DRILL_PASSWORD_FILE"):
             env.pop(name, None)
         repo = Path(__file__).resolve().parents[3]
-        labels = ["crm.tests.test_finance_closeout", "crm.tests.test_finance_closeout_concurrency", "crm.tests.test_finance_accounts", "crm.tests.test_cash_operation_audit", "crm.tests.test_cash_events", "crm.tests.test_actual_cash_reporting", "crm.tests.test_bank_private_vouchers", "crm.tests.test_independent_bank_fee", "crm.tests.test_cash_duplicate_review"]
+        labels = ["crm.tests.test_csv_import_audit_migration_rollback", "crm.tests.test_finance_closeout", "crm.tests.test_finance_closeout_concurrency", "crm.tests.test_finance_accounts", "crm.tests.test_cash_operation_audit", "crm.tests.test_cash_events", "crm.tests.test_actual_cash_reporting", "crm.tests.test_bank_private_vouchers", "crm.tests.test_independent_bank_fee", "crm.tests.test_cash_duplicate_review"]
         print(json.dumps({"postgres": version, "cluster": str(root), "source": database, "port": port, "test_labels": labels}), flush=True)
         result = subprocess.run([sys.executable, "manage.py", "test", *labels, "--verbosity", "2"], cwd=repo / "backend", env=env, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=1800)
         print((result.stdout + result.stderr).replace(secret, "[REDACTED]"), flush=True)

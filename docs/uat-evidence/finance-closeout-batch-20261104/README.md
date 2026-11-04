@@ -32,8 +32,8 @@
 | 检查 | 记录 |
 |---|---|
 | 早期完整 SQLite 回归 | 1207项，55条件跳过，无失败；`backend-full-first.log`。执行发生在后续文件绑定/有效更正补修之前，不当作最终源码的完整回归。 |
-| 最终金融组合 SQLite | 78项，6项PG条件跳过，无失败；`acceptance-backend-targeted.log`。PG条件跳过不计为并发通过。 |
-| 稳定业务源码真实 PG17.11 | `postgres-acceptance.log`：85项全部实际执行，无跳过和失败；含5项新并发、旧资金并发、银行重复核实SQL保护和迁移回退。随机测试库无遗留，集群停止并清理。 |
+| 最终金融组合 SQLite | `sqlite-ci-migration-verified.log`：80项，6项PG条件跳过，无失败，包含CSV审计迁移回退与资金回归。PG条件跳过不计为并发通过。 |
+| 稳定业务源码真实 PG17.11 | `postgres-ci-migration-verified.log`：88项全部实际执行，无跳过和失败；含CSV审计迁移回退、5项新并发、旧资金并发、银行重复核实SQL保护和迁移回退。随机测试库无遗留，集群停止并清理。此前85项定向记录保留。 |
 | 新库和正反向迁移 | `migration-verification.log`：新库到0102、空回退至0097及再正向通过；有银行文件时拒绝回退，历史及实际文件不变。 |
 | Django check / 模型迁移一致性 | 检查通过，makemigrations --check --dry-run无遗漏。 |
 | 前端单元 | `vitest-acceptance.log`：70文件684项通过；`node-final-verified.log`：177项通过，0失败、0取消。刷新布局补修后本页3项再次通过。 |
@@ -74,6 +74,8 @@ git diff --check
 - 新PG下载测试直接close流式响应导致测试事务连接被关闭，改为消费Django测试客户端流式迭代器并验证真实文件内容；新集群重跑通过，未更改生产数据库或清理机制。
 - 人工更正的初版差额流出会歪曲毛流量，已改成不可覆盖历史及有效版本统计，并覆盖跨期更正、零更正和并发分叉拒绝。
 - 390px实际截图发现银行文件SHA长串溢出，已加换行并增加真实Chrome宽度断言；截图不拼接、不重制。
+- CI Run 41812921711及41813412575的PostgreSQL全量各有5项错误：CSV审计回退拒绝测试先撤销新财务空表，再触发旧保护；测试没有恢复最新schema，导致后续并发测试缺表。补充finally恢复全部叶节点并断言恢复，原审计拒绝及历史保留断言不变。锁定PG顺序组合88项全部通过，完整CI另行重跑；失败原始日志见ci-postgres-first。
+- 收尾环境复核发现共享根目录虚拟环境为Django6.0.8，不作为锁定环境验收；改用既有锁定解释器`iss018-command-locked-venv`（Django6.0.9），重跑check、迁移检查、SQLite、PG及普通/双人Chrome。对应chrome-locked-auth和chrome-locked-account各2项通过。启动PG时沙箱受限令牌失败，经授权在沙箱外只启动新随机集群后通过；未接触既有服务。
 
 ## CI 与交付边界
 

@@ -42,9 +42,16 @@ class CsvImportAuditMigrationRollbackTests(TransactionTestCase):
         )
 
         executor = MigrationExecutor(connection)
-        with self.assertRaisesRegex(RuntimeError, "Refusing to reverse CSV import audit protection"):
-            executor.migrate([self.parent_migration])
+        latest_targets = tuple(executor.loader.graph.leaf_nodes())
+        try:
+            with self.assertRaisesRegex(RuntimeError, "Refusing to reverse CSV import audit protection"):
+                executor.migrate([self.parent_migration])
+        finally:
+            # Earlier reverse steps may have committed before the audit guard
+            # refuses its own reversal. Restore the entire current schema.
+            MigrationExecutor(connection).migrate(latest_targets)
 
+        self.assertTrue(set(latest_targets).issubset(MigrationRecorder(connection).applied_migrations()))
         self.assertIn(self.guard_migration, MigrationRecorder(connection).applied_migrations())
         self.assertTrue(CSVImportPreviewAudit.objects.filter(pk=preview.pk).exists())
         self.assertTrue(CSVImportBatch.objects.filter(pk=batch.pk).exists())

@@ -1,0 +1,13 @@
+{"cleanup": "complete", "exit": 1}
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-closeout-batch-20261104\docs\uat-evidence\finance-closeout-batch-20261104\run-postgres-tests.py", line 96, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-closeout-batch-20261104\docs\uat-evidence\finance-closeout-batch-20261104\run-postgres-tests.py", line 56, in main
+    tool([exe("pg_ctl"), "-D", str(root / "data"), "-l", str(root / "postgres.log"), "-o", f"-h 127.0.0.1 -p {port}", "-w", "start"])
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-closeout-batch-20261104\docs\uat-evidence\finance-closeout-batch-20261104\run-postgres-tests.py", line 53, in tool
+    raise RuntimeError(f"{Path(command[0]).name} failed ({result.returncode}): {output}")
+RuntimeError: pg_ctl.exe failed (1): pg_ctl: could not create restricted token: error code 87
+
+pg_ctl: could not start server: error code 3

@@ -11,6 +11,7 @@ import csv
 import io
 import json
 import os
+import sqlite3
 from email.message import Message
 from datetime import date
 from decimal import Decimal
@@ -20,6 +21,7 @@ from urllib.parse import urlencode, urlsplit
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import connection
 from django.http import HttpRequest
 from django.middleware.csrf import get_token
 from django.test import Client, LiveServerTestCase, override_settings
@@ -162,6 +164,19 @@ class ReviewCoreHttpTests(LiveServerTestCase):
     def tearDown(self):
         if self.evidence_dir:
             prefix = self._evidence_prefix()
+            if connection.vendor == "sqlite":
+                database_path = Path(self.evidence_dir) / f"{prefix}-database.sqlite3"
+                self.assertFalse(database_path.exists(), "Refusing to overwrite database evidence")
+                connection.ensure_connection()
+                with sqlite3.connect(database_path) as destination:
+                    connection.connection.backup(destination)
+                    self.assertEqual(destination.execute("PRAGMA integrity_check").fetchone()[0], "ok")
+                database_bytes = database_path.read_bytes()
+                self.saved_artifacts[database_path.name] = {
+                    "content_type": "application/vnd.sqlite3",
+                    "bytes": len(database_bytes),
+                    "sha256": hashlib.sha256(database_bytes).hexdigest(),
+                }
             manifest = {
                 "test": self._testMethodName,
                 "http_events": self.http_events,

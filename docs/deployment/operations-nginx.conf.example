@@ -1,0 +1,35 @@
+# Configuration template only. Replace paths/domain and run nginx -t before use.
+# Include inside http {}; Django must trust forwarded headers ONLY from this proxy.
+server {
+    listen 80;
+    server_name erp.example.invalid;
+    return 308 https://erp.example.invalid$request_uri;
+}
+server {
+    listen 443 ssl;
+    server_name erp.example.invalid;
+    ssl_certificate /etc/sunjack/tls/fullchain.pem;
+    ssl_certificate_key /etc/sunjack/tls/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    root /srv/sunjack/frontend/dist;
+    client_max_body_size 12m;
+    # Body cap includes multipart overhead; Django retains its CSV-specific cap.
+    location = /media { return 404; }
+    location ^~ /media/ { return 404; }
+    location ^~ /static/ {
+        alias /srv/sunjack/static/;
+        autoindex off;
+    }
+    location ^~ /api/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_cache off;
+        proxy_store off;
+        proxy_hide_header Cache-Control;
+        add_header Cache-Control "private, no-store" always;
+        add_header X-Content-Type-Options nosniff always;
+    }
+    location / { try_files $uri $uri/ /index.html; }
+}

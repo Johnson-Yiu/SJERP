@@ -1,0 +1,18 @@
+test_actual_cli_success_and_repeated_destination_refused (test_operations_copy.VerifiedCopyTests.test_actual_cli_success_and_repeated_destination_refused) ... ok
+test_cleanup_failure_preserves_primary_error_and_partial_file (test_operations_copy.VerifiedCopyTests.test_cleanup_failure_preserves_primary_error_and_partial_file) ... ok
+test_copy_verification_failure_cleans_only_owned_copy (test_operations_copy.VerifiedCopyTests.test_copy_verification_failure_cleans_only_owned_copy) ... ok
+test_existing_destination_never_overwritten_or_removed (test_operations_copy.VerifiedCopyTests.test_existing_destination_never_overwritten_or_removed) ... ok
+test_fsync_failure_removes_incomplete_copy (test_operations_copy.VerifiedCopyTests.test_fsync_failure_removes_incomplete_copy) ... ok
+test_verified_copy_and_source_preserved (test_operations_copy.VerifiedCopyTests.test_verified_copy_and_source_preserved) ... ok
+test_wrong_and_partial_digest_rejected_before_creation (test_operations_copy.VerifiedCopyTests.test_wrong_and_partial_digest_rejected_before_creation) ... ok
+test_http_and_embedded_credentials_rejected_without_echo (test_operations_preflight.OperationsPreflightTests.test_http_and_embedded_credentials_rejected_without_echo) ... ok
+test_insufficient_space_and_invalid_threshold_rejected (test_operations_preflight.OperationsPreflightTests.test_insufficient_space_and_invalid_threshold_rejected) ... ok
+test_overlapping_roots_and_relative_paths_rejected (test_operations_preflight.OperationsPreflightTests.test_overlapping_roots_and_relative_paths_rejected) ... ok
+test_requested_inode_check_fails_closed_when_unavailable (test_operations_preflight.OperationsPreflightTests.test_requested_inode_check_fails_closed_when_unavailable) ... ok
+test_safe_inputs_never_authorize_backup (test_operations_preflight.OperationsPreflightTests.test_safe_inputs_never_authorize_backup) ... ok
+test_unknown_secret_field_rejected_without_echo (test_operations_preflight.OperationsPreflightTests.test_unknown_secret_field_rejected_without_echo) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.187s
+
+OK

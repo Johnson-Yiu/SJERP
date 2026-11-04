@@ -2,6 +2,8 @@
 
 ## 用户决定与集成边界（2026-11-04，优先于下方历史阶段记录）
 
+收尾提交 16608aba5f7a362c1c0b278806a79eb37e6a150e 的 [CI #41796421897](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41796421897) 实际结果：Backend success、Backend PostgreSQL success、Frontend failure。唯一业务浏览器失败仍为 `overview-reports.spec.js:44`，53行期望已提交 filter_customer="1"，实际 null；该页面/测试不在打印修复范围。完整失败日志 closeout-16608ab-ci-failure.txt 保留。本分支不借此修改报表或隐藏失败，不声称封存提交完整 CI 通过。此后只增加封存文档和日志，不再人工或专项重复打印实验。
+
 封存时重新读取 [CI #41792269858](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41792269858)：精确源码 fc2293f8572decb70cc8c5e92b355ce754edf4c3 的 Backend、Backend PostgreSQL、Frontend 全部 success，原始 JSON 为 closeout-ci-fc2293f.json。更早 #41791506681 的 Frontend failure 原始日志另存 closeout-earlier-ci-failure.log，不覆盖失败历史。收尾仅封存证据，新的封存提交不借用此结果冒充同 SHA 通过。
 
 资源核查：7506/7507 无监听；按专属脚本 iss037-formal-fixtures 及临时目录 sunjack-r1-repair-06-o0fr7j 筛查 node/python，无存活匹配；专属临时目录已不存在。隔离运行器已自行退出清理，无需杀死其他进程，也未删除桌面文件或其他工作树。

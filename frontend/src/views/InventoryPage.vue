@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { ArrowDownUp, Database, PackageSearch, RefreshCw, Search, X } from 'lucide-vue-next'
-import { useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { api, listAll } from '../api'
 import InventoryPagination from '../components/InventoryPagination.vue'
 import { inventoryPage } from '../utils/inventoryPagination'
@@ -19,10 +19,12 @@ const sortKey = computed(() => sortKeys.includes(route.query.sort) ? route.query
 const sortDirection = computed(() => ['asc', 'desc'].includes(route.query.direction) ? route.query.direction : 'asc')
 const attention = computed(() => route.query.attention === '1')
 const detailId = computed(() => scalar(route.query.detail))
-let searchTimer, requestId = 0
+let searchTimer, requestId = 0, listRequestId = 0, navigationId = 0
 let queryUpdates = Promise.resolve()
 function updateQuery(patch, replace = false) {
+  const currentNavigation = navigationId
   queryUpdates = queryUpdates.catch(() => {}).then(() => {
+    if (currentNavigation !== navigationId || route.path !== '/inventory') return
     const next = { ...route.query, ...patch }
     if (['search', 'sort', 'direction', 'attention'].some(key => key in patch)) delete next.page
     Object.keys(next).forEach(key => { if (next[key] === undefined || next[key] === '') delete next[key] })
@@ -35,7 +37,8 @@ watch(query, value => {
   clearTimeout(searchTimer)
   if (value !== scalar(route.query.search)) searchTimer = setTimeout(() => updateQuery({ search: value || undefined }), 300)
 })
-onBeforeUnmount(() => { clearTimeout(searchTimer); requestId++ })
+onBeforeUnmount(() => { clearTimeout(searchTimer); requestId++; listRequestId++; navigationId++ })
+onBeforeRouteLeave(() => { clearTimeout(searchTimer); navigationId++ })
 function toggleAttention() { return updateQuery({ attention: attention.value ? undefined : '1' }) }
 const needsAttention = row => row.has_anomaly || Number(row.to_procure_quantity || 0) > 0
 const selectedSku = ref(null), detail = ref(null), detailLoading = ref(false), detailError = ref('')
@@ -138,10 +141,15 @@ function stockState(row) {
   return { label: '有库存', className: 'positive-stock' }
 }
 async function load() {
+  const currentRequest = ++listRequestId
   loading.value = true; error.value = ''
-  try { rows.value = await listAll('/skus/inventory-list/'); hasLoaded.value = true }
-  catch (requestError) { error.value = requestError.message || '库存数据加载失败，请稍后重试。' }
-  finally { loading.value = false }
+  try {
+    const result = await listAll('/skus/inventory-list/')
+    if (currentRequest !== listRequestId) return
+    rows.value = result; hasLoaded.value = true
+  }
+  catch (requestError) { if (currentRequest === listRequestId) error.value = requestError.response?.data?.detail || requestError.message || '库存数据加载失败，请稍后重试。' }
+  finally { if (currentRequest === listRequestId) loading.value = false }
 }
 function clearInventoryFilters() { query.value = ''; return updateQuery({ search: undefined, attention: undefined }) }
 function openDetail(row) { return updateQuery({ detail: String(row.id), tab: 'movements', detailSearch: undefined, detailSort: undefined, detailDirection: undefined }) }
@@ -173,8 +181,13 @@ async function loadDetail() {
   }
 }
 function closeDetail() { return updateQuery({ detail: undefined, tab: undefined, detailSearch: undefined, detailSort: undefined, detailDirection: undefined }) }
-watch([detailId, loading], () => { if (!loading.value && route.path === '/inventory') loadDetail() })
-watch(() => route.path, () => clearTimeout(searchTimer))
+watch([detailId, loading], () => {
+  // Invalidate the old drawer even while a list refresh postpones the next load.
+  requestId++
+  selectedSku.value = null; detail.value = null; detailError.value = ''
+  if (!loading.value && route.path === '/inventory') loadDetail()
+}, { flush: 'sync' })
+watch(() => route.path, () => { clearTimeout(searchTimer); navigationId++; requestId++ }, { flush: 'sync' })
 onMounted(load)
 </script>
 

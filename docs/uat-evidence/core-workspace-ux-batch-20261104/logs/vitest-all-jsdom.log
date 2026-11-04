@@ -1,0 +1,79 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104/frontend
+
+✖ quote list renders a recursive parent-child tree with classified document icons (2.2041ms)
+✖ quote tree actions preserve detail, edit, and Excel export entry points (2.3549ms)
+✖ quote list provides summary metrics, filters, and newest-first sorting (0.2762ms)
+✖ every quote row opens detail and dedicated expansion stops propagation (0.212ms)
+✖ orders reuse the compact summary cards used by the quotation desk (0.2305ms)
+✖ order editor does not expose manual lifecycle status changes (0.2086ms)
+✖ order creation leaves number generation to the backend and keeps saved numbers read-only (0.1955ms)
+✖ order draft edits use PUT, close and refresh on success, and surface failed saves (0.2294ms)
+✖ order editor reports an invalid non-positive line quantity before sending a request (0.2451ms)
+✖ order list limits edit and delete operations to drafts (0.3247ms)
+✖ formal order history prefers the saved party snapshot and labels the live master reference (0.2725ms)
+✖ quote history prefers the saved buyer snapshot and never falls back to the live customer name (0.2445ms)
+✖ editing from the order workbench reloads the current order before opening the editor (0.1764ms)
+✖ document deep links initialize and dynamically synchronize quote and order details (0.2201ms)
+✖ closing a document detail removes only detail and preserves remaining route state (0.2203ms)
+✖ opening list rows pushes their detail id into the current route for refresh and history (0.2358ms)
+✔ invalid document ids cannot break the list route and large not-found ids remain loadable as details (1.0484ms)
+ ❯ src/views/DocumentPage.test.js (0 test)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 1
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24.0982
+✖ SKU editor exposes supplier source maintenance through the API (2.3631ms)
+✖ SKU editor canonicalizes abbreviation keys and mirrors backend value formatting (2.3216ms)
+✖ SKU creation relies on generated Sales Model and editing preserves the saved model (0.2792ms)
+✔ editing one SKU keeps its packaging detail when the computed preview key changes (0.3564ms)
+✖ saved parameter suggestions include inherited categories and legacy keys independent of search rows (0.7367ms)
+✖ create and edit include packaging in their single SKU database request (0.6527ms)
+✖ parameter edits submit the explicitly saved Sales Model instead of the generated preview (0.4808ms)
+✖ image failure retains saved SKU IDs for independent retry and reports database success (0.4951ms)
+✔ nested packaging validation messages remain readable (0.7925ms)
+ ❯ src/views/SKUPage.test.js (0 test)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 2
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21.0772
+✖ purchase desk exposes retained contract amount adjustment history (2.3553ms)
+✖ purchase desk connects creation, receipt and supplier payment actions (2.4075ms)
+✖ purchase desk exposes receipt history and the reversal flow (0.3319ms)
+✖ purchase desk labels ordered, received, remaining and overage quantities separately (0.2924ms)
+✖ purchase desk keeps drafts editable and separates placement from draft save (0.2251ms)
+✖ formal purchase history prefers the saved supplier snapshot and exposes its party details (0.2436ms)
+✖ order fulfillment purchase history prefers formal supplier snapshots (0.2293ms)
+✖ purchase creation leaves number generation to the backend and never submits a number (0.1979ms)
+✖ missing supplier source is described as optional without implying automatic creation (0.2717ms)
+✖ purchase price reference only carries across matching currencies and resets stale prices (0.3143ms)
+✖ cost allocation loads minimal cross-order candidates through procurement permission (0.2325ms)
+✖ purchase editor aggregates maintained MOQ in base units without blocking draft save (0.1956ms)
+✖ purchase placement keeps low MOQ as a reasoned soft exception and displays retained evidence (0.2016ms)
+ ❯ src/views/PurchaseOrderPage.test.js (0 test)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 0
+ℹ fail 13
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18.7292
+✖ resource payload serializes empty optional dates as null (2.0934ms)
+✔ transaction resource distinguishes book reference from confirmed bank RMB cash (2.4175ms)
+✖ customer projections are visible but not editable customer fields (0.366ms)
+✖ customer detail shortcuts require the target module action permission (0.2694ms)
+✖ customer, product and SKU details expose a permission-gated report-center shortcut with a safe return path (0.2435ms)
+✖ automatic inventory movements are read-only while manual movements are reversed, not deleted (0.3144ms)
+✖ follow-up history summary is distinguished from the current dashboard obligation (0.2378ms)
+✖ customer ownership uses scoped employee options and sends an explicit clear as null (0.5085ms)
+✖ ISS-049 reuses URL-backed quick filters for customer and follow-up lists (0.4456ms)
+ ❯ src/views/ResourcePage.test.js (0 test)

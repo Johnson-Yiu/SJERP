@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\core-workspace-ux-batch-20261104\docs\uat-evidence\core-workspace-ux-batch-20261104\verify_live.py", line 23, in request
+    with urlopen(req, timeout=30) as response:
+         ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\urllib\request.py", line 187, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\urllib\request.py", line 493, in open
+    response = meth(req, response)
+  File "C:\Python314\Lib\urllib\request.py", line 602, in http_response
+    response = self.parent.error(
+        'http', request, response, code, msg, hdrs)
+  File "C:\Python314\Lib\urllib\request.py", line 531, in error
+    return self._call_chain(*args)
+           ~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Python314\Lib\urllib\request.py", line 464, in _call_chain
+    result = func(*args)
+  File "C:\Python314\Lib\urllib\request.py", line 611, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\core-workspace-ux-batch-20261104\docs\uat-evidence\core-workspace-ux-batch-20261104\verify_live.py", line 33, in <module>
+    rejected = request(f"purchase-orders/{fixture['purchase']}/receive/", {'purchase_item': fixture['purchase_item'], 'quantity': '0', 'unit_cost': '2', 'receipt_date': '2026-11-04'})
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\core-workspace-ux-batch-20261104\docs\uat-evidence\core-workspace-ux-batch-20261104\verify_live.py", line 26, in request
+    return {'endpoint': endpoint, 'method': req.method, 'status': error.code, 'data': json.load(error)}
+                                            ^^^^^^^^^^
+AttributeError: 'Request' object has no attribute 'method'

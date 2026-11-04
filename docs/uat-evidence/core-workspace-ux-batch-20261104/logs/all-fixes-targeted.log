@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104/frontend
+
+
+ Test Files  6 passed (6)
+      Tests  30 passed (30)
+   Start at  16:51:07
+   Duration  23.88s (transform 3.98s, setup 1.82s, import 5.41s, tests 1.66s, environment 13.05s)
+

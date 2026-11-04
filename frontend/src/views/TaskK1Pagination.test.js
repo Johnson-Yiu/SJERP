@@ -18,7 +18,9 @@ test('core management lists and selectors use the tested all-pages loader', asyn
   assert.match(resource, /const nextRows = await listAll\(/)
   assert.match(resource, /options\[key\] = await listAll\(/)
 
-  assert.match(documents, /rows\.value = await listAll\(`\/\$\{props\.type\}\//)
+  // The list now guards the all-pages result before publishing it to the UI.
+  assert.match(documents, /const resource = props\.type/)
+  assert.match(documents, /const result = await listAll\(`\/\$\{resource\}\/`[^\n]*\)\r?\n\s*if \(!isCurrent\(\)\) return\r?\n\s*rows\.value = result/)
   assert.match(documents, /listAll\('\/customers\/'\)/)
   assert.match(documents, /listAll\('\/skus\/'\)/)
   assert.match(documents, /listAll\('\/quotes\/'\)/)

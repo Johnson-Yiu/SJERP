@@ -1,0 +1,10 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104/frontend
+
+[vitest-pool]: Timeout terminating forks worker for test files D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104/frontend/tests/follow-up-safety.spec.js.
+
+ Test Files  75 passed (75)
+      Tests  711 passed (711)
+   Start at  16:45:27
+   Duration  321.76s (transform 8.65s, setup 47.90s, import 27.47s, tests 43.89s, environment 465.23s)
+

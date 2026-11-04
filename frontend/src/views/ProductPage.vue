@@ -115,7 +115,10 @@ async function load() {
     hasLoaded.value = true
     allProductsExist.value = products.value.length > 0
     if (!products.value.length && (query.value || categoryFilter.value)) {
-      try { allProductsExist.value = (await listAll('/products/')).length > 0 } catch { allProductsExist.value = false }
+      let exists = false
+      try { exists = (await listAll('/products/')).length > 0 } catch { /* Keep the empty-state fallback. */ }
+      if (request !== loadVersion) return
+      allProductsExist.value = exists
     }
   } else loadError.value = apiErrorMessage(productResult.reason)
   if (categoryResult.status === 'fulfilled') { categories.value = listData(categoryResult.value); referenceLoaded.categories = true; delete referenceErrors.categories }

@@ -1,0 +1,19 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104/frontend
+
+ ❯ tests/r0f2-overview-reports.spec.js (15 tests | 15 failed) 13ms
+   × dashboard explains server date ranges, zero change, refresh feedback and retains stale data after refresh failure 7ms
+   × dashboard retries initial failure and hides unavailable module links and metrics 1ms
+   × drafts wait for submit, stale save is disabled, and submitted query restores from URL 0ms
+   × supports a second dimension, preserves it in the URL and drills either group back to the other 0ms
+   × opens bounded raw detail rows for the selected cross-group and keeps the reconciliation summary 0ms
+   × clears an incompatible second dimension when the source changes and keeps old saved charts compatible 0ms
+   × invalid dates suppress requests and date shortcuts only stage dates 0ms
+   × catalog retry and filter errors retain existing graph, with explicit filter apply 0ms
+   × local charts restore, reorder, remove and undo while retaining existing storage key and shared dates 0ms
+   × saved chart drill preserves response period and returns to original results and pending draft 0ms
+   × restricted sources are absent and inaccessible local charts send no report request 0ms
+   × storage failure warns instead of claiming persistence 0ms
+   × export failure retains chart and switching configuration resets the display override 0ms
+   × an invalid bookmarked filter is rejected and navigating back to valid conditions recovers 0ms
+   × changing date scope invalidates in-flight options and cannot offer stale selections 0ms

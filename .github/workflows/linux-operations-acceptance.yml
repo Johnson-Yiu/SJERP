@@ -108,7 +108,13 @@ jobs:
           cleanup() {
             if mountpoint -q "$owned/full-volume"; then sudo umount "$owned/full-volume"; fi
             if mountpoint -q "$mountpoint"; then sudo umount "$mountpoint"; fi
-            case "$owned" in "$RUNNER_TEMP"/sunjack-linux-pg-*) rm -rf -- "$owned";; *) exit 1;; esac
+            case "$owned" in "$RUNNER_TEMP"/sunjack-linux-pg-*)
+              test ! -L "$owned"
+              test "$(realpath "$owned")" = "$owned"
+              sudo rm -rf --one-file-system -- "$owned"
+              ;;
+              *) exit 1;;
+            esac
           }
           trap cleanup EXIT
           truncate -s 128M "$image"

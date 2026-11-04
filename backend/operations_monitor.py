@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 
 from crm.services.operations_monitor import check_backup_freshness
+from crm.services.operations_trust import load_receipt_trust
 
 
 def main():
@@ -13,8 +14,9 @@ def main():
     args = parser.parse_args()
     try:
         config = json.loads(Path(args.config).read_text(encoding="utf-8"))
-        if set(config) != {"archive", "receipt_file", "receipt_verification", "maximum_backup_age_seconds"}:
+        if set(config) != {"archive", "receipt_file", "receipt_trust_file", "maximum_backup_age_seconds"}:
             raise ValueError("Unexpected monitor configuration")
+        config["receipt_verification"] = load_receipt_trust(config.pop("receipt_trust_file"))
         receipt_file = Path(config.pop("receipt_file"))
         if not receipt_file.is_absolute() or receipt_file.is_symlink() or not receipt_file.is_file():
             raise ValueError("A separately stored receipt file is required")

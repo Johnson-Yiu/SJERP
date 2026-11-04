@@ -16,7 +16,7 @@
 
 恢复签发入口为 `python backend/operations_backup.py restore-encrypted-verify --config <配置>`。配置在原恢复参数之外，需要密文摘要 `encrypted_sha256`、明文摘要 `expected_sha256`、独立加密密钥配置 `encryption`、仅恢复操作人可读的 `receipt_signing.private_key` 和明确的 OpenSSL `receipt_signing.executable`，以及不存在的绝对 `receipt_output`。回执绑定密文及明文摘要、备份来源和恢复目标数据库系统标识、源代码 SHA、恢复数据库、审计结果、签发时间和归档文件的观察到的修改时间；修改时间是文件系统观察值，不冒充历史业务发生时间。签名私钥不放入归档、命令行或日志。
 
-保留入口 `python backend/operations_archive.py prune --config <配置>` 默认只预览；执行需另加 `--execute-prune`。每项需提供由恢复流程生成的 `restore_receipt`，以及独立受保护的 `receipt_verification` 配置：OpenSSL 可执行文件、验证公钥、该公钥 DER SHA-256 固定指纹及 `max_age_seconds`。旧 `restore_verified_sha256` 的自填声明不能授权删除；缺少签名回执、签名错误、错包、归档时间改变或超期都失败关闭。修改时间、归档及副本应由受控备份存储保护；持有私钥的恢复角色不应同时由保留执行账号使用。`python backend/operations_monitor.py --config <配置>` 在受信回执缺失、错误或备份超过频率门槛时返回非零，适合作为本地调度和告警入口；外部告警投递须目标环境另行测试。
+保留入口 `python backend/operations_archive.py prune --config <配置>` 默认只预览；执行需另加 `--execute-prune`。每项需提供由恢复流程生成的 `restore_receipt`，配置以 `receipt_trust_file` 指向独立信任文件。该 JSON 包含 `executable`、`public_key`、公钥 DER SHA-256 的 `pinned_fingerprint` 和 `max_age_seconds`；信任文件、公钥、OpenSSL 可执行文件及其各级目录必须由 root 拥有且不可由其他用户写入，保留和监控入口必须由非 root 账号运行。此限制目前仅支持 Linux，不能验证时拒绝运行。恢复签名私钥由独立恢复角色保护，不交给保留账号。旧 `restore_verified_sha256` 自填声明不能授权删除；缺少签名回执、签名错误、错包、归档时间改变或超期都失败关闭。修改时间、归档及副本应由受控备份存储保护；拥有文件系统直接删除权限的账号仍可绕过该工具，目标环境须另设存储和账号权限。`python backend/operations_monitor.py --config <配置>` 使用相同 `receipt_trust_file`，在受信回执缺失、错误或备份超过频率门槛时返回非零；外部告警投递须目标环境另行测试。
 
 ## 本轮正在执行的验收
 

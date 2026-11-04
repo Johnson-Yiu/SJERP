@@ -126,6 +126,9 @@ def main():
     connection = dict(host="127.0.0.1", port=port, user="postgres", dbname="postgres", sslmode="disable")
     admin = psycopg.connect(**connection, autocommit=True)
     runtime_connection = None
+    trust_dir = None
+    trust_created = False
+    primary = None
     try:
         if admin.execute("SELECT current_setting('server_version_num')::int").fetchone()[0] // 10000 != 17:
             raise RuntimeError("Expected PostgreSQL 17")
@@ -372,14 +375,28 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
         owner = uuid.uuid4().hex
         (archive_root / ".sunjack-backup-owner").write_text(owner, encoding="ascii")
         (archive_root / ".sunjack-backup-owner").chmod(0o600)
-        private, public = key_root / "private.pem", key_root / "public.pem"
         openssl, gpg = shutil.which("openssl"), shutil.which("gpg")
         if not openssl or not gpg:
             raise RuntimeError("OpenSSL and GnuPG are required")
-        command(openssl, "genpkey", "-algorithm", "EC", "-pkeyopt", "ec_paramgen_curve:P-256", "-out", private, capture_output=True)
-        private.chmod(0o600)
-        public.write_bytes(_openssl(openssl, "pkey", "-in", private, "-pubout"))
+        trust_dir = Path("/etc") / ("sunjack-ci-trust-" + uuid.uuid4().hex)
+        command("sudo", "mkdir", "-m", "0755", "--", trust_dir)
+        trust_created = True
+        private, public = trust_dir / "private.pem", trust_dir / "public.pem"
+        command("sudo", openssl, "genpkey", "-algorithm", "EC", "-pkeyopt", "ec_paramgen_curve:P-256", "-out", private, capture_output=True)
+        command("sudo", "chmod", "0600", private)
+        command("sudo", openssl, "pkey", "-in", private, "-pubout", "-out", public, capture_output=True)
+        command("sudo", "chmod", "0644", public)
+        try:
+            private.read_bytes()
+        except PermissionError:
+            pass
+        else:
+            raise AssertionError("Retention account can read the independent recovery signing key")
         verification = {"executable": openssl, "public_key": str(public), "pinned_fingerprint": public_key_fingerprint(openssl, public), "max_age_seconds": 86400}
+        staged_trust = root / "synthetic-trust.json"
+        staged_trust.write_text(json.dumps(verification), encoding="utf-8")
+        trust_file = trust_dir / "receipt-trust.json"
+        command("sudo", "install", "-o", "root", "-g", "root", "-m", "0644", staged_trust, trust_file)
         key = secrets.token_hex(32).encode()
         now = datetime.now(timezone.utc)
         receipts = []
@@ -406,10 +423,26 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
                 assert not (root / "wrong-key-cli-output").exists()
             timestamp = (now-timedelta(days=age)).timestamp()
             os.utime(encrypted, (timestamp, timestamp))
-            signed, signed_restore = restore_and_sign(service, encrypted_archive=encrypted, encrypted_sha256=cipher["sha256"],
-                plaintext_sha256=backup["sha256"], media_parent=root, gpg_executable=gpg, encryption_key=key,
-                openssl_executable=openssl, signing_key=private)
-            assert signed_restore["verified"] and digest(Path(signed_restore["media_root"]) / "finance-vouchers/synthetic.bin") == voucher_sha
+            signer_config = root / ("synthetic-signer-" + str(age) + ".json")
+            signer_config.write_text(json.dumps({"connection": options, "pg_bin": str(tool_dir), "database": database,
+                "system_identifier": system, "archive": str(encrypted), "cipher_sha256": cipher["sha256"],
+                "plaintext_sha256": backup["sha256"], "media_parent": str(root), "gpg": gpg,
+                "openssl": openssl, "signing_key": str(private)}), encoding="utf-8")
+            signer = subprocess.run(["sudo", "-n", "env", "GITHUB_ACTIONS=true", "GITHUB_SHA=" + os.environ["GITHUB_SHA"],
+                "SUNJACK_CI_POSTGRES_CONTAINER=" + container, "SUNJACK_CI_POSTGRES_PORT=" + str(port),
+                "TMPDIR=" + os.environ["TMPDIR"], "PYTHONPATH=" + str(backend), "GIT_CONFIG_COUNT=1",
+                "GIT_CONFIG_KEY_0=safe.directory", "GIT_CONFIG_VALUE_0=" + str(backend.parent), sys.executable,
+                str(Path(__file__).with_name("linux_receipt_signer.py")), str(signer_config)],
+                input=key+b"\n", capture_output=True, timeout=300)
+            if signer.returncode:
+                raise RuntimeError("Independent recovery signer failed: " + signer.stderr.decode("utf-8", errors="replace")[-3000:])
+            signed_data = json.loads(signer.stdout)
+            signed, signed_restore = signed_data["receipt"], signed_data["restored"]
+            restored_root = Path(signed_restore["media_root"])
+            if restored_root.parent != root or not re.fullmatch(r"sunjack_restore_[0-9a-f]{32}", restored_root.name):
+                raise RuntimeError("Restored media target is outside the task-owned root")
+            restored_hash = command("sudo", "sha256sum", restored_root / "finance-vouchers/synthetic.bin", capture_output=True, text=True).stdout.split()[0]
+            assert signed_restore["verified"] and restored_hash == voucher_sha
             replica = replica_root / encrypted.name
             verified_copy(encrypted, replica, cipher["sha256"])
             receipts.append({"name": encrypted.name, "sha256": cipher["sha256"], "restore_receipt": signed, "replica": str(replica),
@@ -444,14 +477,14 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
         receipt_file.write_text(json.dumps(original), encoding="utf-8")
         monitor_config = root / "monitor.json"
         monitor_config.write_text(json.dumps({"archive": str(archive_root / receipts[0]["name"]),
-            "receipt_file": str(receipt_file), "receipt_verification": monitor_verification,
+            "receipt_file": str(receipt_file), "receipt_trust_file": str(trust_file),
             "maximum_backup_age_seconds": 2 * 86400}), encoding="utf-8")
         monitor_script = backend / "operations_monitor.py"
         monitor = subprocess.run([sys.executable, str(monitor_script), "--config", str(monitor_config)],
                                  capture_output=True, text=True, timeout=60)
         assert monitor.returncode == 0 and json.loads(monitor.stdout)["status"] == "OK"
         monitor_config.write_text(json.dumps({"archive": str(archive_root / receipts[0]["name"]),
-            "receipt_file": str(receipt_file), "receipt_verification": monitor_verification,
+            "receipt_file": str(receipt_file), "receipt_trust_file": str(trust_file),
             "maximum_backup_age_seconds": 3600}), encoding="utf-8")
         monitor = subprocess.run([sys.executable, str(monitor_script), "--config", str(monitor_config)],
                                  capture_output=True, text=True, timeout=60)
@@ -500,8 +533,23 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
                 raise
         else:
             raise AssertionError("Expired signed receipt accepted")
-        result = prune_verified(archive_root, owner_id=owner, receipts=receipts, keep=1, minimum_age_seconds=86400,
-                                receipt_verification=verification, execute=True)
+        # A caller-writable replacement anchor is not allowed even if it is
+        # syntactically valid. Then exercise the CLI with the root-owned pin.
+        prune_config = root / "synthetic-prune.json"
+        prune_base = {"root": str(archive_root), "owner_id": owner, "receipts": receipts, "keep": 1,
+                      "minimum_age_seconds": 86400}
+        prune_script = backend / "operations_archive.py"
+        prune_config.write_text(json.dumps({**prune_base, "receipt_trust_file": str(staged_trust)}), encoding="utf-8")
+        rejected = subprocess.run([sys.executable, str(prune_script), "prune", "--config", str(prune_config), "--execute-prune"],
+                                  capture_output=True, text=True, timeout=60)
+        assert rejected.returncode == 1 and json.loads(rejected.stdout)["status"] == "FAILED"
+        assert all((archive_root / receipt["name"]).exists() for receipt in receipts)
+        prune_config.write_text(json.dumps({**prune_base, "receipt_trust_file": str(trust_file)}), encoding="utf-8")
+        accepted = subprocess.run([sys.executable, str(prune_script), "prune", "--config", str(prune_config), "--execute-prune"],
+                                  capture_output=True, text=True, timeout=60)
+        assert accepted.returncode == 0
+        result = json.loads(accepted.stdout)
+        assert result["status"] == "VERIFIED"
         assert len(result["removed"]) == 2 and len(list(replica_root.iterdir())) == 3
         with psycopg.connect(**options) as db:
             assert database_state(db) == before
@@ -513,6 +561,8 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
             "remount_during_backup_rejected": True, "changed_file_during_backup_rejected": True,
             "restored_private_voucher_sha256": voucher_sha, "real_signed_restores": len(receipts),
             "forged_wrong_archive_expired_rejected": True, "retention_deleted": len(result["removed"]),
+            "operator_writable_trust_anchor_rejected": True, "root_owned_trust_cli_verified": True,
+            "retention_cannot_read_recovery_signing_key": True,
             "group_writable_retention_root_rejected": True,
             "missed_schedule_detected": True,
             "monitor_healthy_and_failure_exit_codes_verified": True, "local_alert_entry": local_alert,
@@ -523,10 +573,30 @@ service.backup(media_root=root+"/media",destination=root+"/interrupt-test/must-n
             "replicas_same_runner_only": True, "tables": len(before["tables"]),
             "source_database_and_voucher_unchanged": True,
             "rows": sum(entry["rows"] for entry in before["tables"].values()), "seconds": round(time.monotonic()-start, 3)}))
+    except Exception as error:
+        primary = error
+        raise
     finally:
-        if runtime_connection is not None:
-            runtime_connection.close()
-        admin.close()
+        cleanup_errors = []
+        try:
+            if runtime_connection is not None:
+                runtime_connection.close()
+            admin.close()
+        except Exception as error:
+            cleanup_errors.append("database connections: " + type(error).__name__)
+        if trust_created:
+            try:
+                if trust_dir.parent != Path("/etc") or not re.fullmatch(r"sunjack-ci-trust-[0-9a-f]{32}", trust_dir.name) or trust_dir.is_symlink():
+                    raise RuntimeError("Owned trust directory identity mismatch")
+                command("sudo", "rm", "-f", "--", trust_dir / "receipt-trust.json", trust_dir / "public.pem", trust_dir / "private.pem")
+                command("sudo", "rmdir", "--", trust_dir)
+            except Exception as error:
+                cleanup_errors.append("task-owned trust directory: " + type(error).__name__)
+        if cleanup_errors:
+            if primary:
+                primary.add_note("Cleanup failed: " + "; ".join(cleanup_errors))
+            else:
+                raise RuntimeError("Cleanup failed: " + "; ".join(cleanup_errors))
 
 
 if __name__ == "__main__":

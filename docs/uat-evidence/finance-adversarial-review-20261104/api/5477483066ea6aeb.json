@@ -1,0 +1,57 @@
+{
+  "test": "crm.tests.test_finance_adversarial_review.FinanceAdversarialHiddenSourceTests.test_hidden_duplicate_service_boundary_below_blocked_role_http_gate",
+  "requests": [
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-BANK",
+        "name": "合成反例银行",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 1
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-CASH",
+        "name": "合成反例现金",
+        "account_type": "cash",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 2
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/mappings/",
+      "input": {
+        "account": 1,
+        "legacy_code": "SYNTH_CNY",
+        "reason": "合成显式账户映射"
+      },
+      "status": 201,
+      "body": {
+        "id": 1
+      }
+    },
+    {
+      "layer": "service_only_HTTP_authorized_role_blocked_ADV03",
+      "candidates": {
+        "ids": [],
+        "token": "",
+        "restricted": true
+      },
+      "post_status": 409
+    }
+  ]
+}

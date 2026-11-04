@@ -1,0 +1,170 @@
+{
+  "test": "crm.tests.test_finance_adversarial_http.FinanceAdversarialLiveHTTPTests.test_real_private_file_and_anonymous_role_denials",
+  "requests": [
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-BANK",
+        "name": "合成反例银行",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 1
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-CASH",
+        "name": "合成反例现金",
+        "account_type": "cash",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 2
+      }
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/voucher-download/?id=1",
+      "request": null,
+      "status": 200,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:11 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/octet-stream",
+        "Content-Length": "56",
+        "Content-Disposition": "attachment; filename=\"synthetic-adversarial.pdf\"",
+        "Cache-Control": "private, no-store",
+        "X-Content-Type-Options": "nosniff",
+        "Allow": "GET, HEAD, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Vary": "Cookie, origin",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "%PDF-1.4\n% Synthetic counterexample evidence only\n%%EOF\n"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/",
+      "request": null,
+      "status": 403,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:13 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "GET, HEAD, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "43",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"detail\":\"身份认证信息未提供。\"}"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/",
+      "request": null,
+      "status": 403,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:15 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "GET, HEAD, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "46",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"detail\":\"你没有权限执行此操作。\"}"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/voucher-download/?id=1",
+      "request": null,
+      "status": 403,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:17 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "GET, HEAD, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "43",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"detail\":\"身份认证信息未提供。\"}"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/voucher-download/?id=1",
+      "request": null,
+      "status": 403,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:19 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "GET, HEAD, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "46",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"detail\":\"你没有权限执行此操作。\"}"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/facts/?export=csv",
+      "request": null,
+      "status": 403,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:21 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "GET, HEAD, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "43",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"detail\":\"身份认证信息未提供。\"}"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/facts/?export=csv",
+      "request": null,
+      "status": 403,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:23 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "GET, HEAD, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "46",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"detail\":\"你没有权限执行此操作。\"}"
+    }
+  ]
+}

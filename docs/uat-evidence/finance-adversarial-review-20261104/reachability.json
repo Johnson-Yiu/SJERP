@@ -1,0 +1,395 @@
+{
+  "scope": "tracked/current backend Python except tests/migrations; finite static inventory",
+  "files": [
+    {
+      "file": "backend/crm/actual_cash_api.py",
+      "sha256_git_lf": "4373e71de29222c5b88ce17411eff50e1301d2872cf82d1d2201b40b82028310",
+      "hits": [
+        {
+          "line": 73,
+          "text": "from .services.finance_closeout import corrected_ids, historical_transfer_ids, reporting_events"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/admin.py",
+      "sha256_git_lf": "32d8a417b1af8daac12928f74aca12cb990f2b171be99e0bb2a7137dde4fb530",
+      "hits": [
+        {
+          "line": 6,
+          "text": "admin.site.register(model)"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/cash_api.py",
+      "sha256_git_lf": "d6085fa2abad55054f4a9bfe01cdc1868ddb10502b8073c88da56a32d0a0c8ba",
+      "hits": [
+        {
+          "line": 58,
+          "text": "from .finance_closeout_api import FinanceVoucherUploadHandler"
+        },
+        {
+          "line": 65,
+          "text": "from .finance_closeout_api import VoucherTooLarge"
+        },
+        {
+          "line": 66,
+          "text": "from .services.finance_closeout import upload"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/finance_closeout_api.py",
+      "sha256_git_lf": "9d09e1a235e57a0ff66e20a682015d2c4630eb03342796f5c704722f246418fd",
+      "hits": [
+        {
+          "line": 14,
+          "text": "from .models import (FinanceAccount, FinanceAccountMapping, FinanceClassification, FinanceFact,"
+        },
+        {
+          "line": 15,
+          "text": "FinanceHistoricalTransfer, FinanceInstruction, FinanceReview, FinanceTransferMatch, FinanceVoucher)"
+        },
+        {
+          "line": 18,
+          "text": "from .services import finance_closeout as ledger"
+        },
+        {
+          "line": 71,
+          "text": "return [fact_data(f, matched) for f in FinanceFact.objects.select_related(\"account\", \"voucher\").filter(actual_date__range=(start, end)).order_by(\"actual_date\", \"pk\")]"
+        },
+        {
+          "line": 111,
+          "text": "return Response({\"accounts\": accounts, \"instructions\": [instruction_data(i) for i in FinanceInstruction.objects.order_by(\"-pk\")],"
+        },
+        {
+          "line": 195,
+          "text": "return Response(fact_data(FinanceFact.objects.select_related(\"account\", \"voucher\").get(pk=ledger.pk(request.query_params.get(\"id\")))))"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/history_takeover.py",
+      "sha256_git_lf": "3cd8f63bbb34308c091c765248d04091d23d5301fdbcd74b235c1a8f0dac45b6",
+      "hits": [
+        {
+          "line": 412,
+          "text": "OrderItem.objects.bulk_create(sales_item_rows)"
+        },
+        {
+          "line": 457,
+          "text": "# bulk_create intentionally bypasses PurchaseOrderItem.save(), which would"
+        },
+        {
+          "line": 459,
+          "text": "PurchaseOrderItem.objects.bulk_create(purchase_item_rows)"
+        },
+        {
+          "line": 612,
+          "text": "HistoryTakeoverSourceRecord.objects.bulk_create(source_records)"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/models.py",
+      "sha256_git_lf": "8d3d6b701c006abc1d2b617943abf333702e67762ea1a37761739969f6fed36e",
+      "hits": [
+        {
+          "line": 2024,
+          "text": "class FinanceInstruction(TimestampedModel):"
+        },
+        {
+          "line": 2048,
+          "text": "class FinanceFact(models.Model):"
+        },
+        {
+          "line": 2050,
+          "text": "instruction = models.OneToOneField(FinanceInstruction, on_delete=models.PROTECT)"
+        },
+        {
+          "line": 2112,
+          "text": "outgoing = models.OneToOneField(FinanceFact, on_delete=models.PROTECT, related_name=\"outgoing_match\")"
+        },
+        {
+          "line": 2113,
+          "text": "incoming = models.OneToOneField(FinanceFact, on_delete=models.PROTECT, related_name=\"incoming_match\")"
+        },
+        {
+          "line": 2121,
+          "text": "outgoing_fact = models.OneToOneField(FinanceFact, null=True, on_delete=models.PROTECT, related_name=\"historical_outgoing_match\")"
+        },
+        {
+          "line": 2122,
+          "text": "incoming_fact = models.OneToOneField(FinanceFact, null=True, on_delete=models.PROTECT, related_name=\"historical_incoming_match\")"
+        },
+        {
+          "line": 2139,
+          "text": "fact = models.ForeignKey(FinanceFact, on_delete=models.PROTECT, related_name=\"classifications\")"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/reporting.py",
+      "sha256_git_lf": "a02942dd3b30e339b88fd1439a62e1e3d037b5378213ed9d0a0e58fbdb9da73e",
+      "hits": [
+        {
+          "line": 80,
+          "text": "from .services.finance_closeout import reporting_events"
+        },
+        {
+          "line": 100,
+          "text": "from .services.finance_closeout import corrected_ids, historical_transfer_ids"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/serializers.py",
+      "sha256_git_lf": "88679747a340ba07778966dfcacfa9b9732432cef38752303f42c40e497e4a98",
+      "hits": [
+        {
+          "line": 787,
+          "text": "PurchaseOrderItem.objects.bulk_create(["
+        },
+        {
+          "line": 2360,
+          "text": "OrderItem.objects.bulk_create(rows)"
+        },
+        {
+          "line": 2384,
+          "text": "OrderItem.objects.bulk_create(rows)"
+        },
+        {
+          "line": 2897,
+          "text": "ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])"
+        },
+        {
+          "line": 2909,
+          "text": "ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/services/bank_vouchers.py",
+      "sha256_git_lf": "81b062d6ffbf2e9cec03d64ebbff0bcde3a6aab9b2b518bad3b37806182b8d4e",
+      "hits": [
+        {
+          "line": 7,
+          "text": "from crm.services import finance_closeout as ledger"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/services/cash_events.py",
+      "sha256_git_lf": "acc205afd6707720ebe4b057d100cd567e5d45d8360a1b2ab5e85b43e596bb78",
+      "hits": [
+        {
+          "line": 32,
+          "text": "from crm.services.finance_closeout import audit"
+        },
+        {
+          "line": 176,
+          "text": "from crm.services.finance_closeout import pk"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/services/finance_closeout.py",
+      "sha256_git_lf": "14c54b84016e692321fc5b176440e2556266cfc0d42842f1c656101c0f68f790",
+      "hits": [
+        {
+          "line": 16,
+          "text": "FinanceFact, FinanceInstruction, FinanceReview, FinanceTransferMatch, FinanceVoucher,"
+        },
+        {
+          "line": 48,
+          "text": "metadata={\"actor\": actor, \"source\": \"finance_closeout_v1\"})"
+        },
+        {
+          "line": 185,
+          "text": "if FinanceFact.objects.filter(account=obj).exists() or FinanceAccountMapping.objects.filter(account=obj).exists():"
+        },
+        {
+          "line": 275,
+          "text": "previous = FinanceInstruction.objects.filter(request_key=p[\"request_key\"]).first()"
+        },
+        {
+          "line": 281,
+          "text": "prior = FinanceInstruction.objects.select_for_update().filter(pk=p[\"replaces\"]).first()"
+        },
+        {
+          "line": 286,
+          "text": "obj = FinanceInstruction.objects.create(request_key=p[\"request_key\"], request_hash=fingerprint,"
+        },
+        {
+          "line": 289,
+          "text": "previous = FinanceInstruction.objects.get(request_key=p[\"request_key\"])"
+        },
+        {
+          "line": 300,
+          "text": "obj = FinanceInstruction.objects.select_for_update().get(pk=pk(value))"
+        },
+        {
+          "line": 321,
+          "text": "obj = FinanceInstruction.objects.select_for_update().get(pk=pk(value))"
+        },
+        {
+          "line": 334,
+          "text": "obj = FinanceInstruction.objects.select_for_update().get(pk=pk(value))"
+        },
+        {
+          "line": 345,
+          "text": "return parent.amount - (FinanceFact.objects.filter(parent=parent, kind__in=kinds).aggregate(total=Sum(\"amount\"))[\"total\"] or Decimal(\"0\"))"
+        },
+        {
+          "line": 353,
+          "text": "initial = FinanceInstruction.objects.get(pk=pk(value))"
+        },
+        {
+          "line": 355,
+          "text": "obj = FinanceInstruction.objects.select_for_update().get(pk=initial.pk)"
+        },
+        {
+          "line": 357,
+          "text": "return FinanceFact.objects.get(instruction=obj)"
+        },
+        {
+          "line": 377,
+          "text": "parent = FinanceFact.objects.select_for_update().filter(pk=p[\"parent\"]).first()"
+        },
+        {
+          "line": 395,
+          "text": "available = remaining(parent, {\"bank_return\", \"refund_return\"}) if parent else legacy_parent.bank_net_amount - (FinanceFact.objects.filter(legacy_parent=legacy_parent, kind=\"bank_return\").aggregate(total=Sum(\"amount\"))[\"total\"] or Decimal(\"0\"))"
+        },
+        {
+          "line": 403,
+          "text": "if parent and (parent.kind in {\"opening\", \"refund_payment\"} or FinanceFact.objects.filter(parent=parent).exists() or FinanceTransferMatch.objects.filter(Q(outgoing=parent) | Q(incoming=parent)).exists() or FinanceHistoricalTransfer.objects.filter(Q(outgoing_fact=parent) | Q(incoming_fact=parent)).exists()):"
+        },
+        {
+          "line": 405,
+          "text": "if legacy_parent and (FinanceFact.objects.filter(legacy_parent=legacy_parent).exists() or legacy_parent.pk in historical_transfer_ids()):"
+        },
+        {
+          "line": 408,
+          "text": "approval_ids = set(FinanceInstruction.objects.filter(kind=\"refund_approval\", **{f\"payload__{reference_key}\": reference_id}).values_list(\"pk\", flat=True))"
+        },
+        {
+          "line": 409,
+          "text": "if any(f.instruction.payload.get(\"approval\") in approval_ids for f in FinanceFact.objects.filter(kind=\"refund_payment\")):"
+        },
+        {
+          "line": 412,
+          "text": "approval = FinanceInstruction.objects.select_for_update().filter(pk=p.get(\"approval\"), kind=\"refund_approval\", status=\"approved\").first()"
+        },
+        {
+          "line": 415,
+          "text": "consumed = sum((f.amount for f in FinanceFact.objects.filter(kind=\"refund_payment\") if f.instruction.payload.get(\"approval\") == approval.pk), Decimal(\"0\"))"
+        },
+        {
+          "line": 418,
+          "text": "original = FinanceFact.objects.select_for_update().filter(pk=approval.payload.get(\"parent\"), direction=\"income\").first()"
+        },
+        {
+          "line": 422,
+          "text": "if (original and FinanceFact.objects.filter(parent=original, kind=\"correction\").exists()) or (legacy_original and FinanceFact.objects.filter(legacy_parent=legacy_original, kind=\"correction\").exists()):"
+        },
+        {
+          "line": 426,
+          "text": "approvals = set(FinanceInstruction.objects.filter(kind=\"refund_approval\", **{f\"payload__{reference_key}\": reference_id}).values_list(\"pk\", flat=True))"
+        },
+        {
+          "line": 427,
+          "text": "original_consumed = sum((f.amount for f in FinanceFact.objects.filter(kind=\"refund_payment\") if f.instruction.payload.get(\"approval\") in approvals), Decimal(\"0\"))"
+        },
+        {
+          "line": 431,
+          "text": "spent = sum((Decimal(a[\"amount\"]) for f in FinanceFact.objects.filter(kind=\"refund_payment\") if f.instruction.payload.get(\"approval\") == approval.pk for a in f.instruction.payload[\"allocations\"] if a[\"order\"] == allocation[\"order\"]), Decimal(\"0\"))"
+        },
+        {
+          "line": 434,
+          "text": "opening = FinanceFact.objects.filter(account=own, kind=\"opening\").first()"
+        },
+        {
+          "line": 436,
+          "text": "if opening or FinanceFact.objects.filter(account=own, actual_date__lt=p[\"actual_date\"]).exists():"
+        },
+        {
+          "line": 440,
+          "text": "if FinanceFact.objects.filter(source_system=p[\"source_system\"], source_key=p[\"source_key\"]).exists():"
+        },
+        {
+          "line": 449,
+          "text": "fact = FinanceFact.objects.create(instruction=obj, account=own, voucher=proof,"
+        },
+        {
+          "line": 460,
+          "text": "ids = list(FinanceFact.objects.filter(account_id=p[\"account\"], actual_date=p[\"actual_date\"], direction=p[\"direction\"], amount=p[\"amount\"]).order_by(\"pk\").values_list(\"pk\", flat=True))"
+        },
+        {
+          "line": 474,
+          "text": "rows = list(FinanceFact.objects.filter(pk__in=ids).order_by(\"pk\"))"
+        },
+        {
+          "line": 479,
+          "text": "out = FinanceFact.objects.select_for_update().get(pk=pk(data[\"outgoing\"]))"
+        },
+        {
+          "line": 480,
+          "text": "inc = FinanceFact.objects.select_for_update().get(pk=pk(data[\"incoming\"]))"
+        },
+        {
+          "line": 500,
+          "text": "fact = FinanceFact.objects.get(pk=pk(data.get(\"fact\")))"
+        },
+        {
+          "line": 515,
+          "text": "facts = list(FinanceFact.objects.filter(account=own, actual_date__lte=end).order_by(\"actual_date\", \"pk\"))"
+        },
+        {
+          "line": 537,
+          "text": "corrections = list(FinanceFact.objects.filter(account=own, kind=\"correction\").values_list(\"pk\", flat=True))"
+        },
+        {
+          "line": 543,
+          "text": "rows = FinanceFact.objects.filter(kind=\"correction\").values_list(\"parent_id\", \"legacy_parent_id\")"
+        },
+        {
+          "line": 569,
+          "text": "for f in FinanceFact.objects.select_related(\"account\").filter(actual_date__range=(start, end)).exclude(kind=\"opening\").exclude(pk__in=matched).exclude(kind=\"correction\", amount=0):"
+        },
+        {
+          "line": 605,
+          "text": "event = FinanceFact.objects.get(pk=pk(ident))"
+        },
+        {
+          "line": 618,
+          "text": "model = RmbCashEvent if prefix == \"legacy\" else FinanceFact"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/services/purchase_costs.py",
+      "sha256_git_lf": "9bf7c796b23f78c2cbe5543862b006af2901901ca40c958ecc29ef59d1d6b3a3",
+      "hits": [
+        {
+          "line": 33,
+          "text": "PurchaseCostAllocation.objects.bulk_create(["
+        },
+        {
+          "line": 161,
+          "text": "PurchaseCostAllocation.objects.bulk_create(records)"
+        }
+      ]
+    },
+    {
+      "file": "backend/crm/urls.py",
+      "sha256_git_lf": "db8579c991f10b3620a0897b1f13011516a6e8c666f5bdc781d3da8b3f4d8792",
+      "hits": [
+        {
+          "line": 17,
+          "text": "from .finance_closeout_api import FinanceCloseoutViewSet"
+        }
+      ]
+    }
+  ]
+}

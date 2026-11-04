@@ -1,0 +1,379 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+Found 54 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying crm.0093_csv_import_preview_audit... OK
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+  Applying crm.0090_fulfillment_request_idempotency... OK
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+  Applying crm.0096_quote_pi_template_snapshots... OK
+  Applying crm.0097_merge_quote_and_cash_review... OK
+  Applying crm.0098_finance_accounts... OK
+  Applying crm.0099_finance_closeout_workflows... OK
+  Applying crm.0100_finance_legacy_fact_links... OK
+  Applying crm.0101_finance_historical_transfer_links... OK
+  Applying crm.0102_bank_private_voucher_binding... OK
+  Applying crm.0098_history_takeover_workflow... OK
+  Applying crm.0103_merge_finance_and_history... OK
+test_hidden_duplicate_service_boundary_below_blocked_role_http_gate (crm.tests.test_finance_adversarial_review.FinanceAdversarialHiddenSourceTests.test_hidden_duplicate_service_boundary_below_blocked_role_http_gate) ... ok
+test_all_kinds_reject_unverified_and_simulated_before_post (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_all_kinds_reject_unverified_and_simulated_before_post) ... Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+ok
+test_approved_payload_has_no_supported_edit_or_delete_path (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_approved_payload_has_no_supported_edit_or_delete_path) ... Bad Request: /api/finance-ledger/approve/
+Not Found: /api/finance-ledger/1/
+Not Found: /api/finance-ledger/1/
+Not Found: /api/finance-ledger/1/
+Bad Request: /api/finance-ledger/cancel/
+ok
+test_audit_failure_rollback_at_instruction_approval_post_transfer_and_review (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_audit_failure_rollback_at_instruction_approval_post_transfer_and_review) ... Internal Server Error: /api/finance-ledger/post/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-adversarial-review-20261104\backend\crm\finance_closeout_api.py", line 92, in handle_exception
+    return super().handle_exception(exc)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-adversarial-review-20261104\backend\crm\finance_closeout_api.py", line 174, in execute
+    obj = ledger.post(request.data.get("id"), request.user, voucher_checked=request.data.get("voucher_checked"))
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-adversarial-review-20261104\backend\crm\services\finance_closeout.py", line 455, in post
+    audit(fact, user, "记入实际资金事实")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit outage
+Internal Server Error: /api/finance-ledger/reviews/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-adversarial-review-20261104\backend\crm\finance_closeout_api.py", line 92, in handle_exception
+    return super().handle_exception(exc)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-adversarial-review-20261104\backend\crm\finance_closeout_api.py", line 190, in reviews
+    obj = ledger.reconcile(request.data, request.user)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-adversarial-review-20261104\backend\crm\services\finance_closeout.py", line 655, in reconcile
+    audit(obj, user, "核对账户余额")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit outage
+Internal Server Error: /api/finance-ledger/transfers/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-adversarial-review-20261104\backend\crm\finance_closeout_api.py", line 92, in handle_exception
+    return super().handle_exception(exc)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-adversarial-review-20261104\backend\crm\finance_closeout_api.py", line 180, in transfers
+    obj = ledger.match_historical_transfer(request.data, request.user) if historical else ledger.match_transfer(request.data, request.user)
+                                                                                          ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\finance-adversarial-review-20261104\backend\crm\services\finance_closeout.py", line 493, in match_transfer
+    audit(obj, user, "核实内部转账本金")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit outage
+ok
+test_cross_approval_excess_and_partial_refund_returns (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_cross_approval_excess_and_partial_refund_returns) ... Bad Request: /api/finance-ledger/post/
+ok
+test_cross_day_transfer_fees_repeat_and_correction_after_match (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_cross_day_transfer_fees_repeat_and_correction_after_match) ... Bad Request: /api/finance-ledger/post/
+ok
+test_file_replacement_deletion_and_size_hash_refuse_without_side_effects (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_file_replacement_deletion_and_size_hash_refuse_without_side_effects) ... Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/voucher-download/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/voucher-download/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/voucher-download/
+ok
+test_mixed_legacy_and_new_cross_day_principal_preserves_legacy_business_rows (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_mixed_legacy_and_new_cross_day_principal_preserves_legacy_business_rows) ... ok
+test_multi_period_amount_direction_date_zero_and_multilevel_corrections (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_multi_period_amount_direction_date_zero_and_multilevel_corrections) ... ok
+test_orm_update_is_blocked_but_bulk_insert_is_a_trusted_code_boundary (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_orm_update_is_blocked_but_bulk_insert_is_a_trusted_code_boundary) ... Bad Request: /api/finance-ledger/post/
+ok
+test_orphan_verified_real_refund_can_be_recorded_without_inventing_original (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_orphan_verified_real_refund_can_be_recorded_without_inventing_original) ... Bad Request: /api/finance-ledger/post/
+ok
+test_per_order_cumulative_approval_is_not_reset_per_payment (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_per_order_cumulative_approval_is_not_reset_per_payment) ... Bad Request: /api/finance-ledger/post/
+ok
+test_permission_rejection_covers_list_detail_file_csv_and_writes (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_permission_rejection_covers_list_detail_file_csv_and_writes) ... ok
+test_positive_negative_zero_opening_and_same_day_boundary (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_positive_negative_zero_opening_and_same_day_boundary) ... Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/post/
+ok
+test_reconciliation_late_correction_cross_period_and_classification (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_reconciliation_late_correction_cross_period_and_classification) ... ok
+test_unknown_debit_stable_retry_failure_revision_and_approval_cancel (crm.tests.test_finance_adversarial_review.FinanceAdversarialReviewTests.test_unknown_debit_stable_retry_failure_revision_and_approval_cancel) ... Bad Request: /api/finance-ledger/fail/
+Bad Request: /api/finance-ledger/post/
+ok
+test_account_verification_and_legacy_mapping_do_not_guess (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_account_verification_and_legacy_mapping_do_not_guess) ... ok
+test_actual_api_report_csv_and_drilldown_share_same_amount (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_actual_api_report_csv_and_drilldown_share_same_amount) ... ok
+test_approved_correction_replaces_effective_fact_without_fake_cash_outflow (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_approved_correction_replaces_effective_fact_without_fake_cash_outflow) ... ok
+test_audit_failure_rolls_back_facts_and_request_status (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_audit_failure_rolls_back_facts_and_request_status) ... ok
+test_bank_return_partial_cumulative_cap_and_original_unchanged (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_bank_return_partial_cumulative_cap_and_original_unchanged) ... ok
+test_distinct_same_amount_requires_review_then_remains_legal (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_distinct_same_amount_requires_review_then_remains_legal) ... ok
+test_existing_bank_transfer_is_matched_without_copying_bank_facts (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_existing_bank_transfer_is_matched_without_copying_bank_facts) ... ok
+test_failure_requires_confirmed_no_debit_and_retry_needs_review (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_failure_requires_confirmed_no_debit_and_retry_needs_review) ... ok
+test_file_digest_recomputed_not_claimed_and_private_direct_url (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_file_digest_recomputed_not_claimed_and_private_direct_url) ... Not Found: /api/media/finance-vouchers/2026/11/f46419aa4eee4f109e7f6d2ca2cac9b7.pdf
+ok
+test_history_and_migration_reversal_are_protected (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_history_and_migration_reversal_are_protected) ... ok
+test_legacy_bank_return_preserves_original_and_does_not_release_sources (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_legacy_bank_return_preserves_original_and_does_not_release_sources) ... ok
+test_malformed_json_commands_are_rejected_without_partial_writes (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_malformed_json_commands_are_rejected_without_partial_writes) ... Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+ok
+test_opening_is_separate_and_late_fact_invalidates_review (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_opening_is_separate_and_late_fact_invalidates_review) ... ok
+test_order_refund_allocations_cannot_exceed_approved_shares (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_order_refund_allocations_cannot_exceed_approved_shares) ... ok
+test_pending_classification_is_independent_from_verified_voucher (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_pending_classification_is_independent_from_verified_voucher) ... ok
+test_persistent_identity_and_conflicting_payload (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_persistent_identity_and_conflicting_payload) ... ok
+test_refund_approved_not_paid_and_excess_separately_recorded (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_refund_approved_not_paid_and_excess_separately_recorded) ... ok
+test_scope_denial_does_not_reveal_or_write (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_scope_denial_does_not_reveal_or_write) ... ok
+test_separate_refund_approvals_still_identify_cumulative_excess (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_separate_refund_approvals_still_identify_cumulative_excess) ... ok
+test_separation_of_duties_and_cancelled_revision (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_separation_of_duties_and_cancelled_revision) ... ok
+test_transfer_cross_day_explicit_match_keeps_account_facts (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_transfer_cross_day_explicit_match_keeps_account_facts) ... ok
+test_transfer_difference_not_assumed_fee (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_transfer_difference_not_assumed_fee) ... ok
+test_unauthenticated_api_and_voucher_download_are_denied (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_unauthenticated_api_and_voucher_download_are_denied) ... Forbidden: /api/finance-ledger/
+Forbidden: /api/finance-ledger/voucher-download/
+Forbidden: /api/finance-ledger/instructions/
+ok
+test_upload_limit_and_audit_failure_do_not_leave_private_files (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_upload_limit_and_audit_failure_do_not_leave_private_files) ... Content Too Large: /api/finance-ledger/vouchers/
+ok
+test_zero_opening_and_negative_balance_are_preserved (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_zero_opening_and_negative_balance_are_preserved) ... ok
+test_binding_audit_failure_rolls_back_whole_registration (crm.tests.test_bank_private_vouchers.BankPrivateVoucherTests.test_binding_audit_failure_rolls_back_whole_registration) ... ok
+test_manually_supplied_sha_cannot_confirm_new_bank_fact (crm.tests.test_bank_private_vouchers.BankPrivateVoucherTests.test_manually_supplied_sha_cannot_confirm_new_bank_fact) ... ok
+test_missing_scope_cannot_download_bank_file_from_account_endpoint (crm.tests.test_bank_private_vouchers.BankPrivateVoucherTests.test_missing_scope_cannot_download_bank_file_from_account_endpoint) ... Forbidden: /api/finance-ledger/voucher-download/
+ok
+test_tampered_file_does_not_confirm_or_release_source (crm.tests.test_bank_private_vouchers.BankPrivateVoucherTests.test_tampered_file_does_not_confirm_or_release_source) ... ok
+test_approval_cancel_vs_actual_payment_keeps_any_real_debit (crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_approval_cancel_vs_actual_payment_keeps_any_real_debit) ... skipped 'Real PostgreSQL 17 lock semantics required'
+test_correction_vs_transfer_preserves_one_consistent_effective_history (crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_correction_vs_transfer_preserves_one_consistent_effective_history) ... skipped 'Real PostgreSQL 17 lock semantics required'
+test_fail_vs_post_cannot_leave_failed_instruction_with_business_fact (crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_fail_vs_post_cannot_leave_failed_instruction_with_business_fact) ... skipped 'Real PostgreSQL 17 lock semantics required'
+test_reconciliation_vs_late_fact_never_silently_keeps_stale_completed (crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_reconciliation_vs_late_fact_never_silently_keeps_stale_completed) ... skipped 'Real PostgreSQL 17 lock semantics required'
+test_transfer_competing_counterparts_do_not_reuse_a_principal (crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_transfer_competing_counterparts_do_not_reuse_a_principal) ... skipped 'Real PostgreSQL 17 lock semantics required'
+test_two_independent_reconciliations_do_not_create_cash_or_overwrite_history (crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_two_independent_reconciliations_do_not_create_cash_or_overwrite_history) ... skipped 'Real PostgreSQL 17 lock semantics required'
+test_two_partial_bank_returns_cannot_exceed_remaining_or_duplicate_audit (crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_two_partial_bank_returns_cannot_exceed_remaining_or_duplicate_audit) ... skipped 'Real PostgreSQL 17 lock semantics required'
+test_real_private_file_and_anonymous_role_denials (crm.tests.test_finance_adversarial_http.FinanceAdversarialLiveHTTPTests.test_real_private_file_and_anonymous_role_denials) ... ok
+test_real_session_csrf_two_person_approval_post_retry_and_csv (crm.tests.test_finance_adversarial_http.FinanceAdversarialLiveHTTPTests.test_real_session_csrf_two_person_approval_post_retry_and_csv) ... Bad Request: /api/finance-ledger/approve/
+ok
+
+----------------------------------------------------------------------
+Ran 54 tests in 38.807s
+
+OK (skipped=7)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

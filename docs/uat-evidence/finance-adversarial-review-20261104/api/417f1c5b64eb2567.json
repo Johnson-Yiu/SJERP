@@ -1,0 +1,173 @@
+{
+  "test": "crm.tests.test_finance_adversarial_http.FinanceAdversarialLiveHTTPTests.test_real_session_csrf_two_person_approval_post_retry_and_csv",
+  "requests": [
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-BANK",
+        "name": "合成反例银行",
+        "account_type": "bank",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 3
+      }
+    },
+    {
+      "method": "post",
+      "path": "/api/finance-ledger/accounts/",
+      "input": {
+        "code": "ADV-CASH",
+        "name": "合成反例现金",
+        "account_type": "cash",
+        "ownership": "own",
+        "ownership_reason": "合成核实"
+      },
+      "status": 201,
+      "body": {
+        "id": 4
+      }
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/instructions/",
+      "request": {
+        "request_key": "ADV-899bd7944fc84ec6b696202174822579",
+        "source_system": "SYNTH-ADVERSARIAL",
+        "source_key": "ADV-899bd7944fc84ec6b696202174822579",
+        "kind": "opening",
+        "account": 3,
+        "voucher": 2,
+        "actual_date": "2026-04-01",
+        "direction": "income",
+        "amount": "37.91",
+        "nature": "unclassified",
+        "truth": "verified",
+        "reason": "合成反例凭证已核实"
+      },
+      "status": 201,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:26 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "POST, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "576",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"id\":1,\"kind\":\"opening\",\"status\":\"pending\",\"payload\":{\"request_key\":\"ADV-899bd7944fc84ec6b696202174822579\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-899bd7944fc84ec6b696202174822579\",\"kind\":\"opening\",\"account\":3,\"voucher\":2,\"actual_date\":\"2026-04-01\",\"direction\":\"income\",\"amount\":\"37.91\",\"nature\":\"unclassified\",\"truth\":\"verified\",\"reason\":\"合成反例凭证已核实\",\"allocations\":[]},\"created_actor\":{\"kind\":\"authenticated_user\",\"action\":\"submit\",\"user_id\":4},\"approved_actor\":{},\"created_at\":\"2026-11-04T15:05:26.094536Z\",\"approved_at\":null,\"replaces\":null}"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/approve/",
+      "request": {
+        "id": 1
+      },
+      "status": 400,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:28 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "POST, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "43",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "[\"发起人不得审批自己的指令。\"]"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/approve/",
+      "request": {
+        "id": 1
+      },
+      "status": 200,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:30 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "POST, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "660",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"id\":1,\"kind\":\"opening\",\"status\":\"approved\",\"payload\":{\"request_key\":\"ADV-899bd7944fc84ec6b696202174822579\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-899bd7944fc84ec6b696202174822579\",\"kind\":\"opening\",\"account\":3,\"voucher\":2,\"actual_date\":\"2026-04-01\",\"direction\":\"income\",\"amount\":\"37.91\",\"nature\":\"unclassified\",\"truth\":\"verified\",\"reason\":\"合成反例凭证已核实\",\"allocations\":[]},\"created_actor\":{\"kind\":\"authenticated_user\",\"action\":\"submit\",\"user_id\":4},\"approved_actor\":{\"kind\":\"authenticated_user\",\"action\":\"approve\",\"user_id\":5},\"created_at\":\"2026-11-04T15:05:26.094536Z\",\"approved_at\":\"2026-11-04T15:05:30.178215Z\",\"replaces\":null}"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/post/",
+      "request": {
+        "id": 1,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:32 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "POST, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "668",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"id\":1,\"account\":3,\"account_name\":\"合成反例银行\",\"account_type\":\"bank\",\"instruction\":1,\"actual_date\":\"2026-04-01\",\"amount\":\"37.91\",\"direction\":\"income\",\"nature\":\"unclassified\",\"kind\":\"opening\",\"refund_excess_amount\":\"0\",\"unallocated_amount\":\"0.00\",\"voucher\":2,\"voucher_sha256\":\"671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-899bd7944fc84ec6b696202174822579\",\"parent\":null,\"legacy_parent\":null,\"actor\":{\"kind\":\"authenticated_user\",\"action\":\"post\",\"user_id\":4},\"created_at\":\"2026-11-04T15:05:32.230343Z\",\"company_flow_included\":false,\"flow_exclusion_reason\":\"opening\",\"classifications\":[]}"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/post/",
+      "request": {
+        "id": 1,
+        "voucher_checked": true
+      },
+      "status": 200,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:34 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "application/json",
+        "Allow": "POST, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "671",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "{\"id\":1,\"account\":3,\"account_name\":\"合成反例银行\",\"account_type\":\"bank\",\"instruction\":1,\"actual_date\":\"2026-04-01\",\"amount\":\"37.91\",\"direction\":\"income\",\"nature\":\"unclassified\",\"kind\":\"opening\",\"refund_excess_amount\":\"0.00\",\"unallocated_amount\":\"0.00\",\"voucher\":2,\"voucher_sha256\":\"671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\",\"source_system\":\"SYNTH-ADVERSARIAL\",\"source_key\":\"ADV-899bd7944fc84ec6b696202174822579\",\"parent\":null,\"legacy_parent\":null,\"actor\":{\"kind\":\"authenticated_user\",\"action\":\"post\",\"user_id\":4},\"created_at\":\"2026-11-04T15:05:32.230343Z\",\"company_flow_included\":false,\"flow_exclusion_reason\":\"opening\",\"classifications\":[]}"
+    },
+    {
+      "transport": "real_tcp_http",
+      "path": "/api/finance-ledger/facts/?date_from=2026-04-01&date_to=2026-04-30&export=csv",
+      "request": null,
+      "status": 200,
+      "headers": {
+        "Date": "Wed, 04 Nov 2026 15:05:36 GMT",
+        "Server": "WSGIServer/0.2 CPython/3.14.5",
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": "attachment; filename=\"account-cash-facts.csv\"",
+        "Allow": "GET, HEAD, OPTIONS",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "384",
+        "Vary": "Cookie, origin",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "same-origin",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "body": "﻿id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256\r\n1,合成反例银行,bank,2026-04-01,opening,unclassified,income,37.91,0.00,0.00,False,SYNTH-ADVERSARIAL,ADV-899bd7944fc84ec6b696202174822579,671bd5ebe29ee88df25e724e2dd4567e7e81bb60b2c94f138c8dfb0061b851b3\r\n"
+    }
+  ]
+}

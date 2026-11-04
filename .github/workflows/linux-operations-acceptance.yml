@@ -1,0 +1,66 @@
+name: Linux operations acceptance
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  media-fence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install locked dependencies
+        run: python -m pip install -r backend/requirements.lock
+      - name: Exercise kernel read-only media fence
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          owned="$(mktemp -d "${RUNNER_TEMP}/sunjack-linux-acceptance.XXXXXXXX")"
+          image="$owned/media.img"
+          mountpoint="$owned/media"
+          cleanup() {
+            if mountpoint -q "$mountpoint"; then sudo umount "$mountpoint"; fi
+            case "$owned" in "$RUNNER_TEMP"/sunjack-linux-acceptance.*) rm -rf -- "$owned";; *) exit 1;; esac
+          }
+          trap cleanup EXIT
+          truncate -s 128M "$image"
+          mkfs.ext4 -q -F "$image"
+          mkdir "$mountpoint"
+          sudo mount -o loop "$image" "$mountpoint"
+          sudo chmod 777 "$mountpoint"
+          export PYTHONPATH="$GITHUB_WORKSPACE/backend" MEDIA_TEST_ROOT="$mountpoint"
+          python - <<'PY'
+          import os
+          from crm.services.operations_fence import verify_readonly_filesystem
+          try:
+              verify_readonly_filesystem(os.environ['MEDIA_TEST_ROOT'])
+          except RuntimeError as error:
+              print('WRITABLE_REJECTED:', error)
+          else:
+              raise SystemExit('Writable filesystem was incorrectly accepted')
+          PY
+          sudo mount -o remount,ro "$mountpoint"
+          python - <<'PY'
+          import os
+          from crm.services.operations_fence import verify_readonly_filesystem
+          print('READONLY_VERIFIED:', verify_readonly_filesystem(os.environ['MEDIA_TEST_ROOT']))
+          PY
+          if sh -c 'printf synthetic > "$MEDIA_TEST_ROOT/competing-write"'; then
+            echo 'Competing write unexpectedly succeeded' >&2
+            exit 1
+          fi
+          echo 'INDEPENDENT_WRITE_REJECTED'
+          sudo mount -o remount,rw "$mountpoint"
+          python - <<'PY'
+          import os
+          from crm.services.operations_fence import verify_readonly_filesystem
+          try:
+              verify_readonly_filesystem(os.environ['MEDIA_TEST_ROOT'])
+          except RuntimeError as error:
+              print('REMOUNT_REJECTED:', error)
+          else:
+              raise SystemExit('Removed protection was incorrectly accepted')
+          PY

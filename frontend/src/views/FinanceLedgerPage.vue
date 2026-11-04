@@ -44,10 +44,10 @@ async function load() {
   Object.assign(state, data.data); facts.value = rows.data.facts; totals.value = rows.data.totals
   ready.value = true
 }
-async function run(work, success) {
+async function run(work, success, reload = true) {
   if (busy.value) return
   busy.value = true; error.value = ''; notice.value = ''
-  try { await work(); await load(); if (success) notice.value = success }
+  try { await work(); if (reload && work !== load) await load(); if (success) notice.value = success }
   catch (e) { error.value = apiErrorMessage(e) }
   finally { busy.value = false }
 }
@@ -100,7 +100,7 @@ onMounted(async () => {
     }
     await load(); await nextTick()
     if (fact) document.getElementById(`fact-${fact.id}`)?.scrollIntoView({ block: 'center' })
-  })
+  }, '', false)
 })
 </script>
 
@@ -144,5 +144,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.ledger-heading > div{min-width:0;flex:1}.ledger-heading > button{flex-shrink:0;white-space:nowrap}
 .ledger-page{display:grid;gap:18px;min-width:0}.ledger-heading{display:flex;justify-content:space-between;gap:16px;align-items:start}.ledger-heading h1{margin:0;font-size:24px}.ledger-page p{font-size:14px;line-height:1.65;overflow-wrap:anywhere;color:#526171}.ledger-tabs,.ledger-actions,.ledger-totals{display:flex;flex-wrap:wrap;gap:10px}.ledger-page button{min-height:40px;padding:8px 14px;border:1px solid #ccd5dc;border-radius:8px;background:white;color:#203446;font-size:14px;cursor:pointer}.ledger-page button[aria-pressed=true]{background:#e5f1f7;border-color:#5b8fa4}.ledger-page button:disabled{opacity:.55;cursor:default}.ledger-form{display:flex;flex-wrap:wrap;gap:14px;align-items:end}.ledger-form label{display:grid;gap:6px;flex:1 1 210px;min-width:0;font-size:14px}.ledger-form input,.ledger-form select{width:100%;min-width:0;min-height:42px;border:1px solid #c9d3dc;border-radius:8px;padding:9px;box-sizing:border-box;font:inherit;background:white}.ledger-form fieldset{width:100%;min-width:0;border:1px solid #d9e0e7;border-radius:8px}.ledger-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px;margin-top:18px}.ledger-cards article{min-width:0;border:1px solid #dce3e9;border-radius:12px;padding:18px;background:white;overflow-wrap:anywhere}.ledger-cards code{display:block;overflow-wrap:anywhere;white-space:normal;font-size:13px}.ledger-error{padding:12px;border:1px solid #dfaaa6;background:#fff4f2;color:#943b32!important;border-radius:8px}.ledger-check{display:flex!important;align-items:center;gap:8px;font-size:14px;margin:14px 0}.ledger-check input{width:auto;min-height:20px}.ledger-totals span{padding:14px;background:#edf4f7;border-radius:10px}.ledger-page h2{font-size:18px;margin:22px 0 12px}@media(max-width:500px){.ledger-form label{flex-basis:100%}.ledger-tabs button{flex:1 1 42%}.ledger-heading h1{font-size:22px}.ledger-cards article{padding:14px}}
 </style>

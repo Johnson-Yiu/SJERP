@@ -1,0 +1,8 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/finance-closeout-batch-20261104/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  16:29:59
+   Duration  7.45s (transform 477ms, setup 1.71s, import 582ms, tests 307ms, environment 3.89s)

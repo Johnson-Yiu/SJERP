@@ -85,6 +85,10 @@ for (const width of [1440, 390]) test(`authenticated finance closure and reconci
   await page.getByRole('button', { name: '刷新', exact: true }).click()
   await expect(page.locator('article').filter({ hasText: `账户 #${bank.id} ·` })).toContainText('需重新核对')
   await expect(page.getByRole('button', { name: '刷新', exact: true })).toBeEnabled()
+  await page.evaluate(async () => {
+    window.scrollTo(0, 0)
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  })
   await page.screenshot({ path: path.join(root, `reconciliation-reopened-${width}.png`), fullPage: true })
   const snapshot = coreSnapshot()
   expect(snapshot).toEqual(legacyBefore)

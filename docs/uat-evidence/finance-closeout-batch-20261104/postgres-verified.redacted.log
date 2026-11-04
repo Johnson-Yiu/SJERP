@@ -1,0 +1,291 @@
+{"postgres": "postgres (PostgreSQL) 17.11", "cluster": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-finance-pg17-7_xzbp80", "source": "fin_src_6323247483904729", "port": 2800, "test_labels": ["crm.tests.test_finance_closeout", "crm.tests.test_finance_closeout_concurrency", "crm.tests.test_finance_accounts", "crm.tests.test_cash_operation_audit", "crm.tests.test_cash_events", "crm.tests.test_actual_cash_reporting", "crm.tests.test_bank_private_vouchers", "crm.tests.test_independent_bank_fee"]}
+Found 70 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying crm.0093_csv_import_preview_audit... OK
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+  Applying crm.0090_fulfillment_request_idempotency... OK
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+  Applying crm.0096_quote_pi_template_snapshots... OK
+  Applying crm.0097_merge_quote_and_cash_review... OK
+  Applying crm.0098_finance_accounts... OK
+  Applying crm.0099_finance_closeout_workflows... OK
+  Applying crm.0100_finance_legacy_fact_links... OK
+  Applying crm.0101_finance_historical_transfer_links... OK
+  Applying crm.0102_bank_private_voucher_binding... OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+P2A-DATABASE_VERIFICATION {"before": "177134330598439ae11fbdd4dabaada3670a46d5a4b87acda0150ec3d4a32390", "after": "177134330598439ae11fbdd4dabaada3670a46d5a4b87acda0150ec3d4a32390", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "confirm_void_refund", "legacy_unchanged": true, "remaining": "0.0000", "vendor": "postgresql"}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "same_request_and_confirm", "one_event": true, "one_allocation": true, "vendor": "postgresql"}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "different_keys_shared_source", "results": ["conflict", "confirmed"], "source": "100.0000", "confirmed_usage": "60.0000", "remaining": "40.0000", "vendor": "postgresql"}
+P2A_MIGRATION_VERIFICATION {"vendor": "postgresql", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}
+Creating test database for alias 'default' ('test_sunjack_5e673e09da89459c98fc7af5761109d7')...
+
+test_account_verification_and_legacy_mapping_do_not_guess (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_account_verification_and_legacy_mapping_do_not_guess) ... ok
+test_actual_api_report_csv_and_drilldown_share_same_amount (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_actual_api_report_csv_and_drilldown_share_same_amount) ... ok
+test_approved_correction_replaces_effective_fact_without_fake_cash_outflow (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_approved_correction_replaces_effective_fact_without_fake_cash_outflow) ... ok
+test_audit_failure_rolls_back_facts_and_request_status (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_audit_failure_rolls_back_facts_and_request_status) ... ok
+test_bank_return_partial_cumulative_cap_and_original_unchanged (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_bank_return_partial_cumulative_cap_and_original_unchanged) ... ok
+test_distinct_same_amount_requires_review_then_remains_legal (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_distinct_same_amount_requires_review_then_remains_legal) ... ok
+test_existing_bank_transfer_is_matched_without_copying_bank_facts (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_existing_bank_transfer_is_matched_without_copying_bank_facts) ... ok
+test_failure_requires_confirmed_no_debit_and_retry_needs_review (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_failure_requires_confirmed_no_debit_and_retry_needs_review) ... ok
+test_file_digest_recomputed_not_claimed_and_private_direct_url (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_file_digest_recomputed_not_claimed_and_private_direct_url) ... Not Found: /api/media/finance-vouchers/2026/11/3baea8cbbe1f416db088898b93b5f273.pdf
+ok
+test_history_and_migration_reversal_are_protected (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_history_and_migration_reversal_are_protected) ... ok
+test_legacy_bank_return_preserves_original_and_does_not_release_sources (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_legacy_bank_return_preserves_original_and_does_not_release_sources) ... ok
+test_opening_is_separate_and_late_fact_invalidates_review (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_opening_is_separate_and_late_fact_invalidates_review) ... ok
+test_order_refund_allocations_cannot_exceed_approved_shares (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_order_refund_allocations_cannot_exceed_approved_shares) ... ok
+test_pending_classification_is_independent_from_verified_voucher (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_pending_classification_is_independent_from_verified_voucher) ... ok
+test_persistent_identity_and_conflicting_payload (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_persistent_identity_and_conflicting_payload) ... ok
+test_refund_approved_not_paid_and_excess_separately_recorded (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_refund_approved_not_paid_and_excess_separately_recorded) ... ok
+test_scope_denial_does_not_reveal_or_write (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_scope_denial_does_not_reveal_or_write) ... ok
+test_separate_refund_approvals_still_identify_cumulative_excess (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_separate_refund_approvals_still_identify_cumulative_excess) ... ok
+test_separation_of_duties_and_cancelled_revision (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_separation_of_duties_and_cancelled_revision) ... ok
+test_transfer_cross_day_explicit_match_keeps_account_facts (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_transfer_cross_day_explicit_match_keeps_account_facts) ... ok
+test_transfer_difference_not_assumed_fee (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_transfer_difference_not_assumed_fee) ... ok
+test_unauthenticated_api_and_voucher_download_are_denied (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_unauthenticated_api_and_voucher_download_are_denied) ... Forbidden: /api/finance-ledger/
+Forbidden: /api/finance-ledger/voucher-download/
+Forbidden: /api/finance-ledger/instructions/
+ok
+test_upload_limit_and_audit_failure_do_not_leave_private_files (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_upload_limit_and_audit_failure_do_not_leave_private_files) ... Content Too Large: /api/finance-ledger/vouchers/
+ok
+test_zero_opening_and_negative_balance_are_preserved (crm.tests.test_finance_closeout.FinanceCloseoutTests.test_zero_opening_and_negative_balance_are_preserved) ... ok
+test_confirmed_ownership_requires_basis (crm.tests.test_finance_accounts.FinanceAccountTests.test_confirmed_ownership_requires_basis) ... ok
+test_display_name_does_not_establish_ownership (crm.tests.test_finance_accounts.FinanceAccountTests.test_display_name_does_not_establish_ownership) ... ok
+test_invalid_type_and_duplicate_identity_are_rejected (crm.tests.test_finance_accounts.FinanceAccountTests.test_invalid_type_and_duplicate_identity_are_rejected) ... ok
+test_audit_failure_rolls_back_registration_and_confirmation (crm.tests.test_cash_operation_audit.CashOperationAuditTests.test_audit_failure_rolls_back_registration_and_confirmation) ... ok
+test_cancel_reason_and_failed_audit_leave_pending_state (crm.tests.test_cash_operation_audit.CashOperationAuditTests.test_cancel_reason_and_failed_audit_leave_pending_state) ... ok
+test_development_identity_is_not_a_fabricated_user (crm.tests.test_cash_operation_audit.CashOperationAuditTests.test_development_identity_is_not_a_fabricated_user) ... ok
+test_registered_and_confirmed_once_with_real_operator (crm.tests.test_cash_operation_audit.CashOperationAuditTests.test_registered_and_confirmed_once_with_real_operator) ... ok
+test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes (crm.tests.test_cash_events.CashEventTests.test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes) ... ok
+test_advance_allocation_does_not_consume_cash_source (crm.tests.test_cash_events.CashEventTests.test_advance_allocation_does_not_consume_cash_source) ... ok
+test_c_partial_60_40_and_overallocation (crm.tests.test_cash_events.CashEventTests.test_c_partial_60_40_and_overallocation) ... Conflict: /api/rmb-cash-events/
+ok
+test_cancel_pending_retains_evidence_and_allows_original_void (crm.tests.test_cash_events.CashEventTests.test_cancel_pending_retains_evidence_and_allows_original_void) ... Bad Request: /api/rmb-cash-events/13/confirm/
+ok
+test_confirm_failure_after_status_update_is_rolled_back (crm.tests.test_cash_events.CashEventTests.test_confirm_failure_after_status_update_is_rolled_back) ... ok
+test_d_split_family_is_cash_rows_not_root_total (crm.tests.test_cash_events.CashEventTests.test_d_split_family_is_cash_rows_not_root_total) ... Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee (crm.tests.test_cash_events.CashEventTests.test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee) ... Bad Request: /api/rmb-cash-events/
+ok
+test_f_cny_direct_identical_amounts_are_distinct_real_events (crm.tests.test_cash_events.CashEventTests.test_f_cny_direct_identical_amounts_are_distinct_real_events) ... Conflict: /api/rmb-cash-events/20/confirm/
+Conflict: /api/rmb-cash-events/22/confirm/
+ok
+test_failure_after_event_creation_rolls_back_both_tables (crm.tests.test_cash_events.CashEventTests.test_failure_after_event_creation_rolls_back_both_tables) ... ok
+test_g_missing_voucher_account_and_manual_check_fail_without_writes (crm.tests.test_cash_events.CashEventTests.test_g_missing_voucher_account_and_manual_check_fail_without_writes) ... Bad Request: /api/rmb-cash-events/24/confirm/
+Bad Request: /api/rmb-cash-events/25/confirm/
+Bad Request: /api/rmb-cash-events/25/confirm/
+ok
+test_h_refund_void_and_correction_protection_are_atomic (crm.tests.test_cash_events.CashEventTests.test_h_refund_void_and_correction_protection_are_atomic) ... Bad Request: /api/rmb-cash-events/26/cancel/
+Bad Request: /api/rmb-cash-events/
+ok
+test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload (crm.tests.test_cash_events.CashEventTests.test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload) ... Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/27/confirm/
+Method Not Allowed: /api/rmb-cash-events/27/
+Method Not Allowed: /api/rmb-cash-events/27/
+Method Not Allowed: /api/rmb-cash-events/27/
+ok
+test_k_invalid_money_rate_sources_and_unknown_fields (crm.tests.test_cash_events.CashEventTests.test_k_invalid_money_rate_sources_and_unknown_fields) ... Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_l_historical_fraction_jpy_precision_and_reference_round_half_up (crm.tests.test_cash_events.CashEventTests.test_l_historical_fraction_jpy_precision_and_reference_round_half_up) ... Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_legacy_contract_only_party_is_protected_and_snapshot_owner_cannot_leak (crm.tests.test_cash_events.CashEventTests.test_legacy_contract_only_party_is_protected_and_snapshot_owner_cannot_leak) ... ok
+test_mixed_currency_stale_snapshot_and_event_number_conflict (crm.tests.test_cash_events.CashEventTests.test_mixed_currency_stale_snapshot_and_event_number_conflict) ... Bad Request: /api/rmb-cash-events/31/confirm/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Not Found: /api/rmb-cash-events/not-an-id/
+ok
+test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview (crm.tests.test_cash_events.CashEventTests.test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview) ... Bad Request: /api/rmb-cash-events/preview/
+ok
+test_k_merged_batch_hidden_entirely_and_all_actions_scoped (crm.tests.test_cash_events.CashPermissionsTests.test_k_merged_batch_hidden_entirely_and_all_actions_scoped) ... ok
+test_missing_contract_module_hides_whole_source_family (crm.tests.test_cash_events.CashPermissionsTests.test_missing_contract_module_hides_whole_source_family) ... ok
+test_no_finance_or_transaction_view_no_amounts_and_write_rights (crm.tests.test_cash_events.CashPermissionsTests.test_no_finance_or_transaction_view_no_amounts_and_write_rights) ... ok
+test_actual_api_uses_confirmed_bank_net_and_bank_date (crm.tests.test_actual_cash_reporting.ActualCashReportingTests.test_actual_api_uses_confirmed_bank_net_and_bank_date) ... ok
+test_actual_cash_api_and_csv_require_transaction_scope (crm.tests.test_actual_cash_reporting.ActualCashReportingTests.test_actual_cash_api_and_csv_require_transaction_scope) ... Forbidden: /api/actual-rmb-cash/
+Forbidden: /api/actual-rmb-cash/
+ok
+test_actual_cash_csv_escapes_formula_like_bank_reference (crm.tests.test_actual_cash_reporting.ActualCashReportingTests.test_actual_cash_csv_escapes_formula_like_bank_reference) ... ok
+test_report_center_actual_source_and_csv_share_same_amounts (crm.tests.test_actual_cash_reporting.ActualCashReportingTests.test_report_center_actual_source_and_csv_share_same_amounts) ... ok
+test_binding_audit_failure_rolls_back_whole_registration (crm.tests.test_bank_private_vouchers.BankPrivateVoucherTests.test_binding_audit_failure_rolls_back_whole_registration) ... ok
+test_manually_supplied_sha_cannot_confirm_new_bank_fact (crm.tests.test_bank_private_vouchers.BankPrivateVoucherTests.test_manually_supplied_sha_cannot_confirm_new_bank_fact) ... ok
+test_missing_scope_cannot_download_bank_file_from_account_endpoint (crm.tests.test_bank_private_vouchers.BankPrivateVoucherTests.test_missing_scope_cannot_download_bank_file_from_account_endpoint) ... Forbidden: /api/finance-ledger/voucher-download/
+ok
+test_tampered_file_does_not_confirm_or_release_source (crm.tests.test_bank_private_vouchers.BankPrivateVoucherTests.test_tampered_file_does_not_confirm_or_release_source) ... ok
+test_fee_source_precision_voucher_and_quota_remain_required (crm.tests.test_independent_bank_fee.IndependentBankFeeTests.test_fee_source_precision_voucher_and_quota_remain_required) ... Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/46/confirm/
+ok
+test_no_parent_preview_register_confirm_replay_counts_once (crm.tests.test_independent_bank_fee.IndependentBankFeeTests.test_no_parent_preview_register_confirm_replay_counts_once) ... Bad Request: /api/rmb-cash-events/47/confirm/
+ok
+test_optional_parent_still_checks_status_account_kind_and_included_fee (crm.tests.test_independent_bank_fee.IndependentBankFeeTests.test_optional_parent_still_checks_status_account_kind_and_included_fee) ... Bad Request: /api/rmb-cash-events/preview/
+Not Found: /api/rmb-cash-events/preview/
+Bad Request: /api/rmb-cash-events/preview/
+Bad Request: /api/rmb-cash-events/preview/
+ok
+test_concurrent_partial_returns_cannot_exceed_original (crm.tests.test_finance_closeout_concurrency.FinanceCloseoutConcurrencyTests.test_concurrent_partial_returns_cannot_exceed_original) ... ok
+test_concurrent_same_instruction_posts_once (crm.tests.test_finance_closeout_concurrency.FinanceCloseoutConcurrencyTests.test_concurrent_same_instruction_posts_once) ... ok
+test_same_request_key_creates_one_instruction_and_audit (crm.tests.test_finance_closeout_concurrency.FinanceCloseoutConcurrencyTests.test_same_request_key_creates_one_instruction_and_audit) ... ok
+test_two_refund_payments_share_approval_ceiling (crm.tests.test_finance_closeout_concurrency.FinanceCloseoutConcurrencyTests.test_two_refund_payments_share_approval_ceiling) ... ok
+test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy (crm.tests.test_cash_events.CashConcurrencyTests.test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy) ... ok
+test_i_concurrent_same_request_creates_one_event_and_one_allocation (crm.tests.test_cash_events.CashConcurrencyTests.test_i_concurrent_same_request_creates_one_event_and_one_allocation) ... ok
+test_j_different_keys_compete_for_same_source (crm.tests.test_cash_events.CashConcurrencyTests.test_j_different_keys_compete_for_same_source) ... ok
+test_additive_migration_preserves_historical_rows_and_decimal_fields (crm.tests.test_cash_events.CashMigrationTests.test_additive_migration_preserves_historical_rows_and_decimal_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 70 tests in 114.224s
+
+OK
+
+{"test_databases_remaining": [], "test_exit": 0}
+{"cleanup": "complete", "exit": 0}

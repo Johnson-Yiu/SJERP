@@ -1,0 +1,4 @@
+{"fresh": "PASS", "vendor": "sqlite", "leaves": [["admin", "0003_logentry_add_action_flag_choices"], ["auth", "0012_alter_user_first_name_max_length"], ["contenttypes", "0002_remove_content_type_name"], ["crm", "0102_bank_private_voucher_binding"], ["sessions", "0001_initial"]]}
+{"empty_reverse_to_0097": "PASS"}
+{"nonempty_reverse": "REFUSED_AS_REQUIRED", "reason": "已有银行私有凭证历史，禁止回退丢失绑定和来源范围。"}
+{"history_and_actual_file": "UNCHANGED", "result": "PASS"}

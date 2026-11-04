@@ -1,5 +1,11 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## REVIEW-INTEGRATION-BATCH-01（2026-11-04，进行中）
+
+沿用远端已核实 `4388947d70d26bca66ca0bfc76b2383a2fc0d404`，其CI 41782956426三项成功；保留预检、备份及0096/0097汇合迁移。本轮推进全量Issue证据归一化、集中独立复审包、合成核心闭环和失败原子性测试，见[专属报告](uat-evidence/review-integration-batch-20261104/README.md)。新增附件故障注入已复现ISS-007失败一致性缺口，修前结果保留；修复/新测试不以基线CI冒充通过。
+
+财务、历史、运维来源尚未交付完整稳定SHA时不按移动HEAD合并。运维5d13f33明确为阶段性成果，不作为完整交付。打印完整验收和分页改进按来源对话中用户明确指令延期，ISS-037其余范围不延期；有效成果保留等待稳定交接。新增核心工作区UX包负责相关前端页面，本包不同时修改其页面。最终集成需对同一最终SHA重新核实三项CI及实际执行的专项，仍待ChatGPT集中独立复审。
+
 ## PRELAUNCH-CONSOLIDATION-CLOSEOUT（2026-11-04）
 
 沿用 `codex/r1-prelaunch-consolidation-20261104`，在规则提交 `147de7400c87d4790ddfcd448fd0b808b9374ab9` 上，保留 BATCH-02 两条 0096 与 0097 汇合迁移及 ISS-121 初版/FIX-01；备份命令仅移植来源 `0692f4db292bd6fdeea1997562fb79c662f03ae7` 相对 `9250b066` 的增量。来源的自动 CI [#41772634041](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41772634041) Backend 和 PostgreSQL 成功、Frontend 因报表测试失败，后端 CI 中隔离备份专项按条件跳过，不能冒充已执行。本机单独执行真实隔离 PG17 命令专项与锁定依赖回归；报表测试对实际响应同步，保留原 CSV 内容断言及确定性竞态用例。最终同一 SHA 的 CI、测试和文件证据以本轮专属报告为准，不能预写通过。

@@ -3,7 +3,7 @@ Description=Record SUNJACK backup failure for monitoring integration
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/logger -p daemon.err -- SUNJACK backup failed for %i; inspect service exit status and recovery report
+ExecStart=/usr/bin/logger -p daemon.err -- SUNJACK backup failed for %i - inspect service exit status and recovery report
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict

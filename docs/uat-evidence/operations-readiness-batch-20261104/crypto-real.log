@@ -1,0 +1,1 @@
+{"status": "PASS", "bytes": 1114112, "roundtrip": true, "wrong_key_rejected": true, "corruption_rejected": true, "source_unchanged": true, "seconds": 2.765, "cleanup": "complete"}

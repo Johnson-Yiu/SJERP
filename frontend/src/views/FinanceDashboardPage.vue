@@ -182,7 +182,7 @@ onMounted(load)
       </template>
     </section>
     <section v-if="can('transactions', 'view')" class="metric-section actual-cash-section" aria-label="银行实际人民币资金">
-      <header><div><h3>{{ actualCash?.events?.some(row => row.id < 0) ? '实际人民币资金（银行与现金）' : '银行实际人民币资金' }}</h3><p>统计已登记、已核实的人民币实际变动，银行与现金分开列示；不代表公司全部账户余额。</p></div><div class="header-actions"><button v-if="actualCash" type="button" class="secondary" @click="showActualCashEvents">查看构成明细</button><button v-if="can('reports', 'export')" type="button" class="secondary" :disabled="actualCashLoading || !actualCash" @click="exportActualCash">导出实际资金 CSV</button></div></header>
+      <header><div><h3>{{ actualCash?.events?.some(row => row.id < 0) ? '实际人民币资金（银行与现金）' : '银行实际人民币资金' }}</h3><p>统计已登记、已核实的人民币实际变动，银行与现金分开列示；不代表公司全部银行余额或现金余额。</p></div><div class="header-actions"><button v-if="actualCash" type="button" class="secondary" @click="showActualCashEvents">查看构成明细</button><button v-if="can('reports', 'export')" type="button" class="secondary" :disabled="actualCashLoading || !actualCash" @click="exportActualCash">导出实际资金 CSV</button></div></header>
       <p v-if="actualCashError" class="error" role="alert">{{ actualCashError }} <button type="button" class="secondary" @click="loadActualCash">重新加载</button></p>
       <p v-else-if="actualCashLoading" class="definition-note" role="status">正在加载已确认银行资金…</p>
       <template v-else-if="actualCash">

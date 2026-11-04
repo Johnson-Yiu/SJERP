@@ -1,0 +1,719 @@
+Proforma Invoice
+Buyer Information
+Name Synthetic Freeze Buyer
+F70B6A42
+Recipient Synthetic Recipient
+Address Synthetic Buyer Address
+Tax ID
+Email buyer@example.invalid
+Tel +00 111111
+Seller Information
+Name Synthetic Seller
+Saler Synthetic Contact
+Address Synthetic Address
+Email synthetic@example.invalid
+Tel +00 000000
+Date 2026 年 11 ⽉ 4 ⽇
+Invoice No. FORMAL-multipage-F70B6A42
+No. Image Model Description QuantityUnit
+Unit
+Price
+USD
+Total
+USD
+1
+ SYNTH-M-
+F70B6A42
+Synthetic product row 1. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+1.00 pcs 1.01
+USD
+1.01
+USD
+2
+ SYNTH-M-
+F70B6A42
+Synthetic product row 2. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+2.00 pcs 1.01
+USD
+2.01
+USD
+3
+ SYNTH-M-
+F70B6A42
+Synthetic product row 3. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+3.00 pcs 1.01
+USD
+3.02
+USD
+2026/11/4 15:45 FORMAL-multipage-F70B6A42
+127.0.0.1:7507/quotes?detail=3 1/9
+No. Image Model Description QuantityUnit
+Unit
+Price
+USD
+Total
+USD
+4
+ SYNTH-M-
+F70B6A42
+Synthetic product row 4. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+4.00 pcs 1.01
+USD
+4.02
+USD
+5
+ SYNTH-M-
+F70B6A42
+Synthetic product row 5. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+5.00 pcs 1.01
+USD
+5.03
+USD
+6
+ SYNTH-M-
+F70B6A42
+Synthetic product row 6. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+6.00 pcs 1.01
+USD
+6.03
+USD
+7
+ SYNTH-M-
+F70B6A42
+Synthetic product row 7. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+7.00 pcs 1.01
+USD
+7.04
+USD
+8
+ SYNTH-M-
+F70B6A42
+Synthetic product row 8. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+8.00 pcs 1.01
+USD
+8.04
+USD
+2026/11/4 15:45 FORMAL-multipage-F70B6A42
+127.0.0.1:7507/quotes?detail=3 2/9
+No. Image Model Description QuantityUnit
+Unit
+Price
+USD
+Total
+USD
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+9
+ SYNTH-M-
+F70B6A42
+Synthetic product row 9. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+9.00 pcs 1.01
+USD
+9.05
+USD
+10
+ SYNTH-M-
+F70B6A42
+Synthetic product row 10. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+10.00 pcs 1.01
+USD
+10.05
+USD
+11
+ SYNTH-M-
+F70B6A42
+Synthetic product row 11. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+11.00 pcs 1.01
+USD
+11.06
+USD
+2026/11/4 15:45 FORMAL-multipage-F70B6A42
+127.0.0.1:7507/quotes?detail=3 3/9
+No. Image Model Description QuantityUnit
+Unit
+Price
+USD
+Total
+USD
+12
+ SYNTH-M-
+F70B6A42
+Synthetic product row 12. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+12.00 pcs 1.01
+USD
+12.06
+USD
+13
+ SYNTH-M-
+F70B6A42
+Synthetic product row 13. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+13.00 pcs 1.01
+USD
+13.07
+USD
+14
+ SYNTH-M-
+F70B6A42
+Synthetic product row 14. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+14.00 pcs 1.01
+USD
+14.07
+USD
+15
+ SYNTH-M-
+F70B6A42
+Synthetic product row 15. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+15.00 pcs 1.01
+USD
+15.08
+USD
+16
+ SYNTH-M-
+F70B6A42
+Synthetic product row 16. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+16.00 pcs 1.01
+USD
+16.08
+USD
+2026/11/4 15:45 FORMAL-multipage-F70B6A42
+127.0.0.1:7507/quotes?detail=3 4/9
+No. Image Model Description QuantityUnit
+Unit
+Price
+USD
+Total
+USD
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+17
+ SYNTH-M-
+F70B6A42
+Synthetic product row 17. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+17.00 pcs 1.01
+USD
+17.09
+USD
+18
+ SYNTH-M-
+F70B6A42
+Synthetic product row 18. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+18.00 pcs 1.01
+USD
+18.09
+USD
+19
+ SYNTH-M-
+F70B6A42
+Synthetic product row 19. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+19.00 pcs 1.01
+USD
+19.10
+USD
+2026/11/4 15:45 FORMAL-multipage-F70B6A42
+127.0.0.1:7507/quotes?detail=3 5/9
+No. Image Model Description QuantityUnit
+Unit
+Price
+USD
+Total
+USD
+20
+ SYNTH-M-
+F70B6A42
+Synthetic product row 20. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+20.00 pcs 1.01
+USD
+20.10
+USD
+21
+ SYNTH-M-
+F70B6A42
+Synthetic product row 21. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+21.00 pcs 1.01
+USD
+21.11
+USD
+22
+ SYNTH-M-
+F70B6A42
+Synthetic product row 22. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+22.00 pcs 1.01
+USD
+22.11
+USD
+23
+ SYNTH-M-
+F70B6A42
+Synthetic product row 23. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+23.00 pcs 1.01
+USD
+23.12
+USD
+24
+ SYNTH-M-
+F70B6A42
+Synthetic product row 24. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+24.00 pcs 1.01
+USD
+24.12
+USD
+2026/11/4 15:45 FORMAL-multipage-F70B6A42
+127.0.0.1:7507/quotes?detail=3 6/9
+No. Image Model Description QuantityUnit
+Unit
+Price
+USD
+Total
+USD
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+25
+ SYNTH-M-
+F70B6A42
+Synthetic product row 25. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+25.00 pcs 1.01
+USD
+25.13
+USD
+26
+ SYNTH-M-
+F70B6A42
+Synthetic product row 26. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+26.00 pcs 1.01
+USD
+26.13
+USD
+27
+ SYNTH-M-
+F70B6A42
+Synthetic product row 27. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+27.00 pcs 1.01
+USD
+27.14
+USD
+2026/11/4 15:45 FORMAL-multipage-F70B6A42
+127.0.0.1:7507/quotes?detail=3 7/9
+No. Image Model Description QuantityUnit
+Unit
+Price
+USD
+Total
+USD
+28
+ SYNTH-M-
+F70B6A42
+Synthetic product row 28. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+28.00 pcs 1.01
+USD
+28.14
+USD
+29
+ SYNTH-M-
+F70B6A42
+Synthetic product row 29. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+29.00 pcs 1.01
+USD
+29.15
+USD
+30
+ SYNTH-M-
+F70B6A42
+Synthetic product row 30. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details. Long
+specification and installation details.
+30.00 pcs 1.01
+USD
+30.15
+USD
+Sub Total: 467.40
+Shipping Cost: 0.00
+Discount: 0.00
+Grand Total: 467.40
+SAY TOTAL US DOLLARS FOUR HUNDRED SIXTY SEVEN AND CENTS FORTY ONLY
+NOTES
+Lead time: 10 Days
+Price Valid Date: 30 Days
+Deposit: 0% (USD 0.00)
+Balance: 100% (USD 467.40)
+Trading terms:
+Shipping details:
+The price is EXCLUDE customs duties and VAT. If the goods generate the customs taxes and VAT taxes
+in buyer's local, the buyer should pay by themselves.
+2026/11/4 15:45 FORMAL-multipage-F70B6A42
+127.0.0.1:7507/quotes?detail=3 8/9
+BANK INFORMATION
+Beneficiary
+Name
+SYNTHETIC-22
+Beneficiary
+Account
+Number
+SYNTHETIC-23
+Swift Code SYNTHETIC-24
+Country/RegionSYNTHETIC-25
+Beneficiary
+Address
+SYNTHETIC-26
+Beneficiary
+Bank
+SYNTHETIC-27
+Beneficiary
+Bank Address
+SYNTHETIC-28
+Bank Code SYNTHETIC-29
+Branch CodeSYNTHETIC-30
+Synthetic notice
+2026/11/4 15:45 FORMAL-multipage-F70B6A42
+127.0.0.1:7507/quotes?detail=3 9/9

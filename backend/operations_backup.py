@@ -1,10 +1,78 @@
 """Explicit PostgreSQL/private-media maintenance backup and isolated restore."""
 import argparse
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
 import uuid
+
+
+def _file_identity(path):
+    info = Path(path).lstat()
+    return info.st_dev, info.st_ino
+
+
+def _unlink_owned(path, identity):
+    if identity is None:
+        return
+    path = Path(path)
+    try:
+        current = _file_identity(path)
+    except FileNotFoundError:
+        return
+    if current != identity:
+        raise RuntimeError("Refusing to remove a staging path whose identity changed")
+    path.unlink()
+
+
+def _encrypted_backup(service, *, media_root, destination, key, encryption, crypt_file):
+    destination = Path(destination)
+    if not destination.parent.is_dir():
+        raise ValueError("An existing backup destination directory is required")
+    if os.path.lexists(destination):
+        raise FileExistsError("Backup destination already exists")
+
+    # The staging ciphertext is exclusive and shares the final directory so the
+    # final name can be published with an atomic, no-replace hard link.
+    staging = destination.parent / (".sunjack-encrypted-" + uuid.uuid4().hex + ".partial")
+    staging_identity = None
+    published = False
+    try:
+        with tempfile.TemporaryDirectory(prefix="sunjack-encrypted-backup-") as folder:
+            plaintext = Path(folder) / "backup.zip"
+            backup = service.backup(media_root=media_root, destination=plaintext)
+            result = crypt_file(plaintext, staging, key=key, expected_sha256=backup["sha256"], **encryption)
+            staging_identity = _file_identity(staging)
+            crypt_file(staging, Path(folder) / "verified.zip", key=key,
+                       expected_sha256=backup["sha256"], decrypt=True, **encryption)
+            result["plaintext_sha256"] = backup["sha256"]
+            result["encryption_roundtrip_verified"] = True
+
+        if _file_identity(staging) != staging_identity:
+            raise RuntimeError("Staging ciphertext changed before publication")
+        os.link(staging, destination, follow_symlinks=False)
+        destination_identity = _file_identity(destination)
+        if destination_identity != staging_identity:
+            try:
+                _unlink_owned(destination, staging_identity)
+            except Exception as cleanup_error:
+                cleanup_error.add_note("Unexpected published path cleanup was incomplete")
+            raise RuntimeError("Published ciphertext identity did not match verified staging file")
+        published = True
+        try:
+            _unlink_owned(staging, staging_identity)
+            staging_identity = None
+        except Exception as cleanup_error:
+            result["staging_ciphertext_cleanup_warning"] = type(cleanup_error).__name__
+        return result
+    except Exception as error:
+        if not published:
+            try:
+                _unlink_owned(staging, staging_identity)
+            except Exception as cleanup_error:
+                error.add_note("Owned staging ciphertext cleanup failed: " + type(cleanup_error).__name__)
+        raise
 
 
 def main():
@@ -53,13 +121,8 @@ def main():
                     key = key_stream.read(4097).rstrip(b"\r\n")
                 if len(key) > 4096:
                     raise ValueError("Invalid key size")
-                with tempfile.TemporaryDirectory(prefix="sunjack-encrypted-backup-") as folder:
-                    plaintext = Path(folder) / "backup.zip"
-                    backup = service.backup(media_root=config["media_root"], destination=plaintext)
-                    result = crypt_file(plaintext, destination, key=key, expected_sha256=backup["sha256"], **encryption)
-                    crypt_file(destination, Path(folder) / "verified.zip", key=key, expected_sha256=backup["sha256"], decrypt=True, **encryption)
-                    result["plaintext_sha256"] = backup["sha256"]
-                    result["encryption_roundtrip_verified"] = True
+                result = _encrypted_backup(service, media_root=config["media_root"], destination=destination,
+                                           key=key, encryption=encryption, crypt_file=crypt_file)
             else:
                 result = service.backup(media_root=config["media_root"], destination=destination)
             result["archive"] = str(destination)

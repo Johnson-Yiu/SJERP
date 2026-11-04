@@ -516,7 +516,7 @@ def _cli() -> int:
         exit_code = 0
     else:
         result = verify(args.manifest) if args.manifest else verify()
-        exit_code = 0 if result["ok"] else 1
+        exit_code = 0 if not args.manifest or result["ok"] else 1
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, separators=(",", ":")))
     return exit_code
 

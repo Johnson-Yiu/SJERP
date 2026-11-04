@@ -6,6 +6,10 @@ from pathlib import Path
 import runpy
 import subprocess
 import sys
+import socket
+import time
+from urllib.request import Request, build_opener, ProxyHandler
+from urllib.error import HTTPError, URLError
 from uuid import uuid4
 
 repository = Path(__file__).resolve().parents[3]
@@ -29,7 +33,9 @@ original_backup = IsolatedPostgresDrill.backup
 original_manage = IsolatedPostgresDrill._manage
 original_restore = IsolatedPostgresDrill.restore
 finance_seed_enabled = os.environ.get("REVIEW_FINANCE_SEED") == "1"
+history_seed_enabled = os.environ.get("REVIEW_HISTORY_SEED") == "1"
 finance_helper = Path(__file__).resolve().parent / "finance-backup-seed" / "seed_finance_backup.py"
+history_helper = Path(__file__).resolve().parent / "seed_history_backup.py"
 
 
 def sequences(drill, database):
@@ -39,19 +45,80 @@ def sequences(drill, database):
                 for (name,) in names}
 
 
-def finance_command(function):
+def restored_private_http(drill, restored):
+    with socket.socket() as listener:
+        listener.bind(("127.0.0.1", 0))
+        port = listener.getsockname()[1]
+    env = drill._environment(restored["database"], Path(restored["media"]))
+    log_path = Path(__file__).resolve().parent / "logs" / f"restored-private-http-{drill.app_sha[:12]}.log"
+    proof = []
+    with log_path.open("wb") as output:
+        child = subprocess.Popen([sys.executable, str(backend / "manage.py"), "runserver",
+                                  f"127.0.0.1:{port}", "--noreload"], cwd=backend, env=env,
+                                 stdout=output, stderr=subprocess.STDOUT)
+        try:
+            base = f"http://127.0.0.1:{port}"
+            opener = build_opener(ProxyHandler({}))
+            deadline = time.monotonic() + 30
+            while True:
+                try:
+                    with opener.open(base + "/api/session/current-operator/", timeout=2):
+                        break
+                except (URLError, TimeoutError):
+                    if child.poll() is not None or time.monotonic() > deadline:
+                        raise RuntimeError("Owned restored HTTP server did not start")
+                    time.sleep(0.1)
+            voucher = next(item for item in drill.review_finance_snapshot["private_vouchers"] if item["scope"] == "account")
+            download = f"/api/finance-ledger/voucher-download/?id={voucher['id']}"
+            cases = [(None, download, 403), ("iss018-drill-denied", download, 403),
+                     ("iss018-drill-owner", download, 200),
+                     ("iss018-drill-owner", "/media/" + voucher["name"], 404)]
+            for username, path, expected in cases:
+                headers = {"Cookie": "sessionid=" + drill.review_sessions[username]} if username else {}
+                try:
+                    response = opener.open(Request(base + path, headers=headers), timeout=10)
+                except HTTPError as error:
+                    response = error
+                with response:
+                    body = response.read()
+                    status = response.code
+                    if status != expected:
+                        raise RuntimeError(f"Restored private HTTP expected {expected}, received {status}")
+                    if status == 200:
+                        if hashlib.sha256(body).hexdigest() != voucher["file_sha256"]:
+                            raise RuntimeError("Restored HTTP voucher bytes differ")
+                        if response.headers.get("Cache-Control") != "private, no-store":
+                            raise RuntimeError("Restored private HTTP cache policy differs")
+                    proof.append({"identity": username or "anonymous", "path": path,
+                                  "status": status, "bytes": len(body), "sha256": hashlib.sha256(body).hexdigest()})
+        finally:
+            child.terminate()
+            try:
+                child.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                child.kill()
+                child.wait(timeout=10)
+    return proof
+
+
+def finance_command(function, helper=finance_helper):
     return ("shell", "--no-imports", "-c",
-            f"import json, runpy; print(json.dumps(runpy.run_path({str(finance_helper)!r})[{function!r}](), ensure_ascii=False))")
+            f"import json, runpy; print(json.dumps(runpy.run_path({str(helper)!r})[{function!r}](), ensure_ascii=False))")
 
 
 def manage_with_finance_seed(drill, *arguments):
     output = original_manage(drill, *arguments)
     core_seed = "from crm.tests.iss018_drill_fixture import seed; seed()"
+    if history_seed_enabled and arguments == ("shell", "--no-imports", "-c", core_seed):
+        drill.review_history_snapshot = json.loads(original_manage(drill, *finance_command("seed", history_helper)).strip().splitlines()[-1])
+        print("HISTORY_BACKUP_SEED=" + json.dumps(drill.review_history_snapshot), flush=True)
     if finance_seed_enabled and arguments == ("shell", "--no-imports", "-c", core_seed):
         # This hook runs before the original driver's all-table source snapshot.
         # The helper independently rejects any database outside this owned root.
         seeded = json.loads(original_manage(drill, *finance_command("seed")).strip().splitlines()[-1])
         drill.review_finance_snapshot = json.loads(original_manage(drill, *finance_command("verify")).strip().splitlines()[-1])
+        drill.review_sessions = json.loads(original_manage(drill, "shell", "--no-imports", "-c",
+            "from crm.tests.iss018_drill_fixture import sessions; sessions()").strip().splitlines()[-1])
         drill.review_sequences = sequences(drill, drill.source)
         with drill._connect(drill.source) as connection:
             drill.review_references = verify_media_references(connection, build_private_media_manifest(drill.media))
@@ -61,6 +128,12 @@ def manage_with_finance_seed(drill, *arguments):
 
 def restore_with_finance_verification(drill, **kwargs):
     restored = original_restore(drill, **kwargs)
+    if history_seed_enabled:
+        actual_history = json.loads(drill._manage_database(
+            restored["database"], Path(restored["media"]), *finance_command("verify", history_helper)).strip().splitlines()[-1])
+        if actual_history != drill.review_history_snapshot:
+            raise RuntimeError("Restored historical archive rows differ")
+        print("HISTORY_RESTORE_VERIFICATION=PASS", flush=True)
     if finance_seed_enabled:
         actual = json.loads(drill._manage_database(
             restored["database"], Path(restored["media"]), *finance_command("verify")).strip().splitlines()[-1])
@@ -75,6 +148,7 @@ def restore_with_finance_verification(drill, **kwargs):
             raise RuntimeError("Restored private media reference count differs")
         proof = {"source_sha": drill.app_sha, "status": "PASS", "snapshot": actual,
                  "sequences": restored_sequences, "media_references": references,
+                 "restored_real_http": restored_private_http(drill, restored),
                  "scope": "Owned synthetic PostgreSQL source/restore verification, not deployment acceptance"}
         target = Path(__file__).resolve().parent / "artifacts" / "postgres-backups" / f"finance-restored-{drill.app_sha[:12]}.json"
         target.write_text(json.dumps(proof, ensure_ascii=False, indent=2), encoding="utf-8")

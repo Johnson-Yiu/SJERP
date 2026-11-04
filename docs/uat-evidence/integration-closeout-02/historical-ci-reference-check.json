@@ -1,0 +1,50 @@
+[
+  {
+    "run_id": 38761364221,
+    "jobs": [
+      {
+        "id": 116513183576,
+        "name": "backend-postgres",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 116513184307,
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 116513184321,
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "note": "Historical job conclusions only; does not replace current integration CI or refresh historical source head SHA."
+  },
+  {
+    "run_id": 41782956426,
+    "jobs": [
+      {
+        "id": 126418502062,
+        "name": "frontend",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126418502256,
+        "name": "backend-postgres",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126418502350,
+        "name": "backend",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "note": "Historical job conclusions only; does not replace current integration CI or refresh historical source head SHA."
+  }
+]

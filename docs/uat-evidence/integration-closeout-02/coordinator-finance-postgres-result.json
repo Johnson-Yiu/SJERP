@@ -1,0 +1,21 @@
+{
+  "code_sha": "90683506f5d9447974302d83c89ba27351d5dfd4",
+  "postgres": "17.11",
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 10.655,
+  "scope": "5 coordinator API tests + 2 finance semantics + 5 real PG concurrency; full final CI separate",
+  "restore_status": "PASS",
+  "backup_sha256": "947950f49746e8bf89891ca91aaea45d775d86503f38bbb8a8bd48a671397756",
+  "tables": 99,
+  "rows": 1081,
+  "migrations": 128,
+  "files": 4,
+  "source_unchanged": true,
+  "cleanup": "complete",
+  "log_zip_sha256": "aa72a565152a9b5e64b77d32d6ae91914f9d07ecb70c132092924cc8c32b03dc",
+  "raw_log_sha256": "36b7ac8f5818590b763f7773e72167a383092b78549ce21f3ab469acc7feca25",
+  "proof": "postgres-9068350/finance-restored-90683506f5d9.json"
+}

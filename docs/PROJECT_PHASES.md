@@ -1,6 +1,23 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
-## REVIEW-INTEGRATION-BATCH-01（2026-11-04，综合回归进行中）
+## INTEGRATION-CLOSEOUT-02 当前核实（2026-11-04—05）
+
+最新主审已推送代码90683506f5d9447974302d83c89ba27351d5dfd4，[CI41855319673](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41855319673)三项SUCCESS：Backend1259通过/58跳过，PG1287通过/30跳过，均1317项0失败；Node179、字体1、Vitest720、Chrome270及构建通过。主审读取原始日志/精确SHA artifact核对；不称ChatGPT已独立复审906或86项全部接受。两项财务反例的协调修复、原失败与32项SQLite/12项PG专项见本轮报告，三个后续稳定来源接收仍继续。
+
+已交付代码`8087f2c68b19a302a25e814ec8ce6113d91d4750`；[CI41839476121](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41839476121) Backend、backend-postgres、Frontend均SUCCESS，用户已转述ChatGPT实际核实。Backend1254通过/58跳过/0失败，PG1282通过/30跳过/0失败；Node179、Vitest720、Playwright270均通过，生产构建通过。同SHA补充PG15/15与恢复HTTP4/4另列；不将旧失败或来源CI写成新版本通过。
+
+当前124个唯一ID：FIXED_PENDING_REVIEW86、NEEDS_VERIFICATION14、BLOCKED13、CLOSED10、OPEN1（ISS-121已授权待实施）。86项FIXED_PENDING_REVIEW仍逐项等待独立复审，本次定向复审不等于整体接受。代码入口、最新证据及具体关闭缺项见[本轮清单](uat-evidence/integration-closeout-02/REVIEW-BACKLOG.md)，当前状态/新增缺陷与计数见本轮最终校验。未自行关闭任何Issue，保留10项原关闭状态。
+
+ISS-121校准：历史资金、未结、库存基准与剩余履约接通是**已授权开发和合成验收、当前待实施**，不是缺真实凭证；当前归档执行器仍为三个not_connected。真实启用资料、生产配置及真实迁移执行才是外部/单独授权边界。接收历史实际接续、Linux运维、财务反例完整稳定SHA后逐项核查迁移汇合、正式财务服务、组原子性、幂等、新表/文件备份、兼容和权限审计；未交付的移动HEAD不合并。财务公共服务缺陷由统一集成协调，不由历史/财务包同时修改。
+
+仅完整打印成品与分页按用户决定延期；不重试或催办，不扩大延期范围。不合并master、不部署、不启用正式RBAC、不导入真实资料、不宣布上线就绪。[当前报告](uat-evidence/integration-closeout-02/README.md)。
+
+## 历史章节：此前阶段摘要（非当前状态）
+
+以下保留原文及原时点结论，历史“运行中/待提交/尚未实施”不覆盖上述当前摘要。原始报告逐字节副本及摘要见[历史清单](uat-evidence/integration-closeout-02/history-manifest.json)。
+
+
+### REVIEW-INTEGRATION-BATCH-01（2026-11-04，综合回归进行中）
 
 五项稳定完整来源（打印、核心工作区、财务、运维、历史）与起点均已完整包含于673ae3724b5db8d69018acbcea3e26c904c3fea3。逐源固定SHA、精确三CI、冲突处理与新0103财务/历史汇合迁移见[专属综合报告](uat-evidence/review-integration-batch-20261104/README.md)。保留已有预检、备份、迁移及历史证据；不取移动HEAD，不把开发者自查当独立复审。
 
@@ -10,17 +27,18 @@ ISS-105/108改为FIXED_PENDING_REVIEW，其余议题不自行关闭。当前124�
 
 最新综合实测：后端代码1f189c3f74fda2908620dd3860230d860f1cbb43的SQLite全量1312项1251通过/61跳过/0失败，PG17.11全量1312项1282通过/30跳过/0失败；99表1081行128迁移4文件、历史/财务新表/序列/凭证恢复一致，真实恢复HTTP4/4，额外8项备份命令专项8/8，源不变且临时集群清理完成。候选CI41829100528 Backend/PG成功、Frontend270项中268通过/2失败（ISS039快照子进程）。03b524db7392ab989c699e31586484fd33a95fcb最小修复有界缓冲/诊断，Node179/179及Chrome2/2；7a896d0f824a361287cf981c377b07731c45f879修证据根目录，财务Chrome4/4。原全部业务/全库/权限断言保留，产品代码tree与全量已验1f完全一致；最终精确SHA三CI以交付回执核实，不提前登记通过。
 
-## PRELAUNCH-CONSOLIDATION-CLOSEOUT（2026-11-04）
+### PRELAUNCH-CONSOLIDATION-CLOSEOUT（2026-11-04）
 
 沿用 `codex/r1-prelaunch-consolidation-20261104`，在规则提交 `147de7400c87d4790ddfcd448fd0b808b9374ab9` 上，保留 BATCH-02 两条 0096 与 0097 汇合迁移及 ISS-121 初版/FIX-01；备份命令仅移植来源 `0692f4db292bd6fdeea1997562fb79c662f03ae7` 相对 `9250b066` 的增量。来源的自动 CI [#41772634041](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41772634041) Backend 和 PostgreSQL 成功、Frontend 因报表测试失败，后端 CI 中隔离备份专项按条件跳过，不能冒充已执行。本机单独执行真实隔离 PG17 命令专项与锁定依赖回归；报表测试对实际响应同步，保留原 CSV 内容断言及确定性竞态用例。最终同一 SHA 的 CI、测试和文件证据以本轮专属报告为准，不能预写通过。
 
 打印工作包当前明确尚未完成；用户已操作界面生成合成草稿 PDF，但发现近乎空白的第二页，原因及正式单据完整矩阵仍待核验。不把其移动中或阶段报告 SHA 当作稳定最终成果。历史预检不授权正式导入；ISS-018 生产部署验收、ISS-037 打印成品及其他启用门槛保持[分别追踪](uat-evidence/r1-prelaunch-consolidation-20261104/READINESS-GATES.md)。未关闭 Issue、合并 master、部署或启用正式 RBAC。
 
-## R1-PRELAUNCH-CONSOLIDATION-01 第一部分（2026-11-04）
+### R1-PRELAUNCH-CONSOLIDATION-01 第一部分（2026-11-04）
 
 独立集成起点 `d5abc64750d00c89d685bf12c0f8f67d4ba10a97`；完整移植历史只读预检初版与 FIX-01 至 `951adda34b5c60b303725702514cdacac17cc58d`，以及隔离备份演练六项提交至 `9250b066cbd28fd09bd2b1cc1f057604de1f76d9`。保留 BATCH-02 两条 0096 和 0097；新库 SQLite 迁移至 0097 成功。锁定 CPython 3.12.16 环境定向 90 项、4 项跳过，system check、迁移一致性检查通过。备份 PG17 既有成功记录仅限独立合成演练；本次未重新运行真实 PG 备份命令。预检 partial 误报定向修复按用户提供的 ChatGPT 复审结论通过，不等于 ISS-121 整体关闭。
 
 第二部分须等待已完成并推送的 `R1-ISS018-RESTORE-COMMAND-ACCEPTANCE-03` 和 `R1-ISS037-PRINT-OUTPUT-ACCEPTANCE-01`，不猜测其 SHA；其后再完成最终综合回归和同一最终 SHA 的三项 CI。[门槛及第一部分核验](uat-evidence/r1-prelaunch-consolidation-20261104/README.md)。本部分未部署、未启用正式 RBAC、未导入真实历史数据或关闭议题。
+
 
 ## R1-RULE-GAP-BATCH-02 集成核验（2026-11-03）
 

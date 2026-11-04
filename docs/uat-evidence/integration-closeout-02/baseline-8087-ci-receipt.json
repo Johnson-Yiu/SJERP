@@ -1,0 +1,108 @@
+{
+  "branch": "codex/r1-prelaunch-consolidation-20261104",
+  "final_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+  "ci_run": 41839476121,
+  "ci_url": "https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41839476121",
+  "ci_status": "SUCCESS",
+  "local_full_regression": "full-regression-results.json",
+  "final_sha_pg": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 70.539,
+    "archive": "logs/final-sha-8087f2c/8087f2c68b19-717d42c6.zip",
+    "sha256": "8b0eb34da053dc1217be6d7da6cf72b9cc150d55d731223dae42016f7ffd8a55",
+    "restore_status": "PASS",
+    "tables": 99,
+    "rows": 1081,
+    "migrations": 128,
+    "private_files": 4,
+    "http_statuses": [
+      403,
+      403,
+      200,
+      404
+    ],
+    "cleanup": "complete"
+  },
+  "readiness": "PASS for delivered executable integration scope; awaits ChatGPT independent review. Formal auth/history/deployment/print gates remain.",
+  "report": "docs/uat-evidence/review-integration-batch-20261104/README.md",
+  "ci_jobs": [
+    {
+      "name": "backend",
+      "status": "SUCCESS",
+      "total": 1312,
+      "passed": 1254,
+      "failed": 0,
+      "skipped": 58
+    },
+    {
+      "name": "backend-postgres",
+      "status": "SUCCESS",
+      "total": 1312,
+      "passed": 1282,
+      "failed": 0,
+      "skipped": 30
+    },
+    {
+      "name": "frontend",
+      "status": "SUCCESS",
+      "node": {
+        "passed": 179,
+        "failed": 0,
+        "skipped": 0
+      },
+      "node_only": {
+        "passed": 1,
+        "failed": 0
+      },
+      "vitest": {
+        "files": 77,
+        "passed": 720,
+        "failed": 0
+      },
+      "playwright": {
+        "passed": 270,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "status": "PASS",
+        "seconds": 3.16
+      }
+    }
+  ],
+  "artifact": {
+    "id": 13330325632,
+    "sha256": "adbe1f662425afb408fc84eb1b66b3407a3634a83735e935e6623249aea849bc",
+    "full_local_archive": ".tmp\\final-ci-41839476121.zip",
+    "compact_evidence": "logs/final-ci-41839476121-evidence.zip",
+    "retained_files": {
+      "financial_png": 6,
+      "financial_pdf": 2,
+      "financial_csv": 4,
+      "iss039_final_snapshots": 2
+    }
+  },
+  "remaining": [
+    "Formal ERP authentication and target RBAC/audit acceptance",
+    "Formal history finance/inventory/fulfillment handoff remains not_connected; no real import authorization",
+    "Target Linux writer fence, proxy, storage/DB role, independent encrypted recovery and alerting",
+    "Complete print/pagination explicitly deferred",
+    "Finance truth persistence boundary remains subject to independent review"
+  ],
+  "warnings": [
+    "4 moderate npm development vulnerabilities",
+    "Build chunk larger than 500 kB",
+    "Deprecated action/runtime and npm package warnings"
+  ],
+  "git_diff_check": "PASS",
+  "remote_head_verified": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+  "snapshot_regression": {
+    "ci_bytes_min": 1075640,
+    "ci_bytes_max": 1075733,
+    "default_limit": 1048576,
+    "complete_snapshot_retained": true
+  }
+}

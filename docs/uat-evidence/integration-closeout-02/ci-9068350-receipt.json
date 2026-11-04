@@ -1,0 +1,64 @@
+{
+  "code_sha": "90683506f5d9447974302d83c89ba27351d5dfd4",
+  "run_id": 41855319673,
+  "url": "https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/41855319673",
+  "status": "SUCCESS",
+  "jobs": [
+    {
+      "name": "backend",
+      "id": 126662246417,
+      "total": 1317,
+      "passed": 1259,
+      "failed": 0,
+      "skipped": 58,
+      "seconds": 365.744
+    },
+    {
+      "name": "backend-postgres",
+      "id": 126662246847,
+      "total": 1317,
+      "passed": 1287,
+      "failed": 0,
+      "skipped": 30,
+      "seconds": 383.263
+    },
+    {
+      "name": "frontend",
+      "id": 126662246364,
+      "node_passed": 179,
+      "node_only_passed": 1,
+      "vitest_passed": 720,
+      "vitest_files": 77,
+      "playwright_passed": 270,
+      "failed": 0,
+      "build": "PASS",
+      "build_seconds": 3.21
+    }
+  ],
+  "logs_zip": "ci-9068350-logs.zip",
+  "logs_zip_sha256": "6efaded71eb34fde63eb9a0754da09edd2e4875de3d5ecfb6d682d333453cb9f",
+  "log_entries": [
+    {
+      "path": "ci-906-backend.log",
+      "source_sha256": "fb1fa3de96f807691d3d6aee26b53283dc778e916b0306877c64b99cb0c1a6c2",
+      "published_sha256": "fb1fa3de96f807691d3d6aee26b53283dc778e916b0306877c64b99cb0c1a6c2",
+      "bytes": 162068,
+      "credential_redactions": 0
+    },
+    {
+      "path": "ci-906-postgres.log",
+      "source_sha256": "fb6114540a0adde31dc87cc6bdb57924eed8647abb67bdd64b347388a8e15fdc",
+      "published_sha256": "79627ba5abe37cce6081ea4e771c263a67c3f42005397d54195157ea0ef889b7",
+      "bytes": 547695,
+      "credential_redactions": 6
+    },
+    {
+      "path": "ci-906-frontend.log",
+      "source_sha256": "235cfd8ddeaec689836b484cb43d372074c797db5fbeb30facf8826481dac376",
+      "published_sha256": "235cfd8ddeaec689836b484cb43d372074c797db5fbeb30facf8826481dac376",
+      "bytes": 1229521,
+      "credential_redactions": 0
+    }
+  ],
+  "scope": "Coordinator financial repair at exact SHA; not acceptance of the three future delivery packages, not 86 independent Issue approvals."
+}

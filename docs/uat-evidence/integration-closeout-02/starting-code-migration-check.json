@@ -1,0 +1,14 @@
+{
+  "checked_code_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+  "crm_leaf_nodes": [
+    [
+      "crm",
+      "0103_merge_finance_and_history"
+    ]
+  ],
+  "migration_nodes": 128,
+  "system_check": "PASS: no issues",
+  "makemigrations_check": "PASS: no changes detected",
+  "product_and_workflow_paths_changed": [],
+  "scope": "Starting 8087 code; current edits documentation/evidence only. Not a future source migration result."
+}

@@ -19,6 +19,10 @@ if os.environ.get("APP_STAGE", "development") != "development":
 if os.environ.get("DATABASE_URL") and not os.environ["DATABASE_URL"].startswith("sqlite://"):
     raise SystemExit("Refusing an inherited non-SQLite database target")
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+evidence_root = Path(os.environ.get("REVIEW_EVIDENCE_ROOT", Path(__file__).resolve().parent)).resolve()
+if not evidence_root.is_relative_to(repository.resolve()):
+    raise SystemExit("Evidence output must remain inside this checkout")
+(evidence_root / "logs").mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(backend))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
@@ -50,7 +54,7 @@ def restored_private_http(drill, restored):
         listener.bind(("127.0.0.1", 0))
         port = listener.getsockname()[1]
     env = drill._environment(restored["database"], Path(restored["media"]))
-    log_path = Path(__file__).resolve().parent / "logs" / f"restored-private-http-{drill.app_sha[:12]}.log"
+    log_path = evidence_root / "logs" / f"restored-private-http-{drill.app_sha[:12]}.log"
     proof = []
     with log_path.open("wb") as output:
         child = subprocess.Popen([sys.executable, str(backend / "manage.py"), "runserver",
@@ -150,7 +154,7 @@ def restore_with_finance_verification(drill, **kwargs):
                  "sequences": restored_sequences, "media_references": references,
                  "restored_real_http": restored_private_http(drill, restored),
                  "scope": "Owned synthetic PostgreSQL source/restore verification, not deployment acceptance"}
-        target = Path(__file__).resolve().parent / "artifacts" / "postgres-backups" / f"finance-restored-{drill.app_sha[:12]}.json"
+        target = evidence_root / "artifacts" / "postgres-backups" / f"finance-restored-{drill.app_sha[:12]}.json"
         target.write_text(json.dumps(proof, ensure_ascii=False, indent=2), encoding="utf-8")
         print("FINANCE_RESTORE_VERIFICATION=PASS", flush=True)
     return restored
@@ -186,7 +190,7 @@ def regression_then_backup(drill, **kwargs):
     backup = original_backup(drill, **kwargs)
     # Retain the exact synthetic archive before the drill removes its owned
     # cluster and temporary files. This never changes the backup implementation.
-    artifact_dir = Path(__file__).resolve().parent / "artifacts" / "postgres-backups"
+    artifact_dir = evidence_root / "artifacts" / "postgres-backups"
     artifact_dir.mkdir(parents=True, exist_ok=True)
     retained = artifact_dir / f"{drill.app_sha[:12]}-{uuid4().hex[:8]}.zip"
     raw_archive = Path(backup["archive"]).read_bytes()

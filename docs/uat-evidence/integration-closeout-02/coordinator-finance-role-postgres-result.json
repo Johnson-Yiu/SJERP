@@ -1,0 +1,57 @@
+{
+  "code_sha": "9af2a32fa81df3aa975424b70a887057e40b6b22",
+  "postgres": "17.11",
+  "total": 64,
+  "passed": 64,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 88.782,
+  "tested_checkout": ".tmp/role-pg-clean-9af",
+  "clean_backend_and_templates_verified": true,
+  "driver_delta": "Documentation runner only: per-run evidence output path; no product/guard/financial assertion changes",
+  "initial_main_worktree_attempt": {
+    "status": "REFUSED",
+    "exit": 1,
+    "tests_executed": 0,
+    "reason": "Application SHA must match a clean backend and templates checkout; another agent new test file was uncommitted",
+    "cleanup": "complete"
+  },
+  "restore_status": "PASS",
+  "tables": 99,
+  "rows": 1081,
+  "migrations": 128,
+  "private_files": 4,
+  "http_statuses": [
+    403,
+    403,
+    200,
+    404
+  ],
+  "backup_sha256": "ba4513f8aa806dc6eae154f933a5bd857efb247e8cf256688616c8ba6955c294",
+  "source_unchanged": true,
+  "cleanup": "complete",
+  "artifact_records": [
+    {
+      "path": "role-pg-9af/artifacts/postgres-backups/9af2a32fa81d-06c30d8a.zip",
+      "bytes": 400375,
+      "sha256": "ba4513f8aa806dc6eae154f933a5bd857efb247e8cf256688616c8ba6955c294"
+    },
+    {
+      "path": "role-pg-9af/artifacts/postgres-backups/9af2a32fa81d-06c30d8a.json",
+      "bytes": 12433,
+      "sha256": "fe453bf2f780aa3e8027b891c46e2c606f73337f4a845b0fced08c745d841754"
+    },
+    {
+      "path": "role-pg-9af/artifacts/postgres-backups/finance-restored-9af2a32fa81d.json",
+      "bytes": 11591,
+      "sha256": "1730efe79855752d7bf7bc34771178d4b30e24a79d0a71f6a23ed0e0d61ae328"
+    },
+    {
+      "path": "role-pg-9af/logs/restored-private-http-9af2a32fa81d.log",
+      "bytes": 462,
+      "sha256": "af834a428fc1758144e6375a6f39b38bb391890ee7cb43eef434db3666cabfa0"
+    }
+  ],
+  "logs_zip_sha256": "b90646b614e069dc1fc9d528447bd8d4b09fd4c1152a9ac08a58878978bf2f19",
+  "scope": "6 new role tests plus existing functional RBAC/finance data-scope regression in synthetic DB; not formal ERP login/RBAC activation"
+}

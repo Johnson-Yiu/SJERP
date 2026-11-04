@@ -1,0 +1,31 @@
+{
+  "code_sha": "a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f",
+  "total": 25,
+  "passed": 25,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 28.854,
+  "new_lock_boundary_tests": 7,
+  "ordered_pg_scenarios": 3,
+  "postgres": "17.11",
+  "separate_backend_pids_verified": true,
+  "real_blocking_pids_verified": true,
+  "no_clean_check_override": true,
+  "restore_status": "PASS",
+  "tables": 99,
+  "rows": 1081,
+  "migrations": 128,
+  "files": 4,
+  "http_statuses": [
+    403,
+    403,
+    200,
+    404
+  ],
+  "source_unchanged": true,
+  "cleanup": "complete",
+  "archive_sha256": "2f00dee96cf73b89fdf6608ce0138f3e5d788822eb2a4ab1737a355d1df69591",
+  "logs_zip_sha256": "64d7e18e271590c537f4f3498e00f323e4c76abebf4dc2da1ad98767c9fcfdae",
+  "draft_attempt_note": "Subagent draft with an in-process clean-check exception was aborted before tests; no accepted PG result. This committed a840 run uses original guard, no exception. Prior draft logs retained.",
+  "scope": "Exact a840 synthetic PG regression, not future sources or formal deployment"
+}

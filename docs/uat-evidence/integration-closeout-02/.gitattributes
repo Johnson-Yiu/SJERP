@@ -1,0 +1,13 @@
+# Keep original reports, downloaded evidence, and recovery proofs byte-exact.
+history/** -text
+ci-8087-browser/** -text
+postgres-9068350/** -text
+role-pg-9af/** -text
+lock-order-pg/** -text
+lock-order-pg-committed-a840/** -text
+*.zip binary
+**/*.png binary
+**/*.jpg binary
+**/*.pdf binary
+**/*.csv -text
+**/*.log -text

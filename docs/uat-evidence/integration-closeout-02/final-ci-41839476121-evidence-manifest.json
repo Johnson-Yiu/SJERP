@@ -1,0 +1,117 @@
+{
+  "source_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+  "artifact_sha256": "adbe1f662425afb408fc84eb1b66b3407a3634a83735e935e6623249aea849bc",
+  "selected_files": [
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout/account-facts-1440.png",
+      "bytes": 180002,
+      "sha256": "35c20ba6617d53b7f170b44d5f52981597718fe0cfcea051ed3dd9b2c933d3c9"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout/account-facts-390.png",
+      "bytes": 171201,
+      "sha256": "264ac0552134dd0537dbc75407ee39493b1b77c422fb2a77ac17c39d4d979d15"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout/facts-1440.csv",
+      "bytes": 388,
+      "sha256": "0dcc25540786b31eedcb051bd7eda8c9983b5a7623d2d90e163375086b3c3a5a"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout/facts-390.csv",
+      "bytes": 598,
+      "sha256": "ab0c78eca21602aef0bf03140794af45e2f2d28a87a9b28cdb14d2021f73e346"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout/http-1440.json",
+      "bytes": 342955,
+      "sha256": "96487dbfbbb5617f6c3fb5764a7bc130bb41891b31bfd33aef422e34f4729e47"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout/http-390.json",
+      "bytes": 367823,
+      "sha256": "a64367fa16256fac80066262c08225e5a6e27b1221b5398bae91342b02a67b5a"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/authenticated-facts-1440.csv",
+      "bytes": 1862,
+      "sha256": "9aeee8545280d2fbb949c9957702e86914939fb90f0278b104e0f9a10c273d48"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/authenticated-facts-390.csv",
+      "bytes": 3539,
+      "sha256": "b9aa8fd561acaa39047ac0c00e731a10047de88ed9b3b70058467d6db6e315ae"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/authenticated-http-1440.json",
+      "bytes": 33380,
+      "sha256": "1a840f2cad88485c8fd80180c3c6eefd75947bd40ef10345e11c576dc64c02a8"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/authenticated-http-390.json",
+      "bytes": 35798,
+      "sha256": "349d84c544e9b4ed06ff710e00ba09b32774ba952909757c324bf5406984c9fb"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/authenticated-http-progress-1440.json",
+      "bytes": 26716,
+      "sha256": "a0d3ab1020f86595091197b1f827988d9d70de823614526ce5c0be3ceec4f95c"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/authenticated-http-progress-390.json",
+      "bytes": 26710,
+      "sha256": "58f68c09e2f9042bf6e06909c49b4633a0b5b03170976ec6bdb7d7900f7cd0ed"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/reconciliation-completed-1440.png",
+      "bytes": 137444,
+      "sha256": "e5293eca1ec3462d08018ccb83b5f1237a0b55c962df1871daa0c11da5902cb0"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/reconciliation-completed-390.png",
+      "bytes": 105547,
+      "sha256": "e916196c8df71df24acbc17de9aaa95c89a2c7b552b1cd13ac833c79fcba4046"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/reconciliation-reopened-1440.png",
+      "bytes": 137682,
+      "sha256": "a557aa8db207ba7307b7124ec4ad3296f79e4f3bd7e5fc17a85999bc7eb39eaa"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/reconciliation-reopened-390.png",
+      "bytes": 104514,
+      "sha256": "f06aa31df34c0cceab47a56e89f11ac04189228d3dc2c76f9e4e1df11399f7ae"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/synthetic-voucher-1440.pdf",
+      "bytes": 617,
+      "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2"
+    },
+    {
+      "path": "ci-41839476121-1/browser/finance-closeout-approval/synthetic-voucher-390.pdf",
+      "bytes": 617,
+      "sha256": "bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2"
+    },
+    {
+      "path": "ci-41839476121-1/browser/iss039-amount-allocation/1440-database-final.json",
+      "bytes": 1209848,
+      "sha256": "239924a7e5fc2fc8ef6a91d216ed361b155823c279501fdd8447b86a51d09e5b"
+    },
+    {
+      "path": "ci-41839476121-1/browser/iss039-amount-allocation/390-database-final.json",
+      "bytes": 1209948,
+      "sha256": "6df1a1e037bb4b507c09405b7df2f0ad656d0c120756ee31b248c07ca776d33d"
+    },
+    {
+      "path": "ci-41839476121-1/suite-run-summary.json",
+      "bytes": 5456,
+      "sha256": "da611d639c8d9f15616f317f4dee9f877d24cdb23a60d4af24ba5ad151cb6e3e"
+    }
+  ],
+  "counts": {
+    "financial_png": 6,
+    "financial_pdf": 2,
+    "financial_csv": 4,
+    "iss039_final_snapshots": 2
+  }
+}

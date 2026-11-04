@@ -1,0 +1,358 @@
+[
+  {
+    "account_lock_wait": {
+      "blocking_pids": [
+        20172
+      ],
+      "confirmed": true,
+      "query": "SELECT \"crm_financefact\".\"id\", \"crm_financefact\".\"instruction_id\", \"crm_financefact\".\"account_id\", \"crm_financefact\".\"voucher_id\", \"crm_financefact\".\"actual_date\", \"crm_financefact\".\"amount\", \"crm_financefact\".\"direction\", \"crm_financefact\".\"kind\", \"crm_financefact\".\"excess_amount\", \"crm_financefact\".\"nature\", \"crm_financefact\".\"truth\", \"crm_financefact\".\"source_system\", \"crm_financefact\".\"source_key\", \"crm_financefact\".\"parent_id\", \"crm_financefact\".\"legacy_parent_id\", \"crm_financefact\".\"actor\", \"crm_financefact\".\"created_at\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"id\" = 33 LIMIT 21",
+      "state": "active",
+      "wait_event_type": "Lock"
+    },
+    "locked_account_id": 37,
+    "main_backend_pid": 20172,
+    "main_database": "test_sunjack_3dbddb14d960477a89e1e763d77846ad",
+    "main_pg_locks": [
+      [
+        "relation",
+        "AccessShareLock",
+        true,
+        "pg_locks",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount_code_7b92fb0a_like",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount_code_key",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount_pkey",
+        null
+      ],
+      [
+        "transactionid",
+        "ExclusiveLock",
+        true,
+        null,
+        "1481"
+      ],
+      [
+        "virtualxid",
+        "ExclusiveLock",
+        true,
+        null,
+        null
+      ]
+    ],
+    "owner_action_result": 4,
+    "worker_account_lock_queries": [
+      {
+        "params": "(37,)",
+        "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+      }
+    ],
+    "worker_backend_pid": 31560,
+    "worker_database": "test_sunjack_3dbddb14d960477a89e1e763d77846ad",
+    "worker_pre_account_lock_queries": [
+      "SELECT \"crm_financefact\".\"id\", \"crm_financefact\".\"instruction_id\", \"crm_financefact\".\"account_id\", \"crm_financefact\".\"voucher_id\", \"crm_financefact\".\"actual_date\", \"crm_financefact\".\"amount\", \"crm_financefact\".\"direction\", \"crm_financefact\".\"kind\", \"crm_financefact\".\"excess_amount\", \"crm_financefact\".\"nature\", \"crm_financefact\".\"truth\", \"crm_financefact\".\"source_system\", \"crm_financefact\".\"source_key\", \"crm_financefact\".\"parent_id\", \"crm_financefact\".\"legacy_parent_id\", \"crm_financefact\".\"actor\", \"crm_financefact\".\"created_at\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"id\" = %s LIMIT 21"
+    ],
+    "worker_result": {
+      "account_lock_queries": [
+        {
+          "params": "(37,)",
+          "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+        }
+      ],
+      "database": "test_sunjack_3dbddb14d960477a89e1e763d77846ad",
+      "kind": "rejected",
+      "pid": 31560,
+      "pre_account_lock_queries": [
+        "SELECT \"crm_financefact\".\"id\", \"crm_financefact\".\"instruction_id\", \"crm_financefact\".\"account_id\", \"crm_financefact\".\"voucher_id\", \"crm_financefact\".\"actual_date\", \"crm_financefact\".\"amount\", \"crm_financefact\".\"direction\", \"crm_financefact\".\"kind\", \"crm_financefact\".\"excess_amount\", \"crm_financefact\".\"nature\", \"crm_financefact\".\"truth\", \"crm_financefact\".\"source_system\", \"crm_financefact\".\"source_key\", \"crm_financefact\".\"parent_id\", \"crm_financefact\".\"legacy_parent_id\", \"crm_financefact\".\"actor\", \"crm_financefact\".\"created_at\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"id\" = %s LIMIT 21"
+      ],
+      "status": 400
+    }
+  },
+  {
+    "account_lock_wait": {
+      "blocking_pids": [
+        33000
+      ],
+      "confirmed": true,
+      "query": "SELECT \"crm_financefact\".\"id\", \"crm_financefact\".\"instruction_id\", \"crm_financefact\".\"account_id\", \"crm_financefact\".\"voucher_id\", \"crm_financefact\".\"actual_date\", \"crm_financefact\".\"amount\", \"crm_financefact\".\"direction\", \"crm_financefact\".\"kind\", \"crm_financefact\".\"excess_amount\", \"crm_financefact\".\"nature\", \"crm_financefact\".\"truth\", \"crm_financefact\".\"source_system\", \"crm_financefact\".\"source_key\", \"crm_financefact\".\"parent_id\", \"crm_financefact\".\"legacy_parent_id\", \"crm_financefact\".\"actor\", \"crm_financefact\".\"created_at\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"id\" = 36 LIMIT 21",
+      "state": "active",
+      "wait_event_type": "Lock"
+    },
+    "locked_account_id": 39,
+    "main_backend_pid": 33000,
+    "main_database": "test_sunjack_3dbddb14d960477a89e1e763d77846ad",
+    "main_pg_locks": [
+      [
+        "relation",
+        "AccessShareLock",
+        true,
+        "pg_locks",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount_code_7b92fb0a_like",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount_code_key",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount_pkey",
+        null
+      ],
+      [
+        "transactionid",
+        "ExclusiveLock",
+        true,
+        null,
+        "1527"
+      ],
+      [
+        "virtualxid",
+        "ExclusiveLock",
+        true,
+        null,
+        null
+      ]
+    ],
+    "owner_action_result": 3,
+    "worker_account_lock_queries": [
+      {
+        "params": "(38,)",
+        "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+      },
+      {
+        "params": "(39,)",
+        "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+      }
+    ],
+    "worker_backend_pid": 25308,
+    "worker_database": "test_sunjack_3dbddb14d960477a89e1e763d77846ad",
+    "worker_pre_account_lock_queries": [
+      "SELECT \"crm_financefact\".\"id\", \"crm_financefact\".\"instruction_id\", \"crm_financefact\".\"account_id\", \"crm_financefact\".\"voucher_id\", \"crm_financefact\".\"actual_date\", \"crm_financefact\".\"amount\", \"crm_financefact\".\"direction\", \"crm_financefact\".\"kind\", \"crm_financefact\".\"excess_amount\", \"crm_financefact\".\"nature\", \"crm_financefact\".\"truth\", \"crm_financefact\".\"source_system\", \"crm_financefact\".\"source_key\", \"crm_financefact\".\"parent_id\", \"crm_financefact\".\"legacy_parent_id\", \"crm_financefact\".\"actor\", \"crm_financefact\".\"created_at\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"id\" = %s LIMIT 21",
+      "SELECT \"crm_financeclassification\".\"id\", \"crm_financeclassification\".\"fact_id\", \"crm_financeclassification\".\"nature\", \"crm_financeclassification\".\"reason\", \"crm_financeclassification\".\"actor\", \"crm_financeclassification\".\"created_at\" FROM \"crm_financeclassification\" WHERE \"crm_financeclassification\".\"fact_id\" = %s ORDER BY \"crm_financeclassification\".\"id\" DESC LIMIT 1",
+      "SELECT \"crm_financefact\".\"parent_id\" AS \"parent_id\", \"crm_financefact\".\"legacy_parent_id\" AS \"legacy_parent_id\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"kind\" = %s",
+      "SELECT \"crm_rmbcashevent\".\"id\", \"crm_rmbcashevent\".\"created_at\", \"crm_rmbcashevent\".\"updated_at\", \"crm_rmbcashevent\".\"event_no\", \"crm_rmbcashevent\".\"request_key\", \"crm_rmbcashevent\".\"request_hash\", \"crm_rmbcashevent\".\"request_payload\", \"crm_rmbcashevent\".\"kind\", \"crm_rmbcashevent\".\"currency\", \"crm_rmbcashevent\".\"amount\", \"crm_rmbcashevent\".\"direction\", \"crm_rmbcashevent\".\"bank_date\", \"crm_rmbcashevent\".\"bank_net_amount\", \"crm_rmbcashevent\".\"fee_mode\", \"crm_rmbcashevent\".\"fee_amount\", \"crm_rmbcashevent\".\"source_account\", \"crm_rmbcashevent\".\"rmb_account\", \"crm_rmbcashevent\".\"bank_reference\", \"crm_rmbcashevent\".\"bank_counterparty\", \"crm_rmbcashevent\".\"bank_summary\", \"crm_rmbcashevent\".\"bank_transaction_id\", \"crm_rmbcashevent\".\"evidence_reference\", \"crm_rmbcashevent\".\"evidence_sha256\", \"crm_rmbcashevent\".\"evidence_note\", \"crm_rmbcashevent\".\"quoted_rate\", \"crm_rmbcashevent\".\"status\", \"crm_rmbcashevent\".\"created_actor\", \"crm_rmbcashevent\".\"confirmed_actor\", \"crm_rmbcashevent\".\"confirmed_at\", \"crm_rmbcashevent\".\"cancelled_reason\", \"crm_rmbcashevent\".\"correction_of_id\", \"crm_rmbcashevent\".\"fee_for_id\" FROM \"crm_rmbcashevent\" WHERE \"crm_rmbcashevent\".\"id\" = %s ORDER BY \"crm_rmbcashevent\".\"bank_date\" DESC, \"crm_rmbcashevent\".\"id\" DESC LIMIT 1",
+      "SELECT \"crm_cashsourceallocation\".\"id\", \"crm_cashsourceallocation\".\"created_at\", \"crm_cashsourceallocation\".\"updated_at\", \"crm_cashsourceallocation\".\"event_id\", \"crm_cashsourceallocation\".\"source_id\", \"crm_cashsourceallocation\".\"amount\", \"crm_cashsourceallocation\".\"currency\", \"crm_cashsourceallocation\".\"source_snapshot\", \"crm_transaction\".\"id\", \"crm_transaction\".\"created_at\", \"crm_transaction\".\"updated_at\", \"crm_transaction\".\"split_from_id\", \"crm_transaction\".\"transaction_no\", \"crm_transaction\".\"transaction_date\", \"crm_transaction\".\"direction\", \"crm_transaction\".\"category\", \"crm_transaction\".\"amount\", \"crm_transaction\".\"currency\", \"crm_transaction\".\"exchange_rate\", \"crm_transaction\".\"rmb_amount\", \"crm_transaction\".\"allocated_amount\", \"crm_transaction\".\"kind\", \"crm_transaction\".\"customer_id\", \"crm_transaction\".\"supplier_id\", \"crm_transaction\".\"order_id\", \"crm_transaction\".\"purchase_order_id\", \"crm_transaction\".\"plan_id\", \"crm_transaction\".\"replaces_id\", \"crm_transaction\".\"status\", \"crm_transaction\".\"voided_at\", \"crm_transaction\".\"void_reason\", \"crm_transaction\".\"payment_method\", \"crm_transaction\".\"reference\", \"crm_transaction\".\"notes\" FROM \"crm_cashsourceallocation\" INNER JOIN \"crm_transaction\" ON (\"crm_cashsourceallocation\".\"source_id\" = \"crm_transaction\".\"id\") WHERE \"crm_cashsourceallocation\".\"event_id\" = %s",
+      "SELECT \"crm_transaction\".\"id\", \"crm_transaction\".\"created_at\", \"crm_transaction\".\"updated_at\", \"crm_transaction\".\"split_from_id\", \"crm_transaction\".\"transaction_no\", \"crm_transaction\".\"transaction_date\", \"crm_transaction\".\"direction\", \"crm_transaction\".\"category\", \"crm_transaction\".\"amount\", \"crm_transaction\".\"currency\", \"crm_transaction\".\"exchange_rate\", \"crm_transaction\".\"rmb_amount\", \"crm_transaction\".\"allocated_amount\", \"crm_transaction\".\"kind\", \"crm_transaction\".\"customer_id\", \"crm_transaction\".\"supplier_id\", \"crm_transaction\".\"order_id\", \"crm_transaction\".\"purchase_order_id\", \"crm_transaction\".\"plan_id\", \"crm_transaction\".\"replaces_id\", \"crm_transaction\".\"status\", \"crm_transaction\".\"voided_at\", \"crm_transaction\".\"void_reason\", \"crm_transaction\".\"payment_method\", \"crm_transaction\".\"reference\", \"crm_transaction\".\"notes\" FROM \"crm_transaction\" WHERE \"crm_transaction\".\"split_from_id\" = %s ORDER BY \"crm_transaction\".\"id\" ASC",
+      "SELECT %s AS \"a\" FROM \"crm_transaction\" WHERE \"crm_transaction\".\"id\" = %s LIMIT 1",
+      "SELECT \"crm_customer\".\"id\", \"crm_customer\".\"created_at\", \"crm_customer\".\"updated_at\", \"crm_customer\".\"name\", \"crm_customer\".\"code\", \"crm_customer\".\"country\", \"crm_customer\".\"region\", \"crm_customer\".\"source\", \"crm_customer\".\"status\", \"crm_customer\".\"owner\", \"crm_customer\".\"owner_profile_id\", \"crm_customer\".\"website\", \"crm_customer\".\"address\", \"crm_customer\".\"notes\", \"crm_customer\".\"next_follow_up\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 21",
+      "SELECT \"crm_order\".\"id\", \"crm_order\".\"created_at\", \"crm_order\".\"updated_at\", \"crm_order\".\"order_no\", \"crm_order\".\"customer_id\", \"crm_order\".\"customer_name_snapshot\", \"crm_order\".\"customer_country_snapshot\", \"crm_order\".\"customer_address_snapshot\", \"crm_order\".\"customer_contact_name_snapshot\", \"crm_order\".\"customer_phone_snapshot\", \"crm_order\".\"customer_email_snapshot\", \"crm_order\".\"quote_id\", \"crm_order\".\"order_date\", \"crm_order\".\"expected_ship_date\", \"crm_order\".\"tail_goods_policy\", \"crm_order\".\"status\", \"crm_order\".\"historical_only\", \"crm_order\".\"currency\", \"crm_order\".\"exchange_rate\", \"crm_order\".\"shipping_fee\", \"crm_order\".\"discount\", \"crm_order\".\"notes\", \"crm_order\".\"cancelled_at\", \"crm_order\".\"cancellation_reason\", \"crm_order\".\"quantity_change_version\", \"crm_order\".\"amount_calculation_version\" FROM \"crm_order\" WHERE \"crm_order\".\"id\" = %s LIMIT 21",
+      "SELECT \"crm_paymentplan\".\"id\", \"crm_paymentplan\".\"created_at\", \"crm_paymentplan\".\"updated_at\", \"crm_paymentplan\".\"order_id\", \"crm_paymentplan\".\"purchase_order_id\", \"crm_paymentplan\".\"direction\", \"crm_paymentplan\".\"due_date\", \"crm_paymentplan\".\"planned_amount\", \"crm_paymentplan\".\"settled_amount\", \"crm_paymentplan\".\"currency\", \"crm_paymentplan\".\"status\", \"crm_paymentplan\".\"notes\" FROM \"crm_paymentplan\" WHERE \"crm_paymentplan\".\"id\" = %s LIMIT 21",
+      "SELECT \"crm_order\".\"id\", \"crm_order\".\"created_at\", \"crm_order\".\"updated_at\", \"crm_order\".\"order_no\", \"crm_order\".\"customer_id\", \"crm_order\".\"customer_name_snapshot\", \"crm_order\".\"customer_country_snapshot\", \"crm_order\".\"customer_address_snapshot\", \"crm_order\".\"customer_contact_name_snapshot\", \"crm_order\".\"customer_phone_snapshot\", \"crm_order\".\"customer_email_snapshot\", \"crm_order\".\"quote_id\", \"crm_order\".\"order_date\", \"crm_order\".\"expected_ship_date\", \"crm_order\".\"tail_goods_policy\", \"crm_order\".\"status\", \"crm_order\".\"historical_only\", \"crm_order\".\"currency\", \"crm_order\".\"exchange_rate\", \"crm_order\".\"shipping_fee\", \"crm_order\".\"discount\", \"crm_order\".\"notes\", \"crm_order\".\"cancelled_at\", \"crm_order\".\"cancellation_reason\", \"crm_order\".\"quantity_change_version\", \"crm_order\".\"amount_calculation_version\" FROM \"crm_order\" WHERE \"crm_order\".\"id\" = %s LIMIT 21",
+      "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+      "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+      "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+      "SELECT %s AS \"a\" FROM \"crm_cashsourceallocation\" WHERE \"crm_cashsourceallocation\".\"event_id\" = %s LIMIT 1",
+      "SELECT \"crm_financeaccountmapping\".\"id\", \"crm_financeaccountmapping\".\"legacy_code\", \"crm_financeaccountmapping\".\"account_id\", \"crm_financeaccountmapping\".\"reason\", \"crm_financeaccountmapping\".\"actor\", \"crm_financeaccountmapping\".\"created_at\" FROM \"crm_financeaccountmapping\" WHERE \"crm_financeaccountmapping\".\"legacy_code\" = %s ORDER BY \"crm_financeaccountmapping\".\"id\" ASC LIMIT 1",
+      "SELECT \"crm_financefact\".\"parent_id\" AS \"parent_id\", \"crm_financefact\".\"legacy_parent_id\" AS \"legacy_parent_id\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"kind\" = %s"
+    ],
+    "worker_result": {
+      "account_lock_queries": [
+        {
+          "params": "(38,)",
+          "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+        },
+        {
+          "params": "(39,)",
+          "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+        }
+      ],
+      "database": "test_sunjack_3dbddb14d960477a89e1e763d77846ad",
+      "kind": "rejected",
+      "pid": 25308,
+      "pre_account_lock_queries": [
+        "SELECT \"crm_financefact\".\"id\", \"crm_financefact\".\"instruction_id\", \"crm_financefact\".\"account_id\", \"crm_financefact\".\"voucher_id\", \"crm_financefact\".\"actual_date\", \"crm_financefact\".\"amount\", \"crm_financefact\".\"direction\", \"crm_financefact\".\"kind\", \"crm_financefact\".\"excess_amount\", \"crm_financefact\".\"nature\", \"crm_financefact\".\"truth\", \"crm_financefact\".\"source_system\", \"crm_financefact\".\"source_key\", \"crm_financefact\".\"parent_id\", \"crm_financefact\".\"legacy_parent_id\", \"crm_financefact\".\"actor\", \"crm_financefact\".\"created_at\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"id\" = %s LIMIT 21",
+        "SELECT \"crm_financeclassification\".\"id\", \"crm_financeclassification\".\"fact_id\", \"crm_financeclassification\".\"nature\", \"crm_financeclassification\".\"reason\", \"crm_financeclassification\".\"actor\", \"crm_financeclassification\".\"created_at\" FROM \"crm_financeclassification\" WHERE \"crm_financeclassification\".\"fact_id\" = %s ORDER BY \"crm_financeclassification\".\"id\" DESC LIMIT 1",
+        "SELECT \"crm_financefact\".\"parent_id\" AS \"parent_id\", \"crm_financefact\".\"legacy_parent_id\" AS \"legacy_parent_id\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"kind\" = %s",
+        "SELECT \"crm_rmbcashevent\".\"id\", \"crm_rmbcashevent\".\"created_at\", \"crm_rmbcashevent\".\"updated_at\", \"crm_rmbcashevent\".\"event_no\", \"crm_rmbcashevent\".\"request_key\", \"crm_rmbcashevent\".\"request_hash\", \"crm_rmbcashevent\".\"request_payload\", \"crm_rmbcashevent\".\"kind\", \"crm_rmbcashevent\".\"currency\", \"crm_rmbcashevent\".\"amount\", \"crm_rmbcashevent\".\"direction\", \"crm_rmbcashevent\".\"bank_date\", \"crm_rmbcashevent\".\"bank_net_amount\", \"crm_rmbcashevent\".\"fee_mode\", \"crm_rmbcashevent\".\"fee_amount\", \"crm_rmbcashevent\".\"source_account\", \"crm_rmbcashevent\".\"rmb_account\", \"crm_rmbcashevent\".\"bank_reference\", \"crm_rmbcashevent\".\"bank_counterparty\", \"crm_rmbcashevent\".\"bank_summary\", \"crm_rmbcashevent\".\"bank_transaction_id\", \"crm_rmbcashevent\".\"evidence_reference\", \"crm_rmbcashevent\".\"evidence_sha256\", \"crm_rmbcashevent\".\"evidence_note\", \"crm_rmbcashevent\".\"quoted_rate\", \"crm_rmbcashevent\".\"status\", \"crm_rmbcashevent\".\"created_actor\", \"crm_rmbcashevent\".\"confirmed_actor\", \"crm_rmbcashevent\".\"confirmed_at\", \"crm_rmbcashevent\".\"cancelled_reason\", \"crm_rmbcashevent\".\"correction_of_id\", \"crm_rmbcashevent\".\"fee_for_id\" FROM \"crm_rmbcashevent\" WHERE \"crm_rmbcashevent\".\"id\" = %s ORDER BY \"crm_rmbcashevent\".\"bank_date\" DESC, \"crm_rmbcashevent\".\"id\" DESC LIMIT 1",
+        "SELECT \"crm_cashsourceallocation\".\"id\", \"crm_cashsourceallocation\".\"created_at\", \"crm_cashsourceallocation\".\"updated_at\", \"crm_cashsourceallocation\".\"event_id\", \"crm_cashsourceallocation\".\"source_id\", \"crm_cashsourceallocation\".\"amount\", \"crm_cashsourceallocation\".\"currency\", \"crm_cashsourceallocation\".\"source_snapshot\", \"crm_transaction\".\"id\", \"crm_transaction\".\"created_at\", \"crm_transaction\".\"updated_at\", \"crm_transaction\".\"split_from_id\", \"crm_transaction\".\"transaction_no\", \"crm_transaction\".\"transaction_date\", \"crm_transaction\".\"direction\", \"crm_transaction\".\"category\", \"crm_transaction\".\"amount\", \"crm_transaction\".\"currency\", \"crm_transaction\".\"exchange_rate\", \"crm_transaction\".\"rmb_amount\", \"crm_transaction\".\"allocated_amount\", \"crm_transaction\".\"kind\", \"crm_transaction\".\"customer_id\", \"crm_transaction\".\"supplier_id\", \"crm_transaction\".\"order_id\", \"crm_transaction\".\"purchase_order_id\", \"crm_transaction\".\"plan_id\", \"crm_transaction\".\"replaces_id\", \"crm_transaction\".\"status\", \"crm_transaction\".\"voided_at\", \"crm_transaction\".\"void_reason\", \"crm_transaction\".\"payment_method\", \"crm_transaction\".\"reference\", \"crm_transaction\".\"notes\" FROM \"crm_cashsourceallocation\" INNER JOIN \"crm_transaction\" ON (\"crm_cashsourceallocation\".\"source_id\" = \"crm_transaction\".\"id\") WHERE \"crm_cashsourceallocation\".\"event_id\" = %s",
+        "SELECT \"crm_transaction\".\"id\", \"crm_transaction\".\"created_at\", \"crm_transaction\".\"updated_at\", \"crm_transaction\".\"split_from_id\", \"crm_transaction\".\"transaction_no\", \"crm_transaction\".\"transaction_date\", \"crm_transaction\".\"direction\", \"crm_transaction\".\"category\", \"crm_transaction\".\"amount\", \"crm_transaction\".\"currency\", \"crm_transaction\".\"exchange_rate\", \"crm_transaction\".\"rmb_amount\", \"crm_transaction\".\"allocated_amount\", \"crm_transaction\".\"kind\", \"crm_transaction\".\"customer_id\", \"crm_transaction\".\"supplier_id\", \"crm_transaction\".\"order_id\", \"crm_transaction\".\"purchase_order_id\", \"crm_transaction\".\"plan_id\", \"crm_transaction\".\"replaces_id\", \"crm_transaction\".\"status\", \"crm_transaction\".\"voided_at\", \"crm_transaction\".\"void_reason\", \"crm_transaction\".\"payment_method\", \"crm_transaction\".\"reference\", \"crm_transaction\".\"notes\" FROM \"crm_transaction\" WHERE \"crm_transaction\".\"split_from_id\" = %s ORDER BY \"crm_transaction\".\"id\" ASC",
+        "SELECT %s AS \"a\" FROM \"crm_transaction\" WHERE \"crm_transaction\".\"id\" = %s LIMIT 1",
+        "SELECT \"crm_customer\".\"id\", \"crm_customer\".\"created_at\", \"crm_customer\".\"updated_at\", \"crm_customer\".\"name\", \"crm_customer\".\"code\", \"crm_customer\".\"country\", \"crm_customer\".\"region\", \"crm_customer\".\"source\", \"crm_customer\".\"status\", \"crm_customer\".\"owner\", \"crm_customer\".\"owner_profile_id\", \"crm_customer\".\"website\", \"crm_customer\".\"address\", \"crm_customer\".\"notes\", \"crm_customer\".\"next_follow_up\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 21",
+        "SELECT \"crm_order\".\"id\", \"crm_order\".\"created_at\", \"crm_order\".\"updated_at\", \"crm_order\".\"order_no\", \"crm_order\".\"customer_id\", \"crm_order\".\"customer_name_snapshot\", \"crm_order\".\"customer_country_snapshot\", \"crm_order\".\"customer_address_snapshot\", \"crm_order\".\"customer_contact_name_snapshot\", \"crm_order\".\"customer_phone_snapshot\", \"crm_order\".\"customer_email_snapshot\", \"crm_order\".\"quote_id\", \"crm_order\".\"order_date\", \"crm_order\".\"expected_ship_date\", \"crm_order\".\"tail_goods_policy\", \"crm_order\".\"status\", \"crm_order\".\"historical_only\", \"crm_order\".\"currency\", \"crm_order\".\"exchange_rate\", \"crm_order\".\"shipping_fee\", \"crm_order\".\"discount\", \"crm_order\".\"notes\", \"crm_order\".\"cancelled_at\", \"crm_order\".\"cancellation_reason\", \"crm_order\".\"quantity_change_version\", \"crm_order\".\"amount_calculation_version\" FROM \"crm_order\" WHERE \"crm_order\".\"id\" = %s LIMIT 21",
+        "SELECT \"crm_paymentplan\".\"id\", \"crm_paymentplan\".\"created_at\", \"crm_paymentplan\".\"updated_at\", \"crm_paymentplan\".\"order_id\", \"crm_paymentplan\".\"purchase_order_id\", \"crm_paymentplan\".\"direction\", \"crm_paymentplan\".\"due_date\", \"crm_paymentplan\".\"planned_amount\", \"crm_paymentplan\".\"settled_amount\", \"crm_paymentplan\".\"currency\", \"crm_paymentplan\".\"status\", \"crm_paymentplan\".\"notes\" FROM \"crm_paymentplan\" WHERE \"crm_paymentplan\".\"id\" = %s LIMIT 21",
+        "SELECT \"crm_order\".\"id\", \"crm_order\".\"created_at\", \"crm_order\".\"updated_at\", \"crm_order\".\"order_no\", \"crm_order\".\"customer_id\", \"crm_order\".\"customer_name_snapshot\", \"crm_order\".\"customer_country_snapshot\", \"crm_order\".\"customer_address_snapshot\", \"crm_order\".\"customer_contact_name_snapshot\", \"crm_order\".\"customer_phone_snapshot\", \"crm_order\".\"customer_email_snapshot\", \"crm_order\".\"quote_id\", \"crm_order\".\"order_date\", \"crm_order\".\"expected_ship_date\", \"crm_order\".\"tail_goods_policy\", \"crm_order\".\"status\", \"crm_order\".\"historical_only\", \"crm_order\".\"currency\", \"crm_order\".\"exchange_rate\", \"crm_order\".\"shipping_fee\", \"crm_order\".\"discount\", \"crm_order\".\"notes\", \"crm_order\".\"cancelled_at\", \"crm_order\".\"cancellation_reason\", \"crm_order\".\"quantity_change_version\", \"crm_order\".\"amount_calculation_version\" FROM \"crm_order\" WHERE \"crm_order\".\"id\" = %s LIMIT 21",
+        "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+        "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+        "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+        "SELECT %s AS \"a\" FROM \"crm_cashsourceallocation\" WHERE \"crm_cashsourceallocation\".\"event_id\" = %s LIMIT 1",
+        "SELECT \"crm_financeaccountmapping\".\"id\", \"crm_financeaccountmapping\".\"legacy_code\", \"crm_financeaccountmapping\".\"account_id\", \"crm_financeaccountmapping\".\"reason\", \"crm_financeaccountmapping\".\"actor\", \"crm_financeaccountmapping\".\"created_at\" FROM \"crm_financeaccountmapping\" WHERE \"crm_financeaccountmapping\".\"legacy_code\" = %s ORDER BY \"crm_financeaccountmapping\".\"id\" ASC LIMIT 1",
+        "SELECT \"crm_financefact\".\"parent_id\" AS \"parent_id\", \"crm_financefact\".\"legacy_parent_id\" AS \"legacy_parent_id\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"kind\" = %s"
+      ],
+      "status": 400
+    }
+  },
+  {
+    "account_lock_wait": {
+      "blocking_pids": [
+        25740
+      ],
+      "confirmed": true,
+      "query": "SELECT \"crm_financefact\".\"id\", \"crm_financefact\".\"instruction_id\", \"crm_financefact\".\"account_id\", \"crm_financefact\".\"voucher_id\", \"crm_financefact\".\"actual_date\", \"crm_financefact\".\"amount\", \"crm_financefact\".\"direction\", \"crm_financefact\".\"kind\", \"crm_financefact\".\"excess_amount\", \"crm_financefact\".\"nature\", \"crm_financefact\".\"truth\", \"crm_financefact\".\"source_system\", \"crm_financefact\".\"source_key\", \"crm_financefact\".\"parent_id\", \"crm_financefact\".\"legacy_parent_id\", \"crm_financefact\".\"actor\", \"crm_financefact\".\"created_at\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"id\" = 39 LIMIT 21",
+      "state": "active",
+      "wait_event_type": "Lock"
+    },
+    "locked_account_id": 41,
+    "main_backend_pid": 25740,
+    "main_database": "test_sunjack_3dbddb14d960477a89e1e763d77846ad",
+    "main_pg_locks": [
+      [
+        "relation",
+        "AccessShareLock",
+        true,
+        "pg_locks",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount_code_7b92fb0a_like",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount_code_key",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount",
+        null
+      ],
+      [
+        "relation",
+        "RowShareLock",
+        true,
+        "crm_financeaccount_pkey",
+        null
+      ],
+      [
+        "transactionid",
+        "ExclusiveLock",
+        true,
+        null,
+        "1576"
+      ],
+      [
+        "virtualxid",
+        "ExclusiveLock",
+        true,
+        null,
+        null
+      ]
+    ],
+    "owner_action_result": 40,
+    "worker_account_lock_queries": [
+      {
+        "params": "(40,)",
+        "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+      },
+      {
+        "params": "(41,)",
+        "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+      }
+    ],
+    "worker_backend_pid": 14184,
+    "worker_database": "test_sunjack_3dbddb14d960477a89e1e763d77846ad",
+    "worker_pre_account_lock_queries": [
+      "SELECT \"crm_financefact\".\"id\", \"crm_financefact\".\"instruction_id\", \"crm_financefact\".\"account_id\", \"crm_financefact\".\"voucher_id\", \"crm_financefact\".\"actual_date\", \"crm_financefact\".\"amount\", \"crm_financefact\".\"direction\", \"crm_financefact\".\"kind\", \"crm_financefact\".\"excess_amount\", \"crm_financefact\".\"nature\", \"crm_financefact\".\"truth\", \"crm_financefact\".\"source_system\", \"crm_financefact\".\"source_key\", \"crm_financefact\".\"parent_id\", \"crm_financefact\".\"legacy_parent_id\", \"crm_financefact\".\"actor\", \"crm_financefact\".\"created_at\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"id\" = %s LIMIT 21",
+      "SELECT \"crm_financeclassification\".\"id\", \"crm_financeclassification\".\"fact_id\", \"crm_financeclassification\".\"nature\", \"crm_financeclassification\".\"reason\", \"crm_financeclassification\".\"actor\", \"crm_financeclassification\".\"created_at\" FROM \"crm_financeclassification\" WHERE \"crm_financeclassification\".\"fact_id\" = %s ORDER BY \"crm_financeclassification\".\"id\" DESC LIMIT 1",
+      "SELECT \"crm_financefact\".\"parent_id\" AS \"parent_id\", \"crm_financefact\".\"legacy_parent_id\" AS \"legacy_parent_id\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"kind\" = %s",
+      "SELECT \"crm_rmbcashevent\".\"id\", \"crm_rmbcashevent\".\"created_at\", \"crm_rmbcashevent\".\"updated_at\", \"crm_rmbcashevent\".\"event_no\", \"crm_rmbcashevent\".\"request_key\", \"crm_rmbcashevent\".\"request_hash\", \"crm_rmbcashevent\".\"request_payload\", \"crm_rmbcashevent\".\"kind\", \"crm_rmbcashevent\".\"currency\", \"crm_rmbcashevent\".\"amount\", \"crm_rmbcashevent\".\"direction\", \"crm_rmbcashevent\".\"bank_date\", \"crm_rmbcashevent\".\"bank_net_amount\", \"crm_rmbcashevent\".\"fee_mode\", \"crm_rmbcashevent\".\"fee_amount\", \"crm_rmbcashevent\".\"source_account\", \"crm_rmbcashevent\".\"rmb_account\", \"crm_rmbcashevent\".\"bank_reference\", \"crm_rmbcashevent\".\"bank_counterparty\", \"crm_rmbcashevent\".\"bank_summary\", \"crm_rmbcashevent\".\"bank_transaction_id\", \"crm_rmbcashevent\".\"evidence_reference\", \"crm_rmbcashevent\".\"evidence_sha256\", \"crm_rmbcashevent\".\"evidence_note\", \"crm_rmbcashevent\".\"quoted_rate\", \"crm_rmbcashevent\".\"status\", \"crm_rmbcashevent\".\"created_actor\", \"crm_rmbcashevent\".\"confirmed_actor\", \"crm_rmbcashevent\".\"confirmed_at\", \"crm_rmbcashevent\".\"cancelled_reason\", \"crm_rmbcashevent\".\"correction_of_id\", \"crm_rmbcashevent\".\"fee_for_id\" FROM \"crm_rmbcashevent\" WHERE \"crm_rmbcashevent\".\"id\" = %s ORDER BY \"crm_rmbcashevent\".\"bank_date\" DESC, \"crm_rmbcashevent\".\"id\" DESC LIMIT 1",
+      "SELECT \"crm_cashsourceallocation\".\"id\", \"crm_cashsourceallocation\".\"created_at\", \"crm_cashsourceallocation\".\"updated_at\", \"crm_cashsourceallocation\".\"event_id\", \"crm_cashsourceallocation\".\"source_id\", \"crm_cashsourceallocation\".\"amount\", \"crm_cashsourceallocation\".\"currency\", \"crm_cashsourceallocation\".\"source_snapshot\", \"crm_transaction\".\"id\", \"crm_transaction\".\"created_at\", \"crm_transaction\".\"updated_at\", \"crm_transaction\".\"split_from_id\", \"crm_transaction\".\"transaction_no\", \"crm_transaction\".\"transaction_date\", \"crm_transaction\".\"direction\", \"crm_transaction\".\"category\", \"crm_transaction\".\"amount\", \"crm_transaction\".\"currency\", \"crm_transaction\".\"exchange_rate\", \"crm_transaction\".\"rmb_amount\", \"crm_transaction\".\"allocated_amount\", \"crm_transaction\".\"kind\", \"crm_transaction\".\"customer_id\", \"crm_transaction\".\"supplier_id\", \"crm_transaction\".\"order_id\", \"crm_transaction\".\"purchase_order_id\", \"crm_transaction\".\"plan_id\", \"crm_transaction\".\"replaces_id\", \"crm_transaction\".\"status\", \"crm_transaction\".\"voided_at\", \"crm_transaction\".\"void_reason\", \"crm_transaction\".\"payment_method\", \"crm_transaction\".\"reference\", \"crm_transaction\".\"notes\" FROM \"crm_cashsourceallocation\" INNER JOIN \"crm_transaction\" ON (\"crm_cashsourceallocation\".\"source_id\" = \"crm_transaction\".\"id\") WHERE \"crm_cashsourceallocation\".\"event_id\" = %s",
+      "SELECT \"crm_transaction\".\"id\", \"crm_transaction\".\"created_at\", \"crm_transaction\".\"updated_at\", \"crm_transaction\".\"split_from_id\", \"crm_transaction\".\"transaction_no\", \"crm_transaction\".\"transaction_date\", \"crm_transaction\".\"direction\", \"crm_transaction\".\"category\", \"crm_transaction\".\"amount\", \"crm_transaction\".\"currency\", \"crm_transaction\".\"exchange_rate\", \"crm_transaction\".\"rmb_amount\", \"crm_transaction\".\"allocated_amount\", \"crm_transaction\".\"kind\", \"crm_transaction\".\"customer_id\", \"crm_transaction\".\"supplier_id\", \"crm_transaction\".\"order_id\", \"crm_transaction\".\"purchase_order_id\", \"crm_transaction\".\"plan_id\", \"crm_transaction\".\"replaces_id\", \"crm_transaction\".\"status\", \"crm_transaction\".\"voided_at\", \"crm_transaction\".\"void_reason\", \"crm_transaction\".\"payment_method\", \"crm_transaction\".\"reference\", \"crm_transaction\".\"notes\" FROM \"crm_transaction\" WHERE \"crm_transaction\".\"split_from_id\" = %s ORDER BY \"crm_transaction\".\"id\" ASC",
+      "SELECT %s AS \"a\" FROM \"crm_transaction\" WHERE \"crm_transaction\".\"id\" = %s LIMIT 1",
+      "SELECT \"crm_customer\".\"id\", \"crm_customer\".\"created_at\", \"crm_customer\".\"updated_at\", \"crm_customer\".\"name\", \"crm_customer\".\"code\", \"crm_customer\".\"country\", \"crm_customer\".\"region\", \"crm_customer\".\"source\", \"crm_customer\".\"status\", \"crm_customer\".\"owner\", \"crm_customer\".\"owner_profile_id\", \"crm_customer\".\"website\", \"crm_customer\".\"address\", \"crm_customer\".\"notes\", \"crm_customer\".\"next_follow_up\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 21",
+      "SELECT \"crm_order\".\"id\", \"crm_order\".\"created_at\", \"crm_order\".\"updated_at\", \"crm_order\".\"order_no\", \"crm_order\".\"customer_id\", \"crm_order\".\"customer_name_snapshot\", \"crm_order\".\"customer_country_snapshot\", \"crm_order\".\"customer_address_snapshot\", \"crm_order\".\"customer_contact_name_snapshot\", \"crm_order\".\"customer_phone_snapshot\", \"crm_order\".\"customer_email_snapshot\", \"crm_order\".\"quote_id\", \"crm_order\".\"order_date\", \"crm_order\".\"expected_ship_date\", \"crm_order\".\"tail_goods_policy\", \"crm_order\".\"status\", \"crm_order\".\"historical_only\", \"crm_order\".\"currency\", \"crm_order\".\"exchange_rate\", \"crm_order\".\"shipping_fee\", \"crm_order\".\"discount\", \"crm_order\".\"notes\", \"crm_order\".\"cancelled_at\", \"crm_order\".\"cancellation_reason\", \"crm_order\".\"quantity_change_version\", \"crm_order\".\"amount_calculation_version\" FROM \"crm_order\" WHERE \"crm_order\".\"id\" = %s LIMIT 21",
+      "SELECT \"crm_paymentplan\".\"id\", \"crm_paymentplan\".\"created_at\", \"crm_paymentplan\".\"updated_at\", \"crm_paymentplan\".\"order_id\", \"crm_paymentplan\".\"purchase_order_id\", \"crm_paymentplan\".\"direction\", \"crm_paymentplan\".\"due_date\", \"crm_paymentplan\".\"planned_amount\", \"crm_paymentplan\".\"settled_amount\", \"crm_paymentplan\".\"currency\", \"crm_paymentplan\".\"status\", \"crm_paymentplan\".\"notes\" FROM \"crm_paymentplan\" WHERE \"crm_paymentplan\".\"id\" = %s LIMIT 21",
+      "SELECT \"crm_order\".\"id\", \"crm_order\".\"created_at\", \"crm_order\".\"updated_at\", \"crm_order\".\"order_no\", \"crm_order\".\"customer_id\", \"crm_order\".\"customer_name_snapshot\", \"crm_order\".\"customer_country_snapshot\", \"crm_order\".\"customer_address_snapshot\", \"crm_order\".\"customer_contact_name_snapshot\", \"crm_order\".\"customer_phone_snapshot\", \"crm_order\".\"customer_email_snapshot\", \"crm_order\".\"quote_id\", \"crm_order\".\"order_date\", \"crm_order\".\"expected_ship_date\", \"crm_order\".\"tail_goods_policy\", \"crm_order\".\"status\", \"crm_order\".\"historical_only\", \"crm_order\".\"currency\", \"crm_order\".\"exchange_rate\", \"crm_order\".\"shipping_fee\", \"crm_order\".\"discount\", \"crm_order\".\"notes\", \"crm_order\".\"cancelled_at\", \"crm_order\".\"cancellation_reason\", \"crm_order\".\"quantity_change_version\", \"crm_order\".\"amount_calculation_version\" FROM \"crm_order\" WHERE \"crm_order\".\"id\" = %s LIMIT 21",
+      "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+      "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+      "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+      "SELECT %s AS \"a\" FROM \"crm_cashsourceallocation\" WHERE \"crm_cashsourceallocation\".\"event_id\" = %s LIMIT 1",
+      "SELECT \"crm_financeaccountmapping\".\"id\", \"crm_financeaccountmapping\".\"legacy_code\", \"crm_financeaccountmapping\".\"account_id\", \"crm_financeaccountmapping\".\"reason\", \"crm_financeaccountmapping\".\"actor\", \"crm_financeaccountmapping\".\"created_at\" FROM \"crm_financeaccountmapping\" WHERE \"crm_financeaccountmapping\".\"legacy_code\" = %s ORDER BY \"crm_financeaccountmapping\".\"id\" ASC LIMIT 1",
+      "SELECT \"crm_financefact\".\"parent_id\" AS \"parent_id\", \"crm_financefact\".\"legacy_parent_id\" AS \"legacy_parent_id\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"kind\" = %s"
+    ],
+    "worker_result": {
+      "account_lock_queries": [
+        {
+          "params": "(40,)",
+          "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+        },
+        {
+          "params": "(41,)",
+          "sql": "SELECT \"crm_financeaccount\".\"id\", \"crm_financeaccount\".\"created_at\", \"crm_financeaccount\".\"updated_at\", \"crm_financeaccount\".\"code\", \"crm_financeaccount\".\"name\", \"crm_financeaccount\".\"account_type\", \"crm_financeaccount\".\"ownership\", \"crm_financeaccount\".\"currency\", \"crm_financeaccount\".\"is_active\", \"crm_financeaccount\".\"ownership_reason\" FROM \"crm_financeaccount\" WHERE \"crm_financeaccount\".\"id\" = %s ORDER BY \"crm_financeaccount\".\"id\" ASC LIMIT 1 FOR UPDATE"
+        }
+      ],
+      "database": "test_sunjack_3dbddb14d960477a89e1e763d77846ad",
+      "kind": "rejected",
+      "pid": 14184,
+      "pre_account_lock_queries": [
+        "SELECT \"crm_financefact\".\"id\", \"crm_financefact\".\"instruction_id\", \"crm_financefact\".\"account_id\", \"crm_financefact\".\"voucher_id\", \"crm_financefact\".\"actual_date\", \"crm_financefact\".\"amount\", \"crm_financefact\".\"direction\", \"crm_financefact\".\"kind\", \"crm_financefact\".\"excess_amount\", \"crm_financefact\".\"nature\", \"crm_financefact\".\"truth\", \"crm_financefact\".\"source_system\", \"crm_financefact\".\"source_key\", \"crm_financefact\".\"parent_id\", \"crm_financefact\".\"legacy_parent_id\", \"crm_financefact\".\"actor\", \"crm_financefact\".\"created_at\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"id\" = %s LIMIT 21",
+        "SELECT \"crm_financeclassification\".\"id\", \"crm_financeclassification\".\"fact_id\", \"crm_financeclassification\".\"nature\", \"crm_financeclassification\".\"reason\", \"crm_financeclassification\".\"actor\", \"crm_financeclassification\".\"created_at\" FROM \"crm_financeclassification\" WHERE \"crm_financeclassification\".\"fact_id\" = %s ORDER BY \"crm_financeclassification\".\"id\" DESC LIMIT 1",
+        "SELECT \"crm_financefact\".\"parent_id\" AS \"parent_id\", \"crm_financefact\".\"legacy_parent_id\" AS \"legacy_parent_id\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"kind\" = %s",
+        "SELECT \"crm_rmbcashevent\".\"id\", \"crm_rmbcashevent\".\"created_at\", \"crm_rmbcashevent\".\"updated_at\", \"crm_rmbcashevent\".\"event_no\", \"crm_rmbcashevent\".\"request_key\", \"crm_rmbcashevent\".\"request_hash\", \"crm_rmbcashevent\".\"request_payload\", \"crm_rmbcashevent\".\"kind\", \"crm_rmbcashevent\".\"currency\", \"crm_rmbcashevent\".\"amount\", \"crm_rmbcashevent\".\"direction\", \"crm_rmbcashevent\".\"bank_date\", \"crm_rmbcashevent\".\"bank_net_amount\", \"crm_rmbcashevent\".\"fee_mode\", \"crm_rmbcashevent\".\"fee_amount\", \"crm_rmbcashevent\".\"source_account\", \"crm_rmbcashevent\".\"rmb_account\", \"crm_rmbcashevent\".\"bank_reference\", \"crm_rmbcashevent\".\"bank_counterparty\", \"crm_rmbcashevent\".\"bank_summary\", \"crm_rmbcashevent\".\"bank_transaction_id\", \"crm_rmbcashevent\".\"evidence_reference\", \"crm_rmbcashevent\".\"evidence_sha256\", \"crm_rmbcashevent\".\"evidence_note\", \"crm_rmbcashevent\".\"quoted_rate\", \"crm_rmbcashevent\".\"status\", \"crm_rmbcashevent\".\"created_actor\", \"crm_rmbcashevent\".\"confirmed_actor\", \"crm_rmbcashevent\".\"confirmed_at\", \"crm_rmbcashevent\".\"cancelled_reason\", \"crm_rmbcashevent\".\"correction_of_id\", \"crm_rmbcashevent\".\"fee_for_id\" FROM \"crm_rmbcashevent\" WHERE \"crm_rmbcashevent\".\"id\" = %s ORDER BY \"crm_rmbcashevent\".\"bank_date\" DESC, \"crm_rmbcashevent\".\"id\" DESC LIMIT 1",
+        "SELECT \"crm_cashsourceallocation\".\"id\", \"crm_cashsourceallocation\".\"created_at\", \"crm_cashsourceallocation\".\"updated_at\", \"crm_cashsourceallocation\".\"event_id\", \"crm_cashsourceallocation\".\"source_id\", \"crm_cashsourceallocation\".\"amount\", \"crm_cashsourceallocation\".\"currency\", \"crm_cashsourceallocation\".\"source_snapshot\", \"crm_transaction\".\"id\", \"crm_transaction\".\"created_at\", \"crm_transaction\".\"updated_at\", \"crm_transaction\".\"split_from_id\", \"crm_transaction\".\"transaction_no\", \"crm_transaction\".\"transaction_date\", \"crm_transaction\".\"direction\", \"crm_transaction\".\"category\", \"crm_transaction\".\"amount\", \"crm_transaction\".\"currency\", \"crm_transaction\".\"exchange_rate\", \"crm_transaction\".\"rmb_amount\", \"crm_transaction\".\"allocated_amount\", \"crm_transaction\".\"kind\", \"crm_transaction\".\"customer_id\", \"crm_transaction\".\"supplier_id\", \"crm_transaction\".\"order_id\", \"crm_transaction\".\"purchase_order_id\", \"crm_transaction\".\"plan_id\", \"crm_transaction\".\"replaces_id\", \"crm_transaction\".\"status\", \"crm_transaction\".\"voided_at\", \"crm_transaction\".\"void_reason\", \"crm_transaction\".\"payment_method\", \"crm_transaction\".\"reference\", \"crm_transaction\".\"notes\" FROM \"crm_cashsourceallocation\" INNER JOIN \"crm_transaction\" ON (\"crm_cashsourceallocation\".\"source_id\" = \"crm_transaction\".\"id\") WHERE \"crm_cashsourceallocation\".\"event_id\" = %s",
+        "SELECT \"crm_transaction\".\"id\", \"crm_transaction\".\"created_at\", \"crm_transaction\".\"updated_at\", \"crm_transaction\".\"split_from_id\", \"crm_transaction\".\"transaction_no\", \"crm_transaction\".\"transaction_date\", \"crm_transaction\".\"direction\", \"crm_transaction\".\"category\", \"crm_transaction\".\"amount\", \"crm_transaction\".\"currency\", \"crm_transaction\".\"exchange_rate\", \"crm_transaction\".\"rmb_amount\", \"crm_transaction\".\"allocated_amount\", \"crm_transaction\".\"kind\", \"crm_transaction\".\"customer_id\", \"crm_transaction\".\"supplier_id\", \"crm_transaction\".\"order_id\", \"crm_transaction\".\"purchase_order_id\", \"crm_transaction\".\"plan_id\", \"crm_transaction\".\"replaces_id\", \"crm_transaction\".\"status\", \"crm_transaction\".\"voided_at\", \"crm_transaction\".\"void_reason\", \"crm_transaction\".\"payment_method\", \"crm_transaction\".\"reference\", \"crm_transaction\".\"notes\" FROM \"crm_transaction\" WHERE \"crm_transaction\".\"split_from_id\" = %s ORDER BY \"crm_transaction\".\"id\" ASC",
+        "SELECT %s AS \"a\" FROM \"crm_transaction\" WHERE \"crm_transaction\".\"id\" = %s LIMIT 1",
+        "SELECT \"crm_customer\".\"id\", \"crm_customer\".\"created_at\", \"crm_customer\".\"updated_at\", \"crm_customer\".\"name\", \"crm_customer\".\"code\", \"crm_customer\".\"country\", \"crm_customer\".\"region\", \"crm_customer\".\"source\", \"crm_customer\".\"status\", \"crm_customer\".\"owner\", \"crm_customer\".\"owner_profile_id\", \"crm_customer\".\"website\", \"crm_customer\".\"address\", \"crm_customer\".\"notes\", \"crm_customer\".\"next_follow_up\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 21",
+        "SELECT \"crm_order\".\"id\", \"crm_order\".\"created_at\", \"crm_order\".\"updated_at\", \"crm_order\".\"order_no\", \"crm_order\".\"customer_id\", \"crm_order\".\"customer_name_snapshot\", \"crm_order\".\"customer_country_snapshot\", \"crm_order\".\"customer_address_snapshot\", \"crm_order\".\"customer_contact_name_snapshot\", \"crm_order\".\"customer_phone_snapshot\", \"crm_order\".\"customer_email_snapshot\", \"crm_order\".\"quote_id\", \"crm_order\".\"order_date\", \"crm_order\".\"expected_ship_date\", \"crm_order\".\"tail_goods_policy\", \"crm_order\".\"status\", \"crm_order\".\"historical_only\", \"crm_order\".\"currency\", \"crm_order\".\"exchange_rate\", \"crm_order\".\"shipping_fee\", \"crm_order\".\"discount\", \"crm_order\".\"notes\", \"crm_order\".\"cancelled_at\", \"crm_order\".\"cancellation_reason\", \"crm_order\".\"quantity_change_version\", \"crm_order\".\"amount_calculation_version\" FROM \"crm_order\" WHERE \"crm_order\".\"id\" = %s LIMIT 21",
+        "SELECT \"crm_paymentplan\".\"id\", \"crm_paymentplan\".\"created_at\", \"crm_paymentplan\".\"updated_at\", \"crm_paymentplan\".\"order_id\", \"crm_paymentplan\".\"purchase_order_id\", \"crm_paymentplan\".\"direction\", \"crm_paymentplan\".\"due_date\", \"crm_paymentplan\".\"planned_amount\", \"crm_paymentplan\".\"settled_amount\", \"crm_paymentplan\".\"currency\", \"crm_paymentplan\".\"status\", \"crm_paymentplan\".\"notes\" FROM \"crm_paymentplan\" WHERE \"crm_paymentplan\".\"id\" = %s LIMIT 21",
+        "SELECT \"crm_order\".\"id\", \"crm_order\".\"created_at\", \"crm_order\".\"updated_at\", \"crm_order\".\"order_no\", \"crm_order\".\"customer_id\", \"crm_order\".\"customer_name_snapshot\", \"crm_order\".\"customer_country_snapshot\", \"crm_order\".\"customer_address_snapshot\", \"crm_order\".\"customer_contact_name_snapshot\", \"crm_order\".\"customer_phone_snapshot\", \"crm_order\".\"customer_email_snapshot\", \"crm_order\".\"quote_id\", \"crm_order\".\"order_date\", \"crm_order\".\"expected_ship_date\", \"crm_order\".\"tail_goods_policy\", \"crm_order\".\"status\", \"crm_order\".\"historical_only\", \"crm_order\".\"currency\", \"crm_order\".\"exchange_rate\", \"crm_order\".\"shipping_fee\", \"crm_order\".\"discount\", \"crm_order\".\"notes\", \"crm_order\".\"cancelled_at\", \"crm_order\".\"cancellation_reason\", \"crm_order\".\"quantity_change_version\", \"crm_order\".\"amount_calculation_version\" FROM \"crm_order\" WHERE \"crm_order\".\"id\" = %s LIMIT 21",
+        "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+        "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+        "SELECT %s AS \"a\" FROM \"crm_customer\" WHERE \"crm_customer\".\"id\" = %s LIMIT 1",
+        "SELECT %s AS \"a\" FROM \"crm_cashsourceallocation\" WHERE \"crm_cashsourceallocation\".\"event_id\" = %s LIMIT 1",
+        "SELECT \"crm_financeaccountmapping\".\"id\", \"crm_financeaccountmapping\".\"legacy_code\", \"crm_financeaccountmapping\".\"account_id\", \"crm_financeaccountmapping\".\"reason\", \"crm_financeaccountmapping\".\"actor\", \"crm_financeaccountmapping\".\"created_at\" FROM \"crm_financeaccountmapping\" WHERE \"crm_financeaccountmapping\".\"legacy_code\" = %s ORDER BY \"crm_financeaccountmapping\".\"id\" ASC LIMIT 1",
+        "SELECT \"crm_financefact\".\"parent_id\" AS \"parent_id\", \"crm_financefact\".\"legacy_parent_id\" AS \"legacy_parent_id\" FROM \"crm_financefact\" WHERE \"crm_financefact\".\"kind\" = %s"
+      ],
+      "status": 400
+    }
+  }
+]

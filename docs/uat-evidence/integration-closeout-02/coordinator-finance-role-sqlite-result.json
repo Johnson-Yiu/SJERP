@@ -1,0 +1,50 @@
+{
+  "product_before": "90683506f5d9447974302d83c89ba27351d5dfd4",
+  "fix_sha": "9af2a32fa81df3aa975424b70a887057e40b6b22",
+  "runs": [
+    {
+      "log": "finance-role-before.log",
+      "total": 6,
+      "passed": 1,
+      "failed": 5,
+      "skipped": 0
+    },
+    {
+      "log": "finance-role-after.log",
+      "total": 91,
+      "passed": 91,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 42.077
+    },
+    {
+      "log": "finance-role-after-export-boundary.log",
+      "total": 91,
+      "passed": 91,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 54.708
+    }
+  ],
+  "archive": "coordinator-finance-role-sqlite-logs.zip",
+  "sha256": "c16187d39c1cb2fd9c62754e956d7e62a71f80296851d466b3eca78f1996618b",
+  "entries": [
+    {
+      "path": "finance-role-before.log",
+      "bytes": 13326,
+      "sha256": "6449a65b9361f34c00153903b9a956f2a24633f7bd8d13282771a358dd748d7a"
+    },
+    {
+      "path": "finance-role-after.log",
+      "bytes": 25317,
+      "sha256": "475047331cda05dd61530f3c47fc491b75ad75c58f9f2e0d3c426ca7b050bef1"
+    },
+    {
+      "path": "finance-role-after-export-boundary.log",
+      "bytes": 25317,
+      "sha256": "a3faaa5ca391a941fe224955199097f53719624e4fb12ba8d44f4416e4a5caa5"
+    }
+  ],
+  "runtime": "Python3.14.5 Windows / isolated test DB; class-local RBAC overrides only, no running application switch",
+  "scope": "Ordinary role route/action/export access; no claim of real ERP login or production RBAC acceptance"
+}

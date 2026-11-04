@@ -1,0 +1,30 @@
+{
+  "tested_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+  "run_id": 41839476121,
+  "scope": "Original final CI logs; explicit credential-field redactions only, original local bytes retained. Not a new closeout run.",
+  "logs_zip_sha256": "b85a9ab9ad592631d6c9af466fd789e8c803036acaa25e0dcf754beee517b775",
+  "entries": [
+    {
+      "path": "final-ci-backend-41839476121.log",
+      "source_sha256": "eb51cf1398fe9bb2c145903577c070fd7087b0daed577e8c08d08e08f0f733b3",
+      "published_sha256": "eb51cf1398fe9bb2c145903577c070fd7087b0daed577e8c08d08e08f0f733b3",
+      "bytes": 161050,
+      "credential_redactions": 0
+    },
+    {
+      "path": "final-ci-postgres-41839476121.log",
+      "source_sha256": "d4791e6a582de128feba6df7820ebfc08a16f8786b1b4e597723aa5561912bd0",
+      "published_sha256": "cb05c5e3693072d62d39e530ed34dd05f98548597d85a013854d8729529807a9",
+      "bytes": 546285,
+      "credential_redactions": 6
+    },
+    {
+      "path": "final-ci-frontend-41839476121.log",
+      "source_sha256": "ea32a95e496cc0a22228de563c62152bad84dc9e7ad0ddd5aee21b335da102bd",
+      "published_sha256": "ea32a95e496cc0a22228de563c62152bad84dc9e7ad0ddd5aee21b335da102bd",
+      "bytes": 1229526,
+      "credential_redactions": 0
+    }
+  ],
+  "compact_evidence_sha256": "b0b4a1395d772e6dafe6246be78a3af41cc8507f8c27e1b053c0b6641240fbb8"
+}

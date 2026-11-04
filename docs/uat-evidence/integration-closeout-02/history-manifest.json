@@ -1,0 +1,58 @@
+[
+  {
+    "original": "docs/uat-evidence/review-integration-batch-20261104/README.md",
+    "historical_copy": "docs/uat-evidence/integration-closeout-02/history/docs__uat-evidence__review-integration-batch-20261104__README.md",
+    "bytes": 11569,
+    "sha256": "2ed4a0369e10017d23ef0f10222cf7b494f2d19fffd997fb4fcf30ee740ac453",
+    "source_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750"
+  },
+  {
+    "original": "docs/uat-evidence/review-integration-batch-20261104/DELIVERY-STATUS.md",
+    "historical_copy": "docs/uat-evidence/integration-closeout-02/history/docs__uat-evidence__review-integration-batch-20261104__DELIVERY-STATUS.md",
+    "bytes": 6067,
+    "sha256": "56e2fb1ca10825ec806802b4a49c23b926740e2c21fde9cf6827e665650bc827",
+    "source_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750"
+  },
+  {
+    "original": "docs/uat-evidence/review-integration-batch-20261104/ISSUE-MATRIX.md",
+    "historical_copy": "docs/uat-evidence/integration-closeout-02/history/docs__uat-evidence__review-integration-batch-20261104__ISSUE-MATRIX.md",
+    "bytes": 62889,
+    "sha256": "2ff4be66900dfc9d4ab9b45e135dda537658f530ae6c6813846cc0230c0019b7",
+    "source_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750"
+  },
+  {
+    "original": "docs/uat-evidence/r1-prelaunch-consolidation-20261104/READINESS-GATES.md",
+    "historical_copy": "docs/uat-evidence/integration-closeout-02/history/docs__uat-evidence__r1-prelaunch-consolidation-20261104__READINESS-GATES.md",
+    "bytes": 5540,
+    "sha256": "8e263cbc7fb20b09f87a3e292ab54fb16bde839eda8d7eb22205b73db77d4490",
+    "source_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750"
+  },
+  {
+    "original": "docs/PROJECT_ISSUES.md",
+    "historical_copy": "docs/uat-evidence/integration-closeout-02/history/docs__PROJECT_ISSUES.md",
+    "bytes": 193408,
+    "sha256": "fe4372d4024953799745553fad14a19f36a0083cc457a835e5bd1d7a29632fba",
+    "source_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750"
+  },
+  {
+    "original": "docs/PROJECT_PHASES.md",
+    "historical_copy": "docs/uat-evidence/integration-closeout-02/history/docs__PROJECT_PHASES.md",
+    "bytes": 148250,
+    "sha256": "1fbb7ce1962c0bd336ffa2da84cb240ed8db695c28ac03469ffecf6169a247b6",
+    "source_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750"
+  },
+  {
+    "original": "docs/uat-evidence/review-integration-batch-20261104/SOURCE-CONTRACTS.md",
+    "historical_copy": "docs/uat-evidence/integration-closeout-02/history/docs__uat-evidence__review-integration-batch-20261104__SOURCE-CONTRACTS.md",
+    "bytes": 8609,
+    "sha256": "969d3e0046477d5a217f01462f5a03a80b87607e29a2cadb47f14db2d9fe2274",
+    "source_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750"
+  },
+  {
+    "original": "docs/uat-evidence/review-integration-batch-20261104/DEFECTS.md",
+    "historical_copy": "docs/uat-evidence/integration-closeout-02/history/docs__uat-evidence__review-integration-batch-20261104__DEFECTS.md",
+    "bytes": 3816,
+    "sha256": "d351463ebfc68cc799fd73b5d3f3df4e24df59161fb0e58e519bddc0dc9ffeda",
+    "source_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750"
+  }
+]

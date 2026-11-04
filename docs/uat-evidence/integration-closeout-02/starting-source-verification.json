@@ -1,0 +1,51 @@
+{
+  "checked_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+  "source_complete_ancestors": [
+    {
+      "name": "baseline",
+      "full_source_sha": "4388947d70d26bca66ca0bfc76b2383a2fc0d404",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41782956426,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "print",
+      "full_source_sha": "b3d0d386de70d9efd77bf62cdbd87877fbccbfb8",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41802910019,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "core-workspace",
+      "full_source_sha": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41808354916,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "finance",
+      "full_source_sha": "3a07e7ef1a9e63c98077d45492ba23b798c7fcdd",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41815451746,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "operations",
+      "full_source_sha": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41814619508,
+      "note": "Source CI provenance; not final integration CI"
+    },
+    {
+      "name": "history",
+      "full_source_sha": "a0729a0965850028fe52f5b6fcc3e825f23b1289",
+      "ancestor_of_checked_head": true,
+      "source_ci_run": 41822826770,
+      "note": "Source CI provenance; not final integration CI"
+    }
+  ],
+  "historical_report_files_verified": 8,
+  "history_bytes_and_git_source_verified": true,
+  "ci_receipt_status": "SUCCESS",
+  "scope": "Starting snapshot, not future source acceptance or new SHA CI"
+}

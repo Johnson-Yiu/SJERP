@@ -1,0 +1,380 @@
+{
+  "schema_version": 1,
+  "audit": {
+    "task": "INTEGRATION-CLOSEOUT-02 defect ledger audit",
+    "base_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+    "branch": "codex/r1-prelaunch-consolidation-20261104",
+    "review_type": "Codex read-only ledger mapping; not ChatGPT independent review",
+    "read_only": true,
+    "tests_run": false,
+    "shared_ledger_modified": false,
+    "issue_closed": false,
+    "commit_created": false,
+    "source_documents": [
+      "AGENTS.md",
+      "docs/PROJECT_ISSUES.md",
+      "docs/PROJECT_PHASES.md",
+      "docs/REVIEW_PROTOCOL.md",
+      "docs/uat-evidence/r1-prelaunch-consolidation-20261104/READINESS-GATES.md",
+      "docs/uat-evidence/review-integration-batch-20261104/DEFECTS.md",
+      "docs/uat-evidence/review-integration-batch-20261104/REVIEW-FINANCE-SOURCE.md",
+      "docs/uat-evidence/review-integration-batch-20261104/REVIEW-OPERATIONS-SOURCE.md",
+      "docs/uat-evidence/review-integration-batch-20261104/REVIEW-HISTORY-FINANCE-CONTRACT.md",
+      "docs/uat-evidence/review-integration-batch-20261104/SOURCE-CONTRACTS.md",
+      "docs/uat-evidence/integration-closeout-02/README.md"
+    ],
+    "public_issue_table": {
+      "numeric_id_rows": 123,
+      "highest_numeric_id": "ISS-123",
+      "additional_subissue": "ISS-008-FUP-01",
+      "unique_ids": 124,
+      "new_id_allocated": false
+    }
+  },
+  "issue_statuses_observed": [
+    {
+      "id": "ISS-007",
+      "status": "NEEDS_VERIFICATION",
+      "match": "attachment failure atomicity, recovery compensation and download filename"
+    },
+    {
+      "id": "ISS-017",
+      "status": "BLOCKED",
+      "match": "private media production proxy/storage ACL and direct access"
+    },
+    {
+      "id": "ISS-018",
+      "status": "BLOCKED",
+      "match": "backup, restore, target storage, writer quiescence, retention and operations"
+    },
+    {
+      "id": "ISS-037",
+      "status": "NEEDS_VERIFICATION",
+      "match": "only the explicitly deferred complete print/pagination sub-scope"
+    },
+    {
+      "id": "ISS-045",
+      "status": "FIXED_PENDING_REVIEW",
+      "match": "legacy QA tools and seed isolation; no historical script is formal business acceptance"
+    },
+    {
+      "id": "ISS-051",
+      "status": "BLOCKED",
+      "match": "production configuration, authentication identity and HTTPS deployment"
+    },
+    {
+      "id": "ISS-103",
+      "status": "NEEDS_VERIFICATION",
+      "match": "OrderDetailModal Vue Transition warning"
+    },
+    {
+      "id": "ISS-105",
+      "status": "FIXED_PENDING_REVIEW",
+      "match": "finance facts/statistics, corrections, fees and voucher scope; conditional truth persistence risk is an explicit verification subfinding"
+    },
+    {
+      "id": "ISS-108",
+      "status": "FIXED_PENDING_REVIEW",
+      "match": "confirmed correction/refund/retained-source rules; do not reopen as a new business decision"
+    },
+    {
+      "id": "ISS-121",
+      "status": "OPEN",
+      "match": "authorized historical handoff development and synthetic acceptance; real import/materials/config are separate boundaries"
+    }
+  ],
+  "findings": [
+    {
+      "key": "defects_attachment_atomicity",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/DEFECTS.md:5,13",
+      "classification": "existing_issue_with_repair_evidence",
+      "existing_issue_ids": [
+        "ISS-007"
+      ],
+      "ledger_status": {
+        "ISS-007": "NEEDS_VERIFICATION"
+      },
+      "summary": "Batch upload/delete audit failure compensation, recovery-copy privacy/bounds, and original download filename belong to the same attachment lifecycle scope.",
+      "recommendation": "No duplicate ID. Retain failed pre-fix logs and current recovery/PG evidence; leave independent review and production proxy/storage checks open under ISS-007/ISS-017."
+    },
+    {
+      "key": "defects_browser_readiness_and_runner",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/DEFECTS.md:6-7",
+      "classification": "resolved_test_harness_or_environment_issue",
+      "existing_issue_ids": [],
+      "summary": "Expired-finance-draft browser readiness assertion and the default unit timeout/cancellation were corrected in test setup/runner paths; reports preserve original failures and later reruns.",
+      "recommendation": "No product Issue on current evidence; do not rewrite original failed run as a pass."
+    },
+    {
+      "key": "defects_transition_warning",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/DEFECTS.md:8",
+      "classification": "existing_issue",
+      "existing_issue_ids": [
+        "ISS-103"
+      ],
+      "ledger_status": {
+        "ISS-103": "NEEDS_VERIFICATION"
+      },
+      "summary": "The OrderDetailModal non-single-root Vue Transition warning is the same warning already tracked by ISS-103.",
+      "recommendation": "Continue only ISS-103's trigger/visible-impact review; no duplicate."
+    },
+    {
+      "key": "defects_playwright_paths_pg_fixtures_manifest",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/DEFECTS.md:9-11",
+      "classification": "resolved_test_fixture_or_evidence_tooling",
+      "existing_issue_ids": [],
+      "related_but_distinct_issue_ids": [
+        "ISS-044"
+      ],
+      "summary": "Evidence-root redirection, isolated PG fixture/environment contract, and duplicate manifest prefixes are test/evidence maintenance. Supplier two-character fixture repair is not the ISS-044 real-data migration scan.",
+      "recommendation": "No new product ID. Keep ISS-044 real staging Supplier.code scan separately."
+    },
+    {
+      "key": "defects_log_card_copy",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/DEFECTS.md:12",
+      "classification": "repaired_ui_copy_and_layout_observation",
+      "existing_issue_ids": [],
+      "summary": "Real-browser copy/wrapping observation is reported fixed with visual and automated evidence; no matching active public issue was found.",
+      "recommendation": "No new open defect on current evidence."
+    },
+    {
+      "key": "defects_print_deferral",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/DEFECTS.md:15",
+      "classification": "explicitly_deferred_existing_scope",
+      "existing_issue_ids": [
+        "ISS-037"
+      ],
+      "ledger_status": {
+        "ISS-037": "NEEDS_VERIFICATION"
+      },
+      "summary": "Only complete print output and pagination are deferred; the deferral does not extend to other ISS-037 snapshot requirements.",
+      "recommendation": "Do not create a new defect or expand the deferred scope."
+    },
+    {
+      "key": "finance_fact_truth_invariant",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/REVIEW-FINANCE-SOURCE.md:23,29-37,77",
+      "code_evidence": [
+        "backend/crm/models.py:2048-2084",
+        "backend/crm/services/finance_closeout.py:349-364,449-452,514-539,553-578",
+        "backend/crm/finance_closeout_api.py:40-70",
+        "backend/crm/actual_cash_api.py:71-75",
+        "backend/crm/reporting.py:77-83"
+      ],
+      "classification": "conditional_financial_integrity_risk_evidence_insufficient_for_api_bypass_claim",
+      "existing_issue_ids": [
+        "ISS-105"
+      ],
+      "ledger_status": {
+        "ISS-105": "FIXED_PENDING_REVIEW"
+      },
+      "summary": "FinanceFact.truth is not constrained by model/database and readers do not filter it; the only non-test FinanceFact.objects.create located is finance_closeout.post(), which rejects non-verified payloads. Static report's ORM counterexample was not executed and requires an in-process ORM writer; no supported HTTP bypass was found.",
+      "recommendation": "Treat as an explicit ISS-105 verification subfinding, not a separate ID or confirmed external vulnerability. Resolve the invariant with a documented writer boundary or persistent constraint/consistent read guard, then verify through an authorized service boundary. Do not use a state-machine-bypassing artificial ORM insert alone as proof of a user-path defect."
+    },
+    {
+      "key": "finance_double_approval_scope",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/REVIEW-FINANCE-SOURCE.md:25,53-58",
+      "classification": "unconfirmed_business_policy_scope_not_code_defect",
+      "existing_issue_ids": [
+        "ISS-105"
+      ],
+      "do_not_reopen_issue_ids": [
+        "ISS-108"
+      ],
+      "summary": "Current APPROVAL_KINDS applies two-person review to specified sensitive actions, not every cash/return transaction. The report asks whether the business wants a broader policy; no existing rule in this review proves current behavior violates an accepted requirement.",
+      "recommendation": "Do not create a defect or reopen ISS-108's confirmed D04/D06 rules. If business later confirms universal dual approval, assess as a newly authorized policy change."
+    },
+    {
+      "key": "finance_fees_corrections_and_normal_paths",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/REVIEW-FINANCE-SOURCE.md:19-58",
+      "classification": "existing_coverage_no_new_defect_observed",
+      "existing_issue_ids": [
+        "ISS-105",
+        "ISS-108",
+        "ISS-119"
+      ],
+      "summary": "Review reports supported paths for internal-principal exclusion, independent fee accounting, included-fee non-duplication, retained original facts, corrections and approved-vs-paid refund distinction; no new failing path was established.",
+      "recommendation": "Reuse existing issue evidence; do not reopen confirmed financial principles."
+    },
+    {
+      "key": "operations_finance_voucher_backup_restore",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/REVIEW-OPERATIONS-SOURCE.md:27-33,63-71",
+      "classification": "existing_scope_with_synthetic_pg_evidence_and_target_environment_gaps",
+      "existing_issue_ids": [
+        "ISS-018",
+        "ISS-105"
+      ],
+      "ledger_status": {
+        "ISS-018": "BLOCKED",
+        "ISS-105": "FIXED_PENDING_REVIEW"
+      },
+      "summary": "FinanceVoucher path/size/SHA reference validation and synthetic PG backup/restore are already implemented/evidenced; production restore, roles, schedules, alerts, RPO/RTO and target media remain distinct.",
+      "recommendation": "No new implementation defect. Keep target operations acceptance under ISS-018."
+    },
+    {
+      "key": "operations_private_media_and_production_config",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/REVIEW-OPERATIONS-SOURCE.md:19-25,37-41,67-70",
+      "classification": "existing_deployment_verification_boundary",
+      "existing_issue_ids": [
+        "ISS-017",
+        "ISS-018",
+        "ISS-051"
+      ],
+      "ledger_status": {
+        "ISS-017": "BLOCKED",
+        "ISS-018": "BLOCKED",
+        "ISS-051": "BLOCKED"
+      },
+      "summary": "Application private-download behavior is present; actual reverse proxy/CDN/media ACL, OS/DB identity, Linux read-only media fence, secrets and failure-domain proof remain target-environment requirements.",
+      "recommendation": "Do not duplicate existing deployment blockers or treat hidden paths/app-level HTTP as production ACL proof."
+    },
+    {
+      "key": "operations_encrypted_publication_and_retention",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/REVIEW-OPERATIONS-SOURCE.md:43-61",
+      "classification": "repaired_code_path_plus_existing_target_operations_constraints",
+      "existing_issue_ids": [
+        "ISS-018",
+        "ISS-051"
+      ],
+      "summary": "Atomic encrypted publication and damage/target-collision refusal are reported repaired and tested. Hard-link support, residual temp cleanup warnings, explicit plaintext destinations and restore-verification configuration ACL are operational constraints.",
+      "recommendation": "No new code defect from the provided evidence; track target filesystem/config/credential controls under existing ISS-018/051."
+    },
+    {
+      "key": "history_handoff_pending_implementation",
+      "source": "docs/PROJECT_ISSUES.md:483; docs/PROJECT_PHASES.md:3-11; backend/crm/history_takeover.py:553-631",
+      "classification": "authorized_pending_implementation_not_new_defect",
+      "existing_issue_ids": [
+        "ISS-121"
+      ],
+      "ledger_status": {
+        "ISS-121": "OPEN"
+      },
+      "summary": "History execute_group currently returns finance/inventory/fulfillment not_connected. The public ledger and phase record explicitly authorize handoff implementation and synthetic acceptance; real data/configuration is a separate boundary.",
+      "recommendation": "Continue implementation only through the authorized stable-source workflow under ISS-121; preserve explicit status until formal services, atomicity, idempotency, concurrency and rejection paths pass. Do not block code work on missing real data and do not claim production connection."
+    },
+    {
+      "key": "history_finance_contract_length_and_mapping",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/SOURCE-CONTRACTS.md:7-18; backend/crm/history_takeover_models.py:55,89; backend/crm/services/finance_closeout.py:235-236",
+      "classification": "implementation_contract_acceptance_no_current_data_loss_defect",
+      "existing_issue_ids": [
+        "ISS-121",
+        "ISS-105"
+      ],
+      "summary": "History source_system max_length 160 exceeds finance service limit 80; source_key limit is 128. Current finance service rejects overlength rather than truncating. Truth labels, explicit bank-proof file, account, actual CNY amount/date, actors and idempotency require explicit mapping during authorized handoff implementation.",
+      "recommendation": "Add explicit mapping/rejection and all-or-none group behavior to ISS-121 acceptance. No evidence yet that real business source labels exceed limits or that truncation/data loss currently occurs; do not register a present defect."
+    },
+    {
+      "key": "history_real_import_and_configuration",
+      "source": "docs/uat-evidence/review-integration-batch-20261104/REVIEW-HISTORY-FINANCE-CONTRACT.md:61-69; docs/uat-evidence/r1-prelaunch-consolidation-20261104/READINESS-GATES.md:9-13",
+      "classification": "external_data_and_separately_authorized_execution_boundary",
+      "existing_issue_ids": [
+        "ISS-121",
+        "ISS-018",
+        "ISS-051"
+      ],
+      "summary": "Real activation date, balances, bank evidence, employee identity, production configuration and real import remain outside synthetic handoff acceptance.",
+      "recommendation": "Keep separate from the authorized history handoff development; do not infer values, import real data or call missing materials a code defect."
+    },
+    {
+      "key": "finance_adversarial_a01_api_counterexample_expense_matches_internal_principal",
+      "source": "User-provided source-chat progress: FINANCE-ADVERSARIAL A01; stable SHA and original artifact not delivered",
+      "classification": "reported_api_counterexample_pending_stable_evidence",
+      "existing_issue_ids": [
+        "ISS-105"
+      ],
+      "not_primary_independently_reproduced": true,
+      "evidence_status": "Chat reports failing assertion/response retained; raw evidence, complete source SHA and stable delivery pending",
+      "summary": "An outgoing expense fact reportedly still matches internal transfer principal, potentially excluding a real company outflow.",
+      "recommendation": "Track as a distinct ISS-105 subcase, not ISS-108 and not a new ID. On stable delivery, verify API response, fact direction/nature, match relation and company-flow/ledger output before classifying as confirmed."
+    },
+    {
+      "key": "finance_adversarial_a01_api_counterexample_reconcile_then_add_principal_pair",
+      "source": "User-provided source-chat progress: FINANCE-ADVERSARIAL A01; stable SHA and original artifact not delivered",
+      "classification": "reported_state_consistency_counterexample_pending_stable_evidence",
+      "existing_issue_ids": [
+        "ISS-105"
+      ],
+      "not_primary_independently_reproduced": true,
+      "evidence_status": "Chat reports failing assertion/response retained; raw evidence, complete source SHA and stable delivery pending",
+      "summary": "After account reconciliation is completed, adding an internal-principal pair reportedly leaves the reconciliation status displaying complete.",
+      "recommendation": "Keep separate from the first A01 subcase under ISS-105. Stable review should verify fingerprint invalidation/reconciliation-required state, API response and ledger relationship. Do not infer a successful fix from an in-progress source."
+    },
+    {
+      "key": "linux_a04_forged_restore_receipt_authorizes_retention_delete",
+      "source": "User-provided source-chat progress: Linux A04; stable SHA and original artifact not delivered",
+      "code_evidence_from_prior_review": [
+        "backend/crm/services/operations_retention.py:9-55",
+        "docs/uat-evidence/review-integration-batch-20261104/REVIEW-OPERATIONS-SOURCE.md:59-61"
+      ],
+      "classification": "reported_backup_retention_authorization_defect_pending_stable_evidence",
+      "suggested_priority": "P1",
+      "existing_issue_ids": [
+        "ISS-018"
+      ],
+      "ledger_status": {
+        "ISS-018": "BLOCKED"
+      },
+      "not_primary_independently_reproduced": true,
+      "evidence_status": "Chat reports self-supplied restore_verified_sha256 triggered retention deletion; independent signed real-restore receipt is being implemented; 7/7 result is transient and not stable acceptance",
+      "summary": "A user-controlled restore_verified_sha256 reportedly suffices to authorize backup pruning without proof of an actual successful restore.",
+      "recommendation": "Deduplicate under ISS-018's backup retention/recovery safety scope; do not create ISS-124 now. Require stable original deletion evidence and stable fix SHA. Verify forged, stale, replayed, mismatched and corrupt receipts are rejected; a signed receipt must bind to the exact archive and actual successful restore before pruning."
+    }
+  ],
+  "ledger_sync_observations": [
+    {
+      "document": "docs/PROJECT_ISSUES.md",
+      "location": "2026-11-04 top summary; ISS-105 and ISS-108 current rows",
+      "observation": "Some prose still says final CI/full PostgreSQL are pending from an earlier checkpoint; the 8087 closeout README and baseline-8087-ci-receipt.json record CI 41839476121 three SUCCESS.",
+      "recommendation": "Ledger owner may reconcile evidence timestamp/status text later; preserve ISS-105/108 FIXED_PENDING_REVIEW until independent review and all closure conditions are accepted."
+    },
+    {
+      "document": "docs/PROJECT_ISSUES.md",
+      "location": "ISS-018 current row",
+      "observation": "Target/production PostgreSQL and media environment remain unverified, while current closeout has isolated PG17 full tests and restore evidence.",
+      "recommendation": "Clarify target-environment scope in a later ledger update; do not imply isolated PG was never run and do not close deployment blocker."
+    }
+  ],
+  "new_issue_recommendation": {
+    "create_new_issue": false,
+    "reason": "The FinanceFact.truth conditional risk maps to ISS-105, the two newly relayed A01 API counterexamples map to ISS-105, and the A04 retention authorization report maps to ISS-018. A01/A04 stable source artifacts are not delivered and have not been independently reproduced.",
+    "possible_parents": [
+      "ISS-105",
+      "ISS-018"
+    ],
+    "next_numeric_candidate_if_later_required": "ISS-124",
+    "id_reserved": false
+  },
+  "boundaries": {
+    "historical_handoff_development_authorized": true,
+    "real_historical_import_authorized": false,
+    "production_configuration_or_deployment_authorized": false,
+    "shared_ledger_edit_authorized": false,
+    "issue_closure_authorized": false
+  },
+  "coordinator_followup": {
+    "finance_reproduced": true,
+    "baseline_product_sha": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+    "corrected_fixture_before": {
+      "passed": 0,
+      "failed": 3,
+      "errors": 0
+    },
+    "initial_fixture_before": {
+      "passed": 0,
+      "failed": 2,
+      "errors": 1
+    },
+    "fix_sha": "90683506f5d9447974302d83c89ba27351d5dfd4",
+    "sqlite_after": {
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0
+    },
+    "public_parent_ids": [
+      "ISS-105",
+      "ISS-018"
+    ],
+    "new_id_created": false,
+    "source_chat_provenance": "Coordinator read-only Codex thread inspection; not user-supplied or stable source acceptance",
+    "note": "Read-only subagent audit and subsequent coordinator reproduction are distinct stages."
+  }
+}

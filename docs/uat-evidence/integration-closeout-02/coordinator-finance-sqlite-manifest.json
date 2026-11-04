@@ -1,0 +1,63 @@
+{
+  "archive": "coordinator-finance-sqlite-logs.zip",
+  "sha256": "5209d1fffd6477230f873e8fa0b41989bb3edc5b16950c46181fc883863166fd",
+  "product_before": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
+  "product_after": "90683506f5d9447974302d83c89ba27351d5dfd4",
+  "runtime": "Python 3.14.5 on Windows; CI Python 3.12 results separately recorded",
+  "runs": [
+    {
+      "log": "finance-counterexamples-before.log",
+      "total": 3,
+      "passed": 0,
+      "failed": 2,
+      "errors": 1,
+      "reason": "2 product failures; historical mixed fixture changed MEDIA_ROOT and could not read prior voucher"
+    },
+    {
+      "log": "finance-counterexamples-before-fixture-corrected.log",
+      "total": 3,
+      "passed": 0,
+      "failed": 3,
+      "errors": 0,
+      "reason": "2 confirmed defect types; classification affects both current/current and legacy/current transfer match APIs"
+    },
+    {
+      "log": "finance-counterexamples-after.log",
+      "total": 30,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "log": "finance-counterexamples-expanded-after.log",
+      "total": 32,
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "entries": [
+    {
+      "path": "finance-counterexamples-before.log",
+      "bytes": 13732,
+      "sha256": "0453fc891687942a523ecb844b5f1d772ecad055f5a2b0ab321fc6fb09b4936f"
+    },
+    {
+      "path": "finance-counterexamples-before-fixture-corrected.log",
+      "bytes": 11369,
+      "sha256": "842ed8febc44f09ea4020d46c256d9c7da0f4be2e7d326d9820a20b686be733d"
+    },
+    {
+      "path": "finance-counterexamples-after.log",
+      "bytes": 14170,
+      "sha256": "53f0f43e0de534107a3fe41be8973bd1051a1aa3ad335013f6fe5df76f9186da"
+    },
+    {
+      "path": "finance-counterexamples-expanded-after.log",
+      "bytes": 14590,
+      "sha256": "d003f5cc523ae07d008d2be7a2afec246561cec6e3b90f6c8367f87ba6f49be6"
+    }
+  ],
+  "original_logs_unchanged": true,
+  "scope": "Synthetic API coordinator regression; not source package acceptance or final CI"
+}

@@ -110,11 +110,16 @@ jobs:
       - name: Install Chrome channel for ISS-028/035 regression
         working-directory: frontend
         run: npx playwright install --with-deps chrome
+      - name: Install virtual display for native print regression
+        run: sudo apt-get update && sudo apt-get install --yes xvfb xauth
       - name: Isolated Playwright regression suite
         working-directory: frontend
         env:
           R1_PLAYWRIGHT_EVIDENCE_ROOT: ${{ github.workspace }}/docs/uat-evidence/ci-${{ github.run_id }}-${{ github.run_attempt }}
-        run: npm run test:browser
+        run: |
+          command -v xvfb-run
+          command -v xauth
+          xvfb-run --auto-servernum --server-args="-screen 0 1440x1000x24 -nolisten tcp" npm run test:browser
       - name: Frontend build
         working-directory: frontend
         run: npm run build

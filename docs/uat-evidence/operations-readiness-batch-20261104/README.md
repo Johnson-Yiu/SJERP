@@ -29,7 +29,7 @@
 - [真实 PG17 新入口专项](maintenance-pg17-final.log)：84表、923行、全部数据/序列与附件引用一致；真实锁竞争、活动连接、其他登录角色拒绝；8次审计 UPDATE/DELETE拒绝、CSV审计TRUNCATE拒绝；损坏转储触发真实恢复失败且新建库已清理；源库不变；45.672秒。**媒体只读栅栏明确模拟。**
 - [真实 PG17 加密/副本/保留联合专项](maintenance-pg17-encrypted-final.log)：对实际数据库归档加密、解密到相同摘要、校验本机独立路径副本、保留最新一份并删除两份旧归档；最终状态/耗时见日志；不宣称异地或真实 Linux 媒体栅栏通过。
 - [真实 GnuPG 故障专项](crypto-real.log)：1,114,112字节，2.765秒；正常往返、错误密钥/截断密文拒绝，源文件不变，独立agent与临时目录清理完成。实际 GnuPG 2.4.9，OpenSSL 3.5.6；没有更改系统安装。
-- [npm锁定安装](npm-ci.log)、[生产构建](frontend-build.log)：通过；主JS约1,136.16 kB，gzip396.79 kB，保留既有超过500kB警告，不据此声称体验改善。
+- [npm锁定安装](npm-ci.log)、[生产构建](frontend-build.log)（[原始字节压缩留档](frontend-build.raw.log.gz)，文本视图仅清理行尾空白）：通过；主JS约1,136.16 kB，gzip396.79 kB，保留既有超过500kB警告，不据此声称体验改善。
 - [Python审计工具独立安装](pip-audit-tool-install.log)、[pip-audit](pip-audit-final.log)：公开PyPI直连恢复后完成，16项锁定依赖（含Pillow13.0.0）无已知漏洞返回；只代表本次公开库覆盖，不等于绝对安全。工具单独安装在任务临时目录，未改项目依赖。
 - [npm全依赖审计](npm-audit-all.json)：5项中危开发依赖；[生产依赖](npm-audit-production.json)：0项。未运行audit fix或无关升级。
 - [既有隔离PG17演练](pg17-command-run.log)：8项通过，806秒；仅作为来源演练回归，未改名成生产工具。

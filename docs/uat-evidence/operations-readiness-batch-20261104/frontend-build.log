@@ -19,7 +19,7 @@ dist/assets/_plugin-vue_export-helper-Bof68IwR.js    140.78 kB │ gzip:  53.44 
 dist/assets/index-BQ25Urc-.js                      1,136.16 kB │ gzip: 396.79 kB
 
 ✓ built in 3.07s
-[plugin builtin:vite-reporter] 
+[plugin builtin:vite-reporter]
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
@@ -31,4 +31,3 @@ Additional callback time came from the callbacks below and from callbacks under 
 1 callback is listed without a time. Its calls overlapped, so the time inside one call includes work from other calls. To find its cost, profile the build with `node --cpu-prof`:
   - plugin vite:css transform (92 calls)
 See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
-

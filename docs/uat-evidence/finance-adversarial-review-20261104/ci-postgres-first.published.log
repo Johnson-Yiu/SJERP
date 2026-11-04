@@ -297,7 +297,7 @@
 2026-11-04T15:11:59.7472702Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:11:59.7472925Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:11:59.7473139Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
-2026-11-04T15:11:59.7473430Z   DJANGO_SECRET_KEY: dPajlTNitGwWJhLRoCNx4CdJjKgnf9BP43UcFzpmpItdhHWjF-0UVwAz4vlpcWBT
+2026-11-04T15:11:59.7473430Z   DJANGO_SECRET_KEY: [REDACTED]
 2026-11-04T15:11:59.7473689Z ##[endgroup]
 2026-11-04T15:12:00.5449432Z Collecting asgiref==3.13.0 (from -r backend/requirements.lock (line 13))
 2026-11-04T15:12:00.6215224Z   Downloading asgiref-3.13.0-py3-none-any.whl.metadata (12 kB)
@@ -376,7 +376,7 @@
 2026-11-04T15:12:04.5141533Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:04.5141741Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:04.5141951Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
-2026-11-04T15:12:04.5142231Z   DJANGO_SECRET_KEY: dPajlTNitGwWJhLRoCNx4CdJjKgnf9BP43UcFzpmpItdhHWjF-0UVwAz4vlpcWBT
+2026-11-04T15:12:04.5142231Z   DJANGO_SECRET_KEY: [REDACTED]
 2026-11-04T15:12:04.5142520Z   MEDIA_ROOT: /home/runner/work/_temp/sunjack-postgres-media
 2026-11-04T15:12:04.5142704Z ##[endgroup]
 2026-11-04T15:12:04.5218756Z ##[group]Run python manage.py check
@@ -396,7 +396,7 @@
 2026-11-04T15:12:04.5236235Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:04.5236494Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:04.5236706Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
-2026-11-04T15:12:04.5236990Z   DJANGO_SECRET_KEY: dPajlTNitGwWJhLRoCNx4CdJjKgnf9BP43UcFzpmpItdhHWjF-0UVwAz4vlpcWBT
+2026-11-04T15:12:04.5236990Z   DJANGO_SECRET_KEY: [REDACTED]
 2026-11-04T15:12:04.5237289Z   MEDIA_ROOT: /home/runner/work/_temp/sunjack-postgres-media
 2026-11-04T15:12:04.5237472Z ##[endgroup]
 2026-11-04T15:12:05.2769403Z System check identified no issues (0 silenced).
@@ -417,7 +417,7 @@
 2026-11-04T15:12:05.4286920Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:05.4287237Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:05.4287561Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
-2026-11-04T15:12:05.4288006Z   DJANGO_SECRET_KEY: dPajlTNitGwWJhLRoCNx4CdJjKgnf9BP43UcFzpmpItdhHWjF-0UVwAz4vlpcWBT
+2026-11-04T15:12:05.4288006Z   DJANGO_SECRET_KEY: [REDACTED]
 2026-11-04T15:12:05.4288463Z   MEDIA_ROOT: /home/runner/work/_temp/sunjack-postgres-media
 2026-11-04T15:12:05.4288750Z ##[endgroup]
 2026-11-04T15:12:06.0153181Z No changes detected
@@ -438,7 +438,7 @@
 2026-11-04T15:12:06.1641775Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:06.1642019Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:06.1642229Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
-2026-11-04T15:12:06.1642512Z   DJANGO_SECRET_KEY: dPajlTNitGwWJhLRoCNx4CdJjKgnf9BP43UcFzpmpItdhHWjF-0UVwAz4vlpcWBT
+2026-11-04T15:12:06.1642512Z   DJANGO_SECRET_KEY: [REDACTED]
 2026-11-04T15:12:06.1642806Z   MEDIA_ROOT: /home/runner/work/_temp/sunjack-postgres-media
 2026-11-04T15:12:06.1642984Z ##[endgroup]
 2026-11-04T15:12:06.6947169Z Operations to perform:
@@ -589,7 +589,7 @@
 2026-11-04T15:12:16.1709588Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:16.1709842Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
 2026-11-04T15:12:16.1710061Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
-2026-11-04T15:12:16.1710341Z   DJANGO_SECRET_KEY: dPajlTNitGwWJhLRoCNx4CdJjKgnf9BP43UcFzpmpItdhHWjF-0UVwAz4vlpcWBT
+2026-11-04T15:12:16.1710341Z   DJANGO_SECRET_KEY: [REDACTED]
 2026-11-04T15:12:16.1710630Z   MEDIA_ROOT: /home/runner/work/_temp/sunjack-postgres-media
 2026-11-04T15:12:16.1710812Z ##[endgroup]
 2026-11-04T15:12:17.9210173Z Creating test database for alias 'default' ('test_sunjack_1b8efd4a441d4a86bdf4ee64e59c50f4')...

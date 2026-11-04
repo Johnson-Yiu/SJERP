@@ -15,6 +15,8 @@ for original in sorted(root.glob("*.log")):
     value = raw.decode("utf-8-sig", errors="replace")
     value = re.sub(r"(?i)(postgres(?:ql)?://[^:/\s]+:)[^@\s]+@", r"\1[REDACTED]@", value)
     value = re.sub(r"(/api/__test__/isolation/)[a-f0-9]+", r"\1[REDACTED]", value)
+    value = re.sub(r"(?i)((?:DJANGO_SECRET_KEY|POSTGRES_PASSWORD|PGPASSWORD)\s*:\s*)[^\s]+", r"\1[REDACTED]", value)
+    value = re.sub(r"(?i)(['\"]token['\"]\s*:\s*['\"])[^'\"]+", r"\1[REDACTED]", value)
     value = "\n".join(line.rstrip() for line in value.splitlines()).rstrip() + "\n"
     published = root / (original.stem + ".published.log")
     published.write_text(value, encoding="utf-8", newline="\n")

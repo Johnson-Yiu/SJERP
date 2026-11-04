@@ -637,8 +637,8 @@
 2026-11-04T15:25:06.8020219Z # Playwright selection: infrastructure smoke tests
 2026-11-04T15:25:06.8021213Z # Isolated RBAC mode: development superadmin
 2026-11-04T15:25:06.8022203Z # [isolation] Pre-migration isolation verification
-2026-11-04T15:25:07.6227502Z # [worktree-a +911ms] {'runId': 'e117db8b-82ab-49d2-ae7d-2a15b71ae9e0', 'token': '3734e9a8f989399af6c17ba5ebe10ebf527bba5ed92143c1', 'database': '/tmp/sunjack-r1-repair-06-umpDWh/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-umpDWh/media', 'rbacEnforcement': False}
-2026-11-04T15:25:07.6230944Z # [worktree-b +907ms] {'runId': 'ca2fa008-6199-4535-96bd-e23106737108', 'token': 'd1a4307dfd5a5e04031d958f7af2ab515ba233459c4773f3', 'database': '/tmp/sunjack-r1-repair-06-V8LAFv/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-V8LAFv/media', 'rbacEnforcement': False}
+2026-11-04T15:25:07.6227502Z # [worktree-a +911ms] {'runId': 'e117db8b-82ab-49d2-ae7d-2a15b71ae9e0', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-umpDWh/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-umpDWh/media', 'rbacEnforcement': False}
+2026-11-04T15:25:07.6230944Z # [worktree-b +907ms] {'runId': 'ca2fa008-6199-4535-96bd-e23106737108', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-V8LAFv/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-V8LAFv/media', 'rbacEnforcement': False}
 2026-11-04T15:25:07.7047878Z # [worktree-b +990ms] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:25:07.7065624Z # [worktree-b +990ms] [isolation] Django system check
 2026-11-04T15:25:07.7078999Z # [worktree-a +995ms] [isolation] Pre-migration isolation verification: passed
@@ -1175,10 +1175,10 @@
 2026-11-04T15:25:34.5695811Z # [worktree-b +27853ms] [isolation] Post-migration isolation verification
 2026-11-04T15:25:34.6616985Z # [worktree-a +27951ms] [isolation] Migration completeness check: passed
 2026-11-04T15:25:34.6626004Z # [isolation] Post-migration isolation verification
-2026-11-04T15:25:35.3287663Z # [worktree-b +28612ms] {'runId': 'ca2fa008-6199-4535-96bd-e23106737108', 'token': 'd1a4307dfd5a5e04031d958f7af2ab515ba233459c4773f3', 'database': '/tmp/sunjack-r1-repair-06-V8LAFv/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-V8LAFv/media', 'rbacEnforcement': False}
+2026-11-04T15:25:35.3287663Z # [worktree-b +28612ms] {'runId': 'ca2fa008-6199-4535-96bd-e23106737108', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-V8LAFv/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-V8LAFv/media', 'rbacEnforcement': False}
 2026-11-04T15:25:35.3290037Z # [worktree-b +28613ms]
 2026-11-04T15:25:35.4066180Z # [worktree-b +28691ms] [isolation] Post-migration isolation verification: passed
-2026-11-04T15:25:35.4268082Z # [worktree-a +28715ms] {'runId': 'e117db8b-82ab-49d2-ae7d-2a15b71ae9e0', 'token': '3734e9a8f989399af6c17ba5ebe10ebf527bba5ed92143c1', 'database': '/tmp/sunjack-r1-repair-06-umpDWh/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-umpDWh/media', 'rbacEnforcement': False}
+2026-11-04T15:25:35.4268082Z # [worktree-a +28715ms] {'runId': 'e117db8b-82ab-49d2-ae7d-2a15b71ae9e0', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-umpDWh/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-umpDWh/media', 'rbacEnforcement': False}
 2026-11-04T15:25:35.5626082Z # [worktree-a +28851ms] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:25:36.4336147Z # [worktree-b +29718ms] [isolated Django API] Performing system checks...
 2026-11-04T15:25:36.4726168Z # [worktree-a +29762ms] [isolated Django API] Performing system checks...
@@ -9742,7 +9742,7 @@
 2026-11-04T15:28:33.9688374Z Playwright selection: all browser tests except iss055-customer-404-real.spec.js, iss022-moq-real.spec.js, iss028-035-category-schema.spec.js, iss006-frontend-storage-chrome.spec.js, iss007-attachment-real.spec.js, iss007-image-snapshot-real.spec.js, shared-report-templates.spec.js, quote-editor-mobile-actions.spec.js
 2026-11-04T15:28:33.9702599Z Isolated RBAC mode: development superadmin
 2026-11-04T15:28:33.9703882Z [isolation] Pre-migration isolation verification
-2026-11-04T15:28:34.4320105Z [business-suite] {'runId': 'd827914d-d0d8-4dd0-ab74-6757ae0bb605', 'token': 'b00db8e3a3b188ec1c1aef08f14f9fa829d61d1d183e67bd', 'database': '/tmp/sunjack-r1-repair-06-BWysHu/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-BWysHu/media', 'rbacEnforcement': False}
+2026-11-04T15:28:34.4320105Z [business-suite] {'runId': 'd827914d-d0d8-4dd0-ab74-6757ae0bb605', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-BWysHu/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-BWysHu/media', 'rbacEnforcement': False}
 2026-11-04T15:28:34.4831471Z [business-suite] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:28:34.4832783Z [business-suite] [isolation] Django system check
 2026-11-04T15:28:35.5275616Z [business-suite] System check identified no issues (0 silenced).
@@ -9883,7 +9883,7 @@
 2026-11-04T15:28:49.3254417Z [business-suite] [isolation] Migration completeness check
 2026-11-04T15:28:50.5988637Z [business-suite] [isolation] Migration completeness check: passed
 2026-11-04T15:28:50.5989887Z [business-suite] [isolation] Post-migration isolation verification
-2026-11-04T15:28:51.0615255Z [business-suite] {'runId': 'd827914d-d0d8-4dd0-ab74-6757ae0bb605', 'token': 'b00db8e3a3b188ec1c1aef08f14f9fa829d61d1d183e67bd', 'database': '/tmp/sunjack-r1-repair-06-BWysHu/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-BWysHu/media', 'rbacEnforcement': False}
+2026-11-04T15:28:51.0615255Z [business-suite] {'runId': 'd827914d-d0d8-4dd0-ab74-6757ae0bb605', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-BWysHu/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-BWysHu/media', 'rbacEnforcement': False}
 2026-11-04T15:28:51.1127241Z [business-suite] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:28:51.1135887Z [business-suite] [isolation] Allowlisted synthetic fixture seed (seed_finance_browser.py)
 2026-11-04T15:28:51.5949988Z [business-suite] {"synthetic_users": [1, 2], "core_tables": {"sha256": "869cc4349f0ec3c203fe3ef7894fd7b69cea337e1fbbaf0baac68ecb44014ce7", "counts": {"Order": 0, "PurchaseOrder": 0, "InventoryMovement": 0, "PaymentPlan": 0, "Transaction": 0}}, "rbac_changed": false}
@@ -10806,7 +10806,7 @@
 2026-11-04T15:40:41.0642178Z [shared-report-templates-isolated] Playwright selection: shared-report-templates.spec.js
 2026-11-04T15:40:41.0643510Z Isolated RBAC mode: development superadmin
 2026-11-04T15:40:41.0645099Z [shared-report-templates-isolated] [isolation] Pre-migration isolation verification
-2026-11-04T15:40:41.5337108Z [shared-report-templates-isolated] {'runId': 'd852b655-7150-4d66-8f54-8d4c35fc7bfc', 'token': '7f493450021c2959ab8ecc4629ea0d2133ae8a6e405276eb', 'database': '/tmp/sunjack-r1-repair-06-VKmbFe/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-VKmbFe/media', 'rbacEnforcement': False}
+2026-11-04T15:40:41.5337108Z [shared-report-templates-isolated] {'runId': 'd852b655-7150-4d66-8f54-8d4c35fc7bfc', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-VKmbFe/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-VKmbFe/media', 'rbacEnforcement': False}
 2026-11-04T15:40:41.5932847Z [shared-report-templates-isolated] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:40:41.5936502Z [shared-report-templates-isolated] [isolation] Django system check
 2026-11-04T15:40:42.6425968Z [shared-report-templates-isolated] System check identified no issues (0 silenced).
@@ -10947,7 +10947,7 @@
 2026-11-04T15:40:56.7446828Z [shared-report-templates-isolated] [isolation] Migration completeness check
 2026-11-04T15:40:58.0014231Z [shared-report-templates-isolated] [isolation] Migration completeness check: passed
 2026-11-04T15:40:58.0016132Z [shared-report-templates-isolated] [isolation] Post-migration isolation verification
-2026-11-04T15:40:58.4673224Z [shared-report-templates-isolated] {'runId': 'd852b655-7150-4d66-8f54-8d4c35fc7bfc', 'token': '7f493450021c2959ab8ecc4629ea0d2133ae8a6e405276eb', 'database': '/tmp/sunjack-r1-repair-06-VKmbFe/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-VKmbFe/media', 'rbacEnforcement': False}
+2026-11-04T15:40:58.4673224Z [shared-report-templates-isolated] {'runId': 'd852b655-7150-4d66-8f54-8d4c35fc7bfc', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-VKmbFe/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-VKmbFe/media', 'rbacEnforcement': False}
 2026-11-04T15:40:58.5171337Z [shared-report-templates-isolated] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:40:59.0744004Z [shared-report-templates-isolated] [isolated Django API] Performing system checks...
 2026-11-04T15:40:59.0745354Z
@@ -10984,7 +10984,7 @@
 2026-11-04T15:41:16.5977869Z Playwright selection: quote-editor-mobile-actions.spec.js
 2026-11-04T15:41:16.5978960Z Isolated RBAC mode: development superadmin
 2026-11-04T15:41:16.5979888Z [isolation] Pre-migration isolation verification
-2026-11-04T15:41:17.0634187Z [quote-editor-isolated] {'runId': '1944190a-a243-48a6-b808-927e73456c35', 'token': 'b4b5eb09ee1b3850c35852a221ac19128193cc28489ea44b', 'database': '/tmp/sunjack-r1-repair-06-cwWVT2/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-cwWVT2/media', 'rbacEnforcement': False}
+2026-11-04T15:41:17.0634187Z [quote-editor-isolated] {'runId': '1944190a-a243-48a6-b808-927e73456c35', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-cwWVT2/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-cwWVT2/media', 'rbacEnforcement': False}
 2026-11-04T15:41:17.1129630Z [quote-editor-isolated] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:41:17.1132707Z [quote-editor-isolated] [isolation] Django system check
 2026-11-04T15:41:18.1505185Z [quote-editor-isolated] System check identified no issues (0 silenced).
@@ -11125,7 +11125,7 @@
 2026-11-04T15:41:32.1237801Z [quote-editor-isolated] [isolation] Migration completeness check
 2026-11-04T15:41:33.3676048Z [quote-editor-isolated] [isolation] Migration completeness check: passed
 2026-11-04T15:41:33.3677730Z [quote-editor-isolated] [isolation] Post-migration isolation verification
-2026-11-04T15:41:33.8177176Z [quote-editor-isolated] {'runId': '1944190a-a243-48a6-b808-927e73456c35', 'token': 'b4b5eb09ee1b3850c35852a221ac19128193cc28489ea44b', 'database': '/tmp/sunjack-r1-repair-06-cwWVT2/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-cwWVT2/media', 'rbacEnforcement': False}
+2026-11-04T15:41:33.8177176Z [quote-editor-isolated] {'runId': '1944190a-a243-48a6-b808-927e73456c35', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-cwWVT2/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-cwWVT2/media', 'rbacEnforcement': False}
 2026-11-04T15:41:33.8636770Z [quote-editor-isolated] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:41:33.8638468Z [quote-editor-isolated] [isolation] Allowlisted synthetic fixture seed (prepare_quote_actions.py)
 2026-11-04T15:41:34.3356118Z [quote-editor-isolated] {"customer": 1, "sku": 1, "synthetic_only": true}
@@ -11200,7 +11200,7 @@
 2026-11-04T15:41:50.8553416Z Playwright selection: iss006-frontend-storage-chrome.spec.js
 2026-11-04T15:41:50.8554360Z Isolated RBAC mode: development superadmin
 2026-11-04T15:41:50.8558530Z [isolation] Pre-migration isolation verification
-2026-11-04T15:41:51.3353501Z [iss006-storage-isolated] {'runId': '84f9bead-17cf-4eb1-babc-c9ff41cee397', 'token': 'ea2bd6cfb9a76c236329d41b03935895f9bf19fdf953c6b3', 'database': '/tmp/sunjack-r1-repair-06-etXjyI/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-etXjyI/media', 'rbacEnforcement': False}
+2026-11-04T15:41:51.3353501Z [iss006-storage-isolated] {'runId': '84f9bead-17cf-4eb1-babc-c9ff41cee397', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-etXjyI/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-etXjyI/media', 'rbacEnforcement': False}
 2026-11-04T15:41:51.3825563Z [iss006-storage-isolated] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:41:51.3826922Z [iss006-storage-isolated] [isolation] Django system check
 2026-11-04T15:41:52.4304212Z [iss006-storage-isolated] System check identified no issues (0 silenced).
@@ -11341,7 +11341,7 @@
 2026-11-04T15:42:06.3097818Z [iss006-storage-isolated] [isolation] Migration completeness check
 2026-11-04T15:42:07.5593695Z [iss006-storage-isolated] [isolation] Migration completeness check: passed
 2026-11-04T15:42:07.5596778Z [iss006-storage-isolated] [isolation] Post-migration isolation verification
-2026-11-04T15:42:08.0108709Z [iss006-storage-isolated] {'runId': '84f9bead-17cf-4eb1-babc-c9ff41cee397', 'token': 'ea2bd6cfb9a76c236329d41b03935895f9bf19fdf953c6b3', 'database': '/tmp/sunjack-r1-repair-06-etXjyI/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-etXjyI/media', 'rbacEnforcement': False}
+2026-11-04T15:42:08.0108709Z [iss006-storage-isolated] {'runId': '84f9bead-17cf-4eb1-babc-c9ff41cee397', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-etXjyI/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-etXjyI/media', 'rbacEnforcement': False}
 2026-11-04T15:42:08.0549166Z [iss006-storage-isolated] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:42:08.0550676Z [iss006-storage-isolated] [isolation] Allowlisted synthetic fixture seed (seed_iss006_frontend_storage_browser.py)
 2026-11-04T15:42:08.8181815Z [iss006-storage-isolated] {"fixture": "/home/runner/work/SUNJACK-ERP/SUNJACK-ERP/docs/uat-evidence/ci-41857369306-1/browser/iss006-frontend-storage-chrome.spec/fixture.json", "database": "/tmp/sunjack-r1-repair-06-etXjyI/db.sqlite3", "case_count": 10}
@@ -11526,7 +11526,7 @@
 2026-11-04T15:42:43.8607242Z Playwright selection: iss007-attachment-real.spec.js
 2026-11-04T15:42:43.8608060Z Isolated RBAC mode: development superadmin
 2026-11-04T15:42:43.8608882Z [isolation] Pre-migration isolation verification
-2026-11-04T15:42:44.3164500Z [iss007-attachment-isolated] {'runId': 'c12d0a96-7eba-4282-ab9c-d2aa0d7ce0bd', 'token': 'bb7a5f21b22064d4e9e557093525ebeac79ea19e1243cccb', 'database': '/tmp/sunjack-r1-repair-06-HnINua/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-HnINua/media', 'rbacEnforcement': False}
+2026-11-04T15:42:44.3164500Z [iss007-attachment-isolated] {'runId': 'c12d0a96-7eba-4282-ab9c-d2aa0d7ce0bd', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-HnINua/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-HnINua/media', 'rbacEnforcement': False}
 2026-11-04T15:42:44.3711042Z [iss007-attachment-isolated] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:42:44.3712919Z [iss007-attachment-isolated] [isolation] Django system check
 2026-11-04T15:42:45.3766989Z [iss007-attachment-isolated] System check identified no issues (0 silenced).
@@ -11667,7 +11667,7 @@
 2026-11-04T15:42:58.7677951Z [iss007-attachment-isolated] [isolation] Migration completeness check
 2026-11-04T15:43:00.0143546Z [iss007-attachment-isolated] [isolation] Migration completeness check: passed
 2026-11-04T15:43:00.0145247Z [iss007-attachment-isolated] [isolation] Post-migration isolation verification
-2026-11-04T15:43:00.4753912Z [iss007-attachment-isolated] {'runId': 'c12d0a96-7eba-4282-ab9c-d2aa0d7ce0bd', 'token': 'bb7a5f21b22064d4e9e557093525ebeac79ea19e1243cccb', 'database': '/tmp/sunjack-r1-repair-06-HnINua/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-HnINua/media', 'rbacEnforcement': False}
+2026-11-04T15:43:00.4753912Z [iss007-attachment-isolated] {'runId': 'c12d0a96-7eba-4282-ab9c-d2aa0d7ce0bd', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-HnINua/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-HnINua/media', 'rbacEnforcement': False}
 2026-11-04T15:43:00.5209645Z [iss007-attachment-isolated] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:43:00.5213795Z [iss007-attachment-isolated] [isolation] Allowlisted synthetic fixture seed (seed_isolated.py)
 2026-11-04T15:43:01.3278435Z [iss007-attachment-isolated] {'customer': 1, 'contact': 1, 'follow_up': 1, 'product': 1, 'sku': 1, 'quote': 1, 'quote_item': 1, 'sku_image': 'sku-images/2026/11/iss007-initial.png', 'quote_image_snapshot': 'quote-item-images/2026/11/iss007-initial.png'}
@@ -11762,7 +11762,7 @@
 2026-11-04T15:43:23.1838160Z Playwright selection: iss007-image-snapshot-real.spec.js
 2026-11-04T15:43:23.1839541Z Isolated RBAC mode: development superadmin
 2026-11-04T15:43:23.1840628Z [isolation] Pre-migration isolation verification
-2026-11-04T15:43:23.6537414Z [iss007-image-snapshot-isolated] {'runId': '0068c652-6a03-43ec-a605-0842cd0698ae', 'token': '3380b2d7d8ea9ee722d78181a10479f6d999ce8a71a29187', 'database': '/tmp/sunjack-r1-repair-06-s7acQ4/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-s7acQ4/media', 'rbacEnforcement': False}
+2026-11-04T15:43:23.6537414Z [iss007-image-snapshot-isolated] {'runId': '0068c652-6a03-43ec-a605-0842cd0698ae', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-s7acQ4/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-s7acQ4/media', 'rbacEnforcement': False}
 2026-11-04T15:43:23.7049130Z [iss007-image-snapshot-isolated] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:43:23.7055069Z [iss007-image-snapshot-isolated] [isolation] Django system check
 2026-11-04T15:43:24.7505265Z [iss007-image-snapshot-isolated] System check identified no issues (0 silenced).
@@ -11903,7 +11903,7 @@
 2026-11-04T15:43:38.6172691Z [iss007-image-snapshot-isolated] [isolation] Migration completeness check
 2026-11-04T15:43:39.8948703Z [iss007-image-snapshot-isolated] [isolation] Migration completeness check: passed
 2026-11-04T15:43:39.8962008Z [iss007-image-snapshot-isolated] [isolation] Post-migration isolation verification
-2026-11-04T15:43:40.3556502Z [iss007-image-snapshot-isolated] {'runId': '0068c652-6a03-43ec-a605-0842cd0698ae', 'token': '3380b2d7d8ea9ee722d78181a10479f6d999ce8a71a29187', 'database': '/tmp/sunjack-r1-repair-06-s7acQ4/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-s7acQ4/media', 'rbacEnforcement': False}
+2026-11-04T15:43:40.3556502Z [iss007-image-snapshot-isolated] {'runId': '0068c652-6a03-43ec-a605-0842cd0698ae', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-s7acQ4/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-s7acQ4/media', 'rbacEnforcement': False}
 2026-11-04T15:43:40.4063983Z [iss007-image-snapshot-isolated] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:43:40.4065911Z [iss007-image-snapshot-isolated] [isolation] Allowlisted synthetic fixture seed (seed_iss007_image_browser.py)
 2026-11-04T15:43:41.1271867Z [iss007-image-snapshot-isolated] {"synthetic_only": true, "customer_id": 1, "product_id": 1, "sku_id": 1, "sku_code": "ISS007-UAT-SKU", "missing_quote_id": 1, "missing_quote_item_id": 1, "missing_image_path": "quote-item-images/iss007-uat/missing-history-image.png", "original_image_sha256": "e05b89a310859dc8d13be6782631c61799a3ccdfaa2cea5e5a564704ac93f254", "replacement_image_sha256": "b7175c6db29b334b723879cda0288abf4aad3f46c96fffffac74228bbd5a4305"}
@@ -12034,7 +12034,7 @@
 2026-11-04T15:44:05.3280510Z [iss022-isolated] Playwright selection: iss022-moq-real.spec.js
 2026-11-04T15:44:05.3281577Z [iss022-isolated] Isolated RBAC mode: development superadmin
 2026-11-04T15:44:05.3282595Z [iss022-isolated] [isolation] Pre-migration isolation verification
-2026-11-04T15:44:05.7928345Z [iss022-isolated] {'runId': '3ecdd965-ce63-40ca-b7ff-d72dab8b35e9', 'token': 'b35fb6166e58b6ce352508dc17458c61ee1f285fd532aefd', 'database': '/tmp/sunjack-r1-repair-06-lpLAbM/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-lpLAbM/media', 'rbacEnforcement': False}
+2026-11-04T15:44:05.7928345Z [iss022-isolated] {'runId': '3ecdd965-ce63-40ca-b7ff-d72dab8b35e9', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-lpLAbM/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-lpLAbM/media', 'rbacEnforcement': False}
 2026-11-04T15:44:05.8407492Z [iss022-isolated] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:44:05.8416143Z [iss022-isolated] [isolation] Django system check
 2026-11-04T15:44:06.8636206Z [iss022-isolated] System check identified no issues (0 silenced).
@@ -12175,7 +12175,7 @@
 2026-11-04T15:44:20.6738547Z [iss022-isolated] [isolation] Migration completeness check
 2026-11-04T15:44:21.9465620Z [iss022-isolated] [isolation] Migration completeness check: passed
 2026-11-04T15:44:21.9467107Z [iss022-isolated] [isolation] Post-migration isolation verification
-2026-11-04T15:44:22.4193840Z [iss022-isolated] {'runId': '3ecdd965-ce63-40ca-b7ff-d72dab8b35e9', 'token': 'b35fb6166e58b6ce352508dc17458c61ee1f285fd532aefd', 'database': '/tmp/sunjack-r1-repair-06-lpLAbM/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-lpLAbM/media', 'rbacEnforcement': False}
+2026-11-04T15:44:22.4193840Z [iss022-isolated] {'runId': '3ecdd965-ce63-40ca-b7ff-d72dab8b35e9', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-lpLAbM/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-lpLAbM/media', 'rbacEnforcement': False}
 2026-11-04T15:44:22.4781549Z [iss022-isolated] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:44:22.4786075Z [iss022-isolated] [isolation] Allowlisted synthetic fixture seed (seed_iss022_browser.py)
 2026-11-04T15:44:22.9711861Z [iss022-isolated] {"database": "sqlite:////tmp/sunjack-r1-repair-06-lpLAbM/db.sqlite3", "supplier_id": 1, "supplier_name": "ISS022 浏览器供应商", "sku_id": 1, "sku_code": "ISS022-BROWSER-SKU", "sku_name": "ISS022 浏览器测试 SKU", "supplier_sku_id": 1, "supplier_sku_code": "ISS022-BROWSER-SOURCE", "moq": "10.00", "trade_unit_id": 1, "trade_unit_name": "10 件箱", "trade_unit": "box", "trade_factor": "10.00"}
@@ -12253,7 +12253,7 @@
 2026-11-04T15:44:40.5152476Z Playwright selection: iss028-035-category-schema.spec.js
 2026-11-04T15:44:40.5153309Z Isolated RBAC mode: development superadmin
 2026-11-04T15:44:40.5154073Z [isolation] Pre-migration isolation verification
-2026-11-04T15:44:40.9987450Z [iss028-035-isolated] {'runId': '7546afa8-bba4-4bd5-a163-abb75b440b14', 'token': '382246d54dc8d9b4a999cefc356c35eaa52f77db7cce3bef', 'database': '/tmp/sunjack-r1-repair-06-OIW7eZ/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-OIW7eZ/media', 'rbacEnforcement': False}
+2026-11-04T15:44:40.9987450Z [iss028-035-isolated] {'runId': '7546afa8-bba4-4bd5-a163-abb75b440b14', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-OIW7eZ/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-OIW7eZ/media', 'rbacEnforcement': False}
 2026-11-04T15:44:41.0587595Z [iss028-035-isolated] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:44:41.0589077Z [iss028-035-isolated] [isolation] Django system check
 2026-11-04T15:44:42.1579302Z [iss028-035-isolated] System check identified no issues (0 silenced).
@@ -12394,7 +12394,7 @@
 2026-11-04T15:44:57.5490528Z [iss028-035-isolated] [isolation] Migration completeness check
 2026-11-04T15:44:58.8628999Z [iss028-035-isolated] [isolation] Migration completeness check: passed
 2026-11-04T15:44:58.8630035Z [iss028-035-isolated] [isolation] Post-migration isolation verification
-2026-11-04T15:44:59.3363689Z [iss028-035-isolated] {'runId': '7546afa8-bba4-4bd5-a163-abb75b440b14', 'token': '382246d54dc8d9b4a999cefc356c35eaa52f77db7cce3bef', 'database': '/tmp/sunjack-r1-repair-06-OIW7eZ/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-OIW7eZ/media', 'rbacEnforcement': False}
+2026-11-04T15:44:59.3363689Z [iss028-035-isolated] {'runId': '7546afa8-bba4-4bd5-a163-abb75b440b14', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-OIW7eZ/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-OIW7eZ/media', 'rbacEnforcement': False}
 2026-11-04T15:44:59.3910734Z [iss028-035-isolated] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:44:59.9723203Z [iss028-035-isolated] [isolated Django API] Performing system checks...
 2026-11-04T15:44:59.9727096Z
@@ -12537,7 +12537,7 @@
 2026-11-04T15:45:24.5235718Z Playwright selection: iss055-customer-404-real.spec.js
 2026-11-04T15:45:24.5238282Z Isolated RBAC mode: ISS-055 employee session
 2026-11-04T15:45:24.5238972Z [isolation] Pre-migration isolation verification
-2026-11-04T15:45:24.9906092Z [iss055-rbac] {'runId': '9c918cb2-f6ce-4324-a046-a7facfa65d61', 'token': 'f47b6824788d7a088d5b9a9b8e870ce74932db38f1760946', 'database': '/tmp/sunjack-r1-repair-06-o3YZD8/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-o3YZD8/media', 'rbacEnforcement': True}
+2026-11-04T15:45:24.9906092Z [iss055-rbac] {'runId': '9c918cb2-f6ce-4324-a046-a7facfa65d61', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-o3YZD8/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-o3YZD8/media', 'rbacEnforcement': True}
 2026-11-04T15:45:25.0478027Z [iss055-rbac] [isolation] Pre-migration isolation verification: passed
 2026-11-04T15:45:25.0483343Z [iss055-rbac] [isolation] Django system check
 2026-11-04T15:45:26.0948870Z [iss055-rbac] System check identified no issues (0 silenced).
@@ -12678,7 +12678,7 @@
 2026-11-04T15:45:40.3454447Z [iss055-rbac] [isolation] Migration completeness check
 2026-11-04T15:45:41.7317097Z [iss055-rbac] [isolation] Migration completeness check: passed
 2026-11-04T15:45:41.7318301Z [iss055-rbac] [isolation] Post-migration isolation verification
-2026-11-04T15:45:42.2080855Z [iss055-rbac] {'runId': '9c918cb2-f6ce-4324-a046-a7facfa65d61', 'token': 'f47b6824788d7a088d5b9a9b8e870ce74932db38f1760946', 'database': '/tmp/sunjack-r1-repair-06-o3YZD8/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-o3YZD8/media', 'rbacEnforcement': True}
+2026-11-04T15:45:42.2080855Z [iss055-rbac] {'runId': '9c918cb2-f6ce-4324-a046-a7facfa65d61', 'token': '[REDACTED]', 'database': '/tmp/sunjack-r1-repair-06-o3YZD8/db.sqlite3', 'mediaRoot': '/tmp/sunjack-r1-repair-06-o3YZD8/media', 'rbacEnforcement': True}
 2026-11-04T15:45:42.2773964Z [iss055-rbac] [isolation] Post-migration isolation verification: passed
 2026-11-04T15:45:42.2785460Z [iss055-rbac] [isolation] Allowlisted synthetic fixture seed (seed.py)
 2026-11-04T15:45:43.1428310Z [iss055-rbac] {"visible_id": 1, "hidden_id": 2, "username": "iss055-9c918cb2", "employee_profile_id": 1}

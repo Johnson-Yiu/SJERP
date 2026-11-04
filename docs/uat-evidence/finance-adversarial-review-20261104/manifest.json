@@ -1,6 +1,6 @@
 {
   "baseline": "8087f2c68b19a302a25e814ec8ce6113d91d4750",
-  "source_checkpoint": "3c34d9e121e751af39267fc28338bf2233178fc3",
+  "source_checkpoint": "2e20bfdccb711bdd5f9028cb60e287ee742c77c5",
   "normalization": "text LF; no business expectation rewriting",
   "logs": [
     {
@@ -254,13 +254,13 @@
     },
     {
       "path": "ci-frontend-print-timeout.published.log",
-      "bytes": 1224385,
-      "sha256_git_lf": "4e7e2000916152a606c3faefa62436526f9471d0f5188a26d419947f473cd9f5"
+      "bytes": 1223549,
+      "sha256_git_lf": "5850ec958bbd9f81070883953c9a28c63771cef9c5453520067f27656c4aadaa"
     },
     {
       "path": "ci-postgres-first.published.log",
-      "bytes": 570468,
-      "sha256_git_lf": "4ce9279a06ec464b1537d41a09a4dfb72a6c71100d644cf8682b8adeb11b4648"
+      "bytes": 570144,
+      "sha256_git_lf": "30166a2e128c71c703fadcdd0d8a7aacd048775d878f0a74fb8166bb6f4c5a56"
     },
     {
       "path": "COMMANDS.md",
@@ -514,8 +514,8 @@
     },
     {
       "path": "publish_evidence.py",
-      "bytes": 2044,
-      "sha256_git_lf": "982dfe330f58e1d99cd7eb48c642d7a7382e625891ab31bb7fb2e4b4bfba4e10"
+      "bytes": 2249,
+      "sha256_git_lf": "cb5441da3ea8412c62a3e01b466cb5bd57442fc2dc2fe17c332740a66bb1b7cd"
     },
     {
       "path": "reachability.json",
@@ -529,8 +529,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 12268,
-      "sha256_git_lf": "49f4232faad3b5f94a57449259e4b5687b70fb757dcedf2ce1b0a6977d88bb43"
+      "bytes": 12690,
+      "sha256_git_lf": "2079adf6520d9c728dfef1afa58c4e40cd7bf5fe346c20c658d641ce56eecee7"
     },
     {
       "path": "run_postgres.py",

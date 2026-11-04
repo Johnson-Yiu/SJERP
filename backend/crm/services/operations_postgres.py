@@ -13,6 +13,7 @@ import uuid
 import zipfile
 import shutil
 import re
+import stat
 
 import psycopg
 from psycopg import sql
@@ -185,14 +186,19 @@ class MaintenanceBackup:
             stage = Path(staging)
             with zipfile.ZipFile(archive) as bundle:
                 names = bundle.namelist()
-                if len(names) != len(set(names)) or bundle.testzip() is not None:
+                if len(names) != len(set(names)):
                     raise ValueError("Invalid archive members")
+                if sum(member.file_size for member in bundle.infolist()) > shutil.disk_usage(stage).free // 2:
+                    raise ValueError("Insufficient safe extraction capacity")
+                for member in bundle.infolist():
+                    if stat.S_ISLNK(member.external_attr >> 16) or member.flag_bits & 1:
+                        raise ValueError("Archive links and encrypted ZIP members are unsupported")
+                if bundle.testzip() is not None:
+                    raise ValueError("Invalid archive checksum")
                 for name in names:
                     _safe_member_path(name)
                     if name not in ("manifest.json", "database.dump") and not name.startswith("media/"):
                         raise ValueError("Unexpected archive member")
-                if sum(member.file_size for member in bundle.infolist()) > shutil.disk_usage(stage).free // 2:
-                    raise ValueError("Insufficient safe extraction capacity")
                 # Extraction also enforces safe paths and forbids archive links.
                 _extract_archive(archive, stage)
             manifest = json.loads((stage / "manifest.json").read_text(encoding="utf-8"))

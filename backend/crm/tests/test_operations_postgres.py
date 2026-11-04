@@ -1,6 +1,9 @@
 from pathlib import Path
 import tempfile
 from unittest import TestCase, mock
+import stat
+import zipfile
+from crm.services.operations_copy import digest
 
 from crm.services.operations_postgres import MaintenanceBackup
 
@@ -35,3 +38,17 @@ class MaintenanceSafetyTests(TestCase):
         connection.execute.return_value.fetchone.return_value = ("synthetic", "9999", 170011)
         with self.assertRaisesRegex(RuntimeError, "identity"):
             self.service.identity(connection)
+
+    def test_archive_symlink_refused_before_any_database_operation(self):
+        with tempfile.TemporaryDirectory(prefix="sunjack-restore-link-") as folder:
+            root = Path(folder)
+            source = root / "unsafe.zip"
+            member = zipfile.ZipInfo("media/linked")
+            member.create_system = 3
+            member.external_attr = (stat.S_IFLNK | 0o777) << 16
+            with zipfile.ZipFile(source, "w") as archive:
+                archive.writestr(member, "../../must-not-exist")
+            with mock.patch.object(self.service, "connect") as connect:
+                with self.assertRaisesRegex(ValueError, "Archive links"):
+                    self.service.restore(archive=source, expected_sha256=digest(source), media_parent=root)
+                connect.assert_not_called()

@@ -19,6 +19,12 @@
 
 ## 已实施 / 待独立复审
 
+### CI发现并补修的库存错误展示回归
+
+阶段66869e0的CI #41804761983：Backend及Backend PostgreSQL通过，Frontend在 `inventory-ux.spec.js:62` 失败：mock HTTP500 detail为“库存服务失败”，原用例正确要求统一的“服务器暂时不可用”提示，实际页面直接显示detail。完整原始日志 logs/ci-66869e0-failed.log 保留。这是本轮错误展示实现的兼容性回归，不是过时断言；原浏览器测试不改、不跳过、不增加timeout。
+
+补修：InventoryPage复用现有apiErrorMessage统一策略，403继续显示具体拒绝原因，500保持统一自然中文提示；403组件夹具改为实际api.js会抛出的normalized error结构，新增500及重试回归。定向30/30通过（logs/inventory-ci-fix.log），生产构建通过（build-inventory-ci-fix.log）。当前新增一项后有效全量应为714，须以补修后最终CI实际结果认定，不能借用下方阶段713通过。正常IAB视觉/库存流转证据继续有效，错误拒绝路径以组件和现有CI真实浏览器测试分别标注。
+
 交叉动作补验：在阶段66869e0后进一步复现“旧收货错误进入新采购草稿”和“冲销提交期间取消仍可用”，独立四项测试中2失败/2通过（logs/purchase-cross-action-before.log）。最小追加仅清空新草稿旧错误、冲销提交时禁用取消/遮罩关闭；不改变冲销原因、请求、限制或幂等协议。补修后与既有收货编辑测试合跑24/24通过（purchase-cross-action-after.log），再次生产构建通过（build-closeout.log）。真实IAB既有收货/冲销成功、取消及新建入口证据保留；可控pending/拒绝交错以组件证据为准，不伪称人工限速或正式网络故障验收。下文711项全量与177项Node是追加前阶段结果，最终追加后的完整测试以最终CI同SHA为准，不混用SHA。
 
 追加后最终本地结果：有效Vitest同命令重跑75文件/713项通过，162.49秒、退出0，无前次worker退出超时警告（logs/vitest-closeout-all.log）；Node全量177/177通过（node-closeout-all.log）；构建再次通过（build-closeout.log）。旧711项结果及全部失败/警告日志继续保留，不改写历史。完整文件清单见file-list.txt。最终CI结果继续以最终SHA运行链接核实。

@@ -3,6 +3,7 @@ import { computed, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { ArrowDownUp, Database, PackageSearch, RefreshCw, Search, X } from 'lucide-vue-next'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { api, listAll } from '../api'
+import { apiErrorMessage } from '../utils/apiErrors.js'
 import InventoryPagination from '../components/InventoryPagination.vue'
 import { inventoryPage } from '../utils/inventoryPagination'
 import OperationLogPanel from '../components/OperationLogPanel.vue'
@@ -148,7 +149,7 @@ async function load() {
     if (currentRequest !== listRequestId) return
     rows.value = result; hasLoaded.value = true
   }
-  catch (requestError) { if (currentRequest === listRequestId) error.value = requestError.response?.data?.detail || requestError.message || '库存数据加载失败，请稍后重试。' }
+  catch (requestError) { if (currentRequest === listRequestId) error.value = apiErrorMessage(requestError) }
   finally { if (currentRequest === listRequestId) loading.value = false }
 }
 function clearInventoryFilters() { query.value = ''; return updateQuery({ search: undefined, attention: undefined }) }

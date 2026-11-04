@@ -7,7 +7,10 @@ docs/uat-evidence/core-workspace-ux-batch-20261104/locked-python-versions.json
 docs/uat-evidence/core-workspace-ux-batch-20261104/logs/all-fixes-targeted.log
 docs/uat-evidence/core-workspace-ux-batch-20261104/logs/build-closeout.log
 docs/uat-evidence/core-workspace-ux-batch-20261104/logs/build-final.log
+docs/uat-evidence/core-workspace-ux-batch-20261104/logs/build-inventory-ci-fix.log
 docs/uat-evidence/core-workspace-ux-batch-20261104/logs/build.log
+docs/uat-evidence/core-workspace-ux-batch-20261104/logs/ci-66869e0-failed.log
+docs/uat-evidence/core-workspace-ux-batch-20261104/logs/inventory-ci-fix.log
 docs/uat-evidence/core-workspace-ux-batch-20261104/logs/locked-api-readback.log
 docs/uat-evidence/core-workspace-ux-batch-20261104/logs/locked-isolated-run.log
 docs/uat-evidence/core-workspace-ux-batch-20261104/logs/node-all.log

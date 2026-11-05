@@ -1,0 +1,50 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\history-navigation-snapshot\\docs\\uat-evidence\\probe",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "fixture.json",
+      "bytes": 242,
+      "raw_sha256": "71f315aea806c3172e61bc79fd1c37005f26b35b8a3af6830778794bf7108bc7",
+      "published_sha256": "7e5c64a695afa89e4afc9ab158cf24ca6276b63d399ce9e56504dead6f5e568f",
+      "redactions": 0
+    },
+    {
+      "path": "playwright-700px-permission-limited.png",
+      "bytes": 91072,
+      "raw_sha256": "608d51e35b77ccef040277152f8e90f770b191d6c502a9079f14ceaa564fb332",
+      "published_sha256": "608d51e35b77ccef040277152f8e90f770b191d6c502a9079f14ceaa564fb332",
+      "redactions": 0
+    },
+    {
+      "path": "playwright-700px.png",
+      "bytes": 207049,
+      "raw_sha256": "5d24c63301cf07b6f38752b4e5f2c033d51803d3fb7536e26aae62ef96ec199f",
+      "published_sha256": "5d24c63301cf07b6f38752b4e5f2c033d51803d3fb7536e26aae62ef96ec199f",
+      "redactions": 0
+    },
+    {
+      "path": "playwright-desktop.png",
+      "bytes": 230710,
+      "raw_sha256": "fce12ac21078c643942fdd02b40d9bd362804d5d30a57d63f97a361308a1b722",
+      "published_sha256": "fce12ac21078c643942fdd02b40d9bd362804d5d30a57d63f97a361308a1b722",
+      "redactions": 0
+    },
+    {
+      "path": "raw-log-hash.json",
+      "bytes": 86,
+      "raw_sha256": "32553b812185685a9a92016320861dddfb007500c9b218c625e65e1d1b5127b9",
+      "published_sha256": "2c9b0554c402feefd0c692f1b13f824699a4e6258fc07d51c7940a2c8ddd69e4",
+      "redactions": 0
+    },
+    {
+      "path": "run.log",
+      "bytes": 13109,
+      "raw_sha256": "877c61c5fa57ce870e20e9520e2502b3a28fa5c605a235a09d990c839f4b095c",
+      "published_sha256": "6362dc5b7f4bbac510bc1b6cbfb773521e48714df5f09c00ffbe6b8cfcb23397",
+      "redactions": 4
+    }
+  ],
+  "omitted": [],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

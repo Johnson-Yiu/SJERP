@@ -174,6 +174,7 @@ test('direct draft links, native refresh cancellation and synthetic account chan
  await expect(page.getByRole('tab')).toHaveCount(1)
  const name=active(page).locator('.customer-editor .field').filter({hasText:'客户名称'}).locator('input').first()
  const secret=`Workspace private draft ${Date.now()}`
+ await name.click() // Establish Chrome's required sticky user activation before beforeunload.
  await name.fill(secret)
  const nativePromise=page.waitForEvent('dialog')
  const reload=page.reload({waitUntil:'domcontentloaded'}).catch(error=>error.message)

@@ -58,3 +58,11 @@ it('URL synchronization does not overwrite a switched workspace scroll position'
  await manager.activate(b);expect(b.scroll.top).toBe(0)
  expect(window.scrollTo).toHaveBeenLastCalledWith({left:0,top:0})
 })
+
+it('page-local replace keeps browser history replacement semantics', async () => {
+ const order=await manager.open('/orders?detail=9')
+ await order.router.replace('/orders?detail=9&tab=items')
+ await manager.open('/customers')
+ root.back(); await vi.waitFor(()=>expect(root.currentRoute.value.query.tab).toBe('items'))
+ root.back(); await vi.waitFor(()=>expect(root.currentRoute.value.path).toBe('/'))
+})

@@ -58,6 +58,15 @@ export function createWorkspaceManager(rootRouter) {
     const id = !fresh && typeof requested === 'string' && /^[a-f0-9-]{36}$/i.test(requested) && !tabs.some(t => t.id === requested) ? requested : crypto.randomUUID()
     const tab = reactive({ id, key, draftNumber: resolved.query.create === '1' ? ++draftSequence : null, objectTitle: '', title: resolved.meta.title || '工作区', router, guards: shallowReactive(new Set()), active: computed(() => activeId.value === id), stale: false, revision: 0, busy: 0, scroll: null, closed: false, controller: markRaw(new AbortController()) })
     await router.push(clean); await router.isReady()
+    let navigationSequence = 0
+    for (const method of ['push', 'replace']) {
+      const navigate = router[method].bind(router)
+      router[method] = location => {
+        const sequence = ++navigationSequence
+        tab.navigationMode = method
+        return navigate(location).finally(() => { if (sequence === navigationSequence) tab.navigationMode = null })
+      }
+    }
     // Each pane owns its route guards and route refs. Hidden panes never see another pane's URL.
     router.beforeEach((to, from) => {
       if (tab.closed) return false
@@ -77,7 +86,7 @@ export function createWorkspaceManager(rootRouter) {
       if (nextKey !== tab.key) tab.objectTitle = ''
       tab.key = nextKey
       tab.title = tab.objectTitle || `${to.meta.title || '工作区'}${to.query.create === '1' ? ` · 新建 ${tab.draftNumber}` : to.query.detail || to.query.edit ? ` · #${to.query.detail || to.query.edit}` : ''}`
-      if (activeId.value === tab.id) void rootRouter.push(url(tab))
+      if (activeId.value === tab.id) void rootRouter[tab.navigationMode === 'replace' ? 'replace' : 'push'](url(tab))
     })
     tab.title = `${resolved.meta.title || '工作区'}${resolved.query.create === '1' ? ` · 新建 ${tab.draftNumber}` : resolved.query.detail || resolved.query.edit ? ` · #${resolved.query.detail || resolved.query.edit}` : ''}`
     openings -= 1

@@ -19,7 +19,9 @@ async function layoutMetrics(page) {
 
 test('history analysis detail tables work at desktop and 700px CSS viewport', async ({ page }) => {
   await page.setViewportSize({ width: 700, height: 900 })
-  await page.goto('/historical-orders')
+  // The test asserts the rendered heading and tables below; waiting for every
+  // unrelated load resource can exhaust the whole test after the page is ready.
+  await page.goto('/historical-orders', { waitUntil: 'domcontentloaded' })
   await expect(page.getByRole('heading', { name: '历史经营分析', exact: true })).toBeVisible()
   await expect(page.locator('.analysis-detail-grid')).toBeVisible()
   await expect(page.locator('.analysis-table')).not.toHaveCount(0)

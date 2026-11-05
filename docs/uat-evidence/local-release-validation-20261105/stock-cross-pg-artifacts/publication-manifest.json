@@ -1,0 +1,41 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-core-final-c95601ee\\docs\\uat-evidence\\local-release-validation-20261105\\stock-cross-pg",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "artifacts/postgres-backups/c95601eebfc8-89b0a435.json",
+      "bytes": 13058,
+      "raw_sha256": "788eb2f32d63fb327fe9c02bb65fe01f2abba5e4ccef9c4ac23c33775e83714f",
+      "published_sha256": "c247d62887ac6954790c323870add9d229eefa84880fbd30c5b75393678c4102",
+      "redactions": 0
+    },
+    {
+      "path": "artifacts/postgres-backups/finance-restored-c95601eebfc8.json",
+      "bytes": 12237,
+      "raw_sha256": "a76de9036be9c4f6f7f4a585c09158e81b32d36625bcd6c9ebd4e4cc50b54f3b",
+      "published_sha256": "5ca2f6a54d4199a564987be84c5fcf38a80480143b409894a22c26103815516c",
+      "redactions": 0
+    },
+    {
+      "path": "artifacts/postgres-backups/history-operational-restored-c95601eebfc8.json",
+      "bytes": 27820,
+      "raw_sha256": "e2695e18762e584b7a9d217dfb2717cc6b37247679001c0283af54a1089bf32a",
+      "published_sha256": "b65577582260532ed0bb40bd5307817de931ae24bd17065a4d19dfe13b520e06",
+      "redactions": 0
+    },
+    {
+      "path": "logs/restored-private-http-c95601eebfc8.log",
+      "bytes": 462,
+      "raw_sha256": "2b38e900008fd43f579102d1d9625f4ac10ab132b00133cb1492c42d2dc230fb",
+      "published_sha256": "416379d88297e03bf004726f2e38a130d9bde65d31fd8a070206d4407850cee7",
+      "redactions": 0
+    }
+  ],
+  "omitted": [
+    {
+      "path": "artifacts/postgres-backups/c95601eebfc8-89b0a435.zip",
+      "reason": "database, archive or unsupported binary retained only locally"
+    }
+  ],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

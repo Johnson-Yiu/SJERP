@@ -64,3 +64,5 @@ ISS-007 图片快照场景在整项 60 秒用尽时等待最后一次打开报�
 报价失败现场：导出 GET 返回 200、响应 10219 字节，浏览器产生下载事件，约 149 毫秒后 `download.saveAs: canceled`；此时页面和上下文仍开放，页面 URL 为报价详情，同次测试的临时下载根目录及 Playwright 输出目录已记录。随后浏览器页面与上下文关闭、隔离 API/Vite 进程退出、端口释放，独占临时目录清理成功。当前代码在点击后 1000 毫秒才撤销 Blob URL，单凭本次时序无法归咎该定时器。日志中 `test-finish.status` 在异常尚未交还给 Playwright 时可能显示 passed，最终 Playwright 结果和 failureMessage 均明确 FAIL；后续诊断提交修正为失败/执行中状态。API 正常不证明实际下载正确，也不能确定取消属于产品还是运行器；根因 UNKNOWN，ISS-020 保持原状态。
 
 为定位增加主框架导航、Blob 撤销和下载链接事件记录（诊断代码 `1b548b67e74dc7bb1ba144f98eec97f5d5dbfda0`，只改测试，不改业务实现）。独立真实 Chrome 156 与默认 HeadlessChrome 156 各运行一次均成功保存实际 XLSX，分别 10218、10219 字节；两次均无法复现失败，不能覆盖上述全套失败或排除偶发问题。[对照证据](quote-download-diagnostics/publication-manifest.json) 保留真实文件、截图与脱敏日志。下一步须在捕获导航、链接、Blob 和请求失败事件的条件下复现完整失败，区分浏览器运行器与业务触发后再最小修复，并对最终稳定源码重新执行集成全量。
+
+独立真实 Chrome 机制对照采用零填充合成 Blob（不是 Excel 文件）：基线、点击后同页路由、点击后整页导航各成功保存 10219 字节。该实验未复现取消，只说明这些单独动作不足以稳定重现；不能证明真实故障与导航无关。复现入口 `probe-download-navigation.cjs` 从 `frontend` 执行，输出见 `logs/quote-navigation-probe.log`；两次实验各自的专用临时目录保留。

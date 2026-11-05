@@ -1,0 +1,47 @@
+{
+  "browser": "156.0.8078.80",
+  "root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-quote-blob-probe-nAVw9r",
+  "rows": [
+    {
+      "mode": "baseline",
+      "outcome": "saved",
+      "bytes": 10219,
+      "events": [
+        {
+          "event": "navigation",
+          "url": "http://127.0.0.1:10255/"
+        }
+      ]
+    },
+    {
+      "mode": "same-document-navigation",
+      "outcome": "saved",
+      "bytes": 10219,
+      "events": [
+        {
+          "event": "navigation",
+          "url": "http://127.0.0.1:10255/"
+        },
+        {
+          "event": "navigation",
+          "url": "http://127.0.0.1:10255/other"
+        }
+      ]
+    },
+    {
+      "mode": "document-navigation",
+      "outcome": "saved",
+      "bytes": 10219,
+      "events": [
+        {
+          "event": "navigation",
+          "url": "http://127.0.0.1:10255/"
+        },
+        {
+          "event": "navigation",
+          "url": "http://127.0.0.1:10255/other"
+        }
+      ]
+    }
+  ]
+}

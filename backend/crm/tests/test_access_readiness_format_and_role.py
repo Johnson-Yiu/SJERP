@@ -1,0 +1,102 @@
+"""Synthetic probes of suffix routing and highest-role mutation guards."""
+import json
+import re
+from pathlib import Path
+from django.contrib.auth import get_user_model
+from django.test import TestCase, override_settings
+from rest_framework.test import APIClient
+from crm.models import AccessRole, EmployeeProfile, OrganizationUnit, Position, RolePermission
+from crm.permissions import has_all_permissions
+
+
+@override_settings(APP_STAGE='production', DEBUG=False, DEVELOPMENT_SUPERADMIN=False, RBAC_ENFORCEMENT=True,
+                   PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class FormatAndRoleProbes(TestCase):
+    def setUp(self):
+        unit = OrganizationUnit.objects.create(name='Synthetic unit', code='ACCESS-UNIT')
+        position = Position.objects.create(unit=unit, name='Synthetic position', code='ACCESS-POS')
+        self.role = AccessRole.objects.create(name='Synthetic all modules', code='access-all', default_data_scope='all')
+        for module, _ in RolePermission.MODULE_CHOICES:
+            RolePermission.objects.create(role=self.role, module=module, can_view=True, can_create=True,
+                                          can_update=True, can_delete=True, can_export=True, can_import=True)
+        self.user = get_user_model().objects.create_user(username='access-synthetic-all', password=None)
+        profile = EmployeeProfile.objects.create(user=self.user, display_name='Synthetic reader', unit=unit, position=position)
+        profile.roles.add(self.role)
+        self.no_permission = get_user_model().objects.create_user(username='access-synthetic-none', password=None)
+        EmployeeProfile.objects.create(user=self.no_permission, display_name='Synthetic no permission', unit=unit, position=position)
+        self.root = get_user_model().objects.create_superuser(username='access-synthetic-root', password=None)
+
+    def test_35_unmapped_patterns_with_three_authentication_states(self):
+        inventory = json.loads((Path(__file__).resolve().parents[3] / 'docs/uat-evidence/access-readiness-20261105/api-inventory.json').read_text(encoding='utf-8-sig'))
+        routes = [r for r in inventory if r['review_reason'].startswith('NO STATIC')]
+        self.assertEqual(len(routes), 35)
+        clients = [APIClient(), APIClient(), APIClient(), APIClient()]
+        clients[1].force_authenticate(self.no_permission)
+        clients[2].force_authenticate(self.user)
+        clients[3].force_authenticate(self.root)
+        for client in clients:
+            client.raise_request_exception = False
+        results = []
+        for entry in routes:
+            match = re.match(r'api/\^([^\\]+)\\\.\(\?P<format>', entry['route'])
+            if match:
+                path = '/api/' + match.group(1) + '.json'
+            elif entry['route'] == 'api/':
+                path = '/api/'
+            elif entry['route'] == 'api/<drf_format_suffix:format>':
+                path = '/api/.json'
+            else:
+                self.fail('Unexpected inventory pattern: ' + entry['route'])
+            statuses = [client.get(path).status_code for client in clients]
+            results.append({'route': entry['route'], 'path': path, 'anonymous': statuses[0], 'ordinary_no_permission': statuses[1],
+                            'ordinary_all_modules': statuses[2], 'superuser': statuses[3]})
+        print('SUFFIX_ROUTE_MATRIX ' + json.dumps(results, sort_keys=True), flush=True)
+
+    def test_authorized_customer_format_suffix_is_consistent(self):
+        client = APIClient()
+        client.force_authenticate(self.user)
+        self.assertEqual(client.get('/api/customers/').status_code, 200)
+        self.assertEqual(client.get('/api/customers.json').status_code, 200)
+
+    def test_highest_role_code_cannot_be_changed_via_api(self):
+        role = AccessRole.objects.get(code='superadmin')
+        client = APIClient()
+        client.force_authenticate(self.root)
+        response = client.patch(f'/api/access-roles/{role.pk}/', {'code': 'synthetic-mutated'}, format='json')
+        print('HIGHEST_ROLE_PATCH_STATUS', response.status_code, flush=True)
+        self.assertIn(response.status_code, (400, 403, 405))
+        role.refresh_from_db()
+        self.assertEqual(role.code, 'superadmin')
+
+    def test_permission_admin_cannot_change_highest_role_code(self):
+        role = AccessRole.objects.get(code='superadmin')
+        self.user.employee_profile.roles.set([AccessRole.objects.get(code='admin')])
+        client = APIClient()
+        client.force_authenticate(self.user)
+        response = client.patch(f'/api/access-roles/{role.pk}/', {'code': 'synthetic-mutated'}, format='json')
+        print('PERMISSION_ADMIN_HIGHEST_ROLE_PATCH_STATUS', response.status_code, flush=True)
+        self.assertIn(response.status_code, (400, 403, 405))
+
+    def test_observe_highest_role_code_change_effect_in_rollback_fixture(self):
+        role = AccessRole.objects.get(code='superadmin')
+        self.user.employee_profile.roles.set([role])
+        self.assertTrue(has_all_permissions(self.user))
+        client = APIClient()
+        client.force_authenticate(self.root)
+        response = client.patch(f'/api/access-roles/{role.pk}/', {'code': 'synthetic-mutated'}, format='json')
+        role.refresh_from_db()
+        print('HIGHEST_ROLE_OBSERVATION', json.dumps({'status': response.status_code, 'code': role.code,
+              'assigned_user_has_all': has_all_permissions(self.user)}), flush=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(role.code, 'synthetic-mutated')
+        self.assertFalse(has_all_permissions(self.user))
+
+    def test_observe_finance_format_suffix_error_types(self):
+        client = APIClient()
+        client.force_authenticate(self.root)
+        for path in ('/api/finance-ledger.json', '/api/rmb-cash-events.json'):
+            try:
+                response = client.get(path)
+                print('FINANCE_SUFFIX_OBSERVATION', path, response.status_code, flush=True)
+            except Exception as error:
+                print('FINANCE_SUFFIX_OBSERVATION', path, type(error).__name__, str(error), flush=True)

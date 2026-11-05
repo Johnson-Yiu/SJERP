@@ -41,3 +41,23 @@ CPython 3.12.16，依赖使用现有锁定环境；每项使用合成账号、�
 3. **目标环境验证**：真实用户生命周期、HTTPS/cookie/CSRF、跨组与全局财务真实数据范围、代理直链及私有媒体 ACL、审计留存和权限回收。应用超级管理员不是数据库或 OS 管理员。
 
 未关闭 ISS-003/051/055/095/096/097；未改变开发超级管理员，不创建真实员工，不运行 GitHub Actions，不将本次结果扩大为全站通过。
+
+## 续查：35 个格式/根入口与最高角色
+
+### 已复现：最高角色可经通用 API 改写（内测前修复）
+
+隔离 SQLite 和 PostgreSQL 中，拥有 `admin` 角色的非 Django 超级用户对 `/api/access-roles/<superadmin-id>/` 发送 `PATCH {"code":"synthetic-mutated"}` 得到 **200**；Django 超级用户同样得到 200。数据库内最高角色代码随之变化，仅被授予该角色的合成用户 `has_all_permissions` 从 true 变为 false。`TestCase` 在隔离库中回滚，未接触真实角色或用户。参见 [SQLite 失败和观测](logs/format-role-final.log)、[PostgreSQL 失败和观测](logs/format-role-postgres.log)。
+
+`backend/crm/views.py` 的 `AccessRoleViewSet.permission_matrix` 只保护专用矩阵动作；通用角色更新路径使用 `AccessRoleSerializer`，未见同等的最高角色代码保护。建议下一轮在服务端统一保护内置最高角色的代码、停用和删除等入口，并补普通权限管理员、Django 超级用户、直接 API、事务和审计回归；本包不改生产权限实现。
+
+### 已复现：格式后缀的授权不一致和财务 500
+
+[逐条 35 路径请求结果](suffix-route-results.json)列出匿名、无权限普通用户、具有全部模块权限的普通用户、Django 超级用户四种身份，仅执行 GET；记录是合成空数据的 HTTP 结果，不等于全部动作或对象范围验收。四类结果分别为：32 条 `403/403/403/200`（含两个 API 根入口）；1 条合同变更 `403/403/200/200`；2 条财务入口 `403/403/500/500`。匿名与无权限用户在本矩阵没有获得 200。
+
+其中授权普通用户 `/api/customers/` 为 200、`/api/customers.json` 为 **403**；`module_for_request` 对首段带 `.json` 的路径未映射到 `customers`，高权限用户则先通过全权限判断。建议统一使用解析后的路由/视图模块而不是将格式后缀作为模块名，并保留无权限拒绝与原有数据范围测试。两个财务后缀返回 **500**：`FinanceCloseoutViewSet.list()` 和 `RmbCashEventViewSet.list()` 不接受 router 传入的 `format` 参数；建议在保留认证及既有契约的前提下处理后缀或明确取消支持，并单独验证。这些是可用性/兼容性缺陷，当前证据不证明未授权数据泄露。
+
+### UI/API 与边界
+
+隔离 Django/Vite 的真实 Chromium 页面复测 [桌面](role-browser-retry/browser/evidence_dir/highest-role-desktop.png)和[窄屏](role-browser-retry/browser/evidence_dir/highest-role-narrow.png)：API 返回 24 个模块，页面 144 个权限勾选全部选中且禁用；专用矩阵接口拒绝修改（400）。两项通过仅覆盖开发身份下页面和该专用动作，不能覆盖上面的通用 PATCH 缺陷或真实员工会话。首次逐一读取复选框触发 30 秒总超时（[日志](logs/role-browser.log)）；复跑采用一次 DOM 读取并逐项断言全部 144 个状态，不增加超时或删除断言，[复跑日志](logs/role-browser-retry.log)为 2/2 通过。日志中本次临时隔离令牌已脱敏。
+
+本轮新专项在 SQLite 与 PostgreSQL 各运行 6 项：3 项观测通过、3 项保护性断言失败；失败是上述两个缺陷的回归信号，没有 skip 或改成通过。其余 354 条 URL 模式的各动态动作、所有关联/文件/导出路径以及真实账号和目标环境仍未逐项完成；之前 129 项通过与这次局部发现均不代表全站验收。公共台账交协调线程处理，等待独立审查后再安排修复。

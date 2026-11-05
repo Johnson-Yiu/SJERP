@@ -18,6 +18,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--postgres-bin', required=True)
     parser.add_argument('--session-only', action='store_true')
+    parser.add_argument('--format-role-only', action='store_true')
     args = parser.parse_args()
     root = Path(tempfile.mkdtemp(prefix='sunjack-access-pg-')).resolve()
     pg = root / 'pgsql' / 'bin'
@@ -43,6 +44,8 @@ def main():
                    'crm.tests.test_finance_integration_permissions', 'crm.tests.test_audit']
         if args.session_only:
             labels = labels[:1]
+        if args.format_role_only:
+            labels = ['crm.tests.test_access_readiness_format_and_role']
         command = [sys.executable, str(repo / 'backend' / 'manage.py'), 'test', *labels, '--noinput', '--verbosity', '1']
         result = subprocess.run(command, cwd=repo, env=env, check=False)
         if result.returncode:

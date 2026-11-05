@@ -1,0 +1,141 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\d5-backend-snapshot\\docs\\uat-evidence\\finished-logs",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "backup-command-faults.log",
+      "bytes": 3744,
+      "raw_sha256": "ed8f4a4fdd30935ff210222195be3e79540fa9e423bf4d8b53afd6dfb8cf9c95",
+      "published_sha256": "c95709772aec1c263441fc051011a8a8c6e122ff31cded25cf8f2ae5cca5d3fd",
+      "redactions": 0
+    },
+    {
+      "path": "django-check.log",
+      "bytes": 49,
+      "raw_sha256": "f87ceb15410bde28ff826ce26228e0576558258fa64d145847921a593a61ee63",
+      "published_sha256": "1e3e63f221bde88816c4a4ef7367691607b20cc1d194028a02ec9ae0586cf9b1",
+      "redactions": 0
+    },
+    {
+      "path": "font.log",
+      "bytes": 185,
+      "raw_sha256": "245703a6c65b43a22e51745b16e76c59eb2253bc7dc9b5125c3dbac95c1466e0",
+      "published_sha256": "245703a6c65b43a22e51745b16e76c59eb2253bc7dc9b5125c3dbac95c1466e0",
+      "redactions": 0
+    },
+    {
+      "path": "locked-dependencies.log",
+      "bytes": 32,
+      "raw_sha256": "521598caff27746af0f3226ed93c5984535f6626f468f1d5f4b21f3d21c1af4b",
+      "published_sha256": "a55d5d82946e2bbc9728b10ac66dbb6f19782ae3f084aefc98dd5b214f4ef80f",
+      "redactions": 0
+    },
+    {
+      "path": "migration-graph.log",
+      "bytes": 5953,
+      "raw_sha256": "b8767d3c3bbfc75fd5a75cb8a19f71fa35cebc67836c8e712be98ee9b66abb79",
+      "published_sha256": "5a72c8cedec20bd6e0ec67f1f6901481072a10186222615ab8dde16cdd330353",
+      "redactions": 0
+    },
+    {
+      "path": "migrations-check.log",
+      "bytes": 21,
+      "raw_sha256": "93e6e2d5be3c054add80c0f19101608803f7ca8a7df1fa41f76bbb9a1f570f4a",
+      "published_sha256": "a2bfa7b376c38062f77ce2b1e703876aaa04662f96355cdf5dc9d0d075302b05",
+      "redactions": 0
+    },
+    {
+      "path": "node.log",
+      "bytes": 46845,
+      "raw_sha256": "b3bab8852b7e15502836fd3ce31efd3b4d02dd93f41ffd82e205eb85fdb40e1d",
+      "published_sha256": "30a23882f0db4fa18f95ee3f00192999071e735f02dbcbf2295ffa91591a179b",
+      "redactions": 10
+    },
+    {
+      "path": "npm-ci.log",
+      "bytes": 603,
+      "raw_sha256": "164e3586ae9629b8966a086cac0c0c500f15da496008174f8ed1f1049c5f4d94",
+      "published_sha256": "164e3586ae9629b8966a086cac0c0c500f15da496008174f8ed1f1049c5f4d94",
+      "redactions": 0
+    },
+    {
+      "path": "pip-check.log",
+      "bytes": 31,
+      "raw_sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "published_sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09",
+      "redactions": 0
+    },
+    {
+      "path": "postgres-version.log",
+      "bytes": 18,
+      "raw_sha256": "e67734a04dcd182e1da50c9739eb32f8e5c5a769dd8aa1da66a3b2adb34375b8",
+      "published_sha256": "86ca29ed311eb4a7c74741d9f3aca487df11298ee374f6d48e3593fdccce34a1",
+      "redactions": 0
+    },
+    {
+      "path": "postgres17-full-backup-restore.log",
+      "bytes": 487029,
+      "raw_sha256": "cfff1c26b04ca6c9c17699e7d7263859e92efe95dbf449549d4625373983ce95",
+      "published_sha256": "21c84101d744c9c7f947682dafa00e8298a075e3e4a6471c56ee786fc395e9ea",
+      "redactions": 0
+    },
+    {
+      "path": "python-path-identity.log",
+      "bytes": 138,
+      "raw_sha256": "05833e3c28bcd4f98891570c914baeca8e995c9a738727f2012f0098419c5546",
+      "published_sha256": "efb8b69f90678318a3491172127a6856769ca557a1fe335066d79d8b7e8f1108",
+      "redactions": 0
+    },
+    {
+      "path": "python-version.log",
+      "bytes": 67,
+      "raw_sha256": "017ddc77faa27bc908abcbc80f4ef5792c1b1f6e515a73e9c27a83f0f1c71695",
+      "published_sha256": "7758dd1dbbc1b1a0afd8c5f3fb40f46aa416ca0ffddceb32408ec3461b00ddad",
+      "redactions": 0
+    },
+    {
+      "path": "sqlite-full.log",
+      "bytes": 409273,
+      "raw_sha256": "2b66308692ab63f86291de5a00a306bdefcbefa774a334a1a616031a84af492f",
+      "published_sha256": "7221496b066065eddbd97b3142adf68af2da059829942d590a68854e98d78be4",
+      "redactions": 0
+    },
+    {
+      "path": "sqlite-upgrade-0103.log",
+      "bytes": 6553,
+      "raw_sha256": "ef33fd9444e83eae66ee9e82b094a3001c4d0f54d9282e4b7060e4f50b43c387",
+      "published_sha256": "0b393902bbc78bd64c5ee6474a677c9328987fe04ea835113e1b48e1568faf1a",
+      "redactions": 0
+    },
+    {
+      "path": "sqlite-upgrade-latest.log",
+      "bytes": 1223,
+      "raw_sha256": "627a2719a0167b1137994a08382ec6cd71dff61414113ab4bbda33ed2455e1a7",
+      "published_sha256": "2047017edeee8f2add9ee766befbe8411a9b150bf5b19d994255c293aa139240",
+      "redactions": 0
+    },
+    {
+      "path": "sqlite-upgrade-seed.log",
+      "bytes": 80,
+      "raw_sha256": "7e69bbe965166f3f65c314f5889d7b27684a97661964d65b525ce31cd4dc7910",
+      "published_sha256": "4c0fdfacdb664a9a69b03ee8957f82c8adda4271a81d1439dc15cf03f84be2b9",
+      "redactions": 0
+    },
+    {
+      "path": "sqlite-upgrade-verify.log",
+      "bytes": 83,
+      "raw_sha256": "241d0f2da81835b2a1badf1a8bf500b594ab9abd21c1f6f7222f104efb7e5f3d",
+      "published_sha256": "5be319d7c3726027883dd900e66ca3c3f192d5246017da825218073e460b9bfd",
+      "redactions": 0
+    },
+    {
+      "path": "vitest.log",
+      "bytes": 321,
+      "raw_sha256": "cb8dfc3124837e2e2b23329225c3c9dc3af60608474b3f5b09e35571eabbcc34",
+      "published_sha256": "4675ad99908d5aff4b08e8c3318670d39650a1346e4f30468ebd5e1ad07bcacb",
+      "redactions": 0
+    }
+  ],
+  "omitted": [],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

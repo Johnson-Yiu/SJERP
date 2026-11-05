@@ -53,6 +53,7 @@ it('a successful draft save adopts the same pane and order movement preserves id
 it('URL synchronization does not overwrite a switched workspace scroll position', async () => {
  const a=await manager.open('/customers'),b=await manager.open('/orders')
  a.scroll={left:0,top:500}; b.scroll={left:0,top:0}
+ await manager.activate(a)
  Object.defineProperty(window,'scrollY',{value:500,configurable:true})
  await manager.activate(b);expect(b.scroll.top).toBe(0)
  expect(window.scrollTo).toHaveBeenLastCalledWith({left:0,top:0})

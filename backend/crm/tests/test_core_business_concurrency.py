@@ -54,7 +54,7 @@ class CoreBusinessConcurrencyTests(CoreBusinessFixture, TransactionTestCase):
         self.assertEqual(sorted(r[1] for r in results),[201,400])
         self.assertEqual(stock.location_quantity(self.sku,LOCATION),D(0))
         self.assertEqual(stock.location_quantity(self.sku,OTHER),D(3))
-        self.assertEqual(InventoryMovement.objects.filter(type='sales_out').count(),1)
+        self.assertEqual(InventoryMovement.objects.filter(type='sale_out').count(),1)
         self.assertEqual(FulfillmentIdempotency.objects.count(),1)
         self.assertEqual(OperationLog.objects.count()-before_logs,1)
         fi.refresh_from_db();si.refresh_from_db()

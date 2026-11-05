@@ -1,0 +1,14 @@
+Creating test database for alias 'default'...
+
+........................................................................................................................Method Not Allowed: /api/operation-logs/
+Method Not Allowed: /api/operation-logs/1/
+Method Not Allowed: /api/operation-logs/1/
+......s..
+----------------------------------------------------------------------
+Ran 129 tests in 481.752s
+
+OK (skipped=1)
+Destroying test database for alias 'default'...
+
+Found 129 test(s).
+System check identified no issues (0 silenced).

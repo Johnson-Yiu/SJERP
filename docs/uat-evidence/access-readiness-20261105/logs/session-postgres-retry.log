@@ -1,0 +1,11 @@
+Creating test database for alias 'default'...
+
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.260s
+
+OK
+Found 5 test(s).
+System check identified no issues (0 silenced).
+PASS: synthetic isolated PostgreSQL permission tests
+Task-owned PostgreSQL root cleaned

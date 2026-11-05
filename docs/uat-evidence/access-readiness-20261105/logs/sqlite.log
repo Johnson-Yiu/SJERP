@@ -1,0 +1,307 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+Found 129 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying crm.0093_csv_import_preview_audit... OK
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+  Applying crm.0090_fulfillment_request_idempotency... OK
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+  Applying crm.0096_quote_pi_template_snapshots... OK
+  Applying crm.0097_merge_quote_and_cash_review... OK
+  Applying crm.0098_finance_accounts... OK
+  Applying crm.0099_finance_closeout_workflows... OK
+  Applying crm.0100_finance_legacy_fact_links... OK
+  Applying crm.0101_finance_historical_transfer_links... OK
+  Applying crm.0102_bank_private_voucher_binding... OK
+  Applying crm.0098_history_takeover_workflow... OK
+  Applying crm.0103_merge_finance_and_history... OK
+  Applying crm.0104_historical_inventory_baseline... OK
+  Applying crm.0105_historical_operational_contract... OK
+  Applying crm.0106_historical_purchase_balance_mode... OK
+  Applying crm.0107_inventory_movement_location... OK
+  Applying crm.0108_history_append_only_truncate... OK
+test_development_identity_does_not_claim_real_authentication (crm.tests.test_access_readiness_20261105.AccessReadinessDevelopmentTests.test_development_identity_does_not_claim_real_authentication) ... ok
+test_deactivated_user_session_no_longer_authorizes (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_deactivated_user_session_no_longer_authorizes) ... FAIL
+test_expired_session_no_longer_authorizes (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_expired_session_no_longer_authorizes) ... FAIL
+test_no_named_business_login_or_logout_route (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_no_named_business_login_or_logout_route) ... ok
+test_synthetic_session_csrf_and_logout (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_synthetic_session_csrf_and_logout) ... FAIL
+test_development_superadmin_can_read_protected_media_without_login (crm.tests.test_functional_rbac.DevelopmentAccessCompatibilityTests.test_development_superadmin_can_read_protected_media_without_login) ... ok
+test_rbac_disabled_preserves_legacy_development_access (crm.tests.test_functional_rbac.DevelopmentAccessCompatibilityTests.test_rbac_disabled_preserves_legacy_development_access) ... ok
+test_admin_can_read_permission_overview_without_organization_view (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_admin_can_read_permission_overview_without_organization_view) ... ok
+test_anonymous_business_api_is_denied (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_anonymous_business_api_is_denied) ... ok
+test_context_endpoint_cannot_bypass_primary_module_view_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_context_endpoint_cannot_bypass_primary_module_view_permission) ... ok
+test_context_hides_related_sections_without_their_module_view_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_context_hides_related_sections_without_their_module_view_permission) ... ok
+test_context_redacts_cross_module_snapshots_and_product_classification (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_context_redacts_cross_module_snapshots_and_product_classification) ... ok
+test_current_operator_returns_complete_matrix_contract (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_current_operator_returns_complete_matrix_contract) ... ok
+test_customer_nested_contacts_require_contacts_create (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_customer_nested_contacts_require_contacts_create) ... ok
+test_finance_related_filters_require_the_linked_module_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_finance_related_filters_require_the_linked_module_permission) ... ok
+test_get_export_query_uses_export_permission_before_safe_method_view (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_get_export_query_uses_export_permission_before_safe_method_view) ... ok
+test_html_api_forms_cannot_disclose_out_of_scope_relation_choices (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_html_api_forms_cannot_disclose_out_of_scope_relation_choices) ... ok
+test_inactive_employee_profile_gets_no_business_access (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_inactive_employee_profile_gets_no_business_access) ... ok
+test_inventory_workbench_apis_use_inventory_permission_and_minimal_sku_data (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_inventory_workbench_apis_use_inventory_permission_and_minimal_sku_data) ... ok
+test_media_url_requires_record_module_and_customer_scope (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_media_url_requires_record_module_and_customer_scope) ... ok
+test_new_role_permission_rows_default_to_no_access (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_new_role_permission_rows_default_to_no_access) ... ok
+test_order_response_masks_customer_and_sku_relations_without_module_permissions (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_order_response_masks_customer_and_sku_relations_without_module_permissions) ... ok
+test_ordinary_user_without_organization_view_cannot_read_overview (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_ordinary_user_without_organization_view_cannot_read_overview) ... ok
+test_parameter_and_certificate_search_do_not_query_hidden_product_names (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_parameter_and_certificate_search_do_not_query_hidden_product_names) ... ok
+test_permission_matrix_write_is_admin_only_and_admin_can_save (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_permission_matrix_write_is_admin_only_and_admin_can_save) ... ok
+test_permissions_are_union_of_active_roles (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_permissions_are_union_of_active_roles) ... ok
+test_product_certificate_files_use_private_media_and_reject_external_urls (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_product_certificate_files_use_private_media_and_reject_external_urls) ... ok
+test_purchase_finance_and_sku_apis_are_module_checked (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_purchase_finance_and_sku_apis_are_module_checked) ... ok
+test_quote_export_and_import_actions_use_special_permissions (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_quote_export_and_import_actions_use_special_permissions) ... ok
+test_report_csv_export_requires_export_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_csv_export_requires_export_permission) ... ok
+test_report_csv_export_requires_report_view_and_export_permissions (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_csv_export_requires_report_view_and_export_permissions) ... ok
+test_report_dimension_requires_its_source_module_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_dimension_requires_its_source_module_permission) ... ok
+test_report_source_and_csv_share_module_scope_and_totals (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_source_and_csv_share_module_scope_and_totals) ... ok
+test_report_view_does_not_grant_sales_source_module_access (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_view_does_not_grant_sales_source_module_access) ... ok
+test_sku_and_historical_quote_images_use_protected_media_permissions (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_sku_and_historical_quote_images_use_protected_media_permissions) ... ok
+test_superadmin_effectively_gets_every_module_and_action (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_superadmin_effectively_gets_every_module_and_action) ... ok
+test_superadmin_overview_exposes_effective_matrix_without_rewriting_template (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_superadmin_overview_exposes_effective_matrix_without_rewriting_template) ... ok
+test_supplier_capability_hides_product_identifier_without_product_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_supplier_capability_hides_product_identifier_without_product_permission) ... ok
+test_unconfigured_non_development_environment_does_not_trust_anonymous (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_unconfigured_non_development_environment_does_not_trust_anonymous) ... ok
+test_unmapped_authenticated_api_fails_closed_in_rbac_mode (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_unmapped_authenticated_api_fails_closed_in_rbac_mode) ... ok
+test_update_and_delete_are_checked_separately (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_update_and_delete_are_checked_separately) ... ok
+test_view_permission_does_not_grant_create (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_view_permission_does_not_grant_create) ... ok
+test_only_unique_legacy_owner_matches_are_bound (crm.tests.test_sales_data_scope.LegacyCustomerOwnerMigrationTests.test_only_unique_legacy_owner_matches_are_bound) ... ok
+test_unmatched_legacy_owner_is_hidden_from_sales_but_visible_to_all_scope (crm.tests.test_sales_data_scope.LegacyCustomerOwnerMigrationTests.test_unmatched_legacy_owner_is_hidden_from_sales_but_visible_to_all_scope) ... ok
+test_all_scope_can_clear_owner_and_legacy_name_without_changing_history (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_all_scope_can_clear_owner_and_legacy_name_without_changing_history) ... ok
+test_create_and_update_associations_reject_out_of_scope_customers (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_create_and_update_associations_reject_out_of_scope_customers) ... ok
+test_current_operator_exposes_server_computed_scope (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_current_operator_exposes_server_computed_scope) ... ok
+test_customer_detail_and_context_share_safe_not_found_semantics (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_customer_detail_and_context_share_safe_not_found_semantics) ... ok
+test_customer_import_rejects_out_of_scope_code_and_defaults_new_owner (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_customer_import_rejects_out_of_scope_code_and_defaults_new_owner) ... ok
+test_customer_insights_and_inventory_detail_require_order_view (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_customer_insights_and_inventory_detail_require_order_view) ... ok
+test_dashboard_active_customer_count_respects_sales_data_scope (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_dashboard_active_customer_count_respects_sales_data_scope) ... ok
+test_dashboard_and_sales_reports_use_the_same_customer_scope (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_dashboard_and_sales_reports_use_the_same_customer_scope) ... ok
+test_effective_scope_uses_widest_active_role_and_override (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_effective_scope_uses_widest_active_role_and_override) ... ok
+test_inventory_surfaces_redact_out_of_scope_sales_references_but_keep_shared_stock (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_inventory_surfaces_redact_out_of_scope_sales_references_but_keep_shared_stock) ... ok
+test_new_customer_defaults_to_current_employee (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_new_customer_defaults_to_current_employee) ... ok
+test_order_with_out_of_scope_source_quote_is_rejected (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_order_with_out_of_scope_source_quote_is_rejected) ... ok
+test_owner_options_and_customer_owner_updates_follow_scope (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_owner_options_and_customer_owner_updates_follow_scope) ... ok
+test_product_customer_action_respects_sales_data_scope (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_product_customer_action_respects_sales_data_scope) ... ok
+test_related_lists_details_and_context_inherit_customer_scope (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_related_lists_details_and_context_inherit_customer_scope) ... ok
+test_sales_order_cost_snapshot_is_server_owned_without_purchase_write (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_sales_order_cost_snapshot_is_server_owned_without_purchase_write) ... ok
+test_self_and_department_scope_cannot_clear_customer_owner (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_self_and_department_scope_cannot_clear_customer_owner) ... ok
+test_self_department_tree_and_all_customer_lists (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_self_department_tree_and_all_customer_lists) ... ok
+test_shared_product_and_sku_contexts_only_include_scoped_sales (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_shared_product_and_sku_contexts_only_include_scoped_sales) ... ok
+test_sku_context_hides_cost_and_stock_without_source_modules (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_sku_context_hides_cost_and_stock_without_source_modules) ... ok
+test_sku_cost_update_requires_purchase_write_permission (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_sku_cost_update_requires_purchase_write_permission) ... ok
+test_sku_inventory_detail_limits_order_and_shipment_rows_to_sales_scope (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_sku_inventory_detail_limits_order_and_shipment_rows_to_sales_scope) ... ok
+test_sku_supplier_source_requires_supplier_module_permission (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_sku_supplier_source_requires_supplier_module_permission) ... ok
+test_supplier_allocation_allows_own_and_department_orders (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_supplier_allocation_allows_own_and_department_orders) ... ok
+test_supplier_allocation_denies_other_employee_get_and_post_without_disclosure (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_supplier_allocation_denies_other_employee_get_and_post_without_disclosure) ... ok
+test_supplier_candidate_and_source_price_are_hidden_without_purchase_view (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_supplier_candidate_and_source_price_are_hidden_without_purchase_view) ... ok
+test_updates_and_quote_revisions_cannot_move_business_across_scope (crm.tests.test_sales_data_scope.SalesDataScopeTests.test_updates_and_quote_revisions_cannot_move_business_across_scope) ... ok
+test_candidates_and_reports_cannot_bypass_purchases_view (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_candidates_and_reports_cannot_bypass_purchases_view) ... ok
+test_four_scopes_and_normal_collaboration (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_four_scopes_and_normal_collaboration) ... ok
+test_hidden_order_rebinding_and_search (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_hidden_order_rebinding_and_search) ... ok
+test_independent_procurement_without_sales_permission (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_independent_procurement_without_sales_permission) ... ok
+test_missing_inventory_and_purchases_denied (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_missing_inventory_and_purchases_denied) ... ok
+test_missing_sales_view_and_update_deny_cost_even_with_all_scope (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_missing_sales_view_and_update_deny_cost_even_with_all_scope) ... ok
+test_multi_order_read_and_audit_snapshots_do_not_leak (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_multi_order_read_and_audit_snapshots_do_not_leak) ... ok
+test_old_and_new_cost_targets_are_checked (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_old_and_new_cost_targets_are_checked) ... ok
+test_shared_receipt_reverse_preserves_sales_snapshot (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_shared_receipt_reverse_preserves_sales_snapshot) ... ok
+test_supplier_allocation_and_drafts_require_each_module (crm.tests.test_procurement_data_scope.ProcurementDataScopeTests.test_supplier_allocation_and_drafts_require_each_module) ... ok
+test_all_authorized_can_view_normal_purchase_finance_and_sales (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_all_authorized_can_view_normal_purchase_finance_and_sales) ... ok
+test_all_scope_cannot_bypass_finance_module (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_all_scope_cannot_bypass_finance_module) ... ok
+test_department_scope_keeps_shared_cross_department_purchase_but_masks_its_sales (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_department_scope_keeps_shared_cross_department_purchase_but_masks_its_sales) ... ok
+test_fulfillment_nested_shared_purchase_uses_current_identity (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_fulfillment_nested_shared_purchase_uses_current_identity) ... ok
+test_missing_serializer_identity_fails_closed_when_rbac_enabled (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_missing_serializer_identity_fails_closed_when_rbac_enabled) ... ok
+test_purchase_view_without_orders_masks_nested_sales_ids_and_allocation_relations (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_purchase_view_without_orders_masks_nested_sales_ids_and_allocation_relations) ... ok
+test_self_cannot_read_other_salesperson_order_even_in_same_department (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_self_cannot_read_other_salesperson_order_even_in_same_department) ... ok
+test_supplier_only_cannot_read_procurement_counts_or_metrics (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_supplier_only_cannot_read_procurement_counts_or_metrics) ... ok
+test_supplier_view_without_finance_cannot_read_nested_plans_or_paid_metrics (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_supplier_view_without_finance_cannot_read_nested_plans_or_paid_metrics) ... ok
+test_transaction_module_is_required_for_paid_summary (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_transaction_module_is_required_for_paid_summary) ... ok
+test_user_context_is_not_ignored_by_nested_serializer (crm.tests.test_supplier_context_scope.SupplierContextScopeTests.test_user_context_is_not_ignored_by_nested_serializer) ... ok
+test_advance_allocation_and_split_family_guard (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_advance_allocation_and_split_family_guard) ... ok
+test_advance_payment_cross_purchase_and_void_restores_balances (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_advance_payment_cross_purchase_and_void_restores_balances) ... ok
+test_allocation_history_cannot_disclose_or_modify_foreign_plan (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_allocation_history_cannot_disclose_or_modify_foreign_plan) ... ok
+test_contract_sales_and_shared_purchase_changes (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_contract_sales_and_shared_purchase_changes) ... ok
+test_creation_cannot_bind_foreign_customer_order_or_plan (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_creation_cannot_bind_foreign_customer_order_or_plan) ... ok
+test_dashboard_report_and_csv_share_cash_scope (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_dashboard_report_and_csv_share_cash_scope) ... ok
+test_finance_allocation_totals_are_hidden_without_finance_view (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_finance_allocation_totals_are_hidden_without_finance_view) ... ok
+test_finance_dashboard_details_reuses_order_and_cash_data_scope (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_finance_dashboard_details_reuses_order_and_cash_data_scope) ... ok
+test_finance_dashboard_masks_counterparty_names_without_party_module_access (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_finance_dashboard_masks_counterparty_names_without_party_module_access) ... ok
+test_finance_export_is_authorized_on_server (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_finance_export_is_authorized_on_server) ... ok
+test_foreign_actions_and_rebinding_are_denied (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_foreign_actions_and_rebinding_are_denied) ... ok
+test_foreign_reads_and_context_are_hidden (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_foreign_reads_and_context_are_hidden) ... ok
+test_four_scopes_preserve_shared_finance (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_four_scopes_preserve_shared_finance) ... ok
+test_module_permissions_are_required_alongside_all_scope (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_module_permissions_are_required_alongside_all_scope) ... ok
+test_normal_settle_refund_void_and_purchase_payment (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_normal_settle_refund_void_and_purchase_payment) ... ok
+test_payable_detail_denies_without_purchase_permission (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_payable_detail_denies_without_purchase_permission) ... ok
+test_payable_detail_matches_dashboard_purchase_permission_and_scope (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_payable_detail_matches_dashboard_purchase_permission_and_scope) ... ok
+test_shared_purchase_contract_does_not_require_sales_module (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_shared_purchase_contract_does_not_require_sales_module) ... ok
+test_unallocated_advance_creation_requires_finance_update (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_unallocated_advance_creation_requires_finance_update) ... ok
+test_unowned_legacy_sales_cash_requires_all_scope (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_unowned_legacy_sales_cash_requires_all_scope) ... ok
+test_void_requires_finance_update_even_without_plan_or_allocations (crm.tests.test_finance_data_scope.FinanceDataScopeTests.test_void_requires_finance_update_even_without_plan_or_allocations) ... ok
+test_authorized_ordinary_reader_can_list_account_ledger (crm.tests.test_finance_integration_permissions.FinanceLedgerOrdinaryRoleTests.test_authorized_ordinary_reader_can_list_account_ledger) ... ok
+test_creator_without_update_can_create_but_cannot_post (crm.tests.test_finance_integration_permissions.FinanceLedgerOrdinaryRoleTests.test_creator_without_update_can_create_but_cannot_post) ... ok
+test_missing_view_transactions_scope_or_active_profile_remains_denied (crm.tests.test_finance_integration_permissions.FinanceLedgerOrdinaryRoleTests.test_missing_view_transactions_scope_or_active_profile_remains_denied) ... ok
+test_readonly_preview_is_allowed_and_never_writes (crm.tests.test_finance_integration_permissions.FinanceLedgerOrdinaryRoleTests.test_readonly_preview_is_allowed_and_never_writes) ... ok
+test_updater_without_create_can_post_but_cannot_create (crm.tests.test_finance_integration_permissions.FinanceLedgerOrdinaryRoleTests.test_updater_without_create_can_post_but_cannot_create) ... ok
+test_viewonly_cannot_export_but_each_existing_export_grant_can (crm.tests.test_finance_integration_permissions.FinanceLedgerOrdinaryRoleTests.test_viewonly_cannot_export_but_each_existing_export_grant_can) ... ok
+test_admin_is_read_only_even_for_superuser (crm.tests.test_audit.AuditTrailTests.test_admin_is_read_only_even_for_superuser) ... ok
+test_api_exposes_only_read_methods (crm.tests.test_audit.AuditTrailTests.test_api_exposes_only_read_methods) ... Method Not Allowed: /api/operation-logs/
+Method Not Allowed: /api/operation-logs/1/
+Method Not Allowed: /api/operation-logs/1/
+ok
+test_application_orm_cannot_mutate_or_delete_historical_rows (crm.tests.test_audit.AuditTrailTests.test_application_orm_cannot_mutate_or_delete_historical_rows) ... ok
+test_audit_row_rolls_back_with_business_transaction (crm.tests.test_audit.AuditTrailTests.test_audit_row_rolls_back_with_business_transaction) ... ok
+test_authenticated_operator_records_operation_with_snapshot (crm.tests.test_audit.AuditTrailTests.test_authenticated_operator_records_operation_with_snapshot) ... ok
+test_development_mode_does_not_record_operations (crm.tests.test_audit.AuditTrailTests.test_development_mode_does_not_record_operations) ... ok
+test_operator_deletion_cannot_rewrite_historical_identity (crm.tests.test_audit.AuditTrailTests.test_operator_deletion_cannot_rewrite_historical_identity) ... ok
+test_postgres_trigger_rejects_raw_update_and_delete (crm.tests.test_audit.AuditTrailTests.test_postgres_trigger_rejects_raw_update_and_delete) ... skipped 'requires a PostgreSQL database; SQLite cannot prove the production DB guard'
+test_ignores_timestamp_and_identifier_substrings (crm.tests.test_sales_data_scope.SensitiveAmountAssertionTests.test_ignores_timestamp_and_identifier_substrings) ... ok
+test_rejects_nested_decimal_string_and_json_number_leaks (crm.tests.test_sales_data_scope.SensitiveAmountAssertionTests.test_rejects_nested_decimal_string_and_json_number_leaks) ... ok
+
+======================================================================
+FAIL: test_deactivated_user_session_no_longer_authorizes (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_deactivated_user_session_no_longer_authorizes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_access_readiness_20261105.py", line 28, in test_deactivated_user_session_no_longer_authorizes
+    self.assertEqual(self.client.get('/api/customers/').status_code, 401)
+AssertionError: 403 != 401
+
+======================================================================
+FAIL: test_expired_session_no_longer_authorizes (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_expired_session_no_longer_authorizes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_access_readiness_20261105.py", line 35, in test_expired_session_no_longer_authorizes
+    self.assertEqual(self.client.get('/api/customers/').status_code, 401)
+AssertionError: 403 != 401
+
+======================================================================
+FAIL: test_synthetic_session_csrf_and_logout (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_synthetic_session_csrf_and_logout)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_access_readiness_20261105.py", line 16, in test_synthetic_session_csrf_and_logout
+    self.assertEqual(self.client.get('/api/customers/').status_code, 401)
+AssertionError: 403 != 401
+
+----------------------------------------------------------------------
+Ran 129 tests in 345.836s
+
+FAILED (failures=3, skipped=1)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

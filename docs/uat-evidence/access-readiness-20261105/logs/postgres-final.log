@@ -1,0 +1,14 @@
+Creating test database for alias 'default'...
+
+........................................................................................................................Method Not Allowed: /api/operation-logs/
+Method Not Allowed: /api/operation-logs/31/
+Method Not Allowed: /api/operation-logs/31/
+.........
+----------------------------------------------------------------------
+Ran 129 tests in 477.161s
+
+OK
+Found 129 test(s).
+System check identified no issues (0 silenced).
+PASS: synthetic isolated PostgreSQL permission tests
+Task-owned PostgreSQL root cleaned

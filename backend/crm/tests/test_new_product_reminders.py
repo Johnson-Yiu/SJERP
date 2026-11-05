@@ -1,7 +1,7 @@
 import uuid
 from unittest.mock import patch
 from django.contrib.auth import get_user_model
-from django.db import connection, close_old_connections
+from django.db import connection, connections, close_old_connections
 from django.db.models.deletion import ProtectedError
 from django.core.exceptions import ValidationError as ModelValidationError
 from django.test import TestCase, TransactionTestCase, override_settings
@@ -176,7 +176,7 @@ class ReminderConcurrencyTests(TransactionTestCase):
                 barrier.wait(timeout=10)
                 return APIClient().post('/api/new-product-reminders/',payload,format='json').status_code
             finally:
-                close_old_connections()
+                connections.close_all()
         with ThreadPoolExecutor(2) as pool:
             statuses = list(pool.map(lambda _: create(), range(2)))
         self.assertEqual(sorted(statuses), [200,201])
@@ -190,7 +190,7 @@ class ReminderConcurrencyTests(TransactionTestCase):
                 path = f'/api/new-product-reminders/{obj.pk}/'
                 return (APIClient().post(path+'void/', {"version":1,"reason":"并发作废"},format='json') if void else APIClient().patch(path,{"version":1,"specification":"并发修改"},format='json')).status_code
             finally:
-                close_old_connections()
+                connections.close_all()
         with ThreadPoolExecutor(2) as pool:
             statuses = list(pool.map(change, [False,True]))
         self.assertEqual(sorted(statuses), [200,409])

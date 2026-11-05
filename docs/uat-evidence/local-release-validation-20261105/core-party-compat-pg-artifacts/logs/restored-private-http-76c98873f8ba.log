@@ -1,0 +1,5 @@
+[05/Nov/2026 17:22:12] "GET /api/session/current-operator/ HTTP/1.1" 200 2810
+[05/Nov/2026 17:22:12] "GET /api/finance-ledger/voucher-download/?id=1 HTTP/1.1" 403 43
+[05/Nov/2026 17:22:13] "GET /api/finance-ledger/voucher-download/?id=1 HTTP/1.1" 403 46
+[05/Nov/2026 17:22:13] "GET /api/finance-ledger/voucher-download/?id=1 HTTP/1.1" 200 67
+[05/Nov/2026 17:22:13] "GET /media/finance-vouchers/2026/11/d14cd8e4369b45fc96089608fe66b83e.pdf HTTP/1.1" 404 179

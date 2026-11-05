@@ -1,0 +1,22 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\core-party-pg-snapshot\\docs\\uat-evidence\\probe",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "raw-log-hash.json",
+      "bytes": 86,
+      "raw_sha256": "22668042aec699afc2000f5b7f00457f75b8c60654bf7a127b51967e2a769dde",
+      "published_sha256": "bf529397368c2fc8983610b9ea882044904d41b962fe8967524ae63bb1d475ad",
+      "redactions": 0
+    },
+    {
+      "path": "run.log",
+      "bytes": 55118,
+      "raw_sha256": "25f08ef71ce76e74fd3a1c5adcfdd25628d6a0b673cc6f9ac4ff1e6d5f40ae85",
+      "published_sha256": "47a8c2e4b55c540fb5d6f892dff6a092479162cd1960d8e0d1de877cbb6c68c1",
+      "redactions": 0
+    }
+  ],
+  "omitted": [],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

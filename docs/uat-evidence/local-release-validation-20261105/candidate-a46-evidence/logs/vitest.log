@@ -1,0 +1,8 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/lrv-final-a46c26f/frontend
+
+
+ Test Files  78 passed (78)
+      Tests  725 passed (725)
+   Start at  12:24:11
+   Duration  129.87s (transform 7.68s, setup 32.78s, import 28.54s, tests 46.05s, environment 245.39s)

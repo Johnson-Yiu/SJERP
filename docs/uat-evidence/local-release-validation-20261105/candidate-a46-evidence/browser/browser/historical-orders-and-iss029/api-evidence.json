@@ -1,0 +1,684 @@
+{
+  "database": "sqlite:///C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-k8ti2f/db.sqlite3",
+  "a": 1,
+  "b": 2,
+  "records": [
+    {
+      "method": "POST",
+      "url": "/quotes/",
+      "status": 201,
+      "body": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 2,
+            "sku_code": "ISS029-SKU",
+            "sales_model_snapshot": "SJ-029",
+            "model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name_snapshot": "R1 Repair Panel",
+            "unit": "pcs",
+            "image": "",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "amount": "10.00",
+            "description": "R1 Repair Panel",
+            "description_snapshot": "R1 Repair Panel",
+            "notes": "",
+            "sales_rules_snapshot": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "status_display": "草稿",
+        "total_amount": "10.00",
+        "root_quote_no": "SJ20261105DE001",
+        "revision_label": "Original",
+        "parent_quote_no": "",
+        "created_at": "2026-11-05T12:28:12.843128+08:00",
+        "updated_at": "2026-11-05T12:28:12.843128+08:00",
+        "quote_no": "SJ20261105DE001",
+        "revision_no": 0,
+        "revision_summary": "",
+        "buyer_company_name": "ISS029 R1 Snapshot Buyer",
+        "quote_date": "2026-11-05",
+        "valid_until": "2026-12-05",
+        "status": "draft",
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "recipient_name": "Version A Recipient",
+        "buyer_address": "Version A Berlin Address",
+        "buyer_email": "version-a@example.com",
+        "buyer_phone": "+49 222 A",
+        "lead_time_days": 10,
+        "deposit_ratio": "0.3000",
+        "trading_terms": "FOB Shenzhen",
+        "shipping_details": "",
+        "root_quote": null,
+        "parent_quote": null,
+        "customer": 1
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/quotes/",
+      "status": 400,
+      "body": {
+        "buyer_email": [
+          "请输入合法的邮件地址。"
+        ]
+      }
+    },
+    {
+      "method": "get",
+      "url": "/contacts/1/",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "created_at": "2026-11-05T12:26:50.086608+08:00",
+        "updated_at": "2026-11-05T12:26:50.086608+08:00",
+        "name": "Original Primary",
+        "title": "",
+        "email": "primary@example.com",
+        "phone": "+49 111",
+        "whatsapp": "",
+        "is_primary": true,
+        "notes": "",
+        "customer": 1
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/quotes/1/revise/",
+      "status": 201,
+      "body": {
+        "id": 2,
+        "items": [
+          {
+            "id": 2,
+            "sku": 2,
+            "sku_code": "ISS029-SKU",
+            "sales_model_snapshot": "SJ-029",
+            "model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name_snapshot": "R1 Repair Panel",
+            "unit": "pcs",
+            "image": "",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "amount": "10.00",
+            "description": "R1 Repair Panel",
+            "description_snapshot": "R1 Repair Panel",
+            "notes": "",
+            "sales_rules_snapshot": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "status_display": "草稿",
+        "total_amount": "10.00",
+        "root_quote_no": "SJ20261105DE001",
+        "revision_label": "Revision 1",
+        "parent_quote_no": "SJ20261105DE001",
+        "created_at": "2026-11-05T12:28:14.442325+08:00",
+        "updated_at": "2026-11-05T12:28:14.442325+08:00",
+        "quote_no": "SJ20261105DE001-1",
+        "revision_no": 1,
+        "revision_summary": "ISS029 收件人改为版本 B，邮箱留空",
+        "buyer_company_name": "ISS029 R1 Snapshot Buyer",
+        "quote_date": "2026-11-05",
+        "valid_until": "2026-12-05",
+        "status": "draft",
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "recipient_name": "Version B Recipient",
+        "buyer_address": "Version B Berlin Address",
+        "buyer_email": "",
+        "buyer_phone": "+49 333 B",
+        "lead_time_days": 10,
+        "deposit_ratio": "0.3000",
+        "trading_terms": "FOB Shenzhen",
+        "shipping_details": "",
+        "root_quote": 1,
+        "parent_quote": 1,
+        "customer": 1
+      }
+    },
+    {
+      "method": "patch",
+      "url": "/contacts/1/",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "created_at": "2026-11-05T12:26:50.086608+08:00",
+        "updated_at": "2026-11-05T12:28:14.775197+08:00",
+        "name": "Changed Primary",
+        "title": "",
+        "email": "changed-master@example.com",
+        "phone": "+49 999",
+        "whatsapp": "",
+        "is_primary": true,
+        "notes": "",
+        "customer": 1
+      }
+    },
+    {
+      "method": "patch",
+      "url": "/customers/1/",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "contact_count": 1,
+        "order_count": 0,
+        "sales_amount": "0.00",
+        "country_display": "Germany",
+        "status_display": "商机",
+        "created_at": "2026-11-05T12:26:50.081165+08:00",
+        "updated_at": "2026-11-05T12:28:14.794823+08:00",
+        "name": "ISS029 R1 Snapshot Buyer",
+        "code": "R1-REPAIR-029-C",
+        "country": "Germany",
+        "region": "",
+        "source": "",
+        "status": "opportunity",
+        "owner": "",
+        "website": "",
+        "address": "Changed Current Master Address",
+        "notes": "",
+        "next_follow_up": null,
+        "owner_profile": null
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/1/",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 2,
+            "sku_code": "ISS029-SKU",
+            "sales_model_snapshot": "SJ-029",
+            "model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name_snapshot": "R1 Repair Panel",
+            "unit": "pcs",
+            "image": "",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "amount": "10.00",
+            "description": "R1 Repair Panel",
+            "description_snapshot": "R1 Repair Panel",
+            "notes": "",
+            "sales_rules_snapshot": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "status_display": "已发送",
+        "total_amount": "10.00",
+        "root_quote_no": "SJ20261105DE001",
+        "revision_label": "Original",
+        "parent_quote_no": "",
+        "created_at": "2026-11-05T12:28:12.843128+08:00",
+        "updated_at": "2026-11-05T12:28:13.852486+08:00",
+        "quote_no": "SJ20261105DE001",
+        "revision_no": 0,
+        "revision_summary": "",
+        "buyer_company_name": "ISS029 R1 Snapshot Buyer",
+        "quote_date": "2026-11-05",
+        "valid_until": "2026-12-05",
+        "status": "sent",
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "recipient_name": "Version A Recipient",
+        "buyer_address": "Version A Berlin Address",
+        "buyer_email": "version-a@example.com",
+        "buyer_phone": "+49 222 A",
+        "lead_time_days": 10,
+        "deposit_ratio": "0.3000",
+        "trading_terms": "FOB Shenzhen",
+        "shipping_details": "",
+        "root_quote": null,
+        "parent_quote": null,
+        "customer": 1
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/1/pi-data/?buyer_email=unsaved@example.com",
+      "status": 200,
+      "body": {
+        "invoice_no": "SJ20261105DE001",
+        "seller": {
+          "name": "Guangzhou Sunjack Lighting Co., Ltd.",
+          "saler": "Johnson",
+          "address": "C0615, Room 201, 1411 Huaguan Road,\nGuangzhou City, China",
+          "email": "johnsonyao@sunjack.cn",
+          "phone": "+86-18103040544"
+        },
+        "bank": [
+          [
+            "Beneficiary Name",
+            "Guangzhou Sunjack Lighting Co., Ltd."
+          ],
+          [
+            "Beneficiary Account Number",
+            "63001208199"
+          ],
+          [
+            "Swift Code",
+            "CHASHKHHXXX"
+          ],
+          [
+            "Country/Region",
+            "HongKong"
+          ],
+          [
+            "Beneficiary Address",
+            "Units 1260, 12/F, Emperor Group Centre, 288 Hennessy Road, Wan Chai, Hong Kong"
+          ],
+          [
+            "Beneficiary Bank",
+            "JPMorgan Chase Bank N.A., Hong Kong Branch"
+          ],
+          [
+            "Beneficiary Bank Address",
+            "CHARTER HOUSE, 8 CONNAUGHT ROAD, CENTRAL, HONG KONG"
+          ],
+          [
+            "Bank Code",
+            "007"
+          ],
+          [
+            "Branch Code",
+            "863"
+          ]
+        ],
+        "bank_notice": "IMPORTANT NOTICE\nWe will not change the bank account information frequently! If the \"Beneficiary Name\" on the Proforma Invoice is not \nGUANGZHOU SUNJACK LIGHTING CO., LTD.,\nplease confirm with us, DO NOT PAY WITHOUT CONFIRMATION, and prevent being scammed!",
+        "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+        "buyer": {
+          "company_name": "ISS029 R1 Snapshot Buyer",
+          "name": "Version A Recipient",
+          "address": "Version A Berlin Address",
+          "email": "version-a@example.com",
+          "phone": "+49 222 A"
+        },
+        "terms": {
+          "quote_date": "2026-11-05",
+          "valid_until": "2026-12-05",
+          "validity_days": 30,
+          "lead_time_days": 10,
+          "trading_terms": "FOB Shenzhen",
+          "shipping_details": "",
+          "notes": ""
+        },
+        "totals": {
+          "currency": "USD",
+          "subtotal": "10.00",
+          "shipping_fee": "0.00",
+          "discount": "0.00",
+          "total_amount": "10.00"
+        },
+        "payment_splits": {
+          "deposit_ratio": "0.3000",
+          "deposit_amount": "3.00",
+          "balance_ratio": "0.7000",
+          "balance_amount": "7.00"
+        },
+        "products": [
+          {
+            "sku": "ISS029-SKU",
+            "sku_code": "ISS029-SKU",
+            "model": "SJ-029",
+            "sales_model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name": "R1 Repair Panel",
+            "description": "R1 Repair Panel",
+            "quantity": 1,
+            "base_quantity": 1,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "unit_price": "10.000000000000",
+            "amount": 10,
+            "unit": "pcs",
+            "image_url": ""
+          }
+        ],
+        "amount_words": "SAY TOTAL US DOLLARS TEN ONLY",
+        "print_sha256": "9f18a6f8dfbe60ee322b67116e3961d822c06c4a8391d3b0ba124c949d240cf3",
+        "print_html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><title>SJ20261105DE001</title>\n<style>\nbody{font:14px Arial,sans-serif;color:#111;margin:24px}h1{text-align:center;font-size:24px}h2{font-size:16px;border-bottom:1px solid #333}.parties{display:grid;grid-template-columns:1fr 1fr;gap:24px}dl{display:grid;grid-template-columns:110px 1fr;gap:4px}dt{font-weight:bold}dd{margin:0;white-space:pre-line}table{border-collapse:collapse;width:100%;margin-top:18px}th,td{border:1px solid #555;padding:5px;text-align:left}td img{max-width:60px;max-height:60px}.totals{text-align:right}.notice{white-space:pre-line}@media print{body{margin:8mm}}@media screen and (max-width:500px){.parties{grid-template-columns:1fr}table,tbody,tr,td{display:block}thead{display:none}tr{border:1px solid #555;margin-bottom:10px}td{border:0;border-bottom:1px solid #ddd;display:grid;grid-template-columns:110px 1fr;overflow-wrap:anywhere}td::before{content:attr(data-label);font-weight:bold}td:last-child{border-bottom:0}}\n</style></head><body>\n<h1>Proforma Invoice</h1><div class=\"parties\"><section><h2>Buyer Information</h2><dl>\n<dt>Name</dt><dd>ISS029 R1 Snapshot Buyer</dd><dt>Recipient</dt><dd>Version A Recipient</dd><dt>Address</dt><dd>Version A Berlin Address</dd><dt>Tax ID</dt><dd></dd><dt>Email</dt><dd>version-a@example.com</dd><dt>Tel</dt><dd>+49 222 A</dd></dl></section>\n<section><h2>Seller Information</h2><dl><dt>Name</dt><dd>Guangzhou Sunjack Lighting Co., Ltd.</dd><dt>Saler</dt><dd>Johnson</dd><dt>Address</dt><dd>C0615, Room 201, 1411 Huaguan Road,\nGuangzhou City, China</dd><dt>Email</dt><dd>johnsonyao@sunjack.cn</dd><dt>Tel</dt><dd>+86-18103040544</dd><dt>Date</dt><dd>2026年11月5日</dd></dl></section></div>\n<p>Invoice No. <strong>SJ20261105DE001</strong></p><table><thead><tr><th>No.</th><th>Image</th><th>Model</th><th>Description</th><th>Quantity</th><th>Unit</th><th>Unit Price USD</th><th>Total USD</th></tr></thead><tbody>\n<tr><td data-label=\"No.\">1</td><td data-label=\"Image\"></td><td data-label=\"Model\">SJ-029</td><td data-label=\"Description\">R1 Repair Panel</td><td data-label=\"Quantity\">1.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">10.00 USD</td><td data-label=\"Total\">10.00 USD</td></tr></tbody></table>\n<div class=\"totals\"><p>Sub Total: 10.00</p><p>Shipping Cost: 0.00</p><p>Discount: 0.00</p><p><strong>Grand Total: 10.00</strong></p></div>\n<p>SAY TOTAL US DOLLARS TEN ONLY</p><section><h2>NOTES</h2><p>Lead time: 10 Days<br>Price Valid Date: 30 Days<br>Deposit: 30% (USD 3.00)<br>Balance: 70% (USD 7.00)<br>Trading terms: FOB Shenzhen<br>Shipping details: <br>The price is EXCLUDE customs duties and VAT. If the goods generate the customs taxes and VAT taxes in buyer's local, the buyer should pay by themselves.</p><p class=\"notice\"></p></section>\n<section><h2>BANK INFORMATION</h2><dl><dt>Beneficiary Name</dt><dd>Guangzhou Sunjack Lighting Co., Ltd.</dd><dt>Beneficiary Account Number</dt><dd>63001208199</dd><dt>Swift Code</dt><dd>CHASHKHHXXX</dd><dt>Country/Region</dt><dd>HongKong</dd><dt>Beneficiary Address</dt><dd>Units 1260, 12/F, Emperor Group Centre, 288 Hennessy Road, Wan Chai, Hong Kong</dd><dt>Beneficiary Bank</dt><dd>JPMorgan Chase Bank N.A., Hong Kong Branch</dd><dt>Beneficiary Bank Address</dt><dd>CHARTER HOUSE, 8 CONNAUGHT ROAD, CENTRAL, HONG KONG</dd><dt>Bank Code</dt><dd>007</dd><dt>Branch Code</dt><dd>863</dd></dl><p class=\"notice\">IMPORTANT NOTICE\nWe will not change the bank account information frequently! If the &quot;Beneficiary Name&quot; on the Proforma Invoice is not \nGUANGZHOU SUNJACK LIGHTING CO., LTD.,\nplease confirm with us, DO NOT PAY WITHOUT CONFIRMATION, and prevent being scammed!</p></section></body></html>\n"
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/2/",
+      "status": 200,
+      "body": {
+        "id": 2,
+        "items": [
+          {
+            "id": 2,
+            "sku": 2,
+            "sku_code": "ISS029-SKU",
+            "sales_model_snapshot": "SJ-029",
+            "model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name_snapshot": "R1 Repair Panel",
+            "unit": "pcs",
+            "image": "",
+            "quantity": "1.00",
+            "unit_price": "10.0000",
+            "amount": "10.00",
+            "description": "R1 Repair Panel",
+            "description_snapshot": "R1 Repair Panel",
+            "notes": "",
+            "sales_rules_snapshot": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "ISS029 R1 Snapshot Buyer",
+        "status_display": "草稿",
+        "total_amount": "10.00",
+        "root_quote_no": "SJ20261105DE001",
+        "revision_label": "Revision 1",
+        "parent_quote_no": "SJ20261105DE001",
+        "created_at": "2026-11-05T12:28:14.442325+08:00",
+        "updated_at": "2026-11-05T12:28:14.442325+08:00",
+        "quote_no": "SJ20261105DE001-1",
+        "revision_no": 1,
+        "revision_summary": "ISS029 收件人改为版本 B，邮箱留空",
+        "buyer_company_name": "ISS029 R1 Snapshot Buyer",
+        "quote_date": "2026-11-05",
+        "valid_until": "2026-12-05",
+        "status": "draft",
+        "currency": "USD",
+        "exchange_rate": "7.200000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "recipient_name": "Version B Recipient",
+        "buyer_address": "Version B Berlin Address",
+        "buyer_email": "",
+        "buyer_phone": "+49 333 B",
+        "lead_time_days": 10,
+        "deposit_ratio": "0.3000",
+        "trading_terms": "FOB Shenzhen",
+        "shipping_details": "",
+        "root_quote": 1,
+        "parent_quote": 1,
+        "customer": 1
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/2/pi-data/?buyer_email=unsaved@example.com",
+      "status": 200,
+      "body": {
+        "invoice_no": "SJ20261105DE001-1",
+        "seller": {
+          "name": "Guangzhou Sunjack Lighting Co., Ltd.",
+          "saler": "Johnson",
+          "address": "C0615, Room 201, 1411 Huaguan Road,\nGuangzhou City, China",
+          "email": "johnsonyao@sunjack.cn",
+          "phone": "+86-18103040544"
+        },
+        "bank": [
+          [
+            "Beneficiary Name",
+            "Guangzhou Sunjack Lighting Co., Ltd."
+          ],
+          [
+            "Beneficiary Account Number",
+            "63001208199"
+          ],
+          [
+            "Swift Code",
+            "CHASHKHHXXX"
+          ],
+          [
+            "Country/Region",
+            "HongKong"
+          ],
+          [
+            "Beneficiary Address",
+            "Units 1260, 12/F, Emperor Group Centre, 288 Hennessy Road, Wan Chai, Hong Kong"
+          ],
+          [
+            "Beneficiary Bank",
+            "JPMorgan Chase Bank N.A., Hong Kong Branch"
+          ],
+          [
+            "Beneficiary Bank Address",
+            "CHARTER HOUSE, 8 CONNAUGHT ROAD, CENTRAL, HONG KONG"
+          ],
+          [
+            "Bank Code",
+            "007"
+          ],
+          [
+            "Branch Code",
+            "863"
+          ]
+        ],
+        "bank_notice": "IMPORTANT NOTICE\nWe will not change the bank account information frequently! If the \"Beneficiary Name\" on the Proforma Invoice is not \nGUANGZHOU SUNJACK LIGHTING CO., LTD.,\nplease confirm with us, DO NOT PAY WITHOUT CONFIRMATION, and prevent being scammed!",
+        "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+        "buyer": {
+          "company_name": "ISS029 R1 Snapshot Buyer",
+          "name": "Version B Recipient",
+          "address": "Version B Berlin Address",
+          "email": "",
+          "phone": "+49 333 B"
+        },
+        "terms": {
+          "quote_date": "2026-11-05",
+          "valid_until": "2026-12-05",
+          "validity_days": 30,
+          "lead_time_days": 10,
+          "trading_terms": "FOB Shenzhen",
+          "shipping_details": "",
+          "notes": ""
+        },
+        "totals": {
+          "currency": "USD",
+          "subtotal": "10.00",
+          "shipping_fee": "0.00",
+          "discount": "0.00",
+          "total_amount": "10.00"
+        },
+        "payment_splits": {
+          "deposit_ratio": "0.3000",
+          "deposit_amount": "3.00",
+          "balance_ratio": "0.7000",
+          "balance_amount": "7.00"
+        },
+        "products": [
+          {
+            "sku": "ISS029-SKU",
+            "sku_code": "ISS029-SKU",
+            "model": "SJ-029",
+            "sales_model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name": "R1 Repair Panel",
+            "description": "R1 Repair Panel",
+            "quantity": 1,
+            "base_quantity": 1,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "unit_price": "10.000000000000",
+            "amount": 10,
+            "unit": "pcs",
+            "image_url": ""
+          }
+        ],
+        "amount_words": "SAY TOTAL US DOLLARS TEN ONLY",
+        "print_sha256": "9f18a6f8dfbe60ee322b67116e3961d822c06c4a8391d3b0ba124c949d240cf3",
+        "print_html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><title>SJ20261105DE001-1</title>\n<style>\nbody{font:14px Arial,sans-serif;color:#111;margin:24px}h1{text-align:center;font-size:24px}h2{font-size:16px;border-bottom:1px solid #333}.parties{display:grid;grid-template-columns:1fr 1fr;gap:24px}dl{display:grid;grid-template-columns:110px 1fr;gap:4px}dt{font-weight:bold}dd{margin:0;white-space:pre-line}table{border-collapse:collapse;width:100%;margin-top:18px}th,td{border:1px solid #555;padding:5px;text-align:left}td img{max-width:60px;max-height:60px}.totals{text-align:right}.notice{white-space:pre-line}@media print{body{margin:8mm}}@media screen and (max-width:500px){.parties{grid-template-columns:1fr}table,tbody,tr,td{display:block}thead{display:none}tr{border:1px solid #555;margin-bottom:10px}td{border:0;border-bottom:1px solid #ddd;display:grid;grid-template-columns:110px 1fr;overflow-wrap:anywhere}td::before{content:attr(data-label);font-weight:bold}td:last-child{border-bottom:0}}\n</style></head><body>\n<h1>Proforma Invoice</h1><div class=\"parties\"><section><h2>Buyer Information</h2><dl>\n<dt>Name</dt><dd>ISS029 R1 Snapshot Buyer</dd><dt>Recipient</dt><dd>Version B Recipient</dd><dt>Address</dt><dd>Version B Berlin Address</dd><dt>Tax ID</dt><dd></dd><dt>Email</dt><dd></dd><dt>Tel</dt><dd>+49 333 B</dd></dl></section>\n<section><h2>Seller Information</h2><dl><dt>Name</dt><dd>Guangzhou Sunjack Lighting Co., Ltd.</dd><dt>Saler</dt><dd>Johnson</dd><dt>Address</dt><dd>C0615, Room 201, 1411 Huaguan Road,\nGuangzhou City, China</dd><dt>Email</dt><dd>johnsonyao@sunjack.cn</dd><dt>Tel</dt><dd>+86-18103040544</dd><dt>Date</dt><dd>2026年11月5日</dd></dl></section></div>\n<p>Invoice No. <strong>SJ20261105DE001-1</strong></p><table><thead><tr><th>No.</th><th>Image</th><th>Model</th><th>Description</th><th>Quantity</th><th>Unit</th><th>Unit Price USD</th><th>Total USD</th></tr></thead><tbody>\n<tr><td data-label=\"No.\">1</td><td data-label=\"Image\"></td><td data-label=\"Model\">SJ-029</td><td data-label=\"Description\">R1 Repair Panel</td><td data-label=\"Quantity\">1.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">10.00 USD</td><td data-label=\"Total\">10.00 USD</td></tr></tbody></table>\n<div class=\"totals\"><p>Sub Total: 10.00</p><p>Shipping Cost: 0.00</p><p>Discount: 0.00</p><p><strong>Grand Total: 10.00</strong></p></div>\n<p>SAY TOTAL US DOLLARS TEN ONLY</p><section><h2>NOTES</h2><p>Lead time: 10 Days<br>Price Valid Date: 30 Days<br>Deposit: 30% (USD 3.00)<br>Balance: 70% (USD 7.00)<br>Trading terms: FOB Shenzhen<br>Shipping details: <br>The price is EXCLUDE customs duties and VAT. If the goods generate the customs taxes and VAT taxes in buyer's local, the buyer should pay by themselves.</p><p class=\"notice\"></p></section>\n<section><h2>BANK INFORMATION</h2><dl><dt>Beneficiary Name</dt><dd>Guangzhou Sunjack Lighting Co., Ltd.</dd><dt>Beneficiary Account Number</dt><dd>63001208199</dd><dt>Swift Code</dt><dd>CHASHKHHXXX</dd><dt>Country/Region</dt><dd>HongKong</dd><dt>Beneficiary Address</dt><dd>Units 1260, 12/F, Emperor Group Centre, 288 Hennessy Road, Wan Chai, Hong Kong</dd><dt>Beneficiary Bank</dt><dd>JPMorgan Chase Bank N.A., Hong Kong Branch</dd><dt>Beneficiary Bank Address</dt><dd>CHARTER HOUSE, 8 CONNAUGHT ROAD, CENTRAL, HONG KONG</dd><dt>Bank Code</dt><dd>007</dd><dt>Branch Code</dt><dd>863</dd></dl><p class=\"notice\">IMPORTANT NOTICE\nWe will not change the bank account information frequently! If the &quot;Beneficiary Name&quot; on the Proforma Invoice is not \nGUANGZHOU SUNJACK LIGHTING CO., LTD.,\nplease confirm with us, DO NOT PAY WITHOUT CONFIRMATION, and prevent being scammed!</p></section></body></html>\n"
+      }
+    },
+    {
+      "method": "get",
+      "url": "/quotes/2/pi-data/",
+      "status": 200,
+      "body": {
+        "invoice_no": "SJ20261105DE001-1",
+        "seller": {
+          "name": "Guangzhou Sunjack Lighting Co., Ltd.",
+          "saler": "Johnson",
+          "address": "C0615, Room 201, 1411 Huaguan Road,\nGuangzhou City, China",
+          "email": "johnsonyao@sunjack.cn",
+          "phone": "+86-18103040544"
+        },
+        "bank": [
+          [
+            "Beneficiary Name",
+            "Guangzhou Sunjack Lighting Co., Ltd."
+          ],
+          [
+            "Beneficiary Account Number",
+            "63001208199"
+          ],
+          [
+            "Swift Code",
+            "CHASHKHHXXX"
+          ],
+          [
+            "Country/Region",
+            "HongKong"
+          ],
+          [
+            "Beneficiary Address",
+            "Units 1260, 12/F, Emperor Group Centre, 288 Hennessy Road, Wan Chai, Hong Kong"
+          ],
+          [
+            "Beneficiary Bank",
+            "JPMorgan Chase Bank N.A., Hong Kong Branch"
+          ],
+          [
+            "Beneficiary Bank Address",
+            "CHARTER HOUSE, 8 CONNAUGHT ROAD, CENTRAL, HONG KONG"
+          ],
+          [
+            "Bank Code",
+            "007"
+          ],
+          [
+            "Branch Code",
+            "863"
+          ]
+        ],
+        "bank_notice": "IMPORTANT NOTICE\nWe will not change the bank account information frequently! If the \"Beneficiary Name\" on the Proforma Invoice is not \nGUANGZHOU SUNJACK LIGHTING CO., LTD.,\nplease confirm with us, DO NOT PAY WITHOUT CONFIRMATION, and prevent being scammed!",
+        "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+        "buyer": {
+          "company_name": "ISS029 R1 Snapshot Buyer",
+          "name": "Version B Recipient",
+          "address": "Version B Berlin Address",
+          "email": "",
+          "phone": "+49 333 B"
+        },
+        "terms": {
+          "quote_date": "2026-11-05",
+          "valid_until": "2026-12-05",
+          "validity_days": 30,
+          "lead_time_days": 10,
+          "trading_terms": "FOB Shenzhen",
+          "shipping_details": "",
+          "notes": ""
+        },
+        "totals": {
+          "currency": "USD",
+          "subtotal": "10.00",
+          "shipping_fee": "0.00",
+          "discount": "0.00",
+          "total_amount": "10.00"
+        },
+        "payment_splits": {
+          "deposit_ratio": "0.3000",
+          "deposit_amount": "3.00",
+          "balance_ratio": "0.7000",
+          "balance_amount": "7.00"
+        },
+        "products": [
+          {
+            "sku": "ISS029-SKU",
+            "sku_code": "ISS029-SKU",
+            "model": "SJ-029",
+            "sales_model": "SJ-029",
+            "product_name": "R1 Repair Panel",
+            "display_name": "R1 Repair Panel",
+            "description": "R1 Repair Panel",
+            "quantity": 1,
+            "base_quantity": 1,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "unit_price": "10.000000000000",
+            "amount": 10,
+            "unit": "pcs",
+            "image_url": ""
+          }
+        ],
+        "amount_words": "SAY TOTAL US DOLLARS TEN ONLY",
+        "print_sha256": "9f18a6f8dfbe60ee322b67116e3961d822c06c4a8391d3b0ba124c949d240cf3",
+        "print_html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><title>SJ20261105DE001-1</title>\n<style>\nbody{font:14px Arial,sans-serif;color:#111;margin:24px}h1{text-align:center;font-size:24px}h2{font-size:16px;border-bottom:1px solid #333}.parties{display:grid;grid-template-columns:1fr 1fr;gap:24px}dl{display:grid;grid-template-columns:110px 1fr;gap:4px}dt{font-weight:bold}dd{margin:0;white-space:pre-line}table{border-collapse:collapse;width:100%;margin-top:18px}th,td{border:1px solid #555;padding:5px;text-align:left}td img{max-width:60px;max-height:60px}.totals{text-align:right}.notice{white-space:pre-line}@media print{body{margin:8mm}}@media screen and (max-width:500px){.parties{grid-template-columns:1fr}table,tbody,tr,td{display:block}thead{display:none}tr{border:1px solid #555;margin-bottom:10px}td{border:0;border-bottom:1px solid #ddd;display:grid;grid-template-columns:110px 1fr;overflow-wrap:anywhere}td::before{content:attr(data-label);font-weight:bold}td:last-child{border-bottom:0}}\n</style></head><body>\n<h1>Proforma Invoice</h1><div class=\"parties\"><section><h2>Buyer Information</h2><dl>\n<dt>Name</dt><dd>ISS029 R1 Snapshot Buyer</dd><dt>Recipient</dt><dd>Version B Recipient</dd><dt>Address</dt><dd>Version B Berlin Address</dd><dt>Tax ID</dt><dd></dd><dt>Email</dt><dd></dd><dt>Tel</dt><dd>+49 333 B</dd></dl></section>\n<section><h2>Seller Information</h2><dl><dt>Name</dt><dd>Guangzhou Sunjack Lighting Co., Ltd.</dd><dt>Saler</dt><dd>Johnson</dd><dt>Address</dt><dd>C0615, Room 201, 1411 Huaguan Road,\nGuangzhou City, China</dd><dt>Email</dt><dd>johnsonyao@sunjack.cn</dd><dt>Tel</dt><dd>+86-18103040544</dd><dt>Date</dt><dd>2026年11月5日</dd></dl></section></div>\n<p>Invoice No. <strong>SJ20261105DE001-1</strong></p><table><thead><tr><th>No.</th><th>Image</th><th>Model</th><th>Description</th><th>Quantity</th><th>Unit</th><th>Unit Price USD</th><th>Total USD</th></tr></thead><tbody>\n<tr><td data-label=\"No.\">1</td><td data-label=\"Image\"></td><td data-label=\"Model\">SJ-029</td><td data-label=\"Description\">R1 Repair Panel</td><td data-label=\"Quantity\">1.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">10.00 USD</td><td data-label=\"Total\">10.00 USD</td></tr></tbody></table>\n<div class=\"totals\"><p>Sub Total: 10.00</p><p>Shipping Cost: 0.00</p><p>Discount: 0.00</p><p><strong>Grand Total: 10.00</strong></p></div>\n<p>SAY TOTAL US DOLLARS TEN ONLY</p><section><h2>NOTES</h2><p>Lead time: 10 Days<br>Price Valid Date: 30 Days<br>Deposit: 30% (USD 3.00)<br>Balance: 70% (USD 7.00)<br>Trading terms: FOB Shenzhen<br>Shipping details: <br>The price is EXCLUDE customs duties and VAT. If the goods generate the customs taxes and VAT taxes in buyer's local, the buyer should pay by themselves.</p><p class=\"notice\"></p></section>\n<section><h2>BANK INFORMATION</h2><dl><dt>Beneficiary Name</dt><dd>Guangzhou Sunjack Lighting Co., Ltd.</dd><dt>Beneficiary Account Number</dt><dd>63001208199</dd><dt>Swift Code</dt><dd>CHASHKHHXXX</dd><dt>Country/Region</dt><dd>HongKong</dd><dt>Beneficiary Address</dt><dd>Units 1260, 12/F, Emperor Group Centre, 288 Hennessy Road, Wan Chai, Hong Kong</dd><dt>Beneficiary Bank</dt><dd>JPMorgan Chase Bank N.A., Hong Kong Branch</dd><dt>Beneficiary Bank Address</dt><dd>CHARTER HOUSE, 8 CONNAUGHT ROAD, CENTRAL, HONG KONG</dd><dt>Bank Code</dt><dd>007</dd><dt>Branch Code</dt><dd>863</dd></dl><p class=\"notice\">IMPORTANT NOTICE\nWe will not change the bank account information frequently! If the &quot;Beneficiary Name&quot; on the Proforma Invoice is not \nGUANGZHOU SUNJACK LIGHTING CO., LTD.,\nplease confirm with us, DO NOT PAY WITHOUT CONFIRMATION, and prevent being scammed!</p></section></body></html>\n"
+      }
+    }
+  ]
+}

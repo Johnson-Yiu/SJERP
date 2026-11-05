@@ -1,0 +1,417 @@
+{
+  "sha": "a46c26f796fe6cc4c4a6a07dc70fe92cfda34114",
+  "application_objects": {
+    "backend": "247d286377e43c37b6e88c5620b7901112145a5f",
+    "frontend": "e0f5fdc1f635ab36fba65d79bffbd8ae4e10292c",
+    "templates": "535566cc881d16b650af62663f9c6195a42823ad",
+    ".github/workflows": "8a8f196b21213dd764898f51eaa0e0a7e8ad027c"
+  },
+  "helper_sha256": {
+    "docs\\uat-evidence\\local-release-validation-20261105\\run-local-validation.py": "6070c0e468dc06d9e9d9a1a74de1221f39bc3091b8f6915a3a7a42fed51b7cb7",
+    "docs\\uat-evidence\\local-release-validation-20261105\\browser-suite.mjs": "fc333c3e4e902af505521525d20a18b4fdb07aafccf79988a75b0b3430efe4ba",
+    "docs\\uat-evidence\\review-integration-batch-20261104\\run-postgres-regression.py": "539c9bef604c9f5d0802232dadf2d22100358b9607c27c2ee3488c07d9c262b4",
+    "docs\\uat-evidence\\review-integration-batch-20261104\\finance-backup-seed\\seed_finance_backup.py": "5e97fbfd0b552834f0e28a790dd81458824b0ac3283a49abbf115355db28d73f",
+    "docs\\uat-evidence\\review-integration-batch-20261104\\seed_history_backup.py": "0f171e50266d9f52e10e8eae413fc089bd760d6c4083802cfac8dab619d4f248",
+    "docs\\uat-evidence\\integration-closeout-02\\seed_history_operational_backup.py": "be797a9c96753d22d321e17264d14736ddce2d20b0c9a81e7d41a808aefea374",
+    "docs\\uat-evidence\\integration-closeout-02\\run-final-history-chrome.mjs": "4e363e629aebbc059317ee9f8143bc1a3629b3c3295c74f4b1483119e3430e89",
+    "docs\\uat-evidence\\integration-closeout-02\\seed_integrated_history_uat.py": "d440ff2673d3346ef3a1210d3af7f0176cdf6d426398394dfab9d773fa57aa3c",
+    "docs\\uat-evidence\\integration-closeout-02\\verify_integrated_history_uat.py": "f0793a1e9d9c47f306a8a0f81ab7646cff60a071c003fb881124b6df5a187f71"
+  },
+  "results": [
+    {
+      "stage": "python-version",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "-c",
+        "import sys; print(sys.version); sys.exit(sys.version_info < (3,12))"
+      ],
+      "cwd": ".",
+      "started_utc": "2026-11-05T03:40:24.200729+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\python-version.log",
+      "sha256": "017ddc77faa27bc908abcbc80f4ef5792c1b1f6e515a73e9c27a83f0f1c71695",
+      "summary_candidates": []
+    },
+    {
+      "stage": "postgres-version",
+      "command": [
+        "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-iss018-pg17-d26bfa744cf54322af03ea964e90089f\\pgsql\\bin\\pg_config.exe",
+        "--version"
+      ],
+      "cwd": ".",
+      "started_utc": "2026-11-05T03:40:24.746269+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\postgres-version.log",
+      "sha256": "e67734a04dcd182e1da50c9739eb32f8e5c5a769dd8aa1da66a3b2adb34375b8",
+      "summary_candidates": []
+    },
+    {
+      "stage": "python-path-identity",
+      "command": [
+        "node",
+        "-e",
+        "const r=require(\"node:child_process\").spawnSync(\"python\", [\"-c\", \"import sys,django; print(sys.executable); print(django.get_version()); assert django.get_version() == \\\"6.0.9\\\"\"], {stdio: \"inherit\"}); process.exit(r.status === null ? 1 : r.status)"
+      ],
+      "cwd": ".",
+      "started_utc": "2026-11-05T03:40:25.742807+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\python-path-identity.log",
+      "sha256": "05833e3c28bcd4f98891570c914baeca8e995c9a738727f2012f0098419c5546",
+      "summary_candidates": []
+    },
+    {
+      "stage": "locked-dependencies",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "-c",
+        "import importlib.metadata as m,re,pathlib,sys; lines=pathlib.Path('backend/requirements.lock').read_text().splitlines(); pins=[x.strip().split('==') for x in lines if re.match(r'^[A-Za-z0-9_.-]+==',x.strip())]; bad=[(n,v,m.version(n)) for n,v in pins if m.version(n)!=v]; print('locked pins:',len(pins),'mismatches:',bad); sys.exit(bool(bad))"
+      ],
+      "cwd": ".",
+      "started_utc": "2026-11-05T03:40:26.804864+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\locked-dependencies.log",
+      "sha256": "521598caff27746af0f3226ed93c5984535f6626f468f1d5f4b21f3d21c1af4b",
+      "summary_candidates": []
+    },
+    {
+      "stage": "pip-check",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": ".",
+      "started_utc": "2026-11-05T03:40:28.142295+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\pip-check.log",
+      "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf",
+      "summary_candidates": []
+    },
+    {
+      "stage": "django-check",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "manage.py",
+        "check"
+      ],
+      "cwd": "backend",
+      "started_utc": "2026-11-05T03:40:29.278995+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\django-check.log",
+      "sha256": "f87ceb15410bde28ff826ce26228e0576558258fa64d145847921a593a61ee63",
+      "summary_candidates": []
+    },
+    {
+      "stage": "migrations-check",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "manage.py",
+        "makemigrations",
+        "--check",
+        "--dry-run"
+      ],
+      "cwd": "backend",
+      "started_utc": "2026-11-05T03:40:32.465053+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\migrations-check.log",
+      "sha256": "93e6e2d5be3c054add80c0f19101608803f7ca8a7df1fa41f76bbb9a1f570f4a",
+      "summary_candidates": []
+    },
+    {
+      "stage": "migration-graph",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "manage.py",
+        "showmigrations",
+        "--plan"
+      ],
+      "cwd": "backend",
+      "started_utc": "2026-11-05T03:40:35.867916+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\migration-graph.log",
+      "sha256": "b8767d3c3bbfc75fd5a75cb8a19f71fa35cebc67836c8e712be98ee9b66abb79",
+      "summary_candidates": []
+    },
+    {
+      "stage": "sqlite-upgrade-0103",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "manage.py",
+        "migrate",
+        "crm",
+        "0103",
+        "--noinput"
+      ],
+      "cwd": "backend",
+      "started_utc": "2026-11-05T03:40:38.283250+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\sqlite-upgrade-0103.log",
+      "sha256": "ef33fd9444e83eae66ee9e82b094a3001c4d0f54d9282e4b7060e4f50b43c387",
+      "summary_candidates": [
+        "OK",
+        "OK",
+        "OK",
+        "OK",
+        "OK"
+      ]
+    },
+    {
+      "stage": "sqlite-upgrade-seed",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "manage.py",
+        "shell",
+        "-c",
+        "from crm.models import Customer; Customer.objects.create(code=\"UAT-UPGRADE\", name=\"Synthetic migration customer\"); print(\"SYNTHETIC_SEED_OK\")"
+      ],
+      "cwd": "backend",
+      "started_utc": "2026-11-05T03:40:55.926252+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\sqlite-upgrade-seed.log",
+      "sha256": "7e69bbe965166f3f65c314f5889d7b27684a97661964d65b525ce31cd4dc7910",
+      "summary_candidates": [
+        "OK"
+      ]
+    },
+    {
+      "stage": "sqlite-upgrade-latest",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "manage.py",
+        "migrate",
+        "--noinput"
+      ],
+      "cwd": "backend",
+      "started_utc": "2026-11-05T03:40:57.265070+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\sqlite-upgrade-latest.log",
+      "sha256": "627a2719a0167b1137994a08382ec6cd71dff61414113ab4bbda33ed2455e1a7",
+      "summary_candidates": [
+        "OK",
+        "OK",
+        "OK",
+        "OK",
+        "OK"
+      ]
+    },
+    {
+      "stage": "sqlite-upgrade-verify",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "manage.py",
+        "shell",
+        "-c",
+        "from crm.models import Customer; assert Customer.objects.filter(code=\"UAT-UPGRADE\", name=\"Synthetic migration customer\").count() == 1; print(\"SYNTHETIC_UPGRADE_OK\")"
+      ],
+      "cwd": "backend",
+      "started_utc": "2026-11-05T03:41:02.155406+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\sqlite-upgrade-verify.log",
+      "sha256": "241d0f2da81835b2a1badf1a8bf500b594ab9abd21c1f6f7222f104efb7e5f3d",
+      "summary_candidates": [
+        "OK"
+      ]
+    },
+    {
+      "stage": "sqlite-full",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "--verbosity",
+        "2"
+      ],
+      "cwd": "backend",
+      "started_utc": "2026-11-05T03:41:03.481337+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\sqlite-full.log",
+      "sha256": "1409c8acb4d82c26af57352ecaea97c32f416b6b804054f47da0395d1f85ef67",
+      "summary_candidates": [
+        "OK",
+        "OK",
+        "OK",
+        "Ran 1419 tests in 880.876s\r",
+        "OK (skipped=80)"
+      ]
+    },
+    {
+      "stage": "postgres17-full-backup-restore",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "docs/uat-evidence/review-integration-batch-20261104/run-postgres-regression.py",
+        "--postgres-bin",
+        "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-iss018-pg17-d26bfa744cf54322af03ea964e90089f\\pgsql\\bin"
+      ],
+      "cwd": ".",
+      "started_utc": "2026-11-05T03:56:02.993095+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\postgres17-full-backup-restore.log",
+      "sha256": "022e51fcf2ce933304b33307977c1becd95fbc9473531d62166398f32ae9de7c",
+      "summary_candidates": [
+        "OK",
+        "OK",
+        "OK",
+        "Ran 1419 tests in 1202.944s\r",
+        "OK (skipped=32)"
+      ]
+    },
+    {
+      "stage": "backup-command-faults",
+      "command": [
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+        "manage.py",
+        "test",
+        "crm.tests.test_iss018_drill_command",
+        "--verbosity",
+        "2"
+      ],
+      "cwd": "backend",
+      "started_utc": "2026-11-05T04:17:34.502485+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\backup-command-faults.log",
+      "sha256": "4102f0ebc9787ba5320fd787ab41d32206b5ddaad2c1386400ee8f2e87ab6ad5",
+      "summary_candidates": [
+        "Ran 8 tests in 321.650s\r",
+        "OK"
+      ]
+    },
+    {
+      "stage": "npm-ci",
+      "command": [
+        "C:\\Windows\\system32\\cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "ci"
+      ],
+      "cwd": "frontend",
+      "started_utc": "2026-11-05T04:22:58.516514+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\npm-ci.log",
+      "sha256": "56ad6428616935c528dbcff4913b7f37c58f3b424084bcbc0deb41deab43f54e",
+      "summary_candidates": []
+    },
+    {
+      "stage": "node",
+      "command": [
+        "C:\\Windows\\system32\\cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "run",
+        "test:unit"
+      ],
+      "cwd": "frontend",
+      "started_utc": "2026-11-05T04:23:21.822214+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\node.log",
+      "sha256": "09e445bd02de5c0c9e9783c8b4c67e66a830e313304288825a154d5ec8c6fd9d",
+      "summary_candidates": [
+        "OK",
+        "OK",
+        "OK",
+        "1 passed (827ms)",
+        "1 passed (703ms)"
+      ]
+    },
+    {
+      "stage": "font",
+      "command": [
+        "node",
+        "--test",
+        "tests/detail-drawer-typography.spec.js"
+      ],
+      "cwd": "frontend",
+      "started_utc": "2026-11-05T04:24:08.372253+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\font.log",
+      "sha256": "90c74df4662342dade617ccc5279e90356a4797ef0dab8ff9b71f8a19b8618e0",
+      "summary_candidates": []
+    },
+    {
+      "stage": "vitest",
+      "command": [
+        "C:\\Windows\\system32\\cmd.exe",
+        "/d",
+        "/c",
+        "npx.cmd",
+        "--no-install",
+        "vitest",
+        "run",
+        "tests",
+        "--environment",
+        "jsdom",
+        "--exclude",
+        "tests/detail-drawer-typography.spec.js"
+      ],
+      "cwd": "frontend",
+      "started_utc": "2026-11-05T04:24:09.417135+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\vitest.log",
+      "sha256": "d4a99ee7141208eefdedf2fd50a59c5b14210c6dd2bf9c3d23f89f2e41d81035",
+      "summary_candidates": [
+        "78 passed (78)",
+        "725 passed (725)"
+      ]
+    },
+    {
+      "stage": "browser-applicable",
+      "command": [
+        "node",
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-a46c26f\\docs\\uat-evidence\\local-release-validation-20261105\\browser-suite.mjs"
+      ],
+      "cwd": "frontend",
+      "started_utc": "2026-11-05T04:26:22.341236+00:00",
+      "exit_code": 1,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\browser-applicable.log",
+      "sha256": "d3d53f59c3b9a49b7190f37628261c00cee104321a7bd570904d4bc2e83f6c97",
+      "summary_candidates": []
+    },
+    {
+      "stage": "build",
+      "command": [
+        "C:\\Windows\\system32\\cmd.exe",
+        "/d",
+        "/c",
+        "npm.cmd",
+        "run",
+        "build"
+      ],
+      "cwd": "frontend",
+      "started_utc": "2026-11-05T05:34:54.714447+00:00",
+      "exit_code": 0,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\build.log",
+      "sha256": "a14a0c883d163208e04b8cdeaf8e25fde2c5130cff0cf5b896fc9be70632af8f",
+      "summary_candidates": []
+    },
+    {
+      "stage": "history-chrome",
+      "command": [
+        "node",
+        "docs/uat-evidence/integration-closeout-02/run-final-history-chrome.mjs",
+        "--checkout",
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-a46c26f",
+        "--sha",
+        "a46c26f796fe6cc4c4a6a07dc70fe92cfda34114",
+        "--evidence-dir",
+        "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-a46c26f\\docs\\uat-evidence\\integration-closeout-02\\local-release-final-a46"
+      ],
+      "cwd": ".",
+      "started_utc": "2026-11-05T05:35:03.014761+00:00",
+      "exit_code": 1,
+      "log": "docs\\uat-evidence\\local-release-validation-20261105\\final-a46\\logs\\history-chrome.log",
+      "sha256": "3fdd0434c8126662e49f556f9efb0caeca4cde3a9e299d34d9bcf2a959437f05",
+      "summary_candidates": []
+    }
+  ],
+  "excluded": [
+    {
+      "spec": "iss037-print-output-acceptance.spec.js",
+      "reason": "USER_DEFERRED"
+    }
+  ],
+  "github_actions": "NOT_RUN",
+  "selection": "full",
+  "scope": "isolated synthetic local verification; not production UAT"
+}

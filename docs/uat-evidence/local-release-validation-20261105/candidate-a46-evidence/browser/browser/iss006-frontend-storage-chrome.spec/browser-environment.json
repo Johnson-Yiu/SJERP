@@ -1,0 +1,9 @@
+{
+  "browserVersion": "156.0.8078.4",
+  "channel": null,
+  "headless": true,
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+  "isolatedDatabase": "C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-VpIBXE/db.sqlite3",
+  "isolatedMediaRoot": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-VpIBXE\\media",
+  "runId": "717253ff-95fd-420c-a5f6-2c37f091b0e7"
+}

@@ -13,7 +13,10 @@ from .report_templates import SharedReportTemplateViewSet
 from .history_import_preflight import HistoryImportPreflightView
 from .history_takeover_api import HistoryTakeoverDetailView, HistoryTakeoverGroupActionView, HistoryTakeoverListCreateView, HistoryTakeoverReportView, HistoryTakeoverTemplateView
 
+from .new_product_reminders import ReminderViewSet
+
 router = DefaultRouter()
+router.register("new-product-reminders", ReminderViewSet, basename="new-product-reminder")
 from .finance_closeout_api import FinanceCloseoutViewSet
 router.register("finance-ledger", FinanceCloseoutViewSet, basename="finance-ledger")
 from .cash_api import RmbCashEventViewSet

@@ -810,7 +810,7 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         customer = self.get_object()
-        if customer.follow_ups.exists() or customer.quotes.exists() or customer.orders.exists() or customer.transactions.exists():
+        if customer.new_product_reminders.exists() or customer.follow_ups.exists() or customer.quotes.exists() or customer.orders.exists() or customer.transactions.exists():
             return Response({"detail": "该客户已有业务历史，不能删除；请保留客户档案。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)
 
@@ -832,7 +832,7 @@ class ContactViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         contact = self.get_object()
-        if contact.follow_ups.exists():
+        if contact.follow_ups.exists() or contact.newproductreminder_set.exists():
             return Response({"detail": "该联系人已有跟进历史，不能删除。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)
 
@@ -913,6 +913,11 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             attachment=attachment,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def destroy(self, request, *args, **kwargs):
+        if self.get_object().new_product_reminders.exists():
+            return Response({"detail": "该跟进有关联新品提醒，不能删除。"}, status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)
 
 
 class ProductCategoryViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -1082,7 +1087,7 @@ class ProductViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         product = self.get_object()
-        if product.skus.exists():
+        if product.skus.exists() or product.newproductreminder_set.exists():
             return Response({"detail": "该产品已存在 SKU，不能物理删除。请将产品设为停产并停用相关 SKU。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)
 

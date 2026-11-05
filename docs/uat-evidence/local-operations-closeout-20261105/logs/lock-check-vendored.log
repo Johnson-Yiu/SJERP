@@ -1,0 +1,16 @@
+asgiref==3.13.0 MATCH
+bleach==6.4.0 MATCH
+Django==6.0.9 MATCH
+django-cors-headers==4.9.0 MATCH
+dj-database-url==3.1.2 MATCH
+djangorestframework==3.18.3 MATCH
+et-xmlfile==2.0.0 MATCH
+openpyxl==3.1.5 MATCH
+Pillow==13.0.0 MATCH
+psycopg==3.3.6 MATCH
+psycopg-binary==3.3.6 MATCH
+pycountry==26.2.16 MATCH
+sqlparse==0.6.0 MATCH
+typing-extensions==4.16.0 MATCH
+tzdata==2026.6 MATCH
+webencodings==0.6.1 MATCH

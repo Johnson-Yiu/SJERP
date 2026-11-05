@@ -44,6 +44,8 @@ class OrderQuantityAdjustmentApiTests(TestCase):
             currency="USD",
             exchange_rate=Decimal("1"),
             status="confirmed",
+            customer_name_snapshot="Customer at confirmation",
+            customer_address_snapshot="Original address",
         )
         self.item = self.order.items.create(sku=self.sku, quantity=Decimal("100"), unit_price=Decimal("10"))
         self.plan = PaymentPlan.objects.create(
@@ -451,9 +453,6 @@ class OrderQuantityAdjustmentApiTests(TestCase):
         record_receipt(line, {"quantity": "100", "unit_cost": "7", "receipt_date": date(2026, 10, 21)})
         confirm_shipment(self.order, {"shipment_date": date(2026, 10, 21), "items": [{"order_item": self.item.pk, "quantity": "50"}]})
         record_transaction({"plan": self.plan, "amount": Decimal("200"), "currency": "USD", "exchange_rate": Decimal("1"), "category": "客户收款"})
-        self.order.customer_name_snapshot = "Customer at confirmation"
-        self.order.customer_address_snapshot = "Original address"
-        self.order.save(update_fields=["customer_name_snapshot", "customer_address_snapshot"])
         self.order.customer.name = "Customer renamed later"
         self.order.customer.save()
         protected = [PurchaseOrder, type(line), PurchaseCostAllocation, GoodsReceipt, Shipment, ShipmentItem, Transaction, InventoryMovement]

@@ -59,7 +59,7 @@ function makeDraft() {
     customer: quote.customer || '', quote_no: quote.quote_no || '', quote_date: quoteDate,
     valid_until: quote.valid_until || addDays(quoteDate, 30), status: quote.status || 'draft', currency: quote.currency || 'USD',
     exchange_rate: compactDecimalInput(quote.exchange_rate ?? defaultExchangeRate(quote.currency || 'USD')), shipping_fee: quote.shipping_fee || 0, discount: quote.discount || 0,
-    recipient_name: quote.recipient_name || '', buyer_address: quote.buyer_address || '', buyer_email: quote.buyer_email || '', buyer_phone: quote.buyer_phone || '',
+    recipient_name: quote.recipient_name || '', buyer_address: quote.buyer_address || '', buyer_email: quote.buyer_email || '', buyer_phone: quote.buyer_phone || '', buyer_tax_id: quote.buyer_tax_id ?? (props.mode === 'revise' ? null : ''),
     lead_time_days: quote.lead_time_days ?? 10, deposit_percent: Number(quote.deposit_ratio ?? 0.30) * 100,
     revision_summary: '',
     trading_terms: quote.trading_terms || 'FOB Shenzhen', shipping_details: quote.shipping_details || '', notes: quote.notes || '',
@@ -93,7 +93,7 @@ const previewDraft = computed(() => {
   return {
     quote_no: draft.quote_no, quote_date: draft.quote_date, valid_until: draft.valid_until, currency: draft.currency,
     ...(previewTemplate.value || {}),
-    buyer: { company_name: props.mode === 'revise' ? (props.quote?.buyer_company_name ?? '') : (customer.name || ''), recipient: draft.recipient_name, address: draft.buyer_address, email: draft.buyer_email, phone: draft.buyer_phone },
+    buyer: { company_name: props.mode === 'revise' ? (props.quote?.buyer_company_name ?? '') : (customer.name || ''), recipient: draft.recipient_name, address: draft.buyer_address, email: draft.buyer_email, phone: draft.buyer_phone, tax_id: draft.buyer_tax_id },
     terms: { lead_time_days: draft.lead_time_days, trading_terms: draft.trading_terms, shipping_details: draft.shipping_details, notes: draft.notes },
     totals: { subtotal: subtotal.value, shipping_fee: roundPiMoney(draft.shipping_fee || 0), discount: roundPiMoney(draft.discount || 0), total_amount: total.value },
     payment_splits: { deposit_ratio: depositRatio, deposit_amount: depositAmount, balance_ratio: 1 - depositRatio, balance_amount: total.value - depositAmount },
@@ -254,6 +254,7 @@ function payload() {
     customer: Number(draft.customer), quote_date: draft.quote_date, valid_until: draft.valid_until || null,
     currency: draft.currency, exchange_rate: draft.exchange_rate, shipping_fee: draft.shipping_fee || 0, discount: draft.discount || 0,
     recipient_name: draft.recipient_name, buyer_address: draft.buyer_address, buyer_email: draft.buyer_email, buyer_phone: draft.buyer_phone,
+    ...((props.mode === 'create' || props.quote?.can_revise_buyer_tax_id === true) ? { buyer_tax_id: draft.buyer_tax_id } : {}),
     lead_time_days: draft.lead_time_days === '' ? null : draft.lead_time_days ?? null, deposit_ratio: Math.min(100, Math.max(0, Number(draft.deposit_percent || 0))) / 100,
     trading_terms: draft.trading_terms, shipping_details: draft.shipping_details, notes: draft.notes,
     revision_summary: draft.revision_summary.trim(),
@@ -319,7 +320,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
 </script>
 
 <template>
-  <div class="modal-backdrop" @mousedown.self="requestClose">
+  <div class="modal-backdrop quote-editor-backdrop" @mousedown.self="requestClose">
     <form class="modal wide quote-editor-modal" aria-label="报价编辑器" @submit.prevent="save(false)">
       <div class="modal-head"><div><h3>{{ mode === 'revise' ? '创建报价修订版' : '新建报价单' }}</h3><small>{{ mode === 'revise' ? `基于 ${quote.quote_no} 创建修订版；原报价保留。` : '报价单草稿' }}</small></div><button type="button" class="mini-btn" aria-label="关闭报价编辑器" @click="requestClose"><X :size="17" /></button></div>
       <div class="modal-body">
@@ -357,7 +358,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
           <section v-if="draft.items.length" class="packing-estimate"><div class="packing-head"><div><small>预计装箱方案</small><h4>按 SKU 默认包装配置估算</h4></div><button type="button" class="btn btn-secondary" @click="packingOpen = !packingOpen"><Box :size="15" /> {{ packingOpen ? '收起预计装箱方案' : '生成预计装箱方案' }}</button></div><template v-if="packingOpen"><div v-if="packingProjection.missing.length" class="packing-warning"><AlertTriangle :size="18" /><div><strong>以下 SKU 缺少包装配置，请补充。</strong><p>补充后会保存为该 SKU 的默认包装配置，供后续报价、订单和出货使用。</p><div class="packing-missing-list"><button v-for="sku in packingProjection.missing" :key="sku.id" type="button" @click="openPackaging(sku)"><Settings2 :size="14" /> {{ sku.sku }} · 补充默认包装</button></div></div></div><template v-else><div class="packing-summary"><div><span>预计件数</span><strong>{{ packingProjection.cartons.length }} 箱</strong></div><div><span>产品数量</span><strong>{{ packingProjection.totalPieces }}</strong></div><div><span>总净重</span><strong>{{ packingProjection.totalNet.toFixed(3) }} kg</strong></div><div><span>总重量</span><strong>{{ packingProjection.totalGross.toFixed(3) }} kg</strong></div><div><span>总体积</span><strong>{{ packingProjection.totalCbm.toFixed(4) }} m³</strong></div></div><p v-for="warning in packingProjection.warnings" :key="warning" class="packing-note">{{ warning }}</p><div class="packing-table-wrap"><table><thead><tr><th>SKU</th><th>件数</th><th>包装尺寸 (cm)</th><th>包装重量</th><th>单件体积</th><th>总体积</th></tr></thead><tbody><tr v-for="(carton, index) in packingProjection.cartons" :key="`${carton.sku.id}-${index}`"><td>{{ carton.sku.sku }}<small v-if="carton.partial">尾箱</small></td><td>{{ carton.quantity }}</td><td>{{ carton.length }} × {{ carton.width }} × {{ carton.height }}</td><td>{{ carton.gross.toFixed(3) }} kg</td><td>{{ carton.cbm.toFixed(4) }} m³</td><td>{{ carton.cbm.toFixed(4) }} m³</td></tr></tbody></table></div></template></template></section>
           <div class="totals"><label>运费 <input v-model="draft.shipping_fee" v-money-input type="number" step="any" /></label><label>折扣 <input v-model="draft.discount" v-money-input type="number" step="any" /></label><div><small>商品小计 {{ draft.currency }} {{ money(subtotal) }}</small><span>合计</span><strong>{{ draft.currency }} {{ money(total) }}</strong></div></div>
           <div class="items-head"><strong>收件信息 / 条款</strong></div>
-          <div class="form-grid"><div class="field"><label for="quote-recipient">收件人</label><input id="quote-recipient" v-model="draft.recipient_name" @input="editRecipient('recipient_name')" /></div><div class="field full"><label for="quote-buyer-address">买方地址</label><textarea id="quote-buyer-address" v-model="draft.buyer_address" @input="editRecipient('buyer_address')" /></div><div class="field"><label for="quote-buyer-email">买方邮箱</label><input id="quote-buyer-email" v-model="draft.buyer_email" type="email" @input="editRecipient('buyer_email')" /></div><div class="field"><label for="quote-buyer-phone">买方电话</label><input id="quote-buyer-phone" v-model="draft.buyer_phone" @input="editRecipient('buyer_phone')" /></div></div>
+          <div class="form-grid"><div class="field"><label for="quote-recipient">收件人</label><input id="quote-recipient" v-model="draft.recipient_name" @input="editRecipient('recipient_name')" /></div><div class="field"><label for="quote-buyer-tax-id">买方税号（选填）</label><input id="quote-buyer-tax-id" v-model="draft.buyer_tax_id" type="text" maxlength="200" :readonly="mode === 'revise' && quote?.can_revise_buyer_tax_id !== true" :placeholder="mode === 'revise' && draft.buyer_tax_id == null ? '历史未记录' : ''" /></div><div class="field full"><label for="quote-buyer-address">买方地址</label><textarea id="quote-buyer-address" v-model="draft.buyer_address" @input="editRecipient('buyer_address')" /></div><div class="field"><label for="quote-buyer-email">买方邮箱</label><input id="quote-buyer-email" v-model="draft.buyer_email" type="email" @input="editRecipient('buyer_email')" /></div><div class="field"><label for="quote-buyer-phone">买方电话</label><input id="quote-buyer-phone" v-model="draft.buyer_phone" @input="editRecipient('buyer_phone')" /></div></div>
           <div class="form-grid"><div class="field full"><label>贸易条款</label><textarea v-model="draft.trading_terms" /></div><div class="field full"><label>运输信息</label><textarea v-model="draft.shipping_details" /></div><div class="field full"><label>补充备注</label><textarea v-model="draft.notes" /></div></div>
         </fieldset>
       </div>
@@ -369,6 +370,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
 </template>
 
 <style scoped>
+.quote-editor-backdrop{z-index:70}
 .quote-editor-modal fieldset > .form-grid:first-child{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.revision-summary textarea{min-height:64px}@media(max-width:850px){.quote-editor-modal fieldset > .form-grid:first-child{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.quote-editor-modal fieldset > .form-grid:first-child{grid-template-columns:1fr}}
 .quote-editor-actions .btn{white-space:nowrap;flex:0 0 auto}
 @media(max-width:480px){.quote-editor-modal .quote-editor-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch;gap:8px;padding:12px}.quote-editor-actions .btn{min-width:0;min-height:46px;padding:10px 12px;white-space:normal;line-height:1.35;text-align:center;word-break:normal;overflow-wrap:normal}.quote-editor-actions .quote-action-save,.quote-editor-actions .quote-action-save-export{grid-column:1/-1;width:100%}}

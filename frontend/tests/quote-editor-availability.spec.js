@@ -424,6 +424,19 @@ describe('QuoteEditorModal inventory reference', () => {
     expect(Number(payload.exchange_rate)).toBe(Number(source.exchange_rate))
     expect(JSON.stringify(source)).toBe(raw)
   })
+  it.each([true, false, undefined])('draft tax edit follows server eligibility %s', async allowed => {
+    const source = { id:44, customer:customer.id, quote_no:'QT-44', buyer_tax_id:'', can_revise_buyer_tax_id:allowed,
+      items:[{sku:skuA.id,quantity:'2',unit_price:'3'}] }
+    const wrapper=await mountEditor({mode:'revise',quote:source});wrappers.push(wrapper)
+    const tax=wrapper.get('#quote-buyer-tax-id')
+    expect(tax.element.readOnly).toBe(allowed !== true)
+    if (allowed === true) await tax.setValue('00123')
+    await wrapper.get('.revision-summary textarea').setValue('correct tax')
+    await wrapper.get('button.btn-primary').trigger('click');await settle()
+    const payload=mocks.api.post.mock.calls.find(([url])=>url==='/quotes/44/revise/')[1]
+    if (allowed === true) expect(payload.buyer_tax_id).toBe('00123')
+    else expect(payload).not.toHaveProperty('buyer_tax_id')
+  })
   it('new quote default exchange rate is compact',async()=>{
     const wrapper=await mountEditor();wrappers.push(wrapper)
     expect(wrapper.findAll('.field').find(f=>f.find('label').text()==='对人民币汇率').get('input').element.value).toBe('7.2')

@@ -1,0 +1,39 @@
+Operations to perform:
+  Target specific migration: 0108_history_append_only_truncate, from crm
+Running migrations:
+  Rendering model states... DONE
+  Unapplying crm.0111_quote_buyer_tax_id...Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\manage.py", line 13, in <module>
+    main()
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\manage.py", line 9, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\__init__.py", line 443, in execute_from_command_line
+    utility.execute()
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\__init__.py", line 437, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\base.py", line 420, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\base.py", line 464, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\base.py", line 111, in wrapper
+    res = handle_func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\commands\migrate.py", line 354, in handle
+    post_migrate_state = executor.migrate(
+                         ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\migrations\executor.py", line 143, in migrate
+    state = self._migrate_all_backwards(plan, full_plan, fake=fake)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\migrations\executor.py", line 221, in _migrate_all_backwards
+    self.unapply_migration(states[migration], migration, fake=fake)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\migrations\executor.py", line 287, in unapply_migration
+    state = migration.unapply(state, schema_editor)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\migrations\migration.py", line 193, in unapply
+    operation.database_backwards(
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\migrations\operations\special.py", line 207, in database_backwards
+    self.reverse_code(from_state.apps, schema_editor)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\migrations\0111_quote_buyer_tax_id.py", line 10, in reject_tax_loss
+    raise RuntimeError("报价买方国家快照已存在，拒绝回退以避免丢失历史事实。")
+RuntimeError: 报价买方国家快照已存在，拒绝回退以避免丢失历史事实。

@@ -134,7 +134,7 @@ def build_quotation_export_dto(quote, *, template_id=None):
             "company_name": quote.buyer_company_name,
             "recipient": quote.recipient_name,
             "address": quote.buyer_address,
-            "tax_id": "",
+            "tax_id": quote.buyer_tax_id or "",
             "email": quote.buyer_email,
             "phone": quote.buyer_phone,
         },

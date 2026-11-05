@@ -48,15 +48,14 @@ def _capture_order_party_snapshot(order, quote=None):
 
     A quote is the authoritative source for buyer/contact fields when one is
     attached to the order.  Empty legacy quote fields stay empty rather than
-    being silently replaced with the current customer master.  Country is not
-    part of the existing quote snapshot schema, so it is captured from the
-    customer selected on this order at confirmation time.
+    being silently replaced with the current customer master.  Quote country
+    follows the same snapshot rule; an unknown country remains unknown.
     """
     customer = Customer.objects.select_for_update().get(pk=order.customer_id)
     if quote is not None:
         values = {
             "customer_name_snapshot": quote.buyer_company_name,
-            "customer_country_snapshot": customer.country,
+            "customer_country_snapshot": quote.buyer_country_snapshot,
             "customer_address_snapshot": quote.buyer_address,
             "customer_contact_name_snapshot": quote.recipient_name,
             "customer_phone_snapshot": quote.buyer_phone,
@@ -93,6 +92,9 @@ def confirm_order(order):
         # The revision allocator and copied quote rows are deliberately invoked only
         # here: editing a draft must not create a legal/commercial quote revision.
         source_quote = Quote.objects.select_for_update().get(pk=order.quote_id)
+        if source_quote.status == "draft":
+            from crm.quote_party_approval_guard import guard_quote_party_approval
+            guard_quote_party_approval(source_quote, status="accepted")
         if source_quote.status in {"rejected", "expired"}:
             raise ValidationError("来源报价已拒绝或过期，请先基于新的报价修订版更新订单来源。")
         from crm.serializers import OrderSerializer

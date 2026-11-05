@@ -323,7 +323,7 @@ class QuoteApiTests(TestCase):
                 self.assertEqual(detail.data[field], value)
             self.assertEqual(pi.data["buyer"], {"company_name": quote.buyer_company_name,
                 "name": expected["recipient_name"], "address": expected["buyer_address"],
-                "email": expected["buyer_email"], "phone": expected["buyer_phone"]})
+                "email": expected["buyer_email"], "phone": expected["buyer_phone"], "tax_id": ""})
             sheet = load_workbook(io.BytesIO(exported.content)).active
             text = "\n".join(str(cell.value or "") for row in sheet for cell in row)
             self.assertIn(expected["recipient_name"], text)
@@ -1354,6 +1354,7 @@ class QuoteExportTests(TestCase):
             "address": "Berlin, Germany",
             "email": "anna@example.com",
             "phone": "+49 30 123456",
+            "tax_id": "",
         })
         self.assertEqual(xlsx_cell_text(response.content, "B3"), "Export Buyer GmbH")
         self.assertEqual(xlsx_cell_text(response.content, "C11"), "MODEL-001")

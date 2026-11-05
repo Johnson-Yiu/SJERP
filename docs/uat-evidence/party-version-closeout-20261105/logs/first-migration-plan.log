@@ -1,0 +1,581 @@
+Planned operations:
+contenttypes.0001_initial
+    Create model ContentType
+    Alter unique_together for contenttype (1 constraint(s))
+auth.0001_initial
+    Create model Permission
+    Create model Group
+    Create model User
+admin.0001_initial
+    Create model LogEntry
+admin.0002_logentry_remove_auto_add
+    Alter field action_time on logentry
+admin.0003_logentry_add_action_flag_choices
+    Alter field action_flag on logentry
+contenttypes.0002_remove_content_type_name
+    Change Meta options on contenttype
+    Alter field name on contenttype
+    Raw Python operation
+    Remove field name from contenttype
+auth.0002_alter_permission_name_max_length
+    Alter field name on permission
+auth.0003_alter_user_email_max_length
+    Alter field email on user
+auth.0004_alter_user_username_opts
+    Alter field username on user
+auth.0005_alter_user_last_login_null
+    Alter field last_login on user
+auth.0006_require_contenttypes_0002
+auth.0007_alter_validators_add_error_messages
+    Alter field username on user
+auth.0008_alter_user_username_max_length
+    Alter field username on user
+auth.0009_alter_user_last_name_max_length
+    Alter field last_name on user
+auth.0010_alter_group_name_max_length
+    Alter field name on group
+auth.0011_update_proxy_permissions
+    Raw Python operation -> Update the content_type of proxy mo…
+auth.0012_alter_user_first_name_max_length
+    Alter field first_name on user
+crm.0001_initial
+    Create model Customer
+    Create model ProductCategory
+    Create model Contact
+    Create model FollowUp
+    Create model Product
+    Create model Quote
+    Create model Order
+    Create model SKU
+    Create model QuoteItem
+    Create model OrderItem
+    Create model Transaction
+crm.0002_inventorymovement_productcertificate_and_more
+    Create model InventoryMovement
+    Create model ProductCertificate
+    Create model ProductParameter
+crm.0003_customer_sales_stages
+    Alter field status on customer
+    Alter field content on followup
+    Alter field result on followup
+    Raw Python operation
+crm.0004_organization_and_permissions
+    Create model AccessRole
+    Create model OrganizationUnit
+    Create model Position
+    Create model RolePermission
+    Create model EmployeeProfile
+    Create constraint unique_org_name_under_parent on model organizationunit
+    Create constraint unique_role_module_permission on model rolepermission
+    Raw Python operation
+crm.0005_alter_followup_subject
+    Alter field subject on followup
+crm.0006_customercodesequence
+    Create model CustomerCodeSequence
+crm.0007_alter_productcategory_options_productcategory_parent_and_more
+    Change Meta options on productcategory
+    Add field parent to productcategory
+    Add field sort_order to productcategory
+    Create model CategoryAttribute
+crm.0008_productcodesequence_product_additional_categories
+    Create model ProductCodeSequence
+    Add field additional_categories to product
+crm.0009_product_hs_code_product_name_en
+    Add field hs_code to product
+    Add field name_en to product
+crm.0010_sku_parameter_values_product_details
+    Add field parameter_values to sku
+    Add field product_details to sku
+crm.0011_quote_pi_fields_and_sku_image
+    Create model QuoteNumberSequence
+    Add field buyer_address to quote
+    Add field buyer_email to quote
+    Add field buyer_phone to quote
+    Add field deposit_ratio to quote
+    Add field lead_time_days to quote
+    Add field recipient_name to quote
+    Add field revision_no to quote
+    Add field root_quote to quote
+    Add field shipping_details to quote
+    Add field trading_terms to quote
+    Add field description to quoteitem
+    Add field image to sku
+    Create model QuoteRevisionCounter
+crm.0012_quote_saved_pi_snapshots
+    Add field buyer_company_name to quote
+    Add field image_snapshot to quoteitem
+    Add field product_name_snapshot to quoteitem
+    Add field sku_code_snapshot to quoteitem
+    Add field unit_snapshot to quoteitem
+    Raw Python operation
+crm.0013_quoteimportantnote
+    Create model QuoteImportantNote
+    Create index crm_quoteim_root_qu_549bb5_idx on field(s) root_quote, -created_at of model quoteimportantnote
+crm.0014_quote_parent_and_revision_summary
+    Add field parent_quote to quote
+    Add field revision_summary to quote
+    Raw Python operation
+crm.0015_quoteimportantnote_deactivation_audit
+    Add field deactivated_at to quoteimportantnote
+    Add field deactivated_by to quoteimportantnote
+crm.0016_trade_fulfillment
+    Create model Supplier
+    Add field is_automatic to inventorymovement
+    Add field is_overage to inventorymovement
+    Add field overage_reason to inventorymovement
+    Add field source_no to inventorymovement
+    Add field source_type to inventorymovement
+    Create model PurchaseOrder
+    Add field purchase_order to transaction
+    Create model PurchaseOrderItem
+    Create model GoodsReceipt
+    Create model Shipment
+    Create model ShipmentItem
+    Create model InventoryReservation
+    Create constraint purchase_item_quantity_positive on model purchaseorderitem
+    Create constraint purchase_item_price_non_negative on model purchaseorderitem
+    Create constraint goods_receipt_quantity_positive on model goodsreceipt
+    Create constraint goods_receipt_cost_non_negative on model goodsreceipt
+    Create constraint shipment_item_quantity_positive on model shipmentitem
+crm.0017_product_suppliers
+    Add field suppliers to product
+crm.0018_finance_operating_ledger
+    Create model PaymentPlan
+    Create constraint payment_plan_one_contract on model paymentplan
+    Create constraint payment_plan_amount_positive on model paymentplan
+    Create constraint payment_plan_settled_non_negative on model paymentplan
+    Add field kind to transaction
+    Add field plan to transaction
+    Add field replaces to transaction
+    Add field rmb_amount to transaction
+    Add field supplier to transaction
+crm.0019_transaction_allocated_amount
+    Add field allocated_amount to transaction
+crm.0020_contract_change_request
+    Create model ContractChangeRequest
+crm.0021_skucodesequence_orderitem_description_snapshot_and_more
+    Create model SKUCodeSequence
+    Add field description_snapshot to orderitem
+    Add field display_name_snapshot to orderitem
+    Add field sales_model_snapshot to orderitem
+    Add field sku_code_snapshot to orderitem
+    Add field unit_snapshot to orderitem
+    Add field sales_model_snapshot to quoteitem
+    Add field description_cn to sku
+    Add field description_en to sku
+    Add field display_name_cn to sku
+    Add field sales_model to sku
+    Raw Python operation
+crm.0021_packagingtemplate_packingplan_packingplancarton_and_more
+    Create model PackagingTemplate
+    Create model PackingPlan
+    Create model PackingPlanCarton
+    Create model PackingPlanCartonItem
+    Create model ShipmentPackage
+    Create model ShipmentPackageItem
+    Create model SKUPackagingProfile
+    Create constraint packing_plan_one_source on model packingplan
+    Create constraint packing_plan_carton_no_unique on model packingplancarton
+    Create constraint shipment_package_carton_no_unique on model shipmentpackage
+    Create constraint shipment_package_item_quantity_positive on model shipmentpackageitem
+    Create constraint sku_pack_unit_weight_non_negative on model skupackagingprofile
+    Create constraint sku_pack_qty_positive on model skupackagingprofile
+    Create constraint sku_pack_tare_non_negative on model skupackagingprofile
+crm.0022_merge_20260823_2351
+crm.0023_categoryattribute_include_in_sales_model
+    Add field include_in_sales_model to categoryattribute
+crm.0024_product_sales_model_prefix_and_sku_abbreviations
+    Add field sales_model_prefix to product
+    Add field sales_model_abbreviations to sku
+crm.0025_packagingtemplate_supplier
+    Add field supplier to packagingtemplate
+crm.0026_packagingtemplate_auto_code_and_legacy_qty
+    Remove constraint pack_template_qty_positive from model packagingtemplate
+    Alter field code on packagingtemplate
+    Alter field qty_per_carton on packagingtemplate
+crm.0027_remove_legacy_model_from_sku_product_details
+    Raw Python operation
+crm.0028_remove_legacy_dimensions_from_sku_product_details
+    Raw Python operation
+crm.0029_quote_child_revision_counter
+    Alter field quote_no on quote
+    Create model QuoteChildRevisionCounter
+    Raw Python operation
+crm.0029_backfill_sku_internal_identity
+    Raw Python operation
+crm.0030_merge_sku_identity_and_quote_counter
+crm.0031_correct_sku_identity_from_specification
+    Raw Python operation
+crm.0032_currency_amount_precision
+    Alter field amount_delta on contractchangerequest
+    Alter field discount on order
+    Alter field shipping_fee on order
+    Alter field planned_amount on paymentplan
+    Alter field settled_amount on paymentplan
+    Alter field discount on quote
+    Alter field shipping_fee on quote
+    Alter field allocated_amount on transaction
+    Alter field amount on transaction
+    Alter field rmb_amount on transaction
+crm.0033_sku_safety_history
+    Add field identity_signature to sku
+    Create model SKUVersion
+    Create constraint unique_sku_version_no on model skuversion
+    Add field sku_code_snapshot to purchaseorderitem
+    Add field sales_model_snapshot to purchaseorderitem
+    Add field display_name_snapshot to purchaseorderitem
+    Add field description_snapshot to purchaseorderitem
+    Add field sku_code_snapshot to inventorymovement
+    Add field sales_model_snapshot to inventorymovement
+    Add field display_name_snapshot to inventorymovement
+    Raw Python operation
+crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more
+    Add field supplier_barcode_snapshot to purchaseorderitem
+    Add field supplier_model_snapshot to purchaseorderitem
+    Add field supplier_name_snapshot to purchaseorderitem
+    Add field supplier_sku_code_snapshot to purchaseorderitem
+    Create model SupplierSKU
+    Add field supplier_sku to inventorymovement
+    Add field supplier_sku to purchaseorderitem
+    Create constraint supplier_supplier_sku_code_unique on model suppliersku
+    Create constraint active_preferred_supplier_sku_unique on model suppliersku
+    Create constraint supplier_sku_purchase_price_non_negative on model suppliersku
+    Create constraint supplier_sku_moq_non_negative on model suppliersku
+crm.0035_sku_display_name_key_sku_sku_display_name_key_unique
+    Add field display_name_key to sku
+    Raw Python operation
+    Create constraint sku_display_name_key_unique on model sku
+crm.0036_followupattachment
+    Create model FollowUpAttachment
+crm.0037_sku_identity_safety
+    Raw Python operation
+    Alter field display_name_key on sku
+    Raw Python operation
+    Remove constraint sku_display_name_key_unique from model sku
+    Create constraint sku_display_name_key_unique on model sku
+crm.0038_supplier_code_remove_default_currency
+    Add field code to supplier
+    Raw Python operation
+    Alter field code on supplier
+    Remove field currency from supplier
+crm.0039_categoryattribute_required
+    Add field required to categoryattribute
+crm.0040_purchaseorder_order_optional
+    Alter field order on purchaseorder
+crm.0041_inventorymovement_related_orders
+    Add field related_orders to inventorymovement
+crm.0042_alter_inventorymovement_type
+    Alter field type on inventorymovement
+crm.0043_alter_transaction_kind
+    Alter field kind on transaction
+crm.0044_operationlog
+    Create model OperationLog
+crm.0045_trade_finance_safety
+    Add field split_from to transaction
+    Create model AdvanceAllocation
+crm.0046_purchaseorder_additional_costs_and_more
+    Add field additional_costs to purchaseorder
+    Add field cost_allocation_version to purchaseorder
+    Create model PurchaseCostAllocation
+crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more
+    Remove constraint cost_allocation_target_valid from model purchasecostallocation
+    Add field target_name to purchasecostallocation
+    Alter field target_type on purchasecostallocation
+    Create constraint cost_allocation_target_valid on model purchasecostallocation
+crm.0048_reporting_geography
+    Add field region to customer
+    Add field region to supplier
+    Add field country to supplier
+crm.0049_supplier_main_products
+    Rename field region on supplier to main_products
+    Alter field country on supplier
+    Alter field main_products on supplier
+    Alter field payment_terms on supplier
+crm.0050_supplier_store_url
+    Add field store_url to supplier
+crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more
+    Remove field mixed_pack_allowed from packagingtemplate
+    Add field tail_goods_policy to order
+    Alter field partial_carton_policy on packagingtemplate
+crm.0052_alter_packingplancarton_partial_carton_policy_snapshot
+    Alter field partial_carton_policy_snapshot on packingplancarton
+crm.0053_hs_code_catalog
+    Create model HSCode
+    Rename field hs_code on product to legacy_hs_code
+    Add field hs_code to product
+    Raw Python operation
+    Remove field legacy_hs_code from product
+crm.0054_sku_plans_supplier_capabilities
+    Add field schema_version to sku
+    Add field characteristics to suppliersku
+    Create model SKUParameterPlan
+    Create model SKURelationship
+    Create model SupplierCandidateOverride
+    Create model SupplierCapability
+    Create constraint product_sku_plan_version_unique on model skuparameterplan
+    Create constraint sku_relationship_unique on model skurelationship
+    Create constraint sku_supplier_override_unique on model suppliercandidateoverride
+crm.0055_freeze_existing_sku_parameters
+    Raw Python operation
+crm.0056_purchase_source_characteristics_snapshot
+    Add field supplier_characteristics_snapshot to purchaseorderitem
+crm.0057_sku_name_separator
+    Raw Python operation
+crm.0058_order_item_supplier_allocation
+    Add field supplier_allocation_note to orderitem
+    Add field supplier_allocation_scope to orderitem
+    Add field supplier_allocation_source to orderitem
+    Add field supplier_allocation_sources_snapshot to orderitem
+    Add field supplier_allocated_at to orderitem
+    Add field supplier_barcode_snapshot to orderitem
+    Add field supplier_characteristics_snapshot to orderitem
+    Add field supplier_currency_snapshot to orderitem
+    Add field supplier_lead_time_days_snapshot to orderitem
+    Add field supplier_model_snapshot to orderitem
+    Add field supplier_moq_snapshot to orderitem
+    Add field supplier_name_snapshot to orderitem
+    Add field supplier_price_snapshot to orderitem
+    Add field supplier_sku to orderitem
+    Add field supplier_sku_code_snapshot to orderitem
+crm.0059_supplier_supply_categories
+    Add field supply_categories to supplier
+crm.0060_product_combination_rules
+    Add field combination_rules to product
+crm.0061_sales_rules
+    Add field sales_rules_snapshot to quoteitem
+    Create model SalesRule
+crm.0062_sku_trade_units
+    Add field trade_quantity to goodsreceipt
+    Add field trade_snapshot to goodsreceipt
+    Add field trade_unit_price to goodsreceipt
+    Add field trade_quantity to inventorymovement
+    Add field trade_snapshot to inventorymovement
+    Add field trade_unit_price to inventorymovement
+    Add field trade_quantity to orderitem
+    Add field trade_snapshot to orderitem
+    Add field trade_unit_price to orderitem
+    Add field trade_quantity to purchaseorderitem
+    Add field trade_snapshot to purchaseorderitem
+    Add field trade_unit_price to purchaseorderitem
+    Add field trade_quantity to quoteitem
+    Add field trade_snapshot to quoteitem
+    Add field trade_unit_price to quoteitem
+    Add field trade_quantity to shipmentitem
+    Add field trade_snapshot to shipmentitem
+    Add field trade_unit_price to shipmentitem
+    Alter field unit_cost on goodsreceipt
+    Alter field unit_cost on inventorymovement
+    Alter field unit_price on orderitem
+    Alter field unit_price on purchaseorderitem
+    Alter field unit_price on quoteitem
+    Create model SKUTradeUnit
+    Add field trade_unit to goodsreceipt
+    Add field trade_unit to inventorymovement
+    Add field trade_unit to orderitem
+    Add field trade_unit to purchaseorderitem
+    Add field trade_unit to quoteitem
+    Add field trade_unit to shipmentitem
+    Create constraint trade_unit_factor_positive on model skutradeunit
+    Create constraint trade_unit_one_default on model skutradeunit
+    Create constraint trade_unit_default_active on model skutradeunit
+crm.0063_trade_unit_base_snapshots
+    Raw Python operation
+crm.0064_goods_receipt_reversal
+    Add field reversal_inventory_movement to goodsreceipt
+    Add field reversed_at to goodsreceipt
+    Add field reversal_reason to goodsreceipt
+    Alter field source_type on inventorymovement
+crm.0065_shipment_reversal
+    Add field order_status_before_confirm to shipment
+    Add field reversed_at to shipment
+    Add field reversal_reason to shipment
+    Add field reversal_inventory_movement to shipmentitem
+crm.0066_transaction_void_metadata
+    Add field voided_at to transaction
+    Add field void_reason to transaction
+crm.0067_order_purchase_cancellation_lifecycle
+    Add field cancelled_at to order
+    Add field cancellation_reason to order
+    Alter field status on order
+    Add field cancelled_at to purchaseorder
+    Add field cancellation_reason to purchaseorder
+crm.0068_documentnumbersequence
+    Create model DocumentNumberSequence
+crm.0069_backfill_purchase_cost_allocations
+    Raw Python operation
+crm.0070_shipmentitem_overage_reversal_links
+    Add field source_order_item to shipmentitem
+    Add field generated_payment_plan to shipmentitem
+    Raw Python operation
+crm.0071_paymentplan_cancelled_zero_amount
+    Remove constraint payment_plan_amount_positive from model paymentplan
+    Create constraint payment_plan_amount_positive on model paymentplan
+crm.0072_supplier_payment_terms
+    Add field payment_terms_snapshot to purchaseorder
+    Add field payment_terms_config to supplier
+crm.0073_followup_next_follow_up_mode
+    Add field next_follow_up_mode to followup
+    Raw Python operation
+crm.0074_functional_rbac_modules
+    Alter field module on rolepermission
+    Raw Python operation
+crm.0075_alter_rolepermission_can_view
+    Alter field can_view on rolepermission
+crm.0076_customer_owner_profile
+    Add field owner_profile to customer
+    Raw Python operation
+crm.0077_rmb_cash_events
+    Create model RmbCashEvent
+    Create model CashSourceAllocation
+    Create constraint cash_event_source_positive on model rmbcashevent
+    Create constraint cash_event_net_positive on model rmbcashevent
+    Create constraint cash_event_fee_nonnegative on model rmbcashevent
+    Create constraint cash_event_confirmation_state on model rmbcashevent
+    Create constraint cash_event_source_unique on model cashsourceallocation
+    Create constraint cash_allocation_positive on model cashsourceallocation
+crm.0078_historical_contract_scope
+    Add field historical_only to order
+    Add field historical_only to purchaseorder
+    Alter field status on order
+    Alter field status on purchaseorder
+crm.0079_shared_report_template
+    Create model SharedReportTemplate
+crm.0080_formal_party_snapshots
+    Add field customer_address_snapshot to order
+    Add field customer_contact_name_snapshot to order
+    Add field customer_country_snapshot to order
+    Add field customer_email_snapshot to order
+    Add field customer_name_snapshot to order
+    Add field customer_phone_snapshot to order
+    Add field supplier_address_snapshot to purchaseorder
+    Add field supplier_contact_name_snapshot to purchaseorder
+    Add field supplier_email_snapshot to purchaseorder
+    Add field supplier_name_snapshot to purchaseorder
+    Add field supplier_phone_snapshot to purchaseorder
+    Add field address to supplier
+crm.0081_transaction_rmb_reference_label
+    Alter field rmb_amount on transaction
+crm.0081_supplier_lifecycle
+    Add field is_active to supplier
+crm.0081_product_certificate_private_file
+    Add field file to productcertificate
+crm.0082_merge_iss026_iss107_iss017
+crm.0083_customer_supplier_preference
+    Create model CustomerSupplierPreference
+    Create constraint customer_supplier_preference_unique on model customersupplierpreference
+crm.0084_alter_orderitem_supplier_allocation_scope_and_source
+    Alter field supplier_allocation_scope on orderitem
+    Alter field supplier_allocation_source on orderitem
+crm.0085_order_quantity_adjustment
+    Add field quantity_change_version to order
+    Create model OrderQuantityAdjustment
+crm.0086_purchase_moq_exception
+    Create model PurchaseMOQException
+crm.0087_amount_calculation_compatibility
+    Add field amount_calculation_version to quote
+    Add field amount_calculation_version to order
+    Alter field amount_calculation_version on quote
+    Alter field amount_calculation_version on order
+crm.0088_operationlog_append_only
+    Raw Python operation
+crm.0089_operationlog_operator_protect
+    Alter field operator on operationlog
+crm.0091_csv_import_audit
+    Create model CSVImportBatch
+    Create model CSVImportRowAudit
+    Raw Python operation
+crm.0090_fulfillment_idempotency
+    Create model FulfillmentIdempotency
+crm.0092_merge_fulfillment_and_csv_audit
+crm.0093_csv_import_preview_audit
+    Create model CSVImportPreviewAudit
+    Add field preview to csvimportbatch
+    Raw Python operation
+crm.0094_csv_import_audit_truncate_guard
+    Raw Python operation
+    Raw Python operation
+crm.0090_fulfillment_request_idempotency
+    Add field request_fingerprint to goodsreceipt
+    Add field request_key to goodsreceipt
+    Add field request_fingerprint to shipment
+    Add field request_key to shipment
+crm.0095_merge_fulfillment_idempotency
+crm.0096_rmbcashevent_bank_counterparty_and_more
+    Add field bank_counterparty to rmbcashevent
+    Add field bank_summary to rmbcashevent
+    Add field bank_transaction_id to rmbcashevent
+    Create model CashDuplicateReview
+    Raw Python operation
+    Raw Python operation
+crm.0096_quote_pi_template_snapshots
+    Create model QuoteTemplateAsset
+    Add field pi_template_snapshots to quote
+crm.0097_merge_quote_and_cash_review
+crm.0098_finance_accounts
+    Create model FinanceAccount
+    Raw Python operation
+crm.0099_finance_closeout_workflows
+    Create model FinanceVoucher
+    Create model FinanceAccountMapping
+    Create model FinanceFact
+    Create model FinanceClassification
+    Create model FinanceInstruction
+    Add field instruction to financefact
+    Create model FinanceTransferMatch
+    Create model FinanceReview
+    Add field voucher to financefact
+    Create constraint finance_fact_source_unique on model financefact
+    Create constraint finance_fact_positive on model financefact
+    Create constraint finance_fact_direction_valid on model financefact
+    Create constraint finance_opening_account_unique on model financefact
+    Raw Python operation
+crm.0100_finance_legacy_fact_links
+    Add field legacy_parent to financefact
+    Create constraint finance_fact_one_parent on model financefact
+    Raw Python operation
+crm.0101_finance_historical_transfer_links
+    Create model FinanceHistoricalTransfer
+    Raw Python operation
+crm.0102_bank_private_voucher_binding
+    Add field bank_sources to financevoucher
+    Add field scope to financevoucher
+    Create model FinanceBankVoucherBinding
+    Raw Python operation
+crm.0098_history_takeover_workflow
+    Create model HistoryTakeoverApplication
+    Create model HistoryTakeoverGroup
+    Create model HistoryTakeoverEvent
+    Create model HistoryTakeoverHandoff
+    Create model HistoryTakeoverSourceRecord
+    Create constraint history_takeover_group_unique on model historytakeovergroup
+    Create constraint history_takeover_handoff_unique on model historytakeoverhandoff
+    Create constraint history_takeover_source_identity_unique on model historytakeoversourcerecord
+    Raw Python operation
+crm.0103_merge_finance_and_history
+crm.0104_historical_inventory_baseline
+    Create model HistoryInventoryBaseline
+    Create model HistoryInventoryBaselineReversal
+    Create constraint history_inventory_qty_nonnegative on model historyinventorybaseline
+    Create constraint history_inventory_cost_nonnegative on model historyinventorybaseline
+    Create constraint history_inventory_owner_valid on model historyinventorybaseline
+    Create constraint history_inventory_warehouse_valid on model historyinventorybaseline
+    Raw Python operation
+    Raw Python operation
+crm.0105_historical_operational_contract
+    Create model HistoryOperationalContract
+    Raw Python operation
+    Raw Python operation
+crm.0106_historical_purchase_balance_mode
+    Add field history_finance_mode to purchaseorder
+    Raw Python operation
+crm.0107_inventory_movement_location
+    Add field warehouse_type to inventorymovement
+    Add field lot_reference to inventorymovement
+    Raw Python operation
+crm.0108_history_append_only_truncate
+    Raw Python operation
+    Raw Python operation
+crm.0109_quote_buyer_country_snapshot
+    Add field buyer_country_snapshot to quote
+sessions.0001_initial
+    Create model Session

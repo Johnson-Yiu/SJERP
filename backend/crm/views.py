@@ -1675,7 +1675,10 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         if before_status == "draft" and target in {"sent", "accepted"}:
             quote.amount_calculation_version = CURRENT_AMOUNT_CALCULATION_VERSION
             update_fields.append("amount_calculation_version")
-        quote.save(update_fields=update_fields)
+        try:
+            quote.save(update_fields=update_fields)
+        except DjangoValidationError as error:
+            raise serializers.ValidationError(error.message_dict if hasattr(error, 'message_dict') else error.messages) from error
         record_operation(
             request=request,
             instance=quote,
@@ -1835,6 +1838,14 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         changes = serializer.validated_data.copy()
+        if "buyer_tax_id" in changes:
+            from .quote_draft_tax import can_revise_draft_tax
+            allowed = can_revise_draft_tax(source.pk, lock=True)
+            source.refresh_from_db()
+            if changes["buyer_tax_id"] != source.buyer_tax_id and (
+                changes["buyer_tax_id"] is None or not allowed
+            ):
+                raise serializers.ValidationError({"buyer_tax_id": "仅未正式化且税号已知的草稿可通过修订更正税号。"})
         item_data = changes.pop("items", None)
         if "customer" in changes and changes["customer"].pk != source.customer_id:
             raise serializers.ValidationError({"customer": "修订版本不能更换客户。"})
@@ -1847,7 +1858,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "customer", "quote_date", "valid_until", "status", "currency", "exchange_rate",
             "shipping_fee", "discount", "notes", "recipient_name", "buyer_address",
             "buyer_email", "buyer_phone", "lead_time_days", "deposit_ratio", "trading_terms",
-            "shipping_details", "buyer_company_name",
+            "shipping_details", "buyer_company_name", "buyer_country_snapshot", "buyer_tax_id",
         ]
         quote_values = {field: getattr(source, field) for field in copied_fields}
         quote_values.update(changes)
@@ -1924,6 +1935,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "template_sha256": export_dto.template_snapshot["sha256"],
             "buyer": {
                 "company_name": quote.buyer_company_name,
+                "tax_id": quote.buyer_tax_id,
                 "name": quote.recipient_name,
                 "address": quote.buyer_address,
                 "email": quote.buyer_email,

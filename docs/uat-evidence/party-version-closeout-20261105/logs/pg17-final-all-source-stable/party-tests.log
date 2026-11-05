@@ -1,0 +1,238 @@
+Creating test database for alias 'default' ('test_sunjack_5523c63994e1445cbaee9ce86af08f3c')...
+Found 73 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying crm.0093_csv_import_preview_audit... OK
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+  Applying crm.0090_fulfillment_request_idempotency... OK
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+  Applying crm.0096_quote_pi_template_snapshots... OK
+  Applying crm.0097_merge_quote_and_cash_review... OK
+  Applying crm.0098_finance_accounts... OK
+  Applying crm.0099_finance_closeout_workflows... OK
+  Applying crm.0100_finance_legacy_fact_links... OK
+  Applying crm.0101_finance_historical_transfer_links... OK
+  Applying crm.0102_bank_private_voucher_binding... OK
+  Applying crm.0098_history_takeover_workflow... OK
+  Applying crm.0103_merge_finance_and_history... OK
+  Applying crm.0104_historical_inventory_baseline... OK
+  Applying crm.0105_historical_operational_contract... OK
+  Applying crm.0106_historical_purchase_balance_mode... OK
+  Applying crm.0107_inventory_movement_location... OK
+  Applying crm.0108_history_append_only_truncate... OK
+  Applying crm.0109_quote_buyer_country_snapshot... OK
+  Applying crm.0110_party_version... OK
+  Applying crm.0111_quote_buyer_tax_id... OK
+  Applying crm.0112_party_quote_application... OK
+  Applying sessions.0001_initial...test_actual_confirmation_freezes_quote_country_after_master_changes (crm.tests.test_order_quote_country_capture.OrderQuoteCountryCaptureTests.test_actual_confirmation_freezes_quote_country_after_master_changes) ... ok
+test_no_quote_keeps_current_customer_country (crm.tests.test_order_quote_country_capture.OrderQuoteCountryCaptureTests.test_no_quote_keeps_current_customer_country) ... ok
+test_quote_saved_country_wins_over_changed_customer (crm.tests.test_order_quote_country_capture.OrderQuoteCountryCaptureTests.test_quote_saved_country_wins_over_changed_customer) ... ok
+test_quote_unknown_country_does_not_fall_back_to_customer (crm.tests.test_order_quote_country_capture.OrderQuoteCountryCaptureTests.test_quote_unknown_country_does_not_fall_back_to_customer) ... ok
+test_customer_country_is_hidden_without_customer_view (crm.tests.test_quote_buyer_country_snapshot.QuoteBuyerCountrySnapshotTests.test_customer_country_is_hidden_without_customer_view) ... ok
+test_new_saved_quote_and_revision_retain_original_country (crm.tests.test_quote_buyer_country_snapshot.QuoteBuyerCountrySnapshotTests.test_new_saved_quote_and_revision_retain_original_country) ... ok
+test_order_confirmation_revision_keeps_quote_country (crm.tests.test_quote_buyer_country_snapshot.QuoteBuyerCountrySnapshotTests.test_order_confirmation_revision_keeps_quote_country) ... ok
+test_saved_snapshot_cannot_be_overwritten_through_model_save (crm.tests.test_quote_buyer_country_snapshot.QuoteBuyerCountrySnapshotTests.test_saved_snapshot_cannot_be_overwritten_through_model_save) ... ok
+test_unknown_legacy_and_explicit_none_remain_unknown (crm.tests.test_quote_buyer_country_snapshot.QuoteBuyerCountrySnapshotTests.test_unknown_legacy_and_explicit_none_remain_unknown) ... ok
+test_draft_revision_can_change_tax_without_mutating_source (crm.tests.test_quote_draft_tax_revision.DraftTaxRevisionTests.test_draft_revision_can_change_tax_without_mutating_source) ... ok
+test_formal_ancestor_after_ui_flag_prevents_stale_submission (crm.tests.test_quote_draft_tax_revision.DraftTaxRevisionTests.test_formal_ancestor_after_ui_flag_prevents_stale_submission) ... Bad Request: /api/quotes/15/revise/
+ok
+test_formal_ancestor_blocks_multi_level_draft (crm.tests.test_quote_draft_tax_revision.DraftTaxRevisionTests.test_formal_ancestor_blocks_multi_level_draft) ... Bad Request: /api/quotes/17/revise/
+ok
+test_orphaned_root_pointer_is_not_eligible (crm.tests.test_quote_draft_tax_revision.DraftTaxRevisionTests.test_orphaned_root_pointer_is_not_eligible) ... Bad Request: /api/quotes/19/revise/
+ok
+test_unformalized_multiple_drafts_remain_editable_and_source_unchanged (crm.tests.test_quote_draft_tax_revision.DraftTaxRevisionTests.test_unformalized_multiple_drafts_remain_editable_and_source_unchanged) ... ok
+test_unknown_ancestor_is_not_overwritten_by_known_child (crm.tests.test_quote_draft_tax_revision.DraftTaxRevisionTests.test_unknown_ancestor_is_not_overwritten_by_known_child) ... Bad Request: /api/quotes/24/revise/
+ok
+test_unknown_remains_unchangeable (crm.tests.test_quote_draft_tax_revision.DraftTaxRevisionTests.test_unknown_remains_unchangeable) ... Bad Request: /api/quotes/25/revise/
+ok
+test_legacy_template_is_not_rewritten (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxTests.test_legacy_template_is_not_rewritten) ... ok
+test_legacy_unknown_and_revision_cannot_change_tax (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxTests.test_legacy_unknown_and_revision_cannot_change_tax) ... Bad Request: /api/quotes/28/revise/
+ok
+test_new_optional_tax_id_api_and_xlsx (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxTests.test_new_optional_tax_id_api_and_xlsx) ... ok
+test_order_confirmation_revision_inherits_tax (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxTests.test_order_confirmation_revision_inherits_tax) ... ok
+test_rejects_nontext_null_and_excel_formula_for_new_quote (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxTests.test_rejects_nontext_null_and_excel_formula_for_new_quote) ... Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+ok
+test_tax_redacted_without_customer_permission (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxTests.test_tax_redacted_without_customer_permission) ... ok
+test_application_preserves_quote_and_line_facts_and_is_idempotent (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_application_preserves_quote_and_line_facts_and_is_idempotent) ... ok
+test_changed_commercial_facts_rejected_before_approval_and_application (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_changed_commercial_facts_rejected_before_approval_and_application) ... ok
+test_customer_identity_is_signed_and_cannot_be_rebound (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_customer_identity_is_signed_and_cannot_be_rebound) ... ok
+test_existing_old_status_request_cannot_create_new_revision (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_existing_old_status_request_cannot_create_new_revision) ... ok
+test_failure_rolls_back_revision_and_counters (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_failure_rolls_back_revision_and_counters) ... ok
+test_only_sent_or_accepted_quotes_can_be_proposed (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_only_sent_or_accepted_quotes_can_be_proposed) ... ok
+test_permission_required_even_for_replay (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_permission_required_even_for_replay) ... ok
+test_pre_fingerprint_approval_can_be_read_but_not_applied (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_pre_fingerprint_approval_can_be_read_but_not_applied) ... ok
+test_rejects_stale_and_tampered_approval_and_anonymous (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_rejects_stale_and_tampered_approval_and_anonymous) ... ok
+test_replacement_and_missing_approval_are_never_applied (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_replacement_and_missing_approval_are_never_applied) ... ok
+test_replay_rechecks_both_source_and_result_facts (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_replay_rechecks_both_source_and_result_facts) ... ok
+test_unknown_country_and_tax_cannot_be_upgraded_on_application (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_unknown_country_and_tax_cannot_be_upgraded_on_application) ... ok
+test_unknown_source_trust_is_preserved_in_reverse_relation (crm.tests.test_party_quote_application.PartyQuoteApplicationTests.test_unknown_source_trust_is_preserved_in_reverse_relation) ... ok
+test_approval_rejects_tampered_persisted_request_content (crm.tests.test_party_version_service.PartyVersionServiceTests.test_approval_rejects_tampered_persisted_request_content) ... ok
+test_changed_baseline_or_approval_content_rejected (crm.tests.test_party_version_service.PartyVersionServiceTests.test_changed_baseline_or_approval_content_rejected) ... ok
+test_incomplete_inputs_rejected (crm.tests.test_party_version_service.PartyVersionServiceTests.test_incomplete_inputs_rejected) ... ok
+test_legacy_basis_requires_tax_id_still_unknown_for_approval_and_verification (crm.tests.test_party_version_service.PartyVersionServiceTests.test_legacy_basis_requires_tax_id_still_unknown_for_approval_and_verification) ... ok
+test_legacy_quote_basis_approval_and_verification_preserve_fingerprints (crm.tests.test_party_version_service.PartyVersionServiceTests.test_legacy_quote_basis_approval_and_verification_preserve_fingerprints) ... ok
+test_legacy_quote_basis_rejects_changed_target_at_both_stages (crm.tests.test_party_version_service.PartyVersionServiceTests.test_legacy_quote_basis_rejects_changed_target_at_both_stages) ... ok
+test_legacy_quote_invalid_field_sets_rejected_at_both_stages (crm.tests.test_party_version_service.PartyVersionServiceTests.test_legacy_quote_invalid_field_sets_rejected_at_both_stages) ... ok
+test_records_immutable_and_approval_failure_rolls_back (crm.tests.test_party_version_service.PartyVersionServiceTests.test_records_immutable_and_approval_failure_rolls_back) ... ok
+test_replacement_proposal_and_independent_approval_do_not_replace_party (crm.tests.test_party_version_service.PartyVersionServiceTests.test_replacement_proposal_and_independent_approval_do_not_replace_party) ... ok
+test_requires_authenticated_session_and_separate_approver (crm.tests.test_party_version_service.PartyVersionServiceTests.test_requires_authenticated_session_and_separate_approver) ... ok
+test_session_permissions_and_customer_scope_for_all_entrypoints (crm.tests.test_party_version_service.PartyVersionServiceTests.test_session_permissions_and_customer_scope_for_all_entrypoints) ... ok
+test_targets_persist_with_independent_approval_and_no_source_write (crm.tests.test_party_version_service.PartyVersionServiceTests.test_targets_persist_with_independent_approval_and_no_source_write) ... ok
+test_verified_approval_rejects_changed_target_and_session (crm.tests.test_party_version_service.PartyVersionServiceTests.test_verified_approval_rejects_changed_target_and_session) ... ok
+test_verified_approval_rejects_tampered_request (crm.tests.test_party_version_service.PartyVersionServiceTests.test_verified_approval_rejects_tampered_request) ... ok
+test_verified_approval_rejects_unapproved_and_tampered_approval (crm.tests.test_party_version_service.PartyVersionServiceTests.test_verified_approval_rejects_unapproved_and_tampered_approval) ... ok
+test_anonymous_development_cannot_send_unapproved_revision (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalApiTests.test_anonymous_development_cannot_send_unapproved_revision) ... Bad Request: /api/quotes/81/mark-sent/
+ok
+test_approved_result_rejects_changed_revision_or_source_document (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalGuardTests.test_approved_result_rejects_changed_revision_or_source_document) ... ok
+test_changed_approved_result_is_rejected (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalGuardTests.test_changed_approved_result_is_rejected) ... ok
+test_draft_chain_cannot_hide_party_change (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalGuardTests.test_draft_chain_cannot_hide_party_change) ... ok
+test_legacy_formal_revision_can_save_or_be_accepted_without_application (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalGuardTests.test_legacy_formal_revision_can_save_or_be_accepted_without_application) ... ok
+test_modified_approval_record_is_rejected (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalGuardTests.test_modified_approval_record_is_rejected) ... ok
+test_order_confirmation_refuses_changed_draft_before_side_effects (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalGuardTests.test_order_confirmation_refuses_changed_draft_before_side_effects) ... ok
+test_unchanged_party_revision_can_be_sent (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalGuardTests.test_unchanged_party_revision_can_be_sent) ... ok
+test_unrelated_quote_with_wrong_application_is_not_enough (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalGuardTests.test_unrelated_quote_with_wrong_application_is_not_enough) ... ok
+test_valid_application_and_unchanged_descendant_are_allowed (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalGuardTests.test_valid_application_and_unchanged_descendant_are_allowed) ... ok
+test_authenticated_separate_approval_and_idempotent_quote_revision (crm.tests.test_quote_party_change_api.QuotePartyChangeApiTests.test_authenticated_separate_approval_and_idempotent_quote_revision) ... Unauthorized: /api/quotes/103/party-change/
+Bad Request: /api/quotes/103/party-change/41/approve/
+ok
+test_authenticated_unprivileged_user_cannot_read_party_change (crm.tests.test_quote_party_change_api.QuotePartyChangeApiTests.test_authenticated_unprivileged_user_cannot_read_party_change) ... ok
+test_drafts_still_allow_party_edits_before_confirmation (crm.tests.test_formal_party_guard.FormalPartyGuardTests.test_drafts_still_allow_party_edits_before_confirmation) ... ok
+test_formal_snapshots_cannot_be_overwritten_by_model_save (crm.tests.test_formal_party_guard.FormalPartyGuardTests.test_formal_snapshots_cannot_be_overwritten_by_model_save) ... ok
+test_ancestor_formalization_serializes_and_rejects_tax_change (crm.tests.test_quote_draft_tax_revision.DraftTaxRevisionConcurrencyTests.test_ancestor_formalization_serializes_and_rejects_tax_change) ... Bad Request: /api/quotes/109/revise/
+ok
+test_cross_migration_rollback_is_rejected_before_schema_changes (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxMigrationTests.test_cross_migration_rollback_is_rejected_before_schema_changes) ... ok
+test_legacy_null_and_loss_guard (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxMigrationTests.test_legacy_null_and_loss_guard) ... ok
+test_two_authenticated_sessions_apply_once (crm.tests.test_party_quote_application.PartyQuoteApplicationConcurrencyTests.test_two_authenticated_sessions_apply_once) ... ok
+test_empty_rollback_and_each_protected_fact_blocks_before_schema_changes (crm.tests.test_party_quote_application_migration.PartyQuoteMigrationRollbackTests.test_empty_rollback_and_each_protected_fact_blocks_before_schema_changes) ... ok
+test_two_sessions_compete_for_same_baseline (crm.tests.test_party_version_concurrency.PartyVersionPostgresConcurrencyTests.test_two_sessions_compete_for_same_baseline) ... ok
+test_two_sessions_compete_to_approve_same_request (crm.tests.test_party_version_concurrency.PartyVersionPostgresConcurrencyTests.test_two_sessions_compete_to_approve_same_request) ... ok
+test_result_item_change_is_serialized_before_formalization (crm.tests.test_quote_party_approval_guard.QuotePartyApprovalConcurrencyTests.test_result_item_change_is_serialized_before_formalization) ... ok
+test_stale_draft_cannot_overwrite_after_concurrent_confirmation (crm.tests.test_formal_party_guard.FormalPartyGuardConcurrencyTests.test_stale_draft_cannot_overwrite_after_concurrent_confirmation) ... ok
+
+----------------------------------------------------------------------
+Ran 73 tests in 192.528s
+
+OK
+ OK
+System check identified no issues (0 silenced).

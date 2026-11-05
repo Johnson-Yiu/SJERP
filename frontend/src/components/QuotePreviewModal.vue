@@ -81,7 +81,7 @@ async function printPreview() {
           <div class="pi-parties">
             <section>
               <h2>Buyer Information</h2>
-              <dl><dt>Name</dt><dd>{{ draft.buyer.company_name || '—' }}</dd><dt>Recipient</dt><dd>{{ draft.buyer.recipient || '—' }}</dd><dt>Address</dt><dd>{{ draft.buyer.address || '—' }}</dd><dt>Tax ID</dt><dd>&nbsp;</dd><dt>Email</dt><dd>{{ draft.buyer.email || '—' }}</dd><dt>Tel</dt><dd>{{ draft.buyer.phone || '—' }}</dd></dl>
+              <dl><dt>Name</dt><dd>{{ draft.buyer.company_name || '—' }}</dd><dt>Recipient</dt><dd>{{ draft.buyer.recipient || '—' }}</dd><dt>Address</dt><dd>{{ draft.buyer.address || '—' }}</dd><dt>Tax ID</dt><dd>{{ draft.buyer.tax_id || '—' }}</dd><dt>Email</dt><dd>{{ draft.buyer.email || '—' }}</dd><dt>Tel</dt><dd>{{ draft.buyer.phone || '—' }}</dd></dl>
             </section>
             <section>
               <h2>Seller Information</h2>

@@ -1,0 +1,27 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/party-version-closeout-20261105/frontend
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files D:/Codex项目/森爵照明管理系统/.worktrees/party-version-closeout-20261105/frontend/tests/customer-ux.spec.js.
+ ❯ ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/party-version-closeout-20261105/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:94
+ ❯ Pool.schedule ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/party-version-closeout-20261105/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3532:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+ ❯ Timeout.<anonymous> ../../../../../Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/party-version-closeout-20261105/frontend/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:3108:58
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ process.processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  77 passed (77)
+      Tests  715 passed (715)
+     Errors  1 error
+   Start at  13:49:32
+   Duration  1347.34s (transform 30.54s, setup 179.69s, import 57.58s, tests 64.30s, environment 2085.54s)
+

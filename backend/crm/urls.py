@@ -12,6 +12,7 @@ from .file_access import protected_media
 from .report_templates import SharedReportTemplateViewSet
 from .history_import_preflight import HistoryImportPreflightView
 from .history_takeover_api import HistoryTakeoverDetailView, HistoryTakeoverGroupActionView, HistoryTakeoverListCreateView, HistoryTakeoverReportView, HistoryTakeoverTemplateView
+from .party_version_api import QuotePartyChangeView, QuotePartyChangeDecisionView
 
 router = DefaultRouter()
 from .finance_closeout_api import FinanceCloseoutViewSet
@@ -55,6 +56,8 @@ from .reporting import historical_analysis, report_catalog, report_data, report_
 from .actual_cash_api import actual_cash_report
 
 urlpatterns = [
+    path('quotes/<int:quote_id>/party-change/', QuotePartyChangeView.as_view()),
+    path('quotes/<int:quote_id>/party-change/<int:request_id>/<str:operation>/', QuotePartyChangeDecisionView.as_view()),
     path("media/<path:relative_path>", protected_media, name="crm-protected-media"),
     path("products/<int:pk>/combination-rules/", ProductCombinationRulesView.as_view()),
     path("products/<int:pk>/sku-plan/", ProductSKUPlanView.as_view()),

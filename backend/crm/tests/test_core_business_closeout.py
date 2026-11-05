@@ -14,7 +14,7 @@ from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 from rest_framework.exceptions import ValidationError as RestValidationError
 
-from crm.models import (Customer, FulfillmentIdempotency, GoodsReceipt, InventoryMovement,
+from crm.models import (AdvanceAllocation, RmbCashEvent, OrderItem, PurchaseOrderItem, ShipmentItem, Customer, FulfillmentIdempotency, GoodsReceipt, InventoryMovement,
     InventoryReservation, OperationLog, Order, PaymentPlan, Product, PurchaseCostAllocation,
     PurchaseOrder, Shipment, SKU, Supplier, SupplierSKU, Transaction)
 from crm.services import fulfillment as stock
@@ -63,7 +63,7 @@ class CoreBusinessFixture:
 
     def snapshot(self):
         models = (InventoryMovement, InventoryReservation, GoodsReceipt, Shipment, FulfillmentIdempotency,
-                  Order, PurchaseOrder, PurchaseCostAllocation, PaymentPlan, Transaction, OperationLog)
+                  Order, OrderItem, PurchaseOrder, PurchaseOrderItem, ShipmentItem, PurchaseCostAllocation, PaymentPlan, Transaction, AdvanceAllocation, RmbCashEvent, OperationLog)
         result = {m.__name__: list(m.objects.order_by("pk").values()) for m in models}
         self.records.append({"database_snapshot": result})
         return result
@@ -266,3 +266,46 @@ class CoreBusinessFlowTests(CoreBusinessFixture, TestCase):
         self.assertEqual(GoodsReceipt.objects.count(),2)
         self.assertEqual(FulfillmentIdempotency.objects.count(),2)
         self.assertEqual(OperationLog.objects.filter(action_label='登记采购到货').count(),2)
+
+    def test_supplier_payment_second_audit_failure_rolls_back_plan_and_transaction(self):
+        from crm.services.finance import ensure_default_payment_plans
+        from crm import views
+        po,item=self.purchase()
+        po.payment_terms_snapshot=[{'label':'合成验收付款','ratio':'1','due_basis':'order_date','offset_days':0}]
+        po.save(update_fields=['payment_terms_snapshot'])
+        ensure_default_payment_plans(po)
+        before=self.snapshot()
+        original=views.record_operation
+        labels=[]
+        def fail_second(*args,**kwargs):
+            labels.append(kwargs['action_label'])
+            if len(labels)==2: raise RuntimeError('synthetic second payment audit failure')
+            return original(*args,**kwargs)
+        payload={'transaction_date':str(DAY),'amount':'6','currency':'CNY','exchange_rate':'1','reference':'CORE-SYNTHETIC-PAYMENT'}
+        with patch('crm.views.record_operation',side_effect=fail_second):
+            with self.assertRaisesRegex(RuntimeError,'synthetic second payment audit failure'):
+                self.post(f'/api/purchase-orders/{po.pk}/pay/',payload,201)
+        self.assertEqual(labels,['登记供应商付款','采购单付款'])
+        self.assertEqual(self.snapshot(),before)
+        self.post(f'/api/purchase-orders/{po.pk}/pay/',payload,201)
+        self.assertEqual(sum((p.remaining_amount for p in po.payment_plans.all()),D(0)),D(12))
+        self.assertEqual(Transaction.objects.count(),1)
+        self.assertEqual(OperationLog.objects.count(),2)
+
+    def test_full_receipt_preserves_unpaid_payable_and_partial_payment_tracking(self):
+        body={'supplier':self.supplier.pk,'order_date':str(DAY),'currency':'CNY','exchange_rate':'1','payment_terms_snapshot':[{'label':'合成验收付款','ratio':'1','due_basis':'order_date','offset_days':0}],'items':[{'sku':self.sku.pk,'quantity':'6','unit_price':'3'}]}
+        draft=self.post('/api/purchase-orders/',body,201);pid=draft['id']
+        self.post(f'/api/purchase-orders/{pid}/place/',{})
+        po=PurchaseOrder.objects.get(pk=pid);item=po.items.get()
+        self.post(f'/api/purchase-orders/{pid}/receive/',{'purchase_item':item.pk,'receipt_date':str(DAY),'quantity':'6','unit_cost':'3',**LOCATION},201)
+        po.refresh_from_db();item.refresh_from_db()
+        self.assertEqual(po.status,'completed');self.assertEqual(item.received_quantity,D(6))
+        self.assertEqual(po.unpaid_amount,D(18))
+        self.assertEqual(sum((p.remaining_amount for p in po.payment_plans.all()),D(0)),D(18))
+        for amount,remaining in [('6','12'),('12','0')]:
+            self.post(f'/api/purchase-orders/{pid}/pay/',{'transaction_date':str(DAY),'amount':amount,'currency':'CNY','exchange_rate':'1'},201)
+            po.refresh_from_db();self.assertEqual(po.status,'completed')
+            self.assertEqual(po.unpaid_amount,D(remaining))
+            self.assertEqual(sum((p.remaining_amount for p in po.payment_plans.all()),D(0)),D(remaining))
+        self.assertEqual(stock.sku_metrics(self.sku)['actual_quantity'],D(6))
+        self.assertEqual(Transaction.objects.count(),2)

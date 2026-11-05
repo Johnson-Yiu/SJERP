@@ -1,0 +1,19 @@
+[UAT] starting python-version
+[UAT] python-version: PASS (94 ms)
+[UAT] starting isolated-migration
+[UAT] isolated-migration: PASS (26113 ms)
+[UAT] starting synthetic-api-seed
+[UAT] synthetic-api-seed: PASS (6094 ms)
+[UAT] starting history-operational-chrome
+[UAT] history-operational-chrome: PASS (14571 ms)
+[UAT] starting history-operational-workflow
+[UAT] history-operational-workflow: PASS (24870 ms)
+[UAT] starting history-operational-fulfillment
+[UAT] history-operational-fulfillment: PASS (9722 ms)
+[UAT] starting history-inventory-location
+[UAT] history-inventory-location: PASS (9474 ms)
+[UAT] starting history-template
+[UAT] history-template: PASS (11101 ms)
+[UAT] starting read-only-business-verification-live
+[UAT] read-only-business-verification-live: PASS (928 ms)
+[UAT] final status PASS; result D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\lrv-final-d5a6a233\docs\uat-evidence\integration-closeout-02\local-release-final-d5a6a233\result.json

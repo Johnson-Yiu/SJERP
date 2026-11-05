@@ -803,3 +803,5 @@ AST 审计 backend 测试文件及浏览器 seeder 共 92 个 Supplier 创建/�
 导出稳定来源已完整合入；最终同候选本地全量正在执行，逐项独立复审仍待完成；旧前端262/1失败和本轮候选浏览器超时保留。真实 Linux 跨 UID 及目标环境门槛、用户延期打印、正式 RBAC/上线授权继续分开记录。日常 CI 为 NOT_RUN，不运行或重跑 Actions，不关闭 Issue。
 
 用户转述 ChatGPT 对导出及运维来源的有限复审：财务概览错误状态、期间捕获及防重复提交补修合理；导出来源本次 266/266 不消除旧报价取消根因 UNKNOWN。运维环境检查与合成 UID 交接脚本可接收，但未在 Linux 运行、未执行正式恢复；上线前须真实 Linux 跨 UID 完整链专项。ISS-018/020/105 不整体关闭。新 CORE-BUSINESS、PARTY-VERSION、ACCESS-READINESS 包不阻塞本轮，稳定后另行集成。
+
+2026-11-05 本地全量候选 `d5a6a23394397775d3aab0f237163d4000bce224` 数据库、备份、Node、Vitest、构建和历史 Chrome 通过；适用浏览器 265/1，报价下载取消根因未知，整体 FAIL。ISS-020 原记录继续跟踪，保留当次网络、下载、页面及清理证据；单次真实 Chrome 和默认浏览器成功不替代全量失败。后续诊断修改仅测试文件，不宣称修复。详见[本轮报告](uat-evidence/local-release-validation-20261105/README.md)。

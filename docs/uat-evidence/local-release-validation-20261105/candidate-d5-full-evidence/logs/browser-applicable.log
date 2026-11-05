@@ -1,0 +1,19 @@
+Starting business-suite
+Finished business-suite: exit=0; signal=none
+Starting shared-report-templates-isolated
+Finished shared-report-templates-isolated: exit=0; signal=none
+Starting quote-editor-isolated
+Finished quote-editor-isolated: exit=1; signal=none
+Starting iss006-storage-isolated
+Finished iss006-storage-isolated: exit=0; signal=none
+Starting iss007-attachment-isolated
+Finished iss007-attachment-isolated: exit=0; signal=none
+Starting iss007-image-snapshot-isolated
+Finished iss007-image-snapshot-isolated: exit=0; signal=none
+Starting iss022-isolated
+Finished iss022-isolated: exit=0; signal=none
+Starting iss028-035-isolated
+Finished iss028-035-isolated: exit=0; signal=none
+Starting iss055-rbac
+Finished iss055-rbac: exit=0; signal=none
+Playwright suite stability: failed; summary D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\lrv-final-d5a6a233\docs\uat-evidence\local-release-validation-20261105\final-d5a6a233\browser\playwright-suite-summary.json

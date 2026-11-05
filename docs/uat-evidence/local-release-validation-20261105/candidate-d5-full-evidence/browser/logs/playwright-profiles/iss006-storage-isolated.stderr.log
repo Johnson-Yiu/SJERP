@@ -1,0 +1,409 @@
+[isolated Django API] [05/Nov/2026 15:30:13] "GET /api/__test__/isolation/[redacted ephemeral isolation token]/ HTTP/1.1" 200 326
+[isolated Django API] [05/Nov/2026 15:30:14] "GET /api/__test__/isolation/[redacted ephemeral isolation token]/ HTTP/1.1" 200 326
+(node:37672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [05/Nov/2026 15:30:21] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 15:30:21] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 568
+[isolated Django API] [05/Nov/2026 15:30:21] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 7889
+[isolated Django API] [05/Nov/2026 15:30:21] "GET /api/orders/?page=1 HTTP/1.1" 200 15518
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [05/Nov/2026 15:30:21] "GET /api/contract-changes/?purchase_order=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:30:21] "GET /api/skus/?page=1 HTTP/1.1" 200 13659
+[isolated Django API] [05/Nov/2026 15:30:28] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 7889
+[isolated Django API] [05/Nov/2026 15:30:32] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 15:30:32] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 568
+[isolated Django API] [05/Nov/2026 15:30:32] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 7889
+[isolated Django API] [05/Nov/2026 15:30:32] "GET /api/orders/?page=1 HTTP/1.1" 200 15518
+[isolated Django API] [05/Nov/2026 15:30:32] "GET /api/contract-changes/?purchase_order=2&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:30:32] "GET /api/skus/?page=1 HTTP/1.1" 200 13659
+[isolated Django API] [05/Nov/2026 15:30:42] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 7889
+[isolated Django API] [05/Nov/2026 15:30:43] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 15:30:43] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 568
+[isolated Django API] [05/Nov/2026 15:30:44] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 7889
+[isolated Django API] [05/Nov/2026 15:30:44] "GET /api/contract-changes/?purchase_order=3&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:30:44] "GET /api/orders/?page=1 HTTP/1.1" 200 15518
+[isolated Django API] [05/Nov/2026 15:30:44] "GET /api/skus/?page=1 HTTP/1.1" 200 13659
+[isolated Django API] [05/Nov/2026 15:30:45] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 7889
+[isolated Django API] [05/Nov/2026 15:30:48] "POST /api/purchase-orders/3/receive/ HTTP/1.1" 201 223
+[isolated Django API] [05/Nov/2026 15:30:48] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 8257
+[isolated Django API] [05/Nov/2026 15:30:49] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 15:30:49] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 568
+[isolated Django API] [05/Nov/2026 15:30:49] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 8257
+[isolated Django API] [05/Nov/2026 15:30:49] "GET /api/orders/?page=1 HTTP/1.1" 200 15518
+[isolated Django API] [05/Nov/2026 15:30:49] "GET /api/contract-changes/?purchase_order=4&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:30:49] "GET /api/skus/?page=1 HTTP/1.1" 200 13659
+[isolated Django API] [05/Nov/2026 15:30:50] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 8257
+[isolated Django API] [05/Nov/2026 15:30:51] "POST /api/purchase-orders/4/receive/ HTTP/1.1" 201 223
+[isolated Django API] [05/Nov/2026 15:30:52] "POST /api/purchase-orders/4/receive/ HTTP/1.1" 201 223
+[isolated Django API] [05/Nov/2026 15:30:52] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 8625
+[isolated Django API] [05/Nov/2026 15:30:53] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 15:30:53] "GET /api/suppliers/?active_only=1&page=1 HTTP/1.1" 200 568
+[isolated Django API] [05/Nov/2026 15:30:53] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 8625
+[isolated Django API] [05/Nov/2026 15:30:53] "GET /api/contract-changes/?purchase_order=5&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:30:53] "GET /api/orders/?page=1 HTTP/1.1" 200 15518
+[isolated Django API] [05/Nov/2026 15:30:54] "GET /api/skus/?page=1 HTTP/1.1" 200 13659
+[isolated Django API] [05/Nov/2026 15:30:56] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 8625
+[isolated Django API] [05/Nov/2026 15:30:56] "POST /api/purchase-orders/5/receive/ HTTP/1.1" 201 223
+[isolated Django API] [05/Nov/2026 15:30:58] "POST /api/purchase-orders/5/receive/ HTTP/1.1" 201 223
+[isolated Django API] [05/Nov/2026 15:30:58] "GET /api/purchase-orders/?page=1 HTTP/1.1" 200 8993
+[isolated Django API] [05/Nov/2026 15:30:59] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:30:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=6 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:30:59] "GET /api/orders/6/workbench/ HTTP/1.1" 200 2828
+[isolated Django API] [05/Nov/2026 15:30:59] "GET /api/orders/6/fulfillment/ HTTP/1.1" 200 2060
+[isolated Django API] Not Found: /api/orders/6/packing-plan/
+[isolated Django API] [05/Nov/2026 15:30:59] "GET /api/orders/6/packing-plan/ HTTP/1.1" 404 40
+[isolated Django API] [05/Nov/2026 15:30:59] "GET /api/orders/6/procurement-plan/ HTTP/1.1" 200 581
+[isolated Django API] [05/Nov/2026 15:30:59] "GET /api/operation-logs/?entity=crm.order&object_id=6&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:30:59] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:30:59 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=6 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [05/Nov/2026 15:30:59] "GET /api/contract-changes/?order=6&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:30:59] "GET /api/orders/?search=&page=1 HTTP/1.1" 200 15518
+[isolated Vite] 15:31:00 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=6 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:00 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=6 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:01] "GET /api/skus/6/ HTTP/1.1" 200 1354
+[isolated Vite] 15:31:01 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=6 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:01 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=6 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:05] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:31:05 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:05] "GET /api/orders/7/workbench/ HTTP/1.1" 200 2786
+[isolated Django API] [05/Nov/2026 15:31:05] "GET /api/orders/7/fulfillment/ HTTP/1.1" 200 2032
+[isolated Django API] Not Found: /api/orders/7/packing-plan/
+[isolated Django API] [05/Nov/2026 15:31:05] "GET /api/orders/7/packing-plan/ HTTP/1.1" 404 40
+[isolated Django API] [05/Nov/2026 15:31:05] "GET /api/orders/7/procurement-plan/ HTTP/1.1" 200 574
+[isolated Django API] [05/Nov/2026 15:31:05] "GET /api/operation-logs/?entity=crm.order&object_id=7&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:31:05] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:31:05 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [05/Nov/2026 15:31:05] "GET /api/contract-changes/?order=7&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:31:05] "GET /api/orders/?search=&page=1 HTTP/1.1" 200 15518
+[isolated Vite] 15:31:14 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:15 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:15] "GET /api/skus/7/ HTTP/1.1" 200 1319
+[isolated Vite] 15:31:15 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:15 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=7 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:15] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:31:16 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=8 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:16] "GET /api/orders/8/workbench/ HTTP/1.1" 200 2840
+[isolated Django API] [05/Nov/2026 15:31:16] "GET /api/orders/8/fulfillment/ HTTP/1.1" 200 2068
+[isolated Django API] Not Found: /api/orders/8/packing-plan/
+[isolated Django API] [05/Nov/2026 15:31:16] "GET /api/orders/8/packing-plan/ HTTP/1.1" 404 40
+[isolated Django API] [05/Nov/2026 15:31:16] "GET /api/orders/8/procurement-plan/ HTTP/1.1" 200 583
+[isolated Django API] [05/Nov/2026 15:31:16] "GET /api/operation-logs/?entity=crm.order&object_id=8&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:31:16] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:31:16 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=8 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [05/Nov/2026 15:31:16] "GET /api/contract-changes/?order=8&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:31:16] "GET /api/orders/?search=&page=1 HTTP/1.1" 200 15518
+[isolated Vite] 15:31:18 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=8 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:18 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=8 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:18] "GET /api/skus/8/ HTTP/1.1" 200 1364
+[isolated Vite] 15:31:18 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=8 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:18 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=8 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:20 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=8 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:20] "POST /api/orders/8/ship/ HTTP/1.1" 201 65
+[isolated Vite] 15:31:20 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=8 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:20] "GET /api/orders/8/workbench/ HTTP/1.1" 200 4016
+[isolated Django API] Not Found: /api/orders/8/packing-plan/
+[isolated Django API] [05/Nov/2026 15:31:20] "GET /api/orders/8/packing-plan/ HTTP/1.1" 404 40
+[isolated Django API] [05/Nov/2026 15:31:20] "GET /api/orders/8/fulfillment/ HTTP/1.1" 200 2441
+[isolated Django API] [05/Nov/2026 15:31:20] "GET /api/orders/8/procurement-plan/ HTTP/1.1" 200 604
+[isolated Django API] [05/Nov/2026 15:31:20] "GET /api/operation-logs/?entity=crm.order&object_id=8&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:31:21] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:31:21 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=8 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:21] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:31:21 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=9 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:21] "GET /api/orders/9/workbench/ HTTP/1.1" 200 2858
+[isolated Django API] [05/Nov/2026 15:31:22] "GET /api/orders/9/fulfillment/ HTTP/1.1" 200 2080
+[isolated Django API] Not Found: /api/orders/9/packing-plan/
+[isolated Django API] [05/Nov/2026 15:31:22] "GET /api/orders/9/packing-plan/ HTTP/1.1" 404 40
+[isolated Django API] [05/Nov/2026 15:31:22] "GET /api/orders/9/procurement-plan/ HTTP/1.1" 200 586
+[isolated Django API] [05/Nov/2026 15:31:22] "GET /api/operation-logs/?entity=crm.order&object_id=9&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:31:22] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:31:22 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=9 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [05/Nov/2026 15:31:22] "GET /api/contract-changes/?order=9&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:31:22] "GET /api/orders/?search=&page=1 HTTP/1.1" 200 15516
+[isolated Vite] 15:31:29 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=9 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:29 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=9 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:29 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=9 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:29] "GET /api/skus/9/ HTTP/1.1" 200 1379
+[isolated Vite] 15:31:29 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=9 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:29] "POST /api/orders/9/ship/ HTTP/1.1" 201 65
+[isolated Vite] 15:31:29 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=9 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:30 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=9 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:30] "POST /api/orders/9/ship/ HTTP/1.1" 201 65
+[isolated Vite] 15:31:30 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=9 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:30] "GET /api/orders/9/workbench/ HTTP/1.1" 200 4044
+[isolated Django API] [05/Nov/2026 15:31:30] "GET /api/orders/9/fulfillment/ HTTP/1.1" 200 2457
+[isolated Django API] Not Found: /api/orders/9/packing-plan/
+[isolated Django API] [05/Nov/2026 15:31:30] "GET /api/orders/9/packing-plan/ HTTP/1.1" 404 40
+[isolated Django API] [05/Nov/2026 15:31:31] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:31:31 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=10 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:31] "GET /api/orders/10/workbench/ HTTP/1.1" 200 2821
+[isolated Django API] [05/Nov/2026 15:31:31] "GET /api/orders/10/fulfillment/ HTTP/1.1" 200 2057
+[isolated Django API] Not Found: /api/orders/10/packing-plan/
+[isolated Django API] [05/Nov/2026 15:31:31] "GET /api/orders/10/packing-plan/ HTTP/1.1" 404 40
+[isolated Django API] [05/Nov/2026 15:31:31] "GET /api/orders/10/procurement-plan/ HTTP/1.1" 200 582
+[isolated Django API] [05/Nov/2026 15:31:31] "GET /api/operation-logs/?entity=crm.order&object_id=10&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:31:31] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Vite] 15:31:31 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=10 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[isolated Django API] [05/Nov/2026 15:31:31] "GET /api/contract-changes/?order=10&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 15:31:31] "GET /api/orders/?search=&page=1 HTTP/1.1" 200 15514
+[isolated Vite] 15:31:44 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=10 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:44 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=10 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:44] "GET /api/skus/10/ HTTP/1.1" 200 1346
+[isolated Vite] 15:31:44 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=10 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:44 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=10 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:44] "POST /api/orders/10/ship/ HTTP/1.1" 201 65
+[isolated Vite] 15:31:44 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=10 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Vite] 15:31:45 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=10 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:45] "POST /api/orders/10/ship/ HTTP/1.1" 201 65
+[isolated Vite] 15:31:45 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated.
+  at <OrderDetailModal key=0 id=10 refresh-key=0  ... >
+  at <BaseTransition appear=true persisted=false mode=undefined  ... >
+  at <Transition name="detail-drawer" appear="" >
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > >
+  at <RouterView key="/orders" >
+  at <App>
+[isolated Django API] [05/Nov/2026 15:31:45] "GET /api/orders/10/workbench/ HTTP/1.1" 200 3988
+[isolated Django API] [05/Nov/2026 15:31:45] "GET /api/orders/10/fulfillment/ HTTP/1.1" 200 2428
+[isolated Django API] Not Found: /api/orders/10/packing-plan/
+[isolated Django API] [05/Nov/2026 15:31:45] "GET /api/orders/10/packing-plan/ HTTP/1.1" 404 40
+[isolated Django API] [05/Nov/2026 15:31:45] "GET /api/orders/10/procurement-plan/ HTTP/1.1" 200 603
+[isolated Django API] [05/Nov/2026 15:31:45] "GET /api/operation-logs/?entity=crm.order&object_id=10&ordering=-created_at HTTP/1.1" 200 52

@@ -1,0 +1,127 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\quote-diagnostics-snapshot\\docs\\uat-evidence\\diagnostics",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "chrome/browser-results.json",
+      "bytes": 6891,
+      "raw_sha256": "90b668302c7e726e6eaadd3e190454247cc160b850c9af129a958daf08527a4c",
+      "published_sha256": "66ae916f70508cacb41e0431d9db10aa5ee89386e676f2535ff82f8e0016b846",
+      "redactions": 0
+    },
+    {
+      "path": "chrome/chrome-quote-actions-1024.png",
+      "bytes": 104878,
+      "raw_sha256": "f688a4e6dec6fafffe5bfa1724afde0777b40f005c3a518f7c1440c4364eedc1",
+      "published_sha256": "f688a4e6dec6fafffe5bfa1724afde0777b40f005c3a518f7c1440c4364eedc1",
+      "redactions": 0
+    },
+    {
+      "path": "chrome/chrome-quote-actions-1440.png",
+      "bytes": 160060,
+      "raw_sha256": "200152be834db92067e5bdf44c07e8bb36555b7371ec5eff053d63b150657a28",
+      "published_sha256": "200152be834db92067e5bdf44c07e8bb36555b7371ec5eff053d63b150657a28",
+      "redactions": 0
+    },
+    {
+      "path": "chrome/chrome-quote-actions-320.png",
+      "bytes": 40346,
+      "raw_sha256": "964632676a0177b206621360bd3b7585945b591c2c5cac9470863b7ffbad700d",
+      "published_sha256": "964632676a0177b206621360bd3b7585945b591c2c5cac9470863b7ffbad700d",
+      "redactions": 0
+    },
+    {
+      "path": "chrome/chrome-quote-actions-390.png",
+      "bytes": 41055,
+      "raw_sha256": "1edf6c634983f0779c17075027866d200b239417845093bbb62744632ea95e5a",
+      "published_sha256": "1edf6c634983f0779c17075027866d200b239417845093bbb62744632ea95e5a",
+      "redactions": 0
+    },
+    {
+      "path": "chrome/downloaded-quote.xlsx",
+      "bytes": 10218,
+      "raw_sha256": "30088e659a1730356d4bfbddb57fbf0f09edb50adc88e055ee71b5148a4a4975",
+      "published_sha256": "30088e659a1730356d4bfbddb57fbf0f09edb50adc88e055ee71b5148a4a4975",
+      "redactions": 0
+    },
+    {
+      "path": "chrome/fixture.json",
+      "bytes": 304,
+      "raw_sha256": "33cf4b86c5688ff64a97130361ed59b2bbf29d9387525b5170036460f02643f5",
+      "published_sha256": "08a1518db7db81dfbd240b2d1f17a9d5baba5b91387807e4dcef2f6c389036bc",
+      "redactions": 0
+    },
+    {
+      "path": "chrome/original-log-utf8.log",
+      "bytes": 19321,
+      "raw_sha256": "dae2119abadb31af026649aa9d6cd7292264decbcba4604e4d3e5b76cf9d9df4",
+      "published_sha256": "27219ff923a8eb5dda8586678c2695b3c0b7aa0bf8ec46b28b5aaa8a9a23cee3",
+      "redactions": 4
+    },
+    {
+      "path": "default/browser-results.json",
+      "bytes": 6894,
+      "raw_sha256": "1964457235276badc89ca69def1e36ea4eebec0064d73af844950a46b48cdf62",
+      "published_sha256": "dd9137a65bb26ed6fbc28c0a186a6e8a95141ac9bfdf927f6042de38b7e19a55",
+      "redactions": 0
+    },
+    {
+      "path": "default/chrome-quote-actions-1024.png",
+      "bytes": 103982,
+      "raw_sha256": "dc9207bc07ee23bf9ffeee038eb64e1ba8c64a18482190e312234870178ab400",
+      "published_sha256": "dc9207bc07ee23bf9ffeee038eb64e1ba8c64a18482190e312234870178ab400",
+      "redactions": 0
+    },
+    {
+      "path": "default/chrome-quote-actions-1440.png",
+      "bytes": 158874,
+      "raw_sha256": "c44abc0dc0b3f92bc89101c9abbd3dea981acb6e6db90e5bb3da404b2cbd532b",
+      "published_sha256": "c44abc0dc0b3f92bc89101c9abbd3dea981acb6e6db90e5bb3da404b2cbd532b",
+      "redactions": 0
+    },
+    {
+      "path": "default/chrome-quote-actions-320.png",
+      "bytes": 40460,
+      "raw_sha256": "01d6f89409829ba8b172471c080a76530896cebfe91cd09920754963c2889424",
+      "published_sha256": "01d6f89409829ba8b172471c080a76530896cebfe91cd09920754963c2889424",
+      "redactions": 0
+    },
+    {
+      "path": "default/chrome-quote-actions-390.png",
+      "bytes": 41025,
+      "raw_sha256": "5c2e7ee9b79f9ed6d3927a0261b3162d54954ab1b49173ca8b11a2b8ff64c08a",
+      "published_sha256": "5c2e7ee9b79f9ed6d3927a0261b3162d54954ab1b49173ca8b11a2b8ff64c08a",
+      "redactions": 0
+    },
+    {
+      "path": "default/downloaded-quote.xlsx",
+      "bytes": 10219,
+      "raw_sha256": "787f57035a1b878fecc92176485441b584bcee8f5cda7bdb184b76a4e1b48c3a",
+      "published_sha256": "787f57035a1b878fecc92176485441b584bcee8f5cda7bdb184b76a4e1b48c3a",
+      "redactions": 0
+    },
+    {
+      "path": "default/fixture.json",
+      "bytes": 304,
+      "raw_sha256": "4b443e961543a9d16688be7f49a35c454cd9f6b1bcf24ce4498c6f83c24ee3e1",
+      "published_sha256": "9caaacd6d10f364a1ff1070e8b96947f263d6d4772922a073286674214bd20fc",
+      "redactions": 0
+    },
+    {
+      "path": "default/original-log-utf8.log",
+      "bytes": 19323,
+      "raw_sha256": "ad1f08416b78584f4212b633111d2ccdd389d40a98190e4c7a2dc5a3f311dbfa",
+      "published_sha256": "3206fbbe91744cb4f9b9a66dc40f97c4a96c6161019decb9d856fad5e9be79a6",
+      "redactions": 5
+    },
+    {
+      "path": "raw-log-hashes.json",
+      "bytes": 168,
+      "raw_sha256": "32913a0706ba9f756284fbf5efbfbc64af41931f42edeb70e3b81283f9804349",
+      "published_sha256": "ac7539d9d6f01e15da236f3119dd87aa79520e8ac046d05aa6a191961bd043e3",
+      "redactions": 0
+    }
+  ],
+  "omitted": [],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

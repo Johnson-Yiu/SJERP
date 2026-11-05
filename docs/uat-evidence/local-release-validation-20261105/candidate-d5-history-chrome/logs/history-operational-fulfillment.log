@@ -1,0 +1,182 @@
+2026-11-05T07:39:08.418Z pw:browser <launching> C:\Program Files\Google\Chrome\Application\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\Users\Johnson\AppData\Local\Temp\playwright_chromiumdev_profile-tV3L2n --remote-debugging-pipe --no-startup-window
+2026-11-05T07:39:08.427Z pw:browser <launched> pid=36568
+{
+  "chrome": "156.0.8078.80",
+  "database": "isolated synthetic SQLite",
+  "before": [
+    {
+      "id": 1,
+      "source_id": 2,
+      "balance_mode": "itemized",
+      "record_type": "销售订单",
+      "opening_balance": "60.0000",
+      "currency": "USD",
+      "archived_id": 1,
+      "archived_no": "HIST-SO-HT-1",
+      "outstanding_balance": "60",
+      "plans": [
+        {
+          "id": 1,
+          "direction": "receivable",
+          "due_date": "2024-09-01",
+          "planned_amount": 60,
+          "settled_amount": 0,
+          "status": "open",
+          "notes": "历史逐笔未结计划：PLAN-SO-1；依据：synthetic://receivable-plan"
+        }
+      ],
+      "continuation_id": 2,
+      "continuation_no": "SO-2026-00001",
+      "continuation_status": "confirmed",
+      "line_links": [
+        {
+          "source_id": 3,
+          "archived_item_id": 1,
+          "continuation_item_id": 2,
+          "quantity": "6.00",
+          "cost_evidence": "合成成本凭证",
+          "cost_currency": "USD"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "source_id": 4,
+      "balance_mode": "itemized",
+      "record_type": "采购订单",
+      "opening_balance": "10.0000",
+      "currency": "USD",
+      "archived_id": 1,
+      "archived_no": "HIST-PO-HT-1",
+      "outstanding_balance": "10",
+      "plans": [
+        {
+          "id": 2,
+          "direction": "payable",
+          "due_date": "2024-09-02",
+          "planned_amount": 10,
+          "settled_amount": 0,
+          "status": "open",
+          "notes": "历史逐笔未结计划：PLAN-PO-1；依据：synthetic://payable-plan"
+        }
+      ],
+      "continuation_id": 2,
+      "continuation_no": "PO-2026-00001",
+      "continuation_status": "ordered",
+      "line_links": [
+        {
+          "source_id": 5,
+          "archived_item_id": 1,
+          "continuation_item_id": 2,
+          "quantity": "3.00",
+          "supplier_sku_id": null,
+          "manual_reason": "合成供应商合同",
+          "target": "order",
+          "sales_source_id": 2
+        }
+      ]
+    }
+  ],
+  "receipt": {
+    "id": 1,
+    "purchase_item": 2,
+    "quantity": "3.00",
+    "trade_unit": null,
+    "trade_quantity": null,
+    "trade_unit_price": null,
+    "trade_snapshot": {
+      "base_unit": "pcs",
+      "unit": "pcs",
+      "factor": "1",
+      "name": ""
+    },
+    "is_overage": false,
+    "inventory_movement": 1
+  },
+  "receiptReplay": "true",
+  "shipment": {
+    "id": 1,
+    "shipment_no": "SH-51045770A7AA4231",
+    "status": "confirmed"
+  },
+  "shipmentReplay": "true",
+  "after": [
+    {
+      "id": 1,
+      "source_id": 2,
+      "balance_mode": "itemized",
+      "record_type": "销售订单",
+      "opening_balance": "60.0000",
+      "currency": "USD",
+      "archived_id": 1,
+      "archived_no": "HIST-SO-HT-1",
+      "outstanding_balance": "40",
+      "plans": [
+        {
+          "id": 1,
+          "direction": "receivable",
+          "due_date": "2024-09-01",
+          "planned_amount": 60,
+          "settled_amount": 20,
+          "status": "open",
+          "notes": "历史逐笔未结计划：PLAN-SO-1；依据：synthetic://receivable-plan"
+        }
+      ],
+      "continuation_id": 2,
+      "continuation_no": "SO-2026-00001",
+      "continuation_status": "shipped",
+      "line_links": [
+        {
+          "source_id": 3,
+          "archived_item_id": 1,
+          "continuation_item_id": 2,
+          "quantity": "6.00",
+          "cost_evidence": "合成成本凭证",
+          "cost_currency": "USD"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "source_id": 4,
+      "balance_mode": "itemized",
+      "record_type": "采购订单",
+      "opening_balance": "10.0000",
+      "currency": "USD",
+      "archived_id": 1,
+      "archived_no": "HIST-PO-HT-1",
+      "outstanding_balance": "6",
+      "plans": [
+        {
+          "id": 2,
+          "direction": "payable",
+          "due_date": "2024-09-02",
+          "planned_amount": 10,
+          "settled_amount": 4,
+          "status": "open",
+          "notes": "历史逐笔未结计划：PLAN-PO-1；依据：synthetic://payable-plan"
+        }
+      ],
+      "continuation_id": 2,
+      "continuation_no": "PO-2026-00001",
+      "continuation_status": "completed",
+      "line_links": [
+        {
+          "source_id": 5,
+          "archived_item_id": 1,
+          "continuation_item_id": 2,
+          "quantity": "3.00",
+          "supplier_sku_id": null,
+          "manual_reason": "合成供应商合同",
+          "target": "order",
+          "sales_source_id": 2
+        }
+      ]
+    }
+  ]
+}
+2026-11-05T07:39:17.530Z pw:browser [pid=36568] <gracefully close start>
+2026-11-05T07:39:17.658Z pw:browser [pid=36568] <process did exit: exitCode=0, signal=null>
+2026-11-05T07:39:17.659Z pw:browser [pid=36568] starting temporary directories cleanup
+2026-11-05T07:39:17.684Z pw:browser [pid=36568] finished temporary directories cleanup
+2026-11-05T07:39:17.684Z pw:browser [pid=36568] <gracefully close end>

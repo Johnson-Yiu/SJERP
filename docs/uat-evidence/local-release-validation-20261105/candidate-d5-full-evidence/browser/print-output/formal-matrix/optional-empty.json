@@ -1,0 +1,105 @@
+{
+  "invoice_no": "FORMAL-optional-empty-31F6B3B2",
+  "seller": {
+    "name": "Synthetic Seller",
+    "saler": "Synthetic Contact",
+    "address": "Synthetic Address",
+    "email": "synthetic@example.invalid",
+    "phone": "+00 000000"
+  },
+  "bank": [
+    [
+      "Beneficiary Name",
+      "SYNTHETIC-22"
+    ],
+    [
+      "Beneficiary Account Number",
+      "SYNTHETIC-23"
+    ],
+    [
+      "Swift Code",
+      "SYNTHETIC-24"
+    ],
+    [
+      "Country/Region",
+      "SYNTHETIC-25"
+    ],
+    [
+      "Beneficiary Address",
+      "SYNTHETIC-26"
+    ],
+    [
+      "Beneficiary Bank",
+      "SYNTHETIC-27"
+    ],
+    [
+      "Beneficiary Bank Address",
+      "SYNTHETIC-28"
+    ],
+    [
+      "Bank Code",
+      "SYNTHETIC-29"
+    ],
+    [
+      "Branch Code",
+      "SYNTHETIC-30"
+    ]
+  ],
+  "bank_notice": "Synthetic notice",
+  "template_sha256": "ae8ed043cf03018bf2b7234193bf6a49fbffcb9142e14f9fa74facb63163b748",
+  "buyer": {
+    "company_name": "Synthetic Freeze Buyer 31F6B3B2",
+    "name": "",
+    "address": "Synthetic Buyer Address",
+    "email": "buyer@example.invalid",
+    "phone": "+00 111111"
+  },
+  "terms": {
+    "quote_date": "2026-11-04",
+    "valid_until": null,
+    "validity_days": 30,
+    "lead_time_days": null,
+    "trading_terms": "",
+    "shipping_details": "",
+    "notes": ""
+  },
+  "totals": {
+    "currency": "USD",
+    "subtotal": "1.01",
+    "shipping_fee": "0.00",
+    "discount": "0.00",
+    "total_amount": "1.01"
+  },
+  "payment_splits": {
+    "deposit_ratio": "0.0000",
+    "deposit_amount": "0.00",
+    "balance_ratio": "1.0000",
+    "balance_amount": "1.01"
+  },
+  "products": [
+    {
+      "sku": "SYNTH-31F6B3B2",
+      "sku_code": "SYNTH-31F6B3B2",
+      "model": "SYNTH-M-31F6B3B2",
+      "sales_model": "SYNTH-M-31F6B3B2",
+      "product_name": "Synthetic Freeze Product 31F6B3B2",
+      "display_name": "Synthetic Freeze Product 31F6B3B2",
+      "description": "Synthetic product row 1. Long specification and installation details. ",
+      "quantity": "1.00",
+      "base_quantity": "1.00",
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "1.005000000000",
+      "amount": "1.01",
+      "unit": "pcs",
+      "image_url": "http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_asszQtk.png"
+    }
+  ],
+  "amount_words": "SAY TOTAL US DOLLARS ONE AND CENTS ONE ONLY",
+  "print_sha256": "9f18a6f8dfbe60ee322b67116e3961d822c06c4a8391d3b0ba124c949d240cf3",
+  "print_html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><title>FORMAL-optional-empty-31F6B3B2</title>\n<style>\nbody{font:14px Arial,sans-serif;color:#111;margin:24px}h1{text-align:center;font-size:24px}h2{font-size:16px;border-bottom:1px solid #333}.parties{display:grid;grid-template-columns:1fr 1fr;gap:24px}dl{display:grid;grid-template-columns:110px 1fr;gap:4px}dt{font-weight:bold}dd{margin:0;white-space:pre-line}table{border-collapse:collapse;width:100%;margin-top:18px}th,td{border:1px solid #555;padding:5px;text-align:left}td img{max-width:60px;max-height:60px}.totals{text-align:right}.notice{white-space:pre-line}@media print{body{margin:8mm}}@media screen and (max-width:500px){.parties{grid-template-columns:1fr}table,tbody,tr,td{display:block}thead{display:none}tr{border:1px solid #555;margin-bottom:10px}td{border:0;border-bottom:1px solid #ddd;display:grid;grid-template-columns:110px 1fr;overflow-wrap:anywhere}td::before{content:attr(data-label);font-weight:bold}td:last-child{border-bottom:0}}\n</style></head><body>\n<h1>Proforma Invoice</h1><div class=\"parties\"><section><h2>Buyer Information</h2><dl>\n<dt>Name</dt><dd>Synthetic Freeze Buyer 31F6B3B2</dd><dt>Recipient</dt><dd></dd><dt>Address</dt><dd>Synthetic Buyer Address</dd><dt>Tax ID</dt><dd></dd><dt>Email</dt><dd>buyer@example.invalid</dd><dt>Tel</dt><dd>+00 111111</dd></dl></section>\n<section><h2>Seller Information</h2><dl><dt>Name</dt><dd>Synthetic Seller</dd><dt>Saler</dt><dd>Synthetic Contact</dd><dt>Address</dt><dd>Synthetic Address</dd><dt>Email</dt><dd>synthetic@example.invalid</dd><dt>Tel</dt><dd>+00 000000</dd><dt>Date</dt><dd>2026年11月4日</dd></dl></section></div>\n<p>Invoice No. <strong>FORMAL-optional-empty-31F6B3B2</strong></p><table><thead><tr><th>No.</th><th>Image</th><th>Model</th><th>Description</th><th>Quantity</th><th>Unit</th><th>Unit Price USD</th><th>Total USD</th></tr></thead><tbody>\n<tr><td data-label=\"No.\">1</td><td data-label=\"Image\"><img src=\"http://127.0.0.1/api/media/quote-item-images/2026/11/synthetic-led_asszQtk.png\" alt=\"\"></td><td data-label=\"Model\">SYNTH-M-31F6B3B2</td><td data-label=\"Description\">Synthetic product row 1. Long specification and installation details. </td><td data-label=\"Quantity\">1.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">1.01 USD</td><td data-label=\"Total\">1.01 USD</td></tr></tbody></table>\n<div class=\"totals\"><p>Sub Total: 1.01</p><p>Shipping Cost: 0.00</p><p>Discount: 0.00</p><p><strong>Grand Total: 1.01</strong></p></div>\n<p>SAY TOTAL US DOLLARS ONE AND CENTS ONE ONLY</p><section><h2>NOTES</h2><p>Lead time: 10 Days<br>Price Valid Date: 30 Days<br>Deposit: 0% (USD 0.00)<br>Balance: 100% (USD 1.01)<br>Trading terms: <br>Shipping details: <br>The price is EXCLUDE customs duties and VAT. If the goods generate the customs taxes and VAT taxes in buyer's local, the buyer should pay by themselves.</p><p class=\"notice\"></p></section>\n<section><h2>BANK INFORMATION</h2><dl><dt>Beneficiary Name</dt><dd>SYNTHETIC-22</dd><dt>Beneficiary Account Number</dt><dd>SYNTHETIC-23</dd><dt>Swift Code</dt><dd>SYNTHETIC-24</dd><dt>Country/Region</dt><dd>SYNTHETIC-25</dd><dt>Beneficiary Address</dt><dd>SYNTHETIC-26</dd><dt>Beneficiary Bank</dt><dd>SYNTHETIC-27</dd><dt>Beneficiary Bank Address</dt><dd>SYNTHETIC-28</dd><dt>Bank Code</dt><dd>SYNTHETIC-29</dd><dt>Branch Code</dt><dd>SYNTHETIC-30</dd></dl><p class=\"notice\">Synthetic notice</p></section></body></html>\n"
+}

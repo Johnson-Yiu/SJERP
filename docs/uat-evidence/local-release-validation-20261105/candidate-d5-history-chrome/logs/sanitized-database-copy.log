@@ -1,0 +1,12 @@
+{
+  "business_and_audit_manifest_sha256": "8e62fd3827aebbc0f5b9bb9f6120252d51ae5975b15ffc0998c395dd7a813415",
+  "business_and_audit_rows": 1091,
+  "business_and_audit_tables_unchanged": true,
+  "django_session_rows_removed_from_published_copy": 2,
+  "published_database": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-d5a6a233\\docs\\uat-evidence\\integration-closeout-02\\local-release-final-d5a6a233\\artifacts\\isolated-sanitized.sqlite3",
+  "published_sha256": "4542a6d1489c3a61e261dbee45d15c9398cc428b9ce00012f4df757947a33f68",
+  "published_table_count": 102,
+  "source_database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-GyCZkp\\db.sqlite3",
+  "source_sha256": "94978d3c99ed4fda78f9c2183321e94320825600edc2ee1049bbe108f96e25be",
+  "source_table_count": 102
+}

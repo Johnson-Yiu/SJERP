@@ -1,0 +1,29 @@
+{
+  "chrome": "156.0.8078.80",
+  "data": "disposable SQLite and synthetic workbook",
+  "screenshots": [
+    {
+      "name": "history-operational-1440.png",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "dimensions": {
+        "viewport": 1440,
+        "document": 1440
+      }
+    },
+    {
+      "name": "history-operational-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "dimensions": {
+        "viewport": 390,
+        "document": 390
+      }
+    }
+  ],
+  "errors": []
+}

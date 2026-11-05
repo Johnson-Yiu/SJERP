@@ -1,0 +1,247 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-d5a6a233\\docs\\uat-evidence\\integration-closeout-02\\local-release-final-d5a6a233",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "artifacts/media/finance-vouchers/2026/11/f1dcf401bdde43c0be7b0bb29399559d.pdf",
+      "bytes": 55,
+      "raw_sha256": "94f673e3511b44ae4cce4189c7bf246b5106f5c0d9ed50767c58265d53c19fb9",
+      "published_sha256": "94f673e3511b44ae4cce4189c7bf246b5106f5c0d9ed50767c58265d53c19fb9",
+      "redactions": 0
+    },
+    {
+      "path": "business-row-summary-corrected.json",
+      "bytes": 20848,
+      "raw_sha256": "eb7b855c03e39f850a1b9b5f1cf4e9e0bd63c60871fb144779dbd10ec1187a18",
+      "published_sha256": "7bdebcb06abc14763165d9808113f4a2a1064ea475613dd2ee376c2a62653ac9",
+      "redactions": 0
+    },
+    {
+      "path": "business-row-summary-live.json",
+      "bytes": 20848,
+      "raw_sha256": "3b898276259f949ce770f2b96e72a640534f31a8c79adeb4e582514c1ac31fca",
+      "published_sha256": "46594ad354ed304b9498caf98a5959c74bfc3848a35b3d79000aab7854e4371a",
+      "redactions": 0
+    },
+    {
+      "path": "fulfillment/chrome-fulfillment.json",
+      "bytes": 4609,
+      "raw_sha256": "1d90d1046411816bc22e3ada01783385af8c9bf255b5a57c9a8f1da354deff28",
+      "published_sha256": "1d90d1046411816bc22e3ada01783385af8c9bf255b5a57c9a8f1da354deff28",
+      "redactions": 0
+    },
+    {
+      "path": "fulfillment/history-operational-settled-1440.png",
+      "bytes": 461651,
+      "raw_sha256": "12d4a001be2bc1cd2214e9037ca83f191af3f8d2bc706b240511dd3c18928c77",
+      "published_sha256": "12d4a001be2bc1cd2214e9037ca83f191af3f8d2bc706b240511dd3c18928c77",
+      "redactions": 0
+    },
+    {
+      "path": "fulfillment/history-operational-settled-390.png",
+      "bytes": 434729,
+      "raw_sha256": "0f764954435d8697933905c7a8cd50239b95f148acd02e72cde6f7e5babfc54e",
+      "published_sha256": "0f764954435d8697933905c7a8cd50239b95f148acd02e72cde6f7e5babfc54e",
+      "redactions": 0
+    },
+    {
+      "path": "inventory-location/inventory-location-1440.png",
+      "bytes": 188435,
+      "raw_sha256": "b81a5bb61ee55b4b4b5b6af34cb6d973457afeb179212531e105bc22e4a2e5dc",
+      "published_sha256": "b81a5bb61ee55b4b4b5b6af34cb6d973457afeb179212531e105bc22e4a2e5dc",
+      "redactions": 0
+    },
+    {
+      "path": "inventory-location/inventory-location-390.png",
+      "bytes": 63163,
+      "raw_sha256": "9f2fb4341bb7999e47b06a4c0f65cd89c899ef773f95cf5abf193d5c696b3e82",
+      "published_sha256": "9f2fb4341bb7999e47b06a4c0f65cd89c899ef773f95cf5abf193d5c696b3e82",
+      "redactions": 0
+    },
+    {
+      "path": "inventory-location/inventory-location-chrome.json",
+      "bytes": 148,
+      "raw_sha256": "d0208900024c49cf1e022d3634287b12811d925acbd971981c1b274c29048376",
+      "published_sha256": "d0208900024c49cf1e022d3634287b12811d925acbd971981c1b274c29048376",
+      "redactions": 0
+    },
+    {
+      "path": "logs/api-server.log",
+      "bytes": 9461,
+      "raw_sha256": "54828e03f35ee0bd54e0c43e20e3efb9c9b03a84b4abc848a68663bbf59da8ba",
+      "published_sha256": "f6a29d6a7a14c812d55c57997c4040670ebc7df3ccee294920f9e880a208d646",
+      "redactions": 0
+    },
+    {
+      "path": "logs/corrected-copy-business-verification.log",
+      "bytes": 20848,
+      "raw_sha256": "eb7b855c03e39f850a1b9b5f1cf4e9e0bd63c60871fb144779dbd10ec1187a18",
+      "published_sha256": "7bdebcb06abc14763165d9808113f4a2a1064ea475613dd2ee376c2a62653ac9",
+      "redactions": 0
+    },
+    {
+      "path": "logs/history-inventory-location.log",
+      "bytes": 2368,
+      "raw_sha256": "312ba7f47c2b2f39e130bf12b28848fd79112bf5c60deca0c54acd9ff8142c78",
+      "published_sha256": "312ba7f47c2b2f39e130bf12b28848fd79112bf5c60deca0c54acd9ff8142c78",
+      "redactions": 0
+    },
+    {
+      "path": "logs/history-operational-chrome.log",
+      "bytes": 2837,
+      "raw_sha256": "b66132842af8cdfbd5f55736e2337b875dd602d95fb97aa643c93c1c6deabd1a",
+      "published_sha256": "b66132842af8cdfbd5f55736e2337b875dd602d95fb97aa643c93c1c6deabd1a",
+      "redactions": 0
+    },
+    {
+      "path": "logs/history-operational-fulfillment.log",
+      "bytes": 6896,
+      "raw_sha256": "b67b8c7d7de23345c99d7b5e7e112cd89dd70ea432352c18cdcd36bbb600aadf",
+      "published_sha256": "b67b8c7d7de23345c99d7b5e7e112cd89dd70ea432352c18cdcd36bbb600aadf",
+      "redactions": 0
+    },
+    {
+      "path": "logs/history-operational-workflow.log",
+      "bytes": 2634,
+      "raw_sha256": "a4f38011082b618c4403bb5c35f804b6eb741506e451658f8bc33823096eab59",
+      "published_sha256": "a4f38011082b618c4403bb5c35f804b6eb741506e451658f8bc33823096eab59",
+      "redactions": 0
+    },
+    {
+      "path": "logs/history-template.log",
+      "bytes": 2363,
+      "raw_sha256": "28d89737a6c4ebfa2cbbc7511028d85f97965b829496f80fc382667a496d42dd",
+      "published_sha256": "28d89737a6c4ebfa2cbbc7511028d85f97965b829496f80fc382667a496d42dd",
+      "redactions": 0
+    },
+    {
+      "path": "logs/isolated-migration.log",
+      "bytes": 179,
+      "raw_sha256": "c6af6a7fc114209712307b362a474f38699fa8edfe40631f1cf40adb394fe368",
+      "published_sha256": "66ab058c13826987cb963def3340883d4853c7b7089837e1cd86307e77875d5f",
+      "redactions": 0
+    },
+    {
+      "path": "logs/python-version.log",
+      "bytes": 16,
+      "raw_sha256": "fd14d8d0c62801ac1c9e6d7081306d877f44791307d9f7ab823ec21da1cbc833",
+      "published_sha256": "9d0ae83e540febd225949f3df4aba97c7a9f79fcf745d6c835780f52a57b50cf",
+      "redactions": 0
+    },
+    {
+      "path": "logs/read-only-business-verification-live.log",
+      "bytes": 20848,
+      "raw_sha256": "3b898276259f949ce770f2b96e72a640534f31a8c79adeb4e582514c1ac31fca",
+      "published_sha256": "46594ad354ed304b9498caf98a5959c74bfc3848a35b3d79000aab7854e4371a",
+      "redactions": 0
+    },
+    {
+      "path": "logs/sanitized-database-copy.log",
+      "bytes": 863,
+      "raw_sha256": "3a8bec470329fcb858ce7ae67d8793dffda637ae3fcb8df7f7caf8b70ad3914d",
+      "published_sha256": "e8cb4868e92c28467d6623ac692395f359735a10353f10a200550233bad2a1f6",
+      "redactions": 0
+    },
+    {
+      "path": "logs/synthetic-api-seed.log",
+      "bytes": 1051,
+      "raw_sha256": "45d8af1d7c48286749209d9ff222fb7d3dc2fa2130aff7ea9610c764efc02e6c",
+      "published_sha256": "55d599b6f3465d26fff16de8610dc44d787bf8b27c5e412576ce1d16644d9604",
+      "redactions": 0
+    },
+    {
+      "path": "logs/vite-server.log",
+      "bytes": 73,
+      "raw_sha256": "43fdb999ae694f7c6b5bdc0d65dd3ffc15680991110cc57c820836b98cc2add1",
+      "published_sha256": "43fdb999ae694f7c6b5bdc0d65dd3ffc15680991110cc57c820836b98cc2add1",
+      "redactions": 0
+    },
+    {
+      "path": "operational/chrome-run.json",
+      "bytes": 550,
+      "raw_sha256": "b7d071b45bb3d921ecd11d7fdf0c34ff05a96eb8803fb5c48363b9c43eb4af2b",
+      "published_sha256": "b7d071b45bb3d921ecd11d7fdf0c34ff05a96eb8803fb5c48363b9c43eb4af2b",
+      "redactions": 0
+    },
+    {
+      "path": "operational/history-operational-1440.png",
+      "bytes": 582076,
+      "raw_sha256": "4f19d076f0fefbb86b44a89d30414ee5758ca90f7d84288d5c03c7d97091a52c",
+      "published_sha256": "4f19d076f0fefbb86b44a89d30414ee5758ca90f7d84288d5c03c7d97091a52c",
+      "redactions": 0
+    },
+    {
+      "path": "operational/history-operational-390.png",
+      "bytes": 499562,
+      "raw_sha256": "316e52a739e7dcbe3164e0f407771674f02f9c961a898292735dc30de1e66bf1",
+      "published_sha256": "316e52a739e7dcbe3164e0f407771674f02f9c961a898292735dc30de1e66bf1",
+      "redactions": 0
+    },
+    {
+      "path": "result.json",
+      "bytes": 87344,
+      "raw_sha256": "a951c8ef22a0fb8315a24080bff9a34088a3a64ce15cc6cce43f2fd9abaa89e8",
+      "published_sha256": "a951c8ef22a0fb8315a24080bff9a34088a3a64ce15cc6cce43f2fd9abaa89e8",
+      "redactions": 0
+    },
+    {
+      "path": "template/history-takeover-template.xlsx",
+      "bytes": 14078,
+      "raw_sha256": "68ce5ad083d032b555e3fec14abe69a0d9de132829839e7e02c4f683bb00aef1",
+      "published_sha256": "68ce5ad083d032b555e3fec14abe69a0d9de132829839e7e02c4f683bb00aef1",
+      "redactions": 0
+    },
+    {
+      "path": "workflow/chrome-workflow.json",
+      "bytes": 347,
+      "raw_sha256": "437d4507396d1bbde6d69413fa990f5e6e3b1bd751af786af0a277850a3cef10",
+      "published_sha256": "437d4507396d1bbde6d69413fa990f5e6e3b1bd751af786af0a277850a3cef10",
+      "redactions": 0
+    },
+    {
+      "path": "workflow/history-operational-workflow-1440.png",
+      "bytes": 540554,
+      "raw_sha256": "266b6f2701101c6384f04ec9e2cc66f5e2be5186203bc4b63e27db0c8c566a7c",
+      "published_sha256": "266b6f2701101c6384f04ec9e2cc66f5e2be5186203bc4b63e27db0c8c566a7c",
+      "redactions": 0
+    },
+    {
+      "path": "workflow/history-operational-workflow-390.png",
+      "bytes": 455684,
+      "raw_sha256": "a54ed11c7a708eb0e4b75e5df57bf3af3406d3d6e573a096eb44a5627544ddfd",
+      "published_sha256": "a54ed11c7a708eb0e4b75e5df57bf3af3406d3d6e573a096eb44a5627544ddfd",
+      "redactions": 0
+    }
+  ],
+  "omitted": [
+    {
+      "path": "artifacts/isolated-sanitized.sqlite3",
+      "reason": "database, archive or unsupported binary retained only locally"
+    },
+    {
+      "path": "harness/history-inventory-location-chrome-uat.mjs",
+      "reason": "database, archive or unsupported binary retained only locally"
+    },
+    {
+      "path": "harness/source-scripts/history-inventory-location-chrome-uat.mjs",
+      "reason": "database, archive or unsupported binary retained only locally"
+    },
+    {
+      "path": "harness/source-scripts/history-operational-chrome-uat.mjs",
+      "reason": "database, archive or unsupported binary retained only locally"
+    },
+    {
+      "path": "harness/source-scripts/history-operational-fulfillment-uat.mjs",
+      "reason": "database, archive or unsupported binary retained only locally"
+    },
+    {
+      "path": "harness/source-scripts/history-operational-workflow-uat.mjs",
+      "reason": "database, archive or unsupported binary retained only locally"
+    },
+    {
+      "path": "harness/source-scripts/history-template-chrome-uat.mjs",
+      "reason": "database, archive or unsupported binary retained only locally"
+    }
+  ],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

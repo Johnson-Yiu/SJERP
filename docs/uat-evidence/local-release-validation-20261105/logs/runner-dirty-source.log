@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\docs\uat-evidence\local-release-validation-20261105\run-local-validation.py", line 142, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\docs\uat-evidence\local-release-validation-20261105\run-local-validation.py", line 51, in main
+    objects = identity(args.sha)
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\docs\uat-evidence\local-release-validation-20261105\run-local-validation.py", line 32, in identity
+    raise RuntimeError("Application checkout is not clean:\n" + dirty)
+RuntimeError: Application checkout is not clean:
+M backend/crm/history_import_preflight.py
+ M backend/crm/history_takeover.py
+?? backend/crm/tests/test_history_source_boundaries.py

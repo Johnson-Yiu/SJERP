@@ -1,0 +1,12 @@
+python-version: exit=0
+postgres-version: exit=0
+python-path-identity: exit=0
+locked-dependencies: exit=0
+pip-check: exit=0
+django-check: exit=0
+migrations-check: exit=0
+migration-graph: exit=0
+sqlite-upgrade-0103: exit=0
+sqlite-upgrade-seed: exit=0
+sqlite-upgrade-latest: exit=0
+sqlite-upgrade-verify: exit=0

@@ -42,7 +42,7 @@ if (path.dirname(evidenceRoot) !== reportRoot || path.basename(evidenceRoot) ===
 }
 const frontendRoot = path.join(frozenRoot, 'frontend')
 const backendRoot = path.join(frozenRoot, 'backend')
-const python = path.join(repoRoot, '.tmp', 'closeout-python312', 'Scripts', 'python.exe')
+const python = process.env.ISOLATED_TEST_PYTHON || path.join(repoRoot, '.tmp', 'closeout-python312', 'Scripts', 'python.exe')
 const seedScript = path.join(reportRoot, 'seed_integrated_history_uat.py')
 const verifyScript = path.join(reportRoot, 'verify_integrated_history_uat.py')
 const inventoryCopy = path.join(evidenceRoot, 'harness', 'history-inventory-location-chrome-uat.mjs')

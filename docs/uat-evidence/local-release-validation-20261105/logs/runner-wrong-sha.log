@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\docs\uat-evidence\local-release-validation-20261105\run-local-validation.py", line 139, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\docs\uat-evidence\local-release-validation-20261105\run-local-validation.py", line 51, in main
+    objects = identity(args.sha)
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\docs\uat-evidence\local-release-validation-20261105\run-local-validation.py", line 29, in identity
+    raise RuntimeError(f"HEAD changed: expected {expected}, actual {actual}")
+RuntimeError: HEAD changed: expected 0000000000000000000000000000000000000000, actual bcdcb57545f121b8a4102f352c74008b47372035

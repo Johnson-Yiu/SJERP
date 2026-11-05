@@ -10,7 +10,7 @@ from django.db import close_old_connections, connection, connections
 from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
 
-from crm import history_operational_finance as bridge
+from crm import history_operational_finance as bridge, history_takeover
 from crm.models import FinanceFact, FinanceInstruction, HistoryTakeoverEvent, HistoryTakeoverSourceRecord
 from crm.services import finance_closeout
 from crm.tests.test_history_takeover import HistoryTakeoverFixtureMixin
@@ -62,6 +62,26 @@ class HistoricalFinanceBridgeTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual(bridge.source_status(self.group, self.maker)[0]["status"], "posted")
         self.group.refresh_from_db()
         self.assertEqual(self.group.finance_handoff_status, "pending_review")
+
+    def test_posted_source_correction_preserves_fact_and_auditable_event_link(self):
+        instruction, _ = bridge.submit_source(self.group.pk, self.source.pk, self.mapping, self.maker)
+        bridge.advance_source(self.group.pk, self.source.pk, "approve", self.reviewer)
+        fact = bridge.advance_source(self.group.pk, self.source.pk, "post", self.maker, voucher_checked=True)
+        history_takeover.submit_correction(self.group, self.maker, kind="correction", occurred_at="2024-09-03",
+            details={"source_id": self.source.pk, "fact_id": fact.pk, "voucher_reference": "synthetic://correction"},
+            reason="核对合成更正凭证")
+        event = HistoryTakeoverEvent.objects.get(group=self.group, event_type="correction_submitted")
+        self.assertEqual(event.details["details"]["source_id"], self.source.pk)
+        self.assertEqual(event.details["details"]["fact_id"], fact.pk)
+        history_takeover.review_correction(self.group, self.reviewer, event_id=event.pk, decision="approve", note="合成凭证已核对")
+        reviewed = HistoryTakeoverEvent.objects.get(group=self.group, event_type="correction_reviewed")
+        self.assertEqual(reviewed.details["source_event_id"], event.pk)
+        self.assertEqual(FinanceFact.objects.count(), 1)
+        self.assertEqual(FinanceInstruction.objects.count(), 1)
+        self.assertEqual(bridge.source_status(self.group, self.maker)[0]["fact_id"], fact.pk)
+        with self.assertRaises(APIException):
+            bridge.submit_source(self.group.pk, self.source.pk, self.mapping, self.maker, replace_id=instruction.pk)
+        self.assertEqual(FinanceFact.objects.count(), 1)
 
     def test_unconfirmed_source_cannot_create_instruction(self):
         source_row = dict(self.source.source_snapshot["resolved"], source_status="pending")

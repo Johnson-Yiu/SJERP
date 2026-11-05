@@ -1,0 +1,223 @@
+Creating test database for alias 'default'...
+
+E..Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+..Bad Request: /api/import/history-takeovers/1/groups/1/correction-review/
+..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+.Not Found: /api/import/history-takeovers/2/
+Not Found: /api/import/history-takeovers/2/review-report.csv
+Conflict: /api/import/history-takeovers/
+.Bad Request: /api/import/history-takeovers/1/groups/1/execute/
+Bad Request: /api/import/history-takeovers/2/groups/2/review/
+Bad Request: /api/import/history-takeovers/3/groups/3/review/
+..Bad Request: /api/import/history-takeovers/2/groups/3/review/
+Bad Request: /api/import/history-takeovers/2/groups/3/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/review/
+.Bad Request: /api/import/history-takeovers/1/groups/1/finance-post/
+............sBad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/1/
+............Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/approve/
+Not Found: /api/finance-ledger/1/
+Not Found: /api/finance-ledger/1/
+Not Found: /api/finance-ledger/1/
+Bad Request: /api/finance-ledger/cancel/
+.Internal Server Error: /api/finance-ledger/post/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\backend\crm\finance_closeout_api.py", line 109, in handle_exception
+    return super().handle_exception(exc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\backend\crm\finance_closeout_api.py", line 191, in execute
+    obj = ledger.post(request.data.get("id"), request.user, voucher_checked=request.data.get("voucher_checked"))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\backend\crm\services\finance_closeout.py", line 457, in post
+    audit(fact, user, "记入实际资金事实")
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit outage
+Internal Server Error: /api/finance-ledger/reviews/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\backend\crm\finance_closeout_api.py", line 109, in handle_exception
+    return super().handle_exception(exc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\backend\crm\finance_closeout_api.py", line 207, in reviews
+    obj = ledger.reconcile(request.data, request.user)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\backend\crm\services\finance_closeout.py", line 678, in reconcile
+    audit(obj, user, "核对账户余额")
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit outage
+Internal Server Error: /api/finance-ledger/transfers/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\backend\crm\finance_closeout_api.py", line 109, in handle_exception
+    return super().handle_exception(exc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\backend\crm\finance_closeout_api.py", line 197, in transfers
+    obj = ledger.match_historical_transfer(request.data, request.user) if historical else ledger.match_transfer(request.data, request.user)
+                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\backend\crm\services\finance_closeout.py", line 495, in match_transfer
+    audit(obj, user, "核实内部转账本金")
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit outage
+.Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/voucher-download/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/voucher-download/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/voucher-download/
+...Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+..Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/post/
+..Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/fail/
+Bad Request: /api/finance-ledger/post/
+.sssssss
+======================================================================
+ERROR: test_finance_adversarial_defect_repros (unittest.loader._FailedTest.test_finance_adversarial_defect_repros)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_finance_adversarial_defect_repros
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'crm.tests.test_finance_adversarial_defect_repros'
+
+
+----------------------------------------------------------------------
+Ran 62 tests in 129.024s
+
+FAILED (errors=1, skipped=8)
+Destroying test database for alias 'default'...
+
+Found 62 test(s).
+System check identified no issues (0 silenced).

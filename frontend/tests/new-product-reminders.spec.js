@@ -55,6 +55,14 @@ describe('new product requirements', () => {
     expect(wrapper.findAll('button').some(b=>b.text()==='修改需求')).toBe(false)
     wrapper.unmount()
   })
+  it('clears the previous detail when a new query removes record positioning', async () => {
+    const {wrapper} = await render('?detail=7&state=all')
+    expect(wrapper.find('.editor').exists()).toBe(true)
+    await wrapper.find('.filters input').setValue('new query')
+    await wrapper.find('.filters').trigger('submit'); await flushPromises()
+    expect(wrapper.find('.editor').exists()).toBe(false)
+    wrapper.unmount()
+  })
   it('keeps a failed edit visible and sends the version for conflict checking', async () => {
     const {wrapper} = await render('?detail=7')
     await wrapper.findAll('button').find(b=>b.text()==='修改需求').trigger('click')

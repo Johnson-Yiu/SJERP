@@ -13,7 +13,7 @@ const form = reactive({ customer: '', follow_up: null, contact: null, product: n
 const page = computed(() => Number(route.query.page) || 1)
 const guard = useUnsavedChangesGuard({ data: () => form, enabled: () => editing.value, busy: () => busy.value })
 const displayTime = value => value ? new Date(value).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false }) : '—'
-let requestKey = '', sequence = 0
+let requestKey = '', sequence = 0, detailSequence = 0
 const writable = computed(() => can('followups', selected.value ? 'update' : 'create'))
 async function load() {
   const seq = ++sequence; loading.value = true; error.value = ''
@@ -41,15 +41,16 @@ watch(() => form.customer, async id => {
 })
 async function open(id) {
   if (!await guard.requestClose(() => { editing.value = false })) return
+  const seq = ++detailSequence
   error.value = ''; feedback.value = ''; selected.value = null; history.value = []; voiding.value = false
   try {
-    selected.value = (await api.get(`/new-product-reminders/${id}/`)).data
-    history.value = (await api.get(`/new-product-reminders/${id}/history/`)).data
-  } catch (e) { error.value = e.message }
+    const [record, events] = await Promise.all([api.get(`/new-product-reminders/${id}/`), api.get(`/new-product-reminders/${id}/history/`)])
+    if (seq === detailSequence) { selected.value = record.data; history.value = events.data }
+  } catch (e) { if (seq === detailSequence) error.value = e.message }
 }
 async function start() {
   if (!await guard.requestClose(() => { editing.value = false })) return
-  selected.value = null; history.value = []; error.value = ''; feedback.value = ''; voiding.value = false
+  ++detailSequence; selected.value = null; history.value = []; error.value = ''; feedback.value = ''; voiding.value = false
   Object.assign(form, { customer: route.query.customer || '', follow_up: route.query.follow_up ? Number(route.query.follow_up) : null, contact: null, product: null, requirement: '', specification: '', other_requirements: '' })
   requestKey = crypto.randomUUID(); editing.value = true; guard.markClean(); await findCustomers()
 }
@@ -87,6 +88,7 @@ async function confirmVoid() {
 watch(() => route.query, async () => {
   search.value = route.query.search || ''; state.value = route.query.state || 'active'; await load()
   if (route.query.detail && String(selected.value?.id) !== String(route.query.detail)) await open(route.query.detail)
+  else if (!route.query.detail && !editing.value) { ++detailSequence; selected.value = null; history.value = []; voiding.value = false }
 }, { immediate: true })
 </script>
 

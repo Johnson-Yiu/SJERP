@@ -1,0 +1,95 @@
+[
+  {
+    "elapsedMs": 1621,
+    "event": "browser",
+    "version": "156.0.8078.80"
+  },
+  {
+    "elapsedMs": 7303,
+    "event": "click-first"
+  },
+  {
+    "elapsedMs": 7344,
+    "event": "pending-disabled"
+  },
+  {
+    "elapsedMs": 7351,
+    "event": "export-request",
+    "attempt": 1,
+    "status": 500,
+    "manual": false,
+    "query": "?date_from=2026-10-01&date_to=2026-10-19&export=csv"
+  },
+  {
+    "elapsedMs": 7619,
+    "event": "export-request",
+    "attempt": 2,
+    "status": 500,
+    "manual": false,
+    "query": "?date_from=2026-10-01&date_to=2026-10-19&export=csv"
+  },
+  {
+    "elapsedMs": 8135,
+    "event": "export-request",
+    "attempt": 3,
+    "status": 500,
+    "manual": false,
+    "query": "?date_from=2026-10-01&date_to=2026-10-19&export=csv"
+  },
+  {
+    "elapsedMs": 9142,
+    "event": "export-request",
+    "attempt": 4,
+    "status": 500,
+    "manual": false,
+    "query": "?date_from=2026-10-01&date_to=2026-10-19&export=csv"
+  },
+  {
+    "elapsedMs": 11149,
+    "event": "export-request",
+    "attempt": 5,
+    "status": 500,
+    "manual": false,
+    "query": "?date_from=2026-10-01&date_to=2026-10-19&export=csv"
+  },
+  {
+    "elapsedMs": 14156,
+    "event": "export-request",
+    "attempt": 6,
+    "status": 500,
+    "manual": false,
+    "query": "?date_from=2026-10-01&date_to=2026-10-19&export=csv"
+  },
+  {
+    "elapsedMs": 14412,
+    "event": "exhausted",
+    "attempts": 6,
+    "error": "服务器暂时不可用，请稍后重试。",
+    "buttonEnabled": true
+  },
+  {
+    "elapsedMs": 14556,
+    "event": "click-manual"
+  },
+  {
+    "elapsedMs": 14607,
+    "event": "export-request",
+    "attempt": 7,
+    "status": 200,
+    "manual": true,
+    "query": "?date_from=2026-10-01&date_to=2026-10-19&export=csv"
+  },
+  {
+    "elapsedMs": 15488,
+    "event": "download",
+    "attempts": 7,
+    "filename": "账面收支参考-2026-10-01-2026-10-19.csv",
+    "bytes": 36,
+    "sha256": "ea6595c73c52df8fd58d559e24e83991ac833af976b1c1092a5ae3b5f0b0c7a1",
+    "bom": true
+  },
+  {
+    "elapsedMs": 15644,
+    "event": "PASS"
+  }
+]

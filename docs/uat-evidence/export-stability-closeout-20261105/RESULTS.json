@@ -1,0 +1,109 @@
+{
+  "baseline_sha": "bcdcb57545f121b8a4102f352c74008b47372035",
+  "tested_code_sha": "56ce3588f544fcfeb98d431fb71d7e2d937f67db",
+  "overall": "FIX_REQUIRED_QUOTE_HISTORY_UNEXPLAINED",
+  "ci": "NOT_RUN_USER_QUOTA_PAUSED",
+  "tests": {
+    "node_unit_locked": {
+      "passed": 179,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "django": "6.0.9"
+    },
+    "font": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0
+    },
+    "vitest": {
+      "passed": 725,
+      "failed": 0,
+      "skipped": 0,
+      "files": 78,
+      "exit_code": 0
+    },
+    "playwright_applicable": {
+      "passed": 266,
+      "failed": 0,
+      "skipped": 0,
+      "profiles": 9,
+      "exit_code": 0,
+      "full_print_deferred_not_run": 7,
+      "quote_original_actions": {
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    "django_finance_locked": {
+      "passed": 33,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0
+    },
+    "django_packing_locked": {
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0
+    },
+    "vitest_packing": {
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0
+    },
+    "finance_baseline_control": {
+      "passed": 0,
+      "failed": 3,
+      "skipped": 0,
+      "exit_code": 1,
+      "classification": "expected baseline failures, separate from full suite"
+    },
+    "finance_fixed_mock": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "note": "also part of full-suite business count"
+    },
+    "quote_bounded_diagnostic": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "instrumented": true,
+      "browser_interrupt_reason": "UNKNOWN"
+    },
+    "finance_500_control": {
+      "failed_http_responses": 6,
+      "subsequent_manual_success": 1,
+      "exit_code": 0,
+      "mocked_api": true
+    }
+  },
+  "actual_files": {
+    "finance_locked_dashboard_downloads": 16,
+    "finance_locked_ledger_downloads": 8,
+    "packing_locked_desktop_downloads": 10,
+    "packing_locked_narrow_downloads": 1,
+    "quote_same_response_byte_equal": true
+  },
+  "earlier_failure": {
+    "source_sha": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "playwright_passed": 262,
+    "failed": 1,
+    "skipped": 0,
+    "failure": "download.saveAs: canceled",
+    "root_cause": "UNKNOWN",
+    "retained_in_baseline": true
+  },
+  "warnings": [
+    "npm audit first installation 5 moderate",
+    "2 npm deprecated packages",
+    "production chunk over 500 kB",
+    "Node 24 vs historical CI Node 22",
+    "original first simulated 500 log UNKNOWN",
+    "initial finance screenshot overwritten during diagnostic retry, documented"
+  ],
+  "scope": "No product backend, full runner, public issue ledger, master, deployment, formal RBAC or GitHub Actions changed."
+}

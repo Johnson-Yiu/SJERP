@@ -1,0 +1,66 @@
+{
+  "version": "156.0.8078.80",
+  "status": 200,
+  "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "contentDisposition": "attachment; filename=\"QHTTP-20261105-001.xlsx\"",
+  "suggestedFilename": "QHTTP-20261105-001.xlsx",
+  "internalPath": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright-artifacts-WKpb4t\\9926edb0-d5ea-49c8-8062-c88f5f95b26b",
+  "internalPathLength": 100,
+  "saveAsPath": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\docs\\uat-evidence\\export-stability-closeout-20261105\\python312-http-recheck-20261105\\quote\\browser-download.xlsx",
+  "saveAsPathLength": 178,
+  "responseBytes": 10143,
+  "downloadBytes": 10143,
+  "responseSha256": "27a048cc3b81d8b99392b35171d69225f8d2b6dd2e5e6a2de6a47abf086641c5",
+  "downloadSha256": "27a048cc3b81d8b99392b35171d69225f8d2b6dd2e5e6a2de6a47abf086641c5",
+  "exactMatch": true,
+  "failure": null,
+  "events": [
+    {
+      "name": "browser_started",
+      "elapsed_ms": 1783.05,
+      "version": "156.0.8078.80",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+    },
+    {
+      "name": "ready",
+      "elapsed_ms": 8207.18
+    },
+    {
+      "name": "click_started",
+      "elapsed_ms": 8208.72
+    },
+    {
+      "name": "click_completed",
+      "elapsed_ms": 8495.3
+    },
+    {
+      "name": "response_headers",
+      "elapsed_ms": 8784.21,
+      "status": 200,
+      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    },
+    {
+      "name": "download_event",
+      "elapsed_ms": 8806.69,
+      "suggestedFilename": "QHTTP-20261105-001.xlsx"
+    },
+    {
+      "name": "download_path_resolved",
+      "elapsed_ms": 9396.96,
+      "internalPath": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright-artifacts-WKpb4t\\9926edb0-d5ea-49c8-8062-c88f5f95b26b",
+      "internalPathLength": 100
+    },
+    {
+      "name": "saveAs_completed",
+      "elapsed_ms": 9402.07,
+      "saveAsPath": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\docs\\uat-evidence\\export-stability-closeout-20261105\\python312-http-recheck-20261105\\quote\\browser-download.xlsx",
+      "saveAsPathLength": 178,
+      "failure": null
+    },
+    {
+      "name": "response_body_read",
+      "elapsed_ms": 9427.73,
+      "bytes": 10143
+    }
+  ]
+}

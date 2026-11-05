@@ -1,0 +1,7 @@
+{
+  "database_parent_from_redacted_runner_log": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-gM2QFz",
+  "suggested_filename": "SJ20261105DE002.xlsx",
+  "derived_saveAs_target": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-gM2QFz\\SJ20261105DE002.xlsx",
+  "derived_target_characters": 84,
+  "scope": "test destination derived from actual isolated DB path and test source; not internal Playwright browser temp path"
+}

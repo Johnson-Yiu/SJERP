@@ -1,0 +1,83 @@
+{
+  "run_id": "a9a0dcbc-c71e-4275-9452-5d1a12342e21",
+  "database": "C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-AhHcmP/db.sqlite3",
+  "receive": {
+    "property-getter": {
+      "order_id": 1,
+      "order_item_id": 1,
+      "sku_id": 1,
+      "sku_code": "I6SKUA9A0DCBCR1",
+      "purchase_id": 1,
+      "purchase_no": "I6POA9A0DCBCR1",
+      "purchase_item_id": 1
+    },
+    "get-item": {
+      "order_id": 2,
+      "order_item_id": 2,
+      "sku_id": 2,
+      "sku_code": "I6SKUA9A0DCBCR2",
+      "purchase_id": 2,
+      "purchase_no": "I6POA9A0DCBCR2",
+      "purchase_item_id": 2
+    },
+    "set-item-recovery": {
+      "order_id": 3,
+      "order_item_id": 3,
+      "sku_id": 3,
+      "sku_code": "I6SKUA9A0DCBCR3",
+      "purchase_id": 3,
+      "purchase_no": "I6POA9A0DCBCR3",
+      "purchase_item_id": 3
+    },
+    "remove-item-recovery": {
+      "order_id": 4,
+      "order_item_id": 4,
+      "sku_id": 4,
+      "sku_code": "I6SKUA9A0DCBCR4",
+      "purchase_id": 4,
+      "purchase_no": "I6POA9A0DCBCR4",
+      "purchase_item_id": 4
+    },
+    "lost-response": {
+      "order_id": 5,
+      "order_item_id": 5,
+      "sku_id": 5,
+      "sku_code": "I6SKUA9A0DCBCR5",
+      "purchase_id": 5,
+      "purchase_no": "I6POA9A0DCBCR5",
+      "purchase_item_id": 5
+    }
+  },
+  "ship": {
+    "property-getter": {
+      "order_id": 6,
+      "order_item_id": 6,
+      "sku_id": 6,
+      "sku_code": "I6SKUA9A0DCBCS1"
+    },
+    "get-item": {
+      "order_id": 7,
+      "order_item_id": 7,
+      "sku_id": 7,
+      "sku_code": "I6SKUA9A0DCBCS2"
+    },
+    "set-item-recovery": {
+      "order_id": 8,
+      "order_item_id": 8,
+      "sku_id": 8,
+      "sku_code": "I6SKUA9A0DCBCS3"
+    },
+    "remove-item-recovery": {
+      "order_id": 9,
+      "order_item_id": 9,
+      "sku_id": 9,
+      "sku_code": "I6SKUA9A0DCBCS4"
+    },
+    "lost-response": {
+      "order_id": 10,
+      "order_item_id": 10,
+      "sku_id": 10,
+      "sku_code": "I6SKUA9A0DCBCS5"
+    }
+  }
+}

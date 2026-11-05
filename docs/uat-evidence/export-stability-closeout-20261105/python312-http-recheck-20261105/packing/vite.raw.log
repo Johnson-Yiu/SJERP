@@ -1,0 +1,22 @@
+
+> senju-crm-erp@1.0.0 dev
+> vite --host 127.0.0.1 --port 18465 --strictPort
+
+
+  VITE v8.3.5  ready in 1189 ms
+
+  ➜  Local:   http://127.0.0.1:18465/
+11:06:36 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView key="/orders" > 
+  at <App>
+11:06:36 [vite] (client) [console.warn] [Vue warn]: Component inside <Transition> renders non-element root node that cannot be animated. 
+  at <OrderDetailModal key=0 id=1 refresh-key=0  ... > 
+  at <BaseTransition appear=true persisted=false mode=undefined  ... > 
+  at <Transition name="detail-drawer" appear="" > 
+  at <DocumentPage type="orders" onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< {} > > 
+  at <RouterView key="/orders" > 
+  at <App>

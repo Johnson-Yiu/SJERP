@@ -1,0 +1,50 @@
+[
+  {
+    "tag": "baseline",
+    "kind": "book",
+    "exportUrl": "http://127.0.0.1:9360/api/finance-dashboard/?date_from=2026-10-01&date_to=2026-10-19&export=csv",
+    "filename": "账面收支参考-2026-09-01-2026-09-30.csv",
+    "content": "﻿period,amount\r\n2026-10-01,42.00\r\n",
+    "bytes": 36,
+    "sha256": "db4938287434ae9c9e0339267081f494b07cfbcbabffb4c87f7c9a1f323d39d7",
+    "contentIsOriginalPeriod": true,
+    "filenameIsOriginalPeriod": false,
+    "filenameIsNewPeriod": true
+  },
+  {
+    "tag": "baseline",
+    "kind": "actual",
+    "exportUrl": "http://127.0.0.1:9360/api/actual-rmb-cash/?date_from=2026-10-01&date_to=2026-10-19&export=csv",
+    "filename": "银行实际人民币资金-2026-09-01-2026-09-30.csv",
+    "content": "﻿period,amount\r\n2026-10-01,42.00\r\n",
+    "bytes": 36,
+    "sha256": "db4938287434ae9c9e0339267081f494b07cfbcbabffb4c87f7c9a1f323d39d7",
+    "contentIsOriginalPeriod": true,
+    "filenameIsOriginalPeriod": false,
+    "filenameIsNewPeriod": true
+  },
+  {
+    "tag": "fixed",
+    "kind": "book",
+    "exportUrl": "http://127.0.0.1:9361/api/finance-dashboard/?date_from=2026-10-01&date_to=2026-10-19&export=csv",
+    "filename": "账面收支参考-2026-10-01-2026-10-19.csv",
+    "content": "﻿period,amount\r\n2026-10-01,42.00\r\n",
+    "bytes": 36,
+    "sha256": "db4938287434ae9c9e0339267081f494b07cfbcbabffb4c87f7c9a1f323d39d7",
+    "contentIsOriginalPeriod": true,
+    "filenameIsOriginalPeriod": true,
+    "filenameIsNewPeriod": false
+  },
+  {
+    "tag": "fixed",
+    "kind": "actual",
+    "exportUrl": "http://127.0.0.1:9361/api/actual-rmb-cash/?date_from=2026-10-01&date_to=2026-10-19&export=csv",
+    "filename": "银行实际人民币资金-2026-10-01-2026-10-19.csv",
+    "content": "﻿period,amount\r\n2026-10-01,42.00\r\n",
+    "bytes": 36,
+    "sha256": "db4938287434ae9c9e0339267081f494b07cfbcbabffb4c87f7c9a1f323d39d7",
+    "contentIsOriginalPeriod": true,
+    "filenameIsOriginalPeriod": true,
+    "filenameIsNewPeriod": false
+  }
+]

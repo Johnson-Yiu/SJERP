@@ -1,0 +1,10 @@
+[
+  {
+    "width": 1440,
+    "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: '账户资金' })\nExpected: visible\nError: strict mode violation: getByRole('heading', { name: '账户资金' }) resolved to 2 elements:\n    1) <h1>账户资金</h1> aka locator('header').filter({ hasText: 'Account cash账户资金11月5日周四J' }).getByRole('heading')\n    2) <h1 data-v-83b3ba57=\"\">账户资金</h1> aka locator('header').filter({ hasText: '账户资金按真实账户核对人民币变动、凭证和处理记录。刷新' }).getByRole('heading')\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: '账户资金' }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: '账户资金' })\n"
+  },
+  {
+    "width": 390,
+    "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: '账户资金' })\nExpected: visible\nError: strict mode violation: getByRole('heading', { name: '账户资金' }) resolved to 2 elements:\n    1) <h1>账户资金</h1> aka locator('header').filter({ hasText: 'Account cash账户资金11月5日周四J' }).getByRole('heading')\n    2) <h1 data-v-83b3ba57=\"\">账户资金</h1> aka locator('header').filter({ hasText: '账户资金按真实账户核对人民币变动、凭证和处理记录。刷新' }).getByRole('heading')\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: '账户资金' }) with timeout 5000ms\n  - waiting for getByRole('heading', { name: '账户资金' })\n"
+  }
+]

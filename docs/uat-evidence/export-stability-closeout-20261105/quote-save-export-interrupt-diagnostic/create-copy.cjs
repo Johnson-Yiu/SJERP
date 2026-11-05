@@ -1,0 +1,15 @@
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const root = path.resolve(__dirname, '../../../..');
+const original = fs.readFileSync(path.join(root, 'frontend/browser-tests/quote-editor-mobile-actions.spec.js'), 'utf8');
+let copy = original.replace("import { expect, test } from '@playwright/test'", "import { expect, test } from '../../../../frontend/node_modules/@playwright/test/index.mjs'\nimport fsSync from 'node:fs'");
+const start = "test('quote editor actions stay readable at desktop and narrow widths and preserve preview/save/export', async ({ page }) => {";
+const inserted = `${start}\n  const diagnosticLog = path.join(process.env.R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR, 'lifecycle.jsonl')\n  const record = (event, extra = {}) => fsSync.appendFileSync(diagnosticLog, JSON.stringify({event, at: new Date().toISOString(), ...extra}) + '\\n')\n  page.on('close', () => record('page-close'))\n  page.context().on('close', () => record('context-close'))\n  page.on('download', d => record('download-event', {filename: d.suggestedFilename()}))\n  record('test-start')`;
+copy = copy.replace(start, inserted);
+const save = '  await download.saveAs(downloadPath)';
+const wrapped = `  try {\n${save}\n  } catch (error) {\n    let failure = 'UNKNOWN', internalPath = 'UNKNOWN', pathError = null\n    try { failure = await download.failure() } catch (e) { failure = 'UNKNOWN: ' + String(e) }\n    try { internalPath = await download.path() } catch (e) { pathError = String(e) }\n    record('saveAs-failure', {error: String(error), failure, internalPath, pathError, internalPathLength: internalPath === 'UNKNOWN' ? null : internalPath.length, targetPath: downloadPath, targetPathLength: downloadPath.length, filename: download.suggestedFilename(), pageClosed: page.isClosed()})\n    throw error\n  }`;
+copy = copy.replace(save, wrapped);
+if (copy === original || !copy.includes("record('saveAs-failure'") || !copy.includes("record('test-start')")) throw new Error('instrumentation failed');
+fs.writeFileSync(path.join(__dirname, 'quote-copy.spec.mjs'), copy);
+console.log(JSON.stringify({originalSha256:crypto.createHash('sha256').update(original).digest('hex'),copySha256:crypto.createHash('sha256').update(copy).digest('hex'),instrumentation:'import path, lifecycle listeners, saveAs catch/rethrow'}));

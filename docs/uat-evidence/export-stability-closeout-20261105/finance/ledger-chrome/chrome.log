@@ -1,0 +1,80 @@
+FAIL width 1440 ExpectError: expect(locator).toBeVisible() failed
+
+Locator: getByRole('heading', { name: '账户资金' })
+Expected: visible
+Error: strict mode violation: getByRole('heading', { name: '账户资金' }) resolved to 2 elements:
+    1) <h1>账户资金</h1> aka locator('header').filter({ hasText: 'Account cash账户资金11月5日周四J' }).getByRole('heading')
+    2) <h1 data-v-83b3ba57="">账户资金</h1> aka locator('header').filter({ hasText: '账户资金按真实账户核对人民币变动、凭证和处理记录。刷新' }).getByRole('heading')
+
+Call log:
+  - Expect "toBeVisible" getByRole('heading', { name: '账户资金' }) with timeout 5000ms
+  - waiting for getByRole('heading', { name: '账户资金' })
+
+    at captureRawStack (D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\frontend\node_modules\playwright-core\lib\coreBundle.js:9282:17)
+    at callMatcherAsStep (D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\frontend\node_modules\playwright\lib\matchers\expect.js:13316:57)
+    at Object.toBeVisible (D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\frontend\node_modules\playwright\lib\matchers\expect.js:13308:23)
+    at D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\ledger-chrome\ledger-check.cjs:9:96 {
+  matcherResult: {
+    message: 'expect(locator).toBeVisible() failed\n' +
+      '\n' +
+      "Locator: getByRole('heading', { name: '账户资金' })\n" +
+      'Expected: visible\n' +
+      "Error: strict mode violation: getByRole('heading', { name: '账户资金' }) resolved to 2 elements:\n" +
+      "    1) <h1>账户资金</h1> aka locator('header').filter({ hasText: 'Account cash账户资金11月5日周四J' }).getByRole('heading')\n" +
+      `    2) <h1 data-v-83b3ba57="">账户资金</h1> aka locator('header').filter({ hasText: '账户资金按真实账户核对人民币变动、凭证和处理记录。刷新' }).getByRole('heading')\n` +
+      '\n' +
+      'Call log:\n' +
+      `  - Expect "toBeVisible" getByRole('heading', { name: '账户资金' }) with timeout 5000ms\n` +
+      "  - waiting for getByRole('heading', { name: '账户资金' })\n",
+    pass: false,
+    actual: undefined,
+    name: 'toBeVisible',
+    expected: 'visible',
+    log: [
+      `  - Expect "toBeVisible" getByRole('heading', { name: '账户资金' }) with timeout 5000ms`,
+      "  - waiting for getByRole('heading', { name: '账户资金' })"
+    ],
+    timeout: undefined,
+    ariaSnapshot: undefined
+  }
+}
+FAIL width 390 ExpectError: expect(locator).toBeVisible() failed
+
+Locator: getByRole('heading', { name: '账户资金' })
+Expected: visible
+Error: strict mode violation: getByRole('heading', { name: '账户资金' }) resolved to 2 elements:
+    1) <h1>账户资金</h1> aka locator('header').filter({ hasText: 'Account cash账户资金11月5日周四J' }).getByRole('heading')
+    2) <h1 data-v-83b3ba57="">账户资金</h1> aka locator('header').filter({ hasText: '账户资金按真实账户核对人民币变动、凭证和处理记录。刷新' }).getByRole('heading')
+
+Call log:
+  - Expect "toBeVisible" getByRole('heading', { name: '账户资金' }) with timeout 5000ms
+  - waiting for getByRole('heading', { name: '账户资金' })
+
+    at captureRawStack (D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\frontend\node_modules\playwright-core\lib\coreBundle.js:9282:17)
+    at callMatcherAsStep (D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\frontend\node_modules\playwright\lib\matchers\expect.js:13316:57)
+    at Object.toBeVisible (D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\frontend\node_modules\playwright\lib\matchers\expect.js:13308:23)
+    at D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\ledger-chrome\ledger-check.cjs:9:96 {
+  matcherResult: {
+    message: 'expect(locator).toBeVisible() failed\n' +
+      '\n' +
+      "Locator: getByRole('heading', { name: '账户资金' })\n" +
+      'Expected: visible\n' +
+      "Error: strict mode violation: getByRole('heading', { name: '账户资金' }) resolved to 2 elements:\n" +
+      "    1) <h1>账户资金</h1> aka locator('header').filter({ hasText: 'Account cash账户资金11月5日周四J' }).getByRole('heading')\n" +
+      `    2) <h1 data-v-83b3ba57="">账户资金</h1> aka locator('header').filter({ hasText: '账户资金按真实账户核对人民币变动、凭证和处理记录。刷新' }).getByRole('heading')\n` +
+      '\n' +
+      'Call log:\n' +
+      `  - Expect "toBeVisible" getByRole('heading', { name: '账户资金' }) with timeout 5000ms\n` +
+      "  - waiting for getByRole('heading', { name: '账户资金' })\n",
+    pass: false,
+    actual: undefined,
+    name: 'toBeVisible',
+    expected: 'visible',
+    log: [
+      `  - Expect "toBeVisible" getByRole('heading', { name: '账户资金' }) with timeout 5000ms`,
+      "  - waiting for getByRole('heading', { name: '账户资金' })"
+    ],
+    timeout: undefined,
+    ariaSnapshot: undefined
+  }
+}

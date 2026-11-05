@@ -1,0 +1,8 @@
+{
+  "source": "seed-api.log",
+  "reason": "Initial testserver host rejection Django debug HTML included environment fields; technical HTML redacted, surrounding stack retained",
+  "raw_sha256": "3479171ae19bbac88f5cac52f84c859f5b0aef081669013743cf9d8d32f319a5",
+  "published_sha256": "29e36e8a89e2778d127a1fec3947dbc9e8d55e3b736b0a9edc9e0d6ee0bf52fe",
+  "removed_html_lines": 1,
+  "raw_private_path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\finance-seed-api-original.raw.log"
+}

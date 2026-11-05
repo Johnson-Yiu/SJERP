@@ -2,6 +2,8 @@ import { expect, test } from '@playwright/test'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
+if (process.env.EXPORT_STABILITY_CHROME === '1') test.use({ channel: 'chrome' })
+
 const evidenceDir = path.resolve(process.env.R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR || '')
 if (!process.env.R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR) {
   throw new Error('R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR must point to the task evidence directory.')
@@ -115,6 +117,9 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
   const downloadPath = path.join(process.env.ISOLATED_TEST_ROOT, download.suggestedFilename())
   await download.saveAs(downloadPath)
   const downloadBytes = (await fs.stat(downloadPath)).size
+  expect(downloadBytes).toBeGreaterThan(0)
+  expect(apiResponses.some(response => response.method === 'GET' && response.path === `/api/quotes/${exportedQuote.id}/export/` && response.status === 200)).toBe(true)
+  await fs.copyFile(downloadPath, path.join(evidenceDir, 'downloaded-quote.xlsx'))
   await expect(editor).toHaveCount(0)
 
   await fs.writeFile(path.join(evidenceDir, 'browser-results.json'), JSON.stringify({

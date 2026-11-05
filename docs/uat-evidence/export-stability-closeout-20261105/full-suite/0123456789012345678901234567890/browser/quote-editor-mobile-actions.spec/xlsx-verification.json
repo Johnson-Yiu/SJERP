@@ -1,0 +1,11 @@
+{
+  "bytes": 10214,
+  "sha256": "1bd9b1227bf435d84464690bd2af734c5e1b390c7958eb681f4048636be57d9c",
+  "zip_crc": "PASS",
+  "sheet": "PI",
+  "model": "R1-QA-MODEL",
+  "unit_price": 12.5,
+  "amount": 12.5,
+  "quote_no": "SJ20261105DE002",
+  "source": "original scenario actions retained; committed post-download assertions and file retention added"
+}

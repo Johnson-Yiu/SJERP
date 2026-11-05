@@ -1,0 +1,79 @@
+{
+  "browser": "Google Chrome 156",
+  "product_code_commit": "56ce3588f544fcfeb98d431fb71d7e2d937f67db",
+  "items": [
+    {
+      "area": "quote save/export",
+      "path": "quote-chrome/browser/quote-editor-mobile-actions.spec/chrome-quote-actions-1440.png",
+      "viewport": "1440x900",
+      "image_width": 1440,
+      "image_height": 900,
+      "sha256": "83db150465dde0d8f835cbc242d201a913d96490aec3ace561a8a4e6e3138804",
+      "scope": "Chrome screenshot before source commit; quote-related files match 56ce"
+    },
+    {
+      "area": "quote save/export",
+      "path": "quote-chrome/browser/quote-editor-mobile-actions.spec/chrome-quote-actions-390.png",
+      "viewport": "390x900",
+      "image_width": 390,
+      "image_height": 900,
+      "sha256": "4127c8c02790ca82df04b2ff9d4ff308f8c368dcf12c889622e349e9d2245f4a",
+      "scope": "Chrome screenshot before source commit; quote-related files match 56ce"
+    },
+    {
+      "area": "finance overview real",
+      "path": "finance/django609-rerun/dashboard/screen-1440-09.png",
+      "viewport": "1440",
+      "image_width": 1440,
+      "image_height": 2744,
+      "sha256": "ef620b326c478a30ddc3d044ffe623e68fc58271bb04c48f6dea932f7164e215",
+      "scope": "Actual Django6.0.9, synthetic data; full-page"
+    },
+    {
+      "area": "finance overview real",
+      "path": "finance/django609-rerun/dashboard/screen-390-09.png",
+      "viewport": "390",
+      "image_width": 390,
+      "image_height": 3982,
+      "sha256": "cebdc8fc43f141e183cba68ad49fc4ab359d26a8c8cd061742fd7c684a9a7af3",
+      "scope": "Actual Django6.0.9, synthetic data; full-page"
+    },
+    {
+      "area": "account cash real",
+      "path": "finance/django609-rerun/ledger/ledger-1440-09-settled.png",
+      "viewport": "1440",
+      "image_width": 1440,
+      "image_height": 1109,
+      "sha256": "21dc0cb27446d0efe0c7c7094a7e22e8a4a2dbc7dd8bd9d3c9bcd243aa49b663",
+      "scope": "September confirmed after query; full-page"
+    },
+    {
+      "area": "account cash real",
+      "path": "finance/django609-rerun/ledger/ledger-390-09-settled.png",
+      "viewport": "390",
+      "image_width": 390,
+      "image_height": 1781,
+      "sha256": "61dfb2182552cef1d1e125c54c557d5d4c02754b1f4506a7407db5b2ca64231c",
+      "scope": "September confirmed after query; full-page"
+    },
+    {
+      "area": "packing list real",
+      "path": "python312-http-recheck-20261105/packing/chrome-packing.png",
+      "viewport": "1440",
+      "image_width": 1440,
+      "image_height": 1000,
+      "sha256": "51d587d372736b96a51758fc29a12bb8808739ca19c4deab8e5f768d718e5006",
+      "scope": "Actual Django6.0.9, synthetic test fixture"
+    },
+    {
+      "area": "packing list real",
+      "path": "python312-http-recheck-20261105/packing-390/chrome-packing-390.png",
+      "viewport": "390x844",
+      "image_width": 390,
+      "image_height": 844,
+      "sha256": "03bb5275e43b73b83981869494517f82b52eec59b863692d3434193e88ea73dd",
+      "scope": "Actual Django6.0.9, synthetic test fixture"
+    }
+  ],
+  "limitations": "No native print dialog; full-page screenshots can be taller than the viewport. Screenshots do not independently prove business or financial correctness."
+}

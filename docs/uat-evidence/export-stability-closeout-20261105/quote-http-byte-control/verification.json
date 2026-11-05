@@ -1,0 +1,35 @@
+{
+  "byte_equal": true,
+  "files": [
+    {
+      "file": "http-response.xlsx",
+      "size": 10117,
+      "sha256": "cfcafad31c61b812ff6b06532b64ae277d677ec6836806dd541e9b986902a0a6",
+      "zip_crc": "pass",
+      "sheet": "PI",
+      "cells": {
+        "L9": "QHTTP-20261105-001",
+        "C11": "QHTTP-MODEL",
+        "J11": 2,
+        "L11": 12.5,
+        "M11": 25,
+        "M14": 25
+      }
+    },
+    {
+      "file": "browser-download.xlsx",
+      "size": 10117,
+      "sha256": "cfcafad31c61b812ff6b06532b64ae277d677ec6836806dd541e9b986902a0a6",
+      "zip_crc": "pass",
+      "sheet": "PI",
+      "cells": {
+        "L9": "QHTTP-20261105-001",
+        "C11": "QHTTP-MODEL",
+        "J11": 2,
+        "L11": 12.5,
+        "M11": 25,
+        "M14": 25
+      }
+    }
+  ]
+}

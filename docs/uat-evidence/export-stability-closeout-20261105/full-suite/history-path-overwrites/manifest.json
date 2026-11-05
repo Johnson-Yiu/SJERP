@@ -1,0 +1,233 @@
+{
+  "scope": "Full suite wrote these new images to historical paths; originals were clean at task start. New images retained here; tracked files restored byte-for-byte from HEAD, untracked originals left in place.",
+  "files": [
+    {
+      "source_path": "docs/uat-evidence/iss-017-private-files/certificate-desktop.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-017-private-files/certificate-desktop.png",
+      "generated_sha256": "1220d4a92caeb1041db707a017abb16c5a0d04dfe02223f64c736b6054489653",
+      "restored_head_sha256": "5fe2b7bbf473c9a310f841665404e96a4a4057dbb9d1a6436f9f57ed404039f8",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-017-private-files/certificate-narrow.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-017-private-files/certificate-narrow.png",
+      "generated_sha256": "956f4110b59ad4deffa6f3f0da786acbb7236c9e766b6f8ece46e9e9e19d51f7",
+      "restored_head_sha256": "829b4501e48e4aabb01ee9cde7c60769c4fce39d4bafcc22711ea70b37a38e5f",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-039-integration/authorized-1440px.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-039-integration/authorized-1440px.png",
+      "generated_sha256": "5ee4b3ac82bdc9c71dc0d5b10e1b7f8e3b9f15f7c3cdfbb43481f86e1be51770",
+      "restored_head_sha256": "cc6f45e73c84ef1190f29bb8b197aac443bb11ac9c1347630f7a93aa00bebebc",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-039-integration/authorized-700px.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-039-integration/authorized-700px.png",
+      "generated_sha256": "b65f2b586a8fa7e262937a01bb141f00c66c67df18caf649ae11ce03b39f2986",
+      "restored_head_sha256": "41fd932049e22c036f3790fa63e6df909344dcdd47cfc354258f76eff38d30d9",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-039-integration/authorized-refresh-1440px.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-039-integration/authorized-refresh-1440px.png",
+      "generated_sha256": "4021f2dad1df7c5e8f5ec66a2f63614f39973af70f6c44af227e7712adfe66e1",
+      "restored_head_sha256": "615de61c73ed6691f25ee86dfadda7476fa6ec28bfd53a8b65e68cd672491ad4",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-039-integration/no-permission-700px.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-039-integration/no-permission-700px.png",
+      "generated_sha256": "ac6eb6f1db17238e96e27f6b2bbc122782c25e8b0a61697ecfbb3ec4c4665122",
+      "restored_head_sha256": "7e0fb31cb537c72670d9106eb7ed3e24fe7d1ca70e6f3e384e34203509f2f91d",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-039-integration/readonly-1440px.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-039-integration/readonly-1440px.png",
+      "generated_sha256": "021aae2a8d38af7893d33c3448c66d9f450406140cce7f6cfcc8a67c85a6dde1",
+      "restored_head_sha256": "40acc570656fe2755e98aee4bab3495c8ae561651c79b81dbe0e18e385e64efd",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png",
+      "generated_sha256": "02ecaec0bbf4bf761b36f8d0bca418fdd29f484203b926b82b8f644b57e8ec65",
+      "restored_head_sha256": "f244765ca806e825b31fc8e2ca3364c31dbca9919717838acc262d23ba29afcb",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-042-shared-reports/employee-700px.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-042-shared-reports/employee-700px.png",
+      "generated_sha256": "a1226e63c99248be59b34432473a89bf08115e4c1fdd730d3b6e08941dcfae32",
+      "restored_head_sha256": "bc86ea965e7d471d41b3c52cf86ef3cb48857c8e2ee5864282308aa2141e0fa7",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-042-shared-reports/manager-1024px.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-042-shared-reports/manager-1024px.png",
+      "generated_sha256": "248331b6e2fe9cdb390dff3345f084153265d5b4dc92242fdebf4ad6b50118d0",
+      "restored_head_sha256": "c289b7f8a8ab3feb4157ede7de70f32628242ad869f5b805bb51ea8d2540f55b",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-042-shared-reports/manager-1440px.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-042-shared-reports/manager-1440px.png",
+      "generated_sha256": "eccfc7e69f096856a5b51090f708eeca8b9e702b3baf1406b95eab68b053a941",
+      "restored_head_sha256": "78d33f67c4a8845685e4531c14409f0e061076797e95aa5fa7653a1aff4c067c",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-048-finance-drill/finance-bank-events-1440.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-048-finance-drill/finance-bank-events-1440.png",
+      "generated_sha256": "3b469f2e81bdd467392bfbd1d38451fc1286989224733f4750a0aa510d4f991a",
+      "restored_head_sha256": "fd585e4739c8da39783bc516e069c26f7d7b1962ab45bed8dd6babfa1f6fcdd1",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-048-finance-drill/finance-bank-events-700.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-048-finance-drill/finance-bank-events-700.png",
+      "generated_sha256": "23c5fe13135ed125eec63a568171a4a89dfd37b13aa4c4d72ac56209d5bd278e",
+      "restored_head_sha256": "db8a33c89241260ec3ea91fe5ff74c60814207e79f54f3d6bf7394b51d2f3b35",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-048-finance-drill/finance-drill-1440.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-048-finance-drill/finance-drill-1440.png",
+      "generated_sha256": "33856016c2ef197a7d4dff1ad71b4fa26ef806291e6038a6c4ffdaa67aa58ce7",
+      "restored_head_sha256": "551de38284a49dab1df16de3bc10f83284318d6d1f694dee3e9ce55a10350275",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/iss-048-finance-drill/finance-drill-700.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/iss-048-finance-drill/finance-drill-700.png",
+      "generated_sha256": "4d68f3cfa93db1167e6bf614e74ed9619081e3c1b912dfb192be60a3de16abf9",
+      "restored_head_sha256": "ec076d81d83e483ad96142a3eee957837b9581d7937f50e3bb45122bd914b780",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png",
+      "generated_sha256": "1f95131b55b3fcce9a4f784b221209f0368b5f18737257e2598b48673e9151cc",
+      "restored_head_sha256": "0f9917fd2f82f847a97fd6b194ff456264d1343865b100e3cd9485c50381f68e",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-desktop.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-desktop.png",
+      "generated_sha256": "f2167cb3ba303f3211fe7eeed0134b808cbde40d62a2f17b0ee2477392a84d76",
+      "restored_head_sha256": "eaee695506440ea9d8bb0e992ef1db3579536ed3e9b39e054214bd49eda6f7aa",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-narrow.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-narrow.png",
+      "generated_sha256": "ceda5618a73fdb1f3cf7a6a6a1579c1c4d9628b0e076cfd28a0ddd09c87d4fee",
+      "restored_head_sha256": "edb897411cffa8551893bd9a68981d72b3143d5723cd7bf1cee56c472fa9b4fd",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-desktop.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-desktop.png",
+      "generated_sha256": "09d51df4d9df2a9eb0c6e03aa1efabec18ccedbce2466843b71d29a9630d41f6",
+      "restored_head_sha256": "cf65ff28db051937b0ea80995ff8a1bdc43c71f0fa9ba2462060261edc8f317a",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-narrow.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-narrow.png",
+      "generated_sha256": "94689dec3f290c2419f339aa90f888bbe303427a8298b94118d40e641cabd6e1",
+      "restored_head_sha256": "dcec2c7f07d3f2086dc618e28537eaa948efb28bf586652d214a8e8f8d2ee546",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-desktop.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-desktop.png",
+      "generated_sha256": "15fa81ad108a4aa8c2d4e6974a67272d941e1b757bdabdf2c0627708d3e6d9ca",
+      "restored_head_sha256": "38c6f9e70aac701b80a314858d5b089ca7f517affc1c07e8178676ece0a0a86c",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-narrow.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-narrow.png",
+      "generated_sha256": "6a6fdfb9497e3f6e6830ea67e73faf628017a5126433423f25fa8a9716f6eff8",
+      "restored_head_sha256": "a628ee8e27c83c80c340dbc5b76e7aeed11beb043463f81a861b338bb04cf57b",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-desktop.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-desktop.png",
+      "generated_sha256": "2adfff2fc7b919f824d2b9ff9c9ad0f3ef186ab307e44498b147c49685706313",
+      "restored_head_sha256": "542ddb7c68891db20d047b137780c73536860227c54169f5cf708e676cff20fb",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-narrow.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-narrow.png",
+      "generated_sha256": "2492c04640d35a8a0a4dd180f3772cbbe711041056fa5bd6e9ad1ce4bcd3e1f6",
+      "restored_head_sha256": "57ae403ebcb7cb9db174b591adce5851c14470da7a947024a8e2168e66554c36",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-desktop.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-desktop.png",
+      "generated_sha256": "f25b31b90d5e0dbed62cfbe3dda226d891c87686dc1568976607553d78896b15",
+      "restored_head_sha256": "8ba8d89b54218f7c17a6131fb40034598d6c2592232ac0e5f2eda679ffaa62db",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-narrow.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-narrow.png",
+      "generated_sha256": "a5b4c2881215a549c51496f2172b807b339c7ddc6fca6bd6dc136e2332ea4830",
+      "restored_head_sha256": "576c3a1d71ff6edf646445ba1c3b9b2b8034907f4eb4faecac54d78d1ffb233a",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-desktop.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-desktop.png",
+      "generated_sha256": "c091883e3bb80b51ee4ee27e0cdf1e601e3efa2d4a8ae7ab8f7cbc8fbe30ce5d",
+      "restored_head_sha256": "b5b0c69bdfdb642b2864db79773aeacbca7f9e69c658c29c9cd5d860bb199bd2",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-narrow.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-narrow.png",
+      "generated_sha256": "a739948ed619d6dc63919ebe6fd9e550020472762c80bd994016db2d1f514043",
+      "restored_head_sha256": "c77634fccfecee3a88237f1b93bcfc218742348f3fb15df4e97a60b0c2e4aa58",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-desktop.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-desktop.png",
+      "generated_sha256": "8998cedf10ebf98a0d7c0efb4155cc3de97584869b127cf24dbf9bffdc2d3041",
+      "restored_head_sha256": "40cf46b2d439fe239e4653b9b42d3ee784cf1954ee256e3a0ab4d6e378ddb950",
+      "restored_exact": true
+    },
+    {
+      "source_path": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-narrow.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-narrow.png",
+      "generated_sha256": "b15e7ab3a2eeca6313c5dd23ddc613f6f9fdcd410456b742ba50d0b397f9311b",
+      "restored_head_sha256": "7aefe9bfcad15522d778a789d2ebacba9773bdd691619853eeae2f367f0d85d0",
+      "restored_exact": true
+    },
+    {
+      "source_path": "frontend/docs/uat-evidence/iss-067-report-permission/employee-authorized-source-1440.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/frontend/docs/uat-evidence/iss-067-report-permission/employee-authorized-source-1440.png",
+      "generated_sha256": "758b3a717d5407b1713da68dacbd4212cac5fb16dd86163f6be1c67c3917aa26",
+      "original_untracked_left_in_place": true
+    },
+    {
+      "source_path": "frontend/docs/uat-evidence/iss-067-report-permission/employee-old-url-1440.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/frontend/docs/uat-evidence/iss-067-report-permission/employee-old-url-1440.png",
+      "generated_sha256": "ca942c29d06ec6991069960f71b4b9a5f39b840c48f2c762345083657308444d",
+      "original_untracked_left_in_place": true
+    },
+    {
+      "source_path": "frontend/docs/uat-evidence/iss-067-report-permission/employee-old-url-700.png",
+      "generated_copy": "docs/uat-evidence/export-stability-closeout-20261105/full-suite/history-path-overwrites/frontend/docs/uat-evidence/iss-067-report-permission/employee-old-url-700.png",
+      "generated_sha256": "c8f2ed9a998104a752550d1ff59ae8a8237bd1f4f9655e136c695432ea5e0a9f",
+      "original_untracked_left_in_place": true
+    }
+  ]
+}

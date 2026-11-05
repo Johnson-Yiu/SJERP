@@ -1,0 +1,30 @@
+Performing system checks...
+
+System check identified no issues (0 silenced).
+November 05, 2026 - 11:05:50
+Django version 6.0.9, using settings 'config.settings'
+Starting development server at http://127.0.0.1:18464/
+Quit the server with CTRL-BREAK.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+[05/Nov/2026 11:06:36] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+Not Found: /api/orders/1/packing-plan/
+[05/Nov/2026 11:06:36] "GET /api/orders/1/packing-plan/ HTTP/1.1" 404 40
+[05/Nov/2026 11:06:36] "GET /api/operation-logs/?entity=crm.order&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[05/Nov/2026 11:06:36] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[05/Nov/2026 11:06:36] "GET /api/orders/1/procurement-plan/ HTTP/1.1" 200 1061
+[05/Nov/2026 11:06:36] "GET /api/orders/?search=&page=1 HTTP/1.1" 200 2004
+[05/Nov/2026 11:06:36] "GET /api/orders/1/fulfillment/ HTTP/1.1" 200 3351
+[05/Nov/2026 11:06:36] "GET /api/orders/1/workbench/ HTTP/1.1" 200 5736
+[05/Nov/2026 11:06:36] "GET /api/shipments/1/packages/ HTTP/1.1" 200 590
+[05/Nov/2026 11:06:37] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64719
+[05/Nov/2026 11:06:37] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64719
+[05/Nov/2026 11:06:38] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64719
+[05/Nov/2026 11:06:38] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64719
+[05/Nov/2026 11:06:38] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64719
+[05/Nov/2026 11:06:38] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64719
+[05/Nov/2026 11:06:38] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64719
+[05/Nov/2026 11:06:39] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64719
+[05/Nov/2026 11:06:40] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64719
+[05/Nov/2026 11:06:41] "GET /api/shipments/1/export-packing-list/ HTTP/1.1" 200 64718

@@ -1,0 +1,75 @@
+{
+  "python": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+  "django": "6.0.9",
+  "openpyxl": "3.1.5",
+  "quote": {
+    "byte_equal": true,
+    "bytes": 10143,
+    "sha256": "27a048cc3b81d8b99392b35171d69225f8d2b6dd2e5e6a2de6a47abf086641c5",
+    "cells": "pass",
+    "zip_crc": "pass"
+  },
+  "packing": [
+    {
+      "file": "download-1.xlsx",
+      "sha256": "91ef1ceb01c8ac6cc4f9e014dba44b93c8a0df2e68ccd4a15fefc3b061fc8208",
+      "bytes": 64719,
+      "zip_crc": "pass"
+    },
+    {
+      "file": "download-2.xlsx",
+      "sha256": "91ef1ceb01c8ac6cc4f9e014dba44b93c8a0df2e68ccd4a15fefc3b061fc8208",
+      "bytes": 64719,
+      "zip_crc": "pass"
+    },
+    {
+      "file": "download-3.xlsx",
+      "sha256": "7bad04235ab444e4d5aaa4f4624437c10e5009b9fcfe97ef2e48c5f60883305e",
+      "bytes": 64719,
+      "zip_crc": "pass"
+    },
+    {
+      "file": "download-4.xlsx",
+      "sha256": "7bad04235ab444e4d5aaa4f4624437c10e5009b9fcfe97ef2e48c5f60883305e",
+      "bytes": 64719,
+      "zip_crc": "pass"
+    },
+    {
+      "file": "download-5.xlsx",
+      "sha256": "7bad04235ab444e4d5aaa4f4624437c10e5009b9fcfe97ef2e48c5f60883305e",
+      "bytes": 64719,
+      "zip_crc": "pass"
+    },
+    {
+      "file": "download-6.xlsx",
+      "sha256": "7bad04235ab444e4d5aaa4f4624437c10e5009b9fcfe97ef2e48c5f60883305e",
+      "bytes": 64719,
+      "zip_crc": "pass"
+    },
+    {
+      "file": "download-7.xlsx",
+      "sha256": "7bad04235ab444e4d5aaa4f4624437c10e5009b9fcfe97ef2e48c5f60883305e",
+      "bytes": 64719,
+      "zip_crc": "pass"
+    },
+    {
+      "file": "download-8.xlsx",
+      "sha256": "2e1b1318fa809f168a601e8f88a18a00ee897f33004714d7e0746f886cd4fb1a",
+      "bytes": 64719,
+      "zip_crc": "pass"
+    },
+    {
+      "file": "download-9.xlsx",
+      "sha256": "fdc7cecd6c1a660358ae20c85b1a6b64d60a19c11d0a8a99ef97b4b978c4446c",
+      "bytes": 64719,
+      "zip_crc": "pass"
+    },
+    {
+      "file": "download-10.xlsx",
+      "sha256": "923a696741420b268de94102ab32b9a248edfa3f41d220287192817c8e76ae89",
+      "bytes": 64718,
+      "zip_crc": "pass"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "code_sha": "56ce3588f544fcfeb98d431fb71d7e2d937f67db",
+  "baseline_sha": "bcdcb57545f121b8a4102f352c74008b47372035",
+  "suite_exit_code": 0,
+  "root_characters": 161,
+  "counts": {
+    "passed": 266,
+    "failed": 0,
+    "skipped": 0
+  },
+  "profiles": [
+    {
+      "name": "business-suite",
+      "exit_code": 0,
+      "signal": null,
+      "passed": 241,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "logs/playwright-profiles/business-suite.stdout.log",
+      "stderr": "logs/playwright-profiles/business-suite.stderr.log"
+    },
+    {
+      "name": "shared-report-templates-isolated",
+      "exit_code": 0,
+      "signal": null,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/shared-report-templates-isolated.stderr.log"
+    },
+    {
+      "name": "quote-editor-isolated",
+      "exit_code": 0,
+      "signal": null,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/quote-editor-isolated.stderr.log"
+    },
+    {
+      "name": "iss006-storage-isolated",
+      "exit_code": 0,
+      "signal": null,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "logs/playwright-profiles/iss006-storage-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss006-storage-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-attachment-isolated",
+      "exit_code": 0,
+      "signal": null,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss007-attachment-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-image-snapshot-isolated",
+      "exit_code": 0,
+      "signal": null,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss007-image-snapshot-isolated.stderr.log"
+    },
+    {
+      "name": "iss022-isolated",
+      "exit_code": 0,
+      "signal": null,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "logs/playwright-profiles/iss022-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss022-isolated.stderr.log"
+    },
+    {
+      "name": "iss028-035-isolated",
+      "exit_code": 0,
+      "signal": null,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "logs/playwright-profiles/iss028-035-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss028-035-isolated.stderr.log"
+    },
+    {
+      "name": "iss055-rbac",
+      "exit_code": 0,
+      "signal": null,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "stdout": "logs/playwright-profiles/iss055-rbac.stdout.log",
+      "stderr": "logs/playwright-profiles/iss055-rbac.stderr.log"
+    }
+  ],
+  "deferred_print_cases_not_run": 7,
+  "deferred_not_in_skipped": true,
+  "quote_prior_failure_remains_unexplained": true
+}

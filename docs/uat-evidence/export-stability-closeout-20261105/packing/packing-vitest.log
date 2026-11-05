@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/export-stability-closeout-20261105/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  26 passed (26)
+   Start at  11:00:11
+   Duration  4.97s (transform 556ms, setup 376ms, import 692ms, tests 390ms, environment 3.16s)
+

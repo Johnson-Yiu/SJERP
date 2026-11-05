@@ -1,0 +1,15 @@
+{
+  "chrome": "156.0.8078.80",
+  "url": "http://127.0.0.1:18243/orders?detail=1&tab=packing",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "filename": "PackingList-SH-PL-01.xlsx",
+  "status": 200,
+  "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "bytes": 65123,
+  "sha256": "d4b991288a1df4490b8452af6d4d48d0753c517abf009e19d8eedf1ed5379b4d",
+  "matchesResponse": true,
+  "failure": null
+}

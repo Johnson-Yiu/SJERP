@@ -1,0 +1,15 @@
+{
+  "database": "sqlite:///C:/Users/Johnson/AppData/Local/Temp/sunjack-r1-repair-06-lBQ3Jx/db.sqlite3",
+  "supplier_id": 1,
+  "supplier_name": "ISS022 浏览器供应商",
+  "sku_id": 1,
+  "sku_code": "ISS022-BROWSER-SKU",
+  "sku_name": "ISS022 浏览器测试 SKU",
+  "supplier_sku_id": 1,
+  "supplier_sku_code": "ISS022-BROWSER-SOURCE",
+  "moq": "10.00",
+  "trade_unit_id": 1,
+  "trade_unit_name": "10 件箱",
+  "trade_unit": "box",
+  "trade_factor": "10.00"
+}

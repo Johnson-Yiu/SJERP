@@ -1,0 +1,4 @@
+[isolated Django API] [05/Nov/2026 11:13:10] "GET /api/__test__/isolation/[REDACTED_ISOLATION_TOKEN]/ HTTP/1.1" 200 326
+[isolated Django API] [05/Nov/2026 11:13:11] "GET /api/__test__/isolation/[REDACTED_ISOLATION_TOKEN]/ HTTP/1.1" 200 326
+(node:19984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "unit",
+    "raw_sha256": "64ab0894ef3b819054d657d8c70c47bc0d3809a785665ccdcec540987dd145f5",
+    "published_sha256": "1b388c71d3357a819bc1ad04c83551c915bac55478fea1e74811e6b4d3238271",
+    "published_path": "docs\\uat-evidence\\export-stability-closeout-20261105\\logs\\unit.log",
+    "raw_private_path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\unit.raw.log",
+    "redaction_count": 10,
+    "exit_code": 0
+  },
+  {
+    "name": "vitest",
+    "raw_sha256": "39333a5035402ad2f44aab65ca6d7568eb9676c86979a772fc653ca9cf0097e0",
+    "published_sha256": "7fac5cac0acd032e92cf3f664235b01eb32c89f12f580f6cd0fc97d50cadb033",
+    "published_path": "docs\\uat-evidence\\export-stability-closeout-20261105\\logs\\vitest.log",
+    "raw_private_path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\vitest.raw.log",
+    "redaction_count": 0,
+    "exit_code": 0
+  },
+  {
+    "name": "font",
+    "raw_sha256": "0b0eb944c14cd0a6d4ee4d4c07eb663b2d048ce9e2ae69a77395439f101d4ffd",
+    "published_sha256": "ccfa1a929a086b199aa2abd4e7d58869f4fc84212def67da8908e4d8927ec623",
+    "published_path": "docs\\uat-evidence\\export-stability-closeout-20261105\\logs\\font.log",
+    "raw_private_path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\font.raw.log",
+    "redaction_count": 0,
+    "exit_code": 0
+  },
+  {
+    "name": "build",
+    "raw_sha256": "b887b10c86a45031377508bd755e6750cff77bbd42c30226cc6371e51eb23edc",
+    "published_sha256": "ba51e780fa50277b389e8ae350b39847482612ca06e15238006e465b58342ae4",
+    "published_path": "docs\\uat-evidence\\export-stability-closeout-20261105\\logs\\build.log",
+    "raw_private_path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\build.raw.log",
+    "redaction_count": 0,
+    "exit_code": 0
+  }
+]

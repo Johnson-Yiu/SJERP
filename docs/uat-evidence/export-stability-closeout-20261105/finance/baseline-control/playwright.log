@@ -1,0 +1,132 @@
+
+Running 3 tests using 1 worker
+
+(node:22532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 browser-tests\finance-csv-stability.spec.js:8:32 › CSV retry and changing period 1440 (12.4s)
+(node:23408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 browser-tests\finance-csv-stability.spec.js:8:32 › CSV retry and changing period 390 (9.8s)
+(node:20704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 browser-tests\finance-csv-stability.spec.js:23:1 › actual cash export failure can retry and blocks duplicate pending requests (9.5s)
+
+
+  1) browser-tests\finance-csv-stability.spec.js:8:32 › CSV retry and changing period 1440 ─────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator:  getByRole('button', { name: '导出 CSV', exact: true })
+    Expected: enabled
+    Received: disabled
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '导出 CSV', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '导出 CSV', exact: true })
+        14 × locator resolved to <button disabled type="button" class="secondary" data-v-3935f5ee="">导出 CSV</button>
+           - unexpected value "disabled"
+
+
+      15 |  return route.fulfill({json:{basis:'bank_cash_confirmed_v1',period:{date_from:from,date_to:to},totals:{inflow:'0',outflow:'0',net:'0',count:0},monthly:[],by_kind:[],events:[]}})} return route.fulfill({json:[]})})
+      16 |  await page.goto('/finance?date_from=2026-10-01&date_to=2026-10-19'); const button=page.getByRole('button',{name:'导出 CSV',exact:true}); await expect(button).toBeEnabled(); await page.screenshot({path:path.join(dir,`finance-${width}.png`),fullPage:true})
+    > 17 |  await button.click(); await expect(page.getByRole('alert').first()).toBeVisible(); await expect(button).toBeEnabled(); await button.click(); await expect(page.getByRole('button',{name:'正在导出…'})).toBeDisabled()
+         |                                                                                                          ^
+      18 |  await page.getByLabel('开始日期').fill('2026-09-01'); await page.getByLabel('结束日期').fill('2026-09-30'); await page.getByRole('button',{name:'查询',exact:true}).click(); await expect(page).toHaveURL(/2026-09-30/)
+      19 |  const downloading=page.waitForEvent('download'); release(); const download=await downloading; expect(download.suggestedFilename()).toContain('2026-10-01-2026-10-19'); const bytes=fs.readFileSync(await download.path()); expect(bytes.subarray(0,3)).toEqual(Buffer.from([239,187,191])); expect(bytes.toString()).toContain('2026-10-01,42')
+      20 |  const again=page.waitForEvent('download'); await button.click(); expect((await again).suggestedFilename()).toContain('2026-09-01-2026-09-30'); await page.goto('/transactions'); await page.goto('/finance?date_from=2026-09-01&date_to=2026-09-30'); await expect(button).toBeEnabled()
+        at D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\baseline-control\temp-1079df43e4aa46208f13843c87c77c01\frontend\browser-tests\finance-csv-stability.spec.js:17:106
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\finance-csv-stability-CSV-retry-and-changing-period-1440\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\finance-csv-stability-CSV-retry-and-changing-period-1440\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\test-results\finance-csv-stability-CSV-retry-and-changing-period-1440\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\test-results\finance-csv-stability-CSV-retry-and-changing-period-1440\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) browser-tests\finance-csv-stability.spec.js:8:32 › CSV retry and changing period 390 ──────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator:  getByRole('button', { name: '导出 CSV', exact: true })
+    Expected: enabled
+    Received: disabled
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '导出 CSV', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '导出 CSV', exact: true })
+        14 × locator resolved to <button disabled type="button" class="secondary" data-v-3935f5ee="">导出 CSV</button>
+           - unexpected value "disabled"
+
+
+      15 |  return route.fulfill({json:{basis:'bank_cash_confirmed_v1',period:{date_from:from,date_to:to},totals:{inflow:'0',outflow:'0',net:'0',count:0},monthly:[],by_kind:[],events:[]}})} return route.fulfill({json:[]})})
+      16 |  await page.goto('/finance?date_from=2026-10-01&date_to=2026-10-19'); const button=page.getByRole('button',{name:'导出 CSV',exact:true}); await expect(button).toBeEnabled(); await page.screenshot({path:path.join(dir,`finance-${width}.png`),fullPage:true})
+    > 17 |  await button.click(); await expect(page.getByRole('alert').first()).toBeVisible(); await expect(button).toBeEnabled(); await button.click(); await expect(page.getByRole('button',{name:'正在导出…'})).toBeDisabled()
+         |                                                                                                          ^
+      18 |  await page.getByLabel('开始日期').fill('2026-09-01'); await page.getByLabel('结束日期').fill('2026-09-30'); await page.getByRole('button',{name:'查询',exact:true}).click(); await expect(page).toHaveURL(/2026-09-30/)
+      19 |  const downloading=page.waitForEvent('download'); release(); const download=await downloading; expect(download.suggestedFilename()).toContain('2026-10-01-2026-10-19'); const bytes=fs.readFileSync(await download.path()); expect(bytes.subarray(0,3)).toEqual(Buffer.from([239,187,191])); expect(bytes.toString()).toContain('2026-10-01,42')
+      20 |  const again=page.waitForEvent('download'); await button.click(); expect((await again).suggestedFilename()).toContain('2026-09-01-2026-09-30'); await page.goto('/transactions'); await page.goto('/finance?date_from=2026-09-01&date_to=2026-09-30'); await expect(button).toBeEnabled()
+        at D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\baseline-control\temp-1079df43e4aa46208f13843c87c77c01\frontend\browser-tests\finance-csv-stability.spec.js:17:106
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\finance-csv-stability-CSV-retry-and-changing-period-390\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\finance-csv-stability-CSV-retry-and-changing-period-390\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\test-results\finance-csv-stability-CSV-retry-and-changing-period-390\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\test-results\finance-csv-stability-CSV-retry-and-changing-period-390\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) browser-tests\finance-csv-stability.spec.js:23:1 › actual cash export failure can retry and blocks duplicate pending requests 
+
+    Error: expect(locator).toBeDisabled() failed
+
+    Locator: getByRole('button', { name: '导出中…' })
+    Expected: disabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeDisabled" getByRole('button', { name: '导出中…' }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '导出中…' })
+
+
+      27 |  if(u.pathname==='/api/finance-dashboard/')return route.fulfill({json:{period,metrics:{},due_items:[],monthly_cash:[],categories:[]}})
+      28 |  if(u.pathname==='/api/actual-rmb-cash/') {if(u.searchParams.has('export')){count++;if(count===1)return route.fulfill({status:400,body:'failure'});await gate;return route.fulfill({contentType:'text/csv',body:'\ufeff实际资金,42'})}return route.fulfill({json:{basis:'bank_cash_confirmed_v1',period,totals:{inflow:'0',outflow:'0',net:'0',count:0},monthly:[],by_kind:[],events:[]}})} return route.fulfill({json:[]})})
+    > 29 |  await page.goto('/finance?date_from=2026-10-01&date_to=2026-10-19');const button=page.getByRole('button',{name:'导出实际资金 CSV'});await expect(button).toBeEnabled();await button.click();await expect(page.getByRole('alert')).toBeVisible();await expect(button).toBeEnabled();await button.click();await expect(page.getByRole('button',{name:'导出中…'})).toBeDisabled();const downloading=page.waitForEvent('download');release();expect((await downloading).suggestedFilename()).toContain('2026-10-01-2026-10-19');expect(count).toBe(2);await expect(button).toBeEnabled()
+         |                                                                                                                                                                                                                                                                                                                                                         ^
+      30 | })
+      31 |
+        at D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\baseline-control\temp-1079df43e4aa46208f13843c87c77c01\frontend\browser-tests\finance-csv-stability.spec.js:29:345
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\finance-csv-stability-actu-d3dd4--duplicate-pending-requests\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\finance-csv-stability-actu-d3dd4--duplicate-pending-requests\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\test-results\finance-csv-stability-actu-d3dd4--duplicate-pending-requests\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\..\test-results\finance-csv-stability-actu-d3dd4--duplicate-pending-requests\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    browser-tests\finance-csv-stability.spec.js:8:32 › CSV retry and changing period 1440 ──────────
+    browser-tests\finance-csv-stability.spec.js:8:32 › CSV retry and changing period 390 ───────────
+    browser-tests\finance-csv-stability.spec.js:23:1 › actual cash export failure can retry and blocks duplicate pending requests 

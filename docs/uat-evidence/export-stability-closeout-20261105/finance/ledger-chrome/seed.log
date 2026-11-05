@@ -1,0 +1,9 @@
+{"action": "account", "status": 403, "body": {"detail": "������֤��Ϣδ�ṩ��"}}
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\ledger-chrome\seed.py", line 18, in <module>
+    account=call('account','/api/finance-ledger/accounts/',{'code':'SYNTH-LEDGER-ONLY','name':'�ϳ�����','account_type':'bank','ownership':'own','ownership_reason':'�������ݺϳ�ƾ֤'})
+            ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\ledger-chrome\seed.py", line 16, in call
+    if r.status_code!=status: raise RuntimeError(f'{label}: {r.status_code}: {getattr(r,"data",None)}')
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: account: 403: {'detail': ErrorDetail(string='������֤��Ϣδ�ṩ��', code='not_authenticated')}

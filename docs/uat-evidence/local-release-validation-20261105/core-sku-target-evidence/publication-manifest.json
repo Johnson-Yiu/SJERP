@@ -1,0 +1,36 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\core-sku-snapshot\\docs\\uat-evidence\\probes",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "core-sqlite-raw-hash.json",
+      "bytes": 86,
+      "raw_sha256": "120ff24ba9993a735ff89600da94cb97d1257876fa6087a049048eb967a17f39",
+      "published_sha256": "070fdc6110af215fb8fa04bad29cb08c197e7267b6018afa60b85aca1a39416b",
+      "redactions": 0
+    },
+    {
+      "path": "core-sqlite.log",
+      "bytes": 42525,
+      "raw_sha256": "54a5804ad55106b9c0e5dc384dafb52ea12957ef6e377a8816a83b69c0bfc428",
+      "published_sha256": "9331249b4b54187927d90ac8534dee5bd1815051e24ed72a76756ad435fee864",
+      "redactions": 0
+    },
+    {
+      "path": "sku-readiness-raw-hash.json",
+      "bytes": 86,
+      "raw_sha256": "22d7db8ab03b4ba0407ba7fac3088f0af6e923eccc34d1224f66416b5171e9f8",
+      "published_sha256": "9e1a06f67a8a4e79c444a52538f943cfddeb0f842ab9ef0214f46853c0728b31",
+      "redactions": 0
+    },
+    {
+      "path": "sku-readiness.log",
+      "bytes": 12868,
+      "raw_sha256": "898731d7e6b48998a4807816ed8d331a78ea76d81a8369325bd4150941ffb3ef",
+      "published_sha256": "39f8a36d6858249ddfa3521e5b4a446ad5d64cd13475b97458271928cd9b66ec",
+      "redactions": 4
+    }
+  ],
+  "omitted": [],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

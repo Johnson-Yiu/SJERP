@@ -76,3 +76,5 @@ ISS-007 图片快照场景在整项 60 秒用尽时等待最后一次打开报�
 `d7d9276` 主套件还出现应付布局刷新和资金重复核查导航等待 `load` 超时；应付失败快照已有筛选框及原值。资金套件要求两条审核，第一场景超时后最终仅有一条，因此另一个 afterAll 断言也失败；这不能单独证明业务缺陷。改为 DOM 就绪并保留筛选值、布局、候选及审核断言后，隔离财务布局 10/10、真实 Chrome 合成资金重复核查 2/2 通过，进程、端口及专属临时数据清理成功。[定向日志及截图](finance-readiness-target-evidence/publication-manifest.json)。同次主套件还观察到导入 CSV 的 `download.path: canceled` 及报价历史 XLSX 的 `download.saveAs: canceled`，具体原因未定，完整失败日志待全套结束归档。
 
 新增来源：CORE-BUSINESS `78bcedb217d3d6ca0a05c9348e72d37c35801312` 的完整 8 提交已合入 `eab047ddc8055bc3ff3ff13442f242bf8b389d5f`，无合并冲突；源包 SQLite/PostgreSQL 各 1430 项仅为来源证据，不能替代集成全量。主体 `792edff6b696c4ad1f5bc65f9e91f623b5b964c0` 尚未接入、仅部分交付；权限审查 `81cb56c18e6183b357af5b9845a4d56d6e6dd96b` 只接收[报告和测试原件](../access-readiness-20261105/INTEGRATION-NOTE.md)，不接入会失败或要求错误行为的默认测试，待权限包修复。
+
+核心合入冻结候选 `76c98873f8ba4e521941f497fbd170c9b2bdb689` 的 SQLite 跨库存、历史盘点、采购成本及审计测试 71 项中 64 通过、7 项 PostgreSQL 专属跳过、0 失败；真实 PostgreSQL 交叉尚在运行。SKU 只读场景在旧候选全页 load 超时；测试提交 `4463ef8ca85871fa39c73941b608b66c57597f97` 改为 DOM 就绪且保留权限断言，独立 Chromium 文件回归 17/17 通过。两次原始日志及哈希见[定向证据](core-sku-target-evidence/publication-manifest.json)，不覆盖完整套件失败。

@@ -13,6 +13,8 @@
 
 ## LOCAL-RELEASE-VALIDATION-03 进展（2026-11-05）
 
+核心冻结候选 `c95601eebfc83597da044ca60a0ad362c57237d0` 的 Node 全量 178 通过、1 项取消：双工作树并发启动时两套迁移分别约 93/101 秒，120 秒总限额先到；两套隔离进程均终止清理。单独将测试文件串行仍是 178/1，不能说串行已修复。测试/入口提交 `2ed5c4343b62e3b419142e98ffbf35d423a28389` 保留两个工作树真实并发和全部断言，将总限额调整为 300 秒并增加 60 秒无输出保护及专属进程树清理测试；未提交版本的 Node 全量试运行 180/180，仍须在固定提交上复验。[失败与试运行日志](uat-evidence/local-release-validation-20261105/node-runner-progress-evidence/publication-manifest.json)。
+
 导入 CSV 下载取消在 `d7d9276` 全套中真实发生，根因 UNKNOWN。隔离导入文件测试依次为 6/6、5/6（客户页 `load` 超时）、加入 DOM 就绪及链接/Blob/字体事件诊断后 6/6；保留中间失败，不以定向成功覆盖全套。一次新运行中外部 Google Fonts 请求完成后页面触发 load，仅为该次时序，不能证明旧超时原因；诊断代码 `44b01cd04e2a08ad69337cdfbc5f8b5454a2b848` 不改导入业务。见[原始哈希及脱敏日志](uat-evidence/local-release-validation-20261105/import-download-diagnostics/publication-manifest.json)。
 
 诊断候选 `d7d927658e26727b6ebef135708d77278b9ee258` 完整浏览器九配置为 257 通过/9 失败（其中主套件 233/8，图片导出 0/1），整体 FAIL；构建和历史 Chrome 通过。原失败含页面 load 超时、资金审核级联及导入/报价下载取消，详细日志和截图已保存，具体 load 阻塞资源及下载取消归因 UNKNOWN。核心来源在该测试后才合入，该结果不代表核心集成候选。

@@ -1,0 +1,50 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\node-runner-probes\\docs\\uat-evidence\\probe",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "full-c956-raw-hash.json",
+      "bytes": 86,
+      "raw_sha256": "61aaa582276fc93af7757d99ba684271eebbf75a4328570066c48f6f4a767a61",
+      "published_sha256": "51742a995ef325a347b0b49e0fbffa81ad9e926d76c830b2007d8b17381eea07",
+      "redactions": 0
+    },
+    {
+      "path": "full-c956.log",
+      "bytes": 42146,
+      "raw_sha256": "a1ad12260bae356bd20597c03c4ec3bb4cf9acc4ce8210c5081214538d1970e4",
+      "published_sha256": "ac444b6113e3968136534ed0177fbd25d217150627bc565236ae5477e328d4ac",
+      "redactions": 2
+    },
+    {
+      "path": "serial-before-watchdog-raw-hash.json",
+      "bytes": 86,
+      "raw_sha256": "b89c867dceb059dc4ece2eb3ef6ff7fb82a0f2de450581ef3910ddc9a4b922db",
+      "published_sha256": "4d7dfe47ae0c7637c2f8f86c250a2d1b5d71938ee1760996e05f13570836d0d8",
+      "redactions": 0
+    },
+    {
+      "path": "serial-before-watchdog.log",
+      "bytes": 43267,
+      "raw_sha256": "bccf1fec147ab16f3e18c39c665ec67287e5415293393a95f4091b3f30c276db",
+      "published_sha256": "05eca6663e7c97129faf9f86c74098b4631e22c066f378dfdae029ddcacfbccb",
+      "redactions": 2
+    },
+    {
+      "path": "watchdog-provisional-raw-hash.json",
+      "bytes": 86,
+      "raw_sha256": "249f0967e905f84038456b22240bea9f7feb2626bb0f7eec0c60a3313c6e01cd",
+      "published_sha256": "8e1d345949d25f44bc4e0081d84cab6293db578c14e0303e7fd0e24998d863e1",
+      "redactions": 0
+    },
+    {
+      "path": "watchdog-provisional.log",
+      "bytes": 48774,
+      "raw_sha256": "02b92ebc93b466d249d374dd0ef813709bf0fb7c5c341f96b7b270df70d23ad9",
+      "published_sha256": "c52397db2e9683ee57f8dcc29e6f6e7ab9dda73d9d2589c3fc472d118a9335d9",
+      "redactions": 10
+    }
+  ],
+  "omitted": [],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

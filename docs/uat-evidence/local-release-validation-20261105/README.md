@@ -86,3 +86,5 @@ ISS-007 图片快照场景在整项 60 秒用尽时等待最后一次打开报�
 导入测试增加未挂载下载链接、Blob 回收、页面导航及外部字体请求诊断：初次隔离运行 6/6；补诊断后一次 5/6（客户页等待 `load` 超时）；改为 DOM 就绪并保留导航/写入断言后 6/6。一次实际记录中多项 `fonts.gstatic.com` 请求结束后页面触发 `load`，说明外部资源会参与该次 load，但并不证明其他失败由字体导致。[三次日志和原始哈希](import-download-diagnostics/publication-manifest.json) 均保留，不将成功覆盖全套中的 CSV 取消。新增库存交叉测试 `9012a9d6b149e0f22ab554afe747b7421d2b669a` 的未提交 SQLite 试运行 2/2，验证既有默认仓流水阻止历史盘点重复入账及盘点后默认仓不能借用历史仓；固定 SHA 和 PostgreSQL 验证待执行。
 
 固定核心候选 `c95601eebfc83597da044ca60a0ad362c57237d0` 的真实 PostgreSQL 17 仓位交叉专项 2/2、0 跳过：既有默认仓流水使历史盘点基准安全阻断；先建立历史基准后，默认仓扣减不能借用历史仓位，正常扣减后盘点仓数量不变。合成历史、财务和运营恢复通过；[脱敏日志](stock-cross-pg-log/publication-manifest.json)、[恢复证据](stock-cross-pg-artifacts/publication-manifest.json)，备份本地 SHA256 `5ea2cad696eb6c88d052ab00007c07754faf60cfa58e0f5da94f279875117fe9`。该专项不替代同候选正在运行的完整集成。
+
+核心候选 `c95601ee` Node 全量实际为 178 通过、1 取消、0 断言失败，阶段 FAIL：两个并发隔离工作树迁移分别约 93/101 秒，120 秒总限额到达后进程树清理；单独串行测试文件仍 178/1。`2ed5c4343b62e3b419142e98ffbf35d423a28389` 增加 60 秒无输出看门狗、静默子进程退出断言及文件级串行，将总限额从 120 调整到 300 秒，仍保留双工作树并发和所有隔离断言。未提交版本的全量试运行 180/180，不能归属于旧 SHA 或代替固定候选验证。[原失败、串行失败和试运行日志](node-runner-progress-evidence/publication-manifest.json)。

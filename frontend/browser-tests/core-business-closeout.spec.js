@@ -37,6 +37,9 @@ for (const width of [1440,390]) test(`real core closure ${width}px`, async({page
  await receipt.getByRole('button',{name:/确认.*入库/}).click()
  await expect(receipt).toBeHidden()
  await expect(page.getByText('验货入库已完成，库存、预留及在途数量已同步。')).toBeVisible()
+ await expect(purchase.locator('.receipt-heading')).toContainText('已到 6.00')
+ await expect(purchase.locator('.receipt-history-row')).toHaveCount(1)
+ await expect(purchase.locator('header').first()).toContainText('已完成')
  await page.screenshot({path:path.join(root,`${width}-receipt-after.png`),fullPage:true})
  const detail=await page.request.get(`/api/orders/${order.id}/`);const saved=await detail.json()
  const ship={shipment_date:day,items:[{order_item:saved.items[0].id,quantity:'6'}]}
@@ -51,9 +54,13 @@ for (const width of [1440,390]) test(`real core closure ${width}px`, async({page
  await expect(modal.locator('.current-todo-card')).toContainText('60.00')
  await page.screenshot({path:path.join(root,`${width}-completed-debt.png`),fullPage:true})
  const money=(amount,kind)=>api('/transactions/',{order:order.id,transaction_date:day,amount,currency:'CNY',exchange_rate:'1',kind,direction:kind==='refund'?'expense':'income',category:kind==='refund'?'合成退款':'客户收款'})
- await money('60','customer_receipt');await page.reload()
+ const reloadOrder=async()=>{
+  const [response]=await Promise.all([page.waitForResponse(r=>new URL(r.url()).pathname===`/api/orders/${order.id}/workbench/`),page.reload()])
+  expect(response.status()).toBe(200);http.push({method:'GET',url:response.url(),status:response.status(),body:await response.json()})
+ }
+ await money('60','customer_receipt');await reloadOrder()
  await expect(modal.locator('.payment-card')).toContainText('款项已结清')
- await money('10','refund');await page.reload()
+ await money('10','refund');await reloadOrder()
  await expect(modal).toContainText('履约：已完成')
  await expect(modal.locator('.current-todo-card')).toContainText('10.00')
  await page.screenshot({path:path.join(root,`${width}-refund-todo.png`),fullPage:true})

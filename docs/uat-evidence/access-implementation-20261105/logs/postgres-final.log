@@ -1,0 +1,103 @@
+Creating test database for alias 'default'...
+
+.....C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ProductCategory'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.Product'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.HSCode'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.SKUPackagingProfile'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.OrganizationUnit'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+Found 60 test(s).
+System check identified no issues (0 silenced).
+SUFFIX_ROUTE_MATRIX [{"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/finance-ledger.json", "route": "api/^finance-ledger\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/rmb-cash-events.json", "route": "api/^rmb-cash-events\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/sku-trade-units.json", "route": "api/^sku-trade-units\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/sales-rules.json", "route": "api/^sales-rules\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/supplier-capabilities.json", "route": "api/^supplier-capabilities\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/customers.json", "route": "api/^customers\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/suppliers.json", "route": "api/^suppliers\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/purchase-orders.json", "route": "api/^purchase-orders\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/contacts.json", "route": "api/^contacts\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/follow-ups.json", "route": "api/^follow-ups\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/categories.json", "route": "api/^categories\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/category-attributes.json", "route": "api/^category-attributes\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/products.json", "route": "api/^products\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/hs-codes.json", "route": "api/^hs-codes\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/skus.json", "route": "api/^skus\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/supplier-skus.json", "route": "api/^supplier-skus\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/packaging-templates.json", "route": "api/^packaging-templates\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/sku-packaging-profiles.json", "route": "api/^sku-packaging-profiles\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/shipments.json", "route": "api/^shipments\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/product-parameters.json", "route": "api/^product-parameters\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/product-certificates.json", "route": "api/^product-certificates\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/quotes.json", "route": "api/^quotes\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/orders.json", "route": "api/^orders\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/transactions.json", "route": "api/^transactions\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/payment-plans.json", "route": "api/^payment-plans\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/contract-changes.json", "route": "api/^contract-changes\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/inventory-movements.json", "route": "api/^inventory-movements\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/organization-units.json", "route": "api/^organization-units\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/positions.json", "route": "api/^positions\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/access-roles.json", "route": "api/^access-roles\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/role-permissions.json", "route": "api/^role-permissions\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/employees.json", "route": "api/^employees\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 403, "ordinary_no_permission": 403, "path": "/api/operation-logs.json", "route": "api/^operation-logs\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 403, "ordinary_no_permission": 403, "path": "/api/", "route": "api/", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 403, "ordinary_no_permission": 403, "path": "/api/.json", "route": "api/<drf_format_suffix:format>", "superuser": 200}]
+HIGHEST_ROLE_PATCH_STATUS 400
+HIGHEST_ROLE_OBSERVATION {"status": 400, "code": "superadmin", "assigned_user_has_all": true}
+PERMISSION_ADMIN_HIGHEST_ROLE_PATCH_STATUS 400
+.......................................................
+----------------------------------------------------------------------
+Ran 60 tests in 60.588s
+
+OK
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\backends\utils.py", line 103, in _execute
+    return self.cursor.execute(sql)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.ObjectInUse: database "test_sunjack_b39dbb6209c0472296439b58daf38829" is being accessed by other users
+DETAIL:  There are 2 other sessions using the database.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\test_runner.py", line 170, in teardown_databases
+    self._destroy_owned_database(record)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\test_runner.py", line 158, in _destroy_owned_database
+    cleanup_connection.creation._destroy_test_db(target, self.verbosity)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\backends\postgresql\creation.py", line 91, in _destroy_test_db
+    return super()._destroy_test_db(test_database_name, verbosity)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\backends\base\creation.py", line 346, in _destroy_test_db
+    cursor.execute(
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\db\backends\utils.py", line 103, in _execute
+    return self.cursor.execute(sql)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+django.db.utils.OperationalError: database "test_sunjack_b39dbb6209c0472296439b58daf38829" is being accessed by other users
+DETAIL:  There are 2 other sessions using the database.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\manage.py", line 13, in <module>
+    main()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\manage.py", line 9, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\__init__.py", line 443, in execute_from_command_line
+    utility.execute()
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\__init__.py", line 437, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\commands\test.py", line 24, in run_from_argv
+    super().run_from_argv(argv)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\base.py", line 420, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\base.py", line 464, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\management\commands\test.py", line 63, in handle
+    failures = test_runner.run_tests(test_labels)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\test\runner.py", line 1141, in run_tests
+    self.teardown_databases(old_config)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\test_runner.py", line 186, in teardown_databases
+    raise failure from errors[0][1]
+RuntimeError: Some temporary test databases could not be destroyed.
+test_sunjack_b39dbb6209c0472296439b58daf38829: OperationalError; manual isolated cleanup required.
+Task-owned PostgreSQL root cleaned
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\docs\uat-evidence\access-readiness-20261105\run_postgres.py", line 69, in <module>
+
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\docs\uat-evidence\access-readiness-20261105\run_postgres.py", line 57, in main
+    command = [sys.executable, str(repo / 'backend' / 'manage.py'), 'test', *labels, '--noinput', '--verbosity', '1']
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Selected PostgreSQL tests failed: exit 1

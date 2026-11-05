@@ -48,6 +48,10 @@ class FormatAndRoleProbes(TestCase):
             else:
                 self.fail('Unexpected inventory pattern: ' + entry['route'])
             statuses = [client.get(path).status_code for client in clients]
+            self.assertIn(statuses[0], (401, 403), path)
+            self.assertEqual(statuses[1], 403, path)
+            self.assertEqual(statuses[2], 403 if path in ('/api/', '/api/.json', '/api/operation-logs.json') else 200, path)
+            self.assertEqual(statuses[3], 200, path)
             results.append({'route': entry['route'], 'path': path, 'anonymous': statuses[0], 'ordinary_no_permission': statuses[1],
                             'ordinary_all_modules': statuses[2], 'superuser': statuses[3]})
         print('SUFFIX_ROUTE_MATRIX ' + json.dumps(results, sort_keys=True), flush=True)
@@ -77,7 +81,7 @@ class FormatAndRoleProbes(TestCase):
         print('PERMISSION_ADMIN_HIGHEST_ROLE_PATCH_STATUS', response.status_code, flush=True)
         self.assertIn(response.status_code, (400, 403, 405))
 
-    def test_observe_highest_role_code_change_effect_in_rollback_fixture(self):
+    def test_highest_role_keeps_assigned_user_permissions_after_rejected_change(self):
         role = AccessRole.objects.get(code='superadmin')
         self.user.employee_profile.roles.set([role])
         self.assertTrue(has_all_permissions(self.user))
@@ -87,16 +91,13 @@ class FormatAndRoleProbes(TestCase):
         role.refresh_from_db()
         print('HIGHEST_ROLE_OBSERVATION', json.dumps({'status': response.status_code, 'code': role.code,
               'assigned_user_has_all': has_all_permissions(self.user)}), flush=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(role.code, 'synthetic-mutated')
-        self.assertFalse(has_all_permissions(self.user))
+        self.assertIn(response.status_code, (400, 403, 405))
+        self.assertEqual(role.code, 'superadmin')
+        self.assertTrue(has_all_permissions(self.user))
 
-    def test_observe_finance_format_suffix_error_types(self):
+    def test_finance_format_suffix_has_no_server_error(self):
         client = APIClient()
         client.force_authenticate(self.root)
         for path in ('/api/finance-ledger.json', '/api/rmb-cash-events.json'):
-            try:
-                response = client.get(path)
-                print('FINANCE_SUFFIX_OBSERVATION', path, response.status_code, flush=True)
-            except Exception as error:
-                print('FINANCE_SUFFIX_OBSERVATION', path, type(error).__name__, str(error), flush=True)
+            response = client.get(path)
+            self.assertEqual(response.status_code, 200)

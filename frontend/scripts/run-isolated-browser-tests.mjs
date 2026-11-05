@@ -439,6 +439,10 @@ export function isolatedFixtureSeed(businessTest) {
       seedFile: path.join('browser-run', 'iss055', 'seed.py'),
       evidenceEnv: 'ISS055_EVIDENCE_DIR',
     },
+    'access-session-real.spec.js': {
+      seedFile: path.join('..', 'docs', 'uat-evidence', 'access-implementation-20261105', 'seed_browser.py'),
+      evidenceEnv: 'ISS055_EVIDENCE_DIR',
+    },
     'iss028-035-category-schema.spec.js': { seedFile: null, evidenceEnv: 'ISS028_035_EVIDENCE_DIR' },
   }
   const profile = allowed[businessTest]
@@ -498,7 +502,7 @@ async function main() {
     const databasePath = path.join(tempRoot, 'db.sqlite3')
     const mediaRoot = path.join(tempRoot, 'media')
     const baseURL = `http://127.0.0.1:${vitePort}`
-    const rbacTestMode = selection.businessTest === 'iss055-customer-404-real.spec.js'
+    const rbacTestMode = ['iss055-customer-404-real.spec.js', 'access-session-real.spec.js'].includes(selection.businessTest)
     let evidenceRoot
     try {
       evidenceRoot = await resolveEvidenceRoot(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, tempRoot)
@@ -531,7 +535,7 @@ async function main() {
       ISOLATED_PLAYWRIGHT_API_BASE_URL: `http://127.0.0.1:${apiPort}`,
       ISS007_BASE_URL: baseURL,
       ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',
-      PLAYWRIGHT_CHANNEL: selection.businessTest === 'iss028-035-category-schema.spec.js' ? 'chrome' : '',
+      PLAYWRIGHT_CHANNEL: ['iss028-035-category-schema.spec.js', 'access-session-real.spec.js'].includes(selection.businessTest) ? 'chrome' : '',
       ISOLATED_PLAYWRIGHT_TEST_EXCLUDE: selection.businessSuite
         ? JSON.stringify([...new Set(['iss055-customer-404-real.spec.js', ...selection.excludedBusinessTests])])
         : '',

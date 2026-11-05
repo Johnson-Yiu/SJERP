@@ -54,13 +54,17 @@ class RmbCashEventViewSet(viewsets.ViewSet):
     permission_classes = [CashEventPermission]
 
     def initialize_request(self, request, *args, **kwargs):
-        if request.method == "POST" and request.path.rstrip("/").endswith("/rmb-cash-events/voucher-upload"):
+        path = request.path.rstrip("/")
+        suffix = kwargs.get("format")
+        if suffix and path.endswith("." + suffix):
+            path = path[:-(len(suffix) + 1)]
+        if request.method == "POST" and path.endswith("/rmb-cash-events/voucher-upload"):
             from .finance_closeout_api import FinanceVoucherUploadHandler
             request.upload_handlers.insert(0, FinanceVoucherUploadHandler(request))
         return super().initialize_request(request, *args, **kwargs)
 
     @action(detail=False, methods=["post"], url_path="voucher-upload")
-    def voucher_upload(self, request):
+    def voucher_upload(self, request, format=None):
         import json
         from .finance_closeout_api import VoucherTooLarge
         from .services.finance_closeout import upload
@@ -78,13 +82,13 @@ class RmbCashEventViewSet(viewsets.ViewSet):
         return Response({"id": obj.pk, "sha256": obj.sha256, "size": obj.size}, status=201)
 
     @action(detail=True, methods=["post"], url_path="bind-voucher")
-    def bind_voucher(self, request, pk=None):
+    def bind_voucher(self, request, pk=None, format=None):
         from .services.bank_vouchers import bind
         bind(cash.get_event(request.user, pk=pk), request.data.get("private_voucher"), request.user)
         return Response(event_data(cash.get_event(request.user, pk=pk)))
 
     @action(detail=True, methods=["get"], url_path="voucher-download")
-    def voucher_download(self, request, pk=None):
+    def voucher_download(self, request, pk=None, format=None):
         from django.http import FileResponse
         from .services.bank_vouchers import require_verified_file
         obj = require_verified_file(cash.get_event(request.user, pk=pk), request.user)
@@ -93,25 +97,25 @@ class RmbCashEventViewSet(viewsets.ViewSet):
         response["X-Content-Type-Options"] = "nosniff"
         return response
 
-    def list(self, request):
+    def list(self, request, format=None):
         cash.access(request.user)
         # Whole batch visibility: neither its total nor its bank reference leaks.
         events = [e for e in RmbCashEvent.objects.all() if cash.visible(e, request.user)]
         return Response({"results": [event_data(e) for e in events], "coverage_since": None, "note": "人工凭证事件列表，不代表全部银行资金。"})
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk=None, format=None):
         return Response(event_data(cash.get_event(request.user, pk=pk)))
 
-    def create(self, request):
+    def create(self, request, format=None):
         event, created = cash.register_event(request.data, request.user)
         return Response(event_data(event), status=201 if created else 200)
 
     @action(detail=False, methods=["get"], url_path="by-request-key")
-    def by_request_key(self, request):
+    def by_request_key(self, request, format=None):
         return Response(event_data(cash.get_event(request.user, request_key=request.query_params.get("request_key", ""))))
 
     @action(detail=False, methods=["post"])
-    def preview(self, request):
+    def preview(self, request, format=None):
         cash.access(request.user)
         p = cash.normalize(request.data)
         rows = cash.validate_sources(p, request.user)
@@ -122,7 +126,7 @@ class RmbCashEventViewSet(viewsets.ViewSet):
                          "note": "只读预览不占用额度，不替代银行凭证确认。"})
 
     @action(detail=False, methods=["get"])
-    def sources(self, request):
+    def sources(self, request, format=None):
         cash.access(request.user)
         currency = request.query_params.get("currency")
         if currency and currency not in cash.UNITS:
@@ -145,19 +149,19 @@ class RmbCashEventViewSet(viewsets.ViewSet):
         return Response({"results": result, "note": "按具体现金行计量；根行不是家族总额。核销不扣减结汇额度，候选额度不代表银行余额。"})
 
     @action(detail=True, methods=["post"])
-    def confirm(self, request, pk=None):
+    def confirm(self, request, pk=None, format=None):
         if not isinstance(request.data, dict) or set(request.data) - {"voucher_checked", "duplicate_token", "duplicate_reason"} or "voucher_checked" not in request.data:
             raise ValidationError("确认不可覆盖草稿金额或凭证。")
         return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
             duplicate_token=request.data.get("duplicate_token"), duplicate_reason=request.data.get("duplicate_reason"))))
 
     @action(detail=True, methods=["get"], url_path="duplicate-candidates")
-    def duplicate_candidates(self, request, pk=None):
+    def duplicate_candidates(self, request, pk=None, format=None):
         event = cash.get_event(request.user, pk=pk)
         return Response(cash.duplicate_candidates(event.request_payload, request.user, exclude_id=event.pk))
 
     @action(detail=True, methods=["post"])
-    def cancel(self, request, pk=None):
+    def cancel(self, request, pk=None, format=None):
         if not isinstance(request.data, dict) or set(request.data) != {"reason"}:
             raise ValidationError("草稿放弃只接受原因。")
         return Response(event_data(cash.cancel_pending(pk, request.user, request.data.get("reason"))))

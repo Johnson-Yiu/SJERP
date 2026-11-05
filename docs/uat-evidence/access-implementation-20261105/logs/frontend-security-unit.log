@@ -1,0 +1,16 @@
+✔ formatApiError preserves field and nested item context (8.5243ms)
+✔ apiErrorMessage uses understandable network and server fallbacks (0.2228ms)
+✔ API errors retain status, parsed data and the original response (3.1985ms)
+✔ API parses Blob JSON errors before formatting (1.3875ms)
+✔ aggregated lists include subsequent pages and keep filters (0.598ms)
+✔ listAll handles non-paginated array actions in one request (0.2387ms)
+✔ failed later pages never return a misleading partial total (0.2359ms)
+✔ return path remains on the ERP origin (0.8578ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2742.6032

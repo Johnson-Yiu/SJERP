@@ -38,10 +38,9 @@ class AccessReadinessSessionTests(TestCase):
         session.save()
         self.assertEqual(self.client.get('/api/customers/').status_code, 401)
 
-    def test_no_named_business_login_or_logout_route(self):
-        for path in ('/api/login/', '/api/logout/', '/api/session/login/', '/api/session/logout/'):
-            with self.subTest(path=path), self.assertRaises(Resolver404):
-                resolve(path)
+    def test_business_login_and_logout_routes_exist(self):
+        for path in ('/api/session/login/', '/api/session/logout/', '/api/session/csrf/'):
+            self.assertIsNotNone(resolve(path))
 
 
 @override_settings(APP_STAGE='development', DEBUG=True, DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False)

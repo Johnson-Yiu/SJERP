@@ -19,6 +19,9 @@ def main():
     parser.add_argument('--postgres-bin', required=True)
     parser.add_argument('--session-only', action='store_true')
     parser.add_argument('--format-role-only', action='store_true')
+    parser.add_argument('--implementation', action='store_true')
+    parser.add_argument('--security-only', action='store_true')
+    parser.add_argument('--suffix-scope-only', action='store_true')
     args = parser.parse_args()
     root = Path(tempfile.mkdtemp(prefix='sunjack-access-pg-')).resolve()
     pg = root / 'pgsql' / 'bin'
@@ -46,6 +49,15 @@ def main():
             labels = labels[:1]
         if args.format_role_only:
             labels = ['crm.tests.test_access_readiness_format_and_role']
+        if args.implementation:
+            labels = ['crm.tests.test_access_implementation', 'crm.tests.test_access_readiness_format_and_role',
+                      'crm.tests.test_access_readiness_20261105', 'crm.tests.test_functional_rbac',
+                      'crm.tests.test_finance_integration_permissions']
+        if args.security_only:
+            labels = ['crm.tests.test_access_implementation', 'crm.tests.test_access_readiness_format_and_role']
+        if args.suffix_scope_only:
+            labels = ['crm.tests.test_sales_data_scope.SalesDataScopeTests.test_customer_format_suffix_retains_self_scope_and_safe_404',
+                      'crm.tests.test_finance_integration_permissions.FinanceLedgerOrdinaryRoleTests.test_format_suffix_preserves_csv_export_permission_and_contents']
         command = [sys.executable, str(repo / 'backend' / 'manage.py'), 'test', *labels, '--noinput', '--verbosity', '1']
         result = subprocess.run(command, cwd=repo, env=env, check=False)
         if result.returncode:

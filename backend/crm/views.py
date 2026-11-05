@@ -569,12 +569,35 @@ class AccessRoleViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     search_fields = ["name", "code", "description"]
     permission_classes = [ModuleActionPermission, PermissionAdminOnly]
 
+    @transaction.atomic
+    def perform_create(self, serializer):
+        if serializer.validated_data.get("code") == "superadmin":
+            raise DRFValidationError("不能使用系统保留的角色编码。")
+        return super().perform_create(serializer)
+
+    def _lock_editable_role(self):
+        role = self.get_object()
+        role = AccessRole.objects.select_for_update().get(pk=role.pk)
+        if role.code == "superadmin":
+            raise DRFValidationError("超级管理员角色不可修改或停用。")
+        return role
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        self._lock_editable_role()
+        if request.data.get("code") == "superadmin":
+            raise DRFValidationError("不能使用系统保留的角色编码。")
+        return super().update(request, *args, **kwargs)
+
+    @transaction.atomic
+    def destroy(self, request, *args, **kwargs):
+        self._lock_editable_role()
+        return super().destroy(request, *args, **kwargs)
+
     @action(detail=True, methods=["post"], url_path="permission-matrix")
     @transaction.atomic
     def permission_matrix(self, request, pk=None):
-        role = self.get_object()
-        if role.code == "superadmin":
-            return Response({"detail": "超级管理员权限为系统最高权限，不允许取消。"}, status=status.HTTP_400_BAD_REQUEST)
+        role = self._lock_editable_role()
         rows = request.data.get("permissions")
         if not isinstance(rows, list):
             return Response({"detail": "权限矩阵格式不正确。"}, status=status.HTTP_400_BAD_REQUEST)
@@ -582,16 +605,27 @@ class AccessRoleViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         valid_modules = dict(RolePermission.MODULE_CHOICES)
         submitted = set()
         for row in rows:
+            if not isinstance(row, dict):
+                return Response({"detail": "权限矩阵格式不正确。"}, status=status.HTTP_400_BAD_REQUEST)
             module = row.get("module")
             if module not in valid_modules or module in submitted:
                 return Response({"detail": f"无效或重复的功能模块：{module}"}, status=status.HTTP_400_BAD_REQUEST)
             submitted.add(module)
+        permission_fields = ("module", "can_view", "can_create", "can_update", "can_delete", "can_export", "can_import")
+        before = list(RolePermission.objects.filter(role=role).order_by("module").values(*permission_fields))
+        # Validate the complete payload before touching any row. Returning a
+        # 400 from inside an atomic block alone does not roll back prior writes.
+        for row in rows:
+            module = row["module"]
             RolePermission.objects.update_or_create(role=role, module=module, defaults={
                 "can_view": bool(row.get("can_view")), "can_create": bool(row.get("can_create")),
                 "can_update": bool(row.get("can_update")), "can_delete": bool(row.get("can_delete")),
                 "can_export": bool(row.get("can_export")), "can_import": bool(row.get("can_import")),
             })
         RolePermission.objects.filter(role=role).exclude(module__in=submitted).delete()
+        after = list(RolePermission.objects.filter(role=role).order_by("module").values(*permission_fields))
+        record_operation(request=request, instance=role, action="custom", action_label="修改角色权限",
+                         before={"permissions": before}, after={"permissions": after})
         refreshed = AccessRole.objects.prefetch_related("permissions").annotate(employee_count=Count("employees", distinct=True)).get(pk=role.pk)
         return Response(AccessRoleSerializer(refreshed).data)
 
@@ -600,6 +634,32 @@ class RolePermissionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = RolePermissionSerializer
     queryset = RolePermission.objects.select_related("role")
     permission_classes = [ModuleActionPermission, PermissionAdminOnly]
+
+    @staticmethod
+    def _lock_role(role_id):
+        role = AccessRole.objects.select_for_update().get(pk=role_id)
+        if role.code == "superadmin":
+            raise DRFValidationError("超级管理员权限不可修改。")
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        self._lock_role(serializer.validated_data["role"].pk)
+        return super().perform_create(serializer)
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        # Lock both roles in a stable order when moving an existing row.
+        role_ids = {serializer.instance.role_id}
+        if "role" in serializer.validated_data:
+            role_ids.add(serializer.validated_data["role"].pk)
+        for role_id in sorted(role_ids):
+            self._lock_role(role_id)
+        return super().perform_update(serializer)
+
+    @transaction.atomic
+    def perform_destroy(self, instance):
+        self._lock_role(instance.role_id)
+        return super().perform_destroy(instance)
 
     def get_queryset(self):
         qs = super().get_queryset()

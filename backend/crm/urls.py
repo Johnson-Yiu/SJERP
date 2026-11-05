@@ -12,6 +12,7 @@ from .file_access import protected_media
 from .report_templates import SharedReportTemplateViewSet
 from .history_import_preflight import HistoryImportPreflightView
 from .history_takeover_api import HistoryTakeoverDetailView, HistoryTakeoverGroupActionView, HistoryTakeoverListCreateView, HistoryTakeoverReportView, HistoryTakeoverTemplateView
+from .session_views import csrf, sign_in, sign_out
 
 router = DefaultRouter()
 from .finance_closeout_api import FinanceCloseoutViewSet
@@ -55,6 +56,9 @@ from .reporting import historical_analysis, report_catalog, report_data, report_
 from .actual_cash_api import actual_cash_report
 
 urlpatterns = [
+    path("session/csrf/", csrf),
+    path("session/login/", sign_in),
+    path("session/logout/", sign_out),
     path("media/<path:relative_path>", protected_media, name="crm-protected-media"),
     path("products/<int:pk>/combination-rules/", ProductCombinationRulesView.as_view()),
     path("products/<int:pk>/sku-plan/", ProductSKUPlanView.as_view()),

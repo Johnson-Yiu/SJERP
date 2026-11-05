@@ -90,7 +90,11 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
         return "finance"
 
     def initialize_request(self, request, *args, **kwargs):
-        if request.method == "POST" and request.path.rstrip("/").endswith("/finance-ledger/vouchers"):
+        path = request.path.rstrip("/")
+        suffix = kwargs.get("format")
+        if suffix and path.endswith("." + suffix):
+            path = path[:-(len(suffix) + 1)]
+        if request.method == "POST" and path.endswith("/finance-ledger/vouchers"):
             request.upload_handlers.insert(0, FinanceVoucherUploadHandler(request))
         return super().initialize_request(request, *args, **kwargs)
 
@@ -108,7 +112,7 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
             exc = ledger.cash.CashConflict("资金记录冲突，请按原请求核对。")
         return super().handle_exception(exc)
 
-    def list(self, request):
+    def list(self, request, format=None):
         end = ledger.iso(request.query_params.get("date_to") or timezone.localdate().isoformat())
         accounts = []
         for obj in FinanceAccount.objects.order_by("pk"):
@@ -132,22 +136,22 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
             "historical_transfers": list(FinanceHistoricalTransfer.objects.values("id", "outgoing_fact_id", "incoming_fact_id", "outgoing_legacy_id", "incoming_legacy_id", "outgoing_voucher_id", "incoming_voucher_id", "reason", "actor"))})
 
     @action(detail=False, methods=["post"])
-    def accounts(self, request):
+    def accounts(self, request, format=None):
         obj = ledger.create_account(request.data, request.user)
         return Response({"id": obj.pk}, status=201)
 
     @action(detail=False, methods=["post"])
-    def verify_account(self, request):
+    def verify_account(self, request, format=None):
         obj = ledger.verify_account(request.data, request.user)
         return Response({"id": obj.pk, "ownership": obj.ownership})
 
     @action(detail=False, methods=["post"])
-    def mappings(self, request):
+    def mappings(self, request, format=None):
         obj = ledger.map_account(request.data, request.user)
         return Response({"id": obj.pk}, status=201)
 
     @action(detail=False, methods=["post"])
-    def vouchers(self, request):
+    def vouchers(self, request, format=None):
         files = request.FILES
         if getattr(request._request, "_csv_import_upload_limit_exceeded", None):
             raise VoucherTooLarge()
@@ -157,7 +161,7 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
         return Response({"id": obj.pk, "sha256": obj.sha256, "size": obj.size}, status=201)
 
     @action(detail=False, methods=["get"], url_path="voucher-download")
-    def voucher_download(self, request):
+    def voucher_download(self, request, format=None):
         obj = ledger.voucher(request.query_params.get("id"))
         response = FileResponse(obj.file.open("rb"), as_attachment=True, filename=obj.original_name, content_type="application/octet-stream")
         response["Cache-Control"] = "private, no-store"
@@ -165,54 +169,54 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
         return response
 
     @action(detail=False, methods=["post"])
-    def preview(self, request):
+    def preview(self, request, format=None):
         p = ledger.normalize(request.data, request.user)
         return Response({"payload": p, "duplicate_candidates": ledger.duplicate_candidates(p, request.user), "written": False})
 
     @action(detail=False, methods=["post"])
-    def instructions(self, request):
+    def instructions(self, request, format=None):
         obj, created = ledger.submit(request.data, request.user)
         return Response(instruction_data(obj), status=201 if created else 200)
 
     @action(detail=False, methods=["post"])
-    def approve(self, request):
+    def approve(self, request, format=None):
         return Response(instruction_data(ledger.approve(request.data.get("id"), request.user)))
 
     @action(detail=False, methods=["post"])
-    def cancel(self, request):
+    def cancel(self, request, format=None):
         return Response(instruction_data(ledger.cancel(request.data.get("id"), request.user, request.data.get("reason"))))
 
     @action(detail=False, methods=["post"])
-    def fail(self, request):
+    def fail(self, request, format=None):
         return Response(instruction_data(ledger.fail(request.data.get("id"), request.user, request.data.get("reason"), request.data.get("no_debit_confirmed"))))
 
     @action(detail=False, methods=["post"], url_path="post", url_name="post")
-    def execute(self, request):
+    def execute(self, request, format=None):
         obj = ledger.post(request.data.get("id"), request.user, voucher_checked=request.data.get("voucher_checked"))
         return Response(fact_data(obj))
 
     @action(detail=False, methods=["post"])
-    def transfers(self, request):
+    def transfers(self, request, format=None):
         historical = any(":" in str(request.data.get(key, "")) for key in ("outgoing", "incoming"))
         obj = ledger.match_historical_transfer(request.data, request.user) if historical else ledger.match_transfer(request.data, request.user)
         return Response({"id": obj.pk}, status=201)
 
     @action(detail=False, methods=["post"])
-    def classifications(self, request):
+    def classifications(self, request, format=None):
         obj = ledger.classify(request.data, request.user)
         return Response({"id": obj.pk}, status=201)
 
     @action(detail=False, methods=["post"])
-    def reviews(self, request):
+    def reviews(self, request, format=None):
         obj = ledger.reconcile(request.data, request.user)
         return Response({"id": obj.pk, "difference": str(obj.difference)}, status=201)
 
     @action(detail=False, methods=["get"])
-    def fact_detail(self, request):
+    def fact_detail(self, request, format=None):
         return Response(fact_data(FinanceFact.objects.select_related("account", "voucher").get(pk=ledger.pk(request.query_params.get("id")))))
 
     @action(detail=False, methods=["get"])
-    def facts(self, request):
+    def facts(self, request, format=None):
         start, end = ledger.iso(request.query_params.get("date_from", "1900-01-01")), ledger.iso(request.query_params.get("date_to", "2099-12-31"))
         if start > end:
             raise ledger.ValidationError("日期范围无效。")

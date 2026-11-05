@@ -10,6 +10,16 @@ api.interceptors.response.use(
     const config = error.config || {}
     const method = String(config.method || 'get').toLowerCase()
     const status = error.response?.status
+    if ([401, 403].includes(status) && typeof window !== 'undefined' && !String(config.url || '').startsWith('/session/') && window.location.pathname !== '/login') {
+      let expired = status === 401
+      if (status === 403) {
+        try {
+          const session = await api.get('/session/current-operator/')
+          expired = !session.data?.authenticated && !session.data?.development_superadmin
+        } catch { /* A failed identity check must not be mistaken for expiry. */ }
+      }
+      if (expired) window.location.assign(`/login?reason=expired&next=${encodeURIComponent(window.location.pathname + window.location.search)}`)
+    }
     const retryable = !status || [500, 502, 503, 504].includes(status)
     const canRetry = ['get', 'head', 'options'].includes(method) && retryable && !config.signal?.aborted
     const retries = config._backendRetryCount || 0

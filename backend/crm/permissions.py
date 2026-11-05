@@ -125,6 +125,12 @@ def module_for_request(request, view=None):
     parts = path.split("/") if path else []
     if parts and parts[0] == "api":
         parts = parts[1:]
+    # DRF's format_suffix_patterns passes the suffix in resolver kwargs.
+    # Only strip a suffix verified by the router, never arbitrary user input.
+    match = getattr(request, "resolver_match", None)
+    format_suffix = match.kwargs.get("format") if match else None
+    if format_suffix and parts and parts[0].endswith("." + format_suffix):
+        parts[0] = parts[0][:-(len(format_suffix) + 1)]
     if parts and parts[0] == "context":
         return CONTEXT_MODULES.get(parts[1]) if len(parts) > 1 else None
     if parts and parts[0] == "operation-logs":

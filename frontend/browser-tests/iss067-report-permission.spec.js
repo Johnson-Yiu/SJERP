@@ -13,7 +13,7 @@ test('employee opening an old unauthorized report URL gets a valid source and ke
   await expect(page.getByRole('alert')).toContainText('地址中的报表来源当前不可查看')
   await expect(page.locator('.report-block')).toHaveCount(0)
   expect(state.reportRequests).toHaveLength(0)
-  await page.screenshot({ path: 'docs/uat-evidence/iss-067-report-permission/employee-old-url-1440.png', fullPage: true })
+  await page.screenshot({ path: test.info().outputPath('employee-old-url-1440.png'), fullPage: true })
 
   await page.getByRole('link', { name: '经营概览', exact: true }).click()
   await page.goBack()
@@ -33,13 +33,13 @@ test('employee opening an old unauthorized report URL gets a valid source and ke
   await expect(source).toHaveValue('customers')
   await expect(page.locator('.reports-page > .report-block .block-kpis')).toBeVisible()
   await expect(page.locator('.saved-block')).toHaveCount(1)
-  await page.screenshot({ path: 'docs/uat-evidence/iss-067-report-permission/employee-authorized-source-1440.png', fullPage: true })
+  await page.screenshot({ path: test.info().outputPath('employee-authorized-source-1440.png'), fullPage: true })
 
   await page.setViewportSize({ width: 700, height: 1000 })
   await page.goto(oldSalesUrl)
   await expect(page.getByRole('combobox', { name: '数据来源', exact: true })).toHaveValue('customers')
   await expect(page.getByRole('alert')).toContainText('地址中的报表来源当前不可查看')
-  await page.screenshot({ path: 'docs/uat-evidence/iss-067-report-permission/employee-old-url-700.png', fullPage: true })
+  await page.screenshot({ path: test.info().outputPath('employee-old-url-700.png'), fullPage: true })
 })
 
 test('shared template path remains available to an employee with the source permission', async ({ page }) => {

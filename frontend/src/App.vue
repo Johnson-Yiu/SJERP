@@ -15,7 +15,7 @@ const rootRouter = useRouter()
 const manager = createWorkspaceManager(rootRouter)
 provide(workspaceManagerKey, manager)
 watch(() => accessState.operator, async value => {
-  const identity = value ? String(value.user_id ?? value.id ?? (value.development_superadmin ? 'development' : value.name)) : 'anonymous'
+  const identity = value ? String(value.user_id ?? value.id ?? value.employee_profile_id ?? (value.development_superadmin && !value.authenticated ? 'development' : 'unidentified-session')) : 'anonymous'
   manager.reset(identity)
   if (value) { await rootRouter.isReady(); if (accessState.operator === value && !manager.tabs.length && !manager.isOpening()) await manager.open(rootRouter.currentRoute.value.fullPath) }
 }, { immediate: true, flush: 'sync' })

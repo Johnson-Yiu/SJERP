@@ -651,7 +651,7 @@ def current_operator(request):
     if development_superadmin_enabled():
         profile = employee_profile_for(request.user) or _profile_for(request.user)
         name = (profile.display_name if profile else request.user.get_full_name() or request.user.username) if request.user.is_authenticated else settings.DEFAULT_OPERATOR_NAME
-        return Response({"name": name, "role": "超级管理员", "authenticated": request.user.is_authenticated,
+        return Response({"name": name, "role": "超级管理员", "authenticated": request.user.is_authenticated, "user_id": request.user.pk if request.user.is_authenticated else None,
                          "development_superadmin": True, "rbac_enforcement": settings.RBAC_ENFORCEMENT,
                          "has_all_permissions": True, "can_manage_permissions": True, "permissions": permission_payload,
                          "data_scope": "all", "data_scope_display": "全部数据",
@@ -665,7 +665,7 @@ def current_operator(request):
         roles = list(profile.roles.filter(active=True).values_list("name", flat=True)) if profile and profile.active else []
         role = "超级管理员" if request.user.is_superuser else "、".join(roles) or "未分配角色"
         scope = effective_data_scope(request.user)
-        return Response({"name": name, "role": role, "authenticated": True, "development_superadmin": False,
+        return Response({"name": name, "role": role, "authenticated": True, "user_id": request.user.pk, "development_superadmin": False,
                          "rbac_enforcement": settings.RBAC_ENFORCEMENT, "has_all_permissions": complete,
                          "can_manage_permissions": can_manage, "permissions": permission_payload,
                          "data_scope": scope, "data_scope_display": data_scope_display(scope),
@@ -673,7 +673,7 @@ def current_operator(request):
                          "unit_id": profile.unit_id if profile and profile.active else None,
                          "unit_name": profile.unit.name if profile and profile.active else "",
                          "can_manage_hs_codes": can_manage, "audit_log_enabled": settings.AUDIT_LOG_ENABLED})
-    return Response({"name": "未登录", "role": "未登录", "authenticated": False, "development_superadmin": False,
+    return Response({"name": "未登录", "role": "未登录", "authenticated": False, "user_id": None, "development_superadmin": False,
                      "rbac_enforcement": settings.RBAC_ENFORCEMENT, "has_all_permissions": complete,
                      "can_manage_permissions": False, "permissions": permission_payload,
                      "data_scope": "none", "data_scope_display": "未分配数据范围",

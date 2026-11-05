@@ -167,3 +167,27 @@ test('bounded synthetic workspaces measure requests, mounted panels, document li
  expect(writes).toBe(0)
  await writeFile(path.join(evidence,'resources.json'),JSON.stringify({snapshots,durations,notes:'Document/window listener registrations and application timer wrappers are measured; once-listener records may overcount. JS heap is opportunistic and not proof of GC. No browser process memory claim.'},null,2))
 })
+
+test('direct draft links, native refresh cancellation and synthetic account changes isolate all in-memory input', async ({ page, request }) => {
+ test.setTimeout(180000)
+ await page.goto('/customers?create=1',{waitUntil:'domcontentloaded'})
+ await expect(page.getByRole('tab')).toHaveCount(1)
+ const name=active(page).locator('.customer-editor .field').filter({hasText:'客户名称'}).locator('input').first()
+ const secret=`Workspace private draft ${Date.now()}`
+ await name.fill(secret)
+ const nativePromise=page.waitForEvent('dialog')
+ const reload=page.reload({waitUntil:'domcontentloaded'}).catch(error=>error.message)
+ const native=await nativePromise;expect(native.type()).toBe('beforeunload');await native.dismiss();await reload
+ await expect(name).toHaveValue(secret)
+ const operator=(await request.get('/api/session/current-operator/')).json()
+ const payload=await operator
+ for(const id of [111,222]){
+  await page.evaluate(async ({payload,id})=>{const {setAccessOperator}=await import('/src/accessControl.js');setAccessOperator({...payload,user_id:id,name:'Same synthetic display name',authenticated:true})},{payload,id})
+  await expect(page.getByRole('tab')).toHaveCount(1)
+  await expect(name).toHaveValue('')
+  if(id===111) await name.fill('Workspace account 111 only')
+ }
+ const stored=await page.evaluate(()=>[...Object.values(localStorage),...Object.values(sessionStorage)].join('\n'))
+ expect(stored).not.toContain(secret);expect(stored).not.toContain('Workspace account 111 only')
+ await writeFile(path.join(evidence,'identity-boundary.json'),JSON.stringify({nativeBeforeUnload:'cancelled and retained',accountChange:'synthetic setAccessOperator 111→222, same display name',storedDraftBody:false,limitation:'This exercises the workspace integration boundary; it is not a real employee login or identity-package acceptance.'},null,2))
+})

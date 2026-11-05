@@ -1,0 +1,455 @@
+Isolation run cd7c08d0-a2c7-4586-adca-a267ce0ab0a2; API 127.0.0.1:13450; Vite 127.0.0.1:13451
+
+Isolated SQLite: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-Kwz9RD\db.sqlite3
+
+Isolated MEDIA_ROOT: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-Kwz9RD\media
+
+Playwright selection: import-ux.spec.js
+
+Isolated RBAC mode: development superadmin
+
+[isolation] Pre-migration isolation verification
+
+{'runId': 'cd7c08d0-a2c7-4586-adca-a267ce0ab0a2', 'token': '[redacted ephemeral isolation token]', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-Kwz9RD\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-Kwz9RD\\media', 'rbacEnforcement': False}
+
+[isolation] Pre-migration isolation verification: passed
+
+[isolation] Django system check
+
+System check identified no issues (0 silenced).
+
+[isolation] Django system check: passed
+
+[isolation] Isolated database migrations
+
+Operations to perform:
+
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+
+Running migrations:
+
+  Applying contenttypes.0001_initial... OK
+
+  Applying auth.0001_initial... OK
+
+  Applying admin.0001_initial... OK
+
+  Applying admin.0002_logentry_remove_auto_add... OK
+
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+
+  Applying contenttypes.0002_remove_content_type_name... OK
+
+  Applying auth.0002_alter_permission_name_max_length... OK
+
+  Applying auth.0003_alter_user_email_max_length... OK
+
+  Applying auth.0004_alter_user_username_opts... OK
+
+  Applying auth.0005_alter_user_last_login_null... OK
+
+  Applying auth.0006_require_contenttypes_0002... OK
+
+  Applying auth.0007_alter_validators_add_error_messages... OK
+
+  Applying auth.0008_alter_user_username_max_length... OK
+
+  Applying auth.0009_alter_user_last_name_max_length... OK
+
+  Applying auth.0010_alter_group_name_max_length... OK
+
+  Applying auth.0011_update_proxy_permissions... OK
+
+  Applying auth.0012_alter_user_first_name_max_length... OK
+
+  Applying crm.0001_initial... OK
+
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+
+  Applying crm.0003_customer_sales_stages... OK
+
+  Applying crm.0004_organization_and_permissions... OK
+
+  Applying crm.0005_alter_followup_subject... OK
+
+  Applying crm.0006_customercodesequence... OK
+
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+
+  Applying crm.0009_product_hs_code_product_name_en... OK
+
+  Applying crm.0010_sku_parameter_values_product_details... OK
+
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+
+  Applying crm.0013_quoteimportantnote... OK
+
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+
+  Applying crm.0016_trade_fulfillment... OK
+
+  Applying crm.0017_product_suppliers... OK
+
+  Applying crm.0018_finance_operating_ledger... OK
+
+  Applying crm.0019_transaction_allocated_amount... OK
+
+  Applying crm.0020_contract_change_request... OK
+
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+
+  Applying crm.0022_merge_20260823_2351... OK
+
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+
+  Applying crm.0025_packagingtemplate_supplier... OK
+
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+
+  Applying crm.0029_quote_child_revision_counter... OK
+
+  Applying crm.0029_backfill_sku_internal_identity... OK
+
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+
+  Applying crm.0032_currency_amount_precision... OK
+
+  Applying crm.0033_sku_safety_history... OK
+
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+
+  Applying crm.0036_followupattachment... OK
+
+  Applying crm.0037_sku_identity_safety... OK
+
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+
+  Applying crm.0039_categoryattribute_required... OK
+
+  Applying crm.0040_purchaseorder_order_optional... OK
+
+  Applying crm.0041_inventorymovement_related_orders... OK
+
+  Applying crm.0042_alter_inventorymovement_type... OK
+
+  Applying crm.0043_alter_transaction_kind... OK
+
+  Applying crm.0044_operationlog... OK
+
+  Applying crm.0045_trade_finance_safety... OK
+
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+
+  Applying crm.0048_reporting_geography... OK
+
+  Applying crm.0049_supplier_main_products... OK
+
+  Applying crm.0050_supplier_store_url... OK
+
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+
+  Applying crm.0053_hs_code_catalog... OK
+
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+
+  Applying crm.0057_sku_name_separator... OK
+
+  Applying crm.0058_order_item_supplier_allocation... OK
+
+  Applying crm.0059_supplier_supply_categories... OK
+
+  Applying crm.0060_product_combination_rules... OK
+
+  Applying crm.0061_sales_rules... OK
+
+  Applying crm.0062_sku_trade_units... OK
+
+  Applying crm.0063_trade_unit_base_snapshots... OK
+
+  Applying crm.0064_goods_receipt_reversal... OK
+
+  Applying crm.0065_shipment_reversal... OK
+
+  Applying crm.0066_transaction_void_metadata... OK
+
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+
+  Applying crm.0068_documentnumbersequence... OK
+
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+
+  Applying crm.0072_supplier_payment_terms... OK
+
+  Applying crm.0073_followup_next_follow_up_mode... OK
+
+  Applying crm.0074_functional_rbac_modules... OK
+
+  Applying crm.0075_alter_rolepermission_can_view... OK
+
+  Applying crm.0076_customer_owner_profile... OK
+
+  Applying crm.0077_rmb_cash_events... OK
+
+  Applying crm.0078_historical_contract_scope... OK
+
+  Applying crm.0079_shared_report_template... OK
+
+  Applying crm.0080_formal_party_snapshots... OK
+
+  Applying crm.0081_transaction_rmb_reference_label... OK
+
+  Applying crm.0081_supplier_lifecycle... OK
+
+  Applying crm.0081_product_certificate_private_file... OK
+
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+
+  Applying crm.0083_customer_supplier_preference... OK
+
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+
+  Applying crm.0085_order_quantity_adjustment... OK
+
+  Applying crm.0086_purchase_moq_exception... OK
+
+  Applying crm.0087_amount_calculation_compatibility... OK
+
+  Applying crm.0088_operationlog_append_only... OK
+
+  Applying crm.0089_operationlog_operator_protect... OK
+
+  Applying crm.0091_csv_import_audit... OK
+
+  Applying crm.0090_fulfillment_idempotency... OK
+
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+
+  Applying crm.0093_csv_import_preview_audit... OK
+
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+
+  Applying crm.0090_fulfillment_request_idempotency... OK
+
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+
+  Applying crm.0096_quote_pi_template_snapshots... OK
+
+  Applying crm.0097_merge_quote_and_cash_review... OK
+
+  Applying crm.0098_finance_accounts... OK
+
+  Applying crm.0099_finance_closeout_workflows... OK
+
+  Applying crm.0100_finance_legacy_fact_links... OK
+
+  Applying crm.0101_finance_historical_transfer_links... OK
+
+  Applying crm.0102_bank_private_voucher_binding... OK
+
+  Applying crm.0098_history_takeover_workflow... OK
+
+  Applying crm.0103_merge_finance_and_history... OK
+
+  Applying crm.0104_historical_inventory_baseline... OK
+
+  Applying crm.0105_historical_operational_contract... OK
+
+  Applying crm.0106_historical_purchase_balance_mode... OK
+
+  Applying crm.0107_inventory_movement_location... OK
+
+  Applying crm.0108_history_append_only_truncate... OK
+
+  Applying sessions.0001_initial... OK
+
+[isolation] Isolated database migrations: passed
+
+[isolation] Migration completeness check
+
+[isolation] Migration completeness check: passed
+
+[isolation] Post-migration isolation verification
+
+{'runId': 'cd7c08d0-a2c7-4586-adca-a267ce0ab0a2', 'token': '[redacted ephemeral isolation token]', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-Kwz9RD\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-Kwz9RD\\media', 'rbacEnforcement': False}
+
+[isolation] Post-migration isolation verification: passed
+
+[isolated Django API] Performing system checks...
+
+
+
+[isolated Django API] System check identified no issues (0 silenced).
+
+[isolated Django API] November 05, 2026 - 17:28:02
+
+Django version 6.0.9, using settings 'test_support.isolated_settings'
+
+Starting development server at http://127.0.0.1:13450/
+
+Quit the server with CTRL-BREAK.
+
+
+
+[isolated Django API] WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+
+[isolation] Direct Django API identity, SQLite path, and MEDIA_ROOT: passed
+
+[isolated Django API] [05/Nov/2026 17:28:03] "GET /api/__test__/isolation/[redacted ephemeral isolation token]/ HTTP/1.1" 200 326
+
+[isolated Vite]
+
+  VITE v8.3.5  ready in 797 ms
+
+
+
+[isolated Vite]   ➜  Local:   http://127.0.0.1:13451/
+
+[isolation] Vite identity: passed
+
+[isolated Django API] [05/Nov/2026 17:28:04] "GET /api/__test__/isolation/[redacted ephemeral isolation token]/ HTTP/1.1" 200 326
+
+[isolation] Vite /api proxy identity, SQLite path, and MEDIA_ROOT: passed
+
+[isolation] Playwright suite
+
+[isolated Vite] 17:28:05 [vite] (client) [optimizer] bundling dependencies...
+
+
+
+Running 6 tests using 1 worker
+
+
+
+(node:23000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  ok 1 browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1440 (7.4s)
+
+  ok 2 browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1280 (4.8s)
+
+  ok 3 browser-tests\import-ux.spec.js:7:37 › import real computed bounds and long error table 1024 (7.4s)
+
+IMPORT_DOWNLOAD_TRACE {"event":"main-frame-navigation","elapsedMs":45,"url":"http://127.0.0.1:13451/import"}
+
+IMPORT_DOWNLOAD_TRACE {"event":"main-frame-navigation","elapsedMs":1578,"url":"http://127.0.0.1:13451/import"}
+
+IMPORT_DOWNLOAD_TRACE {"event":"main-frame-navigation","elapsedMs":1717,"url":"http://127.0.0.1:13451/import"}
+
+IMPORT_DOWNLOAD_TRACE {"event":"download-anchor-click","elapsedMs":6663,"scheme":"blob"}
+
+IMPORT_DOWNLOAD_TRACE {"event":"download-start","elapsedMs":6697,"filename":"customers_template.csv"}
+
+IMPORT_DOWNLOAD_TRACE {"event":"download-anchor-click","elapsedMs":7470,"scheme":"blob"}
+
+IMPORT_DOWNLOAD_TRACE {"event":"download-start","elapsedMs":7484,"filename":"customers_import_failures.csv"}
+
+IMPORT_DOWNLOAD_TRACE {"event":"page-close","elapsedMs":7558}
+
+IMPORT_DOWNLOAD_TRACE {"event":"context-close","elapsedMs":7569}
+
+  ok 4 browser-tests\import-ux.spec.js:29:1 › downloads contain actual UTF8 BOM headers and correctly quoted failure rows (7.7s)
+
+  x  5 browser-tests\import-ux.spec.js:30:1 › pending preview and execute block back/navigation, duplicates and changes; cancel never writes (30.8s)
+
+(node:31940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  ok 6 browser-tests\import-ux.spec.js:31:1 › restricted import entry and template retry (9.1s)
+
+
+
+
+
+  1) browser-tests\import-ux.spec.js:30:1 › pending preview and execute block back/navigation, duplicates and changes; cancel never writes
+
+
+
+    Test timeout of 30000ms exceeded.
+
+
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+
+    Call log:
+
+      - navigating to "http://127.0.0.1:13451/customers", waiting until "load"
+
+
+
+
+
+      28 | }
+
+      29 | test('downloads contain actual UTF8 BOM headers and correctly quoted failure rows',async({page})=>{await traceImportDownload(page);const s=await fixture(page);await page.goto('/import');let p=page.waitForEvent('download');await page.locator('.template-btn').click();let d=await p;let bytes=await readFile(await d.path());expect([...bytes.subarray(0,3)]).toEqual([239,187,191]);expect(bytes.toString('utf8')).toBe('\ufeffcode,name,notes\r\n');s.preview={...valid,preview_token:null,errors:[{row:3,key:'KEY,"1"',message:'原因, "引号"\n第二行'}]};await choose(page);await page.getByRole('button',{name:'预览并校验',exact:true}).click();p=page.waitForEvent('download');await page.getByRole('button',{name:'下载失败清单 CSV',exact:true}).click();d=await p;bytes=await readFile(await d.path());expect(bytes.toString('utf8')).toBe('\ufeffrow,key,message\r\n"3","KEY,""1""","原因, ""引号""\n第二行"')})
+
+    > 30 | test('pending preview and execute block back/navigation, duplicates and changes; cancel never writes',async({page})=>{const s=await fixture(page);await page.goto('/customers');await page.getByRole('link',{name:'数据导入',exact:true}).click();await choose(page);s.pending=gate();await page.getByRole('button',{name:'预览并校验',exact:true}).click();await expect(page.locator('input[type=file]')).toBeDisabled();await page.getByRole('link',{name:'客户管理',exact:true}).click();await expect(page).toHaveURL(/\/import$/);await page.goBack();await expect(page).toHaveURL(/\/import$/);expect(s.posts).toHaveLength(1);s.pending.resolve();await expect(page.getByRole('button',{name:'确认执行导入',exact:true})).toBeEnabled();s.pending=null;await page.getByRole('button',{name:'确认执行导入',exact:true}).click();await page.getByRole('button',{name:'取消',exact:true}).click();expect(s.posts).toHaveLength(1);await page.getByRole('button',{name:'确认执行导入',exact:true}).click();s.pending=gate();await page.getByRole('button',{name:'确认导入',exact:true}).click();await expect(page.getByText('正在执行导入，请勿离开',{exact:true})).toBeVisible();await page.getByRole('link',{name:'客户管理',exact:true}).click();await page.goBack();await expect(page).toHaveURL(/\/import$/);expect(s.posts).toHaveLength(2);s.pending.resolve();await expect(page.getByText('导入完成，已写入数据库',{exact:true})).toBeVisible();await page.getByRole('link',{name:'前往客户',exact:true}).click();await expect(page).toHaveURL(/\/customers$/)})
+
+         |                                                                                                                                                              ^
+
+      31 | test('restricted import entry and template retry',async({page})=>{const s=await fixture(page);s.readOnly=true;s.templateFail=true;await page.goto('/import');await expect(page.locator('.template-btn')).toBeDisabled();await expect(page.locator('input[type=file]')).toBeDisabled();await expect(page.getByText('当前账号仅可查看导入说明，不能预览或执行导入。')).toBeVisible();s.templateFail=false;await page.getByRole('button',{name:'重新加载模板',exact:true}).click();await expect(page.locator('.template-btn')).toBeEnabled();expect(s.posts).toHaveLength(0)})
+
+      32 |
+
+        at D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\frontend\browser-tests\import-ux.spec.js:30:158
+
+
+
+    Error Context: ..\docs\uat-evidence\local-release-validation-20261105\import-download-target-2\artifacts\cd7c08d0-a2c7-4586-adca-a267ce0ab0a2\import-ux-pending-preview--d7b8e-changes-cancel-never-writes\error-context.md
+
+
+
+  1 failed
+
+    browser-tests\import-ux.spec.js:30:1 › pending preview and execute block back/navigation, duplicates and changes; cancel never writes
+
+  5 passed (1.4m)
+
+[isolation] Owned API and Vite process trees stopped; both ports are released.
+
+Removed only this run's marked temporary database and MEDIA_ROOT.
+
+Error: Isolated Playwright suite exited with code 1.
+
+    at runCommand (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/frontend/scripts/run-isolated-browser-tests.mjs:176:25)
+
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+    at async runStage (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/frontend/scripts/run-isolated-browser-tests.mjs:181:3)
+
+    at async main (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/frontend/scripts/run-isolated-browser-tests.mjs:652:7)

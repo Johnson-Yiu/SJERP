@@ -1,0 +1,50 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\import-diagnostics-snapshot\\docs\\uat-evidence\\probes",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "font-trace-raw-hash.json",
+      "bytes": 86,
+      "raw_sha256": "af89b185c33e07dd96c06a1acca07a5ee0de456ef375f348b47b955636800575",
+      "published_sha256": "df68237be26bfd6ce14a60d2f84247745da50873291ddb4bc9e24f299905c233",
+      "redactions": 0
+    },
+    {
+      "path": "font-trace.log",
+      "bytes": 18853,
+      "raw_sha256": "2b9d672d2ac7e19981f473617a1d36aa611f7fffd9b0b4cf9e6d11086bf12bf4",
+      "published_sha256": "1ee2bc227701a4c2e08497b52477c7377119ef07b0d1f99d1a262523760e3ee3",
+      "redactions": 4
+    },
+    {
+      "path": "initial-raw-hash.json",
+      "bytes": 86,
+      "raw_sha256": "88204543b5bc82eb26260017545fd32d942a8db0da6f7b38618f26deb7566b9f",
+      "published_sha256": "ebf497c3006c52843b06dc11b0622dd4ff3ec6c42d15342b25e055a6502af9b4",
+      "redactions": 0
+    },
+    {
+      "path": "initial.log",
+      "bytes": 12634,
+      "raw_sha256": "eff89ba037ff9205346b9e67637e4554a852f912b22c016729dcc68658478e62",
+      "published_sha256": "e8b6e8d70ea7afe7b8a25373937bf120322bc7f403c508349deb15c73c977838",
+      "redactions": 4
+    },
+    {
+      "path": "second-raw-hash.json",
+      "bytes": 86,
+      "raw_sha256": "910f7064bb16d2daa81681d5206fd170882a276c4c4860bdca657803fa9bbe8c",
+      "published_sha256": "807330154f80579c7251b5cb172f2a45bfb11c8030a752cbe441403ff9f3586d",
+      "redactions": 0
+    },
+    {
+      "path": "second.log",
+      "bytes": 17848,
+      "raw_sha256": "4ea8820f942aa51dc7e34adcc450846ac2d7b42141ace65f123808434453eb90",
+      "published_sha256": "ac8ca4f6854758c08c284bb5feabcf205e21dea47d06e1c4c00c0ad9a7222062",
+      "redactions": 4
+    }
+  ],
+  "omitted": [],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

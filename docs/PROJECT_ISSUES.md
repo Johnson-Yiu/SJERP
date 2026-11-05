@@ -2,6 +2,8 @@
 
 ## LOCAL-RELEASE-VALIDATION-03 进展（2026-11-05）
 
+导入 CSV 下载取消在 `d7d9276` 全套中真实发生，根因 UNKNOWN。隔离导入文件测试依次为 6/6、5/6（客户页 `load` 超时）、加入 DOM 就绪及链接/Blob/字体事件诊断后 6/6；保留中间失败，不以定向成功覆盖全套。一次新运行中外部 Google Fonts 请求完成后页面触发 load，仅为该次时序，不能证明旧超时原因；诊断代码 `44b01cd04e2a08ad69337cdfbc5f8b5454a2b848` 不改导入业务。见[原始哈希及脱敏日志](uat-evidence/local-release-validation-20261105/import-download-diagnostics/publication-manifest.json)。
+
 诊断候选 `d7d927658e26727b6ebef135708d77278b9ee258` 完整浏览器九配置为 257 通过/9 失败（其中主套件 233/8，图片导出 0/1），整体 FAIL；构建和历史 Chrome 通过。原失败含页面 load 超时、资金审核级联及导入/报价下载取消，详细日志和截图已保存，具体 load 阻塞资源及下载取消归因 UNKNOWN。核心来源在该测试后才合入，该结果不代表核心集成候选。
 
 SKU 只读浏览器用例在候选 `d7d9276` 等待整页 load 时超时，快照已有 SKU 标题；测试提交 `4463ef8ca85871fa39c73941b608b66c57597f97` 保留原只读权限断言并等待 DOM 就绪，独立 Chromium 文件回归 17/17 通过。阻塞 load 的具体资源未知，不覆盖原全套失败；详情见[证据](uat-evidence/local-release-validation-20261105/core-sku-target-evidence/publication-manifest.json)。

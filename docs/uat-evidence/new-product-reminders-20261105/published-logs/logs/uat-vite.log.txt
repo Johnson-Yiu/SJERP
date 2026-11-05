@@ -1,0 +1,13 @@
+
+> senju-crm-erp@1.0.0 dev
+> vite --port 5276 --host 127.0.0.1
+
+
+  VITE v8.3.5  ready in 9103 ms
+
+  ➜  Local:   http://127.0.0.1:5276/
+18:52:49 [vite] (client) [optimizer] scanning dependencies...
+18:52:53 [vite] (client) [optimizer] bundling dependencies...
+19:01:35 [vite] (client) hmr update /src/components/NewProductReminders.vue, /src/components/NewProductReminders.vue?vue&type=style&index=0&scoped=20310d9a&lang.css
+19:25:03 [vite] (client) hmr update /src/components/NewProductReminders.vue
+19:25:48 [vite] (client) hmr update /src/components/NewProductReminders.vue

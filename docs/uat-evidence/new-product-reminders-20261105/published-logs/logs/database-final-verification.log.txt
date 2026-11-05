@@ -1,0 +1,58 @@
+100 objects imported automatically (use -v 2 for details).
+
+{
+  "status": "PASS",
+  "synthetic_database": ".tmp-reminder-uat.sqlite3",
+  "record_checks": [
+    {
+      "id": 2,
+      "version": 3,
+      "void_reason": "�ϳ����գ��ͻ�������;",
+      "created_by": "������������Ա����ʵ��Ա����",
+      "audit_count": 3,
+      "audit_versions": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": 3,
+      "version": 3,
+      "void_reason": "�ϳ����գ��ͻ�������;",
+      "created_by": "������������Ա����ʵ��Ա����",
+      "audit_count": 3,
+      "audit_versions": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": 56,
+      "version": 3,
+      "void_reason": "������������գ�������;����",
+      "created_by": "������������Ա����ʵ��Ա����",
+      "audit_count": 3,
+      "audit_versions": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": 57,
+      "version": 3,
+      "void_reason": "��ʵHTTP�ϳ�����",
+      "created_by": "������������Ա����ʵ��Ա����",
+      "audit_count": 3,
+      "audit_versions": [
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "pagination_requirements": 52,
+  "customers": 2
+}

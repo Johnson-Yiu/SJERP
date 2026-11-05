@@ -1,0 +1,367 @@
+[
+  {
+    "method": "GET",
+    "path": "new-product-reminders/?state=active&search=%E5%86%85%E7%BD%AE%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%88%E6%88%90%E6%96%B0%E5%93%81%E5%A3%81%E7%81%AF",
+    "status": 200,
+    "body": {
+      "count": 0,
+      "next": null,
+      "previous": null,
+      "results": []
+    }
+  },
+  {
+    "method": "GET",
+    "path": "new-product-reminders/?state=void&search=%E5%86%85%E7%BD%AE%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%88%E6%88%90%E6%96%B0%E5%93%81%E5%A3%81%E7%81%AF",
+    "status": 200,
+    "body": {
+      "count": 1,
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "id": 56,
+          "requirement": "内置浏览器合成新品壁灯",
+          "specification": "IP67 / 3000K / 庭院入口",
+          "other_requirements": "未建档；用于本地验收",
+          "tag": "新品提醒",
+          "customer_name": "合成验收客户甲",
+          "created_at": "2026-11-05T19:17:51.308528+08:00",
+          "updated_at": "2026-11-05T19:22:08.242732+08:00",
+          "request_key": "c0f6cdc1-e01d-4959-9f77-70ea1d7d3d8d",
+          "version": 3,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": "2026-11-05T19:22:08.242732+08:00",
+          "voided_by": "开发超级管理员（非实名员工）",
+          "void_reason": "内置浏览器验收：需求用途调整",
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "path": "new-product-reminders/?state=all&search=%E5%86%85%E7%BD%AE%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%88%E6%88%90%E6%96%B0%E5%93%81%E5%A3%81%E7%81%AF",
+    "status": 200,
+    "body": {
+      "count": 1,
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "id": 56,
+          "requirement": "内置浏览器合成新品壁灯",
+          "specification": "IP67 / 3000K / 庭院入口",
+          "other_requirements": "未建档；用于本地验收",
+          "tag": "新品提醒",
+          "customer_name": "合成验收客户甲",
+          "created_at": "2026-11-05T19:17:51.308528+08:00",
+          "updated_at": "2026-11-05T19:22:08.242732+08:00",
+          "request_key": "c0f6cdc1-e01d-4959-9f77-70ea1d7d3d8d",
+          "version": 3,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": "2026-11-05T19:22:08.242732+08:00",
+          "voided_by": "开发超级管理员（非实名员工）",
+          "void_reason": "内置浏览器验收：需求用途调整",
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "path": "new-product-reminders/56/",
+    "status": 200,
+    "body": {
+      "id": 56,
+      "requirement": "内置浏览器合成新品壁灯",
+      "specification": "IP67 / 3000K / 庭院入口",
+      "other_requirements": "未建档；用于本地验收",
+      "tag": "新品提醒",
+      "customer_name": "合成验收客户甲",
+      "created_at": "2026-11-05T19:17:51.308528+08:00",
+      "updated_at": "2026-11-05T19:22:08.242732+08:00",
+      "request_key": "c0f6cdc1-e01d-4959-9f77-70ea1d7d3d8d",
+      "version": 3,
+      "created_by": "开发超级管理员（非实名员工）",
+      "voided_at": "2026-11-05T19:22:08.242732+08:00",
+      "voided_by": "开发超级管理员（非实名员工）",
+      "void_reason": "内置浏览器验收：需求用途调整",
+      "customer": 1,
+      "follow_up": null,
+      "contact": null,
+      "product": null
+    }
+  },
+  {
+    "method": "GET",
+    "path": "new-product-reminders/56/history/",
+    "status": 200,
+    "body": [
+      {
+        "id": 62,
+        "created_at": "2026-11-05T11:17:51.309525Z",
+        "action_label": "创建新品提醒",
+        "metadata": {
+          "actor": "开发超级管理员（非实名员工）"
+        },
+        "before_data": {},
+        "after_data": {
+          "id": 56,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "内置浏览器合成新品壁灯",
+          "specification": "IP66 / 2700K / 庭院",
+          "other_requirements": "未建档；用于本地验收",
+          "version": 1,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": ""
+        }
+      },
+      {
+        "id": 63,
+        "created_at": "2026-11-05T11:20:41.770627Z",
+        "action_label": "修改新品提醒",
+        "metadata": {
+          "actor": "开发超级管理员（非实名员工）"
+        },
+        "before_data": {
+          "id": 56,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "内置浏览器合成新品壁灯",
+          "specification": "IP66 / 2700K / 庭院",
+          "other_requirements": "未建档；用于本地验收",
+          "version": 1,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": ""
+        },
+        "after_data": {
+          "id": 56,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "内置浏览器合成新品壁灯",
+          "specification": "IP67 / 3000K / 庭院入口",
+          "other_requirements": "未建档；用于本地验收",
+          "version": 2,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": ""
+        }
+      },
+      {
+        "id": 64,
+        "created_at": "2026-11-05T11:22:08.245724Z",
+        "action_label": "作废新品提醒",
+        "metadata": {
+          "actor": "开发超级管理员（非实名员工）"
+        },
+        "before_data": {
+          "id": 56,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "内置浏览器合成新品壁灯",
+          "specification": "IP67 / 3000K / 庭院入口",
+          "other_requirements": "未建档；用于本地验收",
+          "version": 2,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": ""
+        },
+        "after_data": {
+          "id": 56,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "内置浏览器合成新品壁灯",
+          "specification": "IP67 / 3000K / 庭院入口",
+          "other_requirements": "未建档；用于本地验收",
+          "version": 3,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": "2026-11-05 11:22:08.242732+00:00",
+          "voided_by": "开发超级管理员（非实名员工）",
+          "void_reason": "内置浏览器验收：需求用途调整"
+        }
+      }
+    ]
+  },
+  {
+    "method": "DELETE",
+    "path": "new-product-reminders/56/",
+    "status": 405,
+    "body": {
+      "detail": "方法 “DELETE” 不被允许。"
+    }
+  },
+  {
+    "method": "DELETE",
+    "path": "new-product-reminders/",
+    "status": 405,
+    "body": {
+      "detail": "方法 “DELETE” 不被允许。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "new-product-reminders/bulk-delete/",
+    "status": 405,
+    "body": {
+      "detail": "方法 “POST” 不被允许。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "new-product-reminders/",
+    "status": 201,
+    "body": {
+      "id": 57,
+      "requirement": "真实HTTP合成新品需求",
+      "specification": "IP65",
+      "other_requirements": "",
+      "tag": "新品提醒",
+      "customer_name": "合成验收客户甲",
+      "created_at": "2026-11-05T19:28:29.229996+08:00",
+      "updated_at": "2026-11-05T19:28:29.229996+08:00",
+      "request_key": "1a711696-5bc3-4dcf-a3fe-36a8454e5177",
+      "version": 1,
+      "created_by": "开发超级管理员（非实名员工）",
+      "voided_at": null,
+      "voided_by": "",
+      "void_reason": "",
+      "customer": 1,
+      "follow_up": 1,
+      "contact": null,
+      "product": null
+    }
+  },
+  {
+    "method": "POST",
+    "path": "new-product-reminders/",
+    "status": 200,
+    "body": {
+      "id": 57,
+      "requirement": "真实HTTP合成新品需求",
+      "specification": "IP65",
+      "other_requirements": "",
+      "tag": "新品提醒",
+      "customer_name": "合成验收客户甲",
+      "created_at": "2026-11-05T19:28:29.229996+08:00",
+      "updated_at": "2026-11-05T19:28:29.229996+08:00",
+      "request_key": "1a711696-5bc3-4dcf-a3fe-36a8454e5177",
+      "version": 1,
+      "created_by": "开发超级管理员（非实名员工）",
+      "voided_at": null,
+      "voided_by": "",
+      "void_reason": "",
+      "customer": 1,
+      "follow_up": 1,
+      "contact": null,
+      "product": null
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "new-product-reminders/57/",
+    "status": 400,
+    "body": {
+      "non_field_errors": [
+        "包含不可修改的字段。"
+      ]
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "new-product-reminders/57/",
+    "status": 200,
+    "body": {
+      "id": 57,
+      "requirement": "真实HTTP合成新品需求",
+      "specification": "IP68",
+      "other_requirements": "",
+      "tag": "新品提醒",
+      "customer_name": "合成验收客户甲",
+      "created_at": "2026-11-05T19:28:29.229996+08:00",
+      "updated_at": "2026-11-05T19:28:29.931496+08:00",
+      "request_key": "1a711696-5bc3-4dcf-a3fe-36a8454e5177",
+      "version": 2,
+      "created_by": "开发超级管理员（非实名员工）",
+      "voided_at": null,
+      "voided_by": "",
+      "void_reason": "",
+      "customer": 1,
+      "follow_up": 1,
+      "contact": null,
+      "product": null
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "new-product-reminders/57/",
+    "status": 409,
+    "body": {
+      "detail": "记录已变更，请重新打开后再操作。"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "new-product-reminders/57/void/",
+    "status": 400,
+    "body": [
+      "该字段不能为空。"
+    ]
+  },
+  {
+    "method": "POST",
+    "path": "new-product-reminders/57/void/",
+    "status": 200,
+    "body": {
+      "id": 57,
+      "requirement": "真实HTTP合成新品需求",
+      "specification": "IP68",
+      "other_requirements": "",
+      "tag": "新品提醒",
+      "customer_name": "合成验收客户甲",
+      "created_at": "2026-11-05T19:28:29.229996+08:00",
+      "updated_at": "2026-11-05T19:28:31.232895+08:00",
+      "request_key": "1a711696-5bc3-4dcf-a3fe-36a8454e5177",
+      "version": 3,
+      "created_by": "开发超级管理员（非实名员工）",
+      "voided_at": "2026-11-05T19:28:31.232895+08:00",
+      "voided_by": "开发超级管理员（非实名员工）",
+      "void_reason": "真实HTTP合成验收",
+      "customer": 1,
+      "follow_up": 1,
+      "contact": null,
+      "product": null
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "new-product-reminders/57/",
+    "status": 409,
+    "body": {
+      "detail": "记录已变更，请重新打开后再操作。"
+    }
+  }
+]

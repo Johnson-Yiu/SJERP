@@ -1,0 +1,52 @@
+{
+  "runs": [
+    {
+      "profile": "business-suite",
+      "passed": 242,
+      "failed": 1
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "profile": "iss007-attachment-isolated",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "profile": "iss007-image-snapshot-isolated",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "profile": "iss022-isolated",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "profile": "iss028-035-isolated",
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "profile": "iss055-rbac",
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "profile": "quote-editor-isolated",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "profile": "shared-report-templates-isolated",
+      "passed": 1,
+      "failed": 0
+    }
+  ],
+  "passed": 267,
+  "failed": 1,
+  "original_full_result": "FAIL; targeted success does not replace this outcome"
+}

@@ -1,0 +1,232 @@
+[
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/1440-completed-debt.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\1440-completed-debt.png",
+    "sha256": "6ee03c24535a016d4e042b943dc404b67b02f76a63dffa7e00101bd1fad5acd9"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/1440-http-in-progress.json",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\1440-http-in-progress.json",
+    "sha256": "58a5b85fd9701e34a2c0a81e683acf45c4f8bcc802c1ea1bfed1f223d942ce78"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/1440-http.json",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\1440-http.json",
+    "sha256": "98b412fe279e162aa5d2cf2642c4f4bd91e41bb3e01a6f905fb308cdb731008c"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/1440-receipt-after.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\1440-receipt-after.png",
+    "sha256": "ddfe07dd42d3b4d641dbc84ea6bd7fa6dd841ea4f553fd79ea2a6d3f8565f4b1"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/1440-receipt-before.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\1440-receipt-before.png",
+    "sha256": "205c5337e4a9e51fe23f1d30b33a8d131710f2e09776eab2e95d9c8d37d1728a"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/1440-refund-todo.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\1440-refund-todo.png",
+    "sha256": "561b40b69ab28d0c7affd2da5247e40d4ed2badc4f0eceb7f7fc4ecc65d74d71"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/1440-supplier-pay-after.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\1440-supplier-pay-after.png",
+    "sha256": "ec0373fa09c08e7946c8436584facecadc8e3e6e77a19ed9858c716be1b6073b"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/1440-supplier-pay-before.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\1440-supplier-pay-before.png",
+    "sha256": "085350125bcf8650f2daabda176c525e2969168a16f7c8d66c816fff982e0cea"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/390-completed-debt.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\390-completed-debt.png",
+    "sha256": "6c4ddd177c114ed8edef27a288cbf9a3a5e3b73f1811b2d0d0f911e13f45f254"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/390-http-in-progress.json",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\390-http-in-progress.json",
+    "sha256": "a053074a439b3c092f363619d7d2252f446ca84f7de66fbc57c4807097568bc1"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/390-http.json",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\390-http.json",
+    "sha256": "866da6580cfefb6be855e578b9c0b705fe68ff4541805e1153fcffb77b7ba7c0"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/390-receipt-after.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\390-receipt-after.png",
+    "sha256": "7268a13baea012671b63ae082f257998d48bf26e2371d7da5f98947d419b04d3"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/390-receipt-before.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\390-receipt-before.png",
+    "sha256": "d68c0d26ae0456a93189d50b03a21a6e2e08ce52f3b4edb3264d50efbd6aa214"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/390-refund-todo.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\390-refund-todo.png",
+    "sha256": "c738b0894e7b6377220b05499c9277c728d627e7139cee3512cd1da7b210ab50"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/390-supplier-pay-after.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\390-supplier-pay-after.png",
+    "sha256": "df8bc59fa5c7f59d63ff64d699b492f7b134bba084d9172361f841c76c93601d"
+  },
+  {
+    "original": "docs/uat-evidence/core-business-closeout-20261105/chrome/390-supplier-pay-before.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\core-business-closeout-20261105\\chrome\\390-supplier-pay-before.png",
+    "sha256": "994556a71c4bb11e467c6666d3de252c63a7130c2002874b18639f266fa9d2e4"
+  },
+  {
+    "original": "docs/uat-evidence/iss-017-private-files/certificate-desktop.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-017-private-files\\certificate-desktop.png",
+    "sha256": "92c547c91c3c1716caf00746d01f4fbcb1880ba47783f5d6b8b777defd1b4169"
+  },
+  {
+    "original": "docs/uat-evidence/iss-017-private-files/certificate-narrow.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-017-private-files\\certificate-narrow.png",
+    "sha256": "999b3908111e9ac1b63ee17978dadb58df9f5740d90a78da43ce69ef1464e96d"
+  },
+  {
+    "original": "docs/uat-evidence/iss-039-integration/authorized-1440px.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-039-integration\\authorized-1440px.png",
+    "sha256": "dfe5c967218cb9a49c2e8257a6d60f88bd0b072b22c56c6f87ae61a12613ca71"
+  },
+  {
+    "original": "docs/uat-evidence/iss-039-integration/authorized-700px.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-039-integration\\authorized-700px.png",
+    "sha256": "894802e05767498f64ed23d468f98bcfe9e80c8f9c9f3591ac3f914af488f2f4"
+  },
+  {
+    "original": "docs/uat-evidence/iss-039-integration/authorized-refresh-1440px.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-039-integration\\authorized-refresh-1440px.png",
+    "sha256": "8316c3860206c908dc9a52cc587e5d6a449ec7146a5c31607c8cf6e30fbb85f2"
+  },
+  {
+    "original": "docs/uat-evidence/iss-039-integration/no-permission-700px.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-039-integration\\no-permission-700px.png",
+    "sha256": "f9a3489ea7734e8c17c419c40f2a676c0f880660930cc846077de7983158db2e"
+  },
+  {
+    "original": "docs/uat-evidence/iss-039-integration/readonly-1440px.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-039-integration\\readonly-1440px.png",
+    "sha256": "68e58d2feeeceb343e7065a6a4d98c021000891fed1e4b45316c969a4681f827"
+  },
+  {
+    "original": "docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-042-shared-reports\\employee-700px-after-delete.png",
+    "sha256": "02ecaec0bbf4bf761b36f8d0bca418fdd29f484203b926b82b8f644b57e8ec65"
+  },
+  {
+    "original": "docs/uat-evidence/iss-042-shared-reports/employee-700px.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-042-shared-reports\\employee-700px.png",
+    "sha256": "a1226e63c99248be59b34432473a89bf08115e4c1fdd730d3b6e08941dcfae32"
+  },
+  {
+    "original": "docs/uat-evidence/iss-042-shared-reports/manager-1024px.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-042-shared-reports\\manager-1024px.png",
+    "sha256": "248331b6e2fe9cdb390dff3345f084153265d5b4dc92242fdebf4ad6b50118d0"
+  },
+  {
+    "original": "docs/uat-evidence/iss-042-shared-reports/manager-1440px.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-042-shared-reports\\manager-1440px.png",
+    "sha256": "eccfc7e69f096856a5b51090f708eeca8b9e702b3baf1406b95eab68b053a941"
+  },
+  {
+    "original": "docs/uat-evidence/iss-048-finance-drill/finance-bank-events-1440.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-048-finance-drill\\finance-bank-events-1440.png",
+    "sha256": "5bf5208bf1943d8554438b066f127d78b79b29ae5f00295a23de60df71eca6c0"
+  },
+  {
+    "original": "docs/uat-evidence/iss-048-finance-drill/finance-bank-events-700.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-048-finance-drill\\finance-bank-events-700.png",
+    "sha256": "e5a697aed6c0f12125dde64bc1de7b331df763cc2ad875be07c3da1d25f74d83"
+  },
+  {
+    "original": "docs/uat-evidence/iss-048-finance-drill/finance-drill-1440.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-048-finance-drill\\finance-drill-1440.png",
+    "sha256": "a5416ecebd54f33615e2c910b3652b6259f50dc7ffff7d0d9ba87c64cd2273d1"
+  },
+  {
+    "original": "docs/uat-evidence/iss-048-finance-drill/finance-drill-700.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\iss-048-finance-drill\\finance-drill-700.png",
+    "sha256": "ff7491a49768d4e8f835e7b1643af6add79bae33dc1d04da56f3eae92d2d4908"
+  },
+  {
+    "original": "docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-prelaunch-consolidation-20261104\\closeout-logs\\reports-unsaved-filter-1440.png",
+    "sha256": "f862a95172d518f5a9abdb0b83d7b6d5de58d244398dfbae6ae1433a29fe3e72"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-desktop.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\categories-desktop.png",
+    "sha256": "3d71ee34c924dcf74efaab5808d77ba3c7708a5621ca4fe62f8442bd48a89d73"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-narrow.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\categories-narrow.png",
+    "sha256": "1718e465b9e30b0c4aedbf32bfa13dee005ffa5b6554803b4014f2bda4473819"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-desktop.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\contacts-desktop.png",
+    "sha256": "b88f00d908885ec0f108e91323f2addae1effcc6837e883db35c9ae3aba4e8f5"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-narrow.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\contacts-narrow.png",
+    "sha256": "76bc79cbc0122df41b06edf333c0e8cac2fbee4f2fa5e4457628be3047712bf3"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-desktop.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\customers-desktop.png",
+    "sha256": "3e67f5e5e513ea4e1b2ef819c3fdd20f44c2a54e514e06bf41f185d19de39c4d"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-narrow.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\customers-narrow.png",
+    "sha256": "ad65eade38baf0ee0262f7627431b9f1cb3de9c88fd0e85f58a9f45cc5b3c5a5"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-desktop.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\follow-ups-desktop.png",
+    "sha256": "2df2c6b0c3efdd4cabf2364347bd7d4db894cdb7b0a2a8015ffac22388436c66"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-narrow.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\follow-ups-narrow.png",
+    "sha256": "3f9c25d9bb0a61764070a112468ff153937fae3c5a4d7650c08ce4aa8370f1a6"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-desktop.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\home-desktop.png",
+    "sha256": "c72c78f51cac739c43328dd2ab4630005f2210ae6a1e1731880ee7ece72d22e1"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-narrow.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\home-narrow.png",
+    "sha256": "670b7dafd7d8e25d40fd09cc5e9c7280bf28bd093b3c393a4c175ae891fff5b0"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-desktop.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\products-desktop.png",
+    "sha256": "1cb1c7a7c1c31818f29c26f15536784340fdc3f9fdc2ead5cc5b25837b04f844"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-narrow.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\products-narrow.png",
+    "sha256": "2f2f71accd0347e72905e5dd46c9f2aaef32b697433088574c732b7f4de41613"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-desktop.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\skus-desktop.png",
+    "sha256": "4b2add3d8fbcec1f43111c5970fde193416c4a563a6efca92810015f918042d3"
+  },
+  {
+    "original": "docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-narrow.png",
+    "preserved": "docs\\uat-evidence\\new-product-reminders-20261105\\suite-generated-original-paths\\docs\\uat-evidence\\r1-ux-copy-foundation\\screenshots\\skus-narrow.png",
+    "sha256": "69527ab0e97ab5ee4e13c176ea1a38e89d5ff1ba09972fdd0790ff9d0981713f"
+  }
+]

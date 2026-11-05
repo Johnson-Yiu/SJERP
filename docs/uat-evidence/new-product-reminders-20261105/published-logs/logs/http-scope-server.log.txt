@@ -1,0 +1,20 @@
+[05/Nov/2026 20:46:22] "GET /api/session/current-operator/ HTTP/1.1" 200 2845
+Forbidden: /api/new-product-reminders/
+[05/Nov/2026 20:46:22] "GET /api/new-product-reminders/ HTTP/1.1" 403 43
+[05/Nov/2026 20:46:23] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&search=%E5%90%88%E6%88%90%E5%88%86%E9%A1%B5%E5%A3%81%E7%81%AF&state=all HTTP/1.1" 200 25054
+[05/Nov/2026 20:46:23] "GET /api/new-product-reminders/?customer=2&search=%E5%90%88%E6%88%90%E5%88%86%E9%A1%B5%E5%A3%81%E7%81%AF&state=all HTTP/1.1" 200 52
+Not Found: /api/new-product-reminders/55/
+[05/Nov/2026 20:46:23] "GET /api/new-product-reminders/55/ HTTP/1.1" 404 59
+Not Found: /api/new-product-reminders/55/history/
+[05/Nov/2026 20:46:23] "GET /api/new-product-reminders/55/history/ HTTP/1.1" 404 59
+Not Found: /api/new-product-reminders/55/
+[05/Nov/2026 20:46:24] "PATCH /api/new-product-reminders/55/ HTTP/1.1" 404 59
+Not Found: /api/new-product-reminders/55/void/
+[05/Nov/2026 20:46:24] "POST /api/new-product-reminders/55/void/ HTTP/1.1" 404 59
+Forbidden: /api/new-product-reminders/
+[05/Nov/2026 20:46:24] "POST /api/new-product-reminders/ HTTP/1.1" 403 49
+Not Found: /api/customers/2/
+[05/Nov/2026 20:46:24] "GET /api/customers/2/ HTTP/1.1" 404 58
+[05/Nov/2026 20:46:24] "GET /api/customers/1/ HTTP/1.1" 200 405
+[05/Nov/2026 20:46:24] "GET /api/follow-ups/1/ HTTP/1.1" 200 499
+[05/Nov/2026 20:46:25] "GET /api/new-product-reminders/56/ HTTP/1.1" 200 662

@@ -1,0 +1,54 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+ExpectError: expect(locator).toBeVisible() failed
+
+Locator: getByText('已作废', { exact: true })
+Expected: visible
+Error: strict mode violation: getByText('已作废', { exact: true }) resolved to 3 elements:
+    1) <option value="void" data-v-20310d9a="">已作废</option> aka getByLabel('条目状态有效条目已作废全部条目')
+    2) <p role="status" data-v-20310d9a="">已作废</p> aka getByRole('status').filter({ hasText: '已作废' })
+    3) <strong data-v-20310d9a="">已作废</strong> aka getByRole('region', { name: '新品需求详情' }).getByText('已作废')
+
+Call log:
+  - Expect "toBeVisible" getByText('已作废', { exact: true }) with timeout 5000ms
+  - waiting for getByText('已作废', { exact: true })
+    - locator resolved to <option value="void" data-v-20310d9a="">已作废</option>
+    - unexpected value "hidden"
+
+    at captureRawStack (D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\frontend\node_modules\playwright-core\lib\coreBundle.js:9282:17)
+    at callMatcherAsStep (D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\frontend\node_modules\playwright\lib\matchers\expect.js:13316:57)
+    at Object.toBeVisible (D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\frontend\node_modules\playwright\lib\matchers\expect.js:13308:23)
+    at D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\.tmp-reminder-chrome.mjs:41:52 {
+  matcherResult: {
+    message: 'expect(locator).toBeVisible() failed\n' +
+      '\n' +
+      "Locator: getByText('已作废', { exact: true })\n" +
+      'Expected: visible\n' +
+      "Error: strict mode violation: getByText('已作废', { exact: true }) resolved to 3 elements:\n" +
+      `    1) <option value="void" data-v-20310d9a="">已作废</option> aka getByLabel('条目状态有效条目已作废全部条目')\n` +
+      `    2) <p role="status" data-v-20310d9a="">已作废</p> aka getByRole('status').filter({ hasText: '已作废' })\n` +
+      `    3) <strong data-v-20310d9a="">已作废</strong> aka getByRole('region', { name: '新品需求详情' }).getByText('已作废')\n` +
+      '\n' +
+      'Call log:\n' +
+      `  - Expect "toBeVisible" getByText('已作废', { exact: true }) with timeout 5000ms\n` +
+      "  - waiting for getByText('已作废', { exact: true })\n" +
+      '    - locator resolved to <option value="void" data-v-20310d9a="">已作废</option>\n' +
+      '    - unexpected value "hidden"\n',
+    pass: false,
+    actual: undefined,
+    name: 'toBeVisible',
+    expected: 'visible',
+    log: [
+      `  - Expect "toBeVisible" getByText('已作废', { exact: true }) with timeout 5000ms`,
+      "  - waiting for getByText('已作废', { exact: true })",
+      '    - locator resolved to <option value="void" data-v-20310d9a="">已作废</option>',
+      '    - unexpected value "hidden"'
+    ],
+    timeout: undefined,
+    ariaSnapshot: undefined
+  }
+}
+
+Node.js v24.16.0

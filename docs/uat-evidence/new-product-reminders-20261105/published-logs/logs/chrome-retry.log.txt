@@ -1,0 +1,14 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.selectOption: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByLabel('客户', { exact: true })
+
+    at D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\.tmp-reminder-chrome.mjs:19:44 {
+  log: [ "  - waiting for getByLabel('客户', { exact: true })" ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.16.0

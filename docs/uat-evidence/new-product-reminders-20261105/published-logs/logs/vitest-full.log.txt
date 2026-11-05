@@ -1,0 +1,74 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/new-product-reminders-20261105/frontend
+
+ ❯ tests/r0f2-overview-reports.spec.js (15 tests | 15 failed) 13ms
+   × dashboard explains server date ranges, zero change, refresh feedback and retains stale data after refresh failure 7ms
+   × dashboard retries initial failure and hides unavailable module links and metrics 1ms
+   × drafts wait for submit, stale save is disabled, and submitted query restores from URL 1ms
+   × supports a second dimension, preserves it in the URL and drills either group back to the other 0ms
+   × opens bounded raw detail rows for the selected cross-group and keeps the reconciliation summary 0ms
+   × clears an incompatible second dimension when the source changes and keeps old saved charts compatible 0ms
+   × invalid dates suppress requests and date shortcuts only stage dates 0ms
+   × catalog retry and filter errors retain existing graph, with explicit filter apply 0ms
+   × local charts restore, reorder, remove and undo while retaining existing storage key and shared dates 0ms
+   × saved chart drill preserves response period and returns to original results and pending draft 0ms
+   × restricted sources are absent and inaccessible local charts send no report request 0ms
+   × storage failure warns instead of claiming persistence 0ms
+   × export failure retains chart and switching configuration resets the display override 0ms
+   × an invalid bookmarked filter is rejected and navigating back to valid conditions recovers 0ms
+   × changing date scope invalidates in-flight options and cannot offer stale selections 0ms
+ ❯ tests/purchase-costs.spec.js (10 tests | 10 failed) 23ms
+   × shows legacy quantity read-only without recalculating or submitting it 13ms
+   × cancels conversion without editing the historical input or requesting a preview 1ms
+   × requires explicit conversion and a successful current preview before saving amount 2ms
+   × does not offer conversion to read-only users 1ms
+   × edits allocation, saves the revision and renders authoritative calculated totals 1ms
+   × keeps edits and shows server conflict without claiming success 1ms
+   × keeps results on outside clicks and submits a custom target name 1ms
+   × automatically previews fees without saving and ignores stale responses 1ms
+   × keeps restricted allocations read only and never submits masked order IDs 1ms
+   × keeps a procurement-only cross-order allocation editable without customer data 1ms
+ ❯ tests/trade-finance.spec.js (6 tests | 6 failed) 27ms
+     × keeps one transaction identity on failure and blocks concurrent submissions 18ms
+     × settles a populated plan with inherited currency and exchange rate 1ms
+     × retains the selected supplier when saving an unallocated payment 2ms
+     × requires a reason for root transaction void and hides child void actions 1ms
+     × requires inspection acknowledgement and submits accepted quantity with notes 1ms
+     × submits an explicitly selected warehouse and batch for opening stock 1ms
+ ❯ tests/finance-contract-navigation.spec.js (7 tests | 7 failed) 22ms
+     × routes a receivable contract by its order ID and leaves a missing ID as text 14ms
+     × routes a payable contract by its purchase order ID 1ms
+     × routes direct transactions and allocation history by IDs, including inactive history 1ms
+     × keeps Finance Dashboard due links for both contract directions 1ms
+     × separates period performance from current balances and blocks invalid report dates 1ms
+     × opens a permission-scoped finance composition and preserves the selected period 1ms
+     × stores transaction filters in the URL and keeps the query server driven 1ms
+ ❯ tests/history-takeover.spec.js (5 tests | 5 failed) 9ms
+     × explains the approval boundary and prevents anonymous or under-scoped intake from being presented as ready 6ms
+     × requires an explicit verification note and then exposes per-group execution only after approval 1ms
+     × separates archive completion from financial, inventory and fulfillment handoffs 0ms
+     × requires explicit cash amount, account and voucher before saving the historical source 0ms
+     × requires explicit goods ownership, cost and full-count confirmation for a stock baseline 0ms
+ ❯ src/views/DocumentPage.test.js (0 test)
+✔ quote list renders a recursive parent-child tree with classified document icons (119.5667ms)
+✔ quote tree actions preserve detail, edit, and Excel export entry points (2.0492ms)
+✔ quote list provides summary metrics, filters, and newest-first sorting (1.756ms)
+ ❯ tests/follow-up-richtext-and-attachments.spec.js (12 tests | 2 failed) 183ms
+     × escapes user HTML and rejects executable image URLs 5ms
+     × keeps markdown image display safe and attribute-escaped 1ms
+ ❯ src/views/SKUPage.test.js (0 test)
+✔ SKU editor exposes supplier source maintenance through the API (841.3235ms)
+✔ SKU editor canonicalizes abbreviation keys and mirrors backend value formatting (1.662ms)
+ ❯ tests/sku-management.spec.js (9 tests | 9 failed) 19ms
+   × shows one SKU list and permanent supplier maintenance with archive navigation 11ms
+   × all parameter values keeps the list and filtering clears bulk selection 1ms
+   × opens the batch supplier binding flow for selected active SKUs 1ms
+   × rules workspace avoids duplicating the SKU list and supplier allocation panel 1ms
+   × reloads SKU data after an archive edit without clearing the keyword 1ms
+   × bulk status writes only selected SKU and reports API failure 1ms
+   × saves a rule with filters and traits without creating supplier SKU records 1ms
+   × editing a reviewed draft disables publish until another analysis 1ms
+   × split controls clone reactive values and submit two variants 1ms
+ ❯ src/views/PurchaseOrderPage.test.js (0 test)
+✔ purchase desk exposes retained contract amount adjustment history (478.4504ms)
+ ❯ src/views/ResourcePage.test.js (0 test)

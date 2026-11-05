@@ -1,0 +1,33 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/new-product-reminders-20261105/frontend
+
+ ✓ tests/sales-safety.spec.js > Quote adds matching defaults and leaves foreign SKU price blank with a clear hint 217ms
+ ✓ tests/sales-safety.spec.js > Quote currency cancellation preserves price/rate and confirmation clears old prices 188ms
+ ✓ tests/sales-safety.spec.js > empty Quote changes to CNY without confirmation and uses only its own rate 82ms
+ ✓ tests/sales-safety.spec.js > empty Quote changes to EUR without confirmation and uses only its own rate 37ms
+ ✓ tests/sales-safety.spec.js > empty Quote changes to GBP without confirmation and uses only its own rate 51ms
+ ✓ tests/sales-safety.spec.js > new Quote defaults to 30%, historical Quote retains 100% and saved rate 153ms
+ ✓ tests/sales-safety.spec.js > OrderDraft keeps inherited quote trade price and safely adds new SKU defaults 102ms
+ ✓ tests/sales-safety.spec.js > Direct Order matching/mismatched defaults and cancellation protect its existing draft 130ms
+ ✓ tests/sales-safety.spec.js > Direct Order loads full API draft, keeps snapshots, locks customer and clear does not roll back 68ms
+ ✓ tests/sales-safety.spec.js > Direct Order source overwrite cancel makes no API request or draft mutation 129ms
+ ✓ tests/sales-safety.spec.js > Direct Order save opens new Workbench while retaining list context 141ms
+ ✓ tests/sales-safety.spec.js > Quote saved/revised event opens returned revision Workbench with filters 230ms
+ ✓ tests/sales-safety.spec.js > new Quote actual API save enters the returned Workbench 223ms
+ ✓ tests/sales-safety.spec.js > returnTo create context keeps its original destination after Quote save 78ms
+ ✓ tests/sales-safety.spec.js > currency reseeding respects trade unit factor and does not auto convert 0ms
+ ✓ tests/sales-safety.spec.js > Quote revision preserves zero lead time and defaults only nullish values (0) 68ms
+ ✓ tests/sales-safety.spec.js > Quote revision preserves zero lead time and defaults only nullish values (null) 65ms
+ ✓ tests/sales-safety.spec.js > Quote revision preserves zero lead time and defaults only nullish values (undefined) 28ms
+ ✓ tests/sales-safety.spec.js > fresh Direct Order loads a quote without unnecessary confirmation 70ms
+ ✓ tests/sales-safety.spec.js > manual order defaults require confirmation and cancellation preserves all inputs ({"order_date":"2026-09-01"}) 105ms
+ ✓ tests/sales-safety.spec.js > manual order defaults require confirmation and cancellation preserves all inputs ({"expected_ship_date":"2026-12-01"}) 118ms
+ ✓ tests/sales-safety.spec.js > manual order defaults require confirmation and cancellation preserves all inputs ({"currency":"EUR"}) 120ms
+ ✓ tests/sales-safety.spec.js > manual order defaults require confirmation and cancellation preserves all inputs ({"exchange_rate":"8.25"}) 130ms
+ ✓ tests/sales-safety.spec.js > manual order defaults require confirmation and cancellation preserves all inputs ({"currency":"GBP","exchange_rate":"9","expected_ship_date":"2026-11-01"}) 113ms
+
+ Test Files  1 passed (1)
+      Tests  24 passed (24)
+   Start at  19:23:32
+   Duration  29.95s (transform 6.60s, setup 1.17s, import 6.99s, tests 2.65s, environment 15.19s)
+

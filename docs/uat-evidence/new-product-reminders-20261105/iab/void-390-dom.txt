@@ -1,0 +1,179 @@
+- complementary:
+  - generic: S
+  - strong: 森爵照明管理系统
+  - text: 客户 · 销售 · 产品
+  - navigation:
+    - generic: 经营
+    - link "经营概览":
+      - /url: /
+      - generic: 经营概览
+    - link "报表中心":
+      - /url: /reports
+      - generic: 报表中心
+    - link "历史订单分析":
+      - /url: /historical-orders
+      - generic: 历史订单分析
+    - generic: 客户
+    - link "客户管理":
+      - /url: /customers
+      - generic: 客户管理
+    - link "联系人":
+      - /url: /contacts
+      - generic: 联系人
+    - link "跟进记录":
+      - /url: /follow-ups
+      - generic: 跟进记录
+    - generic: 销售
+    - link "报价管理":
+      - /url: /quotes
+      - generic: 报价管理
+    - link "订单管理":
+      - /url: /orders
+      - generic: 订单管理
+    - generic: 采购与库存
+    - link "供应商管理":
+      - /url: /suppliers
+      - generic: 供应商管理
+    - link "采购管理":
+      - /url: /purchase-orders
+      - generic: 采购管理
+    - link "库存":
+      - /url: /inventory
+      - generic: 库存
+    - link "库存流水":
+      - /url: /inventory-movements
+      - generic: 库存流水
+    - generic: 产品资料
+    - link "产品管理":
+      - /url: /products
+      - generic: 产品管理
+    - link "SKU 管理":
+      - /url: /skus
+      - generic: SKU 管理
+    - link "产品分类":
+      - /url: /categories
+      - generic: 产品分类
+    - link "产品参数":
+      - /url: /product-parameters
+      - generic: 产品参数
+    - link "包装管理":
+      - /url: /sku-packaging
+      - generic: 包装管理
+    - link "交易单位":
+      - /url: /sku-trade-units
+      - generic: 交易单位
+    - link "产品证书":
+      - /url: /product-certificates
+      - generic: 产品证书
+    - link "HS 编码维护":
+      - /url: /hs-codes
+      - generic: HS 编码维护
+    - generic: 财务与工具
+    - link "财务概览":
+      - /url: /finance
+      - generic: 财务概览
+    - link "应收计划":
+      - /url: /receivables
+      - generic: 应收计划
+    - link "应付计划":
+      - /url: /payables
+      - generic: 应付计划
+    - link "财务流水":
+      - /url: /transactions
+      - generic: 财务流水
+    - link "人民币资金":
+      - /url: /rmb-cash-events
+      - generic: 人民币资金
+    - link "账户资金":
+      - /url: /finance-ledger
+      - generic: 账户资金
+    - link "数据导入":
+      - /url: /import
+      - generic: 数据导入
+    - link "历史资料承接":
+      - /url: /history-takeover
+      - generic: 历史资料承接
+    - generic: 组织与系统
+    - link "组织与权限":
+      - /url: /organization
+      - generic: 组织与权限
+  - generic: J
+  - strong: 开发身份：Johnson
+  - generic: 超级管理员 · 全部功能与数据权限
+- main:
+  - button:
+  - heading "新品提醒" [level=1]
+  - generic "Johnson": J
+  - heading "客户产品需求" [level=2]
+  - paragraph: 记录客户所找的产品，按关键词查找待联系客户。
+  - button "记录新品需求"
+  - text: 标签
+  - combobox "需求标签":
+    - option "新品提醒" [selected]
+  - text: 关键词
+  - textbox "关键词":
+    - /placeholder: 产品、规格、其他要求或客户
+  - text: 条目状态
+  - combobox "条目状态":
+    - option "有效条目"
+    - option "已作废" [selected]
+    - option "全部条目"
+  - button "查询"
+  - status: 已作废
+  - strong: 合成验收客户甲
+  - text: 新品提醒
+  - strong: 已作废
+  - paragraph: 内置浏览器合成新品壁灯
+  - paragraph: 规格：IP67 / 3000K / 庭院入口
+  - paragraph: 其他要求：未建档；用于本地验收
+  - 'button "查看需求 #56"'
+  - link "查看客户":
+    - /url: /customers?detail=1
+  - strong: 合成验收客户甲
+  - text: 新品提醒
+  - strong: 已作废
+  - paragraph: 合成壁灯 390
+  - paragraph: 规格：IP67 4000K
+  - paragraph: 其他要求：庭院入口；尚未建档
+  - 'button "查看需求 #3"'
+  - link "查看客户":
+    - /url: /customers?detail=1
+  - strong: 合成验收客户甲
+  - text: 新品提醒
+  - strong: 已作废
+  - paragraph: 合成壁灯 1440
+  - paragraph: 规格：IP67 4000K
+  - paragraph: 其他要求：庭院入口；尚未建档
+  - 'button "查看需求 #2"'
+  - link "查看客户":
+    - /url: /customers?detail=1
+  - strong: 合成验收客户甲
+  - text: 新品提醒
+  - strong: 已作废
+  - paragraph: 合成壁灯 1440
+  - paragraph: 规格：IP67 4000K
+  - paragraph: 其他要求：庭院入口；尚未建档
+  - 'button "查看需求 #1"'
+  - link "查看客户":
+    - /url: /customers?detail=1
+  - navigation "需求分页":
+    - button "上一页" [disabled]
+    - generic: 共 4 条 · 第 1 页
+    - button "下一页" [disabled]
+  - region "新品需求详情":
+    - heading "新品需求详情" [level=3]
+    - strong: 合成验收客户甲
+    - paragraph:
+      - strong: 已作废
+      - text: · 内置浏览器验收：需求用途调整
+      - text: 开发超级管理员（非实名员工） · 2026/11/5 19:22:08
+    - paragraph: 内置浏览器合成新品壁灯
+    - paragraph: 规格：IP67 / 3000K / 庭院入口
+    - paragraph: 其他要求：未建档；用于本地验收
+    - paragraph: 记录人：开发超级管理员（非实名员工） · 2026/11/5 19:17:51
+    - link "查看客户":
+      - /url: /customers?detail=1
+    - heading "修改历史" [level=4]
+    - generic "创建新品提醒 · 开发超级管理员（非实名员工） · 2026/11/5 19:17:51"
+    - generic "修改新品提醒 · 开发超级管理员（非实名员工） · 2026/11/5 19:20:41"
+    - generic "作废新品提醒 · 开发超级管理员（非实名员工） · 2026/11/5 19:22:08"

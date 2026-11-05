@@ -1,0 +1,7 @@
+[
+  {
+    "status": "FAIL",
+    "error": "TimeoutError: locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('客户', { exact: true })\u001b[22m\n",
+    "stack": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('客户', { exact: true })\u001b[22m\n\n    at D:\\Codex项目\\森爵照明管理系统\\.worktrees\\new-product-reminders-20261105\\.tmp-reminder-chrome.mjs:19:44"
+  }
+]

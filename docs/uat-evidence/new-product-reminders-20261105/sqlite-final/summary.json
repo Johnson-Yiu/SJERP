@@ -1,0 +1,38 @@
+{
+  "source_sha": "407d9dc5e2f00fc8e89e2a07da653dc65507c08e",
+  "discovered": 1450,
+  "selected": 1450,
+  "complete_coverage": true,
+  "exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "all_passed": true,
+  "shards": [
+    {
+      "index": 0,
+      "python": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+      "django": "6.0.9",
+      "count": 484,
+      "test_assertions": "original, unchanged",
+      "execution": "serial per process; independent memory database and media"
+    },
+    {
+      "index": 1,
+      "python": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+      "django": "6.0.9",
+      "count": 483,
+      "test_assertions": "original, unchanged",
+      "execution": "serial per process; independent memory database and media"
+    },
+    {
+      "index": 2,
+      "python": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+      "django": "6.0.9",
+      "count": 483,
+      "test_assertions": "original, unchanged",
+      "execution": "serial per process; independent memory database and media"
+    }
+  ]
+}

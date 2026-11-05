@@ -1,0 +1,162 @@
+[
+  {
+    "file": "chrome/empty-1440.png",
+    "actual_pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "360c06099f44f22c2c731510e62ac145acf3179e717033721e78a02bc096cf41",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/full-top-1440.png",
+    "actual_pixels": [
+      1440,
+      1702
+    ],
+    "sha256": "56e39c79786681ff513df0f5bbd3caa8fddc9056c7dc3572f86435b9eea4e7c6",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/full-top-390.png",
+    "actual_pixels": [
+      390,
+      2059
+    ],
+    "sha256": "4b434a4a9cde1b468364203696ccec5e066755ffbb9eb632e66cd0f4772e2bbd",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/pagination-1440.png",
+    "actual_pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "bd8adff5edaf88d717c46820d394ae1dab8cda1c2f43a4900bc0a63d07d32fa4",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/saved-1440.png",
+    "actual_pixels": [
+      1440,
+      1237
+    ],
+    "sha256": "7d65cda17a814bbacd7ca46e7a09dc2cc2897eaedeba11e88b368ddc4d25e6f7",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/saved-390.png",
+    "actual_pixels": [
+      390,
+      1548
+    ],
+    "sha256": "6440367517674acd170dde900c36cb354eb5565c73a23d67463294befd01e5e7",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/saved-before-header-fix-1440.png",
+    "actual_pixels": [
+      1440,
+      1202
+    ],
+    "sha256": "d60c63fb18cffac2546f7bd0180df661dda028d6c8794df494863cec37f9f7b1",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/top-1440.png",
+    "actual_pixels": [
+      1440,
+      1000
+    ],
+    "sha256": "47511d4b0349d640b6f17a3c5614a2e7c9dd9b79cc7db4a7becc9b0917d3a38b",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/top-390.png",
+    "actual_pixels": [
+      390,
+      1000
+    ],
+    "sha256": "a182a36f189c5516893c227e5a924edbe89ceaf22dfd8d4c968ebbde2248ac70",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/void-1440.png",
+    "actual_pixels": [
+      1440,
+      1504
+    ],
+    "sha256": "cbe11807648bdc78087cf6205e0bdeb452fdfdf99a73d91eb3c6dae9bca81d51",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "chrome/void-390.png",
+    "actual_pixels": [
+      390,
+      2094
+    ],
+    "sha256": "29bce6907acc470d6914a71a69be58c710a2ea61f900a541c1806a4c27cc7365",
+    "original_bytes": true,
+    "note": "真实 Chrome 原图；fullPage 高度随内容。"
+  },
+  {
+    "file": "iab/active-empty-390.jpg",
+    "actual_pixels": [
+      390,
+      1000
+    ],
+    "sha256": "6aef63715d541741b738148655e021cf8ddcdcf926ee4b581670c68647d8ab6b",
+    "original_bytes": true,
+    "note": "IAB 原始截图可能排除滚动条；不缩放。"
+  },
+  {
+    "file": "iab/history-1440.jpg",
+    "actual_pixels": [
+      1425,
+      990
+    ],
+    "sha256": "ad04385beb7d567edf4ca95bdbc26952b1f71b89eb73d3f795552cc0384d85e4",
+    "original_bytes": true,
+    "note": "IAB 原始截图可能排除滚动条；不缩放。"
+  },
+  {
+    "file": "iab/saved-390.jpg",
+    "actual_pixels": [
+      375,
+      962
+    ],
+    "sha256": "8f6789f7e69186e128855ac5a5c06941a3217eb3301be9271fed838aec2e5302",
+    "original_bytes": true,
+    "note": "IAB 原始截图可能排除滚动条；不缩放。"
+  },
+  {
+    "file": "iab/void-390.jpg",
+    "actual_pixels": [
+      375,
+      962
+    ],
+    "sha256": "16e95c2d99a4a876fe9c5a5c4574e32ed7d03a9bda90f28ae16b7579c015d1e6",
+    "original_bytes": true,
+    "note": "IAB 原始截图可能排除滚动条；不缩放。"
+  },
+  {
+    "file": "iab/void-detail-1440.jpg",
+    "actual_pixels": [
+      1425,
+      1000
+    ],
+    "sha256": "3d2bbc0e9a975e0d4d2b81a14123d5f245c42422a9922381f6aa3c4e21e74ce8",
+    "original_bytes": true,
+    "note": "IAB 原始截图可能排除滚动条；不缩放。"
+  }
+]

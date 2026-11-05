@@ -1,0 +1,120 @@
+Creating test database for alias 'default'...
+
+Cloning test database for alias 'default'...
+
+Cloning test database for alias 'default'...
+
+Cloning test database for alias 'default'...
+
+Cloning test database for alias 'default'...
+
+Destroying test database for alias 'default'...
+
+Destroying test database for alias 'default'...
+
+Destroying test database for alias 'default'...
+
+Destroying test database for alias 'default'...
+
+Destroying test database for alias 'default'...
+
+Found 1450 test(s).
+System check identified no issues (0 silenced).
+multiprocessing.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\case.py", line 58, in testPartExecutor
+    yield
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\case.py", line 634, in run
+    self._callTestMethod(testMethod)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\case.py", line 589, in _callTestMethod
+    if method() is not None:
+       ^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\tests\__init__.py", line 444, in test_admin_can_save_role_permission_matrix_in_configuration_mode
+    self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\case.py", line 885, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\case.py", line 878, in _baseAssertEqual
+    raise self.failureException(msg)
+AssertionError: 403 != 200 : {'detail': ErrorDetail(string='������֤��Ϣδ�ṩ��', code='not_authenticated')}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\multiprocessing\pool.py", line 125, in worker
+    result = (True, func(*args, **kwds))
+                    ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 496, in _run_subsuite
+    result = runner.run(subsuite)
+             ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 387, in run
+    test(result)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\suite.py", line 122, in run
+    test(result)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\testcases.py", line 313, in __call__
+    self._setup_and_call(result)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\testcases.py", line 368, in _setup_and_call
+    super().__call__(result)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\case.py", line 690, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\case.py", line 633, in run
+    with outcome.testPartExecutor(self):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\case.py", line 75, in testPartExecutor
+    _addError(self.result, test_case, exc_info)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\case.py", line 98, in _addError
+    result.addFailure(test, exc_info)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 317, in addFailure
+    self.check_picklable(test, err)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 233, in check_picklable
+    self._confirm_picklable(err)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 207, in _confirm_picklable
+    pickle.loads(pickle.dumps(obj))
+                 ^^^^^^^^^^^^^^^^^
+TypeError: cannot pickle 'traceback' object
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\manage.py", line 13, in <module>
+    main()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\manage.py", line 9, in main
+    execute_from_command_line(sys.argv)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\__init__.py", line 443, in execute_from_command_line
+    utility.execute()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\__init__.py", line 437, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\commands\test.py", line 24, in run_from_argv
+    super().run_from_argv(argv)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\base.py", line 420, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\base.py", line 464, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\commands\test.py", line 63, in handle
+    failures = test_runner.run_tests(test_labels)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 1134, in run_tests
+    result = self.run_suite(suite)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 1061, in run_suite
+    return runner.run(suite)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\runner.py", line 240, in run
+    test(result)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 586, in run
+    subsuite_index, events = test_results.next(timeout=0.1)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\multiprocessing\pool.py", line 873, in next
+    raise value
+TypeError: cannot pickle 'traceback' object

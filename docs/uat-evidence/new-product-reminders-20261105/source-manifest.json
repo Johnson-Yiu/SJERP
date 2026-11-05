@@ -1,0 +1,13 @@
+{
+  "code_sha": "013be1f5c684558e93882c789777cd2bf35da824",
+  "base_sha": "10afcf16fbfc1d0c01a175094012b4b696483cfb",
+  "trees": {
+    "backend": "17fc65a9207eacd6d28d0588f9f2c774e542f7d0",
+    "frontend": "b1b288b45793b3ea7c5881c284be1b19cbe48dfa",
+    "templates": "535566cc881d16b650af62663f9c6195a42823ad"
+  },
+  "frontend_equivalent_to_730_test_source": true,
+  "production_code_sha": "e168a5326622900fd93a748667629c04f32bde91",
+  "final_pg_test_sha": "013be1f5c684558e93882c789777cd2bf35da824",
+  "changes_since_sqlite_full": " backend/crm/tests/test_new_product_reminders.py | 6 +++---\n 1 file changed, 3 insertions(+), 3 deletions(-)\n"
+}

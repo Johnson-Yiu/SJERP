@@ -1,0 +1,55 @@
+[
+  {
+    "width": 1440,
+    "id": 2,
+    "color": {
+      "color": "rgb(112, 119, 128)",
+      "background": "rgb(241, 242, 244)"
+    },
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "steps": [
+      "followup-entry",
+      "free-text-create",
+      "reopen",
+      "edit",
+      "void-cancel",
+      "void-confirm",
+      "void-filter",
+      "grey-and-text",
+      "customer-navigation"
+    ],
+    "status": "PASS"
+  },
+  {
+    "width": 390,
+    "id": 3,
+    "color": {
+      "color": "rgb(112, 119, 128)",
+      "background": "rgb(241, 242, 244)"
+    },
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "steps": [
+      "followup-entry",
+      "free-text-create",
+      "reopen",
+      "edit",
+      "void-cancel",
+      "void-confirm",
+      "void-filter",
+      "grey-and-text",
+      "customer-navigation"
+    ],
+    "status": "PASS"
+  },
+  {
+    "status": "PASS",
+    "steps": [
+      "same-customer-independent-requirements",
+      "other-customer-same-keyword",
+      "tag-keyword-combination",
+      "pagination-50-plus-2",
+      "keyword-resets-page",
+      "no-result"
+    ]
+  }
+]

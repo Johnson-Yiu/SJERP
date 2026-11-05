@@ -100,7 +100,10 @@ class ReminderTests(TestCase):
         self.assertEqual(self.client.delete('/api/new-product-reminders/', {"ids":[obj["id"]]}, format="json").status_code, 405)
         self.assertEqual(self.client.post('/api/new-product-reminders/bulk-delete/', {"ids":[obj["id"]]}, format="json").status_code, 405)
         for resource, linked in (("customers", self.customer), ("contacts", self.contact), ("products", self.product), ("follow-ups", self.follow)):
-            self.assertEqual(self.client.delete(f'/api/{resource}/{linked.pk}/').status_code, 400)
+            rejected = self.client.delete(f'/api/{resource}/{linked.pk}/')
+            self.assertEqual(rejected.status_code, 400)
+            if resource in ('contacts', 'products'):
+                self.assertIn('新品提醒', rejected.data['detail'])
         for linked in (self.customer, self.contact, self.product, self.follow):
             with self.assertRaises(ProtectedError):
                 linked.delete()

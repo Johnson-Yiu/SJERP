@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 import shutil
@@ -20,7 +21,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pg-bin", required=True)
     parser.add_argument("--full", action="store_true")
+    parser.add_argument("--test-label", action="append", help="Diagnostic subset; never substitutes for --full")
     args = parser.parse_args()
+    if args.full and args.test_label:
+        parser.error("--full and --test-label cannot be combined")
+    if any(not re.fullmatch(r"crm\.tests\.[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)*", label) for label in (args.test_label or [])):
+        parser.error("Only explicit crm.tests module/class/method labels are allowed")
     if os.environ.get("APP_STAGE", "development") != "development" or (os.environ.get("DATABASE_URL") and not os.environ["DATABASE_URL"].startswith("sqlite://")):
         raise RuntimeError("Parent must use development and isolated SQLite settings")
     bin_dir = Path(args.pg_bin).resolve(strict=True)
@@ -69,7 +75,7 @@ def main():
         for name in ("ISS018_COMMAND_PG_BIN", "ISS018_DRILL_ROOT", "ISS018_DRILL_PASSWORD_FILE"):
             env.pop(name, None)
         repo = Path(__file__).resolve().parents[3]
-        labels = [] if args.full else ["crm.tests.test_core_business_closeout", "crm.tests.test_core_business_concurrency", "crm.tests.test_postgres_concurrency", "crm.tests.test_iss006_idempotency", "crm.tests.test_fulfillment_audit_atomicity"]
+        labels = args.test_label if args.test_label else ([] if args.full else ["crm.tests.test_core_business_closeout", "crm.tests.test_core_business_concurrency", "crm.tests.test_postgres_concurrency", "crm.tests.test_iss006_idempotency", "crm.tests.test_fulfillment_audit_atomicity"])
         print(json.dumps({"postgres": version, "cluster": str(root), "source": database, "port": port, "test_labels": labels}), flush=True)
         result = subprocess.run([sys.executable, "manage.py", "test", *labels, "--verbosity", "2"], cwd=repo / "backend", env=env, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=7200)
         print((result.stdout + result.stderr).replace(secret, "[REDACTED]"), flush=True)

@@ -276,6 +276,7 @@ class FulfillmentIdempotencyDatabaseTests(TransactionTestCase):
         InventoryMovement.objects.create(movement_no="ISS006-PIN", movement_date=date(2026, 10, 29), type="purchase_in", sku=sku, quantity="2")
         barrier = threading.Barrier(2)
         results = []
+        worker_connections_closed = []
 
         def submit():
             close_old_connections()
@@ -291,13 +292,16 @@ class FulfillmentIdempotencyDatabaseTests(TransactionTestCase):
                 )
                 results.append(response.status_code)
             finally:
-                close_old_connections()
+                # Fresh persistent sessions must be closed by their owning worker.
+                connections.close_all()
+                worker_connections_closed.append(connections["default"].connection is None)
 
         threads = [threading.Thread(target=submit) for _ in range(2)]
         for thread in threads:
             thread.start()
         for thread in threads:
             thread.join(timeout=20)
+        self.assertEqual(worker_connections_closed, [True, True])
         self.assertEqual(sorted(results), [201, 201])
         self.assertEqual(Shipment.objects.filter(order=order, status="confirmed").count(), 1)
         self.assertEqual(InventoryMovement.objects.filter(order=order, source_type="shipment").count(), 1)

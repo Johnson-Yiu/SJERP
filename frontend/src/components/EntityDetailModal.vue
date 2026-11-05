@@ -1,4 +1,8 @@
 <script setup>
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const { workspace } = useWorkspaceNavigation()
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { certificateFileUrl } from '../utils/certificateFile'
 import { provideUnsavedChangesScope } from '../composables/useUnsavedChangesGuard'
 const unsavedScope = provideUnsavedChangesScope()
@@ -10,7 +14,7 @@ import CertificateExpiryBadge from './CertificateExpiryBadge.vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeft, CheckSquare, ChevronRight, ExternalLink, Paperclip, Pencil, Plus, Rows3, Search, Trash2, X } from 'lucide-vue-next'
-import { api, listData } from '../api'
+import { listData } from '../api'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog } from '../dialogs'
 import { resourceConfigs } from '../resourceConfigs'
@@ -353,6 +357,7 @@ onMounted(async () => {
     api.get('/session/current-operator/').then(response => { operatorRole.value = response.data.role || ''; auditEnabled.value = Boolean(response.data.audit_log_enabled) }).catch(() => { operatorRole.value = ''; auditEnabled.value = false }),
   ])
 })
+watch(() => data.value?.title, title => { if (workspace && title) { workspace.objectTitle = String(title); workspace.title = String(title) } }, { immediate: true })
 </script>
 
 <template>

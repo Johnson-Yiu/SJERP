@@ -1,12 +1,26 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onMounted, onBeforeUnmount, ref, provide, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode, History } from 'lucide-vue-next'
 import AppDialogHost from './components/AppDialogHost.vue'
-import { pageIdentityKey } from './utils/routePageState'
+import { onSessionBoundary } from './workspaceSession'
+import WorkspaceTabs from './components/WorkspaceTabs.vue'
+import WorkspacePane from './components/WorkspacePane.vue'
+import { createWorkspaceManager } from './workspaceManager'
+import { workspaceManagerKey } from './composables/useWorkspaceNavigation'
 import { accessState, can, canAccessHistoricalOrders, canAccessOrganization, loadAccessControl } from './accessControl'
 
 const route = useRoute()
+const rootRouter = useRouter()
+const manager = createWorkspaceManager(rootRouter)
+provide(workspaceManagerKey, manager)
+watch(() => accessState.operator, async value => {
+  const identity = value ? String(value.user_id ?? value.id ?? (value.development_superadmin ? 'development' : value.name)) : 'anonymous'
+  manager.reset(identity)
+  if (value) { await rootRouter.isReady(); if (accessState.operator === value && !manager.tabs.length && !manager.isOpening()) await manager.open(rootRouter.currentRoute.value.fullPath) }
+}, { immediate: true, flush: 'sync' })
+const removeBoundary = onSessionBoundary(() => { accessState.operator = null; accessState.loaded = false; manager.reset('expired'); void rootRouter.replace('/access-status-error') })
+onBeforeUnmount(() => { removeBoundary(); manager.destroy() })
 const menuOpen = ref(false)
 const operator = computed(() => accessState.operator || { name: accessState.error ? '权限状态不可用' : '加载中', role: '身份待确认', development_superadmin: false, has_all_permissions: false })
 const nav = [
@@ -99,7 +113,8 @@ onMounted(() => { loadAccessControl().catch(() => {}) })
           <div class="avatar" :title="operator.name">{{ operatorInitial }}</div>
         </div>
       </header>
-      <section class="content"><RouterView :key="pageIdentityKey(route)" /></section>
+      <WorkspaceTabs :manager="manager" />
+      <section class="content"><WorkspacePane v-for="tab in manager.tabs" :key="tab.id" :tab="tab" :manager="manager" /></section>
     </main>
     <AppDialogHost />
   </div>

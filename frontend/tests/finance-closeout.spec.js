@@ -5,7 +5,7 @@ import FinanceLedgerPage from '../src/views/FinanceLedgerPage.vue'
 const api = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn() }))
 vi.mock('../src/api', () => ({ api }))
 vi.mock('../src/accessControl', () => ({ useAccessControl: () => ({ can: () => true }) }))
-vi.mock('vue-router', () => ({ useRoute: () => ({ query: {} }) }))
+vi.mock('vue-router', async importOriginal => ({ ...await importOriginal(), useRoute: () => ({ query: {} }) }))
 let wrapper
 const empty = { accounts: [], vouchers: [], instructions: [], reviews: [], mappings: [], transfers: [] }
 beforeEach(() => {

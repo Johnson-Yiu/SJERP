@@ -19,7 +19,10 @@ vi.mock('../src/api.js', () => ({
   listData: response => response.data.results || response.data,
 }))
 
-import App from '../src/App.vue'
+import { pageIdentityKey } from '../src/utils/routePageState'
+// Preserve the existing standalone page lifecycle contract separately from workspace navigation.
+// Workspace integration (including isolated URL refs and dirty close) is covered by workspace-manager and real Chrome specs.
+const App = defineComponent({ setup() { return { pageIdentityKey } }, template: '<section class="content"><RouterView v-slot="{ Component, route }"><component :is="Component" :key="pageIdentityKey(route)" /></RouterView></section>' })
 import { resolveDialog } from '../src/dialogs'
 import DocumentPage from '../src/views/DocumentPage.vue'
 import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'

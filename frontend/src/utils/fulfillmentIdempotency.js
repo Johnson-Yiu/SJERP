@@ -1,3 +1,4 @@
+import { workspaceAccountScope } from '../workspaceSession.js'
 const STORAGE_PREFIX = 'sunjack:fulfillment-idempotency:'
 const pendingRequestIds = new Map()
 
@@ -41,7 +42,7 @@ function requestStorage(operation, targetId, operationCompleted = false) {
     if (!storage) throw new Error('Session storage is unavailable.')
     return {
       storage,
-      key: `${STORAGE_PREFIX}${operation}:${targetId}`,
+      key: `${STORAGE_PREFIX}${workspaceAccountScope() === 'standalone' ? '' : `${workspaceAccountScope()}:`}${operation}:${targetId}`,
     }
   } catch (error) {
     throw storageFailure(error, operationCompleted)

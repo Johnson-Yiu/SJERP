@@ -1,9 +1,13 @@
 <script setup>
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const { workspace } = useWorkspaceNavigation()
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, downloadQuoteExport } = useWorkspaceApi()
 import { compactDecimalInput } from '../utils/decimalInput'
 import { computed, inject, onMounted, ref, watch } from 'vue'
 import { routeLocationKey, routerKey } from 'vue-router'
 import { AlertTriangle, ArrowLeft, ArrowRight, Download, Eye, FileText, GitBranch, Pencil, Plus, ShoppingCart, StickyNote, X } from 'lucide-vue-next'
-import { api, downloadQuoteExport } from '../api'
+
 import { confirmDialog } from '../dialogs'
 import QuotePreviewModal from './QuotePreviewModal.vue'
 import RichTextEditor from './RichTextEditor.vue'
@@ -158,6 +162,7 @@ function closeNoteEditor() { noteContent.value = ''; noteEditorOpen.value = fals
 onMounted(load)
 watch(() => props.id, load)
 watch(() => props.refreshKey, () => load(quote.value?.id || props.id))
+watch(() => quote.value?.quote_no, title => { if (workspace && title) { workspace.objectTitle = String(title); workspace.title = String(title) } }, { immediate: true })
 </script>
 
 <template>

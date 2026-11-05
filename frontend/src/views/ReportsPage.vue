@@ -1,7 +1,11 @@
 <script setup>
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const workspaceNavigation = useWorkspaceNavigation()
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors'
 import { useAccessControl } from '../accessControl'
 import ReportBlock from '../components/reports/ReportBlock.vue'
@@ -19,7 +23,7 @@ const availablePresets = computed(() => Object.fromEntries(Object.entries(report
 const sourceSpec = computed(() => catalog.value?.sources[form.source])
 const dimensions = computed(() => (sourceSpec.value?.dimensions || []).filter(key => canViewReportDimension(key, can)))
 const filterDimension = ref(''), filterValue = ref('__pick__'), filterOptions = ref([]), optionsLoading = ref(false), optionsError = ref('')
-const storageKey = 'senju-report-blocks-v1', saved = ref([]), removedBlock = ref(null)
+const storageKey = workspaceNavigation.storageKey('senju-report-blocks-v1'), saved = ref([]), removedBlock = ref(null)
 const datePresets = { today: '今天', week: '本周至今', month: '本月至今', quarter: '本季度至今', year: '本年至今', 'last-month': '上月', 'last-year': '去年', 30: '近30天', 90: '近90天' }
 const configKeys = ['source', 'group_by', 'group_by_2', 'grain', 'date_field', 'metric', 'view', 'title', 'comparison']
 const queryKeys = [...configKeys, 'date_from', 'date_to', 'shared_template']

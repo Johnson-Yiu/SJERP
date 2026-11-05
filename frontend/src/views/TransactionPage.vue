@@ -1,8 +1,10 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { BOOK_RMB_NOTE } from '../utils/financeBasis.js'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api, listAll } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import SummaryCards from '../components/SummaryCards.vue'
 import PageLoadState from '../components/PageLoadState.vue'

@@ -82,3 +82,13 @@ test('failed later pages never return a misleading partial total', async () => {
   try { await assert.rejects(listAll('/transactions/'), /second page unavailable/) }
   finally { api.get = original }
 })
+
+test('responses from a previous workspace identity are rejected before publishing data', async () => {
+  const { advanceSessionEpoch } = await import('./workspaceSession.js')
+  let release, started
+  const ready = new Promise(resolve => { started = resolve })
+  const request = api.get('/identity-boundary/', { adapter: config => new Promise(resolve => { release = () => resolve({ data: { old_account: true }, status: 200, config }); started() }) })
+  await ready
+  advanceSessionEpoch(); release()
+  await assert.rejects(request, /账号已变化/)
+})

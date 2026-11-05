@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import { X, Plus, Layers3, Truck, Check } from 'lucide-vue-next'
-import { api } from '../api'
+
 import { confirmDialog } from '../dialogs'
 const props = defineProps({ purchase: Object, orders: Array })
 const emit = defineEmits(['close', 'saved'])

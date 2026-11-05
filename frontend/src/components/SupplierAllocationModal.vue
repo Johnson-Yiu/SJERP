@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onMounted, ref } from 'vue'
 import { AlertTriangle, Check, CircleHelp, Truck, X } from 'lucide-vue-next'
-import { api } from '../api'
+
 
 const props = defineProps({
   orderId: { type: [Number, String], required: true },

@@ -1,5 +1,6 @@
 import { computed, inject, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { routerKey } from 'vue-router'
+import { workspaceKey } from './useWorkspaceNavigation'
 import { confirmDialog } from '../dialogs'
 
 const scopeKey = Symbol('unsaved-editor-scope')
@@ -34,6 +35,7 @@ export function unsavedSnapshot(value) {
 }
 
 export function useUnsavedChangesGuard({ data, enabled = () => true, busy = () => false, confirmOptions = () => ({}), router: suppliedRouter, routeGuard = true, scope: suppliedScope } = {}) {
+  const workspace = inject(workspaceKey, null)
   const router = suppliedRouter || inject(routerKey, null)
   const scope = suppliedScope || inject(scopeKey, null)
   const baseline = ref(null)
@@ -74,8 +76,9 @@ export function useUnsavedChangesGuard({ data, enabled = () => true, busy = () =
     if (typeof window === 'undefined') return
     window[value ? 'addEventListener' : 'removeEventListener']('beforeunload', beforeUnload)
   }, { flush: 'sync', immediate: true })
-  const scopedGuard = { confirmLeave, markClean }
+  const scopedGuard = { confirmLeave, markClean, dirty }
+  workspace?.guards.add(scopedGuard)
   scope?.children.add(scopedGuard)
-  onBeforeUnmount(() => { scope?.children.delete(scopedGuard); stop(); removeRouteGuard?.(); removeAfterGuard?.(); if (typeof window !== 'undefined') window.removeEventListener('beforeunload', beforeUnload) })
+  onBeforeUnmount(() => { workspace?.guards.delete(scopedGuard); scope?.children.delete(scopedGuard); stop(); removeRouteGuard?.(); removeAfterGuard?.(); if (typeof window !== 'undefined') window.removeEventListener('beforeunload', beforeUnload) })
   return { dirty, markClean, setBaseline: markClean, requestClose }
 }

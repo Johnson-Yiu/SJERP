@@ -1,7 +1,11 @@
 <script setup>
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const { workspace } = useWorkspaceNavigation()
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { api } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { optionalSettlementId } from '../utils/cashEventPayload.js'
 import PageLoadState from '../components/PageLoadState.vue'
@@ -108,6 +112,7 @@ function draftSnapshot() {
   }
 }
 function persistDraftSnapshot() {
+  if (workspace) return
   if (typeof window === 'undefined' || !showForm.value || formStep.value !== 'form') return
   try { window.localStorage.setItem(draftStorageKey, JSON.stringify(draftSnapshot())) } catch { /* Keep the form usable when storage is unavailable. */ }
 }
@@ -123,6 +128,7 @@ function clearExpiredDraftSnapshot() {
   }
 }
 function restoreDraftSnapshot() {
+  if (workspace) return false
   if (typeof window === 'undefined') return false
   try {
     const raw = window.localStorage.getItem(draftStorageKey)

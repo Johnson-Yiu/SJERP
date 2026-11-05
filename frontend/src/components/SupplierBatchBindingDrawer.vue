@@ -1,8 +1,10 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onMounted, ref } from 'vue'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { apiErrorMessage } from '../utils/apiErrors'
-import { api } from '../api'
+
 const props = defineProps({ productId: [Number, String], skuIds: Array })
 const emit = defineEmits(['close', 'saved'])
 const suppliers = ref([]), selected = ref([]), settings = ref({}), search = ref(''), loading = ref(true), busy = ref(false), error = ref('')

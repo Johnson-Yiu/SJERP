@@ -1,4 +1,6 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import { followUpError } from '../utils/followUpSafety'
@@ -7,7 +9,7 @@ import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } 
 import CategoryMultiPicker from "./CategoryMultiPicker.vue"
 import { computed, onMounted, reactive, ref } from 'vue'
 import { MinusCircle, Paperclip, X } from 'lucide-vue-next'
-import { api, listData, listAll } from '../api'
+import { listData } from '../api'
 import QuoteEditorModal from './QuoteEditorModal.vue'
 import { resourceConfigs } from '../resourceConfigs'
 import ComboInput from './ComboInput.vue'

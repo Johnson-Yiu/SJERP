@@ -1,4 +1,8 @@
 <script setup>
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const { workspace } = useWorkspaceNavigation()
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { provideUnsavedChangesScope, useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import SkuCombinationRuleEditor from "../components/SkuCombinationRuleEditor.vue"
@@ -8,7 +12,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } 
 import { useRoute, useRouter } from 'vue-router'
 import { Database, History, Layers3, Pencil, Plus, Search, Trash2, X } from 'lucide-vue-next'
 import { pinyin } from 'pinyin-pro'
-import { api, listData, listAll } from '../api'
+import { listData } from '../api'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { packagingError } from '../utils/packagingPresentation'
 import { confirmDialog } from '../dialogs'
@@ -781,7 +785,7 @@ watch(() => form.product, () => { void loadAbbreviationSuggestions() })
 watch(parameterValues, applyAbbreviationSuggestions, { deep: true })
 watch(allPreviews, syncDetails, { immediate: true })
 onMounted(async () => {
-  document.addEventListener('pointerdown', closePackagingPickerOnOutsideClick)
+  if (!workspace || workspace.active) document.addEventListener('pointerdown', closePackagingPickerOnOutsideClick)
   await Promise.all([load(), loadSkuReferenceOptions()])
   if (props.embedded) openCreate(props.initialProduct)
   else { openCreateFromRoute(); await openEditFromRoute() }
@@ -796,6 +800,7 @@ watch([() => route.query.create, () => route.query.product], ([value]) => {
     closeModal()
   }
 })
+watch(() => workspace?.active, active => { document.removeEventListener('pointerdown', closePackagingPickerOnOutsideClick); if (active) document.addEventListener('pointerdown', closePackagingPickerOnOutsideClick) })
 onBeforeUnmount(() => { supplierSourcesVersion++; loadVersion++; document.removeEventListener('pointerdown', closePackagingPickerOnOutsideClick); revokeImagePreview() })
 </script>
 

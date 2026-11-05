@@ -43,10 +43,12 @@ test('history page does not offer an entry form without its master-data permissi
 test('history navigation accepts either sales or purchasing view permission', async () => {
   const accessControl = await readFile(accessControlUrl, 'utf8')
   const router = await readFile(routerUrl, 'utf8')
+  const navigation = await readFile(new URL('../navigationAccess.js', import.meta.url), 'utf8')
+  assert.match(router, /router\.beforeEach\(navigationAccess\)/)
   assert.match(accessControl, /canAccessHistoricalOrders/)
   assert.match(accessControl, /can\('orders', 'view'\) \|\| can\('purchases', 'view'\)/)
-  assert.match(router, /to\.path === '\/historical-orders'/)
-  assert.match(router, /canAccessHistoricalOrders\(\)/)
+  assert.match(navigation, /to\.path === '\/historical-orders'/)
+  assert.match(navigation, /canAccessHistoricalOrders\(\)/)
 })
 
 test('history analysis renders permission-filtered detail tables with local narrow-screen scrolling', async () => {

@@ -1,8 +1,10 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { computed, onMounted, ref } from 'vue'
 import { AlertTriangle, Check, X } from 'lucide-vue-next'
-import { api } from '../api'
+
 
 const props = defineProps({ orderId: { type: [Number, String], required: true }, plan: { type: Object, required: true } })
 const emit = defineEmits(['close', 'created'])

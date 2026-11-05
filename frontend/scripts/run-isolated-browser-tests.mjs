@@ -407,6 +407,7 @@ export function isolatedCashAccountEnvironment(selection) {
 
 export function isolatedFixtureSeed(businessTest) {
   const allowed = {
+    'workspace-tabs-real.spec.js': { seedFile: path.join('test_support', 'seed_workspace_tabs.py'), evidenceEnv: 'WORKSPACE_EVIDENCE_DIR' },
     'finance-closeout-approval.spec.js': { seedFile: path.join('..', 'docs', 'uat-evidence', 'finance-closeout-batch-20261104', 'seed_finance_browser.py'), evidenceEnv: 'FINANCE_AUTH_EVIDENCE_DIR' },
     'iss022-moq-real.spec.js': { seedFile: 'seed_iss022_browser.py', evidenceEnv: 'ISS022_EVIDENCE_DIR' },
     'iss075-payment-terms-real.spec.js': { seedFile: 'seed_iss075_browser.py', evidenceEnv: 'ISS075_EVIDENCE_DIR' },
@@ -531,7 +532,7 @@ async function main() {
       ISOLATED_PLAYWRIGHT_API_BASE_URL: `http://127.0.0.1:${apiPort}`,
       ISS007_BASE_URL: baseURL,
       ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',
-      PLAYWRIGHT_CHANNEL: selection.businessTest === 'iss028-035-category-schema.spec.js' ? 'chrome' : '',
+      PLAYWRIGHT_CHANNEL: ['iss028-035-category-schema.spec.js', 'workspace-tabs-real.spec.js'].includes(selection.businessTest) ? 'chrome' : '',
       ISOLATED_PLAYWRIGHT_TEST_EXCLUDE: selection.businessSuite
         ? JSON.stringify([...new Set(['iss055-customer-404-real.spec.js', ...selection.excludedBusinessTests])])
         : '',

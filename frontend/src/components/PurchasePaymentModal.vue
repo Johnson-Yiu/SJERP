@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { ref } from 'vue'
 import { X, CircleDollarSign } from 'lucide-vue-next'
-import { api } from '../api'
+
 const props = defineProps({ purchase: Object })
 const emit = defineEmits(['close', 'saved'])
 const saving = ref(false), error = ref('')

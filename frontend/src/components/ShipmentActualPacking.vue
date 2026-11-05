@@ -1,6 +1,8 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, downloadPackingListExport } = useWorkspaceApi()
 import { computed, ref, watch } from 'vue'
-import { api, downloadPackingListExport } from '../api'
+
 import { confirmDialog } from '../dialogs'
 import { useAccessControl } from '../accessControl'
 import { decimal, packingSummary, scaled, shippedSkus } from '../utils/actualPacking'

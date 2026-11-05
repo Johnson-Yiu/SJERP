@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api, listAll } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors'
 import { packagingError } from '../utils/packagingPresentation'
 import { internalPagePath } from '../utils/modalNavigation'

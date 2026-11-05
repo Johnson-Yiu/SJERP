@@ -1,10 +1,12 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { BOOK_RMB_NOTE } from '../utils/financeBasis.js'
 import CertificateExpiryBadge from '../components/CertificateExpiryBadge.vue'
 import PageLoadState from '../components/PageLoadState.vue'
 import { computed, onMounted, ref } from 'vue'
 import { RefreshCw, ChevronRight } from 'lucide-vue-next'
-import { api } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors'
 import { useAccessControl } from '../accessControl'
 

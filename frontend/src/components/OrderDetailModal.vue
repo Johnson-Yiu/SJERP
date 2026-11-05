@@ -1,4 +1,8 @@
 <script setup>
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const { workspace } = useWorkspaceNavigation()
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { fulfillmentItemState, fulfillmentStateLabels, fulfillmentMetrics, purchaseArrivalState } from '../utils/orderFulfillment.js'
 import { orderTasks, receivableNeedsReview } from '../utils/orderOverview.js'
 import TradeUnitPicker from './TradeUnitPicker.vue'
@@ -6,7 +10,7 @@ import { tradePayload, baseQuantity, tradeLabel } from '../utils/tradeUnits'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { AlertTriangle, Boxes, FileText, PackageCheck, Pencil, Truck, WalletCards, X } from 'lucide-vue-next'
-import { api } from '../api'
+
 import { confirmDialog } from '../dialogs'
 import { purchaseDetailLocation } from '../utils/detailNavigation'
 import OperationLogPanel from './OperationLogPanel.vue'
@@ -474,6 +478,7 @@ async function loadOperationLogs(id = props.id) {
 onMounted(load)
 watch(() => props.id, load)
 watch(() => props.refreshKey, load)
+watch(() => order.value?.order_no, title => { if (workspace && title) { workspace.objectTitle = String(title); workspace.title = String(title) } }, { immediate: true })
 </script>
 
 <template>

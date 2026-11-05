@@ -1,6 +1,8 @@
 <script setup>
+import { useWorkspaceApi } from '../../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, ref, watch } from 'vue'
-import { api } from '../../api'
+
 import { apiErrorMessage } from '../../utils/apiErrors'
 import { orderDetailLocation, purchaseDetailLocation } from '../../utils/detailNavigation'
 import { useRoute } from 'vue-router'

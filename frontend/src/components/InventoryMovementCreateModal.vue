@@ -1,10 +1,12 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { useAccessControl } from '../accessControl'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { tradePayload } from '../utils/tradeUnits'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { Plus, X } from 'lucide-vue-next'
-import { api, listAll } from '../api'
+
 import ComboInput from './ComboInput.vue'
 import SkuPickerPanel from './SkuPickerPanel.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'

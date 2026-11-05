@@ -18,7 +18,7 @@ const { can } = useAccessControl()
 const route = useRoute(), router = useRouter()
 const today = new Date().toLocaleDateString('en-CA')
 const dateFrom = ref(`${today.slice(0, 7)}-01`), dateTo = ref(today)
-const exporting = ref(false), notice = ref('')
+const exporting = ref(false), actualCashExporting = ref(false), exportError = ref(''), actualCashExportError = ref(''), notice = ref('')
 const drill = ref(null), drillLoading = ref(false), drillError = ref('')
 const actualCashEvents = ref(null)
 let loadVersion = 0
@@ -128,25 +128,28 @@ function resetPeriod() {
   void applyPeriod()
 }
 async function exportReport() {
-  if (!can('finance', 'export')) return
+  if (!can('finance', 'export') || exporting.value || !data.value.period) return
+  const period = { ...data.value.period }
   exporting.value = true
-  error.value = ''
+  exportError.value = ''; notice.value = ''
   try {
-    const response = await api.get('/finance-dashboard/', { params: { date_from: data.value.period.date_from, date_to: data.value.period.date_to, export: 'csv' }, responseType: 'blob' })
+    const response = await api.get('/finance-dashboard/', { params: { date_from: period.date_from, date_to: period.date_to, export: 'csv' }, responseType: 'blob' })
     const url = URL.createObjectURL(response.data)
-    const anchor = document.createElement('a'); anchor.href = url; anchor.download = `账面收支参考-${data.value.period.date_from}-${data.value.period.date_to}.csv`; anchor.click()
+    const anchor = document.createElement('a'); anchor.href = url; anchor.download = `账面收支参考-${period.date_from}-${period.date_to}.csv`; anchor.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
     notice.value = 'CSV 已开始下载。'
-  } catch (err) { error.value = apiErrorMessage(err) || '导出失败，请稍后重试。' } finally { exporting.value = false }
+  } catch (err) { exportError.value = apiErrorMessage(err) || '导出失败，请稍后重试。' } finally { exporting.value = false }
 }
 async function exportActualCash() {
-  if (!can('transactions', 'view') || !can('reports', 'export') || !actualCash.value) return
+  if (!can('transactions', 'view') || !can('reports', 'export') || !actualCash.value || actualCashExporting.value) return
+  const period = { ...actualCash.value.period }
+  actualCashExporting.value = true; actualCashExportError.value = ''; notice.value = ''
   try {
-    const response = await api.get('/actual-rmb-cash/', { params: { date_from: actualCash.value.period.date_from, date_to: actualCash.value.period.date_to, export: 'csv' }, responseType: 'blob' })
+    const response = await api.get('/actual-rmb-cash/', { params: { date_from: period.date_from, date_to: period.date_to, export: 'csv' }, responseType: 'blob' })
     const url = URL.createObjectURL(response.data), anchor = document.createElement('a')
-    anchor.href = url; anchor.download = `银行实际人民币资金-${actualCash.value.period.date_from}-${actualCash.value.period.date_to}.csv`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
+    anchor.href = url; anchor.download = `银行实际人民币资金-${period.date_from}-${period.date_to}.csv`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
     notice.value = '银行实际资金 CSV 已开始下载。'
-  } catch (err) { actualCashError.value = apiErrorMessage(err) || '银行实际资金导出失败，请稍后重试。' }
+  } catch (err) { actualCashExportError.value = apiErrorMessage(err) || '银行实际资金导出失败，请稍后重试。' } finally { actualCashExporting.value = false }
 }
 syncPeriod()
 watch(() => [route.query.date_from, route.query.date_to], () => { syncPeriod(); void load() })
@@ -158,6 +161,7 @@ onMounted(load)
     <header><div><p class="page-lede">合同、应收应付与两种资金口径分开列示。合同按订单日期，账面收支按流水发生日期，银行实际资金按银行实际日期；当前待结与未核销是当前余额。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>
     <form class="report-filters" aria-label="概览日期范围" @submit.prevent="applyPeriod"><label>开始日期<input v-model="dateFrom" type="date" required></label><label>结束日期<input v-model="dateTo" type="date" required></label><button :disabled="loading || !!rangeError">查询</button><button type="button" class="secondary" @click="resetPeriod">本月至今</button><button v-if="can('finance', 'export')" type="button" class="secondary" :disabled="loading || exporting || !data.period || !!error" @click="exportReport">{{ exporting ? '正在导出…' : '导出 CSV' }}</button></form>
     <p v-if="rangeError" class="error" role="alert">{{ rangeError }}</p>
+    <p v-if="exportError" class="error" role="alert">{{ exportError }}</p>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
     <p class="definition-note">合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。银行实际人民币资金按银行实际日期统计；当前待结与未核销不受所选期间限制。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用，仅作经营估算。</p>
     <p class="definition-note">{{ data.cash_basis?.note || BOOK_RMB_NOTE }}</p>
@@ -182,7 +186,8 @@ onMounted(load)
       </template>
     </section>
     <section v-if="can('transactions', 'view')" class="metric-section actual-cash-section" aria-label="银行实际人民币资金">
-      <header><div><h3>{{ actualCash?.events?.some(row => row.id < 0) ? '实际人民币资金（银行与现金）' : '银行实际人民币资金' }}</h3><p>统计已登记、已核实的人民币实际变动，银行与现金分开列示；不代表公司全部银行余额或现金余额。</p></div><div class="header-actions"><button v-if="actualCash" type="button" class="secondary" @click="showActualCashEvents">查看构成明细</button><button v-if="can('reports', 'export')" type="button" class="secondary" :disabled="actualCashLoading || !actualCash" @click="exportActualCash">导出实际资金 CSV</button></div></header>
+      <header><div><h3>{{ actualCash?.events?.some(row => row.id < 0) ? '实际人民币资金（银行与现金）' : '银行实际人民币资金' }}</h3><p>统计已登记、已核实的人民币实际变动，银行与现金分开列示；不代表公司全部银行余额或现金余额。</p></div><div class="header-actions"><button v-if="actualCash" type="button" class="secondary" @click="showActualCashEvents">查看构成明细</button><button v-if="can('reports', 'export')" type="button" class="secondary" :disabled="actualCashLoading || !actualCash || actualCashExporting" @click="exportActualCash">{{ actualCashExporting ? '导出中…' : '导出实际资金 CSV' }}</button></div></header>
+      <p v-if="actualCashExportError" class="error" role="alert">{{ actualCashExportError }}</p>
       <p v-if="actualCashError" class="error" role="alert">{{ actualCashError }} <button type="button" class="secondary" @click="loadActualCash">重新加载</button></p>
       <p v-else-if="actualCashLoading" class="definition-note" role="status">正在加载已确认银行资金…</p>
       <template v-else-if="actualCash">

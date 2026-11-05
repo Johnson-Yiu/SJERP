@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\local-operations-closeout-20261105\backend\operations_pg_acceptance.py", line 209, in <module>
+    main()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\local-operations-closeout-20261105\backend\operations_pg_acceptance.py", line 64, in main
+    drill = IsolatedPostgresDrill(task_root=root, pg_bin=pg, port=port, user="iss018_drill_admin", password=password, app_sha=sha)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\local-operations-closeout-20261105\backend\crm\services\postgres_drill_backup.py", line 68, in __init__
+    self._assert_application()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\local-operations-closeout-20261105\backend\crm\services\postgres_drill_backup.py", line 85, in _assert_application
+    raise BackupRecoveryError("Application SHA must match a clean backend and templates checkout")
+crm.services.backup_recovery.BackupRecoveryError: Application SHA must match a clean backend and templates checkout

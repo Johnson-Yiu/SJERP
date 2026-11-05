@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\local-operations-closeout-20261105\backend\operations_pg_acceptance.py", line 209, in <module>
+    main()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\local-operations-closeout-20261105\backend\operations_pg_acceptance.py", line 58, in main
+    run_tool([tool(pg, "initdb"), "-D", str(cluster), "-U", "iss018_drill_admin", "--auth=scram-sha-256", "--pwfile=" + str(secret), "--encoding=UTF8", "--no-locale"])
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\local-operations-closeout-20261105\backend\isolated_postgres_drill.py", line 47, in run_tool
+    raise RuntimeError(f"{Path(args[0]).name} failed (exit {result.returncode}): {detail}")
+RuntimeError: initdb.exe failed (exit 1): initdb: error: could not create restricted token: error code 87
+
+initdb: error: could not re-execute with restricted token: error code 3
+
+initdb: error: could not create directory "C:/Users/Johnson": File exists

@@ -1,0 +1,194 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_manual_outgoing_cannot_borrow_other_location_stock",
+  "http": [
+    {
+      "database_snapshot": {
+        "InventoryMovement": [
+          {
+            "id": 258,
+            "created_at": "2026-11-05 05:38:54.499845+00:00",
+            "updated_at": "2026-11-05 05:38:54.499845+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "movement_no": "CORE-IM-71dc37aec2",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 200,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "2.00",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          },
+          {
+            "id": 259,
+            "created_at": "2026-11-05 05:38:54.501840+00:00",
+            "updated_at": "2026-11-05 05:38:54.501840+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "movement_no": "CORE-IM-2912e58d9b",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 200,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "10.00",
+            "warehouse": "合成B仓",
+            "warehouse_type": "第三方仓",
+            "lot_reference": "LOT-B",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          }
+        ],
+        "InventoryReservation": [],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [],
+        "PurchaseOrder": [],
+        "PurchaseCostAllocation": [],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "OperationLog": []
+      }
+    },
+    {
+      "path": "/api/inventory-movements/",
+      "request": {
+        "movement_date": "2026-11-05",
+        "type": "sample_out",
+        "sku": 200,
+        "quantity": "3",
+        "unit_cost": "0",
+        "warehouse": "合成A仓",
+        "warehouse_type": "自有仓",
+        "lot_reference": "LOT-A"
+      },
+      "status": 400,
+      "body": [
+        "所选仓库及批次库存不足，不能借用其他仓库或批次库存。"
+      ]
+    },
+    {
+      "database_snapshot": {
+        "InventoryMovement": [
+          {
+            "id": 258,
+            "created_at": "2026-11-05 05:38:54.499845+00:00",
+            "updated_at": "2026-11-05 05:38:54.499845+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "movement_no": "CORE-IM-71dc37aec2",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 200,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "2.00",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          },
+          {
+            "id": 259,
+            "created_at": "2026-11-05 05:38:54.501840+00:00",
+            "updated_at": "2026-11-05 05:38:54.501840+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "movement_no": "CORE-IM-2912e58d9b",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 200,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "10.00",
+            "warehouse": "合成B仓",
+            "warehouse_type": "第三方仓",
+            "lot_reference": "LOT-B",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          }
+        ],
+        "InventoryReservation": [],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [],
+        "PurchaseOrder": [],
+        "PurchaseCostAllocation": [],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "OperationLog": []
+      }
+    }
+  ]
+}

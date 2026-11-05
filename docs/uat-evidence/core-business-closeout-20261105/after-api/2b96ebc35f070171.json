@@ -1,0 +1,15 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_manual_reversal_cannot_make_original_location_negative",
+  "http": [
+    {
+      "path": "/api/inventory-movements/1/reverse/",
+      "request": {
+        "reason": "合成原批次已使用"
+      },
+      "status": 400,
+      "body": {
+        "detail": "原仓库及批次库存不足，无法冲销。"
+      }
+    }
+  ]
+}

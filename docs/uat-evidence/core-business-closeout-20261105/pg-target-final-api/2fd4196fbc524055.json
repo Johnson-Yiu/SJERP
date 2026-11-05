@@ -1,0 +1,25 @@
+{
+  "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_and_ship_race_has_one_legal_outcome_without_partial_effects",
+  "http": [
+    {
+      "independent_pg_sessions": [
+        [
+          25736,
+          400,
+          {
+            "detail": "当前订单状态不能取消。"
+          }
+        ],
+        [
+          37464,
+          201,
+          {
+            "id": 10,
+            "shipment_no": "SH-860BB149EE9C4C46",
+            "status": "confirmed"
+          }
+        ]
+      ]
+    }
+  ]
+}

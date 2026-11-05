@@ -1,0 +1,86 @@
+{
+  "sqlite_full": {
+    "source_checkpoint": "7edbde7c37674a7f73ba22335e5d9b90119722d3",
+    "log": "sqlite-closeout.published.log",
+    "found": 1430,
+    "executed": 1430,
+    "passed": 1345,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 85,
+    "seconds": 1558.385,
+    "exit_code": 0
+  },
+  "postgres_full": {
+    "source_checkpoint": "7edbde7c37674a7f73ba22335e5d9b90119722d3",
+    "log": "pg-closeout.published.log",
+    "found": 1430,
+    "executed": 1430,
+    "passed": 1397,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 33,
+    "seconds": 1945.086,
+    "exit_code": 0,
+    "test_databases_remaining": [],
+    "owned_cluster_cleanup": "complete"
+  },
+  "postgres_targeted": {
+    "source_checkpoint": "4ffad5cf1b84639788ccf4c67a58cb10eacba59c",
+    "log": "pg-final-accepted.published.log",
+    "found": 56,
+    "executed": 56,
+    "passed": 56,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 90.466,
+    "exit_code": 0,
+    "test_databases_remaining": [],
+    "owned_cluster_cleanup": "complete"
+  },
+  "node": {
+    "log": "node-unit-low-load.published.log",
+    "passed": 179,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "exit_code_provenance": "Native shell EXIT=0 confirmed after process completion"
+  },
+  "vitest": {
+    "log": "vitest-full-verbose.published.log",
+    "files_passed": 78,
+    "passed": 725,
+    "failed": 0,
+    "exit_code": 0,
+    "exit_code_provenance": "Native shell EXIT=0 confirmed"
+  },
+  "chrome": {
+    "source_checkpoint": "3afaacae1ac1bc0ff387793326fc2bf704c818f7",
+    "log": "chrome-payment.published.log",
+    "passed": 2,
+    "failed": 0,
+    "widths": [
+      1440,
+      390
+    ],
+    "channel": "chrome",
+    "browser": "156.0.8078.80",
+    "exit_code": 0
+  },
+  "build": {
+    "log": "build.published.log",
+    "exit_code": 0,
+    "seconds": 5.17
+  },
+  "ci": {
+    "status": "NOT_RUN",
+    "reason": "User-approved quota pause; all commits [skip ci]"
+  },
+  "provenance": {
+    "backend_business_checkpoint": "7edbde7c37674a7f73ba22335e5d9b90119722d3",
+    "last_change_after_full": "Only test worker closure and diagnostic selector; all 56 targeted tests re-executed at current test checkpoint",
+    "frontend_source": "Product components, tests, infrastructure, scripts and lockfiles unchanged from baseline; exact tree IDs in source-integrity.json; no claim that later documentation commit reran tests"
+  }
+}

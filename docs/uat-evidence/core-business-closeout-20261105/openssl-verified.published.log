@@ -1,0 +1,23 @@
+test_archive_changed_during_restore_never_gets_signed (crm.tests.test_operations_receipt.ReceiptIssuanceTests.test_archive_changed_during_restore_never_gets_signed) ... ok
+test_cleanup_failure_after_restore_does_not_return_receipt (crm.tests.test_operations_receipt.ReceiptIssuanceTests.test_cleanup_failure_after_restore_does_not_return_receipt) ... ok
+test_cleanup_failure_preserves_restore_error (crm.tests.test_operations_receipt.ReceiptIssuanceTests.test_cleanup_failure_preserves_restore_error) ... ok
+test_failed_restore_never_signs_receipt (crm.tests.test_operations_receipt.ReceiptIssuanceTests.test_failed_restore_never_signs_receipt) ... ok
+test_signs_only_after_verified_restore_and_real_signature_verifies (crm.tests.test_operations_receipt.ReceiptIssuanceTests.test_signs_only_after_verified_restore_and_real_signature_verifies) ... ok
+test_unverified_audit_never_signs_receipt (crm.tests.test_operations_receipt.ReceiptIssuanceTests.test_unverified_audit_never_signs_receipt) ... ok
+test_default_dry_run_then_prune_preserves_newest_and_all_replicas (crm.tests.test_operations_retention.RetentionTests.test_default_dry_run_then_prune_preserves_newest_and_all_replicas) ... ok
+test_digest_without_restore_verification_never_authorizes_pruning (crm.tests.test_operations_retention.RetentionTests.test_digest_without_restore_verification_never_authorizes_pruning) ... ok
+test_missing_or_corrupt_replica_refuses_before_any_deletion (crm.tests.test_operations_retention.RetentionTests.test_missing_or_corrupt_replica_refuses_before_any_deletion) ... ok
+test_monitor_detects_missed_schedule_and_does_not_accept_tampering (crm.tests.test_operations_retention.RetentionTests.test_monitor_detects_missed_schedule_and_does_not_accept_tampering) ... ok
+test_receipt_signed_by_another_real_key_is_rejected (crm.tests.test_operations_retention.RetentionTests.test_receipt_signed_by_another_real_key_is_rejected) ... ok
+test_self_declared_digest_does_not_prove_a_restore (crm.tests.test_operations_retention.RetentionTests.test_self_declared_digest_does_not_prove_a_restore) ... ok
+test_single_backup_never_pruned (crm.tests.test_operations_retention.RetentionTests.test_single_backup_never_pruned) ... ok
+test_tampered_wrong_archive_expired_and_untrusted_key_refused (crm.tests.test_operations_retention.RetentionTests.test_tampered_wrong_archive_expired_and_untrusted_key_refused) ... ok
+test_unknown_files_and_wrong_owner_not_deleted (crm.tests.test_operations_retention.RetentionTests.test_unknown_files_and_wrong_owner_not_deleted) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 15.833s
+
+OK
+Found 15 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

@@ -1,0 +1,1080 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_shared_purchase_amount_costs_reassign_and_receipt_related_orders",
+  "http": [
+    {
+      "path": "/api/purchase-orders/26/cost-allocation/",
+      "request": {
+        "version": 0,
+        "allocations": [
+          {
+            "purchase_item": 26,
+            "target_type": "order",
+            "order": 137,
+            "quantity": "30"
+          },
+          {
+            "purchase_item": 26,
+            "target_type": "order",
+            "order": 138,
+            "quantity": "20"
+          }
+        ],
+        "expenses": [
+          {
+            "name": "合成运费",
+            "amount": "1000",
+            "method": "amount"
+          }
+        ]
+      },
+      "status": 200,
+      "body": {
+        "version": 1,
+        "allocations": [
+          {
+            "purchase_item": 26,
+            "sku_code": "CORE-SKU",
+            "display_name": "合成核心商品",
+            "target_name": "",
+            "target_type": "order",
+            "order": 137,
+            "order_no": "CORE-SO-c9fa8614",
+            "quantity": "30.00",
+            "base_amount": "3000.00",
+            "additional_amount": "300.00",
+            "total_amount": "3300.00"
+          },
+          {
+            "purchase_item": 26,
+            "sku_code": "CORE-SKU",
+            "display_name": "合成核心商品",
+            "target_name": "",
+            "target_type": "order",
+            "order": 138,
+            "order_no": "CORE-SO-f6d8b2df",
+            "quantity": "20.00",
+            "base_amount": "2000.00",
+            "additional_amount": "200.00",
+            "total_amount": "2200.00"
+          },
+          {
+            "purchase_item": 26,
+            "sku_code": "CORE-SKU",
+            "display_name": "合成核心商品",
+            "target_name": "",
+            "target_type": "inventory",
+            "order": null,
+            "order_no": "",
+            "quantity": "50.00",
+            "base_amount": "5000.00",
+            "additional_amount": "500.00",
+            "total_amount": "5500.00"
+          }
+        ],
+        "expenses": [
+          {
+            "name": "合成运费",
+            "amount": "1000.00",
+            "method": "amount"
+          }
+        ],
+        "expense_breakdown": [
+          {
+            "name": "合成运费",
+            "amount": "1000.00",
+            "method": "amount",
+            "shares": [
+              "300.00",
+              "200.00",
+              "500.00"
+            ]
+          }
+        ],
+        "base_amount": "10000.00",
+        "additional_amount": "1000.00",
+        "total_amount": "11000.00",
+        "can_edit": true,
+        "read_only_reason": ""
+      }
+    },
+    {
+      "path": "/api/purchase-orders/26/cost-allocation/",
+      "request": {
+        "version": 1,
+        "allocations": [
+          {
+            "purchase_item": 26,
+            "target_type": "order",
+            "order": 137,
+            "quantity": "20"
+          },
+          {
+            "purchase_item": 26,
+            "target_type": "order",
+            "order": 138,
+            "quantity": "30"
+          }
+        ],
+        "expenses": [
+          {
+            "name": "合成运费",
+            "amount": "1000",
+            "method": "amount"
+          }
+        ]
+      },
+      "status": 200,
+      "body": {
+        "version": 2,
+        "allocations": [
+          {
+            "purchase_item": 26,
+            "sku_code": "CORE-SKU",
+            "display_name": "合成核心商品",
+            "target_name": "",
+            "target_type": "order",
+            "order": 137,
+            "order_no": "CORE-SO-c9fa8614",
+            "quantity": "20.00",
+            "base_amount": "2000.00",
+            "additional_amount": "200.00",
+            "total_amount": "2200.00"
+          },
+          {
+            "purchase_item": 26,
+            "sku_code": "CORE-SKU",
+            "display_name": "合成核心商品",
+            "target_name": "",
+            "target_type": "order",
+            "order": 138,
+            "order_no": "CORE-SO-f6d8b2df",
+            "quantity": "30.00",
+            "base_amount": "3000.00",
+            "additional_amount": "300.00",
+            "total_amount": "3300.00"
+          },
+          {
+            "purchase_item": 26,
+            "sku_code": "CORE-SKU",
+            "display_name": "合成核心商品",
+            "target_name": "",
+            "target_type": "inventory",
+            "order": null,
+            "order_no": "",
+            "quantity": "50.00",
+            "base_amount": "5000.00",
+            "additional_amount": "500.00",
+            "total_amount": "5500.00"
+          }
+        ],
+        "expenses": [
+          {
+            "name": "合成运费",
+            "amount": "1000.00",
+            "method": "amount"
+          }
+        ],
+        "expense_breakdown": [
+          {
+            "name": "合成运费",
+            "amount": "1000.00",
+            "method": "amount",
+            "shares": [
+              "200.00",
+              "300.00",
+              "500.00"
+            ]
+          }
+        ],
+        "base_amount": "10000.00",
+        "additional_amount": "1000.00",
+        "total_amount": "11000.00",
+        "can_edit": true,
+        "read_only_reason": ""
+      }
+    },
+    {
+      "database_snapshot": {
+        "InventoryMovement": [],
+        "InventoryReservation": [],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [
+          {
+            "id": 137,
+            "created_at": "2026-11-05 05:38:52.986773+00:00",
+            "updated_at": "2026-11-05 05:38:52.986773+00:00",
+            "order_no": "CORE-SO-c9fa8614",
+            "customer_id": 162,
+            "customer_name_snapshot": "",
+            "customer_country_snapshot": "",
+            "customer_address_snapshot": "",
+            "customer_contact_name_snapshot": "",
+            "customer_phone_snapshot": "",
+            "customer_email_snapshot": "",
+            "quote_id": null,
+            "order_date": "2026-11-05",
+            "expected_ship_date": null,
+            "tail_goods_policy": "SAME_CARTON",
+            "status": "confirmed",
+            "historical_only": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "shipping_fee": "0.0000",
+            "discount": "0.0000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": "",
+            "quantity_change_version": 0,
+            "amount_calculation_version": 2
+          },
+          {
+            "id": 138,
+            "created_at": "2026-11-05 05:38:52.990762+00:00",
+            "updated_at": "2026-11-05 05:38:52.990762+00:00",
+            "order_no": "CORE-SO-f6d8b2df",
+            "customer_id": 162,
+            "customer_name_snapshot": "",
+            "customer_country_snapshot": "",
+            "customer_address_snapshot": "",
+            "customer_contact_name_snapshot": "",
+            "customer_phone_snapshot": "",
+            "customer_email_snapshot": "",
+            "quote_id": null,
+            "order_date": "2026-11-05",
+            "expected_ship_date": null,
+            "tail_goods_policy": "SAME_CARTON",
+            "status": "confirmed",
+            "historical_only": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "shipping_fee": "0.0000",
+            "discount": "0.0000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": "",
+            "quantity_change_version": 0,
+            "amount_calculation_version": 2
+          }
+        ],
+        "PurchaseOrder": [
+          {
+            "id": 26,
+            "created_at": "2026-11-05 05:38:52.996747+00:00",
+            "updated_at": "2026-11-05 05:38:53.096480+00:00",
+            "payment_terms_snapshot": [],
+            "cost_allocation_version": 2,
+            "additional_costs": [
+              {
+                "name": "合成运费",
+                "amount": "1000.00",
+                "method": "amount"
+              }
+            ],
+            "purchase_no": "CORE-PO-11ad81a7",
+            "supplier_id": 22,
+            "supplier_name_snapshot": "",
+            "supplier_address_snapshot": "",
+            "supplier_contact_name_snapshot": "",
+            "supplier_phone_snapshot": "",
+            "supplier_email_snapshot": "",
+            "order_id": null,
+            "order_date": "2026-11-05",
+            "expected_arrival_date": null,
+            "status": "ordered",
+            "historical_only": false,
+            "history_finance_mode": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": ""
+          }
+        ],
+        "PurchaseCostAllocation": [
+          {
+            "id": 33,
+            "target_name": "",
+            "purchase_item_id": 26,
+            "target_type": "order",
+            "order_id": 137,
+            "quantity": "20.00"
+          },
+          {
+            "id": 34,
+            "target_name": "",
+            "purchase_item_id": 26,
+            "target_type": "order",
+            "order_id": 138,
+            "quantity": "30.00"
+          },
+          {
+            "id": 35,
+            "target_name": "",
+            "purchase_item_id": 26,
+            "target_type": "inventory",
+            "order_id": null,
+            "quantity": "50.00"
+          }
+        ],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "OperationLog": [
+          {
+            "id": 166,
+            "content_type_id": 65,
+            "object_id": "26",
+            "entity": "crm.purchaseorder",
+            "entity_label": "purchase order",
+            "object_label": "CORE-PO-11ad81a7",
+            "action": "custom",
+            "action_label": "采购成本分配",
+            "operator_id": 69,
+            "changed_fields": [
+              "cost_allocation"
+            ],
+            "before_data": {
+              "cost_allocation": {
+                "version": 0,
+                "expenses": [],
+                "allocations": [
+                  {
+                    "order": null,
+                    "order_no": "",
+                    "quantity": "100.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "10000.00",
+                    "target_name": "",
+                    "target_type": "inventory",
+                    "display_name": "合成核心商品",
+                    "total_amount": "10000.00",
+                    "purchase_item": 26,
+                    "additional_amount": "0"
+                  }
+                ],
+                "base_amount": "10000.00",
+                "total_amount": "10000.00",
+                "additional_amount": "0",
+                "expense_breakdown": []
+              }
+            },
+            "after_data": {
+              "cost_allocation": {
+                "version": 1,
+                "expenses": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount"
+                  }
+                ],
+                "allocations": [
+                  {
+                    "order": 137,
+                    "order_no": "CORE-SO-c9fa8614",
+                    "quantity": "30.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "3000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "3300.00",
+                    "purchase_item": 26,
+                    "additional_amount": "300.00"
+                  },
+                  {
+                    "order": 138,
+                    "order_no": "CORE-SO-f6d8b2df",
+                    "quantity": "20.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "2000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "2200.00",
+                    "purchase_item": 26,
+                    "additional_amount": "200.00"
+                  },
+                  {
+                    "order": null,
+                    "order_no": "",
+                    "quantity": "50.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "5000.00",
+                    "target_name": "",
+                    "target_type": "inventory",
+                    "display_name": "合成核心商品",
+                    "total_amount": "5500.00",
+                    "purchase_item": 26,
+                    "additional_amount": "500.00"
+                  }
+                ],
+                "base_amount": "10000.00",
+                "total_amount": "11000.00",
+                "additional_amount": "1000.00",
+                "expense_breakdown": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount",
+                    "shares": [
+                      "300.00",
+                      "200.00",
+                      "500.00"
+                    ]
+                  }
+                ]
+              }
+            },
+            "metadata": {
+              "purchase_no": "CORE-PO-11ad81a7"
+            },
+            "request_method": "POST",
+            "request_path": "/api/purchase-orders/26/cost-allocation/",
+            "created_at": "2026-11-05 05:38:53.061574+00:00"
+          },
+          {
+            "id": 167,
+            "content_type_id": 65,
+            "object_id": "26",
+            "entity": "crm.purchaseorder",
+            "entity_label": "purchase order",
+            "object_label": "CORE-PO-11ad81a7",
+            "action": "custom",
+            "action_label": "采购成本分配",
+            "operator_id": 69,
+            "changed_fields": [
+              "cost_allocation"
+            ],
+            "before_data": {
+              "cost_allocation": {
+                "version": 1,
+                "expenses": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount"
+                  }
+                ],
+                "allocations": [
+                  {
+                    "order": 137,
+                    "order_no": "CORE-SO-c9fa8614",
+                    "quantity": "30.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "3000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "3300.00",
+                    "purchase_item": 26,
+                    "additional_amount": "300.00"
+                  },
+                  {
+                    "order": 138,
+                    "order_no": "CORE-SO-f6d8b2df",
+                    "quantity": "20.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "2000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "2200.00",
+                    "purchase_item": 26,
+                    "additional_amount": "200.00"
+                  },
+                  {
+                    "order": null,
+                    "order_no": "",
+                    "quantity": "50.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "5000.00",
+                    "target_name": "",
+                    "target_type": "inventory",
+                    "display_name": "合成核心商品",
+                    "total_amount": "5500.00",
+                    "purchase_item": 26,
+                    "additional_amount": "500.00"
+                  }
+                ],
+                "base_amount": "10000.00",
+                "total_amount": "11000.00",
+                "additional_amount": "1000.00",
+                "expense_breakdown": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount",
+                    "shares": [
+                      "300.00",
+                      "200.00",
+                      "500.00"
+                    ]
+                  }
+                ]
+              }
+            },
+            "after_data": {
+              "cost_allocation": {
+                "version": 2,
+                "expenses": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount"
+                  }
+                ],
+                "allocations": [
+                  {
+                    "order": 137,
+                    "order_no": "CORE-SO-c9fa8614",
+                    "quantity": "20.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "2000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "2200.00",
+                    "purchase_item": 26,
+                    "additional_amount": "200.00"
+                  },
+                  {
+                    "order": 138,
+                    "order_no": "CORE-SO-f6d8b2df",
+                    "quantity": "30.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "3000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "3300.00",
+                    "purchase_item": 26,
+                    "additional_amount": "300.00"
+                  },
+                  {
+                    "order": null,
+                    "order_no": "",
+                    "quantity": "50.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "5000.00",
+                    "target_name": "",
+                    "target_type": "inventory",
+                    "display_name": "合成核心商品",
+                    "total_amount": "5500.00",
+                    "purchase_item": 26,
+                    "additional_amount": "500.00"
+                  }
+                ],
+                "base_amount": "10000.00",
+                "total_amount": "11000.00",
+                "additional_amount": "1000.00",
+                "expense_breakdown": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount",
+                    "shares": [
+                      "200.00",
+                      "300.00",
+                      "500.00"
+                    ]
+                  }
+                ]
+              }
+            },
+            "metadata": {
+              "purchase_no": "CORE-PO-11ad81a7"
+            },
+            "request_method": "POST",
+            "request_path": "/api/purchase-orders/26/cost-allocation/",
+            "created_at": "2026-11-05 05:38:53.122836+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/api/purchase-orders/26/cost-allocation/",
+      "request": {
+        "version": 1,
+        "allocations": [
+          {
+            "purchase_item": 26,
+            "target_type": "order",
+            "order": 137,
+            "quantity": "30"
+          },
+          {
+            "purchase_item": 26,
+            "target_type": "order",
+            "order": 138,
+            "quantity": "20"
+          }
+        ],
+        "expenses": [
+          {
+            "name": "合成运费",
+            "amount": "1000",
+            "method": "amount"
+          }
+        ]
+      },
+      "status": 400,
+      "body": [
+        "成本分配已被其他人修改，请关闭后重新打开。"
+      ]
+    },
+    {
+      "database_snapshot": {
+        "InventoryMovement": [],
+        "InventoryReservation": [],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [
+          {
+            "id": 137,
+            "created_at": "2026-11-05 05:38:52.986773+00:00",
+            "updated_at": "2026-11-05 05:38:52.986773+00:00",
+            "order_no": "CORE-SO-c9fa8614",
+            "customer_id": 162,
+            "customer_name_snapshot": "",
+            "customer_country_snapshot": "",
+            "customer_address_snapshot": "",
+            "customer_contact_name_snapshot": "",
+            "customer_phone_snapshot": "",
+            "customer_email_snapshot": "",
+            "quote_id": null,
+            "order_date": "2026-11-05",
+            "expected_ship_date": null,
+            "tail_goods_policy": "SAME_CARTON",
+            "status": "confirmed",
+            "historical_only": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "shipping_fee": "0.0000",
+            "discount": "0.0000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": "",
+            "quantity_change_version": 0,
+            "amount_calculation_version": 2
+          },
+          {
+            "id": 138,
+            "created_at": "2026-11-05 05:38:52.990762+00:00",
+            "updated_at": "2026-11-05 05:38:52.990762+00:00",
+            "order_no": "CORE-SO-f6d8b2df",
+            "customer_id": 162,
+            "customer_name_snapshot": "",
+            "customer_country_snapshot": "",
+            "customer_address_snapshot": "",
+            "customer_contact_name_snapshot": "",
+            "customer_phone_snapshot": "",
+            "customer_email_snapshot": "",
+            "quote_id": null,
+            "order_date": "2026-11-05",
+            "expected_ship_date": null,
+            "tail_goods_policy": "SAME_CARTON",
+            "status": "confirmed",
+            "historical_only": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "shipping_fee": "0.0000",
+            "discount": "0.0000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": "",
+            "quantity_change_version": 0,
+            "amount_calculation_version": 2
+          }
+        ],
+        "PurchaseOrder": [
+          {
+            "id": 26,
+            "created_at": "2026-11-05 05:38:52.996747+00:00",
+            "updated_at": "2026-11-05 05:38:53.096480+00:00",
+            "payment_terms_snapshot": [],
+            "cost_allocation_version": 2,
+            "additional_costs": [
+              {
+                "name": "合成运费",
+                "amount": "1000.00",
+                "method": "amount"
+              }
+            ],
+            "purchase_no": "CORE-PO-11ad81a7",
+            "supplier_id": 22,
+            "supplier_name_snapshot": "",
+            "supplier_address_snapshot": "",
+            "supplier_contact_name_snapshot": "",
+            "supplier_phone_snapshot": "",
+            "supplier_email_snapshot": "",
+            "order_id": null,
+            "order_date": "2026-11-05",
+            "expected_arrival_date": null,
+            "status": "ordered",
+            "historical_only": false,
+            "history_finance_mode": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": ""
+          }
+        ],
+        "PurchaseCostAllocation": [
+          {
+            "id": 33,
+            "target_name": "",
+            "purchase_item_id": 26,
+            "target_type": "order",
+            "order_id": 137,
+            "quantity": "20.00"
+          },
+          {
+            "id": 34,
+            "target_name": "",
+            "purchase_item_id": 26,
+            "target_type": "order",
+            "order_id": 138,
+            "quantity": "30.00"
+          },
+          {
+            "id": 35,
+            "target_name": "",
+            "purchase_item_id": 26,
+            "target_type": "inventory",
+            "order_id": null,
+            "quantity": "50.00"
+          }
+        ],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "OperationLog": [
+          {
+            "id": 166,
+            "content_type_id": 65,
+            "object_id": "26",
+            "entity": "crm.purchaseorder",
+            "entity_label": "purchase order",
+            "object_label": "CORE-PO-11ad81a7",
+            "action": "custom",
+            "action_label": "采购成本分配",
+            "operator_id": 69,
+            "changed_fields": [
+              "cost_allocation"
+            ],
+            "before_data": {
+              "cost_allocation": {
+                "version": 0,
+                "expenses": [],
+                "allocations": [
+                  {
+                    "order": null,
+                    "order_no": "",
+                    "quantity": "100.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "10000.00",
+                    "target_name": "",
+                    "target_type": "inventory",
+                    "display_name": "合成核心商品",
+                    "total_amount": "10000.00",
+                    "purchase_item": 26,
+                    "additional_amount": "0"
+                  }
+                ],
+                "base_amount": "10000.00",
+                "total_amount": "10000.00",
+                "additional_amount": "0",
+                "expense_breakdown": []
+              }
+            },
+            "after_data": {
+              "cost_allocation": {
+                "version": 1,
+                "expenses": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount"
+                  }
+                ],
+                "allocations": [
+                  {
+                    "order": 137,
+                    "order_no": "CORE-SO-c9fa8614",
+                    "quantity": "30.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "3000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "3300.00",
+                    "purchase_item": 26,
+                    "additional_amount": "300.00"
+                  },
+                  {
+                    "order": 138,
+                    "order_no": "CORE-SO-f6d8b2df",
+                    "quantity": "20.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "2000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "2200.00",
+                    "purchase_item": 26,
+                    "additional_amount": "200.00"
+                  },
+                  {
+                    "order": null,
+                    "order_no": "",
+                    "quantity": "50.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "5000.00",
+                    "target_name": "",
+                    "target_type": "inventory",
+                    "display_name": "合成核心商品",
+                    "total_amount": "5500.00",
+                    "purchase_item": 26,
+                    "additional_amount": "500.00"
+                  }
+                ],
+                "base_amount": "10000.00",
+                "total_amount": "11000.00",
+                "additional_amount": "1000.00",
+                "expense_breakdown": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount",
+                    "shares": [
+                      "300.00",
+                      "200.00",
+                      "500.00"
+                    ]
+                  }
+                ]
+              }
+            },
+            "metadata": {
+              "purchase_no": "CORE-PO-11ad81a7"
+            },
+            "request_method": "POST",
+            "request_path": "/api/purchase-orders/26/cost-allocation/",
+            "created_at": "2026-11-05 05:38:53.061574+00:00"
+          },
+          {
+            "id": 167,
+            "content_type_id": 65,
+            "object_id": "26",
+            "entity": "crm.purchaseorder",
+            "entity_label": "purchase order",
+            "object_label": "CORE-PO-11ad81a7",
+            "action": "custom",
+            "action_label": "采购成本分配",
+            "operator_id": 69,
+            "changed_fields": [
+              "cost_allocation"
+            ],
+            "before_data": {
+              "cost_allocation": {
+                "version": 1,
+                "expenses": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount"
+                  }
+                ],
+                "allocations": [
+                  {
+                    "order": 137,
+                    "order_no": "CORE-SO-c9fa8614",
+                    "quantity": "30.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "3000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "3300.00",
+                    "purchase_item": 26,
+                    "additional_amount": "300.00"
+                  },
+                  {
+                    "order": 138,
+                    "order_no": "CORE-SO-f6d8b2df",
+                    "quantity": "20.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "2000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "2200.00",
+                    "purchase_item": 26,
+                    "additional_amount": "200.00"
+                  },
+                  {
+                    "order": null,
+                    "order_no": "",
+                    "quantity": "50.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "5000.00",
+                    "target_name": "",
+                    "target_type": "inventory",
+                    "display_name": "合成核心商品",
+                    "total_amount": "5500.00",
+                    "purchase_item": 26,
+                    "additional_amount": "500.00"
+                  }
+                ],
+                "base_amount": "10000.00",
+                "total_amount": "11000.00",
+                "additional_amount": "1000.00",
+                "expense_breakdown": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount",
+                    "shares": [
+                      "300.00",
+                      "200.00",
+                      "500.00"
+                    ]
+                  }
+                ]
+              }
+            },
+            "after_data": {
+              "cost_allocation": {
+                "version": 2,
+                "expenses": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount"
+                  }
+                ],
+                "allocations": [
+                  {
+                    "order": 137,
+                    "order_no": "CORE-SO-c9fa8614",
+                    "quantity": "20.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "2000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "2200.00",
+                    "purchase_item": 26,
+                    "additional_amount": "200.00"
+                  },
+                  {
+                    "order": 138,
+                    "order_no": "CORE-SO-f6d8b2df",
+                    "quantity": "30.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "3000.00",
+                    "target_name": "",
+                    "target_type": "order",
+                    "display_name": "合成核心商品",
+                    "total_amount": "3300.00",
+                    "purchase_item": 26,
+                    "additional_amount": "300.00"
+                  },
+                  {
+                    "order": null,
+                    "order_no": "",
+                    "quantity": "50.00",
+                    "sku_code": "CORE-SKU",
+                    "base_amount": "5000.00",
+                    "target_name": "",
+                    "target_type": "inventory",
+                    "display_name": "合成核心商品",
+                    "total_amount": "5500.00",
+                    "purchase_item": 26,
+                    "additional_amount": "500.00"
+                  }
+                ],
+                "base_amount": "10000.00",
+                "total_amount": "11000.00",
+                "additional_amount": "1000.00",
+                "expense_breakdown": [
+                  {
+                    "name": "合成运费",
+                    "amount": "1000.00",
+                    "method": "amount",
+                    "shares": [
+                      "200.00",
+                      "300.00",
+                      "500.00"
+                    ]
+                  }
+                ]
+              }
+            },
+            "metadata": {
+              "purchase_no": "CORE-PO-11ad81a7"
+            },
+            "request_method": "POST",
+            "request_path": "/api/purchase-orders/26/cost-allocation/",
+            "created_at": "2026-11-05 05:38:53.122836+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/api/purchase-orders/26/receive/",
+      "request": {
+        "purchase_item": 26,
+        "receipt_date": "2026-11-05",
+        "quantity": "40",
+        "unit_cost": "100",
+        "warehouse": "合成A仓",
+        "warehouse_type": "自有仓",
+        "lot_reference": "LOT-A"
+      },
+      "status": 201,
+      "body": {
+        "id": 6,
+        "purchase_item": 26,
+        "quantity": "40.00",
+        "trade_unit": null,
+        "trade_quantity": null,
+        "trade_unit_price": null,
+        "trade_snapshot": {
+          "base_unit": "pcs",
+          "unit": "pcs",
+          "factor": "1",
+          "name": ""
+        },
+        "is_overage": false,
+        "inventory_movement": 250
+      }
+    },
+    {
+      "path": "/api/purchase-orders/26/receipts/6/reverse/",
+      "request": {
+        "reason": "合成共享部分冲销"
+      },
+      "status": 200,
+      "body": {
+        "id": 6,
+        "receipt_date": "2026-11-05",
+        "quantity": "40.00",
+        "unit_cost": "100.000000000000",
+        "notes": "",
+        "is_overage": false,
+        "overage_reason": "",
+        "overage_reason_display": "",
+        "overage_quantity": "0.00",
+        "overage_summary": "",
+        "inventory_movement": 250,
+        "reversal_inventory_movement": 251,
+        "reversed_at": "2026-11-05T13:38:53.276896+08:00",
+        "reversal_reason": "合成共享部分冲销"
+      }
+    }
+  ]
+}

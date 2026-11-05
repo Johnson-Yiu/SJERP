@@ -1,0 +1,196 @@
+{
+  "baseline": "bcdcb57545f121b8a4102f352c74008b47372035",
+  "frozen_business_checkpoint": "7edbde7c37674a7f73ba22335e5d9b90119722d3",
+  "test_checkpoint": "4ffad5cf1b84639788ccf4c67a58cb10eacba59c",
+  "business_files": [
+    {
+      "path": "backend/crm/services/fulfillment.py",
+      "full_run_git_blob": "0c1a7247093d85fa0695e1441439a86c5956af8d",
+      "current_git_blob": "0c1a7247093d85fa0695e1441439a86c5956af8d",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/purchase_costs.py",
+      "full_run_git_blob": "7c1ca8cef1bc37fe61f7e1fc69ceb9486f0db246",
+      "current_git_blob": "7c1ca8cef1bc37fe61f7e1fc69ceb9486f0db246",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/serializers.py",
+      "full_run_git_blob": "f9f00b43043c4a7c7f4c93998320058117627f75",
+      "current_git_blob": "f9f00b43043c4a7c7f4c93998320058117627f75",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/views.py",
+      "full_run_git_blob": "d17111d10abb5b7f5dba62c08199c4c83c9a041d",
+      "current_git_blob": "d17111d10abb5b7f5dba62c08199c4c83c9a041d",
+      "equal": true
+    }
+  ],
+  "unchanged_boundaries": [
+    {
+      "path": "backend/crm/models.py",
+      "baseline_git_object": "dff7fdac74b5a4f4279c164742ab864b02965237",
+      "current_git_object": "dff7fdac74b5a4f4279c164742ab864b02965237",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/migrations",
+      "baseline_git_object": "ed592da95176f4a18ab63f2744049e3b7f6b7823",
+      "current_git_object": "ed592da95176f4a18ab63f2744049e3b7f6b7823",
+      "equal": true
+    },
+    {
+      "path": "backend/config",
+      "baseline_git_object": "5017f21f9aff292d152e95d3654dd1ff189a9d78",
+      "current_git_object": "5017f21f9aff292d152e95d3654dd1ff189a9d78",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/finance.py",
+      "baseline_git_object": "e0afc86df15e170a5c220e21989cc6273d8e2258",
+      "current_git_object": "e0afc86df15e170a5c220e21989cc6273d8e2258",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/finance_closeout.py",
+      "baseline_git_object": "570b00b4b3180f76fb39f242cfa3c18e87bbe2b2",
+      "current_git_object": "570b00b4b3180f76fb39f242cfa3c18e87bbe2b2",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/test_runner.py",
+      "baseline_git_object": "4e89727c84cac9cfb81f48ad236367a56e902af2",
+      "current_git_object": "4e89727c84cac9cfb81f48ad236367a56e902af2",
+      "equal": true
+    },
+    {
+      "path": "frontend/src",
+      "baseline_git_object": "538c56528e02d3605fad7aee190eab6990fe4a8f",
+      "current_git_object": "538c56528e02d3605fad7aee190eab6990fe4a8f",
+      "equal": true
+    },
+    {
+      "path": "frontend/tests",
+      "baseline_git_object": "74955cabdccc4f2e2c2d8229c43d88be21a90f9e",
+      "current_git_object": "74955cabdccc4f2e2c2d8229c43d88be21a90f9e",
+      "equal": true
+    },
+    {
+      "path": "frontend/infrastructure-tests",
+      "baseline_git_object": "b66b641800f9faa140eb07adcdc928903779ba45",
+      "current_git_object": "b66b641800f9faa140eb07adcdc928903779ba45",
+      "equal": true
+    },
+    {
+      "path": "frontend/scripts",
+      "baseline_git_object": "e2d9ec083fdca8eda23f7b217b8fbf3c43af1b2e",
+      "current_git_object": "e2d9ec083fdca8eda23f7b217b8fbf3c43af1b2e",
+      "equal": true
+    },
+    {
+      "path": "frontend/package.json",
+      "baseline_git_object": "c8412f6b10eb533591f7d172adcd5dea82d26523",
+      "current_git_object": "c8412f6b10eb533591f7d172adcd5dea82d26523",
+      "equal": true
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "baseline_git_object": "1a5ce188e997ee6cd9d989e32320c42f312eef8a",
+      "current_git_object": "1a5ce188e997ee6cd9d989e32320c42f312eef8a",
+      "equal": true
+    },
+    {
+      "path": "frontend/vite.config.js",
+      "baseline_git_object": "2bd00a26f656b2820ca083d7afc29c5ada05213b",
+      "current_git_object": "2bd00a26f656b2820ca083d7afc29c5ada05213b",
+      "equal": true
+    },
+    {
+      "path": ".github",
+      "baseline_git_object": "18e8169d8811fe665292303ce5895f571bf18320",
+      "current_git_object": "18e8169d8811fe665292303ce5895f571bf18320",
+      "equal": true
+    },
+    {
+      "path": "AGENTS.md",
+      "baseline_git_object": "ce9d3a188444359b031c076a5ae027e92c4ea9e5",
+      "current_git_object": "ce9d3a188444359b031c076a5ae027e92c4ea9e5",
+      "equal": true
+    },
+    {
+      "path": "docs/PROJECT_ISSUES.md",
+      "baseline_git_object": "0cbdcc488a5d72bb98c1b4315658d431fc6c259c",
+      "current_git_object": "0cbdcc488a5d72bb98c1b4315658d431fc6c259c",
+      "equal": true
+    },
+    {
+      "path": "docs/PROJECT_PHASES.md",
+      "baseline_git_object": "cf4802c4eb26b3b7c50609aa50d81d9e233c1cf4",
+      "current_git_object": "cf4802c4eb26b3b7c50609aa50d81d9e233c1cf4",
+      "equal": true
+    },
+    {
+      "path": "docs/REVIEW_PROTOCOL.md",
+      "baseline_git_object": "2a9c52995c40897a02a47f8eaa8af2fcdba9ec14",
+      "current_git_object": "2a9c52995c40897a02a47f8eaa8af2fcdba9ec14",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/operations_copy.py",
+      "baseline_git_object": "7781aae40be851918995110b0bdd170393e16187",
+      "current_git_object": "7781aae40be851918995110b0bdd170393e16187",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/operations_crypto.py",
+      "baseline_git_object": "3646bea59a9970e4d67655d0f8f74152a5ffe72b",
+      "current_git_object": "3646bea59a9970e4d67655d0f8f74152a5ffe72b",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/operations_fence.py",
+      "baseline_git_object": "b5b9bbe8bbbde2348f33b89fa141ecc21bf88f42",
+      "current_git_object": "b5b9bbe8bbbde2348f33b89fa141ecc21bf88f42",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/operations_monitor.py",
+      "baseline_git_object": "7e1389dd417e4c1ce55741e7f278342519783dc7",
+      "current_git_object": "7e1389dd417e4c1ce55741e7f278342519783dc7",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/operations_postgres.py",
+      "baseline_git_object": "4f36f63fa3e2e077fd0c540c48d4d278759fc601",
+      "current_git_object": "4f36f63fa3e2e077fd0c540c48d4d278759fc601",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/operations_readiness.py",
+      "baseline_git_object": "cbe0e4ed046d65dd7667045495bdffb139898adc",
+      "current_git_object": "cbe0e4ed046d65dd7667045495bdffb139898adc",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/operations_receipt.py",
+      "baseline_git_object": "665c121ba830d5f0b9a1b8506ba7440b6128c3c2",
+      "current_git_object": "665c121ba830d5f0b9a1b8506ba7440b6128c3c2",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/operations_retention.py",
+      "baseline_git_object": "5fb61732c12d499927ee87218970228f8e93da5e",
+      "current_git_object": "5fb61732c12d499927ee87218970228f8e93da5e",
+      "equal": true
+    },
+    {
+      "path": "backend/crm/services/operations_trust.py",
+      "baseline_git_object": "618eaebc8b365a18c0c5ba1f0d999ef9a8be6fbe",
+      "current_git_object": "618eaebc8b365a18c0c5ba1f0d999ef9a8be6fbe",
+      "equal": true
+    }
+  ],
+  "merge_commits_after_baseline": []
+}

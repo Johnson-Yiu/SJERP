@@ -1,0 +1,25 @@
+{
+  "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_location_overdraw_competition_only_one_shipment_commits",
+  "http": [
+    {
+      "independent_pg_sessions": [
+        [
+          37488,
+          400,
+          {
+            "detail": "所选仓库及批次库存不足，不能确认发货。"
+          }
+        ],
+        [
+          17040,
+          201,
+          {
+            "id": 161,
+            "shipment_no": "SH-26307D0C3DA44EF4",
+            "status": "confirmed"
+          }
+        ]
+      ]
+    }
+  ]
+}

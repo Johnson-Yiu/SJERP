@@ -1,0 +1,25 @@
+{
+  "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_and_ship_race_has_one_legal_outcome_without_partial_effects",
+  "http": [
+    {
+      "independent_pg_sessions": [
+        [
+          35884,
+          400,
+          {
+            "detail": "当前订单状态不能取消。"
+          }
+        ],
+        [
+          35240,
+          201,
+          {
+            "id": 160,
+            "shipment_no": "SH-FB8400BDED7447D9",
+            "status": "confirmed"
+          }
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cost_version_race_keeps_single_replacement_and_audit",
+  "http": [
+    {
+      "independent_pg_sessions": [
+        [
+          36636,
+          200,
+          {
+            "version": 1,
+            "allocations": [
+              {
+                "purchase_item": 403,
+                "sku_code": "CORE-SKU",
+                "display_name": "合成核心商品",
+                "target_name": "",
+                "target_type": "order",
+                "order": 1040,
+                "order_no": "CORE-SO-851cfa45",
+                "quantity": "6.00",
+                "base_amount": "18.00",
+                "additional_amount": "0",
+                "total_amount": "18.00"
+              }
+            ],
+            "expenses": [],
+            "expense_breakdown": [],
+            "base_amount": "18.00",
+            "additional_amount": "0",
+            "total_amount": "18.00",
+            "can_edit": true,
+            "read_only_reason": ""
+          }
+        ],
+        [
+          37572,
+          400,
+          [
+            "成本分配已被其他人修改，请关闭后重新打开。"
+          ]
+        ]
+      ]
+    }
+  ]
+}

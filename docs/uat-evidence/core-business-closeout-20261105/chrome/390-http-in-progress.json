@@ -1,0 +1,718 @@
+{
+  "http": [
+    {
+      "method": "POST",
+      "url": "/customers/",
+      "status": 201,
+      "request": {
+        "code": "CORE-390",
+        "name": "合成核心客户390",
+        "country": "CN",
+        "contacts": [
+          {
+            "name": "合成联系人",
+            "email": "core@example.test"
+          }
+        ]
+      },
+      "response": "{\"id\":2,\"contact_count\":0,\"order_count\":0,\"sales_amount\":\"0.00\",\"country_display\":\"China / CN\",\"status_display\":\"线索\",\"created_at\":\"2026-11-05T14:05:31.664923+08:00\",\"updated_at\":\"2026-11-05T14:05:31.664923+08:00\",\"name\":\"合成核心客户390\",\"code\":\"202611050001\",\"country\":\"CN\",\"region\":\"\",\"source\":\"\",\"status\":\"lead\",\"owner\":\"\",\"website\":\"\",\"address\":\"\",\"notes\":\"\",\"next_follow_up\":null,\"owner_profile\":null}"
+    },
+    {
+      "method": "POST",
+      "url": "/categories/",
+      "status": 201,
+      "request": {
+        "name": "合成核心分类390"
+      },
+      "response": "{\"id\":2,\"product_count\":0,\"child_count\":0,\"parent_name\":\"\",\"attributes\":[],\"effective_attributes\":[],\"sku_name_preview\":\"\",\"created_at\":\"2026-11-05T14:05:31.896857+08:00\",\"updated_at\":\"2026-11-05T14:05:31.896857+08:00\",\"name\":\"合成核心分类390\",\"description\":\"\",\"sort_order\":0,\"parent\":null}"
+    },
+    {
+      "method": "POST",
+      "url": "/suppliers/",
+      "status": 201,
+      "request": {
+        "code": "CN",
+        "name": "合成核心供应商390",
+        "supply_categories": [
+          2
+        ]
+      },
+      "response": "{\"id\":2,\"payment_terms_summary\":\"预付款 30% / 尾款 70%（系统默认）\",\"supply_category_names\":[\"合成核心分类390\"],\"purchase_count\":0,\"code\":\"CN\",\"created_at\":\"2026-11-05T14:05:32.243757+08:00\",\"updated_at\":\"2026-11-05T14:05:32.243757+08:00\",\"country\":\"中国\",\"address\":\"\",\"main_products\":\"\",\"name\":\"合成核心供应商390\",\"contact_name\":\"\",\"phone\":\"\",\"email\":\"\",\"store_url\":\"\",\"payment_terms\":\"30%预付款，70%尾款发货前结清\",\"payment_terms_config\":[],\"notes\":\"\",\"is_active\":true,\"supply_categories\":[2]}"
+    },
+    {
+      "method": "POST",
+      "url": "/products/",
+      "status": 201,
+      "request": {
+        "code": "CORE-P-390",
+        "name": "合成核心产品390",
+        "category": 2,
+        "sales_model_prefix": "CORE390"
+      },
+      "response": "{\"id\":2,\"sku_definitions\":null,\"category_name\":\"合成核心分类390\",\"hs_code_value\":\"\",\"sku_count\":0,\"parameter_count\":0,\"certificate_count\":0,\"created_at\":\"2026-11-05T14:05:32.481007+08:00\",\"updated_at\":\"2026-11-05T14:05:32.481007+08:00\",\"name\":\"合成核心产品390\",\"name_en\":\"\",\"code\":\"SPU261105002\",\"combination_rules\":[],\"sales_model_prefix\":\"CORE390\",\"description\":\"\",\"status\":\"active\",\"hs_code\":null,\"category\":2,\"additional_categories\":[],\"suppliers\":[]}"
+    },
+    {
+      "method": "POST",
+      "url": "/skus/",
+      "status": 201,
+      "request": {
+        "sku": "CORE-S-390",
+        "product": 2,
+        "unit": "pcs",
+        "specification": "6PCS",
+        "sales_model": "CORE390"
+      },
+      "response": "{\"id\":2,\"trade_units\":[],\"image_thumbnail\":\"\",\"image\":null,\"sku_code\":\"SKU-000002\",\"product_name\":\"合成核心产品390\",\"product_code\":\"SPU261105002\",\"category_names\":[\"合成核心分类390\"],\"status_label\":\"启用\",\"quote_count\":0,\"order_count\":0,\"sales_model_missing\":false,\"stock_quantity\":\"0.00\",\"actual_quantity\":0.0,\"reserved_quantity\":0.0,\"available_quantity\":0.0,\"in_transit_quantity\":0.0,\"to_procure_quantity\":0.0,\"has_anomaly\":false,\"packaging\":{\"status\":\"NOT_CONFIGURED\",\"template\":null,\"template_name\":\"\",\"effective_qty_per_carton\":null,\"effective_length\":null,\"effective_width\":null,\"effective_height\":null,\"effective_carton_tare_weight\":null,\"unit_net_weight\":null,\"effective_cbm\":null,\"partial_carton_policy\":null},\"historical_matches\":[],\"created_at\":\"2026-11-05T14:05:32.878404+08:00\",\"updated_at\":\"2026-11-05T14:05:32.878404+08:00\",\"schema_version\":1,\"sku\":\"SKU-000002\",\"specification\":\"6PCS\",\"display_name_cn\":\"合成核心产品390-6PCS\",\"display_name_key\":\"合成核心产品390-6pcs\",\"sales_model\":\"CORE390\",\"sales_model_abbreviations\":{},\"description_cn\":\"合成核心产品390\",\"description_en\":\"合成核心产品390\",\"unit\":\"pcs\",\"cost_price\":\"0.0000\",\"default_price\":\"0.0000\",\"currency\":\"USD\",\"active\":true,\"parameter_values\":{},\"identity_signature\":\"\",\"product_details\":[],\"product\":2}"
+    },
+    {
+      "method": "POST",
+      "url": "/orders/",
+      "status": 201,
+      "request": {
+        "customer": 2,
+        "order_date": "2026-11-05",
+        "currency": "CNY",
+        "exchange_rate": "1",
+        "items": [
+          {
+            "sku": 2,
+            "quantity": "6",
+            "unit_price": "10"
+          }
+        ]
+      },
+      "response": "{\"id\":2,\"items\":[{\"id\":2,\"sku\":2,\"sku_code\":\"SKU-000002\",\"sales_model\":\"CORE390\",\"model\":\"CORE390\",\"product_name\":\"合成核心产品390-6PCS\",\"display_name\":\"合成核心产品390-6PCS\",\"description\":\"合成核心产品390\",\"unit\":\"pcs\",\"quantity\":\"6.00\",\"unit_price\":\"10.0000\",\"cost_price\":\"0.0000\",\"amount\":\"60.00\",\"notes\":\"\",\"supplier_sku\":null,\"supplier_name\":\"\",\"supplier_model\":\"\",\"supplier_sku_code\":\"\",\"supplier_barcode\":\"\",\"supplier_allocation\":null,\"trade_unit\":null,\"trade_quantity\":null,\"trade_unit_price\":null,\"trade_snapshot\":{\"base_unit\":\"pcs\",\"unit\":\"pcs\",\"factor\":\"1\",\"name\":\"\"}}],\"customer_name\":\"合成核心客户390\",\"customer_country\":\"CN\",\"quote_no\":\"\",\"source_quote_no\":\"\",\"status_display\":\"草稿\",\"total_amount\":\"60.00\",\"base_amount\":\"60.00\",\"approved_change_amount\":\"0.00\",\"paid_amount\":\"0.00\",\"balance_amount\":0.0,\"receivable_state\":\"draft\",\"created_at\":\"2026-11-05T14:05:33.189243+08:00\",\"updated_at\":\"2026-11-05T14:05:33.189243+08:00\",\"order_no\":\"SO-2026-00002\",\"customer_name_snapshot\":\"\",\"customer_country_snapshot\":\"\",\"customer_address_snapshot\":\"\",\"customer_contact_name_snapshot\":\"\",\"customer_phone_snapshot\":\"\",\"customer_email_snapshot\":\"\",\"order_date\":\"2026-11-05\",\"expected_ship_date\":null,\"tail_goods_policy\":\"SAME_CARTON\",\"status\":\"draft\",\"historical_only\":false,\"currency\":\"CNY\",\"exchange_rate\":\"1.000000\",\"shipping_fee\":\"0.0000\",\"discount\":\"0.0000\",\"notes\":\"\",\"cancelled_at\":null,\"cancellation_reason\":\"\",\"quantity_change_version\":0,\"customer\":2,\"quote\":null}"
+    },
+    {
+      "method": "POST",
+      "url": "/orders/2/confirm/",
+      "status": 200,
+      "request": {},
+      "response": "{\"id\":2,\"items\":[{\"id\":2,\"sku\":2,\"sku_code\":\"SKU-000002\",\"sales_model\":\"CORE390\",\"model\":\"CORE390\",\"product_name\":\"合成核心产品390-6PCS\",\"display_name\":\"合成核心产品390-6PCS\",\"description\":\"合成核心产品390\",\"unit\":\"pcs\",\"quantity\":\"6.00\",\"unit_price\":\"10.0000\",\"cost_price\":\"0.0000\",\"amount\":\"60.00\",\"notes\":\"\",\"supplier_sku\":null,\"supplier_name\":\"\",\"supplier_model\":\"\",\"supplier_sku_code\":\"\",\"supplier_barcode\":\"\",\"supplier_allocation\":null,\"trade_unit\":null,\"trade_quantity\":null,\"trade_unit_price\":null,\"trade_snapshot\":{\"base_unit\":\"pcs\",\"unit\":\"pcs\",\"factor\":\"1\",\"name\":\"\"}}],\"customer_name\":\"合成核心客户390\",\"customer_country\":\"CN\",\"quote_no\":\"\",\"source_quote_no\":\"\",\"status_display\":\"已确认\",\"total_amount\":\"60.00\",\"base_amount\":\"60.00\",\"approved_change_amount\":\"0.00\",\"paid_amount\":\"0.00\",\"balance_amount\":60.0,\"receivable_state\":\"pending\",\"created_at\":\"2026-11-05T14:05:33.189243+08:00\",\"updated_at\":\"2026-11-05T14:05:33.421286+08:00\",\"order_no\":\"SO-2026-00002\",\"customer_name_snapshot\":\"合成核心客户390\",\"customer_country_snapshot\":\"CN\",\"customer_address_snapshot\":\"\",\"customer_contact_name_snapshot\":\"合成联系人\",\"customer_phone_snapshot\":\"\",\"customer_email_snapshot\":\"core@example.test\",\"order_date\":\"2026-11-05\",\"expected_ship_date\":null,\"tail_goods_policy\":\"SAME_CARTON\",\"status\":\"confirmed\",\"historical_only\":false,\"currency\":\"CNY\",\"exchange_rate\":\"1.000000\",\"shipping_fee\":\"0.0000\",\"discount\":\"0.0000\",\"notes\":\"\",\"cancelled_at\":null,\"cancellation_reason\":\"\",\"quantity_change_version\":0,\"customer\":2,\"quote\":null}"
+    },
+    {
+      "method": "POST",
+      "url": "/purchase-orders/",
+      "status": 201,
+      "request": {
+        "supplier": 2,
+        "payment_terms_snapshot": [
+          {
+            "label": "合成到货付款",
+            "ratio": "1",
+            "due_basis": "order_date",
+            "offset_days": 0
+          }
+        ],
+        "order_date": "2026-11-05",
+        "currency": "CNY",
+        "exchange_rate": "1",
+        "items": [
+          {
+            "sku": 2,
+            "quantity": "6",
+            "unit_price": "3"
+          }
+        ]
+      },
+      "response": "{\"id\":2,\"payment_plans\":[],\"moq_exception\":null,\"status_display\":\"草稿\",\"items\":[{\"id\":2,\"sku\":2,\"supplier_sku\":null,\"sku_code\":\"SKU-000002\",\"display_name\":\"合成核心产品390-6PCS\",\"sales_model\":\"CORE390\",\"supplier_name\":\"合成核心供应商390\",\"supplier_model\":\"\",\"supplier_sku_code\":\"\",\"supplier_barcode\":\"\",\"supplier_characteristics_snapshot\":{},\"quantity\":\"6.00\",\"unit_price\":\"3.0000\",\"received_quantity\":\"0.00\",\"remaining_quantity\":\"6.00\",\"overage_quantity\":\"0.00\",\"amount\":\"18.0000\",\"receipts\":[],\"trade_unit\":null,\"trade_quantity\":null,\"trade_unit_price\":null,\"trade_snapshot\":{\"base_unit\":\"pcs\",\"unit\":\"pcs\",\"factor\":\"1\",\"name\":\"\"}}],\"supplier_name\":\"合成核心供应商390\",\"related_orders\":[],\"total_amount\":\"18.00\",\"base_amount\":\"18.00\",\"approved_change_amount\":\"0.00\",\"paid_amount\":\"0.00\",\"unpaid_amount\":\"18.00\",\"created_at\":\"2026-11-05T14:05:33.842789+08:00\",\"updated_at\":\"2026-11-05T14:05:33.842789+08:00\",\"payment_terms_snapshot\":[{\"label\":\"合成到货付款\",\"ratio\":\"1\",\"due_basis\":\"order_date\",\"offset_days\":0}],\"cost_allocation_version\":0,\"additional_costs\":[],\"purchase_no\":\"PO-2026-00002\",\"supplier_name_snapshot\":\"\",\"supplier_address_snapshot\":\"\",\"supplier_contact_name_snapshot\":\"\",\"supplier_phone_snapshot\":\"\",\"supplier_email_snapshot\":\"\",\"order_date\":\"2026-11-05\",\"expected_arrival_date\":null,\"status\":\"draft\",\"historical_only\":false,\"history_finance_mode\":false,\"currency\":\"CNY\",\"exchange_rate\":\"1.000000\",\"notes\":\"\",\"cancelled_at\":null,\"cancellation_reason\":\"\",\"supplier\":2,\"order\":null,\"order_no\":\"\",\"sales_link_restricted\":false}"
+    },
+    {
+      "method": "POST",
+      "url": "/purchase-orders/2/place/",
+      "status": 200,
+      "request": {},
+      "response": "{\"id\":2,\"payment_plans\":[{\"id\":6,\"customer_id\":null,\"supplier_id\":2,\"exchange_rate\":1.0,\"remaining_rmb\":18.0,\"remaining_amount\":\"18.0000\",\"contract_no\":\"PO-2026-00002\",\"counterparty_name\":\"合成核心供应商390\",\"is_overdue\":false,\"created_at\":\"2026-11-05T14:05:34.115811+08:00\",\"updated_at\":\"2026-11-05T14:05:34.115811+08:00\",\"direction\":\"payable\",\"due_date\":\"2026-11-05\",\"planned_amount\":\"18.0000\",\"settled_amount\":\"0.0000\",\"currency\":\"CNY\",\"status\":\"open\",\"notes\":\"合成到货付款\",\"order\":null,\"purchase_order\":2}],\"moq_exception\":null,\"status_display\":\"已下单\",\"items\":[{\"id\":2,\"sku\":2,\"supplier_sku\":null,\"sku_code\":\"SKU-000002\",\"display_name\":\"合成核心产品390-6PCS\",\"sales_model\":\"CORE390\",\"supplier_name\":\"合成核心供应商390\",\"supplier_model\":\"\",\"supplier_sku_code\":\"\",\"supplier_barcode\":\"\",\"supplier_characteristics_snapshot\":{},\"quantity\":\"6.00\",\"unit_price\":\"3.0000\",\"received_quantity\":\"0.00\",\"remaining_quantity\":\"6.00\",\"overage_quantity\":\"0.00\",\"amount\":\"18.0000\",\"receipts\":[],\"trade_unit\":null,\"trade_quantity\":null,\"trade_unit_price\":null,\"trade_snapshot\":{\"base_unit\":\"pcs\",\"unit\":\"pcs\",\"factor\":\"1\",\"name\":\"\"}}],\"supplier_name\":\"合成核心供应商390\",\"related_orders\":[],\"total_amount\":\"18.00\",\"base_amount\":\"18.00\",\"approved_change_amount\":\"0.00\",\"paid_amount\":\"0.00\",\"unpaid_amount\":\"18.00\",\"created_at\":\"2026-11-05T14:05:33.842789+08:00\",\"updated_at\":\"2026-11-05T14:05:34.110824+08:00\",\"payment_terms_snapshot\":[{\"label\":\"合成到货付款\",\"ratio\":\"1\",\"due_basis\":\"order_date\",\"offset_days\":0}],\"cost_allocation_version\":0,\"additional_costs\":[],\"purchase_no\":\"PO-2026-00002\",\"supplier_name_snapshot\":\"合成核心供应商390\",\"supplier_address_snapshot\":\"\",\"supplier_contact_name_snapshot\":\"\",\"supplier_phone_snapshot\":\"\",\"supplier_email_snapshot\":\"\",\"order_date\":\"2026-11-05\",\"expected_arrival_date\":null,\"status\":\"ordered\",\"historical_only\":false,\"history_finance_mode\":false,\"currency\":\"CNY\",\"exchange_rate\":\"1.000000\",\"notes\":\"\",\"cancelled_at\":null,\"cancellation_reason\":\"\",\"supplier\":2,\"order\":null,\"order_no\":\"\",\"sales_link_restricted\":false}"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/suppliers/?active_only=1&page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/skus/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/contract-changes/?purchase_order=2&page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:3609/api/purchase-orders/2/receive/",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:3609/api/purchase-orders/2/pay/",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:3609/api/purchase-orders/2/pay/",
+      "status": 201,
+      "body": {
+        "id": 5,
+        "supplier_name": "合成核心供应商390",
+        "purchase_no": "PO-2026-00002",
+        "allocations": [],
+        "customer_name": "",
+        "order_no": "",
+        "direction_display": "支出",
+        "status_display": "已确认",
+        "rmb_amount": 6,
+        "created_at": "2026-11-05T14:06:15.547530+08:00",
+        "updated_at": "2026-11-05T14:06:15.547530+08:00",
+        "transaction_no": "FIN-B004D5E5DFCC4CFA",
+        "transaction_date": "2026-11-05",
+        "direction": "expense",
+        "category": "供应商付款",
+        "amount": "6.0000",
+        "currency": "CNY",
+        "exchange_rate": "1.000000",
+        "allocated_amount": "0.0000",
+        "kind": "supplier_payment",
+        "status": "confirmed",
+        "voided_at": null,
+        "void_reason": "",
+        "payment_method": "",
+        "reference": "合成核心验收参考号",
+        "notes": "",
+        "split_from": null,
+        "customer": null,
+        "supplier": 2,
+        "order": null,
+        "purchase_order": 2,
+        "plan": 6,
+        "replaces": null
+      }
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/purchase-orders/?page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "/orders/2/ship/",
+      "status": 201,
+      "request": {
+        "shipment_date": "2026-11-05",
+        "items": [
+          {
+            "order_item": 2,
+            "quantity": "6"
+          }
+        ]
+      },
+      "response": "{\"id\":2,\"shipment_no\":\"SH-ADD29FEFF0E34889\",\"status\":\"confirmed\"}"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/workbench/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/fulfillment/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/packing-plan/",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/procurement-plan/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/operation-logs/?entity=crm.order&object_id=2&ordering=-created_at",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/?search=&page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/contract-changes/?order=2&page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:3609/api/orders/2/complete/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/workbench/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/fulfillment/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/packing-plan/",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/procurement-plan/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/operation-logs/?entity=crm.order&object_id=2&ordering=-created_at",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/contract-changes/?order=2&page=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "/transactions/",
+      "status": 201,
+      "request": {
+        "order": 2,
+        "transaction_date": "2026-11-05",
+        "amount": "60",
+        "currency": "CNY",
+        "exchange_rate": "1",
+        "kind": "customer_receipt",
+        "direction": "income",
+        "category": "客户收款"
+      },
+      "response": "{\"id\":6,\"supplier_name\":\"\",\"purchase_no\":\"\",\"allocations\":[],\"customer_name\":\"合成核心客户390\",\"order_no\":\"SO-2026-00002\",\"direction_display\":\"收入\",\"status_display\":\"已确认\",\"rmb_amount\":42.0,\"created_at\":\"2026-11-05T14:06:22.158714+08:00\",\"updated_at\":\"2026-11-05T14:06:22.158714+08:00\",\"transaction_no\":\"FIN-563F764691AE4F69\",\"transaction_date\":\"2026-11-05\",\"direction\":\"income\",\"category\":\"客户收款\",\"amount\":\"42.0000\",\"currency\":\"CNY\",\"exchange_rate\":\"1.000000\",\"allocated_amount\":\"0.0000\",\"kind\":\"customer_receipt\",\"status\":\"confirmed\",\"voided_at\":null,\"void_reason\":\"\",\"payment_method\":\"\",\"reference\":\"\",\"notes\":\"\",\"split_from\":null,\"customer\":2,\"supplier\":null,\"order\":2,\"purchase_order\":null,\"plan\":5,\"replaces\":null}"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/workbench/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/fulfillment/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/packing-plan/",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/procurement-plan/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/operation-logs/?entity=crm.order&object_id=2&ordering=-created_at",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/?search=&page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/contract-changes/?order=2&page=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3609/api/orders/2/workbench/",
+      "status": 200,
+      "body": {
+        "order": {
+          "id": 2,
+          "items": [
+            {
+              "id": 2,
+              "sku": 2,
+              "sku_code": "SKU-000002",
+              "sales_model": "CORE390",
+              "model": "CORE390",
+              "product_name": "合成核心产品390-6PCS",
+              "display_name": "合成核心产品390-6PCS",
+              "description": "合成核心产品390",
+              "unit": "pcs",
+              "quantity": "6.00",
+              "unit_price": "10.0000",
+              "cost_price": "0.0000",
+              "amount": "60.00",
+              "notes": "",
+              "supplier_sku": null,
+              "supplier_name": "",
+              "supplier_model": "",
+              "supplier_sku_code": "",
+              "supplier_barcode": "",
+              "supplier_allocation": null,
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "base_unit": "pcs",
+                "unit": "pcs",
+                "factor": "1",
+                "name": ""
+              }
+            }
+          ],
+          "customer_name": "合成核心客户390",
+          "customer_country": "CN",
+          "quote_no": "",
+          "source_quote_no": "",
+          "status_display": "已完成",
+          "total_amount": "60.00",
+          "base_amount": "60.00",
+          "approved_change_amount": "0.00",
+          "paid_amount": "60.00",
+          "balance_amount": 0,
+          "receivable_state": "settled",
+          "created_at": "2026-11-05T14:05:33.189243+08:00",
+          "updated_at": "2026-11-05T14:06:20.287856+08:00",
+          "order_no": "SO-2026-00002",
+          "customer_name_snapshot": "合成核心客户390",
+          "customer_country_snapshot": "CN",
+          "customer_address_snapshot": "",
+          "customer_contact_name_snapshot": "合成联系人",
+          "customer_phone_snapshot": "",
+          "customer_email_snapshot": "core@example.test",
+          "order_date": "2026-11-05",
+          "expected_ship_date": null,
+          "tail_goods_policy": "SAME_CARTON",
+          "status": "completed",
+          "historical_only": false,
+          "currency": "CNY",
+          "exchange_rate": "1.000000",
+          "shipping_fee": "0.0000",
+          "discount": "0.0000",
+          "notes": "",
+          "cancelled_at": null,
+          "cancellation_reason": "",
+          "quantity_change_version": 0,
+          "customer": 2,
+          "quote": null
+        },
+        "source_quote": null,
+        "items": [
+          {
+            "id": 2,
+            "sku": 2,
+            "sku_code": "SKU-000002",
+            "sales_model": "CORE390",
+            "model": "CORE390",
+            "product_name": "合成核心产品390-6PCS",
+            "display_name": "合成核心产品390-6PCS",
+            "description": "合成核心产品390",
+            "unit": "pcs",
+            "quantity": "6.00",
+            "unit_price": "10.0000",
+            "cost_price": "0.0000",
+            "amount": "60.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "payments": [
+          {
+            "id": 7,
+            "supplier_name": "",
+            "purchase_no": "",
+            "allocations": [],
+            "customer_name": "合成核心客户390",
+            "order_no": "SO-2026-00002",
+            "direction_display": "收入",
+            "status_display": "已确认",
+            "rmb_amount": 18,
+            "created_at": "2026-11-05T14:06:22.162703+08:00",
+            "updated_at": "2026-11-05T14:06:22.162703+08:00",
+            "transaction_no": "FIN-113EFF2E906F4CAD",
+            "transaction_date": "2026-11-05",
+            "direction": "income",
+            "category": "客户收款",
+            "amount": "18.0000",
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "allocated_amount": "0.0000",
+            "kind": "customer_receipt",
+            "status": "confirmed",
+            "voided_at": null,
+            "void_reason": "",
+            "payment_method": "",
+            "reference": "",
+            "notes": "",
+            "split_from": 6,
+            "customer": 2,
+            "supplier": null,
+            "order": 2,
+            "purchase_order": null,
+            "plan": 4,
+            "replaces": null
+          },
+          {
+            "id": 6,
+            "supplier_name": "",
+            "purchase_no": "",
+            "allocations": [],
+            "customer_name": "合成核心客户390",
+            "order_no": "SO-2026-00002",
+            "direction_display": "收入",
+            "status_display": "已确认",
+            "rmb_amount": 42,
+            "created_at": "2026-11-05T14:06:22.158714+08:00",
+            "updated_at": "2026-11-05T14:06:22.158714+08:00",
+            "transaction_no": "FIN-563F764691AE4F69",
+            "transaction_date": "2026-11-05",
+            "direction": "income",
+            "category": "客户收款",
+            "amount": "42.0000",
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "allocated_amount": "0.0000",
+            "kind": "customer_receipt",
+            "status": "confirmed",
+            "voided_at": null,
+            "void_reason": "",
+            "payment_method": "",
+            "reference": "",
+            "notes": "",
+            "split_from": null,
+            "customer": 2,
+            "supplier": null,
+            "order": 2,
+            "purchase_order": null,
+            "plan": 5,
+            "replaces": null
+          }
+        ],
+        "advance_allocations": [],
+        "plans": [
+          {
+            "id": 5,
+            "customer_id": 2,
+            "supplier_id": null,
+            "exchange_rate": 1,
+            "remaining_rmb": 0,
+            "remaining_amount": "0.0000",
+            "contract_no": "SO-2026-00002",
+            "counterparty_name": "合成核心客户390",
+            "is_overdue": false,
+            "created_at": "2026-11-05T14:05:33.475547+08:00",
+            "updated_at": "2026-11-05T14:06:22.160708+08:00",
+            "direction": "receivable",
+            "due_date": null,
+            "planned_amount": "42.0000",
+            "settled_amount": "42.0000",
+            "currency": "CNY",
+            "status": "settled",
+            "notes": "默认尾款",
+            "order": 2,
+            "purchase_order": null
+          },
+          {
+            "id": 4,
+            "customer_id": 2,
+            "supplier_id": null,
+            "exchange_rate": 1,
+            "remaining_rmb": 0,
+            "remaining_amount": "0.0000",
+            "contract_no": "SO-2026-00002",
+            "counterparty_name": "合成核心客户390",
+            "is_overdue": false,
+            "created_at": "2026-11-05T14:05:33.474551+08:00",
+            "updated_at": "2026-11-05T14:06:22.163701+08:00",
+            "direction": "receivable",
+            "due_date": "2026-11-05",
+            "planned_amount": "18.0000",
+            "settled_amount": "18.0000",
+            "currency": "CNY",
+            "status": "settled",
+            "notes": "默认预付款/定金",
+            "order": 2,
+            "purchase_order": null
+          }
+        ],
+        "inventory": [
+          {
+            "id": 4,
+            "movement_no": "SH-4E48B55EB84746A9",
+            "related_orders": [],
+            "related_order_nos": [
+              "SO-2026-00002"
+            ],
+            "sku_code": "SKU-000002",
+            "display_name": "合成核心产品390-6PCS",
+            "sales_model": "CORE390",
+            "product_name": "合成核心产品390-6PCS",
+            "order_no": "SO-2026-00002",
+            "type_display": "销售出库",
+            "signed_quantity": "-6.00",
+            "overage_quantity": "0.00",
+            "overage_summary": "",
+            "reversal_movement": null,
+            "is_reversed": false,
+            "reversal_status": "",
+            "created_at": "2026-11-05T14:06:16.647205+08:00",
+            "updated_at": "2026-11-05T14:06:16.647205+08:00",
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "movement_date": "2026-11-05",
+            "type": "sale_out",
+            "sku_code_snapshot": "SKU-000002",
+            "sales_model_snapshot": "CORE390",
+            "display_name_snapshot": "合成核心产品390-6PCS",
+            "quantity": "6.00",
+            "warehouse": "默认仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "",
+            "unit_cost": "0.0000",
+            "reference": "SH-ADD29FEFF0E34889",
+            "notes": "",
+            "source_type": "shipment",
+            "source_no": "SH-ADD29FEFF0E34889",
+            "is_automatic": true,
+            "is_overage": false,
+            "overage_reason": "",
+            "trade_unit": null,
+            "sku": 2,
+            "supplier_sku": null,
+            "order": 2
+          }
+        ],
+        "payment_summary": {
+          "paid_amount": 60,
+          "balance_amount": 0,
+          "planned_amount": 60,
+          "settlement": {
+            "state": "settled",
+            "label": "款项已结清",
+            "overdue_amount": 0
+          }
+        },
+        "expense_summary": {
+          "expense_rmb": 0
+        },
+        "profit_summary": {
+          "sales_rmb": 60,
+          "purchase_base_rmb": 0,
+          "purchase_additional_rmb": 0,
+          "purchase_cost_rmb": 0,
+          "order_expense_rmb": 0,
+          "expense_rmb": 0,
+          "estimated_profit_rmb": 60,
+          "estimated_gross_profit_rmb": 60,
+          "estimated_margin_percent": 100
+        },
+        "quantity_adjustments": [],
+        "fulfillment_summary": {
+          "ordered_quantity": 6,
+          "shipped_quantity": 6,
+          "remaining_quantity": 0
+        }
+      }
+    }
+  ],
+  "last": {
+    "url": "/transactions/",
+    "status": 201,
+    "request": {
+      "order": 2,
+      "transaction_date": "2026-11-05",
+      "amount": "10",
+      "currency": "CNY",
+      "exchange_rate": "1",
+      "kind": "refund",
+      "direction": "expense",
+      "category": "合成退款"
+    },
+    "response": "{\"id\":8,\"supplier_name\":\"\",\"purchase_no\":\"\",\"allocations\":[],\"customer_name\":\"合成核心客户390\",\"order_no\":\"SO-2026-00002\",\"direction_display\":\"支出\",\"status_display\":\"已确认\",\"rmb_amount\":10.0,\"created_at\":\"2026-11-05T14:06:25.898852+08:00\",\"updated_at\":\"2026-11-05T14:06:25.898852+08:00\",\"transaction_no\":\"FIN-8D9119F92E954DAC\",\"transaction_date\":\"2026-11-05\",\"direction\":\"expense\",\"category\":\"合成退款\",\"amount\":\"10.0000\",\"currency\":\"CNY\",\"exchange_rate\":\"1.000000\",\"allocated_amount\":\"0.0000\",\"kind\":\"refund\",\"status\":\"confirmed\",\"voided_at\":null,\"void_reason\":\"\",\"payment_method\":\"\",\"reference\":\"\",\"notes\":\"\",\"split_from\":null,\"customer\":2,\"supplier\":null,\"order\":2,\"purchase_order\":null,\"plan\":4,\"replaces\":null}"
+  }
+}

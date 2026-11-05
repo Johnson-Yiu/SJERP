@@ -1,0 +1,24 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_shipment_cannot_borrow_other_warehouse_or_lot_stock",
+  "http": [
+    {
+      "path": "/api/orders/5/ship/",
+      "request": {
+        "shipment_date": "2026-11-05",
+        "items": [
+          {
+            "order_item": 5,
+            "quantity": "3",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A"
+          }
+        ]
+      },
+      "status": 400,
+      "body": {
+        "detail": "所选仓库及批次库存不足，不能确认发货。"
+      }
+    }
+  ]
+}

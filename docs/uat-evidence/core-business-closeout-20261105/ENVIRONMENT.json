@@ -1,0 +1,79 @@
+{
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]",
+  "python_executable": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-cpython312-verify-20261031-a37d\\shared-venv\\Scripts\\python.exe",
+  "requirements": {
+    "asgiref": {
+      "locked": "3.13.0",
+      "installed": "3.13.0"
+    },
+    "bleach": {
+      "locked": "6.4.0",
+      "installed": "6.4.0"
+    },
+    "Django": {
+      "locked": "6.0.9",
+      "installed": "6.0.9"
+    },
+    "django-cors-headers": {
+      "locked": "4.9.0",
+      "installed": "4.9.0"
+    },
+    "dj-database-url": {
+      "locked": "3.1.2",
+      "installed": "3.1.2"
+    },
+    "djangorestframework": {
+      "locked": "3.18.3",
+      "installed": "3.18.3"
+    },
+    "et-xmlfile": {
+      "locked": "2.0.0",
+      "installed": "2.0.0"
+    },
+    "openpyxl": {
+      "locked": "3.1.5",
+      "installed": "3.1.5"
+    },
+    "Pillow": {
+      "locked": "13.0.0",
+      "installed": "13.0.0"
+    },
+    "psycopg": {
+      "locked": "3.3.6",
+      "installed": "3.3.6"
+    },
+    "psycopg-binary": {
+      "locked": "3.3.6",
+      "installed": "3.3.6"
+    },
+    "pycountry": {
+      "locked": "26.2.16",
+      "installed": "26.2.16"
+    },
+    "sqlparse": {
+      "locked": "0.6.0",
+      "installed": "0.6.0"
+    },
+    "typing-extensions": {
+      "locked": "4.16.0",
+      "installed": "4.16.0"
+    },
+    "tzdata": {
+      "locked": "2026.6",
+      "installed": "2026.6"
+    },
+    "webencodings": {
+      "locked": "0.6.1",
+      "installed": "0.6.1"
+    }
+  },
+  "all_exact_pins_match": true,
+  "node": "v24.16.0",
+  "openssl": "OpenSSL 3.5.6 7 Apr 2026 (Library: OpenSSL 3.5.6 7 Apr 2026)",
+  "postgres": "postgres (PostgreSQL) 17.11",
+  "chrome": "156.0.8078.80",
+  "ci": "NOT_RUN: user-approved quota pause; every new commit [skip ci]",
+  "npm": "11.13.0",
+  "sqlite_media_scope": "Default development media is this worktree backend/media; inherited MEDIA_ROOT is unset; checked without reading file contents"
+}

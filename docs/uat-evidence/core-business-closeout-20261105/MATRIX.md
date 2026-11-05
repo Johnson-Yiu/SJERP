@@ -12,3 +12,8 @@
 | 异常/并发 | 持久Idempotency-Key、PO父锁、库存锁、API审计同事务、现有PG竞争 | test_postgres_concurrency、test_iss006_idempotency、fulfillment_audit_atomicity等 | 独立PG17连接覆盖响应丢失同键/异内容、超量、取消与履约、成本版本/取消竞争；核对完整业务快照，不用SQLite冒充锁验证 |
 
 边界：不改主体快照/审批、权限框架、导出helper、财务账户资金、运维/运行器及共享台账。使用锁定依赖和合成资料、临时媒体/隔离DB。CI额度暂停，不执行Actions，所有本包提交[skip ci]。新发现跨边界问题记录复现和建议交集成协调，不顺手扩大修复。
+
+
+## 复现后的补充核查
+
+C01/C02 已失败复现并最小补修，保持上表先行判断不改写。补验全部收货后的应付及审计失败时新增 C03：采购付款服务完成后两条审计在事务外，第二条失败会留下付款/核销及第一条审计。先保留 before-payment-audit 失败与快照，再仅给 PurchaseOrderViewSet.pay 加统一事务；账户资金服务、付款及权限规则不改。最终状态和完整结果以 README 为准，均等待独立复审。

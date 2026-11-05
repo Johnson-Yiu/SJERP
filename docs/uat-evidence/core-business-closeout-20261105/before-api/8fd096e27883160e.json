@@ -1,0 +1,57 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_receipt_reversal_cannot_spend_replenishment_in_other_location",
+  "http": [
+    {
+      "path": "/api/purchase-orders/1/receive/",
+      "request": {
+        "purchase_item": 1,
+        "receipt_date": "2026-11-05",
+        "quantity": "6",
+        "unit_cost": "3",
+        "warehouse": "合成A仓",
+        "warehouse_type": "自有仓",
+        "lot_reference": "LOT-A"
+      },
+      "status": 201,
+      "body": {
+        "id": 1,
+        "purchase_item": 1,
+        "quantity": "6.00",
+        "trade_unit": null,
+        "trade_quantity": null,
+        "trade_unit_price": null,
+        "trade_snapshot": {
+          "base_unit": "pcs",
+          "unit": "pcs",
+          "factor": "1",
+          "name": ""
+        },
+        "is_overage": false,
+        "inventory_movement": 1
+      }
+    },
+    {
+      "path": "/api/purchase-orders/1/receipts/1/reverse/",
+      "request": {
+        "reason": "合成测试：A批已耗用，B批不能冒充原入库"
+      },
+      "status": 200,
+      "body": {
+        "id": 1,
+        "receipt_date": "2026-11-05",
+        "quantity": "6.00",
+        "unit_cost": "3.000000000000",
+        "notes": "",
+        "is_overage": false,
+        "overage_reason": "",
+        "overage_reason_display": "",
+        "overage_quantity": "0.00",
+        "overage_summary": "",
+        "inventory_movement": 1,
+        "reversal_inventory_movement": 4,
+        "reversed_at": "2026-11-05T12:40:42.199988+08:00",
+        "reversal_reason": "合成测试：A批已耗用，B批不能冒充原入库"
+      }
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_stale_cost_order_after_cancel_is_reloaded_before_attribution",
+  "http": [
+    {
+      "database_snapshot": {
+        "InventoryMovement": [],
+        "InventoryReservation": [],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:08:03.845362+00:00",
+            "updated_at": "2026-11-05 05:08:03.852344+00:00",
+            "order_no": "CORE-SO-789e8cfc",
+            "customer_id": 1,
+            "customer_name_snapshot": "",
+            "customer_country_snapshot": "",
+            "customer_address_snapshot": "",
+            "customer_contact_name_snapshot": "",
+            "customer_phone_snapshot": "",
+            "customer_email_snapshot": "",
+            "quote_id": null,
+            "order_date": "2026-11-05",
+            "expected_ship_date": null,
+            "tail_goods_policy": "SAME_CARTON",
+            "status": "cancelled",
+            "historical_only": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "shipping_fee": "0.0000",
+            "discount": "0.0000",
+            "notes": "",
+            "cancelled_at": "2026-11-05 05:08:03.851346+00:00",
+            "cancellation_reason": "合成客户取消，发生于成本校验后",
+            "quantity_change_version": 0,
+            "amount_calculation_version": 2
+          }
+        ],
+        "PurchaseOrder": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:08:03.843368+00:00",
+            "updated_at": "2026-11-05 05:08:03.843368+00:00",
+            "payment_terms_snapshot": [],
+            "cost_allocation_version": 0,
+            "additional_costs": [],
+            "purchase_no": "CORE-PO-25a37428",
+            "supplier_id": 1,
+            "supplier_name_snapshot": "",
+            "supplier_address_snapshot": "",
+            "supplier_contact_name_snapshot": "",
+            "supplier_phone_snapshot": "",
+            "supplier_email_snapshot": "",
+            "order_id": null,
+            "order_date": "2026-11-05",
+            "expected_arrival_date": null,
+            "status": "ordered",
+            "historical_only": false,
+            "history_finance_mode": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": ""
+          }
+        ],
+        "PurchaseCostAllocation": [
+          {
+            "id": 1,
+            "target_name": "",
+            "purchase_item_id": 1,
+            "target_type": "inventory",
+            "order_id": null,
+            "quantity": "6.00"
+          }
+        ],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "OperationLog": []
+      }
+    },
+    {
+      "database_snapshot": {
+        "InventoryMovement": [],
+        "InventoryReservation": [],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:08:03.845362+00:00",
+            "updated_at": "2026-11-05 05:08:03.852344+00:00",
+            "order_no": "CORE-SO-789e8cfc",
+            "customer_id": 1,
+            "customer_name_snapshot": "",
+            "customer_country_snapshot": "",
+            "customer_address_snapshot": "",
+            "customer_contact_name_snapshot": "",
+            "customer_phone_snapshot": "",
+            "customer_email_snapshot": "",
+            "quote_id": null,
+            "order_date": "2026-11-05",
+            "expected_ship_date": null,
+            "tail_goods_policy": "SAME_CARTON",
+            "status": "cancelled",
+            "historical_only": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "shipping_fee": "0.0000",
+            "discount": "0.0000",
+            "notes": "",
+            "cancelled_at": "2026-11-05 05:08:03.851346+00:00",
+            "cancellation_reason": "合成客户取消，发生于成本校验后",
+            "quantity_change_version": 0,
+            "amount_calculation_version": 2
+          }
+        ],
+        "PurchaseOrder": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:08:03.843368+00:00",
+            "updated_at": "2026-11-05 05:08:03.843368+00:00",
+            "payment_terms_snapshot": [],
+            "cost_allocation_version": 0,
+            "additional_costs": [],
+            "purchase_no": "CORE-PO-25a37428",
+            "supplier_id": 1,
+            "supplier_name_snapshot": "",
+            "supplier_address_snapshot": "",
+            "supplier_contact_name_snapshot": "",
+            "supplier_phone_snapshot": "",
+            "supplier_email_snapshot": "",
+            "order_id": null,
+            "order_date": "2026-11-05",
+            "expected_arrival_date": null,
+            "status": "ordered",
+            "historical_only": false,
+            "history_finance_mode": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": ""
+          }
+        ],
+        "PurchaseCostAllocation": [
+          {
+            "id": 1,
+            "target_name": "",
+            "purchase_item_id": 1,
+            "target_type": "inventory",
+            "order_id": null,
+            "quantity": "6.00"
+          }
+        ],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "OperationLog": []
+      }
+    }
+  ]
+}

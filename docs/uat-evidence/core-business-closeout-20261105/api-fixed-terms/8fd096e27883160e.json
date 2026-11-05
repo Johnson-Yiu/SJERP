@@ -1,0 +1,598 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_receipt_reversal_cannot_spend_replenishment_in_other_location",
+  "http": [
+    {
+      "path": "/api/purchase-orders/1/receive/",
+      "request": {
+        "purchase_item": 1,
+        "receipt_date": "2026-11-05",
+        "quantity": "6",
+        "unit_cost": "3",
+        "warehouse": "合成A仓",
+        "warehouse_type": "自有仓",
+        "lot_reference": "LOT-A"
+      },
+      "status": 201,
+      "body": {
+        "id": 1,
+        "purchase_item": 1,
+        "quantity": "6.00",
+        "trade_unit": null,
+        "trade_quantity": null,
+        "trade_unit_price": null,
+        "trade_snapshot": {
+          "base_unit": "pcs",
+          "unit": "pcs",
+          "factor": "1",
+          "name": ""
+        },
+        "is_overage": false,
+        "inventory_movement": 1
+      }
+    },
+    {
+      "database_snapshot": {
+        "InventoryMovement": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:20:38.510606+00:00",
+            "updated_at": "2026-11-05 05:20:38.510606+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "movement_no": "GR-A3B758DF920743F4",
+            "movement_date": "2026-11-05",
+            "type": "purchase_in",
+            "sku_id": 1,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "6.00",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A",
+            "unit_cost": "3.000000000000",
+            "reference": "CORE-PO-ba7f334f",
+            "notes": "",
+            "source_type": "receipt",
+            "source_no": "CORE-PO-ba7f334f",
+            "is_automatic": true,
+            "is_overage": false,
+            "overage_reason": ""
+          },
+          {
+            "id": 2,
+            "created_at": "2026-11-05 05:20:38.528071+00:00",
+            "updated_at": "2026-11-05 05:20:38.528071+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "movement_no": "CORE-IM-08eb318447",
+            "movement_date": "2026-11-05",
+            "type": "adjust_out",
+            "sku_id": 1,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "6.00",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          },
+          {
+            "id": 3,
+            "created_at": "2026-11-05 05:20:38.529068+00:00",
+            "updated_at": "2026-11-05 05:20:38.529068+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "movement_no": "CORE-IM-fb3423064b",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 1,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "6.00",
+            "warehouse": "合成B仓",
+            "warehouse_type": "第三方仓",
+            "lot_reference": "LOT-B",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          }
+        ],
+        "InventoryReservation": [],
+        "GoodsReceipt": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:20:38.511603+00:00",
+            "updated_at": "2026-11-05 05:20:38.511603+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "purchase_item_id": 1,
+            "receipt_date": "2026-11-05",
+            "quantity": "6.00",
+            "unit_cost": "3.000000000000",
+            "is_overage": false,
+            "overage_reason": "",
+            "notes": "",
+            "inventory_movement_id": 1,
+            "reversal_inventory_movement_id": null,
+            "reversed_at": null,
+            "reversal_reason": "",
+            "request_key": null,
+            "request_fingerprint": ""
+          }
+        ],
+        "Shipment": [],
+        "FulfillmentIdempotency": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:20:38.496642+00:00",
+            "updated_at": "2026-11-05 05:20:38.527073+00:00",
+            "key": "CORE-fb38df22e9b5419fbfb7f57412f10bab",
+            "operation": "receive",
+            "target_id": 1,
+            "request_hash": "182995643bd424626b356187db8b1eff670b66e57839aa8aedd11f7eb3522157",
+            "operator_id": 1,
+            "status": "succeeded",
+            "response_status": 201,
+            "response_payload": {
+              "id": 1,
+              "purchase_item": 1,
+              "quantity": "6.00",
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "base_unit": "pcs",
+                "unit": "pcs",
+                "factor": "1",
+                "name": ""
+              },
+              "is_overage": false,
+              "inventory_movement": 1
+            }
+          }
+        ],
+        "Order": [],
+        "PurchaseOrder": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:20:38.455753+00:00",
+            "updated_at": "2026-11-05 05:20:38.514107+00:00",
+            "payment_terms_snapshot": [],
+            "cost_allocation_version": 0,
+            "additional_costs": [],
+            "purchase_no": "CORE-PO-ba7f334f",
+            "supplier_id": 1,
+            "supplier_name_snapshot": "",
+            "supplier_address_snapshot": "",
+            "supplier_contact_name_snapshot": "",
+            "supplier_phone_snapshot": "",
+            "supplier_email_snapshot": "",
+            "order_id": null,
+            "order_date": "2026-11-05",
+            "expected_arrival_date": null,
+            "status": "completed",
+            "historical_only": false,
+            "history_finance_mode": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": ""
+          }
+        ],
+        "PurchaseCostAllocation": [
+          {
+            "id": 1,
+            "target_name": "",
+            "purchase_item_id": 1,
+            "target_type": "inventory",
+            "order_id": null,
+            "quantity": "6.00"
+          }
+        ],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "OperationLog": [
+          {
+            "id": 1,
+            "content_type_id": 65,
+            "object_id": "1",
+            "entity": "crm.purchaseorder",
+            "entity_label": "purchase order",
+            "object_label": "CORE-PO-ba7f334f",
+            "action": "custom",
+            "action_label": "登记采购到货",
+            "operator_id": 1,
+            "changed_fields": [
+              "status"
+            ],
+            "before_data": {
+              "id": 1,
+              "payment_terms_snapshot": [],
+              "purchase_no": "CORE-PO-ba7f334f",
+              "supplier": 1,
+              "supplier_name_snapshot": "",
+              "supplier_address_snapshot": "",
+              "supplier_contact_name_snapshot": "",
+              "supplier_phone_snapshot": "",
+              "supplier_email_snapshot": "",
+              "order": null,
+              "order_date": "2026-11-05",
+              "expected_arrival_date": null,
+              "status": "ordered",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": ""
+            },
+            "after_data": {
+              "id": 1,
+              "payment_terms_snapshot": [],
+              "purchase_no": "CORE-PO-ba7f334f",
+              "supplier": 1,
+              "supplier_name_snapshot": "",
+              "supplier_address_snapshot": "",
+              "supplier_contact_name_snapshot": "",
+              "supplier_phone_snapshot": "",
+              "supplier_email_snapshot": "",
+              "order": null,
+              "order_date": "2026-11-05",
+              "expected_arrival_date": null,
+              "status": "completed",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": ""
+            },
+            "metadata": {
+              "receipt_id": 1,
+              "quantity": "6.00",
+              "inventory_movement_id": 1
+            },
+            "request_method": "POST",
+            "request_path": "/api/purchase-orders/1/receive/",
+            "created_at": "2026-11-05 05:20:38.527073+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/api/purchase-orders/1/receipts/1/reverse/",
+      "request": {
+        "reason": "合成测试：A批已耗用，B批不能冒充原入库"
+      },
+      "status": 400,
+      "body": {
+        "detail": "原入库仓库及批次库存不足，不能冲销。"
+      }
+    },
+    {
+      "database_snapshot": {
+        "InventoryMovement": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:20:38.510606+00:00",
+            "updated_at": "2026-11-05 05:20:38.510606+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "movement_no": "GR-A3B758DF920743F4",
+            "movement_date": "2026-11-05",
+            "type": "purchase_in",
+            "sku_id": 1,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "6.00",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A",
+            "unit_cost": "3.000000000000",
+            "reference": "CORE-PO-ba7f334f",
+            "notes": "",
+            "source_type": "receipt",
+            "source_no": "CORE-PO-ba7f334f",
+            "is_automatic": true,
+            "is_overage": false,
+            "overage_reason": ""
+          },
+          {
+            "id": 2,
+            "created_at": "2026-11-05 05:20:38.528071+00:00",
+            "updated_at": "2026-11-05 05:20:38.528071+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "movement_no": "CORE-IM-08eb318447",
+            "movement_date": "2026-11-05",
+            "type": "adjust_out",
+            "sku_id": 1,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "6.00",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          },
+          {
+            "id": 3,
+            "created_at": "2026-11-05 05:20:38.529068+00:00",
+            "updated_at": "2026-11-05 05:20:38.529068+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "movement_no": "CORE-IM-fb3423064b",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 1,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "6.00",
+            "warehouse": "合成B仓",
+            "warehouse_type": "第三方仓",
+            "lot_reference": "LOT-B",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          }
+        ],
+        "InventoryReservation": [],
+        "GoodsReceipt": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:20:38.511603+00:00",
+            "updated_at": "2026-11-05 05:20:38.511603+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "purchase_item_id": 1,
+            "receipt_date": "2026-11-05",
+            "quantity": "6.00",
+            "unit_cost": "3.000000000000",
+            "is_overage": false,
+            "overage_reason": "",
+            "notes": "",
+            "inventory_movement_id": 1,
+            "reversal_inventory_movement_id": null,
+            "reversed_at": null,
+            "reversal_reason": "",
+            "request_key": null,
+            "request_fingerprint": ""
+          }
+        ],
+        "Shipment": [],
+        "FulfillmentIdempotency": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:20:38.496642+00:00",
+            "updated_at": "2026-11-05 05:20:38.527073+00:00",
+            "key": "CORE-fb38df22e9b5419fbfb7f57412f10bab",
+            "operation": "receive",
+            "target_id": 1,
+            "request_hash": "182995643bd424626b356187db8b1eff670b66e57839aa8aedd11f7eb3522157",
+            "operator_id": 1,
+            "status": "succeeded",
+            "response_status": 201,
+            "response_payload": {
+              "id": 1,
+              "purchase_item": 1,
+              "quantity": "6.00",
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "base_unit": "pcs",
+                "unit": "pcs",
+                "factor": "1",
+                "name": ""
+              },
+              "is_overage": false,
+              "inventory_movement": 1
+            }
+          }
+        ],
+        "Order": [],
+        "PurchaseOrder": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 05:20:38.455753+00:00",
+            "updated_at": "2026-11-05 05:20:38.514107+00:00",
+            "payment_terms_snapshot": [],
+            "cost_allocation_version": 0,
+            "additional_costs": [],
+            "purchase_no": "CORE-PO-ba7f334f",
+            "supplier_id": 1,
+            "supplier_name_snapshot": "",
+            "supplier_address_snapshot": "",
+            "supplier_contact_name_snapshot": "",
+            "supplier_phone_snapshot": "",
+            "supplier_email_snapshot": "",
+            "order_id": null,
+            "order_date": "2026-11-05",
+            "expected_arrival_date": null,
+            "status": "completed",
+            "historical_only": false,
+            "history_finance_mode": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": ""
+          }
+        ],
+        "PurchaseCostAllocation": [
+          {
+            "id": 1,
+            "target_name": "",
+            "purchase_item_id": 1,
+            "target_type": "inventory",
+            "order_id": null,
+            "quantity": "6.00"
+          }
+        ],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "OperationLog": [
+          {
+            "id": 1,
+            "content_type_id": 65,
+            "object_id": "1",
+            "entity": "crm.purchaseorder",
+            "entity_label": "purchase order",
+            "object_label": "CORE-PO-ba7f334f",
+            "action": "custom",
+            "action_label": "登记采购到货",
+            "operator_id": 1,
+            "changed_fields": [
+              "status"
+            ],
+            "before_data": {
+              "id": 1,
+              "payment_terms_snapshot": [],
+              "purchase_no": "CORE-PO-ba7f334f",
+              "supplier": 1,
+              "supplier_name_snapshot": "",
+              "supplier_address_snapshot": "",
+              "supplier_contact_name_snapshot": "",
+              "supplier_phone_snapshot": "",
+              "supplier_email_snapshot": "",
+              "order": null,
+              "order_date": "2026-11-05",
+              "expected_arrival_date": null,
+              "status": "ordered",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": ""
+            },
+            "after_data": {
+              "id": 1,
+              "payment_terms_snapshot": [],
+              "purchase_no": "CORE-PO-ba7f334f",
+              "supplier": 1,
+              "supplier_name_snapshot": "",
+              "supplier_address_snapshot": "",
+              "supplier_contact_name_snapshot": "",
+              "supplier_phone_snapshot": "",
+              "supplier_email_snapshot": "",
+              "order": null,
+              "order_date": "2026-11-05",
+              "expected_arrival_date": null,
+              "status": "completed",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": ""
+            },
+            "metadata": {
+              "receipt_id": 1,
+              "quantity": "6.00",
+              "inventory_movement_id": 1
+            },
+            "request_method": "POST",
+            "request_path": "/api/purchase-orders/1/receive/",
+            "created_at": "2026-11-05 05:20:38.527073+00:00"
+          }
+        ]
+      }
+    }
+  ]
+}

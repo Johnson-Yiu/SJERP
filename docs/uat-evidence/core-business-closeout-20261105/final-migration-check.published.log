@@ -1,0 +1,4 @@
+COMMAND: locked Python manage.py makemigrations --check --dry-run
+4ffad5cf1b84639788ccf4c67a58cb10eacba59c
+No changes detected
+EXIT_CODE=0

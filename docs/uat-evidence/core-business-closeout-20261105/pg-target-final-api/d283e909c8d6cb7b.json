@@ -1,0 +1,36 @@
+{
+  "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_purchase_cancellation_and_receipt_compete_without_partial_effects",
+  "http": [
+    {
+      "independent_pg_sessions": [
+        [
+          23004,
+          400,
+          {
+            "detail": "当前采购单状态不能取消。"
+          }
+        ],
+        [
+          12556,
+          201,
+          {
+            "id": 19,
+            "purchase_item": 21,
+            "quantity": "6.00",
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "is_overage": false,
+            "inventory_movement": 56
+          }
+        ]
+      ]
+    }
+  ]
+}

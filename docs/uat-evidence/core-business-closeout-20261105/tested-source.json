@@ -1,0 +1,142 @@
+{
+  "baseline": "bcdcb57545f121b8a4102f352c74008b47372035",
+  "backend_business_checkpoint": "7edbde7c37674a7f73ba22335e5d9b90119722d3",
+  "test_checkpoint": "4ffad5cf1b84639788ccf4c67a58cb10eacba59c",
+  "chrome_checkpoint": "3afaacae1ac1bc0ff387793326fc2bf704c818f7",
+  "files": [
+    {
+      "path": "backend/crm/services/fulfillment.py",
+      "sha256_lf": "4243091a3bd815f30742ea61f35f19afb8adecb5fa80a6654f32f15b152cf64b"
+    },
+    {
+      "path": "backend/crm/services/purchase_costs.py",
+      "sha256_lf": "93cf66b9149836fae7ef07926a03791cc3f9cd74c7ab04270677f62c5141c70d"
+    },
+    {
+      "path": "backend/crm/serializers.py",
+      "sha256_lf": "1685f73efd2c928cc9c0aca11c7d7decba907dd1cdd2cb915593edc778d2818a"
+    },
+    {
+      "path": "backend/crm/views.py",
+      "sha256_lf": "eecacfb9ba8d58d0734f5fa4b98992767a411939af085ef6599badaa8a6c4471"
+    },
+    {
+      "path": "backend/crm/tests/test_core_business_closeout.py",
+      "sha256_lf": "bb0bc50fa55540accbb8660e2f36a7eac325ebe1b283bc944faee645ff8a680e"
+    },
+    {
+      "path": "backend/crm/tests/test_core_business_concurrency.py",
+      "sha256_lf": "8a71c4a8b8d50760d9fcdf6e5743c2e57325cf99fc58aef1ddf80cce7a3fcaf0"
+    },
+    {
+      "path": "backend/crm/tests/test_iss006_idempotency.py",
+      "sha256_lf": "52b4821604211b228326aeb434fae4f630bf966196548b2d56f9333756a6819c"
+    },
+    {
+      "path": "frontend/browser-tests/core-business-closeout.spec.js",
+      "sha256_lf": "d01af1d1450428c88e82ee42918942fdb8bfcece2fcc74f45b8554f86ac636c2"
+    }
+  ],
+  "dedicated_tests": [
+    {
+      "class": "CoreBusinessGapTests",
+      "method": "test_no_baseline_shipment_cannot_borrow_other_warehouse_or_lot_stock",
+      "evidence_id": "b4f7057230e85b23"
+    },
+    {
+      "class": "CoreBusinessGapTests",
+      "method": "test_no_baseline_receipt_reversal_cannot_spend_replenishment_in_other_location",
+      "evidence_id": "8fd096e27883160e"
+    },
+    {
+      "class": "CoreBusinessGapTests",
+      "method": "test_no_baseline_manual_reversal_cannot_make_original_location_negative",
+      "evidence_id": "2b96ebc35f070171"
+    },
+    {
+      "class": "CoreBusinessGapTests",
+      "method": "test_no_baseline_manual_outgoing_cannot_borrow_other_location_stock",
+      "evidence_id": "1cb5516048b557e1"
+    },
+    {
+      "class": "CoreBusinessGapTests",
+      "method": "test_incoming_edit_cannot_relocate_stock_already_consumed",
+      "evidence_id": "947a3e983a436edf"
+    },
+    {
+      "class": "CoreBusinessGapTests",
+      "method": "test_stale_cost_order_after_cancel_is_reloaded_before_attribution",
+      "evidence_id": "30d5fe44780970e7"
+    },
+    {
+      "class": "CoreBusinessFlowTests",
+      "method": "test_legal_location_edits_outgoing_and_receipt_reversal",
+      "evidence_id": "f1a9f66da72e1fc9"
+    },
+    {
+      "class": "CoreBusinessFlowTests",
+      "method": "test_quote_to_order_partial_fulfillment_payment_and_refund_api",
+      "evidence_id": "b12ecb59bfd12058"
+    },
+    {
+      "class": "CoreBusinessFlowTests",
+      "method": "test_shared_purchase_amount_costs_reassign_and_receipt_related_orders",
+      "evidence_id": "2c008d660675d309"
+    },
+    {
+      "class": "CoreBusinessFlowTests",
+      "method": "test_zero_basis_expense_rejection_and_audit_failure_roll_back_all_tables",
+      "evidence_id": "74d1efae6fa24c5d"
+    },
+    {
+      "class": "CoreBusinessFlowTests",
+      "method": "test_deleted_serializer_target_returns_validation_error_without_partial_commit",
+      "evidence_id": "0eaacdae5d76f42a"
+    },
+    {
+      "class": "CoreBusinessFlowTests",
+      "method": "test_standalone_purchase_payables_survive_receipt_reversal_and_cancellation",
+      "evidence_id": "b9756f03df1a3632"
+    },
+    {
+      "class": "CoreBusinessFlowTests",
+      "method": "test_response_loss_same_key_replays_without_second_audit_or_stock_operation",
+      "evidence_id": "bdca1c0fd002335d"
+    },
+    {
+      "class": "CoreBusinessFlowTests",
+      "method": "test_supplier_payment_second_audit_failure_rolls_back_plan_and_transaction",
+      "evidence_id": "f5a5a1bd6e24f270"
+    },
+    {
+      "class": "CoreBusinessFlowTests",
+      "method": "test_full_receipt_preserves_unpaid_payable_and_partial_payment_tracking",
+      "evidence_id": "02511caa3bc14e46"
+    },
+    {
+      "class": "CoreBusinessConcurrencyTests",
+      "method": "test_location_overdraw_competition_only_one_shipment_commits",
+      "evidence_id": "b363646382ffe655"
+    },
+    {
+      "class": "CoreBusinessConcurrencyTests",
+      "method": "test_cost_version_race_keeps_single_replacement_and_audit",
+      "evidence_id": "314285d8b44a24b1"
+    },
+    {
+      "class": "CoreBusinessConcurrencyTests",
+      "method": "test_cancel_between_serializer_validation_and_cost_lock_is_rejected",
+      "evidence_id": "98b18bab416ff7c8"
+    },
+    {
+      "class": "CoreBusinessConcurrencyTests",
+      "method": "test_cancel_and_ship_race_has_one_legal_outcome_without_partial_effects",
+      "evidence_id": "2fd4196fbc524055"
+    },
+    {
+      "class": "CoreBusinessConcurrencyTests",
+      "method": "test_purchase_cancellation_and_receipt_compete_without_partial_effects",
+      "evidence_id": "d283e909c8d6cb7b"
+    }
+  ]
+}

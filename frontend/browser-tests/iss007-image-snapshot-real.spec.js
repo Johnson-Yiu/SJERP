@@ -71,7 +71,12 @@ async function openQuotePreview(page, quoteId) {
 }
 
 test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and missing private images', async ({ page }) => {
-  test.setTimeout(60_000)
+  // This scenario performs several independent exports, image uploads, and eight
+  // viewport captures. Keep a total budget for the complete flow; individual
+  // actions retain Playwright's normal timeout and stage timings remain visible.
+  test.setTimeout(150_000)
+  const started = Date.now()
+  const stage = name => console.log(`ISS007_STAGE ${name} elapsed_ms=${Date.now() - started}`)
   if (!evidenceDir || !process.env.ISOLATED_TEST_PYTHON) throw new Error('Isolated ISS-007 evidence configuration is missing.')
   await mkdir(path.join(evidenceDir, 'screenshots'), { recursive: true })
   await mkdir(path.join(evidenceDir, 'exports'), { recursive: true })
@@ -93,6 +98,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
     }
   })
 
+  stage('sku-upload-start')
   await page.setViewportSize({ width: 1440, height: 1000 })
   await page.goto('/skus', { waitUntil: 'domcontentloaded' })
   await expect(page.getByRole('heading', { name: 'SKU 管理', exact: true, level: 2 })).toBeVisible()
@@ -147,6 +153,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   expect(databaseBefore.confirmed_order.status).toBe('confirmed')
   expect(databaseBefore.formal_quote.image_snapshot_sha256).toBe(fixture.original_image_sha256)
 
+  stage('formal-quote-preview')
   const formalQuotePreview = await openQuotePreview(page, fixture.quote_id)
   const previewImage = page.frameLocator('iframe[title="已保存 PI"]').locator('tbody img').first()
   await expect(previewImage).toBeVisible()
@@ -160,6 +167,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   const workbookPath = path.join(evidenceDir, 'exports', 'iss007-formal-quote-pi.xlsx')
   await download.saveAs(workbookPath)
 
+  stage('invalid-and-replacement-image')
   await page.goto('/skus')
   dialog = await openSkuEditor(page, fixture.sku_code)
   await dialog.locator('input[type="file"]').setInputFiles({ name: 'invalid.png', mimeType: 'image/png', buffer: Buffer.from('not a png image') })
@@ -212,6 +220,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   expect(databaseAfter.confirmed_order.linked_quote_image_snapshot_sha256).toBe(fixture.original_image_sha256)
   expect(databaseAfter.export.original_snapshot_embedded).toBeTruthy()
 
+  stage('replacement-history-preview')
   const finalQuotePreview = await openQuotePreview(page, fixture.quote_id)
   const finalImage = page.frameLocator('iframe[title="已保存 PI"]').locator('tbody img').first()
   await expect.poll(() => finalImage.evaluate(image => image.naturalWidth)).toBe(48)
@@ -221,6 +230,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   await page.setViewportSize({ width: 390, height: 844 })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
 
+  stage('mobile-history-preview')
   const mobilePreview = await openQuotePreview(page, fixture.quote_id)
   const mobileImage = page.frameLocator('iframe[title="已保存 PI"]').locator('tbody img').first()
   await expect.poll(() => mobileImage.evaluate(image => image.naturalWidth)).toBe(48)
@@ -228,6 +238,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
   await mobilePreview.getByRole('button', { name: '关闭预览' }).click()
 
+  stage('missing-image-preview')
   const missingPi = await apiJson(page, 'GET', `/api/quotes/${fixture.missing_quote_id}/pi-data/`)
   expect(missingPi.status).toBe(200)
   const missingMedia = await page.request.get(new URL(missingPi.data.products[0].image_url, page.url()).href)
@@ -242,6 +253,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   expect(imageResponses.some(response => response.status === 400)).toBeTruthy()
   expect(imageResponses.filter(response => response.status === 200).length).toBeGreaterThanOrEqual(2)
 
+  stage('checks-complete')
   const browserResults = {
     viewport: { desktop: '1440x1000', narrow: '390x844' },
     sku_image_upload_thumbnail_visible: true,

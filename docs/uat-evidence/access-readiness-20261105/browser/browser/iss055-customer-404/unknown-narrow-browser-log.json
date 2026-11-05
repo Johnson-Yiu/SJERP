@@ -1,0 +1,29 @@
+{
+  "browser": "chrome",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "requests": [
+    {
+      "url": "http://127.0.0.1:14586/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:14586/api/context/customers/999999/",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:14586/api/operation-logs/?entity=crm.customer&object_id=999999&ordering=-created_at",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:14586/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:14586/api/customers/?search=&page=1",
+      "status": 200
+    }
+  ]
+}

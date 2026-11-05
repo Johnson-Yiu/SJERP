@@ -1,0 +1,44 @@
+Creating test database for alias 'default'...
+
+.FF.F...................................................................................................................Method Not Allowed: /api/operation-logs/
+Method Not Allowed: /api/operation-logs/31/
+Method Not Allowed: /api/operation-logs/31/
+.........
+======================================================================
+FAIL: test_deactivated_user_session_no_longer_authorizes (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_deactivated_user_session_no_longer_authorizes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_access_readiness_20261105.py", line 28, in test_deactivated_user_session_no_longer_authorizes
+    self.assertEqual(self.client.get('/api/customers/').status_code, 401)
+AssertionError: 403 != 401
+
+======================================================================
+FAIL: test_expired_session_no_longer_authorizes (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_expired_session_no_longer_authorizes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_access_readiness_20261105.py", line 35, in test_expired_session_no_longer_authorizes
+    self.assertEqual(self.client.get('/api/customers/').status_code, 401)
+AssertionError: 403 != 401
+
+======================================================================
+FAIL: test_synthetic_session_csrf_and_logout (crm.tests.test_access_readiness_20261105.AccessReadinessSessionTests.test_synthetic_session_csrf_and_logout)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_access_readiness_20261105.py", line 16, in test_synthetic_session_csrf_and_logout
+    self.assertEqual(self.client.get('/api/customers/').status_code, 401)
+AssertionError: 403 != 401
+
+----------------------------------------------------------------------
+Ran 129 tests in 387.577s
+
+FAILED (failures=3)
+Found 129 test(s).
+System check identified no issues (0 silenced).
+Task-owned PostgreSQL root cleaned
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\docs\uat-evidence\access-readiness-20261105\run_postgres.py", line 58, in <module>
+
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\docs\uat-evidence\access-readiness-20261105\run_postgres.py", line 46, in main
+    command = [sys.executable, str(repo / 'backend' / 'manage.py'), 'test', *labels, '--noinput', '--verbosity', '1']
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Selected PostgreSQL tests failed: exit 1

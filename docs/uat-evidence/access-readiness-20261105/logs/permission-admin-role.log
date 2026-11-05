@@ -1,0 +1,19 @@
+Creating test database for alias 'default'...
+
+Found 1 test(s).
+System check identified no issues (0 silenced).
+PERMISSION_ADMIN_HIGHEST_ROLE_PATCH_STATUS 200
+F
+======================================================================
+FAIL: test_permission_admin_cannot_change_highest_role_code (crm.tests.test_access_readiness_format_and_role.FormatAndRoleProbes.test_permission_admin_cannot_change_highest_role_code)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_access_readiness_format_and_role.py", line 75, in test_permission_admin_cannot_change_highest_role_code
+    client.force_authenticate(self.user)
+AssertionError: 200 not found in (400, 403, 405)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.894s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...

@@ -21,6 +21,22 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
   let failureMessage = null
   const apiResponses = []
   const emit = (event, extra = {}) => console.log('QUOTE_LIFECYCLE ' + JSON.stringify({ event, elapsedMs: Date.now() - started, processId: process.pid, ...extra }))
+  await page.exposeFunction('__quoteDownloadDiagnostic', (event, details) => emit(event, details))
+  await page.addInitScript(() => {
+    const revoke = URL.revokeObjectURL.bind(URL)
+    URL.revokeObjectURL = value => {
+      if (String(value).startsWith('blob:')) void window.__quoteDownloadDiagnostic('blob-revoke', {})
+      return revoke(value)
+    }
+    document.addEventListener('click', event => {
+      const link = event.target instanceof Element ? event.target.closest('a[download]') : null
+      if (link) void window.__quoteDownloadDiagnostic('download-anchor-click', { scheme: link.href.split(':')[0] })
+    }, true)
+  })
+  page.on('framenavigated', frame => { if (frame === page.mainFrame()) emit('main-frame-navigation', { url: frame.url() }) })
+  page.on('requestfailed', request => {
+    if (request.url().startsWith('blob:') || request.url().includes('/api/quotes/')) emit('request-failed', { scheme: request.url().split(':')[0], failure: request.failure()?.errorText })
+  })
   page.on('close', () => emit('page-close'))
   page.on('crash', () => emit('page-crash'))
   context.on('close', () => { contextClosed = true; emit('context-close') })
@@ -157,7 +173,7 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
       ])
     }
     emit('test-finish', {
-      status: testInfo.status, failureMessage, pageClosed: page.isClosed(), contextClosed,
+      status: failureMessage ? 'failed' : 'in-progress', failureMessage, pageClosed: page.isClosed(), contextClosed,
       pageUrl: page.isClosed() ? null : page.url(),
       downloadStarted: Boolean(observedDownload), downloadFailure,
       suggestedFilename: observedDownload?.suggestedFilename() || null,

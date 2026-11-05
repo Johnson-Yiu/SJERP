@@ -1,0 +1,899 @@
+HISTORY_BACKUP_SEED={"tables": {"crm_historytakeoverapplication": {"rows": 1, "sha256": "e046ce1970435c7a84a677684ef118b4d204d4114cde29056dd585de1fe78d95"}, "crm_historytakeovergroup": {"rows": 1, "sha256": "81cf8642b5c3c41304c1ef6561a87529ad466496b634e9793662617021ac1bb2"}, "crm_historytakeoversourcerecord": {"rows": 12, "sha256": "b1b34650526fb787596a60b5ed7513a666894a3e27a37a2a69d22f2d17ce95d9"}, "crm_historytakeoverhandoff": {"rows": 3, "sha256": "e203466f5a41b442642396e3626aa355bc15d650bf0a06ba572d39f8e12e70fa"}, "crm_historytakeoverevent": {"rows": 4, "sha256": "a574a18f5478c7aeec0736e1f1e9132b488fe0892d3a1fb845eb230661df9746"}}, "scope": "Synthetic archive-table snapshot; operational finance/inventory/fulfillment, when enabled, are verified separately"}
+
+FINANCE_BACKUP_SEED={"schema_version": 1, "kind": "iss018-synthetic-finance-backup-manifest", "hash_format": "sha256 of each concrete-field row as canonical UTF-8 JSON, ordered by primary key, one LF after each row", "tables": {"crm_financeaccount": {"model": "crm.FinanceAccount", "rows": 2, "sha256": "3be48a943e2695f3d383ce4b5540547b66d0b99f13d73cd4b472ac0979f13555"}, "crm_financevoucher": {"model": "crm.FinanceVoucher", "rows": 2, "sha256": "15f10ff1790848fa9b497531cc464049a7f98544b560f620d09b07a63c27cfd5"}, "crm_financebankvoucherbinding": {"model": "crm.FinanceBankVoucherBinding", "rows": 1, "sha256": "de5e6fd8101b55b00c917707905c462c5f1ddebc4f090e8808489b91337a272a"}, "crm_financeinstruction": {"model": "crm.FinanceInstruction", "rows": 5, "sha256": "e25862470e8bd20b03d40750ff83b3b9500310ac71b356c4a120f27daa65586f"}, "crm_financefact": {"model": "crm.FinanceFact", "rows": 5, "sha256": "09a0e3a32b2c35be7f64d4eb8976325772d1ddfabe60a1b513b206d964386e5b"}, "crm_financeaccountmapping": {"model": "crm.FinanceAccountMapping", "rows": 1, "sha256": "a19567b99177c61c434f89447726a317d324d1a3e8ff7ebef600b3ff0d950c11"}, "crm_financereview": {"model": "crm.FinanceReview", "rows": 1, "sha256": "1980a34dabe1855b73d70b7a984bbc67a3d74294b2731bf093269813470d6a3d"}, "crm_financetransfermatch": {"model": "crm.FinanceTransferMatch", "rows": 1, "sha256": "47544fa144c5dbaf4a1d44b9c091c1301d3bf9205fcc74a00d03cba50078c691"}, "crm_financehistoricaltransfer": {"model": "crm.FinanceHistoricalTransfer", "rows": 1, "sha256": "41abdc251056b76868582919fc59f5b5a10a1e95572f12653d397efa53f2cc16"}, "crm_financeclassification": {"model": "crm.FinanceClassification", "rows": 1, "sha256": "e0d4b63c42b1700e13317765a675b24b1fd3939c7c3929f8fb5c91b08e890838"}, "crm_rmbcashevent": {"model": "crm.RmbCashEvent", "rows": 1, "sha256": "01dee45374edb4819e6c79489decea2828e38134a617189b69cc58d56e8beaa5"}, "crm_cashduplicatereview": {"model": "crm.CashDuplicateReview", "rows": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "crm_cashsourceallocation": {"model": "crm.CashSourceAllocation", "rows": 1, "sha256": "8b497d208962f6d1748d6d0f0981c9e997335ab9ff8abde8bd21890ff4996be0"}}, "private_vouchers": [{"id": 1, "name": "finance-vouchers/2026/11/7db9441025d847eaa0a82dca57c71244.pdf", "scope": "account", "bank_sources": [], "stored_sha256": "45c2a10daff5be8a8734151da93b14160d9ad4250076670efa5812833698bc98", "stored_size": 67, "file_sha256": "45c2a10daff5be8a8734151da93b14160d9ad4250076670efa5812833698bc98", "file_size": 67}, {"id": 2, "name": "finance-vouchers/2026/11/084910e79a364a8dac64d7b34711fd4e.pdf", "scope": "bank", "bank_sources": [1], "stored_sha256": "25fb08ca2b6d14c9ded8275e8baf757d3bd5496cfd8f92f8decff7b6fd143a68", "stored_size": 64, "file_sha256": "25fb08ca2b6d14c9ded8275e8baf757d3bd5496cfd8f92f8decff7b6fd143a68", "file_size": 64}], "seed": {"tag": "4ABD3D4A7D", "source_transaction_id": 1, "maker_user_id": 3, "reviewer_user_id": 4, "account_ids": [1, 2], "mapping_id": 1, "legacy_bank_event_id": 1, "voucher_ids": [1, 2], "opening_fact_id": 1, "transfer_match_id": 1, "classification_id": 1, "historical_transfer_id": 1, "review_id": 1}}
+
+HISTORY_OPERATIONAL_BACKUP_SEED={"schema_version": 1, "kind": "synthetic-history-operational-backup-manifest", "hash_format": "sha256 of every concrete-field row as canonical UTF-8 JSON, ordered by primary key, one LF after each row; PostgreSQL sequence last_value/is_called", "seed": {"tag": "B09D117A", "group_ids": [2, 3], "application_ids": [2, 3], "user_ids": [5, 6], "sku_ids": [2, 3], "group_source_ids": {"main": "HOP-B09D117A-M", "reversal": "HOP-B09D117A-R"}, "baseline_ids": [1, 2], "baseline_reversal_id": 1, "operational_contract_ids": [1, 2], "finance_instruction_id": 6, "finance_fact_id": 6, "private_voucher_id": 3, "receipt_id": 2, "shipment_id": 1, "movement_ids": [2, 3]}, "tables": {"auth_user": {"model": "auth.User", "rows": 6, "sha256": "5037450fc7b499d61b57f19626638a3f856af623b747c4f5a6c3121f5ffd2f83", "sequence": {"name": "public.auth_user_id_seq", "last_value": 6, "is_called": true}}, "crm_categoryattribute": {"model": "crm.CategoryAttribute", "rows": 2, "sha256": "264261afdc850efeb7b7d1b58065f0a3dfbcb924324f910d8ee15ed732977d04", "sequence": {"name": "public.crm_categoryattribute_id_seq", "last_value": 2, "is_called": true}}, "crm_customer": {"model": "crm.Customer", "rows": 3, "sha256": "e22a8e86b90f05a2f1a3f90d2069aaf55afb2a095c4789e98687eaa824fbaf8b", "sequence": {"name": "public.crm_customer_id_seq", "last_value": 5, "is_called": true}}, "crm_financeaccount": {"model": "crm.FinanceAccount", "rows": 3, "sha256": "9c041c10972906ffbf2fcf9db7cea822ca13fe4d1504275798e53ce6a49e0442", "sequence": {"name": "public.crm_financeaccount_id_seq", "last_value": 3, "is_called": true}}, "crm_financeaccountmapping": {"model": "crm.FinanceAccountMapping", "rows": 1, "sha256": "a19567b99177c61c434f89447726a317d324d1a3e8ff7ebef600b3ff0d950c11", "sequence": {"name": "public.crm_financeaccountmapping_id_seq", "last_value": 1, "is_called": true}}, "crm_financebankvoucherbinding": {"model": "crm.FinanceBankVoucherBinding", "rows": 1, "sha256": "de5e6fd8101b55b00c917707905c462c5f1ddebc4f090e8808489b91337a272a", "sequence": {"name": "public.crm_financebankvoucherbinding_id_seq", "last_value": 1, "is_called": true}}, "crm_financeclassification": {"model": "crm.FinanceClassification", "rows": 1, "sha256": "e0d4b63c42b1700e13317765a675b24b1fd3939c7c3929f8fb5c91b08e890838", "sequence": {"name": "public.crm_financeclassification_id_seq", "last_value": 1, "is_called": true}}, "crm_financefact": {"model": "crm.FinanceFact", "rows": 6, "sha256": "505c5d9cbf59010ff2e4bc53d453f9aa26d1a25a61510ad199d37de1e1faedf2", "sequence": {"name": "public.crm_financefact_id_seq", "last_value": 6, "is_called": true}}, "crm_financehistoricaltransfer": {"model": "crm.FinanceHistoricalTransfer", "rows": 1, "sha256": "41abdc251056b76868582919fc59f5b5a10a1e95572f12653d397efa53f2cc16", "sequence": {"name": "public.crm_financehistoricaltransfer_id_seq", "last_value": 1, "is_called": true}}, "crm_financeinstruction": {"model": "crm.FinanceInstruction", "rows": 6, "sha256": "e3fc415c09e05e8980c2a96385bfb90aaaf5d0e0555efea897c18ef56d9c74ca", "sequence": {"name": "public.crm_financeinstruction_id_seq", "last_value": 6, "is_called": true}}, "crm_financereview": {"model": "crm.FinanceReview", "rows": 1, "sha256": "1980a34dabe1855b73d70b7a984bbc67a3d74294b2731bf093269813470d6a3d", "sequence": {"name": "public.crm_financereview_id_seq", "last_value": 1, "is_called": true}}, "crm_financetransfermatch": {"model": "crm.FinanceTransferMatch", "rows": 1, "sha256": "47544fa144c5dbaf4a1d44b9c091c1301d3bf9205fcc74a00d03cba50078c691", "sequence": {"name": "public.crm_financetransfermatch_id_seq", "last_value": 1, "is_called": true}}, "crm_financevoucher": {"model": "crm.FinanceVoucher", "rows": 3, "sha256": "a9d00a69bf4fa03125d05bb9594bffc694e319454e4044a315be7cb7476b6021", "sequence": {"name": "public.crm_financevoucher_id_seq", "last_value": 3, "is_called": true}}, "crm_goodsreceipt": {"model": "crm.GoodsReceipt", "rows": 2, "sha256": "8837b21d28b2d12725d96ff1510dbcbd91a21359c2c67c02396226530a761e6b", "sequence": {"name": "public.crm_goodsreceipt_id_seq", "last_value": 2, "is_called": true}}, "crm_historyinventorybaseline": {"model": "crm.HistoryInventoryBaseline", "rows": 2, "sha256": "ca1db91c1dc0571c53919e9af5c06e72f48ba6957469b789acc1c80a6ed41fd8", "sequence": {"name": "public.crm_historyinventorybaseline_id_seq", "last_value": 2, "is_called": true}}, "crm_historyinventorybaselinereversal": {"model": "crm.HistoryInventoryBaselineReversal", "rows": 1, "sha256": "f54492d64b5b81a11c36a2168762315f2030fa40d436ac34738b4d4e36045d8e", "sequence": {"name": "public.crm_historyinventorybaselinereversal_id_seq", "last_value": 1, "is_called": true}}, "crm_historyoperationalcontract": {"model": "crm.HistoryOperationalContract", "rows": 2, "sha256": "e563411834541894ed677df37f526087d8428f38bf07af020ac320c9b9224d81", "sequence": {"name": "public.crm_historyoperationalcontract_id_seq", "last_value": 2, "is_called": true}}, "crm_historytakeoverapplication": {"model": "crm.HistoryTakeoverApplication", "rows": 3, "sha256": "4c88acef1eb1f465db2386522d2078d679c74f55aad94d5852b6a7002f13f193", "sequence": {"name": "public.crm_historytakeoverapplication_id_seq", "last_value": 3, "is_called": true}}, "crm_historytakeoverevent": {"model": "crm.HistoryTakeoverEvent", "rows": 25, "sha256": "6cd0eabc014a28b20d3e6bbf1de171468c5ab88aff41cc6be1a9736d4917bc90", "sequence": {"name": "public.crm_historytakeoverevent_id_seq", "last_value": 25, "is_called": true}}, "crm_historytakeovergroup": {"model": "crm.HistoryTakeoverGroup", "rows": 3, "sha256": "6a7b20854015e2bc309f4207993a73f4f28b43434530526c99fae5e82c84cce4", "sequence": {"name": "public.crm_historytakeovergroup_id_seq", "last_value": 3, "is_called": true}}, "crm_historytakeoverhandoff": {"model": "crm.HistoryTakeoverHandoff", "rows": 9, "sha256": "56b309401e0ff38abba28c6108b59672a62cec9ab5135bc7d9db256700ba8e66", "sequence": {"name": "public.crm_historytakeoverhandoff_id_seq", "last_value": 9, "is_called": true}}, "crm_historytakeoversourcerecord": {"model": "crm.HistoryTakeoverSourceRecord", "rows": 36, "sha256": "baa71ca9f0670f3f9540ee8b9efe5ac57d34910cc33ca9e21be5e2da94cd05cc", "sequence": {"name": "public.crm_historytakeoversourcerecord_id_seq", "last_value": 36, "is_called": true}}, "crm_inventorymovement": {"model": "crm.InventoryMovement", "rows": 3, "sha256": "30783a70d4d41322ee72aa31228b399901d95fdbf2f66fac15124a114ce5ac27", "sequence": {"name": "public.crm_inventorymovement_id_seq", "last_value": 3, "is_called": true}}, "crm_inventoryreservation": {"model": "crm.InventoryReservation", "rows": 1, "sha256": "d5408e9b7f67636d08236658dda739032f4e7afbf3e2bdfd41ff32e02e9e2394", "sequence": {"name": "public.crm_inventoryreservation_id_seq", "last_value": 4, "is_called": true}}, "crm_operationlog": {"model": "crm.OperationLog", "rows": 42, "sha256": "e7d8c9e6c026e36d527e26c2d35ba36346c0bb1cd366e27991c405222216576a", "sequence": {"name": "public.crm_operationlog_id_seq", "last_value": 42, "is_called": true}}, "crm_order": {"model": "crm.Order", "rows": 5, "sha256": "4904565825df151a3fbaf3ff0bbbf592861d74189071be15fdd3c3a3af7b4319", "sequence": {"name": "public.crm_order_id_seq", "last_value": 5, "is_called": true}}, "crm_orderitem": {"model": "crm.OrderItem", "rows": 5, "sha256": "4fec3d7f06fea2815349efda23a8c5e63e2157e7945d8837f1633d1469856111", "sequence": {"name": "public.crm_orderitem_id_seq", "last_value": 5, "is_called": true}}, "crm_paymentplan": {"model": "crm.PaymentPlan", "rows": 3, "sha256": "b66a95c052d073955cac96604088d9fd99dda3396c599fc778e0f3dac5cfa561", "sequence": {"name": "public.crm_paymentplan_id_seq", "last_value": 3, "is_called": true}}, "crm_product": {"model": "crm.Product", "rows": 3, "sha256": "5b5db7653e5dd417deacd8ccf0fe5f6169748998716ece566db8de73f5e45cef", "sequence": {"name": "public.crm_product_id_seq", "last_value": 3, "is_called": true}}, "crm_productcategory": {"model": "crm.ProductCategory", "rows": 1, "sha256": "1eb350032be82ed216583b5c4973cc5a41f0e7d2447a3b9dd61bef900920457c", "sequence": {"name": "public.crm_productcategory_id_seq", "last_value": 1, "is_called": true}}, "crm_purchaseorder": {"model": "crm.PurchaseOrder", "rows": 5, "sha256": "7ae468312a0622a950ebe7987cd9955cd72d20efd474dafc9ef18e9afabd2a14", "sequence": {"name": "public.crm_purchaseorder_id_seq", "last_value": 5, "is_called": true}}, "crm_purchaseorderitem": {"model": "crm.PurchaseOrderItem", "rows": 5, "sha256": "89ffa5df8c44b0ce8b9e3ad1a3c7c6613a7e20cba379e2a1e60ffc05cdd2ad04", "sequence": {"name": "public.crm_purchaseorderitem_id_seq", "last_value": 5, "is_called": true}}, "crm_shipment": {"model": "crm.Shipment", "rows": 1, "sha256": "7a09f99d5f066d5d11897b91cb83cb40573e57736107c0c53baa64c7325ec0bf", "sequence": {"name": "public.crm_shipment_id_seq", "last_value": 1, "is_called": true}}, "crm_shipmentitem": {"model": "crm.ShipmentItem", "rows": 1, "sha256": "cf3db7e530d8531ca76981f6a38aa7620b7f66df6be0a5a10f0b1b8c8058316a", "sequence": {"name": "public.crm_shipmentitem_id_seq", "last_value": 1, "is_called": true}}, "crm_sku": {"model": "crm.SKU", "rows": 3, "sha256": "ffcdbf7372c843ee978b1ffa1b8ce324e6f1585940676e74dd3b3c6baf9a79c3", "sequence": {"name": "public.crm_sku_id_seq", "last_value": 3, "is_called": true}}, "crm_supplier": {"model": "crm.Supplier", "rows": 2, "sha256": "3a0d17a522eac471f38861e7ea9f3704178e6c2aa92b1a00e19a0f8c8d1edf19", "sequence": {"name": "public.crm_supplier_id_seq", "last_value": 2, "is_called": true}}}, "new_table_rows": {"crm_historyinventorybaseline": [{"id": 1, "group_id": 2, "source_id": 16, "sku_id": 2, "count_date": "2024-12-30", "warehouse_type": "自有仓", "warehouse": "HBK-WH-B09D117A-M", "lot_reference": "HBK-LOT-B09D117A-M", "goods_ownership": "own", "unit_snapshot": "pcs", "quantity": "18.00", "unit_cost": "3.250000000000", "cost_currency": "USD", "evidence_reference": "synthetic://stocktake/HT-1", "approval_snapshot": {"approval": {"note": "Synthetic independent inventory baseline review.", "fingerprint": "397434ec0265cd137042eb64970473a164dbd17d1c1aaf534b2e8f3b8b2f82ec", "reviewer_id": 6, "reviewer_kind": "identified"}, "proposal": {"rows": [{"no_lot": false, "sku_id": 2, "quantity": "18.00", "sku_unit": "pcs", "source_id": 16, "unit_cost": "3.25", "count_date": "2024-12-30", "cost_currency": "USD", "goods_ownership": "own"}], "reason": "Synthetic complete SKU count and ownership/cost evidence.", "maker_id": 5, "maker_kind": "identified", "fingerprint": "397434ec0265cd137042eb64970473a164dbd17d1c1aaf534b2e8f3b8b2f82ec"}}, "created_at": "2026-11-05T09:15:16.114829+00:00"}, {"id": 2, "group_id": 3, "source_id": 28, "sku_id": 3, "count_date": "2024-12-30", "warehouse_type": "自有仓", "warehouse": "HBK-WH-B09D117A-R", "lot_reference": "HBK-LOT-B09D117A-R", "goods_ownership": "own", "unit_snapshot": "pcs", "quantity": "18.00", "unit_cost": "3.250000000000", "cost_currency": "USD", "evidence_reference": "synthetic://stocktake/HT-1", "approval_snapshot": {"approval": {"note": "Synthetic independent inventory baseline review.", "fingerprint": "07090e98eef35eb840ad197436362a1d943d90af6cde4163bee8feb06e8ae483", "reviewer_id": 6, "reviewer_kind": "identified"}, "proposal": {"rows": [{"no_lot": false, "sku_id": 3, "quantity": "18.00", "sku_unit": "pcs", "source_id": 28, "unit_cost": "3.25", "count_date": "2024-12-30", "cost_currency": "USD", "goods_ownership": "own"}], "reason": "Synthetic complete SKU count and ownership/cost evidence.", "maker_id": 5, "maker_kind": "identified", "fingerprint": "07090e98eef35eb840ad197436362a1d943d90af6cde4163bee8feb06e8ae483"}}, "created_at": "2026-11-05T09:15:16.306019+00:00"}], "crm_historyinventorybaselinereversal": [{"id": 1, "baseline_id": 2, "group_id": 3, "reason": "Synthetic backup fixture for immutable inventory baseline reversal.", "actor_id": 6, "created_at": "2026-11-05T09:15:16.316989+00:00"}], "crm_historyoperationalcontract": [{"id": 1, "group_id": 2, "source_id": 20, "archived_order_id": 3, "archived_purchase_id": null, "continuation_order_id": 5, "continuation_purchase_id": null, "settlement_order_id": 3, "settlement_purchase_id": null, "cutover_date": "2025-01-01", "balance_mode": "itemized", "opening_balance": "60.0000", "currency": "USD", "evidence_reference": "synthetic://history-backup/receivable-plan", "source_snapshot": {"source": {"notes": "historical-only", "currency": "USD", "discount": "0.0000", "group_id": "HOP-B09D117A-M", "order_no": "HIST-SO-B09D117A-M", "order_date": "2024-08-01", "shipping_fee": "0.0000", "truth_status": "真实", "customer_code": "202611050000", "exchange_rate": "1.000000", "lifecycle_state": "partial", "source_record_id": "SO-B09D117A-M", "voucher_reference": "synthetic://contract/SO-HT-1", "customer_name_snapshot": "Historical Customer Name", "customer_email_snapshot": "history@example.test", "customer_phone_snapshot": "+1-555-0101", "customer_address_snapshot": "Historical address", "customer_country_snapshot": "United States", "customer_contact_name_snapshot": "Historical contact"}, "resolved": {"notes": "historical-only", "currency": "USD", "discount": "0.0000", "group_id": "HOP-B09D117A-M", "order_no": "HIST-SO-B09D117A-M", "order_date": "2024-08-01", "shipping_fee": "0.0000", "truth_status": "真实", "customer_code": "202611050000", "exchange_rate": "1.000000", "lifecycle_state": "partial", "source_record_id": "SO-B09D117A-M", "voucher_reference": "synthetic://contract/SO-HT-1", "customer_name_snapshot": "Historical Customer Name", "customer_email_snapshot": "history@example.test", "customer_phone_snapshot": "+1-555-0101", "customer_address_snapshot": "Historical address", "customer_country_snapshot": "United States", "customer_contact_name_snapshot": "Historical contact"}}, "line_links": [{"quantity": "6.00", "source_id": 19, "cost_currency": "USD", "cost_evidence": "synthetic://history-backup/sku-cost", "archived_item_id": 3, "continuation_item_id": 5}], "balance_snapshot": {"mode": "itemized", "plans": [{"note": "历史逐笔未结计划：PLAN-SO-B09D117A-M；依据：synthetic://receivable-plan", "amount": "60.0000", "due_date": "2024-09-01"}], "plan_source_ids": [23]}, "approval_snapshot": {"approval": {"note": "Synthetic independent review of residual contracts and opening balances.", "fingerprint": "42521790c2f9bf2f4c136335304e480e08e327dd75b40eb8dcb280451212340a", "reviewer_id": 6, "reviewer_kind": "identified"}, "maker_id": 5, "maker_kind": "identified", "adjustments": {"discount": "0", "evidence": "synthetic://history-backup/residual-sales-amount", "shipping": "0"}, "proposal_fingerprint": "42521790c2f9bf2f4c136335304e480e08e327dd75b40eb8dcb280451212340a"}, "created_at": "2026-11-05T09:15:16.240008+00:00"}, {"id": 2, "group_id": 2, "source_id": 18, "archived_order_id": null, "archived_purchase_id": 3, "continuation_order_id": null, "continuation_purchase_id": 5, "settlement_order_id": null, "settlement_purchase_id": 3, "cutover_date": "2025-01-01", "balance_mode": "itemized", "opening_balance": "10.0000", "currency": "USD", "evidence_reference": "synthetic://history-backup/payable-plan", "source_snapshot": {"source": {"notes": "historical-only", "currency": "USD", "group_id": "HOP-B09D117A-M", "order_date": "2024-07-01", "purchase_no": "HIST-PO-B09D117A-M", "truth_status": "真实", "exchange_rate": "1.000000", "supplier_code": "AA", "lifecycle_state": "partial", "source_record_id": "PO-B09D117A-M", "voucher_reference": "synthetic://contract/PO-HT-1", "supplier_name_snapshot": "Historical Supplier Name", "supplier_email_snapshot": "supplier@example.test", "supplier_phone_snapshot": "+86-555-0111", "supplier_address_snapshot": "Old supplier address", "supplier_contact_name_snapshot": "Supplier contact"}, "resolved": {"notes": "historical-only", "currency": "USD", "group_id": "HOP-B09D117A-M", "order_date": "2024-07-01", "purchase_no": "HIST-PO-B09D117A-M", "truth_status": "真实", "exchange_rate": "1.000000", "supplier_code": "AA", "lifecycle_state": "partial", "source_record_id": "PO-B09D117A-M", "voucher_reference": "synthetic://contract/PO-HT-1", "supplier_name_snapshot": "Historical Supplier Name", "supplier_email_snapshot": "supplier@example.test", "supplier_phone_snapshot": "+86-555-0111", "supplier_address_snapshot": "Old supplier address", "supplier_contact_name_snapshot": "Supplier contact"}}, "line_links": [{"target": "order", "quantity": "3.00", "source_id": 17, "manual_reason": "Synthetic verified source has no supplier SKU mapping.", "sales_source_id": 20, "supplier_sku_id": null, "archived_item_id": 3, "continuation_item_id": 5}], "balance_snapshot": {"mode": "itemized", "plans": [{"note": "历史逐笔未结计划：PLAN-PO-B09D117A-M；依据：synthetic://payable-plan", "amount": "10.0000", "due_date": "2024-09-02"}], "plan_source_ids": [24]}, "approval_snapshot": {"approval": {"note": "Synthetic independent review of residual contracts and opening balances.", "fingerprint": "42521790c2f9bf2f4c136335304e480e08e327dd75b40eb8dcb280451212340a", "reviewer_id": 6, "reviewer_kind": "identified"}, "maker_id": 5, "maker_kind": "identified", "adjustments": {"evidence": "synthetic://history-backup/no-extra-costs", "no_additional_costs": true, "additional_costs_pending": false}, "proposal_fingerprint": "42521790c2f9bf2f4c136335304e480e08e327dd75b40eb8dcb280451212340a"}, "created_at": "2026-11-05T09:15:16.264314+00:00"}]}, "private_vouchers": [{"id": 3, "name": "finance-vouchers/2026/11/938e577b51214247848ac144d2d829c3.pdf", "scope": "account", "stored_size": 57, "file_size": 57, "stored_sha256": "672e77afc7c46870148a03e28abf16b646cde5e281fb22ed1658bf4231938bf4", "file_sha256": "672e77afc7c46870148a03e28abf16b646cde5e281fb22ed1658bf4231938bf4"}], "checks": {"official_history_groups": 2, "active_inventory_baselines": 1, "reversed_inventory_baselines": 1, "operational_contracts": 2, "posted_verified_history_facts": 1, "non_default_location_movements": 2, "receipt_and_shipment_linked": true, "synthetic_maker_reviewer_distinct": true}}
+
+POSTGRES_TEST_SELECTION=['crm.tests.test_core_business_closeout', 'crm.tests.test_core_business_concurrency', 'crm.tests.test_history_operational_inventory', 'crm.tests.test_history_operational_contracts', 'crm.tests.test_history_operational_finance', 'crm.tests.test_fulfillment_audit_atomicity', 'crm.tests.test_purchase_costs', 'crm.tests.test_iss039_shared_purchase_costs']
+
+Found 76 test(s).
+
+Operations to perform:
+
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+
+Synchronizing apps without migrations:
+
+  Creating tables...
+
+    Running deferred SQL...
+
+Running migrations:
+
+  Applying contenttypes.0001_initial... OK
+
+  Applying auth.0001_initial... OK
+
+  Applying admin.0001_initial... OK
+
+  Applying admin.0002_logentry_remove_auto_add... OK
+
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+
+  Applying contenttypes.0002_remove_content_type_name... OK
+
+  Applying auth.0002_alter_permission_name_max_length... OK
+
+  Applying auth.0003_alter_user_email_max_length... OK
+
+  Applying auth.0004_alter_user_username_opts... OK
+
+  Applying auth.0005_alter_user_last_login_null... OK
+
+  Applying auth.0006_require_contenttypes_0002... OK
+
+  Applying auth.0007_alter_validators_add_error_messages... OK
+
+  Applying auth.0008_alter_user_username_max_length... OK
+
+  Applying auth.0009_alter_user_last_name_max_length... OK
+
+  Applying auth.0010_alter_group_name_max_length... OK
+
+  Applying auth.0011_update_proxy_permissions... OK
+
+  Applying auth.0012_alter_user_first_name_max_length... OK
+
+  Applying crm.0001_initial... OK
+
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+
+  Applying crm.0003_customer_sales_stages... OK
+
+  Applying crm.0004_organization_and_permissions... OK
+
+  Applying crm.0005_alter_followup_subject... OK
+
+  Applying crm.0006_customercodesequence... OK
+
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+
+  Applying crm.0009_product_hs_code_product_name_en... OK
+
+  Applying crm.0010_sku_parameter_values_product_details... OK
+
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+
+  Applying crm.0013_quoteimportantnote... OK
+
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+
+  Applying crm.0016_trade_fulfillment... OK
+
+  Applying crm.0017_product_suppliers... OK
+
+  Applying crm.0018_finance_operating_ledger... OK
+
+  Applying crm.0019_transaction_allocated_amount... OK
+
+  Applying crm.0020_contract_change_request... OK
+
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+
+  Applying crm.0022_merge_20260823_2351... OK
+
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+
+  Applying crm.0025_packagingtemplate_supplier... OK
+
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+
+  Applying crm.0029_quote_child_revision_counter... OK
+
+  Applying crm.0029_backfill_sku_internal_identity... OK
+
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+
+  Applying crm.0032_currency_amount_precision... OK
+
+  Applying crm.0033_sku_safety_history... OK
+
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+
+  Applying crm.0036_followupattachment... OK
+
+  Applying crm.0037_sku_identity_safety... OK
+
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+
+  Applying crm.0039_categoryattribute_required... OK
+
+  Applying crm.0040_purchaseorder_order_optional... OK
+
+  Applying crm.0041_inventorymovement_related_orders... OK
+
+  Applying crm.0042_alter_inventorymovement_type... OK
+
+  Applying crm.0043_alter_transaction_kind... OK
+
+  Applying crm.0044_operationlog... OK
+
+  Applying crm.0045_trade_finance_safety... OK
+
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+
+  Applying crm.0048_reporting_geography... OK
+
+  Applying crm.0049_supplier_main_products... OK
+
+  Applying crm.0050_supplier_store_url... OK
+
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+
+  Applying crm.0053_hs_code_catalog... OK
+
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+
+  Applying crm.0057_sku_name_separator... OK
+
+  Applying crm.0058_order_item_supplier_allocation... OK
+
+  Applying crm.0059_supplier_supply_categories... OK
+
+  Applying crm.0060_product_combination_rules... OK
+
+  Applying crm.0061_sales_rules... OK
+
+  Applying crm.0062_sku_trade_units... OK
+
+  Applying crm.0063_trade_unit_base_snapshots... OK
+
+  Applying crm.0064_goods_receipt_reversal... OK
+
+  Applying crm.0065_shipment_reversal... OK
+
+  Applying crm.0066_transaction_void_metadata... OK
+
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+
+  Applying crm.0068_documentnumbersequence... OK
+
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+
+  Applying crm.0072_supplier_payment_terms... OK
+
+  Applying crm.0073_followup_next_follow_up_mode... OK
+
+  Applying crm.0074_functional_rbac_modules... OK
+
+  Applying crm.0075_alter_rolepermission_can_view... OK
+
+  Applying crm.0076_customer_owner_profile... OK
+
+  Applying crm.0077_rmb_cash_events... OK
+
+  Applying crm.0078_historical_contract_scope... OK
+
+  Applying crm.0079_shared_report_template... OK
+
+  Applying crm.0080_formal_party_snapshots... OK
+
+  Applying crm.0081_transaction_rmb_reference_label... OK
+
+  Applying crm.0081_supplier_lifecycle... OK
+
+  Applying crm.0081_product_certificate_private_file... OK
+
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+
+  Applying crm.0083_customer_supplier_preference... OK
+
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+
+  Applying crm.0085_order_quantity_adjustment... OK
+
+  Applying crm.0086_purchase_moq_exception... OK
+
+  Applying crm.0087_amount_calculation_compatibility... OK
+
+  Applying crm.0088_operationlog_append_only... OK
+
+  Applying crm.0089_operationlog_operator_protect... OK
+
+  Applying crm.0091_csv_import_audit... OK
+
+  Applying crm.0090_fulfillment_idempotency... OK
+
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+
+  Applying crm.0093_csv_import_preview_audit... OK
+
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+
+  Applying crm.0090_fulfillment_request_idempotency... OK
+
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+
+  Applying crm.0096_quote_pi_template_snapshots... OK
+
+  Applying crm.0097_merge_quote_and_cash_review... OK
+
+  Applying crm.0098_finance_accounts... OK
+
+  Applying crm.0099_finance_closeout_workflows... OK
+
+  Applying crm.0100_finance_legacy_fact_links... OK
+
+  Applying crm.0101_finance_historical_transfer_links... OK
+
+  Applying crm.0102_bank_private_voucher_binding... OK
+
+  Applying crm.0098_history_takeover_workflow... OK
+
+  Applying crm.0103_merge_finance_and_history... OK
+
+  Applying crm.0104_historical_inventory_baseline... OK
+
+  Applying crm.0105_historical_operational_contract... OK
+
+  Applying crm.0106_historical_purchase_balance_mode... OK
+
+  Applying crm.0107_inventory_movement_location... OK
+
+  Applying crm.0108_history_append_only_truncate... OK
+
+  Applying sessions.0001_initial... OK
+
+System check identified no issues (0 silenced).
+
+Creating test database for alias 'default' ('test_sunjack_238fca9194f7448caccadacc24b6ceca')...
+
+
+
+test_deleted_serializer_target_returns_validation_error_without_partial_commit (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_deleted_serializer_target_returns_validation_error_without_partial_commit) ... ok
+
+test_full_receipt_preserves_unpaid_payable_and_partial_payment_tracking (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_full_receipt_preserves_unpaid_payable_and_partial_payment_tracking) ... ok
+
+test_legal_location_edits_outgoing_and_receipt_reversal (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_legal_location_edits_outgoing_and_receipt_reversal) ... ok
+
+test_quote_to_order_partial_fulfillment_payment_and_refund_api (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_quote_to_order_partial_fulfillment_payment_and_refund_api) ... Bad Request: /api/orders/2/complete/
+
+ok
+
+test_response_loss_same_key_replays_without_second_audit_or_stock_operation (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_response_loss_same_key_replays_without_second_audit_or_stock_operation) ... Conflict: /api/purchase-orders/4/receive/
+
+ok
+
+test_shared_purchase_amount_costs_reassign_and_receipt_related_orders (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_shared_purchase_amount_costs_reassign_and_receipt_related_orders) ... Bad Request: /api/purchase-orders/5/cost-allocation/
+
+ok
+
+test_standalone_purchase_payables_survive_receipt_reversal_and_cancellation (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_standalone_purchase_payables_survive_receipt_reversal_and_cancellation) ... Bad Request: /api/purchase-orders/6/cancel/
+
+ok
+
+test_supplier_payment_second_audit_failure_rolls_back_plan_and_transaction (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_supplier_payment_second_audit_failure_rolls_back_plan_and_transaction) ... Internal Server Error: /api/purchase-orders/7/pay/
+
+Traceback (most recent call last):
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+
+    response = get_response(request)
+
+               ^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+
+    return view_func(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+
+    return self.dispatch(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+
+    response = self.handle_exception(exc)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+
+    self.raise_uncaught_exception(exc)
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+
+    raise exc
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+
+    response = handler(request, *args, **kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+
+    return func(*args, **kwds)
+
+           ^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\lrv-core-76c98873\backend\crm\views.py", line 563, in pay
+
+    record_operation(request=request, instance=purchase, action="custom", action_label="采购单付款", before=before, metadata={"transaction_id": payment.id})
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+
+    return self._mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+
+    return self._execute_mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+
+    result = effect(*args, **kwargs)
+
+             ^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\lrv-core-76c98873\backend\crm\tests\test_core_business_closeout.py", line 282, in fail_second
+
+    if len(labels)==2: raise RuntimeError('synthetic second payment audit failure')
+
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+RuntimeError: synthetic second payment audit failure
+
+ok
+
+test_zero_basis_expense_rejection_and_audit_failure_roll_back_all_tables (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_zero_basis_expense_rejection_and_audit_failure_roll_back_all_tables) ... Bad Request: /api/purchase-orders/8/cost-allocation/
+
+Internal Server Error: /api/purchase-orders/8/receive/
+
+Traceback (most recent call last):
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+
+    response = get_response(request)
+
+               ^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+
+    return view_func(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+
+    return self.dispatch(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+
+    response = self.handle_exception(exc)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+
+    self.raise_uncaught_exception(exc)
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+
+    raise exc
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+
+    response = handler(request, *args, **kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\lrv-core-76c98873\backend\crm\views.py", line 510, in receive
+
+    record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+
+    return self._mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+
+    return self._execute_mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+
+    raise effect
+
+RuntimeError: synthetic audit failure
+
+ok
+
+test_incoming_edit_cannot_relocate_stock_already_consumed (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_incoming_edit_cannot_relocate_stock_already_consumed) ... Bad Request: /api/inventory-movements/16/
+
+ok
+
+test_no_baseline_manual_outgoing_cannot_borrow_other_location_stock (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_manual_outgoing_cannot_borrow_other_location_stock) ... Bad Request: /api/inventory-movements/
+
+ok
+
+test_no_baseline_manual_reversal_cannot_make_original_location_negative (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_manual_reversal_cannot_make_original_location_negative) ... Bad Request: /api/inventory-movements/21/reverse/
+
+ok
+
+test_no_baseline_receipt_reversal_cannot_spend_replenishment_in_other_location (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_receipt_reversal_cannot_spend_replenishment_in_other_location) ... Bad Request: /api/purchase-orders/9/receipts/8/reverse/
+
+ok
+
+test_no_baseline_shipment_cannot_borrow_other_warehouse_or_lot_stock (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_shipment_cannot_borrow_other_warehouse_or_lot_stock) ... Bad Request: /api/orders/5/ship/
+
+ok
+
+test_stale_cost_order_after_cancel_is_reloaded_before_attribution (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_stale_cost_order_after_cancel_is_reloaded_before_attribution) ... ok
+
+test_audit_failure_rolls_back_entire_group (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_audit_failure_rolls_back_entire_group) ... ok
+
+test_baseline_is_not_movement_and_reversal_preserves_evidence (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_baseline_is_not_movement_and_reversal_preserves_evidence) ... ok
+
+test_existing_or_later_movements_prevent_unsafe_baseline_and_reversal (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_existing_or_later_movements_prevent_unsafe_baseline_and_reversal) ... ok
+
+test_later_movement_blocks_reversal (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_later_movement_blocks_reversal) ... ok
+
+test_source_change_after_approval_is_rejected (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_source_change_after_approval_is_rejected) ... ok
+
+test_third_party_owned_goods_do_not_increase_available_stock (crm.tests.test_history_operational_inventory.HistoricalInventoryBaselineTests.test_third_party_owned_goods_do_not_increase_available_stock) ... ok
+
+test_cancelled_contracts_do_not_recreate_fulfillment (crm.tests.test_history_operational_contracts.HistoricalContractLifecycleTests.test_cancelled_contracts_do_not_recreate_fulfillment) ... ok
+
+test_completed_contracts_can_carry_verified_unpaid_balance_only (crm.tests.test_history_operational_contracts.HistoricalContractLifecycleTests.test_completed_contracts_can_carry_verified_unpaid_balance_only) ... ok
+
+test_balance_only_requires_explicit_amount_and_never_guesses (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_balance_only_requires_explicit_amount_and_never_guesses) ... ok
+
+test_failure_rolls_back_links_drafts_and_plans (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_failure_rolls_back_links_drafts_and_plans) ... ok
+
+test_group_balance_stock_receipt_shipment_and_later_settlement (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_group_balance_stock_receipt_shipment_and_later_settlement) ... ok
+
+test_history_records_reject_raw_truncate_and_preserve_rows (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_history_records_reject_raw_truncate_and_preserve_rows) ... ok
+
+test_manual_movements_respect_opening_stock_location (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_manual_movements_respect_opening_stock_location) ... Bad Request: /api/inventory-movements/
+
+Bad Request: /api/inventory-movements/
+
+Bad Request: /api/inventory-movements/35/
+
+ok
+
+test_pending_shared_costs_must_use_formal_cost_workflow_before_placement (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_pending_shared_costs_must_use_formal_cost_workflow_before_placement) ... ok
+
+test_reversal_audit_failure_rolls_back_all_changes (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_reversal_audit_failure_rolls_back_all_changes) ... ok
+
+test_reversal_is_idempotent_and_preserves_records (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_reversal_is_idempotent_and_preserves_records) ... ok
+
+test_reversal_rejects_formal_downstream_work (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_reversal_rejects_formal_downstream_work) ... ok
+
+test_api_enforces_separate_review_and_permission (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_api_enforces_separate_review_and_permission) ... Bad Request: /api/import/history-takeovers/18/groups/18/finance-post/
+
+ok
+
+test_audit_failure_rolls_back_instruction_and_mapping (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_audit_failure_rolls_back_instruction_and_mapping) ... ok
+
+test_changed_source_does_not_create_finance_instruction (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_changed_source_does_not_create_finance_instruction) ... ok
+
+test_explicit_amount_review_post_and_idempotent_replay (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_explicit_amount_review_post_and_idempotent_replay) ... ok
+
+test_missing_amount_and_foreign_source_leave_no_instruction (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_missing_amount_and_foreign_source_leave_no_instruction) ... ok
+
+test_posted_source_correction_preserves_fact_and_auditable_event_link (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_posted_source_correction_preserves_fact_and_auditable_event_link) ... ok
+
+test_unconfirmed_source_cannot_create_instruction (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_unconfirmed_source_cannot_create_instruction) ... ok
+
+test_unknown_result_cannot_be_marked_failed_and_revision_replays (crm.tests.test_history_operational_finance.HistoricalFinanceBridgeTests.test_unknown_result_cannot_be_marked_failed_and_revision_replays) ... ok
+
+test_audit_write_failure_rolls_back_receipt_reversal_and_inventory_movement (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_audit_write_failure_rolls_back_receipt_reversal_and_inventory_movement) ... Internal Server Error: /api/purchase-orders/42/receipts/10/reverse/
+
+Traceback (most recent call last):
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+
+    response = get_response(request)
+
+               ^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+
+    return view_func(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+
+    return self.dispatch(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+
+    response = self.handle_exception(exc)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+
+    self.raise_uncaught_exception(exc)
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+
+    raise exc
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+
+    response = handler(request, *args, **kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\lrv-core-76c98873\backend\crm\views.py", line 532, in reverse_receipt
+
+    record_operation(
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+
+    return self._mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+
+    return self._execute_mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+
+    raise effect
+
+django.db.utils.DatabaseError: injected audit write failure
+
+ok
+
+test_final_shipment_audits_authoritative_order_status_transition (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_final_shipment_audits_authoritative_order_status_transition) ... ok
+
+test_partial_then_complete_receipts_audit_authoritative_status_transitions (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_partial_then_complete_receipts_audit_authoritative_status_transitions) ... ok
+
+test_receipt_audit_write_failure_rolls_back_receipt_inventory_and_key (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_receipt_audit_write_failure_rolls_back_receipt_inventory_and_key) ... Internal Server Error: /api/purchase-orders/44/receive/
+
+Traceback (most recent call last):
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+
+    response = get_response(request)
+
+               ^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+
+    return view_func(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+
+    return self.dispatch(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+
+    response = self.handle_exception(exc)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+
+    self.raise_uncaught_exception(exc)
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+
+    raise exc
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+
+    response = handler(request, *args, **kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\lrv-core-76c98873\backend\crm\views.py", line 510, in receive
+
+    record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+
+    return self._mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+
+    return self._execute_mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+
+    raise effect
+
+django.db.utils.DatabaseError: injected audit write failure
+
+ok
+
+test_receipt_reversal_success_records_audit_and_reverses_inventory (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_receipt_reversal_success_records_audit_and_reverses_inventory) ... ok
+
+test_reversal_business_validation_failure_preserves_receipt_and_inventory (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_reversal_business_validation_failure_preserves_receipt_and_inventory) ... Bad Request: /api/purchase-orders/46/receipts/15/reverse/
+
+ok
+
+test_shipment_audit_write_failure_rolls_back_shipment_inventory_and_key (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_shipment_audit_write_failure_rolls_back_shipment_inventory_and_key) ... Internal Server Error: /api/orders/41/ship/
+
+Traceback (most recent call last):
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+
+    response = get_response(request)
+
+               ^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+
+    return view_func(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+
+    return self.dispatch(request, *args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+
+    response = self.handle_exception(exc)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+
+    self.raise_uncaught_exception(exc)
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+
+    raise exc
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+
+    response = handler(request, *args, **kwargs)
+
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\lrv-core-76c98873\backend\crm\views.py", line 2332, in ship
+
+    record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", before=before, after=after, metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+
+    return self._mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+
+    return self._execute_mock_call(*args, **kwargs)
+
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+
+    raise effect
+
+django.db.utils.DatabaseError: injected audit write failure
+
+ok
+
+test_cancelled_and_reallocation (crm.tests.test_purchase_costs.PurchaseCostTests.test_cancelled_and_reallocation) ... Bad Request: /api/purchase-orders/47/cost-allocation/
+
+ok
+
+test_custom_targets_roundtrip_and_validation (crm.tests.test_purchase_costs.PurchaseCostTests.test_custom_targets_roundtrip_and_validation) ... Bad Request: /api/purchase-orders/48/cost-allocation/
+
+ok
+
+test_invalid_and_stale_requests_are_atomic (crm.tests.test_purchase_costs.PurchaseCostTests.test_invalid_and_stale_requests_are_atomic) ... Bad Request: /api/purchase-orders/49/cost-allocation/
+
+Bad Request: /api/purchase-orders/49/cost-allocation/
+
+Bad Request: /api/purchase-orders/49/cost-allocation/
+
+Bad Request: /api/purchase-orders/49/cost-allocation/
+
+Bad Request: /api/purchase-orders/49/cost-allocation/
+
+Bad Request: /api/purchase-orders/49/cost-allocation/
+
+Bad Request: /api/purchase-orders/49/cost-allocation/
+
+Bad Request: /api/purchase-orders/49/
+
+ok
+
+test_legacy_quantity_summary_is_unchanged_until_explicit_amount_save (crm.tests.test_purchase_costs.PurchaseCostTests.test_legacy_quantity_summary_is_unchanged_until_explicit_amount_save) ... ok
+
+test_preview_matches_save_without_writes (crm.tests.test_purchase_costs.PurchaseCostTests.test_preview_matches_save_without_writes) ... ok
+
+test_preview_rejects_overallocation_without_changes (crm.tests.test_purchase_costs.PurchaseCostTests.test_preview_rejects_overallocation_without_changes) ... Bad Request: /api/purchase-orders/52/cost-allocation-preview/
+
+ok
+
+test_purchase_order_reference_is_not_cost_or_fulfillment_ownership (crm.tests.test_purchase_costs.PurchaseCostTests.test_purchase_order_reference_is_not_cost_or_fulfillment_ownership) ... ok
+
+test_rounding_and_zero_cost (crm.tests.test_purchase_costs.PurchaseCostTests.test_rounding_and_zero_cost) ... Bad Request: /api/purchase-orders/54/cost-allocation/
+
+Bad Request: /api/purchase-orders/54/cost-allocation/
+
+ok
+
+test_split_inventory_freight_profit_and_legacy (crm.tests.test_purchase_costs.PurchaseCostTests.test_split_inventory_freight_profit_and_legacy) ... ok
+
+test_version_zero_item_save_does_not_rewrite_existing_allocations (crm.tests.test_purchase_costs.PurchaseCostTests.test_version_zero_item_save_does_not_rewrite_existing_allocations) ... ok
+
+test_amount_rule_rejects_other_methods_without_any_writes (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_amount_rule_rejects_other_methods_without_any_writes) ... ok
+
+test_audit_contains_before_after_and_is_redacted_for_procurement_only_operator (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_audit_contains_before_after_and_is_redacted_for_procurement_only_operator) ... ok
+
+test_cancelled_target_and_stale_version_leave_all_state_and_audit_unchanged (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_cancelled_target_and_stale_version_leave_all_state_and_audit_unchanged) ... ok
+
+test_cost_allocation_orders_are_minimal_and_sales_apis_remain_scoped (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_cost_allocation_orders_are_minimal_and_sales_apis_remain_scoped) ... ok
+
+test_cost_allocation_reads_respect_procurement_and_sales_visibility (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_cost_allocation_reads_respect_procurement_and_sales_visibility) ... ok
+
+test_legacy_conversion_audit_rollback_and_reservation_rebalance (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_legacy_conversion_audit_rollback_and_reservation_rebalance) ... ok
+
+test_procurement_can_allocate_cross_sales_orders_without_sales_module (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_procurement_can_allocate_cross_sales_orders_without_sales_module) ... ok
+
+test_public_expense_and_attribution_are_atomic_and_do_not_create_other_records (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_public_expense_and_attribution_are_atomic_and_do_not_create_other_records) ... ok
+
+test_cancel_and_ship_race_has_one_legal_outcome_without_partial_effects (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_and_ship_race_has_one_legal_outcome_without_partial_effects) ... Bad Request: /api/orders/78/cancel/
+
+ok
+
+test_cancel_between_serializer_validation_and_cost_lock_is_rejected (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_between_serializer_validation_and_cost_lock_is_rejected) ... Bad Request: /api/purchase-orders/65/cost-allocation/
+
+ok
+
+test_cost_version_race_keeps_single_replacement_and_audit (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cost_version_race_keeps_single_replacement_and_audit) ... Bad Request: /api/purchase-orders/66/cost-allocation/
+
+ok
+
+test_location_overdraw_competition_only_one_shipment_commits (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_location_overdraw_competition_only_one_shipment_commits) ... Bad Request: /api/orders/83/ship/
+
+ok
+
+test_purchase_cancellation_and_receipt_compete_without_partial_effects (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_purchase_cancellation_and_receipt_compete_without_partial_effects) ... Bad Request: /api/purchase-orders/67/receive/
+
+ok
+
+test_different_groups_same_sku_cannot_double_the_stock (crm.tests.test_history_operational_inventory.HistoricalInventoryPostgresTests.test_different_groups_same_sku_cannot_double_the_stock) ... ok
+
+test_migration_refuses_to_remove_existing_baseline (crm.tests.test_history_operational_inventory.HistoricalInventoryPostgresTests.test_migration_refuses_to_remove_existing_baseline) ... ok
+
+test_same_group_concurrent_replay_creates_one_baseline (crm.tests.test_history_operational_inventory.HistoricalInventoryPostgresTests.test_same_group_concurrent_replay_creates_one_baseline) ... ok
+
+test_concurrent_execute_creates_each_contract_once (crm.tests.test_history_operational_contracts.HistoricalContractsPostgresTests.test_concurrent_execute_creates_each_contract_once) ... ok
+
+test_concurrent_post_creates_one_fact_and_one_history_event (crm.tests.test_history_operational_finance.HistoricalFinancePostgresTests.test_concurrent_post_creates_one_fact_and_one_history_event) ... ok
+
+test_concurrent_same_source_submission_is_idempotent (crm.tests.test_history_operational_finance.HistoricalFinancePostgresTests.test_concurrent_same_source_submission_is_idempotent) ... ok
+
+
+
+----------------------------------------------------------------------
+
+Ran 76 tests in 130.722s
+
+
+
+OK
+
+POSTGRES_REGRESSION_EXIT=0
+
+RETAINED_SYNTHETIC_BACKUP=76c98873f8ba-66df8b6d.zip SHA256=9b25dbd40139a272b290e84125c370027e56561088452602eb89d3755356b57c
+
+HISTORY_RESTORE_VERIFICATION=PASS
+
+FINANCE_RESTORE_VERIFICATION=PASS
+
+HISTORY_OPERATIONAL_RESTORE_VERIFICATION=PASS
+
+{"cleanup": "complete", "media": {"algorithm": "sha256", "file_count": 5, "files": [{"path": "finance-vouchers/2026/11/084910e79a364a8dac64d7b34711fd4e.pdf", "sha256": "25fb08ca2b6d14c9ded8275e8baf757d3bd5496cfd8f92f8decff7b6fd143a68", "size": 64}, {"path": "finance-vouchers/2026/11/7db9441025d847eaa0a82dca57c71244.pdf", "sha256": "45c2a10daff5be8a8734151da93b14160d9ad4250076670efa5812833698bc98", "size": 67}, {"path": "finance-vouchers/2026/11/938e577b51214247848ac144d2d829c3.pdf", "sha256": "672e77afc7c46870148a03e28abf16b646cde5e281fb22ed1658bf4231938bf4", "size": 57}, {"path": "follow-up-attachments/2026/11/synthetic.txt", "sha256": "64e20fdf0f55d33193d299a7109e6e6b45ad1b31622bea93341c60330b2a0200", "size": 23}, {"path": "quote-item-images/2026/11/history.gif", "sha256": "ff95b99e6cd933dc1ce0dfc57ce7d4f78577e094ba87381f2edfba2a4690a7c6", "size": 43}], "manifest_sha256": "d52c38de2a860275012f81588fc4b6e95f08c7bbb412a4f0867eec02e4376c06", "root": "MEDIA_ROOT", "schema_version": 1, "storage_backend": "filesystem", "total_bytes": 254}, "migrations": 133, "row_count": 1218, "sha256": "9b25dbd40139a272b290e84125c370027e56561088452602eb89d3755356b57c", "source": "iss018_src_21b02623045b404d", "source_media_unchanged": true, "status": "PASS", "table_count": 102, "target": "iss018_dst_2bf8f45a23da46d7", "versions": {"django": "6.0.9", "pg_dump": "pg_dump (PostgreSQL) 17.11", "pg_restore": "pg_restore (PostgreSQL) 17.11", "server_version_num": 170011}}

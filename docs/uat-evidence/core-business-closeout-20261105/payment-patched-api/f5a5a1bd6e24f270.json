@@ -1,0 +1,261 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_supplier_payment_second_audit_failure_rolls_back_plan_and_transaction",
+  "http": [
+    {
+      "database_snapshot": {
+        "InventoryMovement": [],
+        "InventoryReservation": [],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [],
+        "OrderItem": [],
+        "PurchaseOrder": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 06:00:58.640190+00:00",
+            "updated_at": "2026-11-05 06:00:58.640190+00:00",
+            "payment_terms_snapshot": [
+              {
+                "label": "合成验收付款",
+                "ratio": "1",
+                "due_basis": "order_date",
+                "offset_days": 0
+              }
+            ],
+            "cost_allocation_version": 0,
+            "additional_costs": [],
+            "purchase_no": "CORE-PO-e12143f5",
+            "supplier_id": 1,
+            "supplier_name_snapshot": "",
+            "supplier_address_snapshot": "",
+            "supplier_contact_name_snapshot": "",
+            "supplier_phone_snapshot": "",
+            "supplier_email_snapshot": "",
+            "order_id": null,
+            "order_date": "2026-11-05",
+            "expected_arrival_date": null,
+            "status": "ordered",
+            "historical_only": false,
+            "history_finance_mode": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": ""
+          }
+        ],
+        "PurchaseOrderItem": [
+          {
+            "id": 1,
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "purchase_order_id": 1,
+            "sku_id": 1,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "description_snapshot": "合成核心商品",
+            "supplier_name_snapshot": "合成核心链路供应商",
+            "supplier_model_snapshot": "",
+            "supplier_sku_code_snapshot": "",
+            "supplier_barcode_snapshot": "",
+            "supplier_characteristics_snapshot": {},
+            "quantity": "6.00",
+            "unit_price": "3.000000000000"
+          }
+        ],
+        "ShipmentItem": [],
+        "PurchaseCostAllocation": [
+          {
+            "id": 1,
+            "target_name": "",
+            "purchase_item_id": 1,
+            "target_type": "inventory",
+            "order_id": null,
+            "quantity": "6.00"
+          }
+        ],
+        "PaymentPlan": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 06:00:58.646330+00:00",
+            "updated_at": "2026-11-05 06:00:58.646330+00:00",
+            "order_id": null,
+            "purchase_order_id": 1,
+            "direction": "payable",
+            "due_date": "2026-11-05",
+            "planned_amount": "18.0000",
+            "settled_amount": "0.0000",
+            "currency": "CNY",
+            "status": "open",
+            "notes": "合成验收付款"
+          }
+        ],
+        "Transaction": [],
+        "AdvanceAllocation": [],
+        "RmbCashEvent": [],
+        "OperationLog": []
+      }
+    },
+    {
+      "database_snapshot": {
+        "InventoryMovement": [],
+        "InventoryReservation": [],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [],
+        "OrderItem": [],
+        "PurchaseOrder": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 06:00:58.640190+00:00",
+            "updated_at": "2026-11-05 06:00:58.640190+00:00",
+            "payment_terms_snapshot": [
+              {
+                "label": "合成验收付款",
+                "ratio": "1",
+                "due_basis": "order_date",
+                "offset_days": 0
+              }
+            ],
+            "cost_allocation_version": 0,
+            "additional_costs": [],
+            "purchase_no": "CORE-PO-e12143f5",
+            "supplier_id": 1,
+            "supplier_name_snapshot": "",
+            "supplier_address_snapshot": "",
+            "supplier_contact_name_snapshot": "",
+            "supplier_phone_snapshot": "",
+            "supplier_email_snapshot": "",
+            "order_id": null,
+            "order_date": "2026-11-05",
+            "expected_arrival_date": null,
+            "status": "ordered",
+            "historical_only": false,
+            "history_finance_mode": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": ""
+          }
+        ],
+        "PurchaseOrderItem": [
+          {
+            "id": 1,
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "purchase_order_id": 1,
+            "sku_id": 1,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "description_snapshot": "合成核心商品",
+            "supplier_name_snapshot": "合成核心链路供应商",
+            "supplier_model_snapshot": "",
+            "supplier_sku_code_snapshot": "",
+            "supplier_barcode_snapshot": "",
+            "supplier_characteristics_snapshot": {},
+            "quantity": "6.00",
+            "unit_price": "3.000000000000"
+          }
+        ],
+        "ShipmentItem": [],
+        "PurchaseCostAllocation": [
+          {
+            "id": 1,
+            "target_name": "",
+            "purchase_item_id": 1,
+            "target_type": "inventory",
+            "order_id": null,
+            "quantity": "6.00"
+          }
+        ],
+        "PaymentPlan": [
+          {
+            "id": 1,
+            "created_at": "2026-11-05 06:00:58.646330+00:00",
+            "updated_at": "2026-11-05 06:00:58.646330+00:00",
+            "order_id": null,
+            "purchase_order_id": 1,
+            "direction": "payable",
+            "due_date": "2026-11-05",
+            "planned_amount": "18.0000",
+            "settled_amount": "0.0000",
+            "currency": "CNY",
+            "status": "open",
+            "notes": "合成验收付款"
+          }
+        ],
+        "Transaction": [],
+        "AdvanceAllocation": [],
+        "RmbCashEvent": [],
+        "OperationLog": []
+      }
+    },
+    {
+      "path": "/api/purchase-orders/1/pay/",
+      "request": {
+        "transaction_date": "2026-11-05",
+        "amount": "6",
+        "currency": "CNY",
+        "exchange_rate": "1",
+        "reference": "CORE-SYNTHETIC-PAYMENT"
+      },
+      "status": 201,
+      "body": {
+        "id": 1,
+        "supplier_name": "合成核心链路供应商",
+        "purchase_no": "CORE-PO-e12143f5",
+        "allocations": [],
+        "customer_name": "",
+        "order_no": "",
+        "direction_display": "支出",
+        "status_display": "已确认",
+        "rmb_amount": "6.0000",
+        "created_at": "2026-11-05T14:00:58.933181+08:00",
+        "updated_at": "2026-11-05T14:00:58.933181+08:00",
+        "transaction_no": "FIN-1C9A7B22ADD34DD2",
+        "transaction_date": "2026-11-05",
+        "direction": "expense",
+        "category": "供应商付款",
+        "amount": "6.0000",
+        "currency": "CNY",
+        "exchange_rate": "1.000000",
+        "allocated_amount": "0.0000",
+        "kind": "supplier_payment",
+        "status": "confirmed",
+        "voided_at": null,
+        "void_reason": "",
+        "payment_method": "",
+        "reference": "CORE-SYNTHETIC-PAYMENT",
+        "notes": "",
+        "split_from": null,
+        "customer": null,
+        "supplier": 1,
+        "order": null,
+        "purchase_order": 1,
+        "plan": 1,
+        "replaces": null
+      }
+    }
+  ]
+}

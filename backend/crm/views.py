@@ -547,6 +547,7 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response(GoodsReceiptSerializer(receipt, context={"request": request}).data)
 
     @action(detail=True, methods=["post"])
+    @transaction.atomic
     def pay(self, request, pk=None):
         require_finance_permission(request.user, "transactions", "create")
         require_finance_permission(request.user, "finance", "update")

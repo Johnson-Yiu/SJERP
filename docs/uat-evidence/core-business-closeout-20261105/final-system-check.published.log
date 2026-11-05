@@ -1,0 +1,4 @@
+COMMAND: locked Python manage.py check
+4ffad5cf1b84639788ccf4c67a58cb10eacba59c
+System check identified no issues (0 silenced).
+EXIT_CODE=0

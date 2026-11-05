@@ -1,0 +1,4 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_stale_cost_order_after_cancel_is_reloaded_before_attribution",
+  "http": []
+}

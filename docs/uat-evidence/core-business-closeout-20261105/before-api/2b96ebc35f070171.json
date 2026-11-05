@@ -1,0 +1,61 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_manual_reversal_cannot_make_original_location_negative",
+  "http": [
+    {
+      "path": "/api/inventory-movements/1/reverse/",
+      "request": {
+        "reason": "合成原批次已使用"
+      },
+      "status": 201,
+      "body": {
+        "id": 4,
+        "movement_no": "REV-D1B66A9E802249CC",
+        "related_orders": [],
+        "related_order_nos": [],
+        "sku_code": "CORE-SKU",
+        "display_name": "合成核心商品",
+        "sales_model": null,
+        "product_name": "合成核心商品",
+        "order_no": "",
+        "type_display": "盘亏出库",
+        "signed_quantity": "-6.00",
+        "overage_quantity": "0.00",
+        "overage_summary": "",
+        "reversal_movement": null,
+        "is_reversed": false,
+        "reversal_status": "冲销流水",
+        "created_at": "2026-11-05T12:40:42.086401+08:00",
+        "updated_at": "2026-11-05T12:40:42.086419+08:00",
+        "trade_quantity": null,
+        "trade_unit_price": null,
+        "trade_snapshot": {
+          "unit": "pcs",
+          "base_unit": "pcs",
+          "factor": "1",
+          "name": ""
+        },
+        "movement_date": "2026-11-05",
+        "type": "adjust_out",
+        "sku_code_snapshot": "CORE-SKU",
+        "sales_model_snapshot": "",
+        "display_name_snapshot": "合成核心商品",
+        "quantity": "6.00",
+        "warehouse": "合成A仓",
+        "warehouse_type": "自有仓",
+        "lot_reference": "LOT-A",
+        "unit_cost": "0.0000",
+        "reference": "CORE-IM-8972ff881b",
+        "notes": "冲销库存流水 CORE-IM-8972ff881b：合成原批次已使用",
+        "source_type": "reversal",
+        "source_no": "CORE-IM-8972ff881b",
+        "is_automatic": true,
+        "is_overage": false,
+        "overage_reason": "",
+        "trade_unit": null,
+        "sku": 1,
+        "supplier_sku": null,
+        "order": null
+      }
+    }
+  ]
+}

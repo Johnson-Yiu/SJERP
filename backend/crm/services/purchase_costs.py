@@ -156,6 +156,19 @@ def save_costs(purchase, payload):
     from crm.services.fulfillment import rebalance_sku_reservations
 
     purchase = PurchaseOrder.objects.select_for_update().get(pk=purchase.pk)
+    # Match receipt's PO -> Orders -> SKU lock order. Serializer instances may
+    # predate a concurrent cancellation, so validate the locked current rows.
+    order_ids = {row["order"].pk for row in payload["allocations"] if row.get("order")}
+    order_ids.update(PurchaseCostAllocation.objects.filter(
+        purchase_item__purchase_order=purchase, order__isnull=False,
+    ).values_list("order_id", flat=True))
+    orders = {row.pk: row for row in Order.objects.select_for_update().filter(pk__in=order_ids).order_by("pk")}
+    if order_ids - orders.keys():
+        raise serializers.ValidationError("成本归属订单已不存在，请重新选择。")
+    payload = {**payload, "allocations": [
+        {**row, "order": orders[row["order"].pk]} if row.get("order") else row
+        for row in payload["allocations"]
+    ]}
     records, expenses = prepare_costs(purchase, payload)
     PurchaseCostAllocation.objects.filter(purchase_item__purchase_order=purchase).delete()
     PurchaseCostAllocation.objects.bulk_create(records)

@@ -1,0 +1,356 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_shipment_cannot_borrow_other_warehouse_or_lot_stock",
+  "http": [
+    {
+      "database_snapshot": {
+        "InventoryMovement": [
+          {
+            "id": 27,
+            "created_at": "2026-11-05 06:12:44.002375+00:00",
+            "updated_at": "2026-11-05 06:12:44.002375+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "movement_no": "CORE-IM-b57b3fdb7b",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 14,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "2.00",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          },
+          {
+            "id": 28,
+            "created_at": "2026-11-05 06:12:44.003371+00:00",
+            "updated_at": "2026-11-05 06:12:44.003371+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "movement_no": "CORE-IM-ec95da905d",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 14,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "10.00",
+            "warehouse": "合成B仓",
+            "warehouse_type": "第三方仓",
+            "lot_reference": "LOT-B",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          }
+        ],
+        "InventoryReservation": [
+          {
+            "id": 6,
+            "order_item_id": 5,
+            "sku_id": 14,
+            "quantity": "6.00"
+          }
+        ],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [
+          {
+            "id": 5,
+            "created_at": "2026-11-05 06:12:43.997386+00:00",
+            "updated_at": "2026-11-05 06:12:43.997386+00:00",
+            "order_no": "CORE-SO-cd241cb7",
+            "customer_id": 14,
+            "customer_name_snapshot": "",
+            "customer_country_snapshot": "",
+            "customer_address_snapshot": "",
+            "customer_contact_name_snapshot": "",
+            "customer_phone_snapshot": "",
+            "customer_email_snapshot": "",
+            "quote_id": null,
+            "order_date": "2026-11-05",
+            "expected_ship_date": null,
+            "tail_goods_policy": "SAME_CARTON",
+            "status": "confirmed",
+            "historical_only": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "shipping_fee": "0.0000",
+            "discount": "0.0000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": "",
+            "quantity_change_version": 0,
+            "amount_calculation_version": 2
+          }
+        ],
+        "OrderItem": [
+          {
+            "id": 5,
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "order_id": 5,
+            "sku_id": 14,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "description_snapshot": "合成核心商品",
+            "unit_snapshot": "pcs",
+            "quantity": "6.00",
+            "unit_price": "10.000000000000",
+            "cost_price": "0.0000",
+            "notes": "",
+            "supplier_sku_id": null,
+            "supplier_name_snapshot": "",
+            "supplier_model_snapshot": "",
+            "supplier_sku_code_snapshot": "",
+            "supplier_barcode_snapshot": "",
+            "supplier_characteristics_snapshot": {},
+            "supplier_price_snapshot": null,
+            "supplier_currency_snapshot": "",
+            "supplier_moq_snapshot": null,
+            "supplier_lead_time_days_snapshot": null,
+            "supplier_allocation_source": "",
+            "supplier_allocation_sources_snapshot": [],
+            "supplier_allocation_scope": "",
+            "supplier_allocation_note": "",
+            "supplier_allocated_at": null
+          }
+        ],
+        "PurchaseOrder": [],
+        "PurchaseOrderItem": [],
+        "ShipmentItem": [],
+        "PurchaseCostAllocation": [],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "AdvanceAllocation": [],
+        "RmbCashEvent": [],
+        "OperationLog": []
+      }
+    },
+    {
+      "path": "/api/orders/5/ship/",
+      "request": {
+        "shipment_date": "2026-11-05",
+        "items": [
+          {
+            "order_item": 5,
+            "quantity": "3",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A"
+          }
+        ]
+      },
+      "status": 400,
+      "body": {
+        "detail": "所选仓库及批次库存不足，不能确认发货。"
+      }
+    },
+    {
+      "database_snapshot": {
+        "InventoryMovement": [
+          {
+            "id": 27,
+            "created_at": "2026-11-05 06:12:44.002375+00:00",
+            "updated_at": "2026-11-05 06:12:44.002375+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "movement_no": "CORE-IM-b57b3fdb7b",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 14,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "2.00",
+            "warehouse": "合成A仓",
+            "warehouse_type": "自有仓",
+            "lot_reference": "LOT-A",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          },
+          {
+            "id": 28,
+            "created_at": "2026-11-05 06:12:44.003371+00:00",
+            "updated_at": "2026-11-05 06:12:44.003371+00:00",
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "movement_no": "CORE-IM-ec95da905d",
+            "movement_date": "2026-11-05",
+            "type": "adjust_in",
+            "sku_id": 14,
+            "supplier_sku_id": null,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "order_id": null,
+            "quantity": "10.00",
+            "warehouse": "合成B仓",
+            "warehouse_type": "第三方仓",
+            "lot_reference": "LOT-B",
+            "unit_cost": "0E-12",
+            "reference": "",
+            "notes": "",
+            "source_type": "manual",
+            "source_no": "",
+            "is_automatic": false,
+            "is_overage": false,
+            "overage_reason": ""
+          }
+        ],
+        "InventoryReservation": [
+          {
+            "id": 6,
+            "order_item_id": 5,
+            "sku_id": 14,
+            "quantity": "6.00"
+          }
+        ],
+        "GoodsReceipt": [],
+        "Shipment": [],
+        "FulfillmentIdempotency": [],
+        "Order": [
+          {
+            "id": 5,
+            "created_at": "2026-11-05 06:12:43.997386+00:00",
+            "updated_at": "2026-11-05 06:12:43.997386+00:00",
+            "order_no": "CORE-SO-cd241cb7",
+            "customer_id": 14,
+            "customer_name_snapshot": "",
+            "customer_country_snapshot": "",
+            "customer_address_snapshot": "",
+            "customer_contact_name_snapshot": "",
+            "customer_phone_snapshot": "",
+            "customer_email_snapshot": "",
+            "quote_id": null,
+            "order_date": "2026-11-05",
+            "expected_ship_date": null,
+            "tail_goods_policy": "SAME_CARTON",
+            "status": "confirmed",
+            "historical_only": false,
+            "currency": "CNY",
+            "exchange_rate": "1.000000",
+            "shipping_fee": "0.0000",
+            "discount": "0.0000",
+            "notes": "",
+            "cancelled_at": null,
+            "cancellation_reason": "",
+            "quantity_change_version": 0,
+            "amount_calculation_version": 2
+          }
+        ],
+        "OrderItem": [
+          {
+            "id": 5,
+            "trade_unit_id": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "name": "",
+              "unit": "pcs",
+              "factor": "1",
+              "base_unit": "pcs"
+            },
+            "order_id": 5,
+            "sku_id": 14,
+            "sku_code_snapshot": "CORE-SKU",
+            "sales_model_snapshot": "",
+            "display_name_snapshot": "合成核心商品",
+            "description_snapshot": "合成核心商品",
+            "unit_snapshot": "pcs",
+            "quantity": "6.00",
+            "unit_price": "10.000000000000",
+            "cost_price": "0.0000",
+            "notes": "",
+            "supplier_sku_id": null,
+            "supplier_name_snapshot": "",
+            "supplier_model_snapshot": "",
+            "supplier_sku_code_snapshot": "",
+            "supplier_barcode_snapshot": "",
+            "supplier_characteristics_snapshot": {},
+            "supplier_price_snapshot": null,
+            "supplier_currency_snapshot": "",
+            "supplier_moq_snapshot": null,
+            "supplier_lead_time_days_snapshot": null,
+            "supplier_allocation_source": "",
+            "supplier_allocation_sources_snapshot": [],
+            "supplier_allocation_scope": "",
+            "supplier_allocation_note": "",
+            "supplier_allocated_at": null
+          }
+        ],
+        "PurchaseOrder": [],
+        "PurchaseOrderItem": [],
+        "ShipmentItem": [],
+        "PurchaseCostAllocation": [],
+        "PaymentPlan": [],
+        "Transaction": [],
+        "AdvanceAllocation": [],
+        "RmbCashEvent": [],
+        "OperationLog": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_zero_basis_expense_rejection_and_audit_failure_roll_back_all_tables",
+  "http": [
+    {
+      "path": "/api/purchase-orders/3/cost-allocation/",
+      "request": {
+        "version": 0,
+        "allocations": [],
+        "expenses": []
+      },
+      "status": 400,
+      "body": [
+        "采购金额为零，不能分摊正公共费用；请核对采购金额或移除公共费用。"
+      ]
+    },
+    {
+      "path": "/api/purchase-orders/3/cost-allocation/",
+      "request": {
+        "version": 0,
+        "allocations": [],
+        "expenses": []
+      },
+      "status": 200,
+      "body": {
+        "version": 1,
+        "allocations": [
+          {
+            "purchase_item": 3,
+            "sku_code": "CORE-SKU",
+            "display_name": "合成核心商品",
+            "target_name": "",
+            "target_type": "inventory",
+            "order": null,
+            "order_no": "",
+            "quantity": "6.00",
+            "base_amount": "0.00",
+            "additional_amount": "0",
+            "total_amount": "0.00"
+          }
+        ],
+        "expenses": [],
+        "expense_breakdown": [],
+        "base_amount": "0.00",
+        "additional_amount": "0",
+        "total_amount": "0.00",
+        "can_edit": true,
+        "read_only_reason": ""
+      }
+    }
+  ]
+}

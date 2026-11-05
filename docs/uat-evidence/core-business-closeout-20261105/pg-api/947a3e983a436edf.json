@@ -1,0 +1,13 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_incoming_edit_cannot_relocate_stock_already_consumed",
+  "http": [
+    {
+      "path": "/api/inventory-movements/7/",
+      "method": "patch",
+      "status": 400,
+      "body": [
+        "所选仓库及批次库存不足，不能借用其他仓库或批次库存。"
+      ]
+    }
+  ]
+}

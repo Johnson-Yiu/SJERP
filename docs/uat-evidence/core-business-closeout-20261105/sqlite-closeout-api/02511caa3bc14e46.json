@@ -1,0 +1,329 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_full_receipt_preserves_unpaid_payable_and_partial_payment_tracking",
+  "http": [
+    {
+      "path": "/api/purchase-orders/",
+      "request": {
+        "supplier": 1,
+        "order_date": "2026-11-05",
+        "currency": "CNY",
+        "exchange_rate": "1",
+        "payment_terms_snapshot": [
+          {
+            "label": "合成验收付款",
+            "ratio": "1",
+            "due_basis": "order_date",
+            "offset_days": 0
+          }
+        ],
+        "items": [
+          {
+            "sku": 1,
+            "quantity": "6",
+            "unit_price": "3"
+          }
+        ]
+      },
+      "status": 201,
+      "body": {
+        "id": 1,
+        "payment_plans": [],
+        "moq_exception": null,
+        "status_display": "草稿",
+        "items": [
+          {
+            "id": 1,
+            "sku": 1,
+            "supplier_sku": null,
+            "sku_code": "CORE-SKU",
+            "display_name": "合成核心商品",
+            "sales_model": "",
+            "supplier_name": "合成核心链路供应商",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_characteristics_snapshot": {},
+            "quantity": "6.00",
+            "unit_price": "3.0000",
+            "received_quantity": "0.00",
+            "remaining_quantity": "6.00",
+            "overage_quantity": "0.00",
+            "amount": "18.0000",
+            "receipts": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "supplier_name": "合成核心链路供应商",
+        "related_orders": [],
+        "total_amount": "18.00",
+        "base_amount": "18.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "unpaid_amount": "18.00",
+        "created_at": "2026-11-05T14:06:13.002707+08:00",
+        "updated_at": "2026-11-05T14:06:13.002707+08:00",
+        "payment_terms_snapshot": [
+          {
+            "label": "合成验收付款",
+            "ratio": "1",
+            "due_basis": "order_date",
+            "offset_days": 0
+          }
+        ],
+        "cost_allocation_version": 0,
+        "additional_costs": [],
+        "purchase_no": "PO-2026-00001",
+        "supplier_name_snapshot": "",
+        "supplier_address_snapshot": "",
+        "supplier_contact_name_snapshot": "",
+        "supplier_phone_snapshot": "",
+        "supplier_email_snapshot": "",
+        "order_date": "2026-11-05",
+        "expected_arrival_date": null,
+        "status": "draft",
+        "historical_only": false,
+        "history_finance_mode": false,
+        "currency": "CNY",
+        "exchange_rate": "1.000000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "supplier": 1,
+        "order": null,
+        "order_no": "",
+        "sales_link_restricted": false
+      }
+    },
+    {
+      "path": "/api/purchase-orders/1/place/",
+      "request": {},
+      "status": 200,
+      "body": {
+        "id": 1,
+        "payment_plans": [
+          {
+            "id": 1,
+            "customer_id": null,
+            "supplier_id": 1,
+            "exchange_rate": "1.000000",
+            "remaining_rmb": "18.0000000000",
+            "remaining_amount": "18.0000",
+            "contract_no": "PO-2026-00001",
+            "counterparty_name": "合成核心链路供应商",
+            "is_overdue": false,
+            "created_at": "2026-11-05T14:06:13.175247+08:00",
+            "updated_at": "2026-11-05T14:06:13.175247+08:00",
+            "direction": "payable",
+            "due_date": "2026-11-05",
+            "planned_amount": "18.0000",
+            "settled_amount": "0.0000",
+            "currency": "CNY",
+            "status": "open",
+            "notes": "合成验收付款",
+            "order": null,
+            "purchase_order": 1
+          }
+        ],
+        "moq_exception": null,
+        "status_display": "已下单",
+        "items": [
+          {
+            "id": 1,
+            "sku": 1,
+            "supplier_sku": null,
+            "sku_code": "CORE-SKU",
+            "display_name": "合成核心商品",
+            "sales_model": "",
+            "supplier_name": "合成核心链路供应商",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_characteristics_snapshot": {},
+            "quantity": "6.00",
+            "unit_price": "3.0000",
+            "received_quantity": "0.00",
+            "remaining_quantity": "6.00",
+            "overage_quantity": "0.00",
+            "amount": "18.0000",
+            "receipts": [],
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "pcs",
+              "unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "supplier_name": "合成核心链路供应商",
+        "related_orders": [],
+        "total_amount": "18.00",
+        "base_amount": "18.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "unpaid_amount": "18.00",
+        "created_at": "2026-11-05T14:06:13.002707+08:00",
+        "updated_at": "2026-11-05T14:06:13.170259+08:00",
+        "payment_terms_snapshot": [
+          {
+            "label": "合成验收付款",
+            "ratio": "1",
+            "due_basis": "order_date",
+            "offset_days": 0
+          }
+        ],
+        "cost_allocation_version": 0,
+        "additional_costs": [],
+        "purchase_no": "PO-2026-00001",
+        "supplier_name_snapshot": "合成核心链路供应商",
+        "supplier_address_snapshot": "",
+        "supplier_contact_name_snapshot": "",
+        "supplier_phone_snapshot": "",
+        "supplier_email_snapshot": "",
+        "order_date": "2026-11-05",
+        "expected_arrival_date": null,
+        "status": "ordered",
+        "historical_only": false,
+        "history_finance_mode": false,
+        "currency": "CNY",
+        "exchange_rate": "1.000000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "supplier": 1,
+        "order": null,
+        "order_no": "",
+        "sales_link_restricted": false
+      }
+    },
+    {
+      "path": "/api/purchase-orders/1/receive/",
+      "request": {
+        "purchase_item": 1,
+        "receipt_date": "2026-11-05",
+        "quantity": "6",
+        "unit_cost": "3",
+        "warehouse": "合成A仓",
+        "warehouse_type": "自有仓",
+        "lot_reference": "LOT-A"
+      },
+      "status": 201,
+      "body": {
+        "id": 1,
+        "purchase_item": 1,
+        "quantity": "6.00",
+        "trade_unit": null,
+        "trade_quantity": null,
+        "trade_unit_price": null,
+        "trade_snapshot": {
+          "base_unit": "pcs",
+          "unit": "pcs",
+          "factor": "1",
+          "name": ""
+        },
+        "is_overage": false,
+        "inventory_movement": 1
+      }
+    },
+    {
+      "path": "/api/purchase-orders/1/pay/",
+      "request": {
+        "transaction_date": "2026-11-05",
+        "amount": "6",
+        "currency": "CNY",
+        "exchange_rate": "1"
+      },
+      "status": 201,
+      "body": {
+        "id": 1,
+        "supplier_name": "合成核心链路供应商",
+        "purchase_no": "PO-2026-00001",
+        "allocations": [],
+        "customer_name": "",
+        "order_no": "",
+        "direction_display": "支出",
+        "status_display": "已确认",
+        "rmb_amount": "6.0000",
+        "created_at": "2026-11-05T14:06:13.430370+08:00",
+        "updated_at": "2026-11-05T14:06:13.430370+08:00",
+        "transaction_no": "FIN-24EDECED78224299",
+        "transaction_date": "2026-11-05",
+        "direction": "expense",
+        "category": "供应商付款",
+        "amount": "6.0000",
+        "currency": "CNY",
+        "exchange_rate": "1.000000",
+        "allocated_amount": "0.0000",
+        "kind": "supplier_payment",
+        "status": "confirmed",
+        "voided_at": null,
+        "void_reason": "",
+        "payment_method": "",
+        "reference": "",
+        "notes": "",
+        "split_from": null,
+        "customer": null,
+        "supplier": 1,
+        "order": null,
+        "purchase_order": 1,
+        "plan": 1,
+        "replaces": null
+      }
+    },
+    {
+      "path": "/api/purchase-orders/1/pay/",
+      "request": {
+        "transaction_date": "2026-11-05",
+        "amount": "12",
+        "currency": "CNY",
+        "exchange_rate": "1"
+      },
+      "status": 201,
+      "body": {
+        "id": 2,
+        "supplier_name": "合成核心链路供应商",
+        "purchase_no": "PO-2026-00001",
+        "allocations": [],
+        "customer_name": "",
+        "order_no": "",
+        "direction_display": "支出",
+        "status_display": "已确认",
+        "rmb_amount": "12.0000",
+        "created_at": "2026-11-05T14:06:13.542070+08:00",
+        "updated_at": "2026-11-05T14:06:13.542070+08:00",
+        "transaction_no": "FIN-B4B1AD1D2C0B4E39",
+        "transaction_date": "2026-11-05",
+        "direction": "expense",
+        "category": "供应商付款",
+        "amount": "12.0000",
+        "currency": "CNY",
+        "exchange_rate": "1.000000",
+        "allocated_amount": "0.0000",
+        "kind": "supplier_payment",
+        "status": "confirmed",
+        "voided_at": null,
+        "void_reason": "",
+        "payment_method": "",
+        "reference": "",
+        "notes": "",
+        "split_from": null,
+        "customer": null,
+        "supplier": 1,
+        "order": null,
+        "purchase_order": 1,
+        "plan": 1,
+        "replaces": null
+      }
+    }
+  ]
+}

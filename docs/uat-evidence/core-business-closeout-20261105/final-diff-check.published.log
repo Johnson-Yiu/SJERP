@@ -1,0 +1,3 @@
+COMMAND: git diff --check
+4ffad5cf1b84639788ccf4c67a58cb10eacba59c
+EXIT_CODE=0

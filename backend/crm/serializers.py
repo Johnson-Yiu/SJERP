@@ -3069,16 +3069,14 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
 
     @transaction.atomic
     def create(self, validated_data):
-        from .services.fulfillment import OUTGOING_MOVEMENT_TYPES, inventory_location, location_quantity
-        from .models import HistoryInventoryBaseline
+        from .services.fulfillment import OUTGOING_MOVEMENT_TYPES, inventory_location, validate_inventory_location_change
         delta = validated_data["quantity"] * (-1 if validated_data["type"] in OUTGOING_MOVEMENT_TYPES else 1)
         self.check_stock(validated_data["sku"], delta)
         try:
             location = inventory_location(validated_data["sku"], validated_data)
+            validate_inventory_location_change(validated_data["sku"], location, delta)
         except DjangoValidationError as exc:
             raise serializers.ValidationError(exc.messages) from exc
-        if delta < 0 and HistoryInventoryBaseline.objects.filter(sku=validated_data["sku"], reversal__isnull=True).exists() and location_quantity(validated_data["sku"], location) + delta < 0:
-            raise serializers.ValidationError("所选仓库及批次库存不足。")
         validated_data.update(location)
         related_orders = validated_data.pop("related_orders", [])
         if related_orders:
@@ -3095,7 +3093,7 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        from .services.fulfillment import location_quantity
+        from .services.fulfillment import validate_inventory_location_change
         from .models import HistoryInventoryBaseline
         instance = InventoryMovement.objects.select_for_update().get(pk=instance.pk)
         if HistoryInventoryBaseline.objects.filter(sku=instance.sku, reversal__isnull=True).exists() and any(key in validated_data and validated_data[key] != getattr(instance, key) for key in ("warehouse", "warehouse_type", "lot_reference")):
@@ -3104,9 +3102,11 @@ class InventoryMovementSerializer(TradeLineSerializerMixin, serializers.ModelSer
         sign = -1 if instance.signed_quantity < 0 else 1
         delta = (quantity - instance.quantity) * sign
         self.check_stock(instance.sku, delta)
-        location = {key: getattr(instance, key) for key in ("warehouse", "warehouse_type", "lot_reference")}
-        if delta < 0 and HistoryInventoryBaseline.objects.filter(sku=instance.sku, reversal__isnull=True).exists() and location_quantity(instance.sku, location) + delta < 0:
-            raise serializers.ValidationError("原仓库及批次库存不足。")
+        location = {key: validated_data.get(key, getattr(instance, key)) for key in ("warehouse", "warehouse_type", "lot_reference")}
+        try:
+            validate_inventory_location_change(instance.sku, location, quantity * sign, original=instance)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(exc.messages) from exc
         related_orders = validated_data.pop("related_orders", None)
         if related_orders is not None:
             validated_data["order"] = related_orders[0] if related_orders else None

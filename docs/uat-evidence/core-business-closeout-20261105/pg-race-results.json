@@ -1,0 +1,337 @@
+{
+  "source": "pg-final-accepted.published.log; actual PostgreSQL17 API workers",
+  "test_checkpoint": "4ffad5cf1b84639788ccf4c67a58cb10eacba59c",
+  "races": [
+    {
+      "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_and_ship_race_has_one_legal_outcome_without_partial_effects",
+      "evidence": "pg-final-accepted-api/2fd4196fbc524055.json",
+      "backend_pids": [
+        35816,
+        25596
+      ],
+      "statuses": [
+        200,
+        400
+      ],
+      "responses": [
+        {
+          "id": 17,
+          "items": [
+            {
+              "id": 12,
+              "sku": 30,
+              "sku_code": "CORE-SKU",
+              "sales_model": "",
+              "model": "",
+              "product_name": "合成核心商品",
+              "display_name": "合成核心商品",
+              "description": "合成核心商品",
+              "unit": "pcs",
+              "quantity": "6.00",
+              "unit_price": "10.0000",
+              "cost_price": "0.0000",
+              "amount": "60.00",
+              "notes": "",
+              "supplier_sku": null,
+              "supplier_name": "",
+              "supplier_model": "",
+              "supplier_sku_code": "",
+              "supplier_barcode": "",
+              "supplier_allocation": null,
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "name": "",
+                "unit": "pcs",
+                "factor": "1",
+                "base_unit": "pcs"
+              }
+            }
+          ],
+          "customer_name": "合成核心链路客户",
+          "customer_country": "China",
+          "quote_no": "",
+          "source_quote_no": "",
+          "status_display": "已取消",
+          "total_amount": "60.00",
+          "base_amount": "60.00",
+          "approved_change_amount": "0.00",
+          "paid_amount": "0.00",
+          "balance_amount": "0.00",
+          "receivable_state": "cancelled",
+          "created_at": "2026-11-05T14:44:22.603044+08:00",
+          "updated_at": "2026-11-05T14:44:22.812825+08:00",
+          "order_no": "CORE-SO-10ecbead",
+          "customer_name_snapshot": "",
+          "customer_country_snapshot": "",
+          "customer_address_snapshot": "",
+          "customer_contact_name_snapshot": "",
+          "customer_phone_snapshot": "",
+          "customer_email_snapshot": "",
+          "order_date": "2026-11-05",
+          "expected_ship_date": null,
+          "tail_goods_policy": "SAME_CARTON",
+          "status": "cancelled",
+          "historical_only": false,
+          "currency": "CNY",
+          "exchange_rate": "1.000000",
+          "shipping_fee": "0.0000",
+          "discount": "0.0000",
+          "notes": "",
+          "cancelled_at": "2026-11-05T14:44:22.811828+08:00",
+          "cancellation_reason": "合成取消竞争",
+          "quantity_change_version": 0,
+          "customer": 30,
+          "quote": null
+        },
+        {
+          "detail": "只有已确认且未取消或完成的订单可以发货。"
+        }
+      ],
+      "distinct_connections": 2
+    },
+    {
+      "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cost_version_race_keeps_single_replacement_and_audit",
+      "evidence": "pg-final-accepted-api/314285d8b44a24b1.json",
+      "backend_pids": [
+        24448,
+        18348
+      ],
+      "statuses": [
+        400,
+        200
+      ],
+      "responses": [
+        [
+          "成本分配已被其他人修改，请关闭后重新打开。"
+        ],
+        {
+          "version": 1,
+          "allocations": [
+            {
+              "purchase_item": 22,
+              "sku_code": "CORE-SKU",
+              "display_name": "合成核心商品",
+              "target_name": "",
+              "target_type": "order",
+              "order": 20,
+              "order_no": "CORE-SO-ce06d3f3",
+              "quantity": "6.00",
+              "base_amount": "18.00",
+              "additional_amount": "0",
+              "total_amount": "18.00"
+            }
+          ],
+          "expenses": [],
+          "expense_breakdown": [],
+          "base_amount": "18.00",
+          "additional_amount": "0",
+          "total_amount": "18.00",
+          "can_edit": true,
+          "read_only_reason": ""
+        }
+      ],
+      "distinct_connections": 2
+    },
+    {
+      "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_between_serializer_validation_and_cost_lock_is_rejected",
+      "evidence": "pg-final-accepted-api/98b18bab416ff7c8.json",
+      "backend_pids": [
+        36736,
+        8916
+      ],
+      "statuses": [
+        400,
+        200
+      ],
+      "responses": [
+        [
+          "不能分配到已取消的销售订单。"
+        ],
+        {
+          "id": 18,
+          "items": [
+            {
+              "id": 13,
+              "sku": 31,
+              "sku_code": "CORE-SKU",
+              "sales_model": "",
+              "model": "",
+              "product_name": "合成核心商品",
+              "display_name": "合成核心商品",
+              "description": "合成核心商品",
+              "unit": "pcs",
+              "quantity": "6.00",
+              "unit_price": "10.0000",
+              "cost_price": "0.0000",
+              "amount": "60.00",
+              "notes": "",
+              "supplier_sku": null,
+              "supplier_name": "",
+              "supplier_model": "",
+              "supplier_sku_code": "",
+              "supplier_barcode": "",
+              "supplier_allocation": null,
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "name": "",
+                "unit": "pcs",
+                "factor": "1",
+                "base_unit": "pcs"
+              }
+            }
+          ],
+          "customer_name": "合成核心链路客户",
+          "customer_country": "China",
+          "quote_no": "",
+          "source_quote_no": "",
+          "status_display": "已取消",
+          "total_amount": "60.00",
+          "base_amount": "60.00",
+          "approved_change_amount": "0.00",
+          "paid_amount": "0.00",
+          "balance_amount": "0.00",
+          "receivable_state": "cancelled",
+          "created_at": "2026-11-05T14:44:25.304064+08:00",
+          "updated_at": "2026-11-05T14:44:25.492851+08:00",
+          "order_no": "CORE-SO-b36ebf0e",
+          "customer_name_snapshot": "",
+          "customer_country_snapshot": "",
+          "customer_address_snapshot": "",
+          "customer_contact_name_snapshot": "",
+          "customer_phone_snapshot": "",
+          "customer_email_snapshot": "",
+          "order_date": "2026-11-05",
+          "expected_ship_date": null,
+          "tail_goods_policy": "SAME_CARTON",
+          "status": "cancelled",
+          "historical_only": false,
+          "currency": "CNY",
+          "exchange_rate": "1.000000",
+          "shipping_fee": "0.0000",
+          "discount": "0.0000",
+          "notes": "",
+          "cancelled_at": "2026-11-05T14:44:25.491853+08:00",
+          "cancellation_reason": "合成并发取消",
+          "quantity_change_version": 0,
+          "customer": 31,
+          "quote": null
+        }
+      ],
+      "distinct_connections": 2
+    },
+    {
+      "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_location_overdraw_competition_only_one_shipment_commits",
+      "evidence": "pg-final-accepted-api/b363646382ffe655.json",
+      "backend_pids": [
+        10912,
+        32960
+      ],
+      "statuses": [
+        400,
+        201
+      ],
+      "responses": [
+        {
+          "detail": "所选仓库及批次库存不足，不能确认发货。"
+        },
+        {
+          "id": 10,
+          "shipment_no": "SH-02A3B35203E242A4",
+          "status": "confirmed"
+        }
+      ],
+      "distinct_connections": 2
+    },
+    {
+      "test": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_purchase_cancellation_and_receipt_compete_without_partial_effects",
+      "evidence": "pg-final-accepted-api/d283e909c8d6cb7b.json",
+      "backend_pids": [
+        19336,
+        34732
+      ],
+      "statuses": [
+        200,
+        400
+      ],
+      "responses": [
+        {
+          "id": 23,
+          "payment_plans": [],
+          "moq_exception": null,
+          "status_display": "已取消",
+          "items": [
+            {
+              "id": 23,
+              "sku": 34,
+              "supplier_sku": null,
+              "sku_code": "CORE-SKU",
+              "display_name": "合成核心商品",
+              "sales_model": "",
+              "supplier_name": "合成核心链路供应商",
+              "supplier_model": "",
+              "supplier_sku_code": "",
+              "supplier_barcode": "",
+              "supplier_characteristics_snapshot": {},
+              "quantity": "6.00",
+              "unit_price": "3.0000",
+              "received_quantity": "0.00",
+              "remaining_quantity": "6.00",
+              "overage_quantity": "0.00",
+              "amount": "18.0000",
+              "receipts": [],
+              "trade_unit": null,
+              "trade_quantity": null,
+              "trade_unit_price": null,
+              "trade_snapshot": {
+                "name": "",
+                "unit": "pcs",
+                "factor": "1",
+                "base_unit": "pcs"
+              }
+            }
+          ],
+          "supplier_name": "合成核心链路供应商",
+          "related_orders": [],
+          "total_amount": "18.00",
+          "base_amount": "18.00",
+          "approved_change_amount": "0.00",
+          "paid_amount": "0.00",
+          "unpaid_amount": "18.00",
+          "created_at": "2026-11-05T14:44:32.139715+08:00",
+          "updated_at": "2026-11-05T14:44:32.372238+08:00",
+          "payment_terms_snapshot": [],
+          "cost_allocation_version": 0,
+          "additional_costs": [],
+          "purchase_no": "CORE-PO-4b78bfaa",
+          "supplier_name_snapshot": "",
+          "supplier_address_snapshot": "",
+          "supplier_contact_name_snapshot": "",
+          "supplier_phone_snapshot": "",
+          "supplier_email_snapshot": "",
+          "order_date": "2026-11-05",
+          "expected_arrival_date": null,
+          "status": "cancelled",
+          "historical_only": false,
+          "history_finance_mode": false,
+          "currency": "CNY",
+          "exchange_rate": "1.000000",
+          "notes": "",
+          "cancelled_at": "2026-11-05T14:44:32.372238+08:00",
+          "cancellation_reason": "合成采购取消竞争",
+          "supplier": 34,
+          "order": null,
+          "order_no": "",
+          "sales_link_restricted": false
+        },
+        {
+          "detail": "只有已下单的采购单可以登记验货入库。"
+        }
+      ],
+      "distinct_connections": 2
+    }
+  ]
+}

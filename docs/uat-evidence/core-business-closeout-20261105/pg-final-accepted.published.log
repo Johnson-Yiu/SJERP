@@ -1,0 +1,453 @@
+COMMAND: locked Python run_postgres.py --pg-bin <owned PostgreSQL17 bin>; all 56 targeted tests including worker connection postcondition
+4ffad5cf1b84639788ccf4c67a58cb10eacba59c
+{"postgres": "postgres (PostgreSQL) 17.11", "cluster": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-core-pg17-rr8ace7c", "source": "fin_src_396dcdadbc834a7e", "port": 9603, "test_labels": ["crm.tests.test_core_business_closeout", "crm.tests.test_core_business_concurrency", "crm.tests.test_postgres_concurrency", "crm.tests.test_iss006_idempotency", "crm.tests.test_fulfillment_audit_atomicity"]}
+Found 56 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying crm.0093_csv_import_preview_audit... OK
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+  Applying crm.0090_fulfillment_request_idempotency... OK
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+  Applying crm.0096_quote_pi_template_snapshots... OK
+  Applying crm.0097_merge_quote_and_cash_review... OK
+  Applying crm.0098_finance_accounts... OK
+  Applying crm.0099_finance_closeout_workflows... OK
+  Applying crm.0100_finance_legacy_fact_links... OK
+  Applying crm.0101_finance_historical_transfer_links... OK
+  Applying crm.0102_bank_private_voucher_binding... OK
+  Applying crm.0098_history_takeover_workflow... OK
+  Applying crm.0103_merge_finance_and_history... OK
+  Applying crm.0104_historical_inventory_baseline... OK
+  Applying crm.0105_historical_operational_contract... OK
+  Applying crm.0106_historical_purchase_balance_mode... OK
+  Applying crm.0107_inventory_movement_location... OK
+  Applying crm.0108_history_append_only_truncate... OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+Creating test database for alias 'default' ('test_sunjack_0a4186aab62b443484534679a57b9cb6')...
+
+test_deleted_serializer_target_returns_validation_error_without_partial_commit (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_deleted_serializer_target_returns_validation_error_without_partial_commit) ... ok
+test_full_receipt_preserves_unpaid_payable_and_partial_payment_tracking (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_full_receipt_preserves_unpaid_payable_and_partial_payment_tracking) ... ok
+test_legal_location_edits_outgoing_and_receipt_reversal (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_legal_location_edits_outgoing_and_receipt_reversal) ... ok
+test_quote_to_order_partial_fulfillment_payment_and_refund_api (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_quote_to_order_partial_fulfillment_payment_and_refund_api) ... Bad Request: /api/orders/2/complete/
+ok
+test_response_loss_same_key_replays_without_second_audit_or_stock_operation (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_response_loss_same_key_replays_without_second_audit_or_stock_operation) ... Conflict: /api/purchase-orders/4/receive/
+ok
+test_shared_purchase_amount_costs_reassign_and_receipt_related_orders (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_shared_purchase_amount_costs_reassign_and_receipt_related_orders) ... Bad Request: /api/purchase-orders/5/cost-allocation/
+ok
+test_standalone_purchase_payables_survive_receipt_reversal_and_cancellation (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_standalone_purchase_payables_survive_receipt_reversal_and_cancellation) ... Bad Request: /api/purchase-orders/6/cancel/
+ok
+test_supplier_payment_second_audit_failure_rolls_back_plan_and_transaction (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_supplier_payment_second_audit_failure_rolls_back_plan_and_transaction) ... Internal Server Error: /api/purchase-orders/7/pay/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\core-business-closeout-20261105\backend\crm\views.py", line 563, in pay
+    record_operation(request=request, instance=purchase, action="custom", action_label="采购单付款", before=before, metadata={"transaction_id": payment.id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\core-business-closeout-20261105\backend\crm\tests\test_core_business_closeout.py", line 282, in fail_second
+    if len(labels)==2: raise RuntimeError('synthetic second payment audit failure')
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: synthetic second payment audit failure
+ok
+test_zero_basis_expense_rejection_and_audit_failure_roll_back_all_tables (crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_zero_basis_expense_rejection_and_audit_failure_roll_back_all_tables) ... Bad Request: /api/purchase-orders/8/cost-allocation/
+Internal Server Error: /api/purchase-orders/8/receive/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\core-business-closeout-20261105\backend\crm\views.py", line 510, in receive
+    record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+ok
+test_incoming_edit_cannot_relocate_stock_already_consumed (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_incoming_edit_cannot_relocate_stock_already_consumed) ... Bad Request: /api/inventory-movements/16/
+ok
+test_no_baseline_manual_outgoing_cannot_borrow_other_location_stock (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_manual_outgoing_cannot_borrow_other_location_stock) ... Bad Request: /api/inventory-movements/
+ok
+test_no_baseline_manual_reversal_cannot_make_original_location_negative (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_manual_reversal_cannot_make_original_location_negative) ... Bad Request: /api/inventory-movements/21/reverse/
+ok
+test_no_baseline_receipt_reversal_cannot_spend_replenishment_in_other_location (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_receipt_reversal_cannot_spend_replenishment_in_other_location) ... Bad Request: /api/purchase-orders/9/receipts/8/reverse/
+ok
+test_no_baseline_shipment_cannot_borrow_other_warehouse_or_lot_stock (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_shipment_cannot_borrow_other_warehouse_or_lot_stock) ... Bad Request: /api/orders/5/ship/
+ok
+test_stale_cost_order_after_cancel_is_reloaded_before_attribution (crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_stale_cost_order_after_cancel_is_reloaded_before_attribution) ... ok
+test_distinct_receipt_keys_allow_two_identical_business_operations (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyApiTests.test_distinct_receipt_keys_allow_two_identical_business_operations) ... ok
+test_distinct_shipment_keys_allow_two_partial_shipments (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyApiTests.test_distinct_shipment_keys_allow_two_partial_shipments) ... ok
+test_failed_receipt_does_not_leave_idempotency_or_inventory_side_effects (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyApiTests.test_failed_receipt_does_not_leave_idempotency_or_inventory_side_effects) ... Bad Request: /api/purchase-orders/12/receive/
+ok
+test_missing_key_is_rejected_before_business_side_effects (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyApiTests.test_missing_key_is_rejected_before_business_side_effects) ... Bad Request: /api/purchase-orders/13/receive/
+ok
+test_receipt_replay_returns_original_result_and_does_not_audit_twice (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyApiTests.test_receipt_replay_returns_original_result_and_does_not_audit_twice) ... ok
+test_same_receipt_key_with_changed_content_is_rejected (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyApiTests.test_same_receipt_key_with_changed_content_is_rejected) ... Conflict: /api/purchase-orders/15/receive/
+ok
+test_shipment_replay_preserves_inventory_and_supplement_side_effects (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyApiTests.test_shipment_replay_preserves_inventory_and_supplement_side_effects) ... ok
+test_audit_write_failure_rolls_back_receipt_reversal_and_inventory_movement (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_audit_write_failure_rolls_back_receipt_reversal_and_inventory_movement) ... Internal Server Error: /api/purchase-orders/16/receipts/14/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\core-business-closeout-20261105\backend\crm\views.py", line 532, in reverse_receipt
+    record_operation(
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+ok
+test_final_shipment_audits_authoritative_order_status_transition (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_final_shipment_audits_authoritative_order_status_transition) ... ok
+test_partial_then_complete_receipts_audit_authoritative_status_transitions (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_partial_then_complete_receipts_audit_authoritative_status_transitions) ... ok
+test_receipt_audit_write_failure_rolls_back_receipt_inventory_and_key (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_receipt_audit_write_failure_rolls_back_receipt_inventory_and_key) ... Internal Server Error: /api/purchase-orders/18/receive/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\core-business-closeout-20261105\backend\crm\views.py", line 510, in receive
+    record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+ok
+test_receipt_reversal_success_records_audit_and_reverses_inventory (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_receipt_reversal_success_records_audit_and_reverses_inventory) ... ok
+test_reversal_business_validation_failure_preserves_receipt_and_inventory (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_reversal_business_validation_failure_preserves_receipt_and_inventory) ... Bad Request: /api/purchase-orders/20/receipts/19/reverse/
+ok
+test_shipment_audit_write_failure_rolls_back_shipment_inventory_and_key (crm.tests.test_fulfillment_audit_atomicity.FulfillmentAuditAtomicityTests.test_shipment_audit_write_failure_rolls_back_shipment_inventory_and_key) ... Internal Server Error: /api/orders/16/ship/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\core-business-closeout-20261105\backend\crm\views.py", line 2332, in ship
+    record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", before=before, after=after, metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+ok
+test_cancel_and_ship_race_has_one_legal_outcome_without_partial_effects (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_and_ship_race_has_one_legal_outcome_without_partial_effects) ... Bad Request: /api/orders/17/ship/
+ok
+test_cancel_between_serializer_validation_and_cost_lock_is_rejected (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_between_serializer_validation_and_cost_lock_is_rejected) ... Bad Request: /api/purchase-orders/21/cost-allocation/
+ok
+test_cost_version_race_keeps_single_replacement_and_audit (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cost_version_race_keeps_single_replacement_and_audit) ... Bad Request: /api/purchase-orders/22/cost-allocation/
+ok
+test_location_overdraw_competition_only_one_shipment_commits (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_location_overdraw_competition_only_one_shipment_commits) ... Bad Request: /api/orders/21/ship/
+ok
+test_purchase_cancellation_and_receipt_compete_without_partial_effects (crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_purchase_cancellation_and_receipt_compete_without_partial_effects) ... Bad Request: /api/purchase-orders/23/receive/
+ok
+test_concurrent_accept_and_reject_only_allow_one_quote_transition (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_concurrent_accept_and_reject_only_allow_one_quote_transition) ... Bad Request: /api/quotes/2/accept/
+ok
+test_concurrent_partial_receipts_for_same_purchase_item_cannot_overreceive (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_concurrent_partial_receipts_for_same_purchase_item_cannot_overreceive) ... Bad Request: /api/purchase-orders/24/receive/
+ok
+test_concurrent_valid_partial_receipts_for_same_item_both_commit (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_concurrent_valid_partial_receipts_for_same_item_both_commit) ... ok
+test_cost_audit_failure_rolls_back_allocation_and_real_reservations (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_cost_audit_failure_rolls_back_allocation_and_real_reservations) ... Internal Server Error: /api/purchase-orders/26/cost-allocation/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\core-business-closeout-20261105\backend\crm\views.py", line 442, in cost_allocation
+    record_operation(
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+ok
+test_cost_save_races_receipt_reversal_with_shared_sku (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_cost_save_races_receipt_reversal_with_shared_sku) ... ok
+test_cost_save_races_receipt_with_shared_sku (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_cost_save_races_receipt_with_shared_sku) ... ok
+test_cost_two_buyers_compete_with_real_shared_reservations (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_cost_two_buyers_compete_with_real_shared_reservations) ... Bad Request: /api/purchase-orders/29/cost-allocation/
+ok
+test_distinct_purchases_contend_for_same_sku_reservation_lock (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_distinct_purchases_contend_for_same_sku_reservation_lock) ... ok
+test_order_and_purchase_numbers_are_unique_and_contiguous_under_concurrency (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_order_and_purchase_numbers_are_unique_and_contiguous_under_concurrency) ... ok
+test_order_confirm_locks_nullable_quote_without_outer_join_error (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_order_confirm_locks_nullable_quote_without_outer_join_error) ... ok
+test_order_csv_import_is_rejected_without_advancing_sequence (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_order_csv_import_is_rejected_without_advancing_sequence) ... Bad Request: /api/import/csv/
+ok
+test_purchase_cost_save_allows_one_writer_and_rejects_stale_writer (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_purchase_cost_save_allows_one_writer_and_rejects_stale_writer) ... ok
+test_purchase_draft_generation_does_not_duplicate_under_concurrency (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_purchase_draft_generation_does_not_duplicate_under_concurrency) ... ok
+test_quote_revision_counters_are_unique_and_contiguous_under_concurrency (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_quote_revision_counters_are_unique_and_contiguous_under_concurrency) ... ok
+test_receipt_and_reversal_race_keeps_purchase_stock_and_reservations_consistent (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_receipt_and_reversal_race_keeps_purchase_stock_and_reservations_consistent) ... ok
+test_receipt_and_shipment_concurrently_rebalance_one_sku_without_deadlock (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_receipt_and_shipment_concurrently_rebalance_one_sku_without_deadlock) ... ok
+test_root_quote_number_is_unique_and_contiguous_under_concurrency (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_root_quote_number_is_unique_and_contiguous_under_concurrency) ... ok
+test_same_purchase_order_different_sku_receipts_serialize_status_and_reservations (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_same_purchase_order_different_sku_receipts_serialize_status_and_reservations) ... ok
+test_supplier_category_through_table_exists (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_supplier_category_through_table_exists) ... ok
+test_two_concurrent_requests_cannot_reverse_the_same_goods_receipt_twice (crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_two_concurrent_requests_cannot_reverse_the_same_goods_receipt_twice) ... Bad Request: /api/purchase-orders/37/receipts/33/reverse/
+ok
+test_postgresql_concurrent_duplicate_requests_are_serialized (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyDatabaseTests.test_postgresql_concurrent_duplicate_requests_are_serialized) ... ok
+test_postgresql_concurrent_same_key_receipts_return_one_business_result (crm.tests.test_iss006_idempotency.FulfillmentIdempotencyDatabaseTests.test_postgresql_concurrent_same_key_receipts_return_one_business_result) ... ok
+
+----------------------------------------------------------------------
+Ran 56 tests in 90.466s
+
+OK
+
+{"test_databases_remaining": [], "test_exit": 0}
+{"cleanup": "complete", "exit": 0}
+EXIT_CODE=0

@@ -1,0 +1,22 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessGapTests.test_no_baseline_manual_outgoing_cannot_borrow_other_location_stock",
+  "http": [
+    {
+      "path": "/api/inventory-movements/",
+      "request": {
+        "movement_date": "2026-11-05",
+        "type": "sample_out",
+        "sku": 1,
+        "quantity": "3",
+        "unit_cost": "0",
+        "warehouse": "合成A仓",
+        "warehouse_type": "自有仓",
+        "lot_reference": "LOT-A"
+      },
+      "status": 400,
+      "body": [
+        "所选仓库及批次库存不足，不能借用其他仓库或批次库存。"
+      ]
+    }
+  ]
+}

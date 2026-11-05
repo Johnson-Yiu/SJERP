@@ -1,0 +1,4 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_deleted_serializer_target_returns_validation_error_without_partial_commit",
+  "http": []
+}

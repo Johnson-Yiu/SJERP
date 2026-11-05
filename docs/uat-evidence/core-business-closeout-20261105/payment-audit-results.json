@@ -1,0 +1,55 @@
+{
+  "test": "crm.tests.test_core_business_closeout.CoreBusinessFlowTests.test_supplier_payment_second_audit_failure_rolls_back_plan_and_transaction",
+  "pre_fix_checkpoint": "b2001a82ef5b9822fdaa8d28d8efafc66a5eef38 plus dedicated counterexample",
+  "fix_checkpoint": "7edbde7c37674a7f73ba22335e5d9b90119722d3",
+  "runs": [
+    {
+      "evidence": "before-payment-audit-api/f5a5a1bd6e24f270.json",
+      "snapshots_equal": false,
+      "counts": [
+        {
+          "Transaction": 0,
+          "OperationLog": 0,
+          "PaymentPlan": 1
+        },
+        {
+          "Transaction": 1,
+          "OperationLog": 1,
+          "PaymentPlan": 1
+        }
+      ],
+      "plan_settlements": [
+        [
+          "0.0000"
+        ],
+        [
+          "6.0000"
+        ]
+      ]
+    },
+    {
+      "evidence": "payment-patched-api/f5a5a1bd6e24f270.json",
+      "snapshots_equal": true,
+      "counts": [
+        {
+          "Transaction": 0,
+          "OperationLog": 0,
+          "PaymentPlan": 1
+        },
+        {
+          "Transaction": 0,
+          "OperationLog": 0,
+          "PaymentPlan": 1
+        }
+      ],
+      "plan_settlements": [
+        [
+          "0.0000"
+        ],
+        [
+          "0.0000"
+        ]
+      ]
+    }
+  ]
+}

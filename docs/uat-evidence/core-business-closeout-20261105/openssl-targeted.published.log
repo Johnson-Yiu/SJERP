@@ -1,0 +1,42 @@
+setUpClass (crm.tests.test_operations_receipt.ReceiptIssuanceTests) ... ERROR
+setUpClass (crm.tests.test_operations_retention.RetentionTests) ... ERROR
+
+======================================================================
+ERROR: setUpClass (crm.tests.test_operations_receipt.ReceiptIssuanceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\core-business-closeout-20261105\backend\crm\tests\test_operations_receipt.py", line 27, in setUpClass
+    subprocess.run([cls.openssl, "genpkey", "-algorithm", "EC", "-pkeyopt", "ec_paramgen_curve:P-256", "-out", str(cls.private)], check=True, capture_output=True)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 1538, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。
+
+======================================================================
+ERROR: setUpClass (crm.tests.test_operations_retention.RetentionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\core-business-closeout-20261105\backend\crm\tests\test_operations_retention.py", line 28, in setUpClass
+    subprocess.run([cls.openssl, "genpkey", "-algorithm", "EC", "-pkeyopt", "ec_paramgen_curve:P-256", "-out", str(cls.private)], check=True, capture_output=True)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\subprocess.py", line 1538, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.074s
+
+FAILED (errors=2)
+Found 15 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).

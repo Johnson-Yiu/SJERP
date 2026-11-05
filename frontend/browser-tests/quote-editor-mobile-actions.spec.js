@@ -9,11 +9,26 @@ if (!process.env.R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR) {
   throw new Error('R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR must point to the task evidence directory.')
 }
 
-test('quote editor actions stay readable at desktop and narrow widths and preserve preview/save/export', async ({ page }) => {
+test('quote editor actions stay readable at desktop and narrow widths and preserve preview/save/export', async ({ page }, testInfo) => {
+  // Four viewport screenshots plus two full editor visits share this test.
+  // Bound each screenshot independently and retain lifecycle diagnostics if
+  // the whole workflow or a download fails under a loaded local environment.
+  test.setTimeout(90_000)
+  const started = Date.now()
+  const context = page.context()
+  let contextClosed = false
+  let observedDownload = null
+  let failureMessage = null
+  const apiResponses = []
+  const emit = (event, extra = {}) => console.log('QUOTE_LIFECYCLE ' + JSON.stringify({ event, elapsedMs: Date.now() - started, processId: process.pid, ...extra }))
+  page.on('close', () => emit('page-close'))
+  page.on('crash', () => emit('page-crash'))
+  context.on('close', () => { contextClosed = true; emit('context-close') })
+  page.on('download', download => { observedDownload = download; emit('download-start', { filename: download.suggestedFilename() }) })
+  try {
   await fs.mkdir(evidenceDir, { recursive: true })
   const fixture = JSON.parse(await fs.readFile(path.join(evidenceDir, 'fixture.json'), 'utf8'))
   expect(fixture.synthetic_only).toBe(true)
-  const apiResponses = []
   page.on('response', response => {
     if (new URL(response.url()).pathname.startsWith('/api/quotes/')) {
       apiResponses.push({ method: response.request().method(), path: new URL(response.url()).pathname, status: response.status() })
@@ -82,7 +97,7 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
       expect(measurements.actions[3].y).toBeGreaterThan(measurements.actions[2].y)
     }
     layouts.push(measurements)
-    await page.screenshot({ path: path.join(evidenceDir, `chrome-quote-actions-${width}.png`) })
+    await page.screenshot({ path: path.join(evidenceDir, `chrome-quote-actions-${width}.png`), timeout: 15_000 })
   }
 
   // Preview opens from the current draft and closing it preserves the selected line.
@@ -130,4 +145,24 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
     saveAndExport: { status: exportResponse.status(), id: exportedQuote.id, quote_no: exportedQuote.quote_no, filename: download.suggestedFilename(), downloadBytes },
     apiResponses,
   }, null, 2), 'utf8')
+  } catch (error) {
+    failureMessage = String(error?.message || error)
+    throw error
+  } finally {
+    let downloadFailure = null
+    if (observedDownload && failureMessage) {
+      downloadFailure = await Promise.race([
+        observedDownload.failure().catch(error => String(error)),
+        new Promise(resolve => setTimeout(() => resolve('download failure status unavailable'), 2_000)),
+      ])
+    }
+    emit('test-finish', {
+      status: testInfo.status, failureMessage, pageClosed: page.isClosed(), contextClosed,
+      pageUrl: page.isClosed() ? null : page.url(),
+      downloadStarted: Boolean(observedDownload), downloadFailure,
+      suggestedFilename: observedDownload?.suggestedFilename() || null,
+      downloadDirectory: process.env.ISOLATED_TEST_ROOT || null,
+      evidenceDir, outputDir: testInfo.outputDir, apiResponses,
+    })
+  }
 })

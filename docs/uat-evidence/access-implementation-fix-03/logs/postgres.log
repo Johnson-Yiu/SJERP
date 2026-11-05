@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\docs\uat-evidence\access-readiness-20261105\run_postgres.py", line 41, in main
+    run_tool([tool(pg, 'pg_ctl'), '-D', str(cluster), '-l', str(root / 'postgres.log'), '-o', f'-h 127.0.0.1 -p {port}', '-w', 'start'])
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\isolated_postgres_drill.py", line 47, in run_tool
+    raise RuntimeError(f"{Path(args[0]).name} failed (exit {result.returncode}): {detail}")
+RuntimeError: pg_ctl.exe failed (exit 1): pg_ctl: could not create restricted token: error code 87
+
+pg_ctl: could not start server: error code 3
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\docs\uat-evidence\access-readiness-20261105\run_postgres.py", line 76, in <module>
+    main()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\docs\uat-evidence\access-readiness-20261105\run_postgres.py", line 68, in main
+    run_tool([tool(pg, 'pg_ctl'), '-D', str(cluster), '-m', 'fast', '-w', 'stop'])
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\isolated_postgres_drill.py", line 47, in run_tool
+    raise RuntimeError(f"{Path(args[0]).name} failed (exit {result.returncode}): {detail}")
+RuntimeError: pg_ctl.exe failed (exit 1): pg_ctl: PID file "C:/Users/Johnson/AppData/Local/Temp/sunjack-access-pg-cs_spd4a/cluster/postmaster.pid" does not exist
+
+Is server running?
+
+EXIT_CODE=1

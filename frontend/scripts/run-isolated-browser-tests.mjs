@@ -362,6 +362,7 @@ export async function resolvePlaywrightSelection(userArgs) {
         throw new Error('Only --exclude-business-test <name.spec.js> may follow --all-business-tests.')
       }
       const requested = args[index + 1]
+      if (requested === 'access-session-real.spec.js') throw new Error('The restricted access session profile is required by the full suite.')
       if (!requested || path.basename(requested) !== requested || !requested.endsWith('.spec.js')) {
         throw new Error('Excluded business test must be a single .spec.js filename inside frontend/browser-tests.')
       }
@@ -475,7 +476,34 @@ export function browserArgs() {
   ]
 }
 
-async function main() {
+export function isolatedProfiles(selection) {
+  return selection.businessSuite
+    ? [selection, { businessTest: 'access-session-real.spec.js', businessSuite: false }]
+    : [selection]
+}
+
+export function isolatedRbacMode(selection) {
+  return ['iss055-customer-404-real.spec.js', 'access-session-real.spec.js'].includes(selection.businessTest)
+}
+
+export function isolatedAuthenticationEnvironment(selection, runId) {
+  const restricted = isolatedRbacMode(selection)
+  return {
+    DEVELOPMENT_SUPERADMIN: restricted ? '0' : '1',
+    RBAC_ENFORCEMENT: restricted ? '1' : '0',
+    ISOLATED_TEST_RBAC_MODE: restricted ? 'iss055' : '',
+    ISS055_UI_USERNAME: restricted ? `iss055-${runId.slice(0, 8)}` : '',
+    ISS055_UI_PASSWORD: restricted ? randomBytes(24).toString('base64url') : '',
+  }
+}
+
+export function isolatedExcludedTests(selection) {
+  return selection.businessSuite
+    ? [...new Set(['iss055-customer-404-real.spec.js', 'access-session-real.spec.js', ...selection.excludedBusinessTests])]
+    : []
+}
+
+async function runProfile(selection) {
   let receivedSignal = null
   const handleSignal = signal => {
     receivedSignal ??= signal
@@ -491,7 +519,6 @@ async function main() {
   process.once('SIGTERM', onTerminate)
   try {
     await requireLocalDependencies()
-    const selection = await resolvePlaywrightSelection(process.argv.slice(2))
     const playwrightArguments = browserArgs()
     const python = await pythonExecutable()
     const { apiPort, vitePort } = await choosePorts()
@@ -502,7 +529,7 @@ async function main() {
     const databasePath = path.join(tempRoot, 'db.sqlite3')
     const mediaRoot = path.join(tempRoot, 'media')
     const baseURL = `http://127.0.0.1:${vitePort}`
-    const rbacTestMode = ['iss055-customer-404-real.spec.js', 'access-session-real.spec.js'].includes(selection.businessTest)
+    const rbacTestMode = isolatedRbacMode(selection)
     let evidenceRoot
     try {
       evidenceRoot = await resolveEvidenceRoot(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, tempRoot)
@@ -513,11 +540,9 @@ async function main() {
     const env = {
       ...process.env,
       ...isolatedCashAccountEnvironment(selection),
+      ...isolatedAuthenticationEnvironment(selection, runId),
       APP_STAGE: 'development',
       DJANGO_DEBUG: '1',
-      DEVELOPMENT_SUPERADMIN: rbacTestMode ? '0' : '1',
-      RBAC_ENFORCEMENT: rbacTestMode ? '1' : '0',
-      ISOLATED_TEST_RBAC_MODE: rbacTestMode ? 'iss055' : '',
       AUDIT_LOG_ENABLED: '0',
       MEDIA_STORAGE_BACKEND: 'django.core.files.storage.FileSystemStorage',
       DJANGO_SETTINGS_MODULE: 'test_support.isolated_settings',
@@ -537,12 +562,10 @@ async function main() {
       ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',
       PLAYWRIGHT_CHANNEL: ['iss028-035-category-schema.spec.js', 'access-session-real.spec.js'].includes(selection.businessTest) ? 'chrome' : '',
       ISOLATED_PLAYWRIGHT_TEST_EXCLUDE: selection.businessSuite
-        ? JSON.stringify([...new Set(['iss055-customer-404-real.spec.js', ...selection.excludedBusinessTests])])
+        ? JSON.stringify(isolatedExcludedTests(selection))
         : '',
       ISOLATED_PLAYWRIGHT_OUTPUT_DIR: path.join(evidenceRoot, 'artifacts', runId),
       ISOLATED_TEST_PYTHON: python,
-      ISS055_UI_USERNAME: rbacTestMode ? `iss055-${runId.slice(0, 8)}` : '',
-      ISS055_UI_PASSWORD: rbacTestMode ? randomBytes(24).toString('base64url') : '',
       PYTHONDONTWRITEBYTECODE: '1',
       PYTHONUNBUFFERED: '1',
       PYTHONUTF8: '1',
@@ -685,6 +708,20 @@ async function main() {
     process.removeListener('SIGTERM', onTerminate)
     if (receivedSignal) process.exitCode = receivedSignal === 'SIGINT' ? 130 : 143
   }
+}
+
+export async function executeProfiles(selection, execute = runProfile) {
+  const failures = []
+  for (const profile of isolatedProfiles(selection)) {
+    try { await execute(profile) }
+    catch (error) { failures.push(error); console.error(error.stack || error) }
+    if ([130, 143].includes(process.exitCode)) break
+  }
+  if (failures.length) throw new AggregateError(failures, `${failures.length} isolated profile(s) failed.`)
+}
+
+async function main() {
+  await executeProfiles(await resolvePlaywrightSelection(process.argv.slice(2)))
 }
 
 if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {

@@ -71,6 +71,28 @@ class SessionAndRoleTests(TestCase):
         self.assertEqual(role.code, 'superadmin')
         self.assertEqual(list(RolePermission.objects.filter(role=role).values_list('pk', 'module', 'can_view')), before)
 
+    def test_matrix_rejects_non_booleans_without_partial_writes_or_audit(self):
+        self.client.force_login(self.user)
+        self.client.get('/api/session/csrf/')
+        token = self.client.cookies['csrftoken'].value
+        role = AccessRole.objects.create(name='Synthetic matrix', code='synthetic-matrix')
+        RolePermission.objects.create(role=role, module='customers', can_view=True)
+        before = list(RolePermission.objects.filter(role=role).values())
+        audit_before = OperationLog.objects.count()
+        for field in ('can_view', 'can_create', 'can_update', 'can_delete', 'can_export', 'can_import'):
+            for invalid in ('false', 'true', [], {}, None, 0, 1):
+                with self.subTest(field=field, invalid=invalid):
+                    payload = {'permissions': [{'module': 'customers', 'can_view': False}, {'module': 'orders', field: invalid}]}
+                    response = self.post_json(f'/api/access-roles/{role.pk}/permission-matrix/', payload, token)
+                    self.assertEqual(response.status_code, 400, response.content)
+                    self.assertEqual(list(RolePermission.objects.filter(role=role).values()), before)
+                    self.assertEqual(OperationLog.objects.count(), audit_before)
+        response = self.post_json(f'/api/access-roles/{role.pk}/permission-matrix/', {'permissions': [{'module': 'customers', 'can_view': True}]}, token)
+        self.assertEqual(response.status_code, 200, response.content)
+        row = RolePermission.objects.get(role=role, module='customers')
+        self.assertTrue(row.can_view)
+        self.assertFalse(row.can_create)
+
     def test_real_session_rechecks_permission_revocation_and_deactivation(self):
         user = get_user_model().objects.create_user('synthetic-employee', password='synthetic-password')
         unit = OrganizationUnit.objects.create(name='Synthetic unit', code='AUTH-UNIT')

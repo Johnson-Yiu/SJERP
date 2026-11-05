@@ -608,8 +608,11 @@ class AccessRoleViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             if not isinstance(row, dict):
                 return Response({"detail": "权限矩阵格式不正确。"}, status=status.HTTP_400_BAD_REQUEST)
             module = row.get("module")
-            if module not in valid_modules or module in submitted:
+            if not isinstance(module, str) or module not in valid_modules or module in submitted:
                 return Response({"detail": f"无效或重复的功能模块：{module}"}, status=status.HTTP_400_BAD_REQUEST)
+            for field in ("can_view", "can_create", "can_update", "can_delete", "can_export", "can_import"):
+                if field in row and not isinstance(row[field], bool):
+                    return Response({"detail": f"权限字段 {field} 必须为布尔值。"}, status=status.HTTP_400_BAD_REQUEST)
             submitted.add(module)
         permission_fields = ("module", "can_view", "can_create", "can_update", "can_delete", "can_export", "can_import")
         before = list(RolePermission.objects.filter(role=role).order_by("module").values(*permission_fields))
@@ -618,9 +621,9 @@ class AccessRoleViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         for row in rows:
             module = row["module"]
             RolePermission.objects.update_or_create(role=role, module=module, defaults={
-                "can_view": bool(row.get("can_view")), "can_create": bool(row.get("can_create")),
-                "can_update": bool(row.get("can_update")), "can_delete": bool(row.get("can_delete")),
-                "can_export": bool(row.get("can_export")), "can_import": bool(row.get("can_import")),
+                "can_view": row.get("can_view", False), "can_create": row.get("can_create", False),
+                "can_update": row.get("can_update", False), "can_delete": row.get("can_delete", False),
+                "can_export": row.get("can_export", False), "can_import": row.get("can_import", False),
             })
         RolePermission.objects.filter(role=role).exclude(module__in=submitted).delete()
         after = list(RolePermission.objects.filter(role=role).order_by("module").values(*permission_fields))

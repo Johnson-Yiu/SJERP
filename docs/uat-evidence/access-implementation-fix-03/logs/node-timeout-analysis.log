@@ -1,0 +1,10 @@
+
+docs\uat-evidence\access-implementation-fix-03\logs\node-full.log:41:[worktree-b +13314ms] [isolation] Pre-migration isolation verification: passed
+docs\uat-evidence\access-implementation-fix-03\logs\node-full.log:44:[worktree-a +21963ms] [isolation] Pre-migration isolation verification: passed
+docs\uat-evidence\access-implementation-fix-03\logs\node-full.log:47:[worktree-b +35678ms] [isolation] Django system check: passed
+docs\uat-evidence\access-implementation-fix-03\logs\node-full.log:50:[worktree-a +52231ms] [isolation] Django system check: passed
+docs\uat-evidence\access-implementation-fix-03\logs\node-full.log:391:[worktree-a +116332ms] closed code=null signal=SIGTERM
+docs\uat-evidence\access-implementation-fix-03\logs\node-full.log:392:[worktree-a +116332ms] owned runner cleanup finished
+docs\uat-evidence\access-implementation-fix-03\logs\node-full.log:393:[worktree-b +116850ms] closed code=null signal=SIGTERM
+docs\uat-evidence\access-implementation-fix-03\logs\node-full.log:394:[worktree-b +116852ms] owned runner cleanup finished
+docs\uat-evidence\access-implementation-fix-03\logs\node-full.log:569:  'test timed out after 120000ms'

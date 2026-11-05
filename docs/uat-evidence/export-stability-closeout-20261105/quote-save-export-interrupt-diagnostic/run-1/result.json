@@ -1,0 +1,25 @@
+{
+  "run": 1,
+  "api_port": 3361,
+  "vite_port": 3362,
+  "database": "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\export-stability-closeout-20261105\\docs\\uat-evidence\\export-stability-closeout-20261105\\quote-save-export-interrupt-diagnostic\\run-1\\synthetic.sqlite3",
+  "seed_command": [
+    "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe",
+    "manage.py",
+    "shell",
+    "-c",
+    "import runpy; runpy.run_path('D:\\\\Codex\u9879\u76ee\\\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\\\.worktrees\\\\export-stability-closeout-20261105\\\\docs\\\\uat-evidence\\\\export-stability-closeout-20261105\\\\quote-save-export-interrupt-diagnostic\\\\seed.py')"
+  ],
+  "status": "PASS",
+  "seed_exit": 0,
+  "test_command": [
+    "C:\\Program Files\\nodejs\\node.EXE",
+    "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\export-stability-closeout-20261105\\frontend\\node_modules\\@playwright\\test\\cli.js",
+    "test",
+    "--config",
+    "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\export-stability-closeout-20261105\\docs\\uat-evidence\\export-stability-closeout-20261105\\quote-save-export-interrupt-diagnostic\\playwright.config.cjs",
+    "--output",
+    "D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\export-stability-closeout-20261105\\docs\\uat-evidence\\export-stability-closeout-20261105\\quote-save-export-interrupt-diagnostic\\run-1\\artifacts"
+  ],
+  "test_exit": 0
+}

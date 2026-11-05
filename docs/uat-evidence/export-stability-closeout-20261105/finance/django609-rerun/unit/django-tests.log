@@ -1,0 +1,23 @@
+Creating test database for alias 'default'...
+
+.Forbidden: /api/actual-rmb-cash/
+Forbidden: /api/actual-rmb-cash/
+...............Not Found: /api/media/finance-vouchers/2026/11/4c4fd18bf9f148f79cbbb1b47c4b783d.pdf
+...Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+...........Forbidden: /api/finance-ledger/
+Forbidden: /api/finance-ledger/voucher-download/
+Forbidden: /api/finance-ledger/instructions/
+.Request Entity Too Large: /api/finance-ledger/vouchers/
+..
+----------------------------------------------------------------------
+Ran 33 tests in 3.059s
+
+OK
+Destroying test database for alias 'default'...
+
+Found 33 test(s).
+System check identified no issues (0 silenced).

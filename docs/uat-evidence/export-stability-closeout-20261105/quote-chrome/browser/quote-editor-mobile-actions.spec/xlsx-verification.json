@@ -1,0 +1,15 @@
+{
+  "bytes": 10218,
+  "sha256": "0d7e6f7cc1041816f680baede9587c9d00c557eb8acb551f84f374c03c971b39",
+  "zip_crc": "PASS",
+  "sheets": [
+    "PI"
+  ],
+  "cells": {
+    "L9": "SJ20261105DE002",
+    "C11": "R1-QA-MODEL",
+    "L11": 12.5,
+    "M11": 12.5
+  },
+  "assertions": "PASS"
+}

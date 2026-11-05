@@ -1,0 +1,22 @@
+const fs=require('node:fs'), path=require('node:path'), {spawn}=require('node:child_process'), {createRequire}=require('node:module'), crypto=require('node:crypto')
+const root=__dirname, setup=JSON.parse(fs.readFileSync(path.join(root,'setup.json'),'utf8').replace(/^\ufeff/,'')), {chromium}=createRequire(path.resolve('frontend/package.json'))('@playwright/test')
+const results=[]; const servers=[]
+async function start(tag,port){const dir=path.join(setup.temp,tag), log=fs.openSync(path.join(root,tag+'-vite.log'),'w');const p=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port',String(port),'--strictPort'],{cwd:dir,stdio:['ignore',log,log]});servers.push(p);for(let i=0;i<100;i++){if(p.exitCode!==null)throw Error(`${tag} server exited ${p.exitCode}`);try{if((await fetch(`http://127.0.0.1:${port}/`)).ok)return}catch{}await new Promise(r=>setTimeout(r,200))}throw Error('server did not start')}
+async function scenario(browser,tag,port,kind){
+ const page=await browser.newPage({viewport:{width:1440,height:900},acceptDownloads:true});let release;const gate=new Promise(r=>release=r);let exportUrl
+ try{
+ await page.route('**/api/**',async route=>{const u=new URL(route.request().url()),from=u.searchParams.get('date_from'),to=u.searchParams.get('date_to'),period={date_from:from,date_to:to};
+ if(u.pathname.includes('current-operator'))return route.fulfill({json:{authenticated:true,development_superadmin:true,has_all_permissions:true}})
+ if(['/api/finance-dashboard/','/api/actual-rmb-cash/'].includes(u.pathname)){
+ if(u.searchParams.has('export')){exportUrl=u.toString();await gate;return route.fulfill({contentType:'text/csv; charset=utf-8',body:`\ufeffperiod,amount\r\n${from},42.00\r\n`})}
+ if(u.pathname.includes('dashboard'))return route.fulfill({json:{period,metrics:{},due_items:[],monthly_cash:[],categories:[]}})
+ return route.fulfill({json:{basis:'bank_cash_confirmed_v1',period,totals:{inflow:'0',outflow:'0',net:'0',count:0},monthly:[],by_kind:[],events:[]}})}return route.fulfill({json:[]})})
+ await page.goto(`http://127.0.0.1:${port}/finance?date_from=2026-10-01&date_to=2026-10-19`)
+ const btn=page.getByRole('button',{name:kind==='book'?'导出 CSV':'导出实际资金 CSV',exact:true}); await btn.waitFor({state:'visible'}); await page.waitForFunction(el=>!el.disabled,await btn.elementHandle())
+ await btn.click();await page.waitForFunction(()=>true);for(let i=0;!exportUrl && i<100;i++)await new Promise(r=>setTimeout(r,50));if(!exportUrl)throw Error('export request not observed')
+ const updated=page.waitForResponse(r=>{let u=new URL(r.url());return u.pathname==='/api/actual-rmb-cash/'&&!u.searchParams.has('export')&&u.searchParams.get('date_from')==='2026-09-01'})
+ await page.getByLabel('开始日期').fill('2026-09-01');await page.getByLabel('结束日期').fill('2026-09-30');await page.getByRole('button',{name:'查询',exact:true}).click();await updated;await page.waitForTimeout(300)
+ const downloadP=page.waitForEvent('download',{timeout:10000});release();const download=await downloadP;const bytes=fs.readFileSync(await download.path()),content=bytes.toString('utf8'),filename=download.suggestedFilename();fs.writeFileSync(path.join(root,`${tag}-${kind}.csv`),bytes);await page.screenshot({path:path.join(root,`${tag}-${kind}.png`),fullPage:true})
+ const r={tag,kind,exportUrl,filename,content,bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),contentIsOriginalPeriod:content.includes('2026-10-01'),filenameIsOriginalPeriod:filename.includes('2026-10-01-2026-10-19'),filenameIsNewPeriod:filename.includes('2026-09-01-2026-09-30')};results.push(r);console.log(JSON.stringify(r))
+ }catch(e){results.push({tag,kind,error:String(e)});console.error(tag,kind,e);try{await page.screenshot({path:path.join(root,`${tag}-${kind}-failure.png`),fullPage:true})}catch{}}finally{release();await page.close()}}
+;(async()=>{try{await start('baseline',setup.baseline_port);await start('fixed',setup.fixed_port);const browser=await chromium.launch({channel:'chrome',headless:true});try{for(const [tag,port] of [['baseline',setup.baseline_port],['fixed',setup.fixed_port]])for(const kind of ['book','actual'])await scenario(browser,tag,port,kind)}finally{await browser.close()}}finally{for(const p of servers)p.kill();fs.writeFileSync(path.join(root,'results.json'),JSON.stringify(results,null,2))}if(results.length!==4||results.some(x=>x.error))process.exitCode=1})().catch(e=>{console.error(e);process.exitCode=1})

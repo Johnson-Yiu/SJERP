@@ -1,0 +1,13 @@
+{
+  "command": "npm run test:unit",
+  "ISOLATED_TEST_PYTHON": "locked Python3.12.16",
+  "django_version": "6.0.9",
+  "passed": 179,
+  "failed": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "raw_sha256": "6142bb155a6f3793d81c6df5470cc712cc394f1187e000b9bb77e3ad78b29b90",
+  "published_sha256": "6df99eb245ca3736a224791a86a75ffc95f02f167ea1f3a5db4dd6acfedcde31",
+  "redaction_count": 10,
+  "private_original": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\unit-locked.raw.log"
+}

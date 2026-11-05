@@ -1,0 +1,5 @@
+﻿id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256
+5,合成银行,bank,2026-10-20,cash,unclassified,income,450.01,0.00,0.00,True,SYNTH-LEDGER,'=SYNTH-10,3fed4cefe5e8aae42a4f81d4f91d0e7cd019662440b606f014cebd44aeccca34
+6,合成银行,bank,2026-10-21,cash,unclassified,income,451.01,0.00,0.00,True,SYNTH-LEDGER,'+SYNTH-10,3fed4cefe5e8aae42a4f81d4f91d0e7cd019662440b606f014cebd44aeccca34
+7,合成银行,bank,2026-10-22,cash,unclassified,income,452.01,0.00,0.00,True,SYNTH-LEDGER,'-SYNTH-10,3fed4cefe5e8aae42a4f81d4f91d0e7cd019662440b606f014cebd44aeccca34
+8,合成银行,bank,2026-10-23,cash,unclassified,income,453.01,0.00,0.00,True,SYNTH-LEDGER,'@SYNTH-10,3fed4cefe5e8aae42a4f81d4f91d0e7cd019662440b606f014cebd44aeccca34

@@ -1,0 +1,22 @@
+{
+  "file": "download-390.xlsx",
+  "bytes": 65123,
+  "sha256": "d4b991288a1df4490b8452af6d4d48d0753c517abf009e19d8eedf1ed5379b4d",
+  "zip_crc": "pass",
+  "sheet": "Sheet1",
+  "columns": 16,
+  "shipment": "SH-PL-01",
+  "order": "SO-PL-01",
+  "quantities": [
+    3,
+    2,
+    4
+  ],
+  "cartons": [
+    1,
+    1,
+    null
+  ],
+  "subtotal": "=SUM(H6:H14)",
+  "print_area": "'Sheet1'!$A$1:$P$15"
+}

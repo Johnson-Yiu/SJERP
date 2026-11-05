@@ -1,0 +1,75 @@
+{"name":"browser_started","elapsed_ms":2336.91,"version":"156.0.8078.80","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"}
+{"name":"ready","elapsed_ms":6123.3}
+{"name":"click_started","elapsed_ms":6125}
+{"name":"click_completed","elapsed_ms":6205.75}
+{"name":"response_headers","elapsed_ms":6614.68,"status":200,"contentType":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
+{"name":"download_event","elapsed_ms":6621.33,"suggestedFilename":"QHTTP-20261105-001.xlsx"}
+{"name":"download_path_resolved","elapsed_ms":7015.79,"internalPath":"C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright-artifacts-Jzp7sa\\c2391021-f1e5-482e-8717-2062065d33e2","internalPathLength":100}
+{"name":"saveAs_completed","elapsed_ms":7020.56,"saveAsPath":"D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\docs\\uat-evidence\\export-stability-closeout-20261105\\quote-http-byte-control\\browser-download.xlsx","saveAsPathLength":164,"failure":null}
+{"name":"response_body_read","elapsed_ms":7026.41,"bytes":10117}
+{
+  "version": "156.0.8078.80",
+  "status": 200,
+  "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "contentDisposition": "attachment; filename=\"QHTTP-20261105-001.xlsx\"",
+  "suggestedFilename": "QHTTP-20261105-001.xlsx",
+  "internalPath": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright-artifacts-Jzp7sa\\c2391021-f1e5-482e-8717-2062065d33e2",
+  "internalPathLength": 100,
+  "saveAsPath": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\docs\\uat-evidence\\export-stability-closeout-20261105\\quote-http-byte-control\\browser-download.xlsx",
+  "saveAsPathLength": 164,
+  "responseBytes": 10117,
+  "downloadBytes": 10117,
+  "responseSha256": "cfcafad31c61b812ff6b06532b64ae277d677ec6836806dd541e9b986902a0a6",
+  "downloadSha256": "cfcafad31c61b812ff6b06532b64ae277d677ec6836806dd541e9b986902a0a6",
+  "exactMatch": true,
+  "failure": null,
+  "events": [
+    {
+      "name": "browser_started",
+      "elapsed_ms": 2336.91,
+      "version": "156.0.8078.80",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
+    },
+    {
+      "name": "ready",
+      "elapsed_ms": 6123.3
+    },
+    {
+      "name": "click_started",
+      "elapsed_ms": 6125
+    },
+    {
+      "name": "click_completed",
+      "elapsed_ms": 6205.75
+    },
+    {
+      "name": "response_headers",
+      "elapsed_ms": 6614.68,
+      "status": 200,
+      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    },
+    {
+      "name": "download_event",
+      "elapsed_ms": 6621.33,
+      "suggestedFilename": "QHTTP-20261105-001.xlsx"
+    },
+    {
+      "name": "download_path_resolved",
+      "elapsed_ms": 7015.79,
+      "internalPath": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright-artifacts-Jzp7sa\\c2391021-f1e5-482e-8717-2062065d33e2",
+      "internalPathLength": 100
+    },
+    {
+      "name": "saveAs_completed",
+      "elapsed_ms": 7020.56,
+      "saveAsPath": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\docs\\uat-evidence\\export-stability-closeout-20261105\\quote-http-byte-control\\browser-download.xlsx",
+      "saveAsPathLength": 164,
+      "failure": null
+    },
+    {
+      "name": "response_body_read",
+      "elapsed_ms": 7026.41,
+      "bytes": 10117
+    }
+  ]
+}

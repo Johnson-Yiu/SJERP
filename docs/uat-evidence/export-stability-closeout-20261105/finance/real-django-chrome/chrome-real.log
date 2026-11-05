@@ -1,0 +1,22 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ Buffer(640) [Uint8Array] [
++   239,
++   187,
++   191,
+- Buffer(637) [Uint8Array] [
+    232,
+    180,
+    166,
+    233,
+    157,
+
+    at D:\Codex项目\森爵照明管理系统\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\real-django-chrome\real-check.cjs:25:13 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [Buffer [Uint8Array]],
+  expected: [Buffer [Uint8Array]],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}

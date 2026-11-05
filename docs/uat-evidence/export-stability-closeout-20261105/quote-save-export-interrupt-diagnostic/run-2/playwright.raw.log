@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:17512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node.EXE --trace-warnings ...` to show where the warning was created)
+  ok 1 ..\docs\uat-evidence\export-stability-closeout-20261105\quote-save-export-interrupt-diagnostic\quote-copy.spec.mjs:13:1 › quote editor actions stay readable at desktop and narrow widths and preserve preview/save/export (7.8s)
+
+  1 passed (10.1s)

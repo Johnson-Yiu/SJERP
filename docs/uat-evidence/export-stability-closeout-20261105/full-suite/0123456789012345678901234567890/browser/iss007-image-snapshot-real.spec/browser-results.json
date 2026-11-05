@@ -1,0 +1,141 @@
+{
+  "viewport": {
+    "desktop": "1440x1000",
+    "narrow": "390x844"
+  },
+  "sku_image_upload_thumbnail_visible": true,
+  "invalid_image_http_status": 400,
+  "sku_image_replacement_http_status": 200,
+  "original_sku_image_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2",
+  "replacement_sku_image_sha256": "4991af95c7f5acaed2e13ea94ebf0733dd077d7e0f14cac519c3e97e798f3e1a",
+  "historical_quote_image_sha256_after_replacement": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2",
+  "confirmed_order_status_after_replacement": "confirmed",
+  "exported_workbook": "docs\\uat-evidence\\export-stability-closeout-20261105\\full-suite\\0123456789012345678901234567890\\browser\\iss007-image-snapshot-real.spec\\exports\\iss007-formal-quote-pi.xlsx",
+  "missing_history_image_page_errors": [],
+  "missing_history_image_http_status": 404,
+  "database_before": {
+    "stage": "before",
+    "isolated_database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-XlfTbQ\\db.sqlite3",
+    "isolated_media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-XlfTbQ\\media",
+    "synthetic_records_only": true,
+    "row_counts": {
+      "customers": 1,
+      "products": 1,
+      "skus": 1,
+      "quotes": 2,
+      "quote_items": 2,
+      "orders": 1,
+      "order_items": 1
+    },
+    "customer_id": 1,
+    "product_id": 1,
+    "sku": {
+      "id": 1,
+      "code": "ISS007-UAT-SKU",
+      "image_path": "sku-images/2026/11/iss007-original-red.png",
+      "sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2"
+    },
+    "formal_quote": {
+      "id": 2,
+      "number": "SJ20261031DE001",
+      "status": "accepted",
+      "item_id": 2,
+      "image_snapshot_path": "quote-item-images/2026/11/iss007-original-red.png",
+      "image_snapshot_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2"
+    },
+    "confirmed_order": {
+      "id": 1,
+      "number": "SO-2026-00001",
+      "status": "confirmed",
+      "quote_id": 2,
+      "item_id": 1,
+      "item_sku_code_snapshot": "ISS007-UAT-SKU",
+      "order_item_has_own_image_snapshot_field": false,
+      "linked_quote_image_snapshot_path": "quote-item-images/2026/11/iss007-original-red.png",
+      "linked_quote_image_snapshot_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2"
+    },
+    "missing_history": {
+      "quote_item_id": 1,
+      "referenced_path": "quote-item-images/iss007-uat/missing-history-image.png",
+      "file_exists": false
+    },
+    "hash_checks": {
+      "sku_matches_expected_stage": true,
+      "formal_quote_matches_original": true,
+      "confirmed_order_quote_matches_original": true
+    }
+  },
+  "database_after": {
+    "stage": "after",
+    "isolated_database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-XlfTbQ\\db.sqlite3",
+    "isolated_media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-XlfTbQ\\media",
+    "synthetic_records_only": true,
+    "row_counts": {
+      "customers": 1,
+      "products": 1,
+      "skus": 1,
+      "quotes": 2,
+      "quote_items": 2,
+      "orders": 1,
+      "order_items": 1
+    },
+    "customer_id": 1,
+    "product_id": 1,
+    "sku": {
+      "id": 1,
+      "code": "ISS007-UAT-SKU",
+      "image_path": "sku-images/2026/11/iss007-replacement-blue.png",
+      "sha256": "4991af95c7f5acaed2e13ea94ebf0733dd077d7e0f14cac519c3e97e798f3e1a"
+    },
+    "formal_quote": {
+      "id": 2,
+      "number": "SJ20261031DE001",
+      "status": "accepted",
+      "item_id": 2,
+      "image_snapshot_path": "quote-item-images/2026/11/iss007-original-red.png",
+      "image_snapshot_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2"
+    },
+    "confirmed_order": {
+      "id": 1,
+      "number": "SO-2026-00001",
+      "status": "confirmed",
+      "quote_id": 2,
+      "item_id": 1,
+      "item_sku_code_snapshot": "ISS007-UAT-SKU",
+      "order_item_has_own_image_snapshot_field": false,
+      "linked_quote_image_snapshot_path": "quote-item-images/2026/11/iss007-original-red.png",
+      "linked_quote_image_snapshot_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2"
+    },
+    "missing_history": {
+      "quote_item_id": 1,
+      "referenced_path": "quote-item-images/iss007-uat/missing-history-image.png",
+      "file_exists": false
+    },
+    "hash_checks": {
+      "sku_matches_expected_stage": true,
+      "formal_quote_matches_original": true,
+      "confirmed_order_quote_matches_original": true
+    },
+    "export": {
+      "path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\docs\\uat-evidence\\export-stability-closeout-20261105\\full-suite\\0123456789012345678901234567890\\browser\\iss007-image-snapshot-real.spec\\exports\\iss007-formal-quote-pi.xlsx",
+      "bytes": 11581,
+      "worksheet_names": [
+        "PI"
+      ],
+      "embedded_media_sha256": {
+        "xl/media/image1.png": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2"
+      },
+      "original_snapshot_embedded": true
+    }
+  },
+  "screenshots": [
+    "sku-image-upload-desktop-1440.png",
+    "quote-pi-original-snapshot-desktop-1440.png",
+    "sku-image-replaced-desktop-1440.png",
+    "quote-pi-after-sku-replacement-desktop-1440.png",
+    "sku-image-replaced-mobile-390.png",
+    "sku-image-editor-preview-mobile-390.png",
+    "quote-pi-history-mobile-390.png",
+    "missing-history-image-mobile-390.png"
+  ]
+}

@@ -1,0 +1,8 @@
+
+> senju-crm-erp@1.0.0 dev
+> vite --host 127.0.0.1 --port 18463 --strictPort
+
+
+  VITE v8.3.5  ready in 1202 ms
+
+  ➜  Local:   http://127.0.0.1:18463/

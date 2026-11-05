@@ -1,0 +1,17 @@
+CSV-09-0 201
+CSV-09-0 201
+CSV-09-0 201
+CSV-09-0 200
+CSV-09-1 201
+CSV-09-1 201
+CSV-09-1 201
+Conflict: /api/rmb-cash-events/2/confirm/
+CSV-09-1 409
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\real-django-chrome\seed-api.py", line 19, in <module>
+    check(c.post('/api/rmb-cash-events/'+str(event['id'])+'/confirm/',{'voucher_checked':True},format='json'),200)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\real-django-chrome\seed-api.py", line 13, in check
+    if response.status_code != expected: raise RuntimeError(str(getattr(response,'data',response.content)))
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: {'detail': ErrorDetail(string='���������ظ��ʽ��¼�������º˶Բ���д����˵����', code='error')}

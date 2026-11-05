@@ -1,0 +1,4 @@
+executable: 'D:\\Codex\u9879\u76ee\\\u68ee\u7235\u7167\u660e\u7ba1\u7406\u7cfb\u7edf\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\closeout-python312\\Scripts\\python.exe'
+python: 3.12.16 (main, Oct 26 2026, 14:10:56) [MSC v.1944 64 bit (AMD64)]
+django: 6.0.9
+openpyxl: 3.1.5

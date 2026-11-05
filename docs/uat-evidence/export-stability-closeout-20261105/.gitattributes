@@ -1,0 +1,24 @@
+# Preserve byte-exact captured logs, machine manifests and actual downloads.
+* -text
+*.log binary
+*.xlsx binary
+*.sqlite3 binary
+*.png binary
+*.zip binary
+*.pdf binary
+*.csv -text
+*.json -text
+**/error-context.md binary
+script-hashes.txt binary
+# Captured script snapshots retain exact bytes and their recorded hashes.
+finance/django609-rerun/dashboard/real-check.cjs binary
+finance/django609-rerun/dashboard/real-check.original.cjs binary
+finance/django609-rerun/dashboard/seed-api.py binary
+finance/django609-rerun/ledger/ledger-check.cjs binary
+finance/ledger-chrome/ledger-check.cjs binary
+finance/real-django-chrome/real-check.cjs binary
+finance/real-django-chrome/seed-api.py binary
+finance/retry-500-control/api-used.js binary
+python312-http-recheck-20261105/packing-390/chrome-390.cjs binary
+python312-http-recheck-20261105/packing/chrome-check.cjs binary
+python312-http-recheck-20261105/quote/chrome-control.cjs binary

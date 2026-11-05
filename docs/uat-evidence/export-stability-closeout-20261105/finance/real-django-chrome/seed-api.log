@@ -1,0 +1,19 @@
+Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\utils\deprecation.py", line 308, in __call__
+    response = self.process_request(request)
+  File "C:\Python314\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Python314\Lib\site-packages\django\http\request.py", line 206, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+CSV-09-0 400
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\real-django-chrome\seed-api.py", line 15, in <module>
+    t=check(c.post('/api/transactions/',{'transaction_no':key,'transaction_date':f'2026-{month}-15','direction':'income','kind':'other_income','category':prefix+'synthetic','amount':amount,'currency':'CNY','exchange_rate':'1'},format='json'),201)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\export-stability-closeout-20261105\docs\uat-evidence\export-stability-closeout-20261105\finance\real-django-chrome\seed-api.py", line 13, in check
+    if response.status_code != expected: raise RuntimeError(str(getattr(response,'data',response.content)))
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[REDACTED: Django debug HTML may contain local environment values; original locally retained]

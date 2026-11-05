@@ -1,0 +1,205 @@
+{
+  "scope": "Publication copies only; originals retained in this worktree private .tmp. Test outcomes and assertions unchanged.",
+  "files_redacted": 22,
+  "files": [
+    {
+      "path": "browser/finance-closeout/http-1440.json",
+      "raw_sha256": "e6ec10ec5efe6c70539688e9bea0efdf8d7a3075865e08353b9afddcc1ff6bb8",
+      "published_sha256": "a008d6dbd7f0ee400e0865cee85f81e620938b5ea0f365e4f6e45f22ad657e37",
+      "hex_tokens": 0,
+      "sensitive_fields_seen": 1,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\browser\\finance-closeout\\http-1440.json"
+    },
+    {
+      "path": "browser/finance-closeout/http-390.json",
+      "raw_sha256": "73bf26318920f43b706cd3fceec120f7f382dde4f9bd4c8cc96fe64236208a13",
+      "published_sha256": "5d83cbc7990eaaf3e89398b3b22e8cb98335cf19b4bc32def63b1da0d216849c",
+      "hex_tokens": 0,
+      "sensitive_fields_seen": 1,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\browser\\finance-closeout\\http-390.json"
+    },
+    {
+      "path": "cash-duplicate/browser-http.json",
+      "raw_sha256": "21a734c42293ea0456b0ff8c326b19b53eebd9f7cf245f343c57aa69dcfc1508",
+      "published_sha256": "4d3d7cdc77678eb94987c7924f9be96e21bf71e5fd8c33c2a7eca701fe09eeeb",
+      "hex_tokens": 0,
+      "sensitive_fields_seen": 4,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\cash-duplicate\\browser-http.json"
+    },
+    {
+      "path": "independent-bank-fee/http.json",
+      "raw_sha256": "b682c03d58dbdbf840f14f6b5810ee64855eb62c7af0c8e43163f42161baa1ac",
+      "published_sha256": "b03382b5bd6d93d14b9c9d68a99b961c8962583e4e8fb83671704b1227b6b855",
+      "hex_tokens": 0,
+      "sensitive_fields_seen": 5,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\independent-bank-fee\\http.json"
+    },
+    {
+      "path": "logs/playwright-profiles/business-suite.stderr.log",
+      "raw_sha256": "5a9a3a3d125f27d4e4fd18083f5e6f23775a11b060a9db79c35be9c8e9a35d99",
+      "published_sha256": "9d3240d9aae5533e26930ee16aad24c76cbbf13fdee4ecb2cb0b6f381b677fa0",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 0,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\business-suite.stderr.log"
+    },
+    {
+      "path": "logs/playwright-profiles/business-suite.stdout.log",
+      "raw_sha256": "1c4b35a3a77471b5d2cee364f773b28250f9d3b941665f2824318d30be1b5ff6",
+      "published_sha256": "0880a0ae5b2f13cdc16ad8ee478ec7b5e72bacbb9a8d8a8412b0747380b6fc5a",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 2,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\business-suite.stdout.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss006-storage-isolated.stderr.log",
+      "raw_sha256": "731d081985a3099e72823cbd1c7af8417b6cd293911ef25f6a1a75389b346b4b",
+      "published_sha256": "6344b1c26eabf8a35fb756c48839d44d29a6693a3bd443f6c585261bb873219c",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 0,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss006-storage-isolated.stderr.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss006-storage-isolated.stdout.log",
+      "raw_sha256": "2dff0f984d3f1cb55a0197b0cfb60f14af61b39bdc0fa207989cac56c8204617",
+      "published_sha256": "ff8356de2c592b35235a8cc8663582ef4efc4910b9287e208f4b1bf413521735",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 2,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss006-storage-isolated.stdout.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-attachment-isolated.stderr.log",
+      "raw_sha256": "6e6073673df1ef085f85d524a38e6eaf78a1124dbd5dbceda47a762d1c49d918",
+      "published_sha256": "483ba97608b5080e3965dc01ce1b7390ccaa26bf80d0ec76701fa00c8dab6e5a",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 0,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss007-attachment-isolated.stderr.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log",
+      "raw_sha256": "fd4fc80c18089e9648dffd8dc467ab7757477eb9374fca5bba7ed4cdc2cf110d",
+      "published_sha256": "42031d50f0aa774690c9a2c30b40a54c7ccb67bfa6f019b96429079946ecadee",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 2,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss007-attachment-isolated.stdout.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-image-snapshot-isolated.stderr.log",
+      "raw_sha256": "91905c2c9b674dcc2e305b2ce0ebdcad000a9f1c48a9997233f02dbc6d319987",
+      "published_sha256": "c07650854b2d2199b54525f28d4260209440f6d29df53a73ff0dc3031b7f0781",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 0,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss007-image-snapshot-isolated.stderr.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log",
+      "raw_sha256": "9e27cb0a2b78a4abd446cf2cc738b314dfd9314e994713870ce7558fa0fb4ef8",
+      "published_sha256": "9ceef03fb627456c7c72f731a8eb7ba95b7af7bd1f652614ca0cf133ec50e275",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 2,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss007-image-snapshot-isolated.stdout.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss022-isolated.stderr.log",
+      "raw_sha256": "cc1cd424e88a1ac1bbb90d789e56b625edf2839a5baf94627bc5ebdcccab14c5",
+      "published_sha256": "bf75cc2092031fd7303198ac17775b062981dcdc2411c65d94f2fa1fad6cf558",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 0,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss022-isolated.stderr.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss022-isolated.stdout.log",
+      "raw_sha256": "8be5c6fb04c475994eac6b52c9d991d46b5447bc5b3843a5139b4b1f505c9a6c",
+      "published_sha256": "139245675540b12f110bb484da9f757dc1b2fc0f1e9d65cbec2ff717c4eebac1",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 2,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss022-isolated.stdout.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss028-035-isolated.stderr.log",
+      "raw_sha256": "e12450f343e2b8e75fa2090a985bb3faf336360ed464c1e662668bbdc1250ca8",
+      "published_sha256": "7d855b3ee871c53f6c96dbaddd12b5c6c6e71be84a68be8fc3a5fd36ef98ec32",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 0,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss028-035-isolated.stderr.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss028-035-isolated.stdout.log",
+      "raw_sha256": "207384c49b182c360f98fc799c398b6b46c136f30ba3a4009b693dd8daac29c1",
+      "published_sha256": "8540bfb4351123aab9eb44d51bcd4189b748417591b4c8d61533a7bfbd2c81ea",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 2,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss028-035-isolated.stdout.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss055-rbac.stderr.log",
+      "raw_sha256": "4074aa9efd93150163e0770fbe36f037862762f9e8abad613c45fe3515440db1",
+      "published_sha256": "55d0e12ffeffb50ae323348ec8853de5ccb6888bfa13380f1e0cec6019ed1dcc",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 0,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss055-rbac.stderr.log"
+    },
+    {
+      "path": "logs/playwright-profiles/iss055-rbac.stdout.log",
+      "raw_sha256": "f95360696fa1e64b30516ac99bb3aa9b44f96b355829ec7af5c7c86154959ad4",
+      "published_sha256": "7041800f23333a38729192c5a3aa7c57ac3e71140901b43aae4f81f000d7a806",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 2,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\iss055-rbac.stdout.log"
+    },
+    {
+      "path": "logs/playwright-profiles/quote-editor-isolated.stderr.log",
+      "raw_sha256": "d998e6326894c2c177d956ec0fda594ccf696682f18f663484e9b884bd9a0c3c",
+      "published_sha256": "da1b4d69abc55b99204acb6258fec82190d9b0f4694efb33cc9d8f856bba71ff",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 0,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\quote-editor-isolated.stderr.log"
+    },
+    {
+      "path": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+      "raw_sha256": "d13c1dc4bd15382da55bede60a3ca2fde4d3ea36a509380115398a8cd0697d45",
+      "published_sha256": "fd43c8fb29934c1cd3ae46cc753ffe8a9951d9133d81833ad5cfc121ac0a71bb",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 2,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\quote-editor-isolated.stdout.log"
+    },
+    {
+      "path": "logs/playwright-profiles/shared-report-templates-isolated.stderr.log",
+      "raw_sha256": "3c66db3fb0f872f15afcb1762c51682ebb02d9c8be5ebd60443fa749da4fa78d",
+      "published_sha256": "c8757c3051bcb6869030792ce9a320f20133344444ea7dedd7123741019ec90b",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 0,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\shared-report-templates-isolated.stderr.log"
+    },
+    {
+      "path": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log",
+      "raw_sha256": "cd00a7ff89bcad39b136f54d67f89cbefba1d887378d017cac08857542cf9d03",
+      "published_sha256": "b85d224159cedef5b6eb5197d7c5e7303bb64b3d1b03ba300a87ba300422e4ea",
+      "hex_tokens": 2,
+      "sensitive_fields_seen": 2,
+      "debug_html_lines": 0,
+      "raw_local": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\export-stability-closeout-20261105\\.tmp\\export-stability-private\\full-suite-original\\logs\\playwright-profiles\\shared-report-templates-isolated.stdout.log"
+    }
+  ],
+  "undecodable_text_files": []
+}

@@ -1,0 +1,402 @@
+[
+  {
+    "width": 1440,
+    "period": [
+      "2026-09-01",
+      "2026-09-30"
+    ],
+    "kind": "book",
+    "iteration": 1,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "账面收支参考-2026-09-01-2026-09-30.csv",
+    "bytes": 640,
+    "sha256": "1cd64e9b764a1ec26ccdeb5626493025bc695b60bccc7694c6e9b8cdc6cdd40c",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "122.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 1440,
+    "period": [
+      "2026-09-01",
+      "2026-09-30"
+    ],
+    "kind": "book",
+    "iteration": 2,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "账面收支参考-2026-09-01-2026-09-30.csv",
+    "bytes": 640,
+    "sha256": "1cd64e9b764a1ec26ccdeb5626493025bc695b60bccc7694c6e9b8cdc6cdd40c",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "122.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 1440,
+    "period": [
+      "2026-09-01",
+      "2026-09-30"
+    ],
+    "kind": "actual",
+    "iteration": 1,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "银行实际人民币资金-2026-09-01-2026-09-30.csv",
+    "bytes": 814,
+    "sha256": "579272e8081d413839c22c407e6a7b65ea664fa262ccfe20a7283a2e35c296cd",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "122.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 1440,
+    "period": [
+      "2026-09-01",
+      "2026-09-30"
+    ],
+    "kind": "actual",
+    "iteration": 2,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "银行实际人民币资金-2026-09-01-2026-09-30.csv",
+    "bytes": 814,
+    "sha256": "579272e8081d413839c22c407e6a7b65ea664fa262ccfe20a7283a2e35c296cd",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "122.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 1440,
+    "period": [
+      "2026-10-01",
+      "2026-10-31"
+    ],
+    "kind": "book",
+    "iteration": 1,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "账面收支参考-2026-10-01-2026-10-31.csv",
+    "bytes": 642,
+    "sha256": "cc446d723207c9bd514c548d63ad80d5e65e1822b88681353e2da4eec90cfdae",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "450.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 1440,
+    "period": [
+      "2026-10-01",
+      "2026-10-31"
+    ],
+    "kind": "book",
+    "iteration": 2,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "账面收支参考-2026-10-01-2026-10-31.csv",
+    "bytes": 642,
+    "sha256": "cc446d723207c9bd514c548d63ad80d5e65e1822b88681353e2da4eec90cfdae",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "450.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 1440,
+    "period": [
+      "2026-10-01",
+      "2026-10-31"
+    ],
+    "kind": "actual",
+    "iteration": 1,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "银行实际人民币资金-2026-10-01-2026-10-31.csv",
+    "bytes": 816,
+    "sha256": "ada437b8d8f3647c885061502691562c013935c30eb8dc786be58b34809c83f9",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "450.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 1440,
+    "period": [
+      "2026-10-01",
+      "2026-10-31"
+    ],
+    "kind": "actual",
+    "iteration": 2,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "银行实际人民币资金-2026-10-01-2026-10-31.csv",
+    "bytes": 816,
+    "sha256": "ada437b8d8f3647c885061502691562c013935c30eb8dc786be58b34809c83f9",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "450.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 390,
+    "period": [
+      "2026-09-01",
+      "2026-09-30"
+    ],
+    "kind": "book",
+    "iteration": 1,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "账面收支参考-2026-09-01-2026-09-30.csv",
+    "bytes": 640,
+    "sha256": "1cd64e9b764a1ec26ccdeb5626493025bc695b60bccc7694c6e9b8cdc6cdd40c",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "122.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 390,
+    "period": [
+      "2026-09-01",
+      "2026-09-30"
+    ],
+    "kind": "book",
+    "iteration": 2,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "账面收支参考-2026-09-01-2026-09-30.csv",
+    "bytes": 640,
+    "sha256": "1cd64e9b764a1ec26ccdeb5626493025bc695b60bccc7694c6e9b8cdc6cdd40c",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "122.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 390,
+    "period": [
+      "2026-09-01",
+      "2026-09-30"
+    ],
+    "kind": "actual",
+    "iteration": 1,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "银行实际人民币资金-2026-09-01-2026-09-30.csv",
+    "bytes": 814,
+    "sha256": "579272e8081d413839c22c407e6a7b65ea664fa262ccfe20a7283a2e35c296cd",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "122.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 390,
+    "period": [
+      "2026-09-01",
+      "2026-09-30"
+    ],
+    "kind": "actual",
+    "iteration": 2,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "银行实际人民币资金-2026-09-01-2026-09-30.csv",
+    "bytes": 814,
+    "sha256": "579272e8081d413839c22c407e6a7b65ea664fa262ccfe20a7283a2e35c296cd",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "122.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 390,
+    "period": [
+      "2026-10-01",
+      "2026-10-31"
+    ],
+    "kind": "book",
+    "iteration": 1,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "账面收支参考-2026-10-01-2026-10-31.csv",
+    "bytes": 642,
+    "sha256": "cc446d723207c9bd514c548d63ad80d5e65e1822b88681353e2da4eec90cfdae",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "450.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 390,
+    "period": [
+      "2026-10-01",
+      "2026-10-31"
+    ],
+    "kind": "book",
+    "iteration": 2,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "账面收支参考-2026-10-01-2026-10-31.csv",
+    "bytes": 642,
+    "sha256": "cc446d723207c9bd514c548d63ad80d5e65e1822b88681353e2da4eec90cfdae",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "450.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 390,
+    "period": [
+      "2026-10-01",
+      "2026-10-31"
+    ],
+    "kind": "actual",
+    "iteration": 1,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "银行实际人民币资金-2026-10-01-2026-10-31.csv",
+    "bytes": 816,
+    "sha256": "ada437b8d8f3647c885061502691562c013935c30eb8dc786be58b34809c83f9",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "450.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  },
+  {
+    "width": 390,
+    "period": [
+      "2026-10-01",
+      "2026-10-31"
+    ],
+    "kind": "actual",
+    "iteration": 2,
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "downloadName": "银行实际人民币资金-2026-10-01-2026-10-31.csv",
+    "bytes": 816,
+    "sha256": "ada437b8d8f3647c885061502691562c013935c30eb8dc786be58b34809c83f9",
+    "rawHttpEqualsDownload": true,
+    "browserResponseEqualsDownload": false,
+    "browserResponseEqualsDownloadWithoutBom": true,
+    "bom": true,
+    "amount": "450.01",
+    "formulaPrefixes": [
+      "=",
+      "+",
+      "-",
+      "@"
+    ]
+  }
+]

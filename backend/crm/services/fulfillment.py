@@ -72,6 +72,23 @@ def location_quantity(sku, location):
     return baseline + incoming - outgoing
 
 
+def validate_inventory_location_change(sku, location, signed_quantity, *, original=None):
+    """Validate the projected per-location debit while the caller holds SKU's lock.
+
+    Ordinary stock has locations too; a history baseline is not what creates
+    this constraint. For an editable manual row, undo its old effect before
+    applying the new effect, including relocation without a quantity change.
+    """
+    fields = ("warehouse", "warehouse_type", "lot_reference")
+    changes = {tuple(location[key] for key in fields): signed_quantity}
+    if original is not None:
+        old = tuple(getattr(original, key) for key in fields)
+        changes[old] = changes.get(old, Decimal("0")) - original.signed_quantity
+    for values, delta in changes.items():
+        if delta < 0 and location_quantity(sku, dict(zip(fields, values))) + delta < 0:
+            raise ValidationError("所选仓库及批次库存不足，不能借用其他仓库或批次库存。")
+
+
 class FulfillmentIdempotencyConflict(ValidationError):
     """A request key cannot safely be replayed for this request."""
 
@@ -562,7 +579,7 @@ def reverse_receipt(receipt: GoodsReceipt, reason: str) -> GoodsReceipt:
     if actual_quantity < receipt.quantity:
         raise ValidationError("当前 SKU 实际库存不足以冲销，请先处理后续出库。")
     location = {key: getattr(original_movement, key) for key in ("warehouse", "warehouse_type", "lot_reference")} if original_movement else inventory_location(sku, {})
-    if HistoryInventoryBaseline.objects.filter(sku=sku, reversal__isnull=True).exists() and location_quantity(sku, location) < receipt.quantity:
+    if location_quantity(sku, location) < receipt.quantity:
         raise ValidationError("原入库仓库及批次库存不足，不能冲销。")
     movement = InventoryMovement.objects.create(
         **{k: getattr(receipt, k) for k in TRADE_FIELDS},
@@ -621,7 +638,7 @@ def reverse_manual_inventory_movement(movement: InventoryMovement, reason: str) 
         available = signed_inventory_quantity(sku) - active_reservation_quantity(sku)
         if available < movement.quantity:
             raise ValidationError("当前可用库存不足，无法完整冲销该流水；请先处理相关预留/业务单据。")
-        if HistoryInventoryBaseline.objects.filter(sku=sku, reversal__isnull=True).exists() and location_quantity(sku, location) < movement.quantity:
+        if location_quantity(sku, location) < movement.quantity:
             raise ValidationError("原仓库及批次库存不足，无法冲销。")
 
     reversal = InventoryMovement.objects.create(
@@ -702,7 +719,7 @@ def confirm_shipment(order: Order, payload: dict) -> Shipment:
         own_reserved = InventoryReservation.objects.filter(sku=item.sku, order_item__order=order).aggregate(total=Sum("quantity"))["total"] or Decimal("0")
         if quantity > sku_metrics(item.sku)["available_quantity"] + own_reserved:
             raise ValidationError("库存不足，不能确认发货。")
-        if HistoryInventoryBaseline.objects.filter(sku=item.sku, reversal__isnull=True).exists() and quantity > location_quantity(item.sku, location):
+        if quantity > location_quantity(item.sku, location):
             raise ValidationError("所选仓库及批次库存不足，不能确认发货。")
 
         def create_line(order_item, line_quantity, overage=False, line_reason="", source_order_item=None):

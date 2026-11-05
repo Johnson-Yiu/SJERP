@@ -191,3 +191,27 @@ test('direct draft links, native refresh cancellation and synthetic account chan
  expect(stored).not.toContain(secret);expect(stored).not.toContain('Workspace account 111 only')
  await writeFile(path.join(evidence,'identity-boundary.json'),JSON.stringify({nativeBeforeUnload:'cancelled and retained',accountChange:'synthetic setAccessOperator 111→222, same display name',storedDraftBody:false,limitation:'This exercises the workspace integration boundary; it is not a real employee login or identity-package acceptance.'},null,2))
 })
+
+test('list filters, page and both list and task scroll survive independent navigation', async ({ page, request }) => {
+ test.setTimeout(180000)
+ for(let i=0;i<55;i++){
+  const response=await request.post('/api/customers/',{data:{name:`Paging synthetic ${String(i).padStart(3,'0')}`,country:'US',contacts:[{name:'Synthetic paging contact',is_primary:true}]}})
+  expect(response.status(),await response.text()).toBe(201)
+ }
+ await page.goto('/customers?search=Paging',{waitUntil:'domcontentloaded'})
+ await expect(active(page).getByRole('button',{name:'下一页',exact:true})).toBeVisible()
+ await active(page).getByRole('button',{name:'下一页',exact:true}).click()
+ await expect(page).toHaveURL(/page=2/)
+ const firstName=await active(page).locator('tbody tr').first().locator('td').first().innerText()
+ await page.evaluate(()=>window.scrollTo(0,500))
+ await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(500)
+ await page.getByRole('link',{name:'订单管理',exact:true}).click()
+ await expect(active(page).getByRole('button',{name:/新建订单/})).toBeVisible()
+ await page.evaluate(()=>window.scrollTo(0,0))
+ await page.getByRole('tab',{name:'客户管理',exact:true}).click()
+ await expect(page).toHaveURL(/search=Paging.*page=2|page=2.*search=Paging/)
+ await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(500)
+ await expect(active(page).locator('tbody tr').first().locator('td').first()).toHaveText(firstName)
+ await expect(active(page).locator('.customer-search input')).toHaveValue('Paging')
+ await page.screenshot({path:path.join(evidence,'desktop-list-page-scroll-restored.png'),fullPage:true})
+})

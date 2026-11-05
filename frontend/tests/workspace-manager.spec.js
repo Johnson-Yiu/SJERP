@@ -49,3 +49,11 @@ it('a successful draft save adopts the same pane and order movement preserves id
  await manager.adopt(draft,'/orders?detail=42');expect(manager.tabs).toHaveLength(2);expect(draft.key).toBe('/orders:object:42')
  manager.move(draft.id,1);expect(manager.tabs.map(t=>t.id)).toEqual([list.id,draft.id])
 })
+
+it('URL synchronization does not overwrite a switched workspace scroll position', async () => {
+ const a=await manager.open('/customers'),b=await manager.open('/orders')
+ a.scroll={left:0,top:500}; b.scroll={left:0,top:0}
+ Object.defineProperty(window,'scrollY',{value:500,configurable:true})
+ await manager.activate(b);expect(b.scroll.top).toBe(0)
+ expect(window.scrollTo).toHaveBeenLastCalledWith({left:0,top:0})
+})

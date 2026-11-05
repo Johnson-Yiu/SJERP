@@ -26,9 +26,11 @@ export function createWorkspaceManager(rootRouter) {
   function url(tab) { const r = tab.router.currentRoute.value; return { path: r.path, query: { ...r.query, [workspaceQueryKey]: tab.id }, hash: r.hash } }
   async function activate(tab, { sync = true } = {}) {
     if (!tabs.includes(tab)) return false
-    rememberScroll(); activeId.value = tab.id
+    const switched = activeId.value !== tab.id
+    if (switched) rememberScroll()
+    activeId.value = tab.id
     if (sync) await rootRouter.push(url(tab))
-    requestAnimationFrame(() => { if (activeId.value === tab.id) window.scrollTo(tab.scroll || { left: 0, top: 0 }) })
+    if (switched) requestAnimationFrame(() => { if (activeId.value === tab.id) window.scrollTo(tab.scroll || { left: 0, top: 0 }) })
     return true
   }
   async function open(location, options = {}) {

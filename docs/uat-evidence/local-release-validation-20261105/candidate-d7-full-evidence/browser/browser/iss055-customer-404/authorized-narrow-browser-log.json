@@ -1,0 +1,37 @@
+{
+  "browser": "chrome",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "requests": [
+    {
+      "url": "http://127.0.0.1:12798/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:12798/api/operation-logs/?entity=crm.customer&object_id=1&ordering=-created_at",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:12798/api/session/current-operator/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:12798/api/customers/owner-options/?page=1",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:12798/api/customers/country-options/?page=1",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:12798/api/customers/?search=&page=1",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:12798/api/context/customers/1/",
+      "status": 200
+    }
+  ]
+}

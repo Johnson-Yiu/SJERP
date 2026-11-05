@@ -1,0 +1,135 @@
+{
+  "candidateSha": "d7d927658e26727b6ebef135708d77278b9ee258",
+  "allPassed": false,
+  "originalProfileCount": 9,
+  "originalBusinessSuiteExclusions": [
+    "iss022-moq-real.spec.js",
+    "iss028-035-category-schema.spec.js",
+    "iss055-customer-404-real.spec.js",
+    "iss006-frontend-storage-chrome.spec.js",
+    "iss007-attachment-real.spec.js",
+    "iss007-image-snapshot-real.spec.js",
+    "shared-report-templates.spec.js",
+    "quote-editor-mobile-actions.spec.js"
+  ],
+  "additionalDeferredExclusion": "iss037-print-output-acceptance.spec.js",
+  "deferredSpecRun": false,
+  "runs": [
+    {
+      "name": "business-suite",
+      "args": [
+        "--all-business-tests",
+        "--exclude-business-test",
+        "iss022-moq-real.spec.js",
+        "--exclude-business-test",
+        "iss028-035-category-schema.spec.js",
+        "--exclude-business-test",
+        "iss055-customer-404-real.spec.js",
+        "--exclude-business-test",
+        "iss006-frontend-storage-chrome.spec.js",
+        "--exclude-business-test",
+        "iss007-attachment-real.spec.js",
+        "--exclude-business-test",
+        "iss007-image-snapshot-real.spec.js",
+        "--exclude-business-test",
+        "shared-report-templates.spec.js",
+        "--exclude-business-test",
+        "quote-editor-mobile-actions.spec.js",
+        "--exclude-business-test",
+        "iss037-print-output-acceptance.spec.js"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "stdout": "logs/playwright-profiles/business-suite.stdout.log",
+      "stderr": "logs/playwright-profiles/business-suite.stderr.log"
+    },
+    {
+      "name": "shared-report-templates-isolated",
+      "args": [
+        "--business-test",
+        "shared-report-templates.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "logs/playwright-profiles/shared-report-templates-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/shared-report-templates-isolated.stderr.log"
+    },
+    {
+      "name": "quote-editor-isolated",
+      "args": [
+        "--business-test",
+        "quote-editor-mobile-actions.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "logs/playwright-profiles/quote-editor-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/quote-editor-isolated.stderr.log"
+    },
+    {
+      "name": "iss006-storage-isolated",
+      "args": [
+        "--business-test",
+        "iss006-frontend-storage-chrome.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "logs/playwright-profiles/iss006-storage-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss006-storage-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-attachment-isolated",
+      "args": [
+        "--business-test",
+        "iss007-attachment-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "logs/playwright-profiles/iss007-attachment-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss007-attachment-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-image-snapshot-isolated",
+      "args": [
+        "--business-test",
+        "iss007-image-snapshot-real.spec.js"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "stdout": "logs/playwright-profiles/iss007-image-snapshot-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss007-image-snapshot-isolated.stderr.log"
+    },
+    {
+      "name": "iss022-isolated",
+      "args": [
+        "--business-test",
+        "iss022-moq-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "logs/playwright-profiles/iss022-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss022-isolated.stderr.log"
+    },
+    {
+      "name": "iss028-035-isolated",
+      "args": [
+        "--business-test",
+        "iss028-035-category-schema.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "logs/playwright-profiles/iss028-035-isolated.stdout.log",
+      "stderr": "logs/playwright-profiles/iss028-035-isolated.stderr.log"
+    },
+    {
+      "name": "iss055-rbac",
+      "args": [
+        "--business-test",
+        "iss055-customer-404-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "logs/playwright-profiles/iss055-rbac.stdout.log",
+      "stderr": "logs/playwright-profiles/iss055-rbac.stderr.log"
+    }
+  ]
+}

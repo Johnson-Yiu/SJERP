@@ -1,0 +1,38 @@
+[isolated Django API] [05/Nov/2026 17:15:34] "GET /api/__test__/isolation/[redacted ephemeral isolation token]/ HTTP/1.1" 200 326
+[isolated Django API] [05/Nov/2026 17:15:35] "GET /api/__test__/isolation/[redacted ephemeral isolation token]/ HTTP/1.1" 200 326
+(node:14212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [05/Nov/2026 17:15:40] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 17:15:40] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:40] "GET /api/customers/?page=1 HTTP/1.1" 200 500
+[isolated Django API] [05/Nov/2026 17:15:40] "GET /api/skus/?page=1 HTTP/1.1" 200 1359
+[isolated Django API] [05/Nov/2026 17:15:40] "GET /api/quotes/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:40] "GET /api/contacts/?customer=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:40] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:44] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 17:15:44] "GET /api/customers/?page=1 HTTP/1.1" 200 500
+[isolated Django API] [05/Nov/2026 17:15:44] "GET /api/skus/?page=1 HTTP/1.1" 200 1359
+[isolated Django API] [05/Nov/2026 17:15:44] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:44] "GET /api/contacts/?customer=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:44] "GET /api/quotes/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:44] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:51] "POST /api/quotes/availability-preview/ HTTP/1.1" 200 130
+[isolated Django API] [05/Nov/2026 17:15:51] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 17:15:52] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 17:15:52] "GET /api/quotes/preview-template/?discount=0 HTTP/1.1" 200 952
+[isolated Django API] [05/Nov/2026 17:15:53] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 17:15:53] "POST /api/quotes/ HTTP/1.1" 201 1383
+[isolated Django API] [05/Nov/2026 17:15:53] "GET /api/session/current-operator/ HTTP/1.1" 200 2657
+[isolated Django API] [05/Nov/2026 17:15:53] "GET /api/customers/?page=1 HTTP/1.1" 200 500
+[isolated Django API] [05/Nov/2026 17:15:53] "GET /api/skus/?page=1 HTTP/1.1" 200 1359
+[isolated Django API] [05/Nov/2026 17:15:53] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 1435
+[isolated Django API] [05/Nov/2026 17:15:53] "GET /api/contacts/?customer=1&page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:53] "GET /api/packaging-templates/?page=1 HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:54] "POST /api/quotes/availability-preview/ HTTP/1.1" 200 130
+[isolated Django API] [05/Nov/2026 17:15:54] "POST /api/sales-rules/check-quote/ HTTP/1.1" 200 43
+[isolated Django API] [05/Nov/2026 17:15:54] "POST /api/quotes/ HTTP/1.1" 201 1383
+[isolated Django API] [05/Nov/2026 17:15:54] "GET /api/quotes/?customer=1&search=&status=&ordering=-updated_at&page=1 HTTP/1.1" 200 2819
+[isolated Django API] [05/Nov/2026 17:15:54] "GET /api/quotes/2/export/ HTTP/1.1" 200 10218
+[isolated Django API] [05/Nov/2026 17:15:54] "GET /api/quotes/2/workbench/ HTTP/1.1" 200 2886
+[isolated Django API] [05/Nov/2026 17:15:54] "GET /api/operation-logs/?entity=crm.quote&object_id=2&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [05/Nov/2026 17:15:54] "GET /api/session/current-operator/ HTTP/1.1" 200 2657

@@ -69,7 +69,7 @@ ISS-007 图片快照场景在整项 60 秒用尽时等待最后一次打开报�
 
 候选 `d5a6a233` 的 PostgreSQL 合成恢复核对覆盖 102 张表、1218 行、133 条迁移记录和 5 个私有文件，源媒体未变化；加密合成备份包保留本地，SHA256 `a7822f46b6db60b219683053c1bf6f3bf0a08657fd255c545c9385626189a2df`，不将隔离数据库或凭据推送。为在完整运行中捕捉取消发生时的导航、Blob 与请求事件，随后固定新测试候选 `d7d927658e26727b6ebef135708d77278b9ee258` 重跑全量；它尚无最终结果，不影响 `d5a6a233` 的 FAIL 事实。
 
-诊断候选 `d7d927658e26727b6ebef135708d77278b9ee258` 已完成 SQLite 1419 项（1339 通过、80 跳过）、真实 PostgreSQL 1419 项（1387 通过、32 跳过），二者均 0 失败；独立 PostgreSQL 备份故障 8/8、Node 179/179、字体 1/1、Vitest 725/725 通过。新候选浏览器、构建和历史 Chrome 尚未结束。已结束的 19 份日志经脱敏并记录原始/发布 SHA：[日志清单](candidate-d7-backend-logs/publication-manifest.json)。此前 `d5a6a233` 的浏览器 265/1 仍为 FAIL。
+诊断候选 `d7d927658e26727b6ebef135708d77278b9ee258` 已完成 SQLite 1419 项（1339 通过、80 跳过）、真实 PostgreSQL 1419 项（1387 通过、32 跳过），二者均 0 失败；独立 PostgreSQL 备份故障 8/8、Node 179/179、字体 1/1、Vitest 725/725 通过。该候选浏览器九配置 257 通过/9 失败，生产构建及历史 Chrome 通过，整体 FAIL。已结束的 19 份日志经脱敏并记录原始/发布 SHA：[日志清单](candidate-d7-backend-logs/publication-manifest.json)。此前 `d5a6a233` 的浏览器 265/1 仍为 FAIL。
 
 `d7d927658e26727b6ebef135708d77278b9ee258` 进行中的浏览器主套件出现历史经营分析导航 `load` 等待 30 秒超时；快照显示标题及多张明细表已经出现，阻塞 `load` 的具体资源未知。测试提交 `d7d37de82f492f0e128f85ee28577f8e3e3a058d` 使用 DOM 就绪并保留原标题、表格、布局和权限断言；隔离 Playwright Chromium 定向 2/2 通过，进程/端口/专属临时数据清理成功，不能覆盖全套失败。[定向证据](history-navigation-target-evidence/publication-manifest.json) 含截图、脱敏日志和哈希；完整失败现场待本次运行结束后归档。
 
@@ -80,3 +80,5 @@ ISS-007 图片快照场景在整项 60 秒用尽时等待最后一次打开报�
 核心合入冻结候选 `76c98873f8ba4e521941f497fbd170c9b2bdb689` 的 SQLite 跨库存、历史盘点、采购成本及审计测试 71 项中 64 通过、7 项 PostgreSQL 专属跳过、0 失败；真实 PostgreSQL 17 交叉已完成 76/76、0 跳过，包含库存/取消/成本竞争及第二条采购付款审计失败后重试，历史、财务及运营合成恢复均通过；[脱敏日志](core-pg-cross-log/publication-manifest.json)、[恢复证据](core-pg-cross-artifacts/publication-manifest.json)。合成备份包留本地，SHA256 `9b25dbd40139a272b290e84125c370027e56561088452602eb89d3755356b57c`。已有正式主体快照与数量调整兼容专项仍在运行，部分主体新模型尚未集成。SKU 只读场景在旧候选全页 load 超时；测试提交 `4463ef8ca85871fa39c73941b608b66c57597f97` 改为 DOM 就绪且保留权限断言，独立 Chromium 文件回归 17/17 通过。两次原始日志及哈希见[定向证据](core-sku-target-evidence/publication-manifest.json)，不覆盖完整套件失败。
 
 核心候选 `76c98873` 在真实 PostgreSQL 17 上，现有正式主体快照、订单数量调整与核心业务组合测试 47/47、0 跳过，合成历史/财务/运营恢复通过；[日志](core-party-compat-pg-log/publication-manifest.json)、[恢复证据](core-party-compat-pg-artifacts/publication-manifest.json)。这只覆盖当前已有主体规则，未集成的部分主体新模型与完整闭环仍待稳定来源。合成备份本地保留，SHA256 `d59a4061f108a55bd4af97465772067382523e3fb5922515c9b690844441fe4f`。
+
+`d7d927658e26727b6ebef135708d77278b9ee258` 本地全量已结束：SQLite 1419/80 跳过，真实 PostgreSQL 1419/32 跳过，独立备份故障 8/8、Node 179/179、Vitest 725/725、生产构建和历史 Chrome 通过；适用浏览器 257 通过、9 失败、0 跳过，延期打印 7 项 NOT_RUN，整体 FAIL。主套件 233/8，另有 ISS-007 图片导出 `download.saveAs: canceled`；报价编辑器配置本次成功不消除旧取消根因 UNKNOWN。[完整日志与失败截图](candidate-d7-full-evidence/publication-manifest.json)、[历史 Chrome](candidate-d7-history-chrome/publication-manifest.json) 共 327 个文件已核对发布哈希。该候选在核心来源合入之前固定，不代表核心集成结果。

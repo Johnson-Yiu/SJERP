@@ -1,0 +1,544 @@
+{
+  "source_sha": "d7d927658e26727b6ebef135708d77278b9ee258",
+  "status": "PASS",
+  "snapshot": {
+    "schema_version": 1,
+    "kind": "iss018-synthetic-finance-backup-manifest",
+    "hash_format": "sha256 of each concrete-field row as canonical UTF-8 JSON, ordered by primary key, one LF after each row",
+    "tables": {
+      "crm_financeaccount": {
+        "model": "crm.FinanceAccount",
+        "rows": 3,
+        "sha256": "85453dab93621908791888de06b364b55fd967201516510456477b5d4f46a12d"
+      },
+      "crm_financevoucher": {
+        "model": "crm.FinanceVoucher",
+        "rows": 3,
+        "sha256": "caeb46af21d0bb50ce320ecdcdea3a9dc97474d6138bf63b12e93dc7ba8de940"
+      },
+      "crm_financebankvoucherbinding": {
+        "model": "crm.FinanceBankVoucherBinding",
+        "rows": 1,
+        "sha256": "1c4daf841a8e6c3103272442f33c1e9654a016271a010d480e5cf8dfdd795e53"
+      },
+      "crm_financeinstruction": {
+        "model": "crm.FinanceInstruction",
+        "rows": 6,
+        "sha256": "5c39f73d806737617e16095cf071e7f3c0c96f52672963e37ef33483a2614bf9"
+      },
+      "crm_financefact": {
+        "model": "crm.FinanceFact",
+        "rows": 6,
+        "sha256": "4269b5e8dc9aafa6c3a8d7a02bb7336bec425f22d41b6cfda38a766a07989577"
+      },
+      "crm_financeaccountmapping": {
+        "model": "crm.FinanceAccountMapping",
+        "rows": 1,
+        "sha256": "7cc536bfc43f52bb433a2939e2469c0edd857dc05570eb11407664c71cce5024"
+      },
+      "crm_financereview": {
+        "model": "crm.FinanceReview",
+        "rows": 1,
+        "sha256": "86cf0b4db64eb2a03a4bbce94714fa8a06aee04d21b2755e779f9b4d2c93b5d0"
+      },
+      "crm_financetransfermatch": {
+        "model": "crm.FinanceTransferMatch",
+        "rows": 1,
+        "sha256": "ae6372e6b7335d3bf7b1d586459ed907b1360c21862f715a31a0bf51b1a2954e"
+      },
+      "crm_financehistoricaltransfer": {
+        "model": "crm.FinanceHistoricalTransfer",
+        "rows": 1,
+        "sha256": "cfbeed9e20329717619e4e6f313502b7699e89742e0e70d722cb114863c05154"
+      },
+      "crm_financeclassification": {
+        "model": "crm.FinanceClassification",
+        "rows": 1,
+        "sha256": "21e12485fa4a836c901bd5a613978ee901e28ec3937004aa558c82197885cb32"
+      },
+      "crm_rmbcashevent": {
+        "model": "crm.RmbCashEvent",
+        "rows": 1,
+        "sha256": "5dcbab53c498994e6d76c426fc6d42d44b54d0c417e4d6efd1d4dcfec2426a23"
+      },
+      "crm_cashduplicatereview": {
+        "model": "crm.CashDuplicateReview",
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_cashsourceallocation": {
+        "model": "crm.CashSourceAllocation",
+        "rows": 1,
+        "sha256": "98562d5290d502f82354d8702218bd12ec3cd5e149379353e37da395788efc4c"
+      }
+    },
+    "private_vouchers": [
+      {
+        "id": 1,
+        "name": "finance-vouchers/2026/11/cb65b72ab99944d9a20bf6c0822ab2a7.pdf",
+        "scope": "account",
+        "bank_sources": [],
+        "stored_sha256": "ba66ebfa6a332a740e064d1515cb9cd3a40857ffcfb42d1054638a1952112918",
+        "stored_size": 67,
+        "file_sha256": "ba66ebfa6a332a740e064d1515cb9cd3a40857ffcfb42d1054638a1952112918",
+        "file_size": 67
+      },
+      {
+        "id": 2,
+        "name": "finance-vouchers/2026/11/d7030d6b899d499abab780c97bc774d6.pdf",
+        "scope": "bank",
+        "bank_sources": [
+          1
+        ],
+        "stored_sha256": "94fd70cc05ed81922f1935e9728da564c8493c39c73d38bfcd0b80e16435388a",
+        "stored_size": 64,
+        "file_sha256": "94fd70cc05ed81922f1935e9728da564c8493c39c73d38bfcd0b80e16435388a",
+        "file_size": 64
+      },
+      {
+        "id": 3,
+        "name": "finance-vouchers/2026/11/8e26cdd7f1c34eb19b4c3dfb942d88a9.pdf",
+        "scope": "account",
+        "bank_sources": [],
+        "stored_sha256": "e65641f311be84f16c8f6bfe87c347c2ab6867bde192e59e824f1feadefaf8be",
+        "stored_size": 57,
+        "file_sha256": "e65641f311be84f16c8f6bfe87c347c2ab6867bde192e59e824f1feadefaf8be",
+        "file_size": 57
+      }
+    ]
+  },
+  "sequences": {
+    "auth_group_id_seq": [
+      1,
+      false
+    ],
+    "auth_group_permissions_id_seq": [
+      1,
+      false
+    ],
+    "auth_permission_id_seq": [
+      372,
+      true
+    ],
+    "auth_user_groups_id_seq": [
+      1,
+      false
+    ],
+    "auth_user_id_seq": [
+      6,
+      true
+    ],
+    "auth_user_user_permissions_id_seq": [
+      1,
+      false
+    ],
+    "crm_accessrole_id_seq": [
+      15,
+      true
+    ],
+    "crm_advanceallocation_id_seq": [
+      1,
+      false
+    ],
+    "crm_cashduplicatereview_id_seq": [
+      1,
+      false
+    ],
+    "crm_cashsourceallocation_id_seq": [
+      1,
+      true
+    ],
+    "crm_categoryattribute_id_seq": [
+      2,
+      true
+    ],
+    "crm_contact_id_seq": [
+      1,
+      true
+    ],
+    "crm_contractchangerequest_id_seq": [
+      1,
+      false
+    ],
+    "crm_csvimportbatch_id_seq": [
+      1,
+      true
+    ],
+    "crm_csvimportpreviewaudit_id_seq": [
+      1,
+      true
+    ],
+    "crm_csvimportrowaudit_id_seq": [
+      1,
+      true
+    ],
+    "crm_customer_id_seq": [
+      5,
+      true
+    ],
+    "crm_customercodesequence_id_seq": [
+      1,
+      false
+    ],
+    "crm_customersupplierpreference_id_seq": [
+      1,
+      false
+    ],
+    "crm_documentnumbersequence_id_seq": [
+      2,
+      true
+    ],
+    "crm_employeeprofile_id_seq": [
+      1,
+      false
+    ],
+    "crm_employeeprofile_roles_id_seq": [
+      1,
+      false
+    ],
+    "crm_financeaccount_id_seq": [
+      3,
+      true
+    ],
+    "crm_financeaccountmapping_id_seq": [
+      1,
+      true
+    ],
+    "crm_financebankvoucherbinding_id_seq": [
+      1,
+      true
+    ],
+    "crm_financeclassification_id_seq": [
+      1,
+      true
+    ],
+    "crm_financefact_id_seq": [
+      6,
+      true
+    ],
+    "crm_financehistoricaltransfer_id_seq": [
+      1,
+      true
+    ],
+    "crm_financeinstruction_id_seq": [
+      6,
+      true
+    ],
+    "crm_financereview_id_seq": [
+      1,
+      true
+    ],
+    "crm_financetransfermatch_id_seq": [
+      1,
+      true
+    ],
+    "crm_financevoucher_id_seq": [
+      3,
+      true
+    ],
+    "crm_followup_id_seq": [
+      1,
+      true
+    ],
+    "crm_followupattachment_id_seq": [
+      1,
+      true
+    ],
+    "crm_fulfillmentidempotency_id_seq": [
+      1,
+      true
+    ],
+    "crm_goodsreceipt_id_seq": [
+      2,
+      true
+    ],
+    "crm_historyinventorybaseline_id_seq": [
+      2,
+      true
+    ],
+    "crm_historyinventorybaselinereversal_id_seq": [
+      1,
+      true
+    ],
+    "crm_historyoperationalcontract_id_seq": [
+      2,
+      true
+    ],
+    "crm_historytakeoverapplication_id_seq": [
+      3,
+      true
+    ],
+    "crm_historytakeoverevent_id_seq": [
+      25,
+      true
+    ],
+    "crm_historytakeovergroup_id_seq": [
+      3,
+      true
+    ],
+    "crm_historytakeoverhandoff_id_seq": [
+      9,
+      true
+    ],
+    "crm_historytakeoversourcerecord_id_seq": [
+      36,
+      true
+    ],
+    "crm_hscode_id_seq": [
+      1,
+      false
+    ],
+    "crm_inventorymovement_id_seq": [
+      3,
+      true
+    ],
+    "crm_inventorymovement_related_orders_id_seq": [
+      2,
+      true
+    ],
+    "crm_inventoryreservation_id_seq": [
+      4,
+      true
+    ],
+    "crm_operationlog_id_seq": [
+      42,
+      true
+    ],
+    "crm_order_id_seq": [
+      5,
+      true
+    ],
+    "crm_orderitem_id_seq": [
+      5,
+      true
+    ],
+    "crm_orderquantityadjustment_id_seq": [
+      1,
+      false
+    ],
+    "crm_organizationunit_id_seq": [
+      6,
+      true
+    ],
+    "crm_packagingtemplate_id_seq": [
+      1,
+      false
+    ],
+    "crm_packingplan_id_seq": [
+      1,
+      false
+    ],
+    "crm_packingplancarton_id_seq": [
+      1,
+      false
+    ],
+    "crm_packingplancartonitem_id_seq": [
+      1,
+      false
+    ],
+    "crm_paymentplan_id_seq": [
+      3,
+      true
+    ],
+    "crm_position_id_seq": [
+      13,
+      true
+    ],
+    "crm_product_additional_categories_id_seq": [
+      1,
+      false
+    ],
+    "crm_product_id_seq": [
+      3,
+      true
+    ],
+    "crm_product_suppliers_id_seq": [
+      1,
+      false
+    ],
+    "crm_productcategory_id_seq": [
+      1,
+      true
+    ],
+    "crm_productcertificate_id_seq": [
+      1,
+      false
+    ],
+    "crm_productcodesequence_id_seq": [
+      1,
+      true
+    ],
+    "crm_productparameter_id_seq": [
+      1,
+      false
+    ],
+    "crm_purchasecostallocation_id_seq": [
+      2,
+      true
+    ],
+    "crm_purchasemoqexception_id_seq": [
+      1,
+      false
+    ],
+    "crm_purchaseorder_id_seq": [
+      5,
+      true
+    ],
+    "crm_purchaseorderitem_id_seq": [
+      5,
+      true
+    ],
+    "crm_quote_id_seq": [
+      1,
+      true
+    ],
+    "crm_quotechildrevisioncounter_id_seq": [
+      1,
+      false
+    ],
+    "crm_quoteimportantnote_id_seq": [
+      1,
+      false
+    ],
+    "crm_quoteitem_id_seq": [
+      1,
+      true
+    ],
+    "crm_quotenumbersequence_id_seq": [
+      1,
+      false
+    ],
+    "crm_quoterevisioncounter_id_seq": [
+      1,
+      false
+    ],
+    "crm_rmbcashevent_id_seq": [
+      1,
+      true
+    ],
+    "crm_rolepermission_id_seq": [
+      360,
+      true
+    ],
+    "crm_salesrule_id_seq": [
+      1,
+      false
+    ],
+    "crm_sharedreporttemplate_id_seq": [
+      1,
+      false
+    ],
+    "crm_shipment_id_seq": [
+      1,
+      true
+    ],
+    "crm_shipmentitem_id_seq": [
+      1,
+      true
+    ],
+    "crm_shipmentpackage_id_seq": [
+      1,
+      false
+    ],
+    "crm_shipmentpackageitem_id_seq": [
+      1,
+      false
+    ],
+    "crm_sku_id_seq": [
+      3,
+      true
+    ],
+    "crm_skucodesequence_id_seq": [
+      1,
+      false
+    ],
+    "crm_skupackagingprofile_id_seq": [
+      1,
+      false
+    ],
+    "crm_skuparameterplan_id_seq": [
+      2,
+      true
+    ],
+    "crm_skurelationship_id_seq": [
+      1,
+      false
+    ],
+    "crm_skutradeunit_id_seq": [
+      1,
+      false
+    ],
+    "crm_skuversion_id_seq": [
+      1,
+      false
+    ],
+    "crm_supplier_id_seq": [
+      2,
+      true
+    ],
+    "crm_supplier_supply_categories_id_seq": [
+      1,
+      true
+    ],
+    "crm_suppliercandidateoverride_id_seq": [
+      1,
+      false
+    ],
+    "crm_suppliercapability_id_seq": [
+      1,
+      false
+    ],
+    "crm_suppliersku_id_seq": [
+      1,
+      false
+    ],
+    "crm_transaction_id_seq": [
+      1,
+      true
+    ],
+    "django_admin_log_id_seq": [
+      1,
+      false
+    ],
+    "django_content_type_id_seq": [
+      93,
+      true
+    ],
+    "django_migrations_id_seq": [
+      133,
+      true
+    ]
+  },
+  "media_references": 5,
+  "restored_real_http": [
+    {
+      "identity": "anonymous",
+      "path": "/api/finance-ledger/voucher-download/?id=1",
+      "status": 403,
+      "bytes": 43,
+      "sha256": "323035c1907e918ffa978a9bdec9f41f159f8625dde60f9585819811a73f258d"
+    },
+    {
+      "identity": "iss018-drill-denied",
+      "path": "/api/finance-ledger/voucher-download/?id=1",
+      "status": 403,
+      "bytes": 46,
+      "sha256": "ea74f83522e11136cc232d8cf171c7fd703dca0c2bb616e942b8d002fdc1235a"
+    },
+    {
+      "identity": "iss018-drill-owner",
+      "path": "/api/finance-ledger/voucher-download/?id=1",
+      "status": 200,
+      "bytes": 67,
+      "sha256": "ba66ebfa6a332a740e064d1515cb9cd3a40857ffcfb42d1054638a1952112918"
+    },
+    {
+      "identity": "iss018-drill-owner",
+      "path": "/media/finance-vouchers/2026/11/cb65b72ab99944d9a20bf6c0822ab2a7.pdf",
+      "status": 404,
+      "bytes": 179,
+      "sha256": "5547992afdadb59737c5c0feb1a35dff294cd27145bf290c031737ecf8a2577d"
+    }
+  ],
+  "scope": "Owned synthetic PostgreSQL source/restore verification, not deployment acceptance"
+}

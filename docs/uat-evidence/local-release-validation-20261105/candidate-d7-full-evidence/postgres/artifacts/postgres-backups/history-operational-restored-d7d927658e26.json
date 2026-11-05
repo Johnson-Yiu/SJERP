@@ -1,0 +1,791 @@
+{
+  "source_sha": "d7d927658e26727b6ebef135708d77278b9ee258",
+  "status": "PASS",
+  "snapshot": {
+    "schema_version": 1,
+    "kind": "synthetic-history-operational-backup-manifest",
+    "hash_format": "sha256 of every concrete-field row as canonical UTF-8 JSON, ordered by primary key, one LF after each row; PostgreSQL sequence last_value/is_called",
+    "seed": {
+      "tag": "1AC51951",
+      "group_ids": [
+        2,
+        3
+      ],
+      "application_ids": [
+        2,
+        3
+      ],
+      "user_ids": [
+        5,
+        6
+      ],
+      "sku_ids": [
+        2,
+        3
+      ],
+      "group_source_ids": {
+        "main": "HOP-1AC51951-M",
+        "reversal": "HOP-1AC51951-R"
+      },
+      "baseline_ids": [
+        1,
+        2
+      ],
+      "baseline_reversal_id": 1,
+      "operational_contract_ids": [
+        1,
+        2
+      ],
+      "finance_instruction_id": 6,
+      "finance_fact_id": 6,
+      "private_voucher_id": 3,
+      "receipt_id": 2,
+      "shipment_id": 1,
+      "movement_ids": [
+        2,
+        3
+      ]
+    },
+    "tables": {
+      "auth_user": {
+        "model": "auth.User",
+        "rows": 6,
+        "sha256": "fb77fa4e61143fe110ea02f8535d8fd030e2fc071882c6ca427203d1f030531b",
+        "sequence": {
+          "name": "public.auth_user_id_seq",
+          "last_value": 6,
+          "is_called": true
+        }
+      },
+      "crm_categoryattribute": {
+        "model": "crm.CategoryAttribute",
+        "rows": 2,
+        "sha256": "6e669ff8171b9ae5455f375f474e69d9c001369d8848fe06809332927da2f62e",
+        "sequence": {
+          "name": "public.crm_categoryattribute_id_seq",
+          "last_value": 2,
+          "is_called": true
+        }
+      },
+      "crm_customer": {
+        "model": "crm.Customer",
+        "rows": 3,
+        "sha256": "026e16eb7260d9f0f7570c48fc5ed8a4dca0c73ef036308a8574a8da82129c1a",
+        "sequence": {
+          "name": "public.crm_customer_id_seq",
+          "last_value": 5,
+          "is_called": true
+        }
+      },
+      "crm_financeaccount": {
+        "model": "crm.FinanceAccount",
+        "rows": 3,
+        "sha256": "85453dab93621908791888de06b364b55fd967201516510456477b5d4f46a12d",
+        "sequence": {
+          "name": "public.crm_financeaccount_id_seq",
+          "last_value": 3,
+          "is_called": true
+        }
+      },
+      "crm_financeaccountmapping": {
+        "model": "crm.FinanceAccountMapping",
+        "rows": 1,
+        "sha256": "7cc536bfc43f52bb433a2939e2469c0edd857dc05570eb11407664c71cce5024",
+        "sequence": {
+          "name": "public.crm_financeaccountmapping_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_financebankvoucherbinding": {
+        "model": "crm.FinanceBankVoucherBinding",
+        "rows": 1,
+        "sha256": "1c4daf841a8e6c3103272442f33c1e9654a016271a010d480e5cf8dfdd795e53",
+        "sequence": {
+          "name": "public.crm_financebankvoucherbinding_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_financeclassification": {
+        "model": "crm.FinanceClassification",
+        "rows": 1,
+        "sha256": "21e12485fa4a836c901bd5a613978ee901e28ec3937004aa558c82197885cb32",
+        "sequence": {
+          "name": "public.crm_financeclassification_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_financefact": {
+        "model": "crm.FinanceFact",
+        "rows": 6,
+        "sha256": "4269b5e8dc9aafa6c3a8d7a02bb7336bec425f22d41b6cfda38a766a07989577",
+        "sequence": {
+          "name": "public.crm_financefact_id_seq",
+          "last_value": 6,
+          "is_called": true
+        }
+      },
+      "crm_financehistoricaltransfer": {
+        "model": "crm.FinanceHistoricalTransfer",
+        "rows": 1,
+        "sha256": "cfbeed9e20329717619e4e6f313502b7699e89742e0e70d722cb114863c05154",
+        "sequence": {
+          "name": "public.crm_financehistoricaltransfer_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_financeinstruction": {
+        "model": "crm.FinanceInstruction",
+        "rows": 6,
+        "sha256": "5c39f73d806737617e16095cf071e7f3c0c96f52672963e37ef33483a2614bf9",
+        "sequence": {
+          "name": "public.crm_financeinstruction_id_seq",
+          "last_value": 6,
+          "is_called": true
+        }
+      },
+      "crm_financereview": {
+        "model": "crm.FinanceReview",
+        "rows": 1,
+        "sha256": "86cf0b4db64eb2a03a4bbce94714fa8a06aee04d21b2755e779f9b4d2c93b5d0",
+        "sequence": {
+          "name": "public.crm_financereview_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_financetransfermatch": {
+        "model": "crm.FinanceTransferMatch",
+        "rows": 1,
+        "sha256": "ae6372e6b7335d3bf7b1d586459ed907b1360c21862f715a31a0bf51b1a2954e",
+        "sequence": {
+          "name": "public.crm_financetransfermatch_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_financevoucher": {
+        "model": "crm.FinanceVoucher",
+        "rows": 3,
+        "sha256": "caeb46af21d0bb50ce320ecdcdea3a9dc97474d6138bf63b12e93dc7ba8de940",
+        "sequence": {
+          "name": "public.crm_financevoucher_id_seq",
+          "last_value": 3,
+          "is_called": true
+        }
+      },
+      "crm_goodsreceipt": {
+        "model": "crm.GoodsReceipt",
+        "rows": 2,
+        "sha256": "f9fbd46f6a53af96b2e2c9fab3bd71baccc07c28409841fd00ddec0cb10dc11b",
+        "sequence": {
+          "name": "public.crm_goodsreceipt_id_seq",
+          "last_value": 2,
+          "is_called": true
+        }
+      },
+      "crm_historyinventorybaseline": {
+        "model": "crm.HistoryInventoryBaseline",
+        "rows": 2,
+        "sha256": "b5973a74bee5671d01a604781a2d767320c92617f7cb8d74218322a2a120aec4",
+        "sequence": {
+          "name": "public.crm_historyinventorybaseline_id_seq",
+          "last_value": 2,
+          "is_called": true
+        }
+      },
+      "crm_historyinventorybaselinereversal": {
+        "model": "crm.HistoryInventoryBaselineReversal",
+        "rows": 1,
+        "sha256": "af662665106c94342a524abeda288e7a6a779b13f95e9366b674ac7b5ceb244c",
+        "sequence": {
+          "name": "public.crm_historyinventorybaselinereversal_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_historyoperationalcontract": {
+        "model": "crm.HistoryOperationalContract",
+        "rows": 2,
+        "sha256": "9869dd3402e555f8fed4c6d946734c9a2b15a40dc43f44e2be28b9828552df19",
+        "sequence": {
+          "name": "public.crm_historyoperationalcontract_id_seq",
+          "last_value": 2,
+          "is_called": true
+        }
+      },
+      "crm_historytakeoverapplication": {
+        "model": "crm.HistoryTakeoverApplication",
+        "rows": 3,
+        "sha256": "278cd3506c40ec141500aec5beeb1fbd0a186af334bda008faf9da7eaa710b86",
+        "sequence": {
+          "name": "public.crm_historytakeoverapplication_id_seq",
+          "last_value": 3,
+          "is_called": true
+        }
+      },
+      "crm_historytakeoverevent": {
+        "model": "crm.HistoryTakeoverEvent",
+        "rows": 25,
+        "sha256": "60be0606a8a508f48aec414467a4d4a14f4f10a3d39f6fab66fda46aa6514029",
+        "sequence": {
+          "name": "public.crm_historytakeoverevent_id_seq",
+          "last_value": 25,
+          "is_called": true
+        }
+      },
+      "crm_historytakeovergroup": {
+        "model": "crm.HistoryTakeoverGroup",
+        "rows": 3,
+        "sha256": "b4aa3792e3b27dbe04faf58cb8c173f740a12ec38e1bfe3e1d18d769836f041f",
+        "sequence": {
+          "name": "public.crm_historytakeovergroup_id_seq",
+          "last_value": 3,
+          "is_called": true
+        }
+      },
+      "crm_historytakeoverhandoff": {
+        "model": "crm.HistoryTakeoverHandoff",
+        "rows": 9,
+        "sha256": "48736e94c634348cca95d722950dc53f1e01f2f974f2115b669c816a607f8794",
+        "sequence": {
+          "name": "public.crm_historytakeoverhandoff_id_seq",
+          "last_value": 9,
+          "is_called": true
+        }
+      },
+      "crm_historytakeoversourcerecord": {
+        "model": "crm.HistoryTakeoverSourceRecord",
+        "rows": 36,
+        "sha256": "cb5106301e953baa4f5ce7561096e81eaccf3fefc7b6903a96c28c81fd80127b",
+        "sequence": {
+          "name": "public.crm_historytakeoversourcerecord_id_seq",
+          "last_value": 36,
+          "is_called": true
+        }
+      },
+      "crm_inventorymovement": {
+        "model": "crm.InventoryMovement",
+        "rows": 3,
+        "sha256": "df79666cdcfc4a417f9353aaa179eb4aa15d7409a344739b3e8b6568b846f1c3",
+        "sequence": {
+          "name": "public.crm_inventorymovement_id_seq",
+          "last_value": 3,
+          "is_called": true
+        }
+      },
+      "crm_inventoryreservation": {
+        "model": "crm.InventoryReservation",
+        "rows": 1,
+        "sha256": "d5408e9b7f67636d08236658dda739032f4e7afbf3e2bdfd41ff32e02e9e2394",
+        "sequence": {
+          "name": "public.crm_inventoryreservation_id_seq",
+          "last_value": 4,
+          "is_called": true
+        }
+      },
+      "crm_operationlog": {
+        "model": "crm.OperationLog",
+        "rows": 42,
+        "sha256": "076fc54dda18b7b98b031351415ff326419ced7fee280795330259e64223868e",
+        "sequence": {
+          "name": "public.crm_operationlog_id_seq",
+          "last_value": 42,
+          "is_called": true
+        }
+      },
+      "crm_order": {
+        "model": "crm.Order",
+        "rows": 5,
+        "sha256": "03bf95f09f582c76a41a017ca318ffe34e0e1ceb6427ea77e10a684b969866b5",
+        "sequence": {
+          "name": "public.crm_order_id_seq",
+          "last_value": 5,
+          "is_called": true
+        }
+      },
+      "crm_orderitem": {
+        "model": "crm.OrderItem",
+        "rows": 5,
+        "sha256": "24c0751e8a36861fe0a75757d263808e89a51ba6f72a107dc410b36bb439304b",
+        "sequence": {
+          "name": "public.crm_orderitem_id_seq",
+          "last_value": 5,
+          "is_called": true
+        }
+      },
+      "crm_paymentplan": {
+        "model": "crm.PaymentPlan",
+        "rows": 3,
+        "sha256": "e0e7a4ffc1ddde9f1435632c9f9b67f5870dde7513dc54d1260b69fdc60e9487",
+        "sequence": {
+          "name": "public.crm_paymentplan_id_seq",
+          "last_value": 3,
+          "is_called": true
+        }
+      },
+      "crm_product": {
+        "model": "crm.Product",
+        "rows": 3,
+        "sha256": "877d5addd528f7dbdadd373667c21f5c5583a239cf0ece64c4d26b3db8f43469",
+        "sequence": {
+          "name": "public.crm_product_id_seq",
+          "last_value": 3,
+          "is_called": true
+        }
+      },
+      "crm_productcategory": {
+        "model": "crm.ProductCategory",
+        "rows": 1,
+        "sha256": "67350a2a90cc2bf6986fe57289a125af64fc7b1e827d07908eeee7cf27dbfeb6",
+        "sequence": {
+          "name": "public.crm_productcategory_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_purchaseorder": {
+        "model": "crm.PurchaseOrder",
+        "rows": 5,
+        "sha256": "d6872c8026c87adea3e28c4e2e39e7ebd2058e063e6b8a6e50a1528715645669",
+        "sequence": {
+          "name": "public.crm_purchaseorder_id_seq",
+          "last_value": 5,
+          "is_called": true
+        }
+      },
+      "crm_purchaseorderitem": {
+        "model": "crm.PurchaseOrderItem",
+        "rows": 5,
+        "sha256": "89ffa5df8c44b0ce8b9e3ad1a3c7c6613a7e20cba379e2a1e60ffc05cdd2ad04",
+        "sequence": {
+          "name": "public.crm_purchaseorderitem_id_seq",
+          "last_value": 5,
+          "is_called": true
+        }
+      },
+      "crm_shipment": {
+        "model": "crm.Shipment",
+        "rows": 1,
+        "sha256": "b229592ba62d3c4982ab4ba52fd72cb8231f1540a7c0004e791152ed3f65c2b0",
+        "sequence": {
+          "name": "public.crm_shipment_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_shipmentitem": {
+        "model": "crm.ShipmentItem",
+        "rows": 1,
+        "sha256": "cf3db7e530d8531ca76981f6a38aa7620b7f66df6be0a5a10f0b1b8c8058316a",
+        "sequence": {
+          "name": "public.crm_shipmentitem_id_seq",
+          "last_value": 1,
+          "is_called": true
+        }
+      },
+      "crm_sku": {
+        "model": "crm.SKU",
+        "rows": 3,
+        "sha256": "ab4cd687e7f48803ad96af8a346403705f18862faef5f7c0901ff9debc690bb4",
+        "sequence": {
+          "name": "public.crm_sku_id_seq",
+          "last_value": 3,
+          "is_called": true
+        }
+      },
+      "crm_supplier": {
+        "model": "crm.Supplier",
+        "rows": 2,
+        "sha256": "9cb815b43698753a953d5caca1ee9eaecdb51c9941b3d051d054d6fa19f93c73",
+        "sequence": {
+          "name": "public.crm_supplier_id_seq",
+          "last_value": 2,
+          "is_called": true
+        }
+      }
+    },
+    "new_table_rows": {
+      "crm_historyinventorybaseline": [
+        {
+          "id": 1,
+          "group_id": 2,
+          "source_id": 16,
+          "sku_id": 2,
+          "count_date": "2024-12-30",
+          "warehouse_type": "自有仓",
+          "warehouse": "HBK-WH-1AC51951-M",
+          "lot_reference": "HBK-LOT-1AC51951-M",
+          "goods_ownership": "own",
+          "unit_snapshot": "pcs",
+          "quantity": "18.00",
+          "unit_cost": "3.250000000000",
+          "cost_currency": "USD",
+          "evidence_reference": "synthetic://stocktake/HT-1",
+          "approval_snapshot": {
+            "approval": {
+              "note": "Synthetic independent inventory baseline review.",
+              "fingerprint": "8ce79736217e5462a31d9862ce3804b825a2412236e6296eb45c8e853ca6dbbe",
+              "reviewer_id": 6,
+              "reviewer_kind": "identified"
+            },
+            "proposal": {
+              "rows": [
+                {
+                  "no_lot": false,
+                  "sku_id": 2,
+                  "quantity": "18.00",
+                  "sku_unit": "pcs",
+                  "source_id": 16,
+                  "unit_cost": "3.25",
+                  "count_date": "2024-12-30",
+                  "cost_currency": "USD",
+                  "goods_ownership": "own"
+                }
+              ],
+              "reason": "Synthetic complete SKU count and ownership/cost evidence.",
+              "maker_id": 5,
+              "maker_kind": "identified",
+              "fingerprint": "8ce79736217e5462a31d9862ce3804b825a2412236e6296eb45c8e853ca6dbbe"
+            }
+          },
+          "created_at": "2026-11-05T08:03:56.323013+00:00"
+        },
+        {
+          "id": 2,
+          "group_id": 3,
+          "source_id": 28,
+          "sku_id": 3,
+          "count_date": "2024-12-30",
+          "warehouse_type": "自有仓",
+          "warehouse": "HBK-WH-1AC51951-R",
+          "lot_reference": "HBK-LOT-1AC51951-R",
+          "goods_ownership": "own",
+          "unit_snapshot": "pcs",
+          "quantity": "18.00",
+          "unit_cost": "3.250000000000",
+          "cost_currency": "USD",
+          "evidence_reference": "synthetic://stocktake/HT-1",
+          "approval_snapshot": {
+            "approval": {
+              "note": "Synthetic independent inventory baseline review.",
+              "fingerprint": "195400dbae8103bc973fda1b85144d8339b2c10d876479b1db3d9534f6056fd0",
+              "reviewer_id": 6,
+              "reviewer_kind": "identified"
+            },
+            "proposal": {
+              "rows": [
+                {
+                  "no_lot": false,
+                  "sku_id": 3,
+                  "quantity": "18.00",
+                  "sku_unit": "pcs",
+                  "source_id": 28,
+                  "unit_cost": "3.25",
+                  "count_date": "2024-12-30",
+                  "cost_currency": "USD",
+                  "goods_ownership": "own"
+                }
+              ],
+              "reason": "Synthetic complete SKU count and ownership/cost evidence.",
+              "maker_id": 5,
+              "maker_kind": "identified",
+              "fingerprint": "195400dbae8103bc973fda1b85144d8339b2c10d876479b1db3d9534f6056fd0"
+            }
+          },
+          "created_at": "2026-11-05T08:03:56.514502+00:00"
+        }
+      ],
+      "crm_historyinventorybaselinereversal": [
+        {
+          "id": 1,
+          "baseline_id": 2,
+          "group_id": 3,
+          "reason": "Synthetic backup fixture for immutable inventory baseline reversal.",
+          "actor_id": 6,
+          "created_at": "2026-11-05T08:03:56.524982+00:00"
+        }
+      ],
+      "crm_historyoperationalcontract": [
+        {
+          "id": 1,
+          "group_id": 2,
+          "source_id": 20,
+          "archived_order_id": 3,
+          "archived_purchase_id": null,
+          "continuation_order_id": 5,
+          "continuation_purchase_id": null,
+          "settlement_order_id": 3,
+          "settlement_purchase_id": null,
+          "cutover_date": "2025-01-01",
+          "balance_mode": "itemized",
+          "opening_balance": "60.0000",
+          "currency": "USD",
+          "evidence_reference": "synthetic://history-backup/receivable-plan",
+          "source_snapshot": {
+            "source": {
+              "notes": "historical-only",
+              "currency": "USD",
+              "discount": "0.0000",
+              "group_id": "HOP-1AC51951-M",
+              "order_no": "HIST-SO-1AC51951-M",
+              "order_date": "2024-08-01",
+              "shipping_fee": "0.0000",
+              "truth_status": "真实",
+              "customer_code": "202611050000",
+              "exchange_rate": "1.000000",
+              "lifecycle_state": "partial",
+              "source_record_id": "SO-1AC51951-M",
+              "voucher_reference": "synthetic://contract/SO-HT-1",
+              "customer_name_snapshot": "Historical Customer Name",
+              "customer_email_snapshot": "history@example.test",
+              "customer_phone_snapshot": "+1-555-0101",
+              "customer_address_snapshot": "Historical address",
+              "customer_country_snapshot": "United States",
+              "customer_contact_name_snapshot": "Historical contact"
+            },
+            "resolved": {
+              "notes": "historical-only",
+              "currency": "USD",
+              "discount": "0.0000",
+              "group_id": "HOP-1AC51951-M",
+              "order_no": "HIST-SO-1AC51951-M",
+              "order_date": "2024-08-01",
+              "shipping_fee": "0.0000",
+              "truth_status": "真实",
+              "customer_code": "202611050000",
+              "exchange_rate": "1.000000",
+              "lifecycle_state": "partial",
+              "source_record_id": "SO-1AC51951-M",
+              "voucher_reference": "synthetic://contract/SO-HT-1",
+              "customer_name_snapshot": "Historical Customer Name",
+              "customer_email_snapshot": "history@example.test",
+              "customer_phone_snapshot": "+1-555-0101",
+              "customer_address_snapshot": "Historical address",
+              "customer_country_snapshot": "United States",
+              "customer_contact_name_snapshot": "Historical contact"
+            }
+          },
+          "line_links": [
+            {
+              "quantity": "6.00",
+              "source_id": 19,
+              "cost_currency": "USD",
+              "cost_evidence": "synthetic://history-backup/sku-cost",
+              "archived_item_id": 3,
+              "continuation_item_id": 5
+            }
+          ],
+          "balance_snapshot": {
+            "mode": "itemized",
+            "plans": [
+              {
+                "note": "历史逐笔未结计划：PLAN-SO-1AC51951-M；依据：synthetic://receivable-plan",
+                "amount": "60.0000",
+                "due_date": "2024-09-01"
+              }
+            ],
+            "plan_source_ids": [
+              23
+            ]
+          },
+          "approval_snapshot": {
+            "approval": {
+              "note": "Synthetic independent review of residual contracts and opening balances.",
+              "fingerprint": "16dc742eb7c454a9de4f1aa5af66182dab5f682e0b894470f02a44a9e23c11e4",
+              "reviewer_id": 6,
+              "reviewer_kind": "identified"
+            },
+            "maker_id": 5,
+            "maker_kind": "identified",
+            "adjustments": {
+              "discount": "0",
+              "evidence": "synthetic://history-backup/residual-sales-amount",
+              "shipping": "0"
+            },
+            "proposal_fingerprint": "16dc742eb7c454a9de4f1aa5af66182dab5f682e0b894470f02a44a9e23c11e4"
+          },
+          "created_at": "2026-11-05T08:03:56.448115+00:00"
+        },
+        {
+          "id": 2,
+          "group_id": 2,
+          "source_id": 18,
+          "archived_order_id": null,
+          "archived_purchase_id": 3,
+          "continuation_order_id": null,
+          "continuation_purchase_id": 5,
+          "settlement_order_id": null,
+          "settlement_purchase_id": 3,
+          "cutover_date": "2025-01-01",
+          "balance_mode": "itemized",
+          "opening_balance": "10.0000",
+          "currency": "USD",
+          "evidence_reference": "synthetic://history-backup/payable-plan",
+          "source_snapshot": {
+            "source": {
+              "notes": "historical-only",
+              "currency": "USD",
+              "group_id": "HOP-1AC51951-M",
+              "order_date": "2024-07-01",
+              "purchase_no": "HIST-PO-1AC51951-M",
+              "truth_status": "真实",
+              "exchange_rate": "1.000000",
+              "supplier_code": "AA",
+              "lifecycle_state": "partial",
+              "source_record_id": "PO-1AC51951-M",
+              "voucher_reference": "synthetic://contract/PO-HT-1",
+              "supplier_name_snapshot": "Historical Supplier Name",
+              "supplier_email_snapshot": "supplier@example.test",
+              "supplier_phone_snapshot": "+86-555-0111",
+              "supplier_address_snapshot": "Old supplier address",
+              "supplier_contact_name_snapshot": "Supplier contact"
+            },
+            "resolved": {
+              "notes": "historical-only",
+              "currency": "USD",
+              "group_id": "HOP-1AC51951-M",
+              "order_date": "2024-07-01",
+              "purchase_no": "HIST-PO-1AC51951-M",
+              "truth_status": "真实",
+              "exchange_rate": "1.000000",
+              "supplier_code": "AA",
+              "lifecycle_state": "partial",
+              "source_record_id": "PO-1AC51951-M",
+              "voucher_reference": "synthetic://contract/PO-HT-1",
+              "supplier_name_snapshot": "Historical Supplier Name",
+              "supplier_email_snapshot": "supplier@example.test",
+              "supplier_phone_snapshot": "+86-555-0111",
+              "supplier_address_snapshot": "Old supplier address",
+              "supplier_contact_name_snapshot": "Supplier contact"
+            }
+          },
+          "line_links": [
+            {
+              "target": "order",
+              "quantity": "3.00",
+              "source_id": 17,
+              "manual_reason": "Synthetic verified source has no supplier SKU mapping.",
+              "sales_source_id": 20,
+              "supplier_sku_id": null,
+              "archived_item_id": 3,
+              "continuation_item_id": 5
+            }
+          ],
+          "balance_snapshot": {
+            "mode": "itemized",
+            "plans": [
+              {
+                "note": "历史逐笔未结计划：PLAN-PO-1AC51951-M；依据：synthetic://payable-plan",
+                "amount": "10.0000",
+                "due_date": "2024-09-02"
+              }
+            ],
+            "plan_source_ids": [
+              24
+            ]
+          },
+          "approval_snapshot": {
+            "approval": {
+              "note": "Synthetic independent review of residual contracts and opening balances.",
+              "fingerprint": "16dc742eb7c454a9de4f1aa5af66182dab5f682e0b894470f02a44a9e23c11e4",
+              "reviewer_id": 6,
+              "reviewer_kind": "identified"
+            },
+            "maker_id": 5,
+            "maker_kind": "identified",
+            "adjustments": {
+              "evidence": "synthetic://history-backup/no-extra-costs",
+              "no_additional_costs": true,
+              "additional_costs_pending": false
+            },
+            "proposal_fingerprint": "16dc742eb7c454a9de4f1aa5af66182dab5f682e0b894470f02a44a9e23c11e4"
+          },
+          "created_at": "2026-11-05T08:03:56.474046+00:00"
+        }
+      ]
+    },
+    "private_vouchers": [
+      {
+        "id": 3,
+        "name": "finance-vouchers/2026/11/8e26cdd7f1c34eb19b4c3dfb942d88a9.pdf",
+        "scope": "account",
+        "stored_size": 57,
+        "file_size": 57,
+        "stored_sha256": "e65641f311be84f16c8f6bfe87c347c2ab6867bde192e59e824f1feadefaf8be",
+        "file_sha256": "e65641f311be84f16c8f6bfe87c347c2ab6867bde192e59e824f1feadefaf8be"
+      }
+    ],
+    "checks": {
+      "official_history_groups": 2,
+      "active_inventory_baselines": 1,
+      "reversed_inventory_baselines": 1,
+      "operational_contracts": 2,
+      "posted_verified_history_facts": 1,
+      "non_default_location_movements": 2,
+      "receipt_and_shipment_linked": true,
+      "synthetic_maker_reviewer_distinct": true
+    }
+  },
+  "restored_guard_probes": [
+    {
+      "table": "crm_historyinventorybaseline",
+      "action": "UPDATE",
+      "sqlstate": "55000",
+      "rejected_by_history_guard": true
+    },
+    {
+      "table": "crm_historyinventorybaseline",
+      "action": "DELETE",
+      "sqlstate": "55000",
+      "rejected_by_history_guard": true
+    },
+    {
+      "table": "crm_historyinventorybaseline",
+      "action": "TRUNCATE",
+      "sqlstate": "55000",
+      "rejected_by_history_guard": true
+    },
+    {
+      "table": "crm_historyinventorybaselinereversal",
+      "action": "UPDATE",
+      "sqlstate": "55000",
+      "rejected_by_history_guard": true
+    },
+    {
+      "table": "crm_historyinventorybaselinereversal",
+      "action": "DELETE",
+      "sqlstate": "55000",
+      "rejected_by_history_guard": true
+    },
+    {
+      "table": "crm_historyinventorybaselinereversal",
+      "action": "TRUNCATE",
+      "sqlstate": "55000",
+      "rejected_by_history_guard": true
+    },
+    {
+      "table": "crm_historyoperationalcontract",
+      "action": "UPDATE",
+      "sqlstate": "55000",
+      "rejected_by_history_guard": true
+    },
+    {
+      "table": "crm_historyoperationalcontract",
+      "action": "DELETE",
+      "sqlstate": "55000",
+      "rejected_by_history_guard": true
+    },
+    {
+      "table": "crm_historyoperationalcontract",
+      "action": "TRUNCATE",
+      "sqlstate": "55000",
+      "rejected_by_history_guard": true
+    }
+  ],
+  "guard_probe_data_unchanged": true,
+  "scope": "Actual populated synthetic PostgreSQL restore; not production roles or real history"
+}

@@ -1,0 +1,2294 @@
+{
+  "schema_version": 2,
+  "run_kind": "FINAL_DOCS_ONLY_HISTORY_CHROME_UAT",
+  "product_sha": "d7d927658e26727b6ebef135708d77278b9ee258",
+  "frozen_checkout": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-d7d92765",
+  "evidence_directory": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-d7d92765\\docs\\uat-evidence\\integration-closeout-02\\local-release-final-d7d92765",
+  "run_id": "7ca2cefa-5863-4164-bd5d-a85351ad63e1",
+  "chrome_channel_explicit_in_source_scripts": "chrome",
+  "runtime": {
+    "node": "v24.16.0",
+    "python": "Python 3.12.16",
+    "chrome_version": "156.0.8078.80",
+    "chrome_versions": [
+      {
+        "file": "operational/chrome-run.json",
+        "chrome": "156.0.8078.80"
+      },
+      {
+        "file": "workflow/chrome-workflow.json",
+        "chrome": "156.0.8078.80"
+      },
+      {
+        "file": "fulfillment/chrome-fulfillment.json",
+        "chrome": "156.0.8078.80"
+      },
+      {
+        "file": "inventory-location/inventory-location-chrome.json",
+        "chrome": "156.0.8078.80"
+      },
+      {
+        "file": "history-template.raw.log",
+        "chrome": "156.0.8078.80"
+      }
+    ],
+    "chrome_launch_evidence": [
+      "2026-11-05T09:27:53.629Z pw:browser <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-QHlTQx --remote-debugging-pipe --no-startup-window",
+      "2026-11-05T09:28:24.549Z pw:browser <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-zm2q0N --remote-debugging-pipe --no-startup-window",
+      "2026-11-05T09:29:32.429Z pw:browser <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-OGLREE --remote-debugging-pipe --no-startup-window",
+      "2026-11-05T09:30:53.689Z pw:browser <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-Myayr2 --remote-debugging-pipe --no-startup-window",
+      "2026-11-05T09:32:08.526Z pw:browser <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\Johnson\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-vHyhe5 --remote-debugging-pipe --no-startup-window"
+    ]
+  },
+  "preflight": {
+    "git_before": {
+      "head": "d7d927658e26727b6ebef135708d77278b9ee258",
+      "application_dirs_clean": true,
+      "git_root": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-d7d92765"
+    },
+    "git_after": {
+      "head": "d7d927658e26727b6ebef135708d77278b9ee258",
+      "application_dirs_clean": true,
+      "git_root": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-d7d92765"
+    },
+    "python_312": true,
+    "node_dependencies_present": true
+  },
+  "source_scripts": [
+    {
+      "name": "history-operational-chrome-uat.mjs",
+      "source": "frontend/scripts/history-operational-chrome-uat.mjs",
+      "source_sha256": "17c527958a0876938b0aae3cd735c8c50224f3d8a62d221dd23ef0b4f05c4951",
+      "reviewed_447d_sha256": "17c527958a0876938b0aae3cd735c8c50224f3d8a62d221dd23ef0b4f05c4951",
+      "source_bytes": 3570,
+      "evidence_copy": "harness/source-scripts/history-operational-chrome-uat.mjs",
+      "evidence_copy_sha256": "17c527958a0876938b0aae3cd735c8c50224f3d8a62d221dd23ef0b4f05c4951",
+      "explicitly_launches_chrome": true
+    },
+    {
+      "name": "history-operational-workflow-uat.mjs",
+      "source": "frontend/scripts/history-operational-workflow-uat.mjs",
+      "source_sha256": "67612e51626ebe4597701dee91178e36753cc22960284796b19b7b584b9f4cb1",
+      "reviewed_447d_sha256": "67612e51626ebe4597701dee91178e36753cc22960284796b19b7b584b9f4cb1",
+      "source_bytes": 9002,
+      "evidence_copy": "harness/source-scripts/history-operational-workflow-uat.mjs",
+      "evidence_copy_sha256": "67612e51626ebe4597701dee91178e36753cc22960284796b19b7b584b9f4cb1",
+      "explicitly_launches_chrome": true
+    },
+    {
+      "name": "history-operational-fulfillment-uat.mjs",
+      "source": "frontend/scripts/history-operational-fulfillment-uat.mjs",
+      "source_sha256": "8c01503132273e80af3a0a26d87341da89104cecda7a57f19778cd282a9aa651",
+      "reviewed_447d_sha256": "8c01503132273e80af3a0a26d87341da89104cecda7a57f19778cd282a9aa651",
+      "source_bytes": 5620,
+      "evidence_copy": "harness/source-scripts/history-operational-fulfillment-uat.mjs",
+      "evidence_copy_sha256": "8c01503132273e80af3a0a26d87341da89104cecda7a57f19778cd282a9aa651",
+      "explicitly_launches_chrome": true
+    },
+    {
+      "name": "history-inventory-location-chrome-uat.mjs",
+      "source": "frontend/scripts/history-inventory-location-chrome-uat.mjs",
+      "source_sha256": "fa36c1fe2edee2b02c237e62b5d5a6d323d0f6b2e52b5589d0e1e72afc34710a",
+      "reviewed_447d_sha256": "fa36c1fe2edee2b02c237e62b5d5a6d323d0f6b2e52b5589d0e1e72afc34710a",
+      "source_bytes": 2504,
+      "evidence_copy": "harness/source-scripts/history-inventory-location-chrome-uat.mjs",
+      "evidence_copy_sha256": "fa36c1fe2edee2b02c237e62b5d5a6d323d0f6b2e52b5589d0e1e72afc34710a",
+      "explicitly_launches_chrome": true
+    },
+    {
+      "name": "history-template-chrome-uat.mjs",
+      "source": "frontend/scripts/history-template-chrome-uat.mjs",
+      "source_sha256": "45faa88db307660438ad432b7251933464c0538c60ce6d714c37ea304cb365a9",
+      "reviewed_447d_sha256": "45faa88db307660438ad432b7251933464c0538c60ce6d714c37ea304cb365a9",
+      "source_bytes": 1377,
+      "evidence_copy": "harness/source-scripts/history-template-chrome-uat.mjs",
+      "evidence_copy_sha256": "45faa88db307660438ad432b7251933464c0538c60ce6d714c37ea304cb365a9",
+      "explicitly_launches_chrome": true
+    }
+  ],
+  "isolation": {
+    "root_basename": "sunjack-r1-repair-06-EY5b2O",
+    "api_port": 53621,
+    "vite_port": 53622,
+    "database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-EY5b2O\\db.sqlite3",
+    "media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-EY5b2O\\media",
+    "session_dir_basename": "sunjack-history-operational-closeout-final-7ca2cefa-5863-4164-bd5d-a85351ad63e1",
+    "development_superadmin": true,
+    "rbac_enforcement": false,
+    "audit_log_enabled": true,
+    "filesystem_media": true,
+    "pg_environment_variables_removed": true,
+    "session_files_kept_out_of_evidence": true
+  },
+  "identities": {
+    "direct_api": {
+      "verified": true,
+      "database_path_matches": true,
+      "media_root_matches": true,
+      "rbac_enforcement": false
+    },
+    "vite": {
+      "verified": true
+    },
+    "vite_api_proxy": {
+      "verified": true,
+      "database_path_matches": true,
+      "media_root_matches": true
+    }
+  },
+  "seed": {
+    "actors_are_superusers": [
+      false,
+      false
+    ],
+    "audit_log_enabled": true,
+    "database_engine": "django.db.backends.sqlite3",
+    "database_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-EY5b2O\\db.sqlite3",
+    "development_superadmin_enabled": true,
+    "finance_account_code": "UAT-HISTORY-CNY",
+    "finance_account_id": 1,
+    "finance_voucher_id": 1,
+    "finance_voucher_name": "synthetic-uat.pdf",
+    "finance_voucher_sha256": "94f673e3511b44ae4cce4189c7bf246b5106f5c0d9ed50767c58265d53c19fb9",
+    "finance_voucher_size": 55,
+    "generated_sku": "SKU-000001",
+    "history_application_id": 1,
+    "history_group_id": 1,
+    "history_source_file_name": "synthetic-history-uAT.xlsx",
+    "history_source_system": "Synthetic browser UAT",
+    "history_submission_preflight_only": true,
+    "master_ids": {
+      "category": 1,
+      "customer": 1,
+      "product": 1,
+      "sku": 1,
+      "supplier": 1
+    },
+    "media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-EY5b2O\\media",
+    "rbac_enforcement": false,
+    "synthetic_session_actors": [
+      "synthetic-history-uploader",
+      "synthetic-history-reviewer"
+    ]
+  },
+  "inventory_acceptance_copy": {
+    "source": "frontend/scripts/history-inventory-location-chrome-uat.mjs",
+    "source_sha256": "fa36c1fe2edee2b02c237e62b5d5a6d323d0f6b2e52b5589d0e1e72afc34710a",
+    "transformations": [
+      {
+        "kind": "playwright-import",
+        "from": "from '@playwright/test'",
+        "to": "from 'file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/lrv-final-d7d92765/frontend/node_modules/@playwright/test/index.mjs'",
+        "occurrences": 1,
+        "input_sha256": "fa36c1fe2edee2b02c237e62b5d5a6d323d0f6b2e52b5589d0e1e72afc34710a",
+        "output_sha256": "d42d119f9cb59e99c5c24c36a86159431d6794941202fc8ab3599635dabebe45"
+      },
+      {
+        "kind": "api-generated-sku-fixture",
+        "from": "UAT-HT-S1",
+        "to": "SKU-000001",
+        "occurrences": 6,
+        "input_sha256": "d42d119f9cb59e99c5c24c36a86159431d6794941202fc8ab3599635dabebe45",
+        "output_sha256": "72cb5a09ed12eec23fff0177f94bec9cf06c4436eb5dfd9b079f0b902342dcd8"
+      }
+    ],
+    "acceptance_copy": "harness/history-inventory-location-chrome-uat.mjs",
+    "acceptance_copy_sha256": "72cb5a09ed12eec23fff0177f94bec9cf06c4436eb5dfd9b079f0b902342dcd8",
+    "acceptance_copy_bytes": 2721,
+    "round_trip_matches_original": true
+  },
+  "stages": [
+    {
+      "label": "python-version",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 43,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/python-version.log"
+    },
+    {
+      "label": "isolated-migration",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 35571,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/isolated-migration.log"
+    },
+    {
+      "label": "synthetic-api-seed",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 23176,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/synthetic-api-seed.log"
+    },
+    {
+      "label": "history-operational-chrome",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 30691,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/history-operational-chrome.log"
+    },
+    {
+      "label": "history-operational-workflow",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 67622,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/history-operational-workflow.log"
+    },
+    {
+      "label": "history-operational-fulfillment",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 80775,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/history-operational-fulfillment.log"
+    },
+    {
+      "label": "history-inventory-location",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 75848,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/history-inventory-location.log"
+    },
+    {
+      "label": "history-template",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 61776,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/history-template.log"
+    },
+    {
+      "label": "read-only-business-verification-live",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 5929,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/read-only-business-verification-live.log"
+    },
+    {
+      "label": "sanitized-database-copy",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 11747,
+      "raw_log_truncated": false,
+      "evidence_log": "logs/sanitized-database-copy.log"
+    },
+    {
+      "label": "corrected-copy-business-verification",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 11571,
+      "evidence_log": "logs/corrected-copy-business-verification.log"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "fulfillment/history-operational-settled-1440.png",
+      "width": 1440,
+      "height": 3882,
+      "size": 516427,
+      "sha256": "80ecf7d79f54572c0afd5d7ee022e7e65f9294a8bd01120d11cde7e43d828533"
+    },
+    {
+      "path": "fulfillment/history-operational-settled-390.png",
+      "width": 390,
+      "height": 4411,
+      "size": 435471,
+      "sha256": "627db7923fee8dd87ccf9abd0da33d29a8858135ba2e11d71015ece63d525e54"
+    },
+    {
+      "path": "inventory-location/inventory-location-1440.png",
+      "width": 1440,
+      "height": 1000,
+      "size": 188204,
+      "sha256": "9259eb20b85fe8c9b90eb33e211190aa78145ecc648b9f8911aba2ef4db3ef1c"
+    },
+    {
+      "path": "inventory-location/inventory-location-390.png",
+      "width": 390,
+      "height": 844,
+      "size": 63163,
+      "sha256": "9f2fb4341bb7999e47b06a4c0f65cd89c899ef773f95cf5abf193d5c696b3e82"
+    },
+    {
+      "path": "operational/history-operational-1440.png",
+      "width": 1440,
+      "height": 5033,
+      "size": 581488,
+      "sha256": "588eedb301febab88276b965c0b35302b02159cafff753fa76a6f5dbe3a5bb98"
+    },
+    {
+      "path": "operational/history-operational-390.png",
+      "width": 390,
+      "height": 6051,
+      "size": 499094,
+      "sha256": "6cf68383a5ae00ae6b5521b4add27ccd71f06cfde0fe18a1e25608c60664c771"
+    },
+    {
+      "path": "workflow/history-operational-workflow-1440.png",
+      "width": 1440,
+      "height": 4143,
+      "size": 540076,
+      "sha256": "a381b940b317ab5673da9644582b293fcbebf9666f9431a3c6109028b2867303"
+    },
+    {
+      "path": "workflow/history-operational-workflow-390.png",
+      "width": 390,
+      "height": 4964,
+      "size": 455216,
+      "sha256": "7c5349a1d15fb2eb20e3f7df59aedee970b094dab41da66e46c61e473caffcb2"
+    }
+  ],
+  "logs": [
+    {
+      "name": "python-version.log",
+      "raw_sha256": "fd14d8d0c62801ac1c9e6d7081306d877f44791307d9f7ab823ec21da1cbc833",
+      "published_sha256": "fd14d8d0c62801ac1c9e6d7081306d877f44791307d9f7ab823ec21da1cbc833",
+      "raw_bytes": 16,
+      "published_bytes": 16,
+      "token_redactions": 0
+    },
+    {
+      "name": "isolated-migration.log",
+      "raw_sha256": "f3724ce4966f861d4a3b279213a2b0aae763b014782ddc2d1c71bb3e518075e8",
+      "published_sha256": "f3724ce4966f861d4a3b279213a2b0aae763b014782ddc2d1c71bb3e518075e8",
+      "raw_bytes": 179,
+      "published_bytes": 179,
+      "token_redactions": 0
+    },
+    {
+      "name": "synthetic-api-seed.log",
+      "raw_sha256": "7f4376babc17bdbfc6cd0320911e46dec77c441daaa2c3568c39b7cfd7ecef73",
+      "published_sha256": "7f4376babc17bdbfc6cd0320911e46dec77c441daaa2c3568c39b7cfd7ecef73",
+      "raw_bytes": 1051,
+      "published_bytes": 1051,
+      "token_redactions": 0
+    },
+    {
+      "name": "history-operational-chrome.log",
+      "raw_sha256": "5ed6bd60cc64b944cfc5fd9420b8ac8d36d9741f9a4d465851a8669315e66a2e",
+      "published_sha256": "5ed6bd60cc64b944cfc5fd9420b8ac8d36d9741f9a4d465851a8669315e66a2e",
+      "raw_bytes": 2837,
+      "published_bytes": 2837,
+      "token_redactions": 0
+    },
+    {
+      "name": "history-operational-workflow.log",
+      "raw_sha256": "de79e2dd3dd8317b8267a235653037177964f62ce3950803ae72d25324d8adf0",
+      "published_sha256": "de79e2dd3dd8317b8267a235653037177964f62ce3950803ae72d25324d8adf0",
+      "raw_bytes": 2634,
+      "published_bytes": 2634,
+      "token_redactions": 0
+    },
+    {
+      "name": "history-operational-fulfillment.log",
+      "raw_sha256": "26e8ef85b185f7f9494a026adef12214fc2fdc3218c02f83497bf0677efbfd5e",
+      "published_sha256": "26e8ef85b185f7f9494a026adef12214fc2fdc3218c02f83497bf0677efbfd5e",
+      "raw_bytes": 7017,
+      "published_bytes": 7017,
+      "token_redactions": 0
+    },
+    {
+      "name": "history-inventory-location.log",
+      "raw_sha256": "8edabf2e942d174166ff1a2d028bfcff43f3f2f9e6a6ae7b627b79b9f46dffbe",
+      "published_sha256": "8edabf2e942d174166ff1a2d028bfcff43f3f2f9e6a6ae7b627b79b9f46dffbe",
+      "raw_bytes": 2489,
+      "published_bytes": 2489,
+      "token_redactions": 0
+    },
+    {
+      "name": "history-template.log",
+      "raw_sha256": "2108c0d994f20738616096d8e05b578e7b9a58143f164ec7cb2846d76dd1aa4e",
+      "published_sha256": "2108c0d994f20738616096d8e05b578e7b9a58143f164ec7cb2846d76dd1aa4e",
+      "raw_bytes": 2484,
+      "published_bytes": 2484,
+      "token_redactions": 0
+    },
+    {
+      "name": "read-only-business-verification-live.log",
+      "raw_sha256": "9d81871ca35f4aea597c46dbee33ff599c22d42cfb1a84872e60477d1efed09e",
+      "published_sha256": "9d81871ca35f4aea597c46dbee33ff599c22d42cfb1a84872e60477d1efed09e",
+      "raw_bytes": 20848,
+      "published_bytes": 20848,
+      "token_redactions": 0
+    },
+    {
+      "name": "sanitized-database-copy.log",
+      "raw_sha256": "6f4b7443705f8b51e4f20843371d3ac8dff963a3011f0983ab24b6294f9053e5",
+      "published_sha256": "6f4b7443705f8b51e4f20843371d3ac8dff963a3011f0983ab24b6294f9053e5",
+      "raw_bytes": 863,
+      "published_bytes": 863,
+      "token_redactions": 0
+    },
+    {
+      "name": "corrected-copy-business-verification.log",
+      "raw_sha256": "b3ced44caa88e9d708c6e8085360afab3022b88f97f354ba90f79ddc6f729abb",
+      "published_sha256": "b3ced44caa88e9d708c6e8085360afab3022b88f97f354ba90f79ddc6f729abb",
+      "raw_bytes": 20848,
+      "published_bytes": 20848,
+      "token_redactions": 0
+    },
+    {
+      "name": "api-server.log",
+      "raw_sha256": "74c04b0a4c72884da55913daf3cb2c77e29fcb0e690398148a228bcd4ce6c0b4",
+      "published_sha256": "8acc2aec989c4c7fd0f9614efd6f3535f70893d4b63e6398ead8126b08166a3f",
+      "raw_bytes": 9505,
+      "published_bytes": 9461,
+      "token_redactions": 2
+    },
+    {
+      "name": "vite-server.log",
+      "raw_sha256": "90a5476d23d14036a8f0c998b74f1dbf7474719d9e41761d259049a0b0319a92",
+      "published_sha256": "90a5476d23d14036a8f0c998b74f1dbf7474719d9e41761d259049a0b0319a92",
+      "raw_bytes": 198,
+      "published_bytes": 198,
+      "token_redactions": 0
+    }
+  ],
+  "database_copy": {
+    "business_and_audit_manifest_sha256": "9ee6dce4a0625cce16b423c6356439d11e62e8e1cdeafbee9c15614b0ae845d2",
+    "business_and_audit_rows": 1091,
+    "business_and_audit_tables_unchanged": true,
+    "django_session_rows_removed_from_published_copy": 2,
+    "published_database": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\lrv-final-d7d92765\\docs\\uat-evidence\\integration-closeout-02\\local-release-final-d7d92765\\artifacts\\isolated-sanitized.sqlite3",
+    "published_sha256": "cea1859dcc5833889c26134ffcdfc2bbc47113f3aa83988082ada74c9f38b51b",
+    "published_table_count": 102,
+    "source_database": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-EY5b2O\\db.sqlite3",
+    "source_sha256": "1921170bb18ed60d7ca988d74b56027c50c0c59161cf4fb741027173229c180f",
+    "source_table_count": 102
+  },
+  "media_copy": {
+    "path": "artifacts/media",
+    "file_count": 1,
+    "files": [
+      {
+        "path": "finance-vouchers/2026/11/41a98e20de014b3ea648e14c21614298.pdf",
+        "size": 55,
+        "sha256": "94f673e3511b44ae4cce4189c7bf246b5106f5c0d9ed50767c58265d53c19fb9"
+      }
+    ]
+  },
+  "teardown": {
+    "api_stopped": true,
+    "vite_stopped": true,
+    "ports_released": true,
+    "owned_temp_cleanup": true,
+    "sanitized_copy_verification_cleanup": true,
+    "temp_root_removed": "sunjack-r1-repair-06-EY5b2O"
+  },
+  "errors": [],
+  "blocked_stages": [],
+  "business_verification_live": {
+    "audit": {
+      "history_event_count": 16,
+      "operation_log_count": 21
+    },
+    "continuation": {
+      "contract_count": 2,
+      "contracts": [
+        {
+          "balance_mode": "itemized",
+          "continuation_order_id": 2,
+          "continuation_purchase_id": null,
+          "id": 1,
+          "settlement_order_id": 1,
+          "settlement_purchase_id": null
+        },
+        {
+          "balance_mode": "itemized",
+          "continuation_order_id": null,
+          "continuation_purchase_id": 2,
+          "id": 2,
+          "settlement_order_id": null,
+          "settlement_purchase_id": 1
+        }
+      ],
+      "payment_plan_count": 2
+    },
+    "database_tables": {
+      "auth_group": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "auth_group_permissions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "auth_permission": {
+        "rows": 372,
+        "sha256": "dc69190c33d9d221f669accee53410781dd9e7732e0ee352fd006a73c3a71113"
+      },
+      "auth_user": {
+        "rows": 2,
+        "sha256": "9c4b35d229e1b377716a10617b1234dfa8a884dc614d9df2394b0380133358df"
+      },
+      "auth_user_groups": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "auth_user_user_permissions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_accessrole": {
+        "rows": 15,
+        "sha256": "23c71e1c4841475cd590fa72dd2320689a6791a6c72ceaeb450824a2c093a019"
+      },
+      "crm_advanceallocation": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_cashduplicatereview": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_cashsourceallocation": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_categoryattribute": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_contact": {
+        "rows": 1,
+        "sha256": "dc399343de66a9e4d596a75d890e3557e464a6cc4d228c5f5b540cdba5636e2f"
+      },
+      "crm_contractchangerequest": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_csvimportbatch": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_csvimportpreviewaudit": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_csvimportrowaudit": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_customer": {
+        "rows": 1,
+        "sha256": "d177b67fadde7fc24e529604f2cd12f0716efdd3d7d6af7c6fd72e7625144f4b"
+      },
+      "crm_customercodesequence": {
+        "rows": 1,
+        "sha256": "0ee180ae6a69c648d4af232711b77df109b88887117f355b068c32142baff59c"
+      },
+      "crm_customersupplierpreference": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_documentnumbersequence": {
+        "rows": 2,
+        "sha256": "84b0b4ac75d6f6b78a07613141babda514cb5e06274459bb77711854ae034c01"
+      },
+      "crm_employeeprofile": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_employeeprofile_roles": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_financeaccount": {
+        "rows": 1,
+        "sha256": "70ab7694b17df50c77912d717bee85990b0853a4beeb0df70128168b7226993d"
+      },
+      "crm_financeaccountmapping": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_financebankvoucherbinding": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_financeclassification": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_financefact": {
+        "rows": 2,
+        "sha256": "22f980441df2864abc7bab556bc60ae2a08a2cd40f9273c1c820b76b04352473"
+      },
+      "crm_financehistoricaltransfer": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_financeinstruction": {
+        "rows": 2,
+        "sha256": "10d2bbbef764559285eb6cfb336a73e394e197f369a3f4d6fc8a1a3f4654a104"
+      },
+      "crm_financereview": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_financetransfermatch": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_financevoucher": {
+        "rows": 1,
+        "sha256": "cf83a996b4c7263fe12b5db639d3b3f06b7cd880d266e12e80fd10f6c05341dc"
+      },
+      "crm_followup": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_followupattachment": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_fulfillmentidempotency": {
+        "rows": 2,
+        "sha256": "532d8f6177918265788aa19f2c752fe4736cf6314dcb3ebca6c29104c9d9c50f"
+      },
+      "crm_goodsreceipt": {
+        "rows": 1,
+        "sha256": "5cfcc8967d3d0ed928478aa5bbaec9b000bfbbfad93fa0e851f84408a70f4e66"
+      },
+      "crm_historyinventorybaseline": {
+        "rows": 1,
+        "sha256": "7d265bbb48d1c053f6c7a939c165fbca153a39c3dd4aa56adeae96dde6f8c897"
+      },
+      "crm_historyinventorybaselinereversal": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_historyoperationalcontract": {
+        "rows": 2,
+        "sha256": "eb1a0b810cfe55307273bc60d2969b7c9ff3157c899898be1cf3464dd770ab0d"
+      },
+      "crm_historytakeoverapplication": {
+        "rows": 1,
+        "sha256": "ab800adef139815a090b76b4fcb75714e05450d61de34e446fe0eaecd89a86ff"
+      },
+      "crm_historytakeoverevent": {
+        "rows": 16,
+        "sha256": "a89ff05f48d5760259afc2de7a707d420a382a31b0e7046af3c23d0920527af1"
+      },
+      "crm_historytakeovergroup": {
+        "rows": 1,
+        "sha256": "ae86e7e22a6948614b2bdfd6807859549c2b66712267a563507c13de06552de3"
+      },
+      "crm_historytakeoverhandoff": {
+        "rows": 3,
+        "sha256": "702ff3704d8d04382e2949568c48ac6761b509719b37ba267fb9970455724d46"
+      },
+      "crm_historytakeoversourcerecord": {
+        "rows": 12,
+        "sha256": "3e56a655c8bc511cd9f50f60f0d4bd19a9af7ccadc6aae659e7aa82db672875d"
+      },
+      "crm_hscode": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_inventorymovement": {
+        "rows": 2,
+        "sha256": "a87145d3c94bb6f0617d13c7cf01008a141ad22dd4756ecba04f3c282e7d0e3c"
+      },
+      "crm_inventorymovement_related_orders": {
+        "rows": 1,
+        "sha256": "a236ab292ebe281971439255bfb5301c4e8691663e72bc1c7267bf0cd540b44d"
+      },
+      "crm_inventoryreservation": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_operationlog": {
+        "rows": 21,
+        "sha256": "77c8533fcfb75b7d88961949dea6671a6aaccc5a1b7ec517cd5f8bcb5779406b"
+      },
+      "crm_order": {
+        "rows": 2,
+        "sha256": "4220dcdccc459de10c89fa7c4365c793f8a3fbc0d5076cac5db5d92002d02df8"
+      },
+      "crm_orderitem": {
+        "rows": 2,
+        "sha256": "8682cf27feed3a2f1423cfb8a89c96ccb143f76571a509c0fcdd972b52f704ee"
+      },
+      "crm_orderquantityadjustment": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_organizationunit": {
+        "rows": 6,
+        "sha256": "449de09f53c8ebf6eb7147f8f4683e0e0b36a5dc8555cb28deeb7442f19a3da9"
+      },
+      "crm_packagingtemplate": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_packingplan": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_packingplancarton": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_packingplancartonitem": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_paymentplan": {
+        "rows": 2,
+        "sha256": "bf338a17ac7ce96245fb7df375c301c05080ae6e86e9d2973248a16e6cd5695c"
+      },
+      "crm_position": {
+        "rows": 13,
+        "sha256": "8841d68290e139a2ee62742ffe4599804619cc59ac1e63fa840bfc9caf40cf5e"
+      },
+      "crm_product": {
+        "rows": 1,
+        "sha256": "277a74972d5196c76e43b7e49a3cfa36853070d886f8e857a2139d865e75df1c"
+      },
+      "crm_product_additional_categories": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_product_suppliers": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_productcategory": {
+        "rows": 1,
+        "sha256": "7f84da365a89e63497d0b99e0da46f8f43209abdcdb9cf00f5bd22c0428d68ed"
+      },
+      "crm_productcertificate": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_productcodesequence": {
+        "rows": 1,
+        "sha256": "fea9499b328cfb91d6b08eeb464dc2a116dec93ad1326381c85d10007ebd3aaf"
+      },
+      "crm_productparameter": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_purchasecostallocation": {
+        "rows": 1,
+        "sha256": "bb4d082e36a7be5e1a77fc3730e0f8e61ee22162b1bb38240b1dd569132160ac"
+      },
+      "crm_purchasemoqexception": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_purchaseorder": {
+        "rows": 2,
+        "sha256": "581bb111e0c9df0bf660c9f36ffe4b1b0915e48e7b86509ec5cf0d7aad22a559"
+      },
+      "crm_purchaseorderitem": {
+        "rows": 2,
+        "sha256": "d2d27f3331d8af70a0c2dbd7a4d3cacd561c435ee3a359cfc757978238cec1f1"
+      },
+      "crm_quote": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_quotechildrevisioncounter": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_quoteimportantnote": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_quoteitem": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_quotenumbersequence": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_quoterevisioncounter": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_quotetemplateasset": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_rmbcashevent": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_rolepermission": {
+        "rows": 360,
+        "sha256": "4d50279dc6ca527f9b0046e36d1937d12d38f12eae63725ea6683cc519042875"
+      },
+      "crm_salesrule": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_sharedreporttemplate": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_shipment": {
+        "rows": 1,
+        "sha256": "97204d6f3798b785451e05e85803d4e7050c551711c0988ef93e572c9b347d9d"
+      },
+      "crm_shipmentitem": {
+        "rows": 1,
+        "sha256": "5b530ee4aec009c8449aedb3fc27552513542c3ec5790bf921f8ff303516865a"
+      },
+      "crm_shipmentpackage": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_shipmentpackageitem": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_sku": {
+        "rows": 1,
+        "sha256": "e0f113a52facf4333afb61129488d808c2ac755f39ce87999c407d138e5d80a7"
+      },
+      "crm_skucodesequence": {
+        "rows": 1,
+        "sha256": "680fa65e7c61bd4b6c2caf61b66ccd392e7a313f3e54241d6150c57f4dc90c2b"
+      },
+      "crm_skupackagingprofile": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_skuparameterplan": {
+        "rows": 1,
+        "sha256": "404a8b81e1a9a4a10ff07d077dfb46e127a1eada77082c521743b6ef10a56dcf"
+      },
+      "crm_skurelationship": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_skutradeunit": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_skuversion": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_supplier": {
+        "rows": 1,
+        "sha256": "b1f7f13fe30c0a0e50d1edcac0c5d15c947be017085d3bb3a52d9d48d585fa16"
+      },
+      "crm_supplier_supply_categories": {
+        "rows": 1,
+        "sha256": "327bb078e44963caeb8ded262028cb2d0cad2f6195bec7218c46bb6d01a3180a"
+      },
+      "crm_suppliercandidateoverride": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_suppliercapability": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_suppliersku": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "crm_transaction": {
+        "rows": 2,
+        "sha256": "42414b721fa256e58902eb8176fa0c4cd03c52428b4f78849f6c2d8c049b77ee"
+      },
+      "django_admin_log": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "django_content_type": {
+        "rows": 93,
+        "sha256": "27506cef46b0270912e8eb8b8eaa38c93b96b76911d7ee5e2b1856d4e3f03341"
+      },
+      "django_migrations": {
+        "rows": 133,
+        "sha256": "37947f55aa65ee89783ebe9b5eeb04a9d0e88475f64dd9739fe262386550ec75"
+      },
+      "django_session": {
+        "rows": 2,
+        "sha256": "2fc2a469c082576c6ef0914d691a39d00c37cc42e0447ea7b90776cd8220691e"
+      }
+    },
+    "finance": {
+      "account_code": "UAT-HISTORY-CNY",
+      "account_ownership": "own",
+      "facts": [
+        {
+          "amount": "287.43",
+          "direction": "income",
+          "id": 1,
+          "instruction_status": "posted",
+          "kind": "cash",
+          "source_key": "e9ebbf7577713c103b47cd70fbc1fbeb22873fc5411e61b4452e53c3880b67ef",
+          "source_system": "HISTORY_TAKEOVER_V1"
+        },
+        {
+          "amount": "35.00",
+          "direction": "expense",
+          "id": 2,
+          "instruction_status": "posted",
+          "kind": "cash",
+          "source_key": "d141b85cdf1d4ffa8783d8c532aab0554e146ea2fb3d2e061764d21dca76dd47",
+          "source_system": "HISTORY_TAKEOVER_V1"
+        }
+      ],
+      "finance_instructions": 2,
+      "voucher_file_relative_path": "finance-vouchers/2026/11/41a98e20de014b3ea648e14c21614298.pdf",
+      "voucher_name": "synthetic-uat.pdf",
+      "voucher_sha256": "94f673e3511b44ae4cce4189c7bf246b5106f5c0d9ed50767c58265d53c19fb9",
+      "voucher_size": 55
+    },
+    "fulfillment": {
+      "idempotency": [
+        {
+          "key": "synthetic-history-receipt-uat-1",
+          "operation": "receive",
+          "response_status": 201,
+          "status": "succeeded"
+        },
+        {
+          "key": "synthetic-history-shipment-uat-1",
+          "operation": "ship",
+          "response_status": 201,
+          "status": "succeeded"
+        }
+      ],
+      "receipt_id": 1,
+      "receipt_quantity": "3.00",
+      "shipment_id": 1,
+      "shipment_quantity": "6.00"
+    },
+    "history": {
+      "application_id": 1,
+      "application_status": "executed",
+      "archived_order": {
+        "id": 1,
+        "order_no": "HIST-SO-HT-1",
+        "status": "historical"
+      },
+      "archived_purchase": {
+        "id": 1,
+        "purchase_no": "HIST-PO-HT-1",
+        "status": "historical"
+      },
+      "created_actor_kind": "development",
+      "created_by_label": "开发身份（非实名）",
+      "event_rows": [
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "group_submitted"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "application_submitted"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "group_approved"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "group_executed"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "finance_instruction_submitted"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "finance_instruction_approve"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "finance_instruction_post"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "finance_instruction_submitted"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "finance_instruction_approve"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "finance_instruction_post"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "inventory_baseline_proposed"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "inventory_baseline_approved"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "inventory_baseline_posted"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "operational_contract_proposed"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "operational_contract_approved"
+        },
+        {
+          "actor_kind": "development",
+          "actor_label": "开发身份（非实名）",
+          "event_type": "operational_contracts_created"
+        }
+      ],
+      "group_status": "executed",
+      "reviewed_actor_kind": "development",
+      "reviewed_by_label": "开发身份（非实名）",
+      "source_file_name": "synthetic-history-uAT.xlsx",
+      "source_group_id": "HT-UAT-447D-1",
+      "source_record_rows": 12,
+      "source_system": "Synthetic browser UAT"
+    },
+    "inventory": {
+      "baseline_count": 1,
+      "baselines": [
+        {
+          "cost_currency": "USD",
+          "id": 1,
+          "lot_reference": "LOT-HT-01",
+          "quantity": "18.00",
+          "sku": "SKU-000001",
+          "warehouse": "SYN-WH-01",
+          "warehouse_type": "自有仓"
+        }
+      ],
+      "inventory_movements": 2
+    },
+    "isolation": {
+      "audit_log_enabled": true,
+      "database_engine": "django.db.backends.sqlite3",
+      "database_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-EY5b2O\\db.sqlite3",
+      "development_name_is_not_real_employee_identity": true,
+      "development_superadmin_enabled": true,
+      "media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-EY5b2O\\media",
+      "rbac_enforcement": false,
+      "synthetic_dual_session_is_not_real_employee_acceptance": true
+    }
+  },
+  "template_download": {
+    "path": "template/history-takeover-template.xlsx",
+    "size": 14077,
+    "sha256": "9dcec1639ac7b8277167a80bcbd44d58aa2621516eb703fde775ee99b548c1b7"
+  },
+  "source_scripts_unchanged": [
+    {
+      "name": "history-operational-chrome-uat.mjs",
+      "source_sha256_before": "17c527958a0876938b0aae3cd735c8c50224f3d8a62d221dd23ef0b4f05c4951",
+      "source_sha256_after": "17c527958a0876938b0aae3cd735c8c50224f3d8a62d221dd23ef0b4f05c4951",
+      "unchanged": true
+    },
+    {
+      "name": "history-operational-workflow-uat.mjs",
+      "source_sha256_before": "67612e51626ebe4597701dee91178e36753cc22960284796b19b7b584b9f4cb1",
+      "source_sha256_after": "67612e51626ebe4597701dee91178e36753cc22960284796b19b7b584b9f4cb1",
+      "unchanged": true
+    },
+    {
+      "name": "history-operational-fulfillment-uat.mjs",
+      "source_sha256_before": "8c01503132273e80af3a0a26d87341da89104cecda7a57f19778cd282a9aa651",
+      "source_sha256_after": "8c01503132273e80af3a0a26d87341da89104cecda7a57f19778cd282a9aa651",
+      "unchanged": true
+    },
+    {
+      "name": "history-inventory-location-chrome-uat.mjs",
+      "source_sha256_before": "fa36c1fe2edee2b02c237e62b5d5a6d323d0f6b2e52b5589d0e1e72afc34710a",
+      "source_sha256_after": "fa36c1fe2edee2b02c237e62b5d5a6d323d0f6b2e52b5589d0e1e72afc34710a",
+      "unchanged": true
+    },
+    {
+      "name": "history-template-chrome-uat.mjs",
+      "source_sha256_before": "45faa88db307660438ad432b7251933464c0538c60ce6d714c37ea304cb365a9",
+      "source_sha256_after": "45faa88db307660438ad432b7251933464c0538c60ce6d714c37ea304cb365a9",
+      "unchanged": true
+    }
+  ],
+  "corrected_copy_verification": {
+    "result": "PASS",
+    "exit_code": 0,
+    "source_database": "artifacts/isolated-sanitized.sqlite3",
+    "verification_database_copy": "sunjack-r1-repair-06-JyfCcn",
+    "database_sha256_before": "cea1859dcc5833889c26134ffcdfc2bbc47113f3aa83988082ada74c9f38b51b",
+    "database_sha256_after": "cea1859dcc5833889c26134ffcdfc2bbc47113f3aa83988082ada74c9f38b51b",
+    "database_unchanged": true,
+    "isolated_identity": true,
+    "log": "corrected-copy-business-verification.raw.log",
+    "temp_root_cleanup": true,
+    "stage": {
+      "label": "corrected-copy-business-verification",
+      "exit_code": 0,
+      "signal": null,
+      "duration_ms": 11571,
+      "evidence_log": "logs/corrected-copy-business-verification.log"
+    },
+    "summary": {
+      "audit": {
+        "history_event_count": 16,
+        "operation_log_count": 21
+      },
+      "continuation": {
+        "contract_count": 2,
+        "contracts": [
+          {
+            "balance_mode": "itemized",
+            "continuation_order_id": 2,
+            "continuation_purchase_id": null,
+            "id": 1,
+            "settlement_order_id": 1,
+            "settlement_purchase_id": null
+          },
+          {
+            "balance_mode": "itemized",
+            "continuation_order_id": null,
+            "continuation_purchase_id": 2,
+            "id": 2,
+            "settlement_order_id": null,
+            "settlement_purchase_id": 1
+          }
+        ],
+        "payment_plan_count": 2
+      },
+      "database_tables": {
+        "auth_group": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "auth_group_permissions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "auth_permission": {
+          "rows": 372,
+          "sha256": "dc69190c33d9d221f669accee53410781dd9e7732e0ee352fd006a73c3a71113"
+        },
+        "auth_user": {
+          "rows": 2,
+          "sha256": "9c4b35d229e1b377716a10617b1234dfa8a884dc614d9df2394b0380133358df"
+        },
+        "auth_user_groups": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "auth_user_user_permissions": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_accessrole": {
+          "rows": 15,
+          "sha256": "23c71e1c4841475cd590fa72dd2320689a6791a6c72ceaeb450824a2c093a019"
+        },
+        "crm_advanceallocation": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_cashduplicatereview": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_cashsourceallocation": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_categoryattribute": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_contact": {
+          "rows": 1,
+          "sha256": "dc399343de66a9e4d596a75d890e3557e464a6cc4d228c5f5b540cdba5636e2f"
+        },
+        "crm_contractchangerequest": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_csvimportbatch": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_csvimportpreviewaudit": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_csvimportrowaudit": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_customer": {
+          "rows": 1,
+          "sha256": "d177b67fadde7fc24e529604f2cd12f0716efdd3d7d6af7c6fd72e7625144f4b"
+        },
+        "crm_customercodesequence": {
+          "rows": 1,
+          "sha256": "0ee180ae6a69c648d4af232711b77df109b88887117f355b068c32142baff59c"
+        },
+        "crm_customersupplierpreference": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_documentnumbersequence": {
+          "rows": 2,
+          "sha256": "84b0b4ac75d6f6b78a07613141babda514cb5e06274459bb77711854ae034c01"
+        },
+        "crm_employeeprofile": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_employeeprofile_roles": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_financeaccount": {
+          "rows": 1,
+          "sha256": "70ab7694b17df50c77912d717bee85990b0853a4beeb0df70128168b7226993d"
+        },
+        "crm_financeaccountmapping": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_financebankvoucherbinding": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_financeclassification": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_financefact": {
+          "rows": 2,
+          "sha256": "22f980441df2864abc7bab556bc60ae2a08a2cd40f9273c1c820b76b04352473"
+        },
+        "crm_financehistoricaltransfer": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_financeinstruction": {
+          "rows": 2,
+          "sha256": "10d2bbbef764559285eb6cfb336a73e394e197f369a3f4d6fc8a1a3f4654a104"
+        },
+        "crm_financereview": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_financetransfermatch": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_financevoucher": {
+          "rows": 1,
+          "sha256": "cf83a996b4c7263fe12b5db639d3b3f06b7cd880d266e12e80fd10f6c05341dc"
+        },
+        "crm_followup": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_followupattachment": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_fulfillmentidempotency": {
+          "rows": 2,
+          "sha256": "532d8f6177918265788aa19f2c752fe4736cf6314dcb3ebca6c29104c9d9c50f"
+        },
+        "crm_goodsreceipt": {
+          "rows": 1,
+          "sha256": "5cfcc8967d3d0ed928478aa5bbaec9b000bfbbfad93fa0e851f84408a70f4e66"
+        },
+        "crm_historyinventorybaseline": {
+          "rows": 1,
+          "sha256": "7d265bbb48d1c053f6c7a939c165fbca153a39c3dd4aa56adeae96dde6f8c897"
+        },
+        "crm_historyinventorybaselinereversal": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_historyoperationalcontract": {
+          "rows": 2,
+          "sha256": "eb1a0b810cfe55307273bc60d2969b7c9ff3157c899898be1cf3464dd770ab0d"
+        },
+        "crm_historytakeoverapplication": {
+          "rows": 1,
+          "sha256": "ab800adef139815a090b76b4fcb75714e05450d61de34e446fe0eaecd89a86ff"
+        },
+        "crm_historytakeoverevent": {
+          "rows": 16,
+          "sha256": "a89ff05f48d5760259afc2de7a707d420a382a31b0e7046af3c23d0920527af1"
+        },
+        "crm_historytakeovergroup": {
+          "rows": 1,
+          "sha256": "ae86e7e22a6948614b2bdfd6807859549c2b66712267a563507c13de06552de3"
+        },
+        "crm_historytakeoverhandoff": {
+          "rows": 3,
+          "sha256": "702ff3704d8d04382e2949568c48ac6761b509719b37ba267fb9970455724d46"
+        },
+        "crm_historytakeoversourcerecord": {
+          "rows": 12,
+          "sha256": "3e56a655c8bc511cd9f50f60f0d4bd19a9af7ccadc6aae659e7aa82db672875d"
+        },
+        "crm_hscode": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_inventorymovement": {
+          "rows": 2,
+          "sha256": "a87145d3c94bb6f0617d13c7cf01008a141ad22dd4756ecba04f3c282e7d0e3c"
+        },
+        "crm_inventorymovement_related_orders": {
+          "rows": 1,
+          "sha256": "a236ab292ebe281971439255bfb5301c4e8691663e72bc1c7267bf0cd540b44d"
+        },
+        "crm_inventoryreservation": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_operationlog": {
+          "rows": 21,
+          "sha256": "77c8533fcfb75b7d88961949dea6671a6aaccc5a1b7ec517cd5f8bcb5779406b"
+        },
+        "crm_order": {
+          "rows": 2,
+          "sha256": "4220dcdccc459de10c89fa7c4365c793f8a3fbc0d5076cac5db5d92002d02df8"
+        },
+        "crm_orderitem": {
+          "rows": 2,
+          "sha256": "8682cf27feed3a2f1423cfb8a89c96ccb143f76571a509c0fcdd972b52f704ee"
+        },
+        "crm_orderquantityadjustment": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_organizationunit": {
+          "rows": 6,
+          "sha256": "449de09f53c8ebf6eb7147f8f4683e0e0b36a5dc8555cb28deeb7442f19a3da9"
+        },
+        "crm_packagingtemplate": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_packingplan": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_packingplancarton": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_packingplancartonitem": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_paymentplan": {
+          "rows": 2,
+          "sha256": "bf338a17ac7ce96245fb7df375c301c05080ae6e86e9d2973248a16e6cd5695c"
+        },
+        "crm_position": {
+          "rows": 13,
+          "sha256": "8841d68290e139a2ee62742ffe4599804619cc59ac1e63fa840bfc9caf40cf5e"
+        },
+        "crm_product": {
+          "rows": 1,
+          "sha256": "277a74972d5196c76e43b7e49a3cfa36853070d886f8e857a2139d865e75df1c"
+        },
+        "crm_product_additional_categories": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_product_suppliers": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_productcategory": {
+          "rows": 1,
+          "sha256": "7f84da365a89e63497d0b99e0da46f8f43209abdcdb9cf00f5bd22c0428d68ed"
+        },
+        "crm_productcertificate": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_productcodesequence": {
+          "rows": 1,
+          "sha256": "fea9499b328cfb91d6b08eeb464dc2a116dec93ad1326381c85d10007ebd3aaf"
+        },
+        "crm_productparameter": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_purchasecostallocation": {
+          "rows": 1,
+          "sha256": "bb4d082e36a7be5e1a77fc3730e0f8e61ee22162b1bb38240b1dd569132160ac"
+        },
+        "crm_purchasemoqexception": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_purchaseorder": {
+          "rows": 2,
+          "sha256": "581bb111e0c9df0bf660c9f36ffe4b1b0915e48e7b86509ec5cf0d7aad22a559"
+        },
+        "crm_purchaseorderitem": {
+          "rows": 2,
+          "sha256": "d2d27f3331d8af70a0c2dbd7a4d3cacd561c435ee3a359cfc757978238cec1f1"
+        },
+        "crm_quote": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_quotechildrevisioncounter": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_quoteimportantnote": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_quoteitem": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_quotenumbersequence": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_quoterevisioncounter": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_quotetemplateasset": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_rmbcashevent": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_rolepermission": {
+          "rows": 360,
+          "sha256": "4d50279dc6ca527f9b0046e36d1937d12d38f12eae63725ea6683cc519042875"
+        },
+        "crm_salesrule": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_sharedreporttemplate": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_shipment": {
+          "rows": 1,
+          "sha256": "97204d6f3798b785451e05e85803d4e7050c551711c0988ef93e572c9b347d9d"
+        },
+        "crm_shipmentitem": {
+          "rows": 1,
+          "sha256": "5b530ee4aec009c8449aedb3fc27552513542c3ec5790bf921f8ff303516865a"
+        },
+        "crm_shipmentpackage": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_shipmentpackageitem": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_sku": {
+          "rows": 1,
+          "sha256": "e0f113a52facf4333afb61129488d808c2ac755f39ce87999c407d138e5d80a7"
+        },
+        "crm_skucodesequence": {
+          "rows": 1,
+          "sha256": "680fa65e7c61bd4b6c2caf61b66ccd392e7a313f3e54241d6150c57f4dc90c2b"
+        },
+        "crm_skupackagingprofile": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_skuparameterplan": {
+          "rows": 1,
+          "sha256": "404a8b81e1a9a4a10ff07d077dfb46e127a1eada77082c521743b6ef10a56dcf"
+        },
+        "crm_skurelationship": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_skutradeunit": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_skuversion": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_supplier": {
+          "rows": 1,
+          "sha256": "b1f7f13fe30c0a0e50d1edcac0c5d15c947be017085d3bb3a52d9d48d585fa16"
+        },
+        "crm_supplier_supply_categories": {
+          "rows": 1,
+          "sha256": "327bb078e44963caeb8ded262028cb2d0cad2f6195bec7218c46bb6d01a3180a"
+        },
+        "crm_suppliercandidateoverride": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_suppliercapability": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_suppliersku": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "crm_transaction": {
+          "rows": 2,
+          "sha256": "42414b721fa256e58902eb8176fa0c4cd03c52428b4f78849f6c2d8c049b77ee"
+        },
+        "django_admin_log": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "django_content_type": {
+          "rows": 93,
+          "sha256": "27506cef46b0270912e8eb8b8eaa38c93b96b76911d7ee5e2b1856d4e3f03341"
+        },
+        "django_migrations": {
+          "rows": 133,
+          "sha256": "37947f55aa65ee89783ebe9b5eeb04a9d0e88475f64dd9739fe262386550ec75"
+        },
+        "django_session": {
+          "rows": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "finance": {
+        "account_code": "UAT-HISTORY-CNY",
+        "account_ownership": "own",
+        "facts": [
+          {
+            "amount": "287.43",
+            "direction": "income",
+            "id": 1,
+            "instruction_status": "posted",
+            "kind": "cash",
+            "source_key": "e9ebbf7577713c103b47cd70fbc1fbeb22873fc5411e61b4452e53c3880b67ef",
+            "source_system": "HISTORY_TAKEOVER_V1"
+          },
+          {
+            "amount": "35.00",
+            "direction": "expense",
+            "id": 2,
+            "instruction_status": "posted",
+            "kind": "cash",
+            "source_key": "d141b85cdf1d4ffa8783d8c532aab0554e146ea2fb3d2e061764d21dca76dd47",
+            "source_system": "HISTORY_TAKEOVER_V1"
+          }
+        ],
+        "finance_instructions": 2,
+        "voucher_file_relative_path": "finance-vouchers/2026/11/41a98e20de014b3ea648e14c21614298.pdf",
+        "voucher_name": "synthetic-uat.pdf",
+        "voucher_sha256": "94f673e3511b44ae4cce4189c7bf246b5106f5c0d9ed50767c58265d53c19fb9",
+        "voucher_size": 55
+      },
+      "fulfillment": {
+        "idempotency": [
+          {
+            "key": "synthetic-history-receipt-uat-1",
+            "operation": "receive",
+            "response_status": 201,
+            "status": "succeeded"
+          },
+          {
+            "key": "synthetic-history-shipment-uat-1",
+            "operation": "ship",
+            "response_status": 201,
+            "status": "succeeded"
+          }
+        ],
+        "receipt_id": 1,
+        "receipt_quantity": "3.00",
+        "shipment_id": 1,
+        "shipment_quantity": "6.00"
+      },
+      "history": {
+        "application_id": 1,
+        "application_status": "executed",
+        "archived_order": {
+          "id": 1,
+          "order_no": "HIST-SO-HT-1",
+          "status": "historical"
+        },
+        "archived_purchase": {
+          "id": 1,
+          "purchase_no": "HIST-PO-HT-1",
+          "status": "historical"
+        },
+        "created_actor_kind": "development",
+        "created_by_label": "开发身份（非实名）",
+        "event_rows": [
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "group_submitted"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "application_submitted"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "group_approved"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "group_executed"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "finance_instruction_submitted"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "finance_instruction_approve"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "finance_instruction_post"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "finance_instruction_submitted"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "finance_instruction_approve"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "finance_instruction_post"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "inventory_baseline_proposed"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "inventory_baseline_approved"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "inventory_baseline_posted"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "operational_contract_proposed"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "operational_contract_approved"
+          },
+          {
+            "actor_kind": "development",
+            "actor_label": "开发身份（非实名）",
+            "event_type": "operational_contracts_created"
+          }
+        ],
+        "group_status": "executed",
+        "reviewed_actor_kind": "development",
+        "reviewed_by_label": "开发身份（非实名）",
+        "source_file_name": "synthetic-history-uAT.xlsx",
+        "source_group_id": "HT-UAT-447D-1",
+        "source_record_rows": 12,
+        "source_system": "Synthetic browser UAT"
+      },
+      "inventory": {
+        "baseline_count": 1,
+        "baselines": [
+          {
+            "cost_currency": "USD",
+            "id": 1,
+            "lot_reference": "LOT-HT-01",
+            "quantity": "18.00",
+            "sku": "SKU-000001",
+            "warehouse": "SYN-WH-01",
+            "warehouse_type": "自有仓"
+          }
+        ],
+        "inventory_movements": 2
+      },
+      "isolation": {
+        "audit_log_enabled": true,
+        "database_engine": "django.db.backends.sqlite3",
+        "database_path": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-JyfCcn\\db.sqlite3",
+        "development_name_is_not_real_employee_identity": true,
+        "development_superadmin_enabled": true,
+        "media_root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-JyfCcn\\media",
+        "rbac_enforcement": false,
+        "synthetic_dual_session_is_not_real_employee_acceptance": true
+      }
+    }
+  },
+  "http_evidence": {
+    "api_log": "logs/api-server.log",
+    "vite_log": "logs/vite-server.log",
+    "local_api_requests": 98,
+    "status_counts": {
+      "200": 90,
+      "201": 8
+    },
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/__test__/isolation/[ISOLATION_TOKEN_REDACTED]/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/__test__/isolation/[ISOLATION_TOKEN_REDACTED]/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/session/current-operator/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/1/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/review/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/1/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/execute/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/1/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/session/current-operator/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/1/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/session/current-operator/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/1/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-submit/",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-approve/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-post/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-submit/",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-approve/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-post/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/finance-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/finance-ledger/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-propose/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-approve/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-execute/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/inventory-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-propose/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-approve/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-execute/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/orders/2/confirm/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/purchase-orders/2/place/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/session/current-operator/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/1/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/1/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/purchase-orders/2/receive/",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/purchase-orders/2/receive/",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/orders/2/ship/",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/orders/2/ship/",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/payment-plans/1/settle/",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/payment-plans/2/settle/",
+        "status": 201
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/session/current-operator/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/1/",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/import/history-takeovers/1/groups/1/operational-status/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/session/current-operator/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/inventory-movements/?search=&page=1",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/skus/?include_inactive=1&page=1",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/skus/?include_inactive=1&page=1",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/orders/?page=1",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/session/current-operator/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/1/",
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/import/history-takeovers/template/",
+        "status": 200
+      }
+    ]
+  },
+  "acceptance": {
+    "chrome_stage_results": {
+      "history-operational-chrome": 0,
+      "history-operational-workflow": 0,
+      "history-operational-fulfillment": 0,
+      "history-inventory-location": 0,
+      "history-template": 0
+    },
+    "chrome_pass_count": 5,
+    "chrome_fail_or_missing_count": 0,
+    "live_read_only_verification_exit_code": 0,
+    "corrected_copy_verification_exit_code": 0,
+    "screenshots_count": 8,
+    "downloaded_workbook_present": true,
+    "required_artifacts_present": true
+  },
+  "final_status": "PASS"
+}

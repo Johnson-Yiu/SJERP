@@ -2,6 +2,8 @@
 
 ## LOCAL-RELEASE-VALIDATION-03 进展（2026-11-05）
 
+诊断候选 `d7d927658e26727b6ebef135708d77278b9ee258` 完整浏览器九配置为 257 通过/9 失败（其中主套件 233/8，图片导出 0/1），整体 FAIL；构建和历史 Chrome 通过。原失败含页面 load 超时、资金审核级联及导入/报价下载取消，详细日志和截图已保存，具体 load 阻塞资源及下载取消归因 UNKNOWN。核心来源在该测试后才合入，该结果不代表核心集成候选。
+
 SKU 只读浏览器用例在候选 `d7d9276` 等待整页 load 时超时，快照已有 SKU 标题；测试提交 `4463ef8ca85871fa39c73941b608b66c57597f97` 保留原只读权限断言并等待 DOM 就绪，独立 Chromium 文件回归 17/17 通过。阻塞 load 的具体资源未知，不覆盖原全套失败；详情见[证据](uat-evidence/local-release-validation-20261105/core-sku-target-evidence/publication-manifest.json)。
 
 来源 `81cb56c18e6183b357af5b9845a4d56d6e6dd96b` 的隔离权限审查确认：ISS-097 最高角色经通用 PATCH 可修改 code；ISS-003/055 普通授权客户 `.json` 路径与无后缀授权不一致；ISS-105 两个财务 `.json` 列表返回 500。最高角色保护属于内测前安全阻断，后两项为已复现兼容性缺陷，现有证据不证明未授权数据泄露。权限包负责修复，本集成不修改其专属实现、不启用正式 RBAC；修复后必须将保护性断言纳入默认发现，不再保留要求错误行为成功的观测断言。[原审查与原始测试](uat-evidence/access-readiness-20261105/INTEGRATION-NOTE.md) 已保存，不自行关闭原 Issue。

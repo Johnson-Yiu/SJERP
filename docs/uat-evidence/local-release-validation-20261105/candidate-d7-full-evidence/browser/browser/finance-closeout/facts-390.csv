@@ -1,0 +1,3 @@
+﻿id,account_name,account_type,actual_date,kind,nature,direction,amount,refund_excess_amount,unallocated_amount,company_flow_included,source_system,source_key,voucher_sha256
+17,合成验收银行-1440-1793867668978,bank,2026-01-02,cash,unclassified,income,123.45,0.00,0.00,True,SYNTH-CHROME,SYNTH-ROW-1440-1793867668978,bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2
+18,合成验收银行-390-1793867681714,bank,2026-01-02,cash,unclassified,income,123.45,0.00,0.00,True,SYNTH-CHROME,SYNTH-ROW-390-1793867681714,bf8883a33aa79e609a9aabd0c18fcce7381004276751c09b16b1d5d4707a80f2

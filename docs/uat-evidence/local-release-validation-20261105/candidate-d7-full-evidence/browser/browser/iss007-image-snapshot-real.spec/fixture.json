@@ -1,0 +1,20 @@
+{
+  "synthetic_only": true,
+  "customer_id": 1,
+  "product_id": 1,
+  "sku_id": 1,
+  "sku_code": "ISS007-UAT-SKU",
+  "missing_quote_id": 1,
+  "missing_quote_item_id": 1,
+  "missing_image_path": "quote-item-images/iss007-uat/missing-history-image.png",
+  "original_image_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2",
+  "replacement_image_sha256": "4991af95c7f5acaed2e13ea94ebf0733dd077d7e0f14cac519c3e97e798f3e1a",
+  "original_image_base64": "iVBORw0KGgoAAAANSUhEUgAAADAAAAAgCAIAAADbtmxLAAAAT0lEQVR4nM3OMQEAIAzAsFJf8+8APfwYWKMg585QIjESIzESIzESIzESIzESIzESIzESIzESIzESIzESIzESIzESIzESIzESIzES43bg9wAfnwGQR08NSAAAAABJRU5ErkJggg==",
+  "replacement_image_base64": "iVBORw0KGgoAAAANSUhEUgAAADAAAAAgCAIAAADbtmxLAAAAT0lEQVR4nM3OQQEAIBCAMCSMJc1lP/9XQJZga59LicRIjMRIjMRIjMRIjMRIjMRIjMRIjMRIjMRIjMRIjMRIjMRIjMRIjMRIjMRIjL8D0wOLKwGWmO/32AAAAABJRU5ErkJggg==",
+  "quote_id": 2,
+  "quote_no": "SJ20261031DE001",
+  "quote_item_id": 2,
+  "order_id": 1,
+  "order_no": "SO-2026-00001",
+  "order_item_id": 1
+}

@@ -49,7 +49,7 @@ test('other business selections and infrastructure smoke preserve existing accou
 })
 
 function runProcess(command, args, options) {
-  const { testSignal, traceLabel, ...spawnOptions } = options
+  const { testSignal, traceLabel, progressTimeoutMs, ...spawnOptions } = options
   const started = performance.now()
   const trace = message => {
     if (traceLabel) process.stdout.write(`[${traceLabel} +${Math.round(performance.now() - started)}ms] ${message}\n`)
@@ -60,25 +60,45 @@ function runProcess(command, args, options) {
     stdio: ['ignore', 'pipe', 'pipe'],
   })
   let output = ''
-  const append = chunk => { output += chunk.toString(); trace(chunk.toString().trimEnd()) }
+  let progressTimer
+  let stalled = false
+  let stopPromise = null
+  const stop = reason => {
+    if (!stopPromise) stopPromise = stopOwnedProcessTree(child).catch(error => trace(`${reason} cleanup failed: ${error.message}`))
+    return stopPromise
+  }
+  const resetProgressTimer = () => {
+    if (!progressTimeoutMs || stalled) return
+    clearTimeout(progressTimer)
+    progressTimer = setTimeout(() => {
+      stalled = true
+      trace(`no child output for ${progressTimeoutMs}ms; stopping owned runner pid=${child.pid}`)
+      void stop('stalled runner')
+    }, progressTimeoutMs)
+  }
+  const append = chunk => { output += chunk.toString(); trace(chunk.toString().trimEnd()); resetProgressTimer() }
+  resetProgressTimer()
   child.stdout.on('data', append)
   child.stderr.on('data', append)
   trace(`spawned owned runner pid=${child.pid}`)
   const cancel = () => {
     trace(`test cancelled; stopping owned runner pid=${child.pid}`)
-    void stopOwnedProcessTree(child).then(
-      () => trace('owned runner cleanup finished'),
-      error => trace(`owned runner cleanup failed: ${error.message}`),
-    )
+    void stop('cancelled runner').then(() => trace('owned runner cleanup finished'))
   }
   testSignal?.addEventListener('abort', cancel, { once: true })
   if (testSignal?.aborted) cancel()
   return new Promise((resolve, reject) => {
-    child.once('error', reject)
-    child.once('close', (code, signal) => {
+    child.once('error', error => { clearTimeout(progressTimer); reject(error) })
+    child.once('close', async (code, signal) => {
+      clearTimeout(progressTimer)
       testSignal?.removeEventListener('abort', cancel)
+      if (stopPromise) await stopPromise
       trace(`closed code=${code} signal=${signal}`)
-      resolve({ code, signal, output })
+      if (stalled) {
+        const error = new Error(`owned runner had no output for ${progressTimeoutMs}ms`)
+        error.childPid = child.pid
+        reject(error)
+      } else resolve({ code, signal, output })
     })
   })
 }
@@ -435,7 +455,17 @@ test('cleanup refuses an ownership marker belonging to another run', async () =>
   }
 })
 
-test('two independent worktree runtimes can start concurrently without sharing ports or data', { timeout: 120000 }, async t => {
+test('silent owned runner is stopped and reported', { timeout: 20000 }, async () => {
+  let childPid
+  await assert.rejects(
+    runProcess(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { progressTimeoutMs: 1000 }),
+    error => { childPid = error.childPid; return /owned runner had no output for 1000ms/.test(error.message) },
+  )
+  assert.ok(childPid)
+  assert.throws(() => process.kill(childPid, 0), error => error.code === 'ESRCH')
+})
+
+test('two independent worktree runtimes can start concurrently without sharing ports or data', { timeout: 300000 }, async t => {
   const started = performance.now()
   const phase = message => process.stdout.write(`[parallel setup +${Math.round(performance.now() - started)}ms] ${message}\n`)
   const parent = await mkdtemp(path.join(os.tmpdir(), 'sunjack-parallel-worktrees-'))
@@ -452,7 +482,7 @@ test('two independent worktree runtimes can start concurrently without sharing p
     const results = await Promise.all(worktrees.map(worktree => runProcess(
       process.execPath,
       [path.join(worktree.frontend, 'scripts/run-isolated-browser-tests.mjs')],
-      { cwd: worktree.frontend, env, testSignal: t.signal, traceLabel: path.basename(worktree.root) },
+      { cwd: worktree.frontend, env, testSignal: t.signal, traceLabel: path.basename(worktree.root), progressTimeoutMs: 60000 },
     )))
     for (const result of results) {
       assert.equal(result.code, 0, result.output)

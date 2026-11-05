@@ -113,7 +113,9 @@ def main():
       ("postgres17-full-backup-restore", exe(python, "docs/uat-evidence/review-integration-batch-20261104/run-postgres-regression.py", "--postgres-bin", pg_bin), ROOT),
       ("backup-command-faults", exe(python, "manage.py", "test", "crm.tests.test_iss018_drill_command", "--verbosity", "2"), ROOT / "backend"),
       ("npm-ci", exe(*npm, "ci"), ROOT / "frontend"),
-      ("node", exe(*npm, "run", "test:unit"), ROOT / "frontend"),
+      # Serialize test files to avoid unrelated load while the isolation test
+      # still launches its two worktrees concurrently and retains all assertions.
+      ("node", exe(*npm, "run", "test:unit", "--", "--test-concurrency=1"), ROOT / "frontend"),
       ("font", exe("node", "--test", "tests/detail-drawer-typography.spec.js"), ROOT / "frontend"),
       ("vitest", exe(*npx, "--no-install", "vitest", "run", "tests", "--environment", "jsdom", "--exclude", "tests/detail-drawer-typography.spec.js"), ROOT / "frontend"),
       ("browser-applicable", exe("node", REPORT / "browser-suite.mjs"), ROOT / "frontend"),

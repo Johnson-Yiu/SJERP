@@ -1,0 +1,64 @@
+{
+  "source": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\r1-prelaunch-consolidation-20261104\\.tmp\\finance-target-snapshot\\docs\\uat-evidence\\finance-target",
+  "raw_retained_locally": true,
+  "items": [
+    {
+      "path": "cash-duplicate/evidence/browser-database.json",
+      "bytes": 5928,
+      "raw_sha256": "fb38e7b1d7275a56476b2ebee2b620d3ddeaca400b763f830299ee7c684660a2",
+      "published_sha256": "477d8688d850c7c0df9b232a2064d613f3e4e5e33b81b798d8c629fcc019ddf8",
+      "redactions": 0
+    },
+    {
+      "path": "cash-duplicate/evidence/browser-http.json",
+      "bytes": 67609,
+      "raw_sha256": "197aeb736845977234ca42130cbab0cadc414921b583df2c13e8c7d6d3d1e720",
+      "published_sha256": "04cdc8f83683e852ea59d95eff60307c6bcba97f26c1a8db822f935167e89ce1",
+      "redactions": 0
+    },
+    {
+      "path": "cash-duplicate/evidence/screenshots/duplicate-review-1440.png",
+      "bytes": 172369,
+      "raw_sha256": "3dd68b5c09c81122001da6e2bdc5d5b3b40e2cbf6a69ebdd219ada61fa7c233e",
+      "published_sha256": "3dd68b5c09c81122001da6e2bdc5d5b3b40e2cbf6a69ebdd219ada61fa7c233e",
+      "redactions": 0
+    },
+    {
+      "path": "cash-duplicate/evidence/screenshots/duplicate-review-390.png",
+      "bytes": 97404,
+      "raw_sha256": "04b8a2375e9fa18a8a1704ae41c0ce497009dc73f1466a11f3b60fb7560a2eca",
+      "published_sha256": "04b8a2375e9fa18a8a1704ae41c0ce497009dc73f1466a11f3b60fb7560a2eca",
+      "redactions": 0
+    },
+    {
+      "path": "cash-duplicate/raw-log-hash.json",
+      "bytes": 86,
+      "raw_sha256": "a94bb069fa7f4ae89d21ba24cc82486aed0ddfa744909468b822af485421edba",
+      "published_sha256": "90465d122195519494e45778209fb7b7d9fdfd2231f9f235748c81c959a88a79",
+      "redactions": 0
+    },
+    {
+      "path": "cash-duplicate/run.log",
+      "bytes": 14164,
+      "raw_sha256": "c60fc0c93e6150f1a2c984d3baa0ad0e0faae237dca203a36483b18f7bb1f4c1",
+      "published_sha256": "a9997a128e9566f9691c438f1d153da95253c4e153e4c4b8378f3974c1d2257c",
+      "redactions": 4
+    },
+    {
+      "path": "finance-layout/raw-log-hash.json",
+      "bytes": 86,
+      "raw_sha256": "6b34797b20604bd28a7b399f4be530d74f68cb7a53f32fb5efe8c28764a29462",
+      "published_sha256": "2bc01b33287f20f672d299bc0432069b9278e857e4919d3fb97d59145ec6fc7e",
+      "redactions": 0
+    },
+    {
+      "path": "finance-layout/run.log",
+      "bytes": 12068,
+      "raw_sha256": "147a66d14744f4c1aafb9e1be61e7dfb4424550279d25115e947abb7b24be4d8",
+      "published_sha256": "1d55bf3aadac8486dfef04e364299f8aceffc38cf4ed50ed2d666aca4c621cc1",
+      "redactions": 4
+    }
+  ],
+  "omitted": [],
+  "scope": "Synthetic evidence only; skipped databases and archives may contain temporary sessions."
+}

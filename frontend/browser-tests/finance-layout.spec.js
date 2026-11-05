@@ -32,7 +32,7 @@ for (const route of ['receivables','payables']) {
       await expect(page.getByLabel('仅看逾期')).toBeChecked()
       await expect(page.getByLabel('到期日从')).toHaveValue('2026-10-01')
       await expect(page.getByLabel('到期日至')).toHaveValue('2026-10-31')
-      await page.reload(); await expect(page.getByRole('searchbox')).toHaveValue('Supplier')
+      await page.reload({ waitUntil: 'domcontentloaded' }); await expect(page.getByRole('searchbox')).toHaveValue('Supplier')
       await page.getByRole('button',{name:'重置',exact:true}).click()
       await expect(page).toHaveURL(new RegExp(`/${route}\\?status=open$`))
     })

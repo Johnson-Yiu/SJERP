@@ -72,3 +72,5 @@ ISS-007 图片快照场景在整项 60 秒用尽时等待最后一次打开报�
 诊断候选 `d7d927658e26727b6ebef135708d77278b9ee258` 已完成 SQLite 1419 项（1339 通过、80 跳过）、真实 PostgreSQL 1419 项（1387 通过、32 跳过），二者均 0 失败；独立 PostgreSQL 备份故障 8/8、Node 179/179、字体 1/1、Vitest 725/725 通过。新候选浏览器、构建和历史 Chrome 尚未结束。已结束的 19 份日志经脱敏并记录原始/发布 SHA：[日志清单](candidate-d7-backend-logs/publication-manifest.json)。此前 `d5a6a233` 的浏览器 265/1 仍为 FAIL。
 
 `d7d927658e26727b6ebef135708d77278b9ee258` 进行中的浏览器主套件出现历史经营分析导航 `load` 等待 30 秒超时；快照显示标题及多张明细表已经出现，阻塞 `load` 的具体资源未知。测试提交 `d7d37de82f492f0e128f85ee28577f8e3e3a058d` 使用 DOM 就绪并保留原标题、表格、布局和权限断言；隔离 Playwright Chromium 定向 2/2 通过，进程/端口/专属临时数据清理成功，不能覆盖全套失败。[定向证据](history-navigation-target-evidence/publication-manifest.json) 含截图、脱敏日志和哈希；完整失败现场待本次运行结束后归档。
+
+`d7d9276` 主套件还出现应付布局刷新和资金重复核查导航等待 `load` 超时；应付失败快照已有筛选框及原值。资金套件要求两条审核，第一场景超时后最终仅有一条，因此另一个 afterAll 断言也失败；这不能单独证明业务缺陷。改为 DOM 就绪并保留筛选值、布局、候选及审核断言后，隔离财务布局 10/10、真实 Chrome 合成资金重复核查 2/2 通过，进程、端口及专属临时数据清理成功。[定向日志及截图](finance-readiness-target-evidence/publication-manifest.json)。同次主套件还观察到导入 CSV 的 `download.path: canceled` 及报价历史 XLSX 的 `download.saveAs: canceled`，具体原因未定，完整失败日志待全套结束归档。

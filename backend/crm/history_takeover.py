@@ -12,7 +12,7 @@ from decimal import Decimal
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
-from .history_import_preflight import SHEET_SCHEMAS, _read_workbook, preflight_rows
+from .history_import_preflight import SHEET_SCHEMAS, _read_workbook, _storage_limit_errors, preflight_rows
 from .models import (
     Customer,
     HistoryTakeoverApplication,
@@ -156,6 +156,12 @@ def _status_for_group(payload, group_id):
 def submit_workbook(data, filename, user):
     rows = _read_workbook(data)
     payload, rows = preflight_rows(rows, user)
+    # Reject unpersistable identifiers before creating an application.
+    for sheet, entries in rows.items():
+        for entry in entries:
+            errors = _storage_limit_errors(sheet, entry["data"])
+            if errors:
+                raise TakeoverRuleError(f"{sheet}第 {entry['row']} 行：{errors[0]}")
     digest = hashlib.sha256(data).hexdigest()
     existing = HistoryTakeoverApplication.objects.select_for_update().filter(source_sha256=digest).exclude(status__in=["rejected", "withdrawn"]).first()
     if existing:
@@ -342,10 +348,14 @@ def _record_source_id(sheet, data):
 
 
 def _truth_rows(group):
+    if len(group.source_system) > 160 or len(group.source_group_id) > 120:
+        raise TakeoverRuleError("历史关联组来源系统或组编号超出长度限制，请更正原始资料。")
     for sheet, rows in group.source_rows.items():
         for item in rows:
             data = item["data"]
             identity = _record_source_id(sheet, data)
+            if len(identity) > 160:
+                raise TakeoverRuleError(f"{sheet}第 {item['row']} 行来源记录编号超过 160 个字符。")
             if identity and HistoryTakeoverSourceRecord.objects.filter(source_system=group.source_system, record_type=sheet, source_record_id=identity).exists():
                 raise TakeoverRuleError(f"来源记录已由其他承接批次登记：{sheet} / {identity}。")
 

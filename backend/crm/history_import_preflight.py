@@ -440,6 +440,23 @@ def _issue(result, status_text, message, action, related=None):
                 result["related_records"].append(item)
 
 
+def _storage_limit_errors(sheet, data):
+    """Describe source identities that cannot fit the existing history models."""
+    errors = []
+    if len(str(data.get("group_id") or "").strip()) > 120:
+        errors.append("来源关联组编号不能超过 120 个字符。")
+    if sheet == "分组" and len(str(data.get("source_system") or "")) > 160:
+        errors.append("原系统名称不能超过 160 个字符。")
+    if sheet in ("销售明细", "采购明细"):
+        parent = "source_order_id" if sheet == "销售明细" else "source_purchase_id"
+        identity = f"{data.get(parent) or ''}:{data.get('source_line_id') or ''}"
+    else:
+        identity = next((str(data[key]) for key in ("source_record_id", "source_event_id", "source_line_id", "source_plan_id") if data.get(key)), "")
+    if len(identity) > 160:
+        errors.append("来源记录编号（明细含上级编号）不能超过 160 个字符。")
+    return errors
+
+
 def _base_validate(sheet, record, result):
     data = record["data"]
     schema = {column["key"]: column for column in SHEET_SCHEMAS[sheet]}
@@ -491,6 +508,8 @@ def _base_validate(sheet, record, result):
     if not group_id:
         _issue(result, "阻断", "缺少来源关联组编号。", "按同一业务依赖链填写来源关联组编号。")
     data["group_id"] = group_id
+    for error in _storage_limit_errors(sheet, data):
+        _issue(result, "阻断", error, "请核对原始资料；无法准确表示时联系管理员处理，不得截断或覆盖历史编号。")
 
 
 def _records_index(records, key):

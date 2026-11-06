@@ -1,0 +1,6 @@
+{
+  "nativeBeforeUnload": "cancelled and retained",
+  "accountChange": "synthetic setAccessOperator 111→222, same display name",
+  "storedDraftBody": false,
+  "limitation": "This exercises the workspace integration boundary; it is not a real employee login or identity-package acceptance."
+}

@@ -16,6 +16,7 @@
 |EntityDetailModal → `drill`、`back`、`relationWorkbenchLocation`、`quickCreate`|关系栈、关系工作台或 RelatedCreateModal|已表达独立路由的关联对象进入标签；当前任务内部局部关系栈/短关联创建保留子窗体|详情 stack、当前 tab、局部选择|客户/联系人、产品/SKU、订单/采购关联与返回|
 |OrderDetailModal/QuoteDetailModal/PurchaseDetailModal → `useDetailTab`、`load`、原编辑与履约 emits|工作台子页与动作|工作台页签仍是页内前进；入库、出库、成本、审批和附件不改变动作含义|工作台子页、未保存子表单|原工作台、合同金额、出入库、成本回归|
 |`/products`、`/skus`、`/categories` → 原 load/create/edit/detail/规则编辑|列表、抽屉与编辑器|模块工作区；路由化独立对象为对象标签，嵌入 ProductWorkspace/SKU 选择及分类编辑仍为当前任务|参数、SKU、图片 object URL、分类路径、选择|产品/SKU 既有回归；失活暂停文档监听，关闭撤销对象 URL|
+|`/inventory` → `openDetail`、`selectDetailTab`、`detailRecordLocation`、`closeDetail`|库存列表、SKU 详情和工作台下钻|可独立查阅的 SKU 库存详情与跨模块对象为独立工作区。关联记录筛选及详情子页留在当前工作区；关闭详情回到仍打开的原列表|SKU、页码、排序、详情筛选、原列表滚动|真实 Chrome 下钻库存流水、关闭及浏览器返回；保留原库存断言|
 |`/sku-packaging`、`/sku-trade-units`、`/hs-codes` → 原 load/reset/save/query|维护与本地步骤|模块工作区；包装选择、单位换算和编码筛选不新增标签|表单、selected SKU、排序、URL 查询|既有参数/包装/交易单位回归|
 |`/`、`/finance` → 概览下钻链接|导航到带筛选列表或对象|跨模块任务为标签，目标列表保留其 URL 业务筛选，原来源工作区不销毁|概览期间、返回上下文|原下钻和报表权限回归|
 |`/reports` → 图表设置、共享报表、ReportDetailPanel 下钻、导出|局部图表与分页明细、CSV|图表及明细仍为当前任务/子窗体；图表布局偏好按账号隔离|图表定义、明细选择/分页、期间|报表、导出及权限原回归|

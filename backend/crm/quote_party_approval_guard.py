@@ -14,6 +14,31 @@ def _party(quote):
     return {key: getattr(quote, field) for key, field in PARTY_FIELDS.items()}
 
 
+def validate_inherited_quote_details(quote):
+    """Use the shared validated revision-chain reader under the quote lock."""
+    from .party_document_details import effective_quote_details
+    from .party_document_details_models import PartyDocumentDetailsStorage
+    from django.db import connections
+    alias = quote._state.db or 'default'
+    if PartyDocumentDetailsStorage._meta.db_table not in connections[alias].introspection.table_names():
+        from django.db.migrations.recorder import MigrationRecorder
+        if MigrationRecorder.Migration.objects.using(alias).filter(app='crm', name='0116_party_document_details_storage').exists():
+            raise ValidationError('报价主体资料表缺失。')
+        return None
+    Quote = apps.get_model('crm', 'Quote')
+    current = Quote.objects.select_for_update().get(pk=quote.pk)
+    return effective_quote_details(current)
+
+
+def inherit_quote_details(source, revision):
+    """Copy only persisted, verified facts into a new draft revision."""
+    from .party_document_details import inherit_quote_details as inherit
+    if revision.status != 'draft' or revision.parent_quote_id != source.pk:
+        raise ValidationError(MESSAGE)
+    if validate_inherited_quote_details(source) is not None:
+        inherit(source, revision)
+
+
 def _approved_boundary(source, revision):
     Application = apps.get_model('crm', 'PartyQuoteApplication')
     application = Application.objects.select_for_update().filter(result_quote_id=revision.pk).first()
@@ -27,6 +52,10 @@ def _approved_boundary(source, revision):
     approval = Approval.objects.select_for_update().get(pk=application.approval_id)
     request = Request.objects.select_for_update().get(pk=approval.request_id)
     try:
+        if isinstance(request.base_snapshot, dict) and 'party_details' in request.base_snapshot:
+            from .party_version import verify_quote_details_application
+            verify_quote_details_application(source, revision)
+            return True
         if (application.source_quote_id != source.pk or revision.parent_quote_id != source.pk
                 or request.quote_id != source.pk or request.order_id is not None
                 or request.purchase_order_id is not None or request.quote_customer_id != source.customer_id
@@ -58,8 +87,15 @@ def _approved_boundary(source, revision):
         return False
 
 
-def guard_quote_party_approval(quote, *, status=None, update_fields=None):
+def guard_quote_party_approval(quote, *, status=None, update_fields=None, replacement_context=None):
     """Called in an atomic block before a revision can become sent/accepted."""
+    if ((status or quote.status) in {'sent', 'accepted'} and quote.pk
+            and (status is not None or update_fields is None or 'status' in update_fields)):
+        from .party_replacement import snapshot_for_confirmation
+        context = replacement_context or getattr(quote, '_replacement_context', None)
+        approved = snapshot_for_confirmation(quote, 'quote', context=context)
+        if approved is not None and any(getattr(quote, field) != value for field, value in approved.items()):
+            raise ValidationError(MESSAGE)
     if (status or quote.status) not in {'sent', 'accepted'} or not quote.parent_quote_id:
         return
     Quote = apps.get_model('crm', 'Quote')
@@ -85,14 +121,18 @@ def guard_quote_party_approval(quote, *, status=None, update_fields=None):
     if formal_index is None:
         return
     source = chain[formal_index]
+    if quote.pk:
+        validate_inherited_quote_details(quote)
     if quote.customer_id != source.customer_id:
         raise ValidationError(MESSAGE)
-    if _party(quote) == _party(source):
+    from .party_version import _effective_basis, TARGETS
+    quote_basis = _effective_basis('quote', quote, TARGETS['quote'][1])
+    if quote_basis == _effective_basis('quote', source, TARGETS['quote'][1]):
         return
     for index in range(formal_index - 1, -1, -1):
         revision = chain[index]
         parent = chain[index + 1]
         if revision.pk and _approved_boundary(parent, revision):
-            if _party(quote) == _party(revision) and quote.customer_id == revision.customer_id:
+            if quote_basis == _effective_basis('quote', revision, TARGETS['quote'][1]) and quote.customer_id == revision.customer_id:
                 return
     raise ValidationError(MESSAGE)

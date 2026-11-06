@@ -27,6 +27,17 @@ REVIEW_TABLE = "crm_cashduplicatereview"
 REVIEW_TRIGGER = "crm_cashduplicatereview_truncate_guard"
 REVIEW_MIGRATION = "0096_rmbcashevent_bank_counterparty_and_more"
 GUARD_FUNCTION = "crm_reject_csv_import_audit_truncate"
+PARTY_TABLE = "crm_partydocumentversion"
+PARTY_TRIGGER = "crm_party_document_version_truncate_guard"
+PARTY_FUNCTION = "crm_party_document_version_immutable"
+PARTY_MIGRATION = "0114_party_document_version"
+TERMINAL_TABLE = "crm_partyversionterminalevent"
+TERMINAL_TRIGGER = "crm_party_terminal_truncate_guard"
+TERMINAL_FUNCTION = "crm_party_terminal_immutable"
+TERMINAL_MIGRATION = "0113_party_request_lifecycle"
+REPLACEMENT_MIGRATION = "0115_party_replacement"
+REPLACEMENT_FUNCTION = "crm_party_replacement_immutable"
+REPLACEMENT_GUARDS = {"crm_partyreplacementtarget": "crm_partyreplacementtarget_truncate_guard", "crm_partyreplacementlink": "crm_partyreplacementlink_truncate_guard"}
 TEST_NAME = re.compile(r"test_sunjack_[0-9a-f]{32}\Z")
 IDENTITY_FIELDS = ("NAME", "HOST", "PORT", "USER", "OPTIONS")
 
@@ -77,17 +88,36 @@ def active_truncate_guards(connection):
         cursor.execute(
             "SELECT to_regclass('public.crm_cashduplicatereview') IS NOT NULL, "
             "EXISTS (SELECT 1 FROM django_migrations WHERE app = %s AND name = %s), "
+            "EXISTS (SELECT 1 FROM django_migrations WHERE app = %s AND name = %s), "
+            "to_regclass('public.crm_partydocumentversion') IS NOT NULL, "
+            "EXISTS (SELECT 1 FROM django_migrations WHERE app = %s AND name = %s), "
+            "to_regclass('public.crm_partyversionterminalevent') IS NOT NULL, "
             "EXISTS (SELECT 1 FROM django_migrations WHERE app = %s AND name = %s)",
-            ["crm", REVIEW_MIGRATION, "crm", HISTORY_MIGRATION],
+            ["crm", REVIEW_MIGRATION, "crm", HISTORY_MIGRATION, "crm", PARTY_MIGRATION, "crm", TERMINAL_MIGRATION],
         )
-        table_exists, migration_applied, history_applied = cursor.fetchone()
+        table_exists, migration_applied, history_applied, party_table_exists, party_migration_applied, terminal_table_exists, terminal_migration_applied = cursor.fetchone()
     if table_exists != migration_applied:
         raise ImproperlyConfigured("Duplicate review migration and table disagree; cleanup refused.")
+    if party_table_exists != party_migration_applied:
+        raise ImproperlyConfigured("Party document migration and table disagree; cleanup refused.")
+    if terminal_table_exists != terminal_migration_applied:
+        raise ImproperlyConfigured("Party terminal migration and table disagree; cleanup refused.")
     guards = dict(TRUNCATE_GUARDS)
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT EXISTS (SELECT 1 FROM django_migrations WHERE app=%s AND name=%s), to_regclass('public.crm_partyreplacementtarget') IS NOT NULL, to_regclass('public.crm_partyreplacementlink') IS NOT NULL", ['crm', REPLACEMENT_MIGRATION])
+        replacement_applied, target_exists, link_exists = cursor.fetchone()
+    if replacement_applied != target_exists or replacement_applied != link_exists:
+        raise ImproperlyConfigured('Party replacement migration and tables disagree; cleanup refused.')
+    if replacement_applied:
+        guards.update(REPLACEMENT_GUARDS)
     if migration_applied:
         guards[REVIEW_TABLE] = REVIEW_TRIGGER
     if history_applied:
         guards.update(HISTORY_GUARDS)
+    if party_migration_applied:
+        guards[PARTY_TABLE] = PARTY_TRIGGER
+    if terminal_migration_applied:
+        guards[TERMINAL_TABLE] = TERMINAL_TRIGGER
     return guards
 
 
@@ -110,7 +140,7 @@ def assert_truncate_guards_enabled(connection, guards=None):
         )
         actual = set(cursor.fetchall())
     expected = {
-        (table, trigger, "O", 34, HISTORY_FUNCTION if table in HISTORY_GUARDS else GUARD_FUNCTION, "public")
+        (table, trigger, "O", 34, REPLACEMENT_FUNCTION if table in REPLACEMENT_GUARDS else PARTY_FUNCTION if table == PARTY_TABLE else TERMINAL_FUNCTION if table == TERMINAL_TABLE else HISTORY_FUNCTION if table in HISTORY_GUARDS else GUARD_FUNCTION, "public")
         for table, trigger in guards.items()
     }
     if actual != expected:

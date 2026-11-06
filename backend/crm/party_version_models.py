@@ -27,6 +27,7 @@ class ImmutableRecord(models.Model):
 
 
 class PartyVersionRequest(ImmutableRecord):
+    is_active = models.BooleanField(default=True, editable=False)
     quote = models.ForeignKey('crm.Quote', null=True, blank=True, on_delete=models.PROTECT)
     order = models.ForeignKey('crm.Order', null=True, blank=True, on_delete=models.PROTECT)
     purchase_order = models.ForeignKey('crm.PurchaseOrder', null=True, blank=True, on_delete=models.PROTECT)
@@ -46,9 +47,9 @@ class PartyVersionRequest(ImmutableRecord):
     class Meta:
         constraints = [
             models.CheckConstraint(condition=(models.Q(quote__isnull=False, order__isnull=True, purchase_order__isnull=True) | models.Q(quote__isnull=True, order__isnull=False, purchase_order__isnull=True) | models.Q(quote__isnull=True, order__isnull=True, purchase_order__isnull=False)), name='party_request_one_target'),
-            models.UniqueConstraint(fields=['quote', 'base_fingerprint'], condition=models.Q(quote__isnull=False), name='party_quote_base_unique'),
-            models.UniqueConstraint(fields=['order', 'base_fingerprint'], condition=models.Q(order__isnull=False), name='party_order_base_unique'),
-            models.UniqueConstraint(fields=['purchase_order', 'base_fingerprint'], condition=models.Q(purchase_order__isnull=False), name='party_purchase_base_unique'),
+            models.UniqueConstraint(fields=['quote'], condition=models.Q(quote__isnull=False, is_active=True), name='party_quote_active_unique'),
+            models.UniqueConstraint(fields=['order'], condition=models.Q(order__isnull=False, is_active=True), name='party_order_active_unique'),
+            models.UniqueConstraint(fields=['purchase_order'], condition=models.Q(purchase_order__isnull=False, is_active=True), name='party_purchase_active_unique'),
         ]
 
 
@@ -72,3 +73,15 @@ class PartyQuoteApplication(ImmutableRecord):
     revision_fingerprint = models.CharField(max_length=64)
     application_fingerprint = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class PartyVersionTerminalEvent(ImmutableRecord):
+    request = models.OneToOneField(PartyVersionRequest, on_delete=models.PROTECT, related_name='terminal_event')
+    kind = models.CharField(max_length=20, choices=[('rejected', '已拒绝'), ('withdrawn', '已撤回'), ('invalidated', '已失效')])
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='party_version_terminal_events')
+    note = models.TextField()
+    request_fingerprint = models.CharField(max_length=64)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(kind__in=['rejected', 'withdrawn', 'invalidated']), name='party_terminal_kind_valid')]

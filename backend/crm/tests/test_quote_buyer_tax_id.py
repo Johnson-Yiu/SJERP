@@ -150,7 +150,13 @@ class QuoteBuyerTaxMigrationTests(TransactionTestCase):
         from django.db.migrations.recorder import MigrationRecorder
 
         executor = MigrationExecutor(connection)
-        apps = executor.loader.project_state([("crm", "0111_quote_buyer_tax_id")]).apps
+        leaves = executor.loader.graph.leaf_nodes()
+        self.addCleanup(lambda: MigrationExecutor(connection).migrate(leaves))
+        # Empty later migrations can reverse before 0115 rejects protected facts.
+        # Start at that guard so schema/state comparisons cover the refusal.
+        start = [("crm", "0115_party_replacement")]
+        executor.migrate(start)
+        apps = executor.loader.project_state(start).apps
         customer_model = apps.get_model("crm", "Customer")
         quote_model = apps.get_model("crm", "Quote")
         request_model = apps.get_model("crm", "PartyVersionRequest")
@@ -177,13 +183,13 @@ class QuoteBuyerTaxMigrationTests(TransactionTestCase):
         for value in ("000123", ""):
             with self.subTest(tax=value):
                 quote_model.objects.filter(pk=quote.pk).update(buyer_tax_id=value)
-                assert_rejected("报价买方税号快照已存在")
+                assert_rejected("报价主体快照已存在，拒绝回退")
                 self.assertEqual(quote_model.objects.get(pk=quote.pk).buyer_tax_id, value)
         quote_model.objects.filter(pk=quote.pk).update(buyer_tax_id=None)
         for value in ("Germany", ""):
             with self.subTest(country=value):
                 quote_model.objects.filter(pk=quote.pk).update(buyer_country_snapshot=value)
-                assert_rejected("报价买方国家快照已存在")
+                assert_rejected("报价主体快照已存在，拒绝回退")
                 self.assertEqual(quote_model.objects.get(pk=quote.pk).buyer_country_snapshot, value)
         quote_model.objects.filter(pk=quote.pk).update(buyer_country_snapshot=None)
         initiator = user_model.objects.create(username="tax-cross-initiator")
@@ -191,11 +197,11 @@ class QuoteBuyerTaxMigrationTests(TransactionTestCase):
         request = request_model.objects.create(quote_id=quote.pk, initiator_id=initiator.pk,
             base_snapshot={}, proposed_snapshot={}, base_fingerprint="base", content_fingerprint="content",
             change_type="correction", reason="Synthetic", evidence="Synthetic", source_trust="unknown")
-        assert_rejected("主体申请记录已存在")
+        assert_rejected("主体记录已存在，拒绝回退")
         self.assertTrue(request_model.objects.filter(pk=request.pk).exists())
         approval = approval_model.objects.create(request_id=request.pk, approver_id=approver.pk,
             approved_fingerprint="content", note="Synthetic")
-        assert_rejected("主体审批记录已存在")
+        assert_rejected("主体记录已存在，拒绝回退")
         self.assertTrue(approval_model.objects.filter(pk=approval.pk).exists())
 
     def test_legacy_null_and_loss_guard(self):

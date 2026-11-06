@@ -2331,4 +2331,7 @@ class SalesRule(TimestampedModel):
         constraints = [models.CheckConstraint(condition=models.Q(minimum_quantity__gt=0), name="sales_moq_positive")]
 
 
-from .party_version_models import PartyVersionRequest, PartyVersionApproval, PartyQuoteApplication  # noqa: E402,F401
+from .party_version_models import PartyVersionRequest, PartyVersionApproval, PartyQuoteApplication, PartyVersionTerminalEvent  # noqa: E402,F401
+from .party_document_models import PartyDocumentVersion  # noqa: E402,F401
+from .party_replacement_models import PartyReplacementTarget, PartyReplacementLink  # noqa: E402,F401
+from .party_document_details_models import PartyDocumentDetailsStorage  # noqa: E402,F401

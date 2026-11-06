@@ -1,0 +1,28 @@
+Creating test database for alias 'default'...
+
+..Bad Request: /api/quotes/1/party-change/1/withdraw/
+Bad Request: /api/quotes/1/party-change/1/invalidate/
+Bad Request: /api/quotes/1/party-change/1/create-replacement/
+....Bad Request: /api/quotes/1/party-change/1/create-replacement/
+..Bad Request: /api/quotes/2/revise/
+.Bad Request: /api/quotes/1/party-change/1/create-replacement/
+.Bad Request: /api/quotes/1/party-change/1/create-replacement/
+Bad Request: /api/quotes/1/party-change/1/approve/
+Bad Request: /api/quotes/1/party-change/1/create-replacement/
+.....Bad Request: /api/quotes/2/mark-sent/
+.Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+....Bad Request: /api/quotes/1/revise/
+...Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+..
+----------------------------------------------------------------------
+Ran 25 tests in 52.430s
+
+OK
+Destroying test database for alias 'default'...
+
+Found 25 test(s).
+System check identified no issues (0 silenced).

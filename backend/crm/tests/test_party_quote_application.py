@@ -57,10 +57,14 @@ class ApplicationFixture:
     def proposal(self, change_type='correction', source_trust='unverified'):
         data = baseline(request=self.session(0), target_type='quote', target_id=self.quote.pk)
         proposed = deepcopy(data['snapshot'])
-        proposed['name'] = 'Corrected same legal party'
+        replacement = None
+        if change_type == 'replacement':
+            replacement = Customer.objects.create(code='APPLY-REPLACE', name='Replacement buyer')
+        proposed['name'] = replacement.name if replacement else 'Corrected same legal party'
         return propose(request=self.session(0), target_type='quote', target_id=self.quote.pk,
             expected_base_fingerprint=data['fingerprint'], proposed_snapshot=proposed,
-            change_type=change_type, reason='Correction reason', evidence='Evidence reference', source_trust=source_trust)
+            change_type=change_type, reason='Correction reason', evidence='Evidence reference', source_trust=source_trust,
+            replacement_target_id=replacement.pk if replacement else None)
 
     def approved(self, change_type='correction'):
         obj = self.proposal(change_type)

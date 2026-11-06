@@ -4,7 +4,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
 
 const mocks = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), can: vi.fn(() => true) }))
-vi.mock('../src/api', () => ({ api: { get: mocks.get, post: mocks.post }, downloadQuoteExport: vi.fn() }))
+vi.mock('../src/api', () => ({ api: { get: mocks.get, post: mocks.post }, listAll: vi.fn(async () => [{ id: 42, name: '合成目标客户', code: 'SYN' }]), downloadQuoteExport: vi.fn() }))
 vi.mock('../src/accessControl', () => ({ useAccessControl: () => ({ can: mocks.can }) }))
 import QuoteDetailModal from '../src/components/QuoteDetailModal.vue'
 
@@ -36,6 +36,19 @@ async function open() {
 const button = text => wrapper.findAll('button').find(element => element.text() === text)
 
 describe('quote party correction', () => {
+  it('shows changed buyer and seller details with unknown and explicit blank values', async () => {
+    const before = { buyer: { address: null, tax_id: '旧税号', contact: '不变' }, seller: { billing_address: '', phone: '旧电话' } }
+    const after = { buyer: { address: '', tax_id: '新税号', contact: '不变' }, seller: { billing_address: null, phone: '新电话' } }
+    state.requests = [{ id: 9, status: 'pending', initiator_id: 8, change_type: 'correction', base_snapshot: { ...base, party_details: before }, proposed_snapshot: { ...base, party_details: after } }]
+    await open()
+    const comparison = wrapper.get('.party-details-changes').text()
+    expect(comparison).toContain('买方地址未知 → 已留空')
+    expect(comparison).toContain('买方税号旧税号 → 新税号')
+    expect(comparison).toContain('卖方账单地址已留空 → 未知')
+    expect(comparison).toContain('卖方电话旧电话 → 新电话')
+    expect(comparison).not.toContain('买方联系人')
+  })
+
   it('preserves unknown tax and submits only correction with the baseline fingerprint', async () => {
     mocks.post.mockResolvedValue({ data: {} })
     await open()
@@ -216,19 +229,22 @@ describe('quote party correction', () => {
     expect(wrapper.get('.party-legal-confirm input').element.checked).toBe(false)
   })
 
-  it('records a proposed legal entity replacement with reason and evidence but no application action', async () => {
+  it('requires a scoped target and explicit proposed replacement facts', async () => {
     mocks.post.mockResolvedValue({ data: {} })
     await open()
     await wrapper.get('.party-change-type select').setValue('replacement')
-    expect(wrapper.text()).toContain('暂不能生效；不会更改原单，也不能生成报价草稿')
+    await flushPromises()
+    expect(wrapper.text()).toContain('请选择新的法律主体')
     expect(wrapper.find('.party-legal-confirm').exists()).toBe(false)
-    await wrapper.findAll('.party-form-fields textarea')[0].setValue('拟更换主体')
-    await button('提交主体替换记录').trigger('click')
-    expect(wrapper.get('[role="alert"]').text()).toContain('请填写原因和依据')
+    await button('提交替换申请').trigger('click')
+    expect(wrapper.get('[role="alert"]').text()).toContain('请选择目标')
     expect(mocks.post).not.toHaveBeenCalled()
-    await wrapper.findAll('.party-form-fields textarea')[1].setValue('合成依据')
-    await button('提交主体替换记录').trigger('click'); await flushPromises()
-    expect(mocks.post).toHaveBeenCalledWith('/quotes/1/party-change/', expect.objectContaining({ change_type: 'replacement', reason: '拟更换主体', evidence: '合成依据', proposed_snapshot: base }))
+    await wrapper.get('.replacement-form select').setValue('42')
+    for (const field of wrapper.findAll('.replacement-form button').filter(item => item.text() === '确认留空')) await field.trigger('click')
+    await wrapper.findAll('.replacement-form textarea')[0].setValue('拟更换主体')
+    await wrapper.findAll('.replacement-form textarea')[1].setValue('合成依据')
+    await button('提交替换申请').trigger('click'); await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/quotes/1/party-change/', expect.objectContaining({ change_type: 'replacement', replacement_target_id: 42, reason: '拟更换主体', evidence: '合成依据', proposed_snapshot: { name: '合成目标客户', country: '', address: '', contact: '', phone: '', email: '', tax_id: '' } }))
   })
 
   it.each(['draft', 'rejected', 'expired'])('disables all changes for %s while keeping historical records visible', async status => {
@@ -254,5 +270,101 @@ describe('quote party correction', () => {
     expect(button('生成报价草稿').attributes('disabled')).toBeDefined()
     expect(wrapper.text()).toContain('生成报价草稿需要报价创建和修改权限')
     expect(mocks.post).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ['withdraw', '撤回申请', 7, 'pending', null, 'withdrawn', '已撤回'],
+    ['reject', '拒绝申请', 8, 'pending', null, 'rejected', '已拒绝'],
+    ['invalidate', '标记失效', 8, 'approved', { approver_id: 9, note: '核对' }, 'invalidated', '已失效'],
+  ])('%s requires a reason, sends it, refreshes and displays the recorded actor', async (operation, label, initiator, status, approval, resultStatus, resultLabel) => {
+    state.requests = [{ id: 30, initiator_id: initiator, status, change_type: 'correction', base_snapshot: base, proposed_snapshot: base, reason: '原申请', evidence: '依据', source_trust: 'unverified', content_fingerprint: 'hash', approval, application: null, terminal_event: null }]
+    mocks.post.mockImplementation(async () => {
+      state.requests[0].status = resultStatus
+      state.requests[0].terminal_event = { actor_id: 7, note: '人工处理原因', created_at: '2026-11-05T10:00:00Z' }
+      return { data: {} }
+    })
+    await open()
+    await button(label).trigger('click')
+    expect(wrapper.get('[role="alert"]').text()).toContain('请填写处理原因')
+    expect(mocks.post).not.toHaveBeenCalled()
+    await wrapper.get('.party-request .party-approval-note:last-of-type input').setValue('人工处理原因')
+    await button(label).trigger('click'); await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith(`/quotes/1/party-change/30/${operation}/`, { note: '人工处理原因' })
+    const record = wrapper.get('.party-request').text()
+    expect(record).toContain(resultLabel)
+    expect(record).toContain('操作账号 ID：7')
+    expect(record).toContain('原因：人工处理原因')
+    expect(button(label)).toBeUndefined()
+    expect(button('批准更正')).toBeUndefined()
+    expect(button('生成报价草稿')).toBeUndefined()
+  })
+
+  it('only offers withdrawal to the initiator and rejection to another authenticated account', async () => {
+    state.requests = [
+      { id: 31, initiator_id: 7, status: 'pending', change_type: 'correction', base_snapshot: base, proposed_snapshot: base, approval: null, application: null },
+      { id: 32, initiator_id: 8, status: 'pending', change_type: 'correction', base_snapshot: base, proposed_snapshot: base, approval: null, application: null },
+    ]
+    await open()
+    const rows = wrapper.findAll('.party-request')
+    expect(rows[0].text()).toContain('撤回申请')
+    expect(rows[0].text()).not.toContain('拒绝申请')
+    expect(rows[1].text()).toContain('拒绝申请')
+    expect(rows[1].text()).not.toContain('撤回申请')
+    expect(rows[0].text()).toContain('标记失效')
+    expect(rows[1].text()).toContain('标记失效')
+  })
+
+  it('allows a different account to approve a replacement record without offering application', async () => {
+    state.requests = [{ id: 35, initiator_id: 8, status: 'pending', change_type: 'replacement', base_snapshot: base, proposed_snapshot: base, reason: '拟更换', evidence: '依据', source_trust: 'unverified', content_fingerprint: 'replacement-hash', approval: null, application: null, terminal_event: null }]
+    mocks.post.mockImplementation(async () => {
+      state.requests[0].status = 'approved'
+      state.requests[0].approval = { approver_id: 7, note: '已核对' }
+      return { data: {} }
+    })
+    await open()
+    await wrapper.findAll('.party-request .party-approval-note input')[0].setValue('已核对')
+    await button('批准主体替换记录').trigger('click'); await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/quotes/1/party-change/35/approve/', { expected_content_fingerprint: 'replacement-hash', note: '已核对' })
+    expect(wrapper.text()).toContain('已批准')
+    expect(button('生成报价草稿')).toBeUndefined()
+    expect(button('标记失效')).toBeTruthy()
+  })
+
+  it('does not allow an initiator to approve their replacement record', async () => {
+    state.requests = [{ id: 36, initiator_id: 7, status: 'pending', change_type: 'replacement', base_snapshot: base, proposed_snapshot: base, reason: '拟更换', evidence: '依据', source_trust: 'unverified', approval: null, application: null, terminal_event: null }]
+    await open()
+    expect(wrapper.text()).toContain('申请人不能审批自己的申请')
+    expect(button('批准主体替换记录')).toBeUndefined()
+    expect(button('生成报价草稿')).toBeUndefined()
+  })
+
+  it.each(['applied', 'rejected', 'withdrawn', 'invalidated', 'unexpected'])('never offers lifecycle actions for %s', async status => {
+    state.requests = [{ id: 33, initiator_id: 7, status, change_type: 'correction', base_snapshot: base, proposed_snapshot: base, approval: { approver_id: 8, note: '同意' }, application: status === 'applied' ? { result_quote_id: 2 } : null, terminal_event: ['rejected', 'withdrawn', 'invalidated'].includes(status) ? { actor_id: 8, note: '终止原因' } : null }]
+    await open()
+    for (const label of ['撤回申请', '拒绝申请', '标记失效', '批准更正', '生成报价草稿']) expect(button(label)).toBeUndefined()
+    if (status !== 'applied' && status !== 'unexpected') expect(wrapper.text()).toContain('操作账号 ID：8')
+  })
+
+  it('fails closed if status conflicts with an applied or terminated record', async () => {
+    state.requests = [
+      { id: 37, initiator_id: 7, status: 'pending', change_type: 'correction', base_snapshot: base, proposed_snapshot: base, approval: null, application: { result_quote_id: 2 }, terminal_event: null },
+      { id: 38, initiator_id: 8, status: 'pending', change_type: 'correction', base_snapshot: base, proposed_snapshot: base, approval: null, application: null, terminal_event: { actor_id: 9, note: 'Synthetic' } },
+      { id: 39, initiator_id: 7, status: 'pending', change_type: 'correction', base_snapshot: base, proposed_snapshot: base, approval: { approver_id: 9, note: 'Synthetic' }, application: null, terminal_event: null },
+    ]
+    await open()
+    for (const label of ['撤回申请', '拒绝申请', '标记失效', '批准更正', '生成报价草稿']) expect(button(label)).toBeUndefined()
+    expect(wrapper.text()).toContain('已终止')
+  })
+
+  it('keeps the processing reason after server failure for a retry', async () => {
+    state.requests = [{ id: 34, initiator_id: 7, status: 'pending', change_type: 'correction', base_snapshot: base, proposed_snapshot: base, approval: null, application: null }]
+    mocks.post.mockRejectedValueOnce({ response: { status: 400, data: { note: ['请核实原因'] } } }).mockResolvedValue({ data: {} })
+    await open()
+    await wrapper.get('.party-request .party-approval-note input').setValue('保留原因')
+    await button('撤回申请').trigger('click'); await flushPromises()
+    expect(wrapper.get('[role="alert"]').text()).toContain('请核实原因')
+    expect(wrapper.get('.party-request .party-approval-note input').element.value).toBe('保留原因')
+    await button('撤回申请').trigger('click'); await flushPromises()
+    expect(mocks.post).toHaveBeenCalledTimes(2)
   })
 })

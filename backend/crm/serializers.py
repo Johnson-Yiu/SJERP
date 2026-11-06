@@ -617,6 +617,13 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         user = serializer_user(self.context)
         from .sales_scope import scope_customer_related_queryset
+        data['effective_party'] = None
+        if user_can(user, 'suppliers', 'view') and instance.status not in {'draft', 'cancelled'}:
+            from .party_document_version import effective_snapshot
+            try:
+                data['effective_party'] = effective_snapshot(instance)
+            except DjangoValidationError as exc:
+                raise serializers.ValidationError({'effective_party': exc.messages}) from exc
         associated_ids = {row["id"] for row in data["related_orders"]}
         if instance.order_id:
             associated_ids.add(instance.order_id)
@@ -2118,6 +2125,14 @@ class OrderSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data.pop("amount_calculation_version", None)
         user = serializer_user(self.context)
+        data['effective_party'] = None
+        from .sales_scope import customer_in_scope
+        if user_can(user, 'customers', 'view') and customer_in_scope(instance.customer_id, user) and instance.status != 'draft':
+            from .party_document_version import effective_snapshot
+            try:
+                data['effective_party'] = effective_snapshot(instance)
+            except DjangoValidationError as exc:
+                raise serializers.ValidationError({'effective_party': exc.messages}) from exc
         if not user_can(user, "customers", "view"):
             data.update(
                 customer=None,
@@ -2321,10 +2336,12 @@ class OrderSerializer(serializers.ModelSerializer):
             parent_quote=source_quote,
             revision_no=revision_no,
             revision_summary=f"订单确认时调整：{'、'.join(changed_parts)}",
-            status="accepted",
+            status="draft",
             pi_template_snapshots=source_quote.pi_template_snapshots,
             **revision_values,
         )
+        from .quote_party_approval_guard import inherit_quote_details
+        inherit_quote_details(source_quote, revision)
         create_quote_items(
             revision,
             [
@@ -2340,6 +2357,8 @@ class OrderSerializer(serializers.ModelSerializer):
             ],
             source_items=source_items,
         )
+        revision.status = 'accepted'
+        revision.save(update_fields=['status'])
         return revision
 
     @staticmethod

@@ -1659,7 +1659,13 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def _change_status(self, request, quote, target, allowed, label):
         # The action target may have changed after the request was routed.
         # Re-read it under a row lock so exactly one competing transition wins.
+        from .party_replacement import prepare_formalization
+        try:
+            replacement_context = prepare_formalization('quote', quote.pk) if target in {'sent', 'accepted'} else None
+        except DjangoValidationError as error:
+            raise serializers.ValidationError(error.message_dict if hasattr(error, 'message_dict') else error.messages) from error
         quote = Quote.objects.select_for_update().get(pk=quote.pk)
+        quote._replacement_context = replacement_context
         if quote.status not in allowed:
             return Response({"detail": "当前报价状态不能执行此操作，请创建修订版重新报价。"}, status=status.HTTP_400_BAD_REQUEST)
         if target in {"sent", "accepted"}:
@@ -1854,6 +1860,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             quote_no, revision_no = allocate_revision_quote_no(source)
         except DjangoValidationError as exc:
             raise serializers.ValidationError(getattr(exc, "message_dict", exc.messages)) from exc
+        source.refresh_from_db()
         copied_fields = [
             "customer", "quote_date", "valid_until", "status", "currency", "exchange_rate",
             "shipping_fee", "discount", "notes", "recipient_name", "buyer_address",
@@ -1872,6 +1879,11 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             pi_template_snapshots=source.pi_template_snapshots,
             **quote_values,
         )
+        from .quote_party_approval_guard import inherit_quote_details
+        try:
+            inherit_quote_details(source, revision)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(getattr(exc, 'message_dict', exc.messages)) from exc
         if item_data is None:
             source_items = list(source.items.select_related("sku__product"))
             item_data = [

@@ -41,6 +41,9 @@ class PartyVersionServiceTests(TestCase):
             expected_base_fingerprint=base['fingerprint'], proposed_snapshot=new,
             change_type='correction', reason='Correct name', evidence='Document reference', source_trust='unverified')
         args.update(overrides)
+        if args['change_type'] == 'replacement' and 'replacement_target_id' not in args:
+            replacement = Customer.objects.create(code='PV-REPL', name='Corrected name')
+            args['replacement_target_id'] = replacement.pk
         return propose(**args)
 
     def test_targets_persist_with_independent_approval_and_no_source_write(self):
@@ -173,8 +176,13 @@ class PartyVersionServiceTests(TestCase):
     def test_legacy_quote_invalid_field_sets_rejected_at_both_stages(self):
         cases = (lambda base: {k: v for k, v in base.items() if k != 'country'},
                  lambda base: {**base, 'unexpected': 'value'})
-        for make_invalid in cases:
+        for index, make_invalid in enumerate(cases):
             with self.subTest(case=make_invalid):
+                if index:
+                    # Keep malformed legacy fixtures on separate synthetic
+                    # documents: 0113 permits only one active request per target.
+                    self.quote = Quote.objects.create(quote_no='PVT-INVALID-2', customer=self.quote.customer,
+                        quote_date=date(2026, 1, 1), status='sent', buyer_country_snapshot=None, buyer_tax_id=None)
                 obj = self._legacy_quote_request(base_snapshot=make_invalid)
                 with self.assertRaisesMessage(ValidationError, '基准快照字段无效'):
                     approve(request=self.b, request_id=obj.pk,

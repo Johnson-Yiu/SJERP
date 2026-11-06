@@ -125,7 +125,7 @@ class QuotePartyApprovalGuardTests(ApplicationFixture, TestCase):
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 from threading import Event
 from unittest import skipUnless
-from django.db import close_old_connections, connection, transaction
+from django.db import close_old_connections, connection, connections, transaction
 from django.test import TransactionTestCase
 
 @skipUnless(connection.vendor == 'postgresql', 'requires PostgreSQL row locks')
@@ -149,7 +149,7 @@ class QuotePartyApprovalConcurrencyTests(ApplicationFixture, TransactionTestCase
                     if not release.wait(10):
                         raise RuntimeError('test did not release item lock')
             finally:
-                close_old_connections()
+                connections['default'].close()
         def formalize():
             close_old_connections()
             try:
@@ -164,7 +164,7 @@ class QuotePartyApprovalConcurrencyTests(ApplicationFixture, TransactionTestCase
                     return 'rejected'
                 return 'unexpectedly accepted'
             finally:
-                close_old_connections()
+                connections['default'].close()
         with ThreadPoolExecutor(max_workers=2) as pool:
             writer = pool.submit(edit_item)
             sender = pool.submit(formalize)

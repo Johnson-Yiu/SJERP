@@ -14,6 +14,8 @@ import SupplierAllocationModal from './SupplierAllocationModal.vue'
 import ProcurementDraftModal from './ProcurementDraftModal.vue'
 import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
 import ShipmentActualPacking from './ShipmentActualPacking.vue'
+import DocumentPartyVersions from './DocumentPartyVersions.vue'
+import PartyDetailsPanel from './PartyDetailsPanel.vue'
 import { useDetailTab } from '../utils/useDetailTab'
 import { useAccessControl } from '../accessControl'
 import { clearFulfillmentRequest, fulfillmentRequestId } from '../utils/fulfillmentIdempotency'
@@ -217,7 +219,7 @@ async function submitQuantityAdjustment() {
 const formalParty = computed(() => order.value && order.value.status !== 'draft')
 const partyName = computed(() => {
   if (!order.value) return '—'
-  return formalParty.value ? (order.value.customer_name_snapshot || '历史主体未记录') : (order.value.customer_name || '—')
+  return formalParty.value ? (order.value.effective_party?.name || order.value.customer_name_snapshot || '历史主体未记录') : (order.value.customer_name || '—')
 })
 const partyMasterReference = computed(() => {
   if (!formalParty.value || !order.value?.customer_name || !order.value.customer_name_snapshot) return ''
@@ -553,7 +555,9 @@ watch(() => props.refreshKey, load)
 
           <p v-if="lifecycleNotice" class="fulfillment-helper" role="status">{{ lifecycleNotice }}</p>
           <section v-if="activeTab === 'overview'" class="workbench-grid">
+            <PartyDetailsPanel v-if="can('customers', 'view')" :key="JSON.stringify(order.effective_party)" kind="order" :id="order.id" :status="order.status" :can-edit="can('orders', 'update') && !order.historical_only" />
             <article v-if="formalParty" class="workbench-card party-snapshot-card"><h3>交易主体快照</h3><p v-if="partySnapshotRows.length">正式确认时保存的主体资料；后续客户主档修改不会覆盖。</p><p v-else class="muted">历史主体未记录，以下不使用当前主档补造历史事实。</p><dl v-if="partySnapshotRows.length" class="data-list compact"><template v-for="[label, value] in partySnapshotRows" :key="label"><dt>{{ label }}</dt><dd>{{ value || '未记录' }}</dd></template></dl><p v-if="!partySnapshotRows.length && order.customer_name" class="party-reference">当前主档参考：{{ order.customer_name }}</p></article>
+            <DocumentPartyVersions v-if="formalParty && can('customers', 'view')" kind="order" :id="order.id" :source-party-id="order.customer" @updated="workbench.order.effective_party = $event" />
             <article class="workbench-card summary-card"><h3><PackageCheck :size="18" /> 订单摘要</h3><div class="summary-metrics"><div><small>订单金额</small><strong>{{ order.currency }} {{ money(order.total_amount) }}</strong><small>{{ contractAmountLabel }}</small></div><div><small>商品项数</small><strong>{{ workbench.items.length }}</strong></div><div><small>订单数量</small><strong>{{ workbench.fulfillment_summary.ordered_quantity }}</strong></div><div><small>预计交期</small><strong>{{ order.expected_ship_date || '未设置' }}</strong></div></div></article>
             <article class="workbench-card current-todo-card"><h3>当前待办</h3><div class="task-list"><div v-for="task in currentTasks" :key="task.key" class="task-row" :class="{ warning: task.warning }"><div><strong>{{ task.title }}</strong><p>{{ task.key === 'receivable' ? `待收 ${order.currency} ${money(task.amount)}` : task.description }}</p></div><RouterLink v-if="['receivable', 'receivable_review'].includes(task.key) && canViewPayments" class="task-action" :to="{ path: '/receivables', query: { order: String(order.id) } }">{{ task.action }}</RouterLink><button v-else-if="!['confirm', 'receivable', 'receivable_review'].includes(task.key) && (task.key === 'procurement' ? can('purchases', 'create') : can('orders', 'update'))" class="task-action" :disabled="lifecycleSaving" @click="performTask(task)">{{ task.action }}</button></div><div v-if="!currentTasks.length" class="task-row"><div><strong>{{ order.status === 'completed' ? '履约已完成' : order.status === 'cancelled' ? '订单已取消' : '当前没有待处理事项' }}</strong><p>{{ order.status === 'cancelled' ? '仅保留历史记录与审计信息。' : !canViewPayments ? '当前没有可查看的履约待办。' : '当前没有待处理事项。' }}</p></div></div></div></article>
             <article class="workbench-card fulfillment-overview"><div class="section-heading"><div><h3><Truck :size="16" /> 履约进度</h3><p>按销售出库流水统计。</p></div><b>{{ fulfillmentPercent.toFixed(0) }}%</b></div><div class="progress-track fulfillment"><i :style="{ width: `${fulfillmentPercent}%` }" /></div><dl class="data-list compact"><dt>订单数量</dt><dd>{{ workbench.fulfillment_summary.ordered_quantity }}</dd><dt>已出库</dt><dd>{{ workbench.fulfillment_summary.shipped_quantity }}</dd><dt>待出库</dt><dd>{{ workbench.fulfillment_summary.remaining_quantity }}</dd></dl><button class="task-action" @click="activeTab = 'fulfillment'">查看采购与发货</button></article>

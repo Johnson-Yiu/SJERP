@@ -5,7 +5,7 @@ import path from 'node:path'
 for (const [name, viewport] of [['desktop', { width: 1440, height: 900 }], ['narrow', { width: 390, height: 844 }]]) {
   test(`ERP login and logout use the isolated real session (${name})`, async ({ page }) => {
     await page.setViewportSize(viewport)
-    await page.goto('/login?next=%2Fcustomers')
+    await page.goto('/login?next=%2Fcustomers', { waitUntil: 'domcontentloaded' })
     await fs.mkdir(process.env.EVIDENCE_DIR, { recursive: true })
     await page.screenshot({ path: path.join(process.env.EVIDENCE_DIR, `login-${name}.png`), fullPage: true })
     await page.getByLabel('账号').fill(process.env.ISS055_UI_USERNAME)
@@ -41,7 +41,7 @@ for (const [name, viewport] of [['desktop', { width: 1440, height: 900 }], ['nar
 }
 
 test('lost session shows expiry and preserves a same-origin return', async ({ page }) => {
-  await page.goto('/login?next=%2Fcustomers')
+  await page.goto('/login?next=%2Fcustomers', { waitUntil: 'domcontentloaded' })
   await page.getByLabel('账号').fill(process.env.ISS055_UI_USERNAME)
   await page.getByLabel('密码').fill(process.env.ISS055_UI_PASSWORD)
   await page.getByRole('button', { name: '登录', exact: true }).click()

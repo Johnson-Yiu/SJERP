@@ -116,14 +116,14 @@ onMounted(async () => {
 
 <template>
   <section class="ledger-page">
-    <header class="ledger-heading"><div><h1>账户资金</h1><p>按真实账户核对人民币变动、凭证和处理记录。</p></div><button :disabled="busy" @click="run(load)">刷新</button></header>
+    <header class="ledger-heading"><div><h1>账户余额与对账</h1><p>按真实账户核对人民币变动、凭证和处理记录。</p></div><button :disabled="busy" @click="run(load)">刷新</button></header>
     <p v-if="error" role="alert" class="ledger-error">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
     <p v-if="!ready && !error">正在读取账户资金…</p>
     <nav class="ledger-tabs" aria-label="资金功能"><button v-for="(label, key) in { facts: '资金事实', instructions: '登记与复核', accounts: '账户与映射', reviews: '账户核对', controls: '转账与分类' }" :key="key" :aria-pressed="tab === key" @click="tab = key">{{ label }}</button></nav>
     <div v-if="tab === 'facts'">
       <div class="ledger-form"><label>开始日期<input v-model="period.date_from" type="date"></label><label>结束日期<input v-model="period.date_to" type="date"></label><button :disabled="busy" @click="run(load)">查询</button><button v-if="can('finance', 'export') || can('reports', 'export')" :disabled="busy" @click="downloadCsv">导出 CSV</button></div>
       <div class="ledger-totals"><span>公司流入 ¥{{ totals.inflow }}</span><span>公司流出 ¥{{ totals.outflow }}</span><span>净变动 ¥{{ totals.net }}</span></div>
-      <p>本页汇总新承接的账户事实。启用余额不计收入，已核实内部本金不计公司毛流量；账户明细保留两端变动。已有银行事实见人民币资金页，合并统计见财务概览。</p>
+      <p>本页汇总新承接的账户事实。启用余额不计收入，已核实内部本金不计公司毛流量；账户明细保留两端变动。已有银行事实见银行结汇与凭证页，合并统计见财务概览。</p>
       <div class="ledger-cards"><article v-for="a in state.accounts" :key="a.id"><strong>{{ a.name }}</strong><p>{{ a.account_type === 'bank' ? '银行' : '现金' }} · {{ a.ownership === 'own' ? '自有' : a.ownership === 'external' ? '外部' : '归属待核实' }}</p><p>余额：{{ a.balance === null ? '未设置启用基准' : `¥${a.balance}` }}</p></article></div>
       <div class="ledger-cards"><article v-for="f in facts" :key="f.id" :id="`fact-${f.id}`"><strong>#{{ f.id }} · {{ f.account_name }} · {{ f.direction === 'income' ? '+' : '−' }}¥{{ f.amount }}</strong><p>{{ f.actual_date }} · {{ kinds[f.kind] }} · {{ natures[f.nature] }}</p><p>{{ f.company_flow_included ? '计入公司毛流量' : f.flow_exclusion_reason === 'superseded' ? '原版本已核实更正，保留历史' : '基准、零更正或已核实内部本金' }} · 来源 {{ f.source_system }} / {{ f.source_key }}</p><p v-if="Number(f.refund_excess_amount)">超额退款：¥{{ f.refund_excess_amount }}</p><p v-if="Number(f.unallocated_amount)">尚未分配至订单：¥{{ f.unallocated_amount }}</p><a :href="`/api/finance-ledger/voucher-download/?id=${f.voucher}`">下载私有凭证</a><details><summary>凭证摘要与历史分类</summary><code>{{ f.voucher_sha256 }}</code><p v-for="(c, i) in f.classifications" :key="i">{{ natures[c.nature] }} · {{ c.reason }} · {{ c.created_at }}</p></details></article></div>
       <p v-if="!facts.length">所选期间暂无已记账账户事实。</p>

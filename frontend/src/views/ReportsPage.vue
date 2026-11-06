@@ -7,7 +7,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { apiErrorMessage } from '../utils/apiErrors'
-import { useAccessControl } from '../accessControl'
+import { useAccessControl, accessState } from '../accessControl'
 import ReportBlock from '../components/reports/ReportBlock.vue'
 import SharedReportTemplates from '../components/reports/SharedReportTemplates.vue'
 import { reportBlocks, datePreset, canViewReportSource, canViewReportDimension, canViewReportConfig } from '../reports/registry'
@@ -23,7 +23,7 @@ const availablePresets = computed(() => Object.fromEntries(Object.entries(report
 const sourceSpec = computed(() => catalog.value?.sources[form.source])
 const dimensions = computed(() => (sourceSpec.value?.dimensions || []).filter(key => canViewReportDimension(key, can)))
 const filterDimension = ref(''), filterValue = ref('__pick__'), filterOptions = ref([]), optionsLoading = ref(false), optionsError = ref('')
-const storageKey = workspaceNavigation.storageKey('senju-report-blocks-v1'), saved = ref([]), removedBlock = ref(null)
+const storageKey = workspaceNavigation.storageKey('senju-report-blocks-v1', { accountOnly: true }), saved = ref([]), removedBlock = ref(null)
 const datePresets = { today: '今天', week: '本周至今', month: '本月至今', quarter: '本季度至今', year: '本年至今', 'last-month': '上月', 'last-year': '去年', 30: '近30天', 90: '近90天' }
 const configKeys = ['source', 'group_by', 'group_by_2', 'grain', 'date_field', 'metric', 'view', 'title', 'comparison']
 const queryKeys = [...configKeys, 'date_from', 'date_to', 'shared_template']
@@ -266,8 +266,12 @@ async function loadCatalog() {
     if (!first) { applied.value=null; return }
     if (!availableSources.value[form.source]) { form.source=first; sourceChanged() }
     try {
-      const entries=JSON.parse(localStorage.getItem(storageKey)||'[]')
+      const current = localStorage.getItem(storageKey)
+      const legacyAllowed = workspaceNavigation.workspace && accessState.operator?.development_superadmin === true && accessState.operator?.authenticated !== true
+      const legacy = !current && legacyAllowed ? localStorage.getItem('senju-report-blocks-v1') : null
+      const entries=JSON.parse(current || legacy || '[]')
       if(Array.isArray(entries)) saved.value=entries.filter(item=>item?.id && catalog.value.sources[item.config?.source]?.dimensions.includes(item.config.group_by) && (!item.config.group_by_2 || (catalog.value.sources[item.config.source].dimensions.includes(item.config.group_by_2) && item.config.group_by_2 !== item.config.group_by))).slice(0,30)
+      if (legacy) { localStorage.setItem(storageKey, JSON.stringify(saved.value)); localStorage.removeItem('senju-report-blocks-v1') }
     } catch { storageError.value='无法读取旧图表设置；本次可重新配置。' }
     await loadSharedTemplates()
     hydrateRoute()

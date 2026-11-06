@@ -1,5 +1,5 @@
 export const longName='R0-F2 长名称客户及照明产品系列用于办公页面换行验收'.repeat(3)
-export const operator={authenticated:true,development_superadmin:true,has_all_permissions:true,name:'R0-F2 QA'}
+export const operator={user_id:4242,authenticated:true,development_superadmin:true,has_all_permissions:true,name:'R0-F2 QA'}
 export const catalog={sources:{sales:{label:'销售报表',dimensions:['time','customer','country','category'],dates:{order_date:'订单日期',created_at:'创建时间'},note:'有效销售合同金额，按订单汇率折人民币，不代表实收。'},purchase:{label:'采购报表',dimensions:['time','supplier'],dates:{order_date:'下单日期'},note:'有效采购合同金额。'},customers:{label:'客户增长',dimensions:['time','source'],dates:{created_at:'创建时间'},note:'按档案创建时间统计。'},cash:{label:'现金收支',dimensions:['time','direction','category'],dates:{transaction_date:'发生日期'},note:'已确认收支，收入为正、支出为负。'},inventory:{label:'库存变动',dimensions:['time','warehouse'],dates:{movement_date:'发生日期'},note:'期间库存变动，不是当前余额。'}},dimensions:{time:'时间',customer:'客户',country:'国家',category:'产品主分类',supplier:'供应商',source:'来源',direction:'收支方向',warehouse:'仓库'},grains:{day:'日',month:'月',year:'年'}}
 export function report(params,empty=false){
  const filters=Object.fromEntries([...params].filter(([k])=>k.startsWith('filter_')).map(([k,v])=>[k.slice(7),v]))
@@ -16,7 +16,7 @@ export async function mockApi(page,{restricted=false,empty=false,failDashboard=f
  const state={failDashboard,failCatalog,failReport,empty,reportRequests:[],detailRequests:[]}
  await page.route('**/api/**',async route=>{
   const url=new URL(route.request().url()); const path=url.pathname
-  if(path.includes('current-operator')) return route.fulfill({json:restricted?{authenticated:true,rbac_enforcement:true,development_superadmin:false,has_all_permissions:false,permissions:{dashboard:{view:true},reports:{view:true},customers:{view:true}}}:operator})
+  if(path.includes('current-operator')) return route.fulfill({json:restricted?{user_id:4242,authenticated:true,rbac_enforcement:true,development_superadmin:false,has_all_permissions:false,permissions:{dashboard:{view:true},reports:{view:true},customers:{view:true}}}:operator})
   if(path==='/api/dashboard/') return state.failDashboard?route.fulfill({status:400,json:{detail:'经营数据暂不可用'}}):route.fulfill({json:dashboard(state.empty)})
   if(path==='/api/reports/catalog/') return state.failCatalog?route.fulfill({status:400,json:{detail:'报表选项暂不可用'}}):route.fulfill({json:catalog})
   if(path==='/api/reports/data/') {state.reportRequests.push(url.searchParams);return state.failReport?route.fulfill({status:400,json:{detail:'报表数据暂不可用'}}):route.fulfill({json:report(url.searchParams,state.empty)})}

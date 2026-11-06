@@ -11,6 +11,6 @@ export function useWorkspaceNavigation() {
     adoptObject(location) { return manager?.adopt(workspace, location) },
     confirmExit() { return manager?.confirmExit() ?? Promise.resolve(true) },
     newDraft(location) { return manager?.open(location, { fresh: true }) },
-    storageKey(key) { return workspace ? `${key}:${manager.identity.value}:${workspace.id}` : key },
+    storageKey(key, { accountOnly = false } = {}) { return workspace ? `${key}:${manager.identity.value}${accountOnly ? '' : `:${workspace.id}`}` : key },
   }
 }

@@ -1,11 +1,20 @@
 import { navigationAccess } from './navigationAccess'
 import { advanceSessionEpoch, onWorkspaceWrite, setWorkspaceAccountScope } from './workspaceSession'
 import { computed, markRaw, reactive, ref, shallowReactive } from 'vue'
-import { createRouter, createMemoryHistory } from 'vue-router'
+import { createRouter, createMemoryHistory, isNavigationFailure, NavigationFailureType } from 'vue-router'
 import { installModalNavigationGuard } from './utils/modalNavigation'
 import { alertDialog, clearDialogs } from './dialogs'
 
 export const WORKSPACE_LIMIT = 12
+export function newWorkspaceId() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+  const bytes = new Uint8Array(16)
+  if (globalThis.crypto?.getRandomValues) globalThis.crypto.getRandomValues(bytes)
+  else bytes.forEach((_, i) => { bytes[i] = Math.floor(Math.random() * 256) })
+  bytes[6] = (bytes[6] & 15) | 64; bytes[8] = (bytes[8] & 63) | 128
+  const hex = [...bytes].map(value => value.toString(16).padStart(2, '0')).join('')
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`
+}
 export const workspaceQueryKey = '__workspace'
 export function businessIdentity(route) {
   const id = route.query.edit || route.query.detail
@@ -23,13 +32,19 @@ export function createWorkspaceManager(rootRouter) {
   const pendingObjects = new Map()
   const active = computed(() => tabs.find(t => t.id === activeId.value))
   function rememberScroll() { if (active.value) active.value.scroll = { left: window.scrollX, top: window.scrollY } }
-  function url(tab) { const r = tab.router.currentRoute.value; return { path: r.path, query: { ...r.query, [workspaceQueryKey]: tab.id }, hash: r.hash } }
+  const historyIdentity = () => rootRouter.options.history.state?.[workspaceQueryKey]
+  function url(tab) { const r = tab.router.currentRoute.value; return { path: r.path, query: { ...r.query }, hash: r.hash, state: { [workspaceQueryKey]: tab.id }, force: true } }
+  async function syncRoot(tab, replace = false) {
+    const location = url(tab)
+    if (rootRouter.currentRoute.value.fullPath === rootRouter.resolve(location).fullPath && historyIdentity() === tab.id) return
+    return rootRouter[replace ? 'replace' : 'push'](location)
+  }
   async function activate(tab, { sync = true } = {}) {
     if (!tabs.includes(tab)) return false
     const switched = activeId.value !== tab.id
     if (switched) rememberScroll()
     activeId.value = tab.id
-    if (sync) await rootRouter.push(url(tab))
+    if (sync) await syncRoot(tab)
     if (switched) requestAnimationFrame(() => { if (activeId.value === tab.id) window.scrollTo(tab.scroll || { left: 0, top: 0 }) })
     return true
   }
@@ -41,7 +56,7 @@ export function createWorkspaceManager(rootRouter) {
     if (!options.fresh && key) pendingObjects.set(key, promise)
     try { return await promise } finally { pendingOpenCount--; if (pendingObjects.get(key) === promise) pendingObjects.delete(key) }
   }
-  async function openWorkspace(location, { fresh = false, sync = true } = {}) {
+  async function openWorkspace(location, { fresh = false, sync = true, requestedId = null } = {}) {
     if (destroyed) return false
     const openedGeneration = generation
     const resolved = rootRouter.resolve(location), clean = localLocation(resolved)
@@ -50,12 +65,12 @@ export function createWorkspaceManager(rootRouter) {
     if (access !== true) { await rootRouter.replace(access); return false }
     const key = businessIdentity(resolved)
     const existing = !fresh && tabs.find(t => t.key && t.key === key)
-    if (existing) { await activate(existing, { sync: false }); if ((Object.keys(clean.query).length || clean.hash) && existing.router.currentRoute.value.fullPath !== existing.router.resolve(clean).fullPath) await existing.router.push(clean); if (sync) await rootRouter.push(url(existing)); return existing }
+    if (existing) { await activate(existing, { sync: false }); if ((Object.keys(clean.query).length || clean.hash) && existing.router.currentRoute.value.fullPath !== existing.router.resolve(clean).fullPath) await existing.router.push(clean); if (sync) await syncRoot(existing); return existing }
     if (tabs.length + openings >= WORKSPACE_LIMIT) { notice.value = `已打开 ${WORKSPACE_LIMIT} 个工作区。请先保存并关闭不再使用的标签。`; return false }
     const router = markRaw(createRouter({ history: createMemoryHistory(), routes: rootRouter.options.routes }))
     openings += 1
-    const requested = resolved.query[workspaceQueryKey]
-    const id = !fresh && typeof requested === 'string' && /^[a-f0-9-]{36}$/i.test(requested) && !tabs.some(t => t.id === requested) ? requested : crypto.randomUUID()
+    const requested = requestedId || resolved.query[workspaceQueryKey] || (!fresh && !tabs.length && resolved.path === rootRouter.currentRoute.value.path ? historyIdentity() : null)
+    const id = typeof requested === 'string' && /^[a-f0-9-]{36}$/i.test(requested) && !tabs.some(t => t.id === requested) ? requested : newWorkspaceId()
     const tab = reactive({ id, key, draftNumber: resolved.query.create === '1' ? ++draftSequence : null, objectTitle: '', title: resolved.meta.title || '工作区', router, guards: shallowReactive(new Set()), active: computed(() => activeId.value === id), stale: false, revision: 0, busy: 0, scroll: null, closed: false, controller: markRaw(new AbortController()) })
     await router.push(clean); await router.isReady()
     let navigationSequence = 0
@@ -86,7 +101,7 @@ export function createWorkspaceManager(rootRouter) {
       if (nextKey !== tab.key) tab.objectTitle = ''
       tab.key = nextKey
       tab.title = tab.objectTitle || `${to.meta.title || '工作区'}${to.query.create === '1' ? ` · 新建 ${tab.draftNumber}` : to.query.detail || to.query.edit ? ` · #${to.query.detail || to.query.edit}` : ''}`
-      if (activeId.value === tab.id) void rootRouter[tab.navigationMode === 'replace' ? 'replace' : 'push'](url(tab))
+      if (activeId.value === tab.id) void syncRoot(tab, tab.navigationMode === 'replace')
     })
     tab.title = `${resolved.meta.title || '工作区'}${resolved.query.create === '1' ? ` · 新建 ${tab.draftNumber}` : resolved.query.detail || resolved.query.edit ? ` · #${resolved.query.detail || resolved.query.edit}` : ''}`
     openings -= 1
@@ -119,6 +134,7 @@ export function createWorkspaceManager(rootRouter) {
       if (closingGeneration !== generation || targets.some(tab => !tabs.includes(tab))) return false
       const oldIndex = tabs.indexOf(active.value), wasActive = targets.includes(active.value)
       for (const tab of targets) { tab.closed = true; tab.controller.abort(); tabs.splice(tabs.indexOf(tab), 1) }
+      if (targets.length) notice.value = ''
       if (wasActive) { if (tabs.length) await activate(tabs[Math.min(oldIndex, tabs.length - 1)]); else { activeId.value = ''; await open('/') } }
       return true
     } finally { closing = false }
@@ -141,19 +157,20 @@ export function createWorkspaceManager(rootRouter) {
   }
   const removeWrite = onWorkspaceWrite(source => { for (const tab of tabs) if (tab.id !== source) tab.stale = true })
   const remove = rootRouter.afterEach(async (to, _from, failure) => {
-    if (failure || destroyed) return
-    const tab = tabs.find(t => t.id === to.query[workspaceQueryKey])
+    if (destroyed || (failure && !isNavigationFailure(failure, NavigationFailureType.duplicated))) return
+    const requestedId = historyIdentity() || to.query[workspaceQueryKey]
+    const tab = tabs.find(t => t.id === requestedId && t.router.currentRoute.value.path === to.path)
     if (tab) {
       await activate(tab, { sync: false })
       const clean = localLocation(to)
       if (tab.router.resolve(clean).fullPath !== tab.router.currentRoute.value.fullPath) {
         const failure = await tab.router.push(clean)
-        if (failure) await rootRouter.replace(url(tab))
+        if (failure) await syncRoot(tab, true)
       }
     } else {
-      const opened = await open(to.fullPath, { fresh: to.query.create === '1', sync: false })
-      if (opened) await rootRouter.replace(url(opened))
-      else if (active.value) await rootRouter.replace(url(active.value))
+      const opened = await open(to.fullPath, { fresh: to.query.create === '1', sync: false, requestedId })
+      if (opened) await syncRoot(opened, true)
+      else if (active.value) await syncRoot(active.value, true)
     }
   })
   return { isOpening: () => pendingOpenCount > 0, tabs, activeId, active, identity, notice, open, activate, adopt, close, confirmExit, reload, move, invalidate, reset, destroy() { destroyed = true; removeWrite(); remove(); reset('destroyed') } }

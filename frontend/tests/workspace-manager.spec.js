@@ -3,7 +3,7 @@ import { createRouter, createMemoryHistory } from 'vue-router'
 import { ref } from 'vue'
 vi.mock('../src/workspaceRoutes', () => ({ routes: ['/', '/customers', '/orders', '/purchase-orders'].map(path => ({ path, component: { template: '<div />' }, meta: { title: path } })) }))
 vi.mock('../src/dialogs', () => ({ alertDialog: vi.fn().mockResolvedValue(true), clearDialogs: vi.fn() }))
-import { createWorkspaceManager, WORKSPACE_LIMIT } from '../src/workspaceManager'
+import { createWorkspaceManager, WORKSPACE_LIMIT, newWorkspaceId } from '../src/workspaceManager'
 let root, manager
 beforeEach(async () => { window.scrollTo = vi.fn(); vi.stubGlobal('requestAnimationFrame', fn => fn()); root = createRouter({ history: createMemoryHistory(), routes: ['/', '/customers', '/orders', '/purchase-orders'].map(path => ({ path, component: {} })) }); await root.push('/'); manager = createWorkspaceManager(root) })
 afterEach(() => manager.destroy())
@@ -17,7 +17,7 @@ describe('business workspaces', () => {
   const a = await manager.open('/customers?search=Alpha&page=3'), b = await manager.open('/orders?detail=9'); const confirmLeave = vi.fn().mockResolvedValue(false)
   a.guards.add({ confirmLeave, dirty: ref(true) }); await manager.activate(a)
   expect(confirmLeave).not.toHaveBeenCalled(); expect(b.router.currentRoute.value.query.detail).toBe('9'); expect(a.router.currentRoute.value.query.page).toBe('3')
-  expect(root.currentRoute.value.query.__workspace).toBe(a.id)
+  expect(root.options.history.state.__workspace).toBe(a.id)
  })
  it('batch cancellation is atomic and preserves guards and all tabs', async () => {
   const a = await manager.open('/customers'), b = await manager.open('/orders?create=1', { fresh: true })
@@ -28,7 +28,7 @@ describe('business workspaces', () => {
   const a = await manager.open('/customers'); a.busy=1; expect(await manager.close([a.id])).toBe(false); a.busy=0
   for (let i=1;i<WORKSPACE_LIMIT;i++) await manager.open('/orders?create=1', { fresh: true })
   expect(await manager.open('/orders?create=1', { fresh: true })).toBe(false); expect(manager.tabs).toHaveLength(WORKSPACE_LIMIT)
-  expect(await manager.close([a.id])).toBe(true); expect(a.controller.signal.aborted).toBe(true)
+  expect(await manager.close([a.id])).toBe(true); expect(a.controller.signal.aborted).toBe(true); expect(manager.notice.value).toBe('')
  })
  it('identity reset destroys old panes and reload cancellation retains dirty state', async () => {
   const a=await manager.open('/orders?edit=4'); a.stale=true; a.guards.add({confirmLeave:vi.fn().mockResolvedValue(false)})
@@ -65,4 +65,20 @@ it('page-local replace keeps browser history replacement semantics', async () =>
  await manager.open('/customers')
  root.back(); await vi.waitFor(()=>expect(root.currentRoute.value.query.tab).toBe('items'))
  root.back(); await vi.waitFor(()=>expect(root.currentRoute.value.path).toBe('/'))
+})
+
+it('identical draft URLs keep distinct native history identities through Back and Forward', async () => {
+ const first=await manager.open('/orders?create=1',{fresh:true}), second=await manager.open('/orders?create=1',{fresh:true})
+ expect(root.currentRoute.value.fullPath).toBe('/orders?create=1')
+ expect(root.options.history.state.__workspace).toBe(second.id)
+ root.back();await vi.waitFor(()=>expect(manager.activeId.value).toBe(first.id))
+ root.forward();await vi.waitFor(()=>expect(manager.activeId.value).toBe(second.id))
+ expect(root.currentRoute.value.fullPath).toBe('/orders?create=1')
+})
+
+it('workspace identity remains available on development HTTP origins without randomUUID', () => {
+ const original = globalThis.crypto
+ vi.stubGlobal('crypto', { getRandomValues: original.getRandomValues.bind(original) })
+ try { const first = newWorkspaceId(), second = newWorkspaceId(); expect(first).toMatch(/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/); expect(first).not.toBe(second) }
+ finally { vi.stubGlobal('crypto', original) }
 })

@@ -29,6 +29,12 @@ test('desktop and 390px isolated workspaces preserve draft inputs, route state a
  const countBefore=apiRequests.length
  for(let i=0;i<3;i++){await page.getByRole('tab',{name:/新建 2/}).click();await page.getByRole('tab',{name:/新建 1/}).click()}
  expect(apiRequests.length).toBe(countBefore)
+ await page.evaluate(()=>history.back())
+ await expect(active(page)).toHaveAttribute('data-workspace',draftB)
+ await expect(active(page).locator('.customer-editor .field').filter({hasText:'客户名称'}).locator('input').first()).toHaveValue('Workspace Draft B')
+ await page.evaluate(()=>history.forward())
+ await expect(active(page)).toHaveAttribute('data-workspace',draftA)
+ expect(apiRequests.length).toBe(countBefore)
  await page.getByRole('button',{name:/关闭 客户管理.*新建 1/}).click()
  await expect(page.getByRole('dialog',{name:'未保存修改'})).toBeVisible();await page.getByRole('button',{name:'继续编辑',exact:true}).click()
  await expect(page.locator(`[data-workspace="${draftA}"] input`).filter({visible:true}).first()).toBeVisible()
@@ -74,9 +80,9 @@ test('saved object tasks deduplicate, history and refresh retain links, and bulk
  await page.getByRole('tab',{name:'WS-SO001',exact:true}).click()
  await expect(active(page)).toHaveAttribute('data-workspace',orderPane)
  await expect(page).toHaveURL(savedUrl)
- await page.goBack({waitUntil:'domcontentloaded'})
+ await page.evaluate(()=>history.back())
  await expect(page.getByRole('tab',{name:'Workspace Alpha',exact:true})).toHaveAttribute('aria-selected','true')
- await page.goForward({waitUntil:'domcontentloaded'})
+ await page.evaluate(()=>history.forward())
  await expect(page.getByRole('tab',{name:'WS-SO001',exact:true})).toHaveAttribute('aria-selected','true')
  await page.screenshot({path:path.join(evidence,'desktop-parallel-objects.png'),fullPage:true})
  await page.reload({waitUntil:'domcontentloaded'})
@@ -176,10 +182,14 @@ test('direct draft links, native refresh cancellation and synthetic account chan
  const secret=`Workspace private draft ${Date.now()}`
  await name.click() // Establish Chrome's required sticky user activation before beforeunload.
  await name.fill(secret)
- const nativePromise=page.waitForEvent('dialog')
- const reload=page.reload({waitUntil:'domcontentloaded'}).catch(error=>error.message)
- const native=await nativePromise;expect(native.type()).toBe('beforeunload');await native.dismiss();await reload
+ await expect(page.locator('[aria-label="未保存"]')).toHaveCount(1)
+ const documentId=await page.evaluate(()=>window.__refreshGuardProof=crypto.randomUUID())
+ const nativePromise=page.waitForEvent('dialog',{timeout:10000})
+ const reload=page.reload({waitUntil:'domcontentloaded',timeout:10000}).catch(error=>error.message)
+ const native=await nativePromise;expect(native.type()).toBe('beforeunload');await native.dismiss()
  await expect(name).toHaveValue(secret)
+ expect(await page.evaluate(()=>window.__refreshGuardProof)).toBe(documentId)
+ await reload
  const operator=(await request.get('/api/session/current-operator/')).json()
  const payload=await operator
  for(const id of [111,222]){
@@ -204,6 +214,7 @@ test('list filters, page and both list and task scroll survive independent navig
  await active(page).getByRole('button',{name:'下一页',exact:true}).click()
  await expect(page).toHaveURL(/page=2/)
  const firstName=await active(page).locator('tbody tr').first().locator('td').first().innerText()
+ await page.evaluate(()=>document.fonts.ready)
  await page.evaluate(()=>window.scrollTo(0,500))
  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBe(500)
  await page.getByRole('link',{name:'订单管理',exact:true}).click()

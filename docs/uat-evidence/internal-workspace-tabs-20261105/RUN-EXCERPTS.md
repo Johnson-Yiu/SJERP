@@ -9,6 +9,23 @@ Ran 1443 tests in 1077.724s
 OK (skipped=85)
 ```
 
+## 冻结前端组件
+
+```text
+ Test Files  79 passed (79)
+      Tests  737 passed (737)
+   Duration  527.42s (transform 25.10s, setup 52.43s, import 66.81s, tests 43.60s, environment 331.75s)
+```
+
+## 冻结 Node
+
+```text
+ℹ tests 180
+ℹ pass 180
+ℹ fail 0
+ℹ skipped 0
+```
+
 ## Node 排版专项
 
 ```text
@@ -21,20 +38,20 @@ OK (skipped=85)
 ## 生产构建
 
 ```text
-✓ built in 5.84s
+✓ built in 5.28s
 ```
 
 ## Chrome 工作区专项
 
 ```text
 Running 6 tests using 1 worker
-ok 1 browser-tests\workspace-tabs-real.spec.js:6:1 › desktop and 390px isolated workspaces preserve draft inputs, route state and atomic close cancellation (5.4s)
-ok 2 browser-tests\workspace-tabs-real.spec.js:62:1 › saved object tasks deduplicate, history and refresh retain links, and bulk closing respects dirty drafts (5.4s)
-ok 3 browser-tests\workspace-tabs-real.spec.js:97:1 › saved customer drafts adopt the object and related dirty edits receive an explicit conflict prompt (3.0s)
-ok 4 browser-tests\workspace-tabs-real.spec.js:127:1 › bounded synthetic workspaces measure requests, mounted panels, document listeners and timers through reclamation (4.9s)
-ok 5 browser-tests\workspace-tabs-real.spec.js:182:1 › direct draft links, native refresh cancellation and synthetic account changes isolate all in-memory input (17.8s)
-ok 6 browser-tests\workspace-tabs-real.spec.js:211:1 › list filters, page and both list and task scroll survive independent navigation (14.3s)
-  6 passed (1.5m)
+ok 1 browser-tests\workspace-tabs-real.spec.js:6:1 › desktop and 390px isolated workspaces preserve draft inputs, route state and atomic close cancellation (7.0s)
+ok 2 browser-tests\workspace-tabs-real.spec.js:62:1 › saved object tasks deduplicate, history and refresh retain links, and bulk closing respects dirty drafts (8.4s)
+ok 3 browser-tests\workspace-tabs-real.spec.js:97:1 › saved customer drafts adopt the object and related dirty edits receive an explicit conflict prompt (2.5s)
+ok 4 browser-tests\workspace-tabs-real.spec.js:127:1 › bounded synthetic workspaces measure requests, mounted panels, document listeners and timers through reclamation (5.3s)
+ok 5 browser-tests\workspace-tabs-real.spec.js:182:1 › direct draft links, native refresh cancellation and synthetic account changes isolate all in-memory input (12.0s)
+ok 6 browser-tests\workspace-tabs-real.spec.js:211:1 › list filters, page and both list and task scroll survive independent navigation (8.6s)
+  6 passed (48.6s)
 ```
 
 ## 资金与财务重试
@@ -467,4 +484,193 @@ Running 242 tests using 1 worker
 [business-suite] ok 197 browser-tests\product-master-ux.spec.js:134:41 › R0-F9 products status labels stay on one line 1024 (6.3s)
 [business-suite] ok 198 browser-tests\r1-repair-04-routing.spec.js:4:1 › R1-REPAIR-04 font interception is registered before navigation (441ms)
 [business-suite] ok 199 browser-tests\report-query-request-order.spec.js:4:1 › submitted labels can precede the data response; capture the actual filtered request (4.4s)
+[business-suite] ok 200 browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1440 (7.2s)
+[business-suite] ok 201 browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1280 (12.4s)
+[business-suite] ok 202 browser-tests\sku-ux.spec.js:20:37 › SKU list filters and pending batch 1024 (9.3s)
+[business-suite] ok 203 browser-tests\sku-ux.spec.js:21:1 › batch failure retains selections and retry succeeds once (4.7s)
+[business-suite] ok 204 browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1440 (4.6s)
+[business-suite] ok 205 browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1280 (8.1s)
+[business-suite] ok 206 browser-tests\sku-ux.spec.js:22:37 › SKU supplier source error and retry 1024 (6.1s)
+[business-suite] ok 207 browser-tests\sku-ux.spec.js:23:1 › SKU read-only detail remains accessible with no write controls (1.4s)
+[business-suite] ok 208 browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1440 (4.8s)
+[business-suite] ok 209 browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1280 (5.0s)
+[business-suite] ok 210 browser-tests\sku-ux.spec.js:25:37 › SKU detail inventory link and Back 1024 (5.3s)
+[business-suite] ok 211 browser-tests\sku-ux.spec.js:26:1 › SKU history load failure remains distinct from empty history and retries (12.0s)
+[business-suite] ok 212 browser-tests\sku-ux.spec.js:28:1 › SKU logical loads keep separate history and ignore late responses in the rendered list (5.1s)
+[business-suite] ok 213 browser-tests\sku-ux.spec.js:57:1 › transaction-unit navigation returns to SKU editor with original list context (9.1s)
+[business-suite] ok 214 browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1440 (4.0s)
+[business-suite] ok 215 browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1280 (2.5s)
+[business-suite] ok 216 browser-tests\sku-ux.spec.js:59:41 › R0-F9 skus status labels stay on one line 1024 (4.4s)
+[business-suite] ok 217 browser-tests\sku-workspace-batch-races.spec.js:21:74 › SKU source context race success and long content 1440 (8.2s)
+[business-suite] ok 218 browser-tests\sku-workspace-batch-races.spec.js:21:74 › SKU source context race failure and long content 1440 (16.0s)
+[business-suite] ok 219 browser-tests\sku-workspace-batch-races.spec.js:21:74 › SKU source context race success and long content 390 (8.7s)
+[business-suite] ok 220 browser-tests\sku-workspace-batch-races.spec.js:21:74 › SKU source context race failure and long content 390 (7.9s)
+[business-suite] x  221 browser-tests\supplier-ux.spec.js:30:37 › supplier long names, notes, filters, editor and detail at 1440 (30.1s)
+[business-suite] x  222 browser-tests\supplier-ux.spec.js:30:37 › supplier long names, notes, filters, editor and detail at 1280 (30.6s)
+[business-suite] x  223 browser-tests\supplier-ux.spec.js:30:37 › supplier long names, notes, filters, editor and detail at 1024 (30.2s)
+[business-suite] x  224 browser-tests\supplier-ux.spec.js:39:1 › supplier creates, cancels dirty edits, saves and reopens consistent detail and list (30.4s)
+[business-suite] ok 225 browser-tests\supplier-ux.spec.js:43:1 › duplicate code and category retry keep entered data; supplier fixed rules stay hidden (4.5s)
+[business-suite] ok 226 browser-tests\supplier-ux.spec.js:46:1 › filters and page survive reload, detail close and procurement workbench return (11.5s)
+[business-suite] ok 227 browser-tests\supplier-ux.spec.js:49:1 › initial errors retry to empty and refresh errors retain supplier list (15.3s)
+[business-suite] ok 228 browser-tests\supplier-ux.spec.js:52:1 › restricted view hides supplier write actions and purchase shortcuts (2.3s)
+[business-suite] ok 229 browser-tests\ux-copy-foundation.spec.js:21:5 › home copy renders in Chrome at 1440px (6.4s)
+[business-suite] ok 230 browser-tests\ux-copy-foundation.spec.js:21:5 › home copy renders in Chrome at 390px (5.8s)
+[business-suite] ok 231 browser-tests\ux-copy-foundation.spec.js:21:5 › customers copy renders in Chrome at 1440px (11.5s)
+[business-suite] ok 232 browser-tests\ux-copy-foundation.spec.js:21:5 › customers copy renders in Chrome at 390px (3.0s)
+[business-suite] ok 233 browser-tests\ux-copy-foundation.spec.js:21:5 › contacts copy renders in Chrome at 1440px (4.4s)
+[business-suite] ok 234 browser-tests\ux-copy-foundation.spec.js:21:5 › contacts copy renders in Chrome at 390px (5.1s)
+[business-suite] ok 235 browser-tests\ux-copy-foundation.spec.js:21:5 › follow-ups copy renders in Chrome at 1440px (5.0s)
+[business-suite] ok 236 browser-tests\ux-copy-foundation.spec.js:21:5 › follow-ups copy renders in Chrome at 390px (4.7s)
+[business-suite] x  237 browser-tests\ux-copy-foundation.spec.js:21:5 › products copy renders in Chrome at 1440px (30.0s)
+[business-suite] ok 238 browser-tests\ux-copy-foundation.spec.js:21:5 › products copy renders in Chrome at 390px (8.0s)
+[business-suite] ok 239 browser-tests\ux-copy-foundation.spec.js:21:5 › skus copy renders in Chrome at 1440px (18.2s)
+[business-suite] ok 240 browser-tests\ux-copy-foundation.spec.js:21:5 › skus copy renders in Chrome at 390px (4.5s)
+[business-suite] ok 241 browser-tests\ux-copy-foundation.spec.js:21:5 › categories copy renders in Chrome at 1440px (3.2s)
+[business-suite] ok 242 browser-tests\ux-copy-foundation.spec.js:21:5 › categories copy renders in Chrome at 390px (4.2s)
+  14 failed
+  228 passed (35.6m)
+[shared-report-templates-isolated] ok 1 browser-tests\shared-report-templates.spec.js:9:1 › separate manager and employee sessions share only the published query definition (10.3s)
+  1 passed (11.6s)
+[isolation] Playwright suite: passed
+[quote-editor-isolated] ok 1 browser-tests\quote-editor-mobile-actions.spec.js:12:1 › quote editor actions stay readable at desktop and narrow widths and preserve preview/save/export (15.7s)
+  1 passed (17.1s)
+[isolation] Playwright suite: passed
+Running 10 tests using 1 worker
+[iss006-storage-isolated] ok  1 browser-tests\iss006-frontend-storage-chrome.spec.js:194:3 › 采购收货: sessionStorage 属性读取异常时阻止提交 (24.4s)
+[iss006-storage-isolated] ok  2 browser-tests\iss006-frontend-storage-chrome.spec.js:202:3 › 采购收货: sessionStorage.getItem 异常时阻止提交 (10.5s)
+[iss006-storage-isolated] x   3 browser-tests\iss006-frontend-storage-chrome.spec.js:210:3 › 采购收货: setItem 异常后恢复存储，沿用原请求 ID (20.2s)
+[iss006-storage-isolated] ok  4 browser-tests\iss006-frontend-storage-chrome.spec.js:226:3 › 采购收货: removeItem 异常提示核对服务器结果，恢复后重试不重复建单 (10.2s)
+[iss006-storage-isolated] ok  5 browser-tests\iss006-frontend-storage-chrome.spec.js:244:3 › 采购收货: 服务器成功但网络响应丢失，重试只生成一条记录 (5.1s)
+[iss006-storage-isolated] ok  6 browser-tests\iss006-frontend-storage-chrome.spec.js:194:3 › 订单发货: sessionStorage 属性读取异常时阻止提交 (7.5s)
+[iss006-storage-isolated] ok  7 browser-tests\iss006-frontend-storage-chrome.spec.js:202:3 › 订单发货: sessionStorage.getItem 异常时阻止提交 (8.8s)
+[iss006-storage-isolated] x   8 browser-tests\iss006-frontend-storage-chrome.spec.js:210:3 › 订单发货: setItem 异常后恢复存储，沿用原请求 ID (5.6s)
+[iss006-storage-isolated] ok  9 browser-tests\iss006-frontend-storage-chrome.spec.js:226:3 › 订单发货: removeItem 异常提示核对服务器结果，恢复后重试不重复建单 (25.5s)
+[iss006-storage-isolated] ok 10 browser-tests\iss006-frontend-storage-chrome.spec.js:244:3 › 订单发货: 服务器成功但网络响应丢失，重试只生成一条记录 (4.1s)
+  2 failed
+  8 passed (2.2m)
+Running 3 tests using 1 worker
+[iss007-attachment-isolated] ok 1 browser-tests\iss007-attachment-real.spec.js:41:1 › customer follow-up attachment uploads, reopens, and serves through private API (8.8s)
+[iss007-attachment-isolated] ok 2 browser-tests\iss007-attachment-real.spec.js:84:1 › SKU replacement keeps quote image snapshot and exposes thumbnail (9.5s)
+[iss007-attachment-isolated] ok 3 browser-tests\iss007-attachment-real.spec.js:142:1 › attachment upload failure stays visible and retries without duplicating the follow-up (15.0s)
+  3 passed (34.8s)
+[isolation] Playwright suite: passed
+[iss007-image-snapshot-isolated] ok 1 browser-tests\iss007-image-snapshot-real.spec.js:73:1 › ISS-007 SKU image upload, immutable quote/order snapshots, exports, and missing private images (19.0s)
+  1 passed (20.6s)
+[isolation] Playwright suite: passed
+[iss022-isolated] x  1 browser-tests\iss022-moq-real.spec.js:59:3 › ISS-022 采购 MOQ 真实浏览器回归 › 等于 MOQ、低于 MOQ、交易单位换算、取消保留草稿及例外留痕 (2.0m)
+  1 failed
+Running 2 tests using 1 worker
+[iss028-035-isolated] ok 1 browser-tests\iss028-035-category-schema.spec.js:129:3 › ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-028 根/子分类归类、继承属性和筛选 (17.0s)
+[iss028-035-isolated] x  2 browser-tests\iss028-035-category-schema.spec.js:219:3 › ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-035 模板变更不改写已发布 SKU、报价和订单快照 (30.1s)
+  1 failed
+  1 passed (49.7s)
+Running 6 tests using 1 worker
+[iss055-rbac] ok 1 browser-tests\iss055-customer-404-real.spec.js:76:5 › authorized customer detail keeps secure Chinese 404 semantics (desktop) (21.4s)
+[iss055-rbac] ok 2 browser-tests\iss055-customer-404-real.spec.js:76:5 › authorized customer detail keeps secure Chinese 404 semantics (narrow) (8.8s)
+[iss055-rbac] ok 3 browser-tests\iss055-customer-404-real.spec.js:76:5 › unauthorized customer detail keeps secure Chinese 404 semantics (desktop) (7.3s)
+[iss055-rbac] ok 4 browser-tests\iss055-customer-404-real.spec.js:76:5 › unauthorized customer detail keeps secure Chinese 404 semantics (narrow) (16.8s)
+[iss055-rbac] ok 5 browser-tests\iss055-customer-404-real.spec.js:76:5 › unknown customer detail keeps secure Chinese 404 semantics (desktop) (5.4s)
+[iss055-rbac] ok 6 browser-tests\iss055-customer-404-real.spec.js:76:5 › unknown customer detail keeps secure Chinese 404 semantics (narrow) (12.5s)
+  6 passed (1.3m)
+[isolation] Playwright suite: passed
+Playwright suite stability: failed
+```
+
+## 报价 Excel 导出复测
+
+```text
+ok 1 browser-tests\quote-editor-mobile-actions.spec.js:12:1 › quote editor actions stay readable at desktop and narrow widths and preserve preview/save/export (38.3s)
+  1 passed (1.2m)
+```
+
+## 采购付款计划复测
+
+```text
+ok 1 browser-tests\iss075-payment-terms-real.spec.js:22:3 › ISS-075 供应商固定付款规则退出常规前端真实浏览器回归 › 供应商 UI、空付款条件草稿/正式 PO、历史付款计划与窄屏 (23.3s)
+  1 passed (46.2s)
+```
+
+## 采购 MOQ 与例外复测
+
+```text
+ok 1 browser-tests\iss022-moq-real.spec.js:56:3 › ISS-022 采购 MOQ 真实浏览器回归 › 等于 MOQ、低于 MOQ、交易单位换算、取消保留草稿及例外留痕 (29.4s)
+  1 passed (31.2s)
+```
+
+## 供应商专项
+
+```text
+Running 22 tests using 1 worker
+ok  1 browser-tests\supplier-ux.spec.js:30:37 › supplier long names, notes, filters, editor and detail at 1440 (11.5s)
+ok  2 browser-tests\supplier-ux.spec.js:30:37 › supplier long names, notes, filters, editor and detail at 1280 (7.6s)
+ok  3 browser-tests\supplier-ux.spec.js:30:37 › supplier long names, notes, filters, editor and detail at 1024 (9.0s)
+ok  4 browser-tests\supplier-ux.spec.js:39:1 › supplier creates, cancels dirty edits, saves and reopens consistent detail and list (15.6s)
+ok  5 browser-tests\supplier-ux.spec.js:43:1 › duplicate code and category retry keep entered data; supplier fixed rules stay hidden (7.1s)
+x   6 browser-tests\supplier-ux.spec.js:46:1 › filters and page survive reload, detail close and procurement workbench return (30.2s)
+ok  7 browser-tests\supplier-ux.spec.js:49:1 › initial errors retry to empty and refresh errors retain supplier list (28.3s)
+ok  8 browser-tests\supplier-ux.spec.js:52:1 › restricted view hides supplier write actions and purchase shortcuts (23.4s)
+ok  9 browser-tests\ux-copy-foundation.spec.js:21:5 › home copy renders in Chrome at 1440px (11.5s)
+ok 10 browser-tests\ux-copy-foundation.spec.js:21:5 › home copy renders in Chrome at 390px (8.1s)
+ok 11 browser-tests\ux-copy-foundation.spec.js:21:5 › customers copy renders in Chrome at 1440px (21.3s)
+ok 12 browser-tests\ux-copy-foundation.spec.js:21:5 › customers copy renders in Chrome at 390px (6.0s)
+ok 13 browser-tests\ux-copy-foundation.spec.js:21:5 › contacts copy renders in Chrome at 1440px (8.3s)
+ok 14 browser-tests\ux-copy-foundation.spec.js:21:5 › contacts copy renders in Chrome at 390px (9.2s)
+ok 15 browser-tests\ux-copy-foundation.spec.js:21:5 › follow-ups copy renders in Chrome at 1440px (19.9s)
+ok 16 browser-tests\ux-copy-foundation.spec.js:21:5 › follow-ups copy renders in Chrome at 390px (6.0s)
+ok 17 browser-tests\ux-copy-foundation.spec.js:21:5 › products copy renders in Chrome at 1440px (12.7s)
+ok 18 browser-tests\ux-copy-foundation.spec.js:21:5 › products copy renders in Chrome at 390px (5.1s)
+ok 19 browser-tests\ux-copy-foundation.spec.js:21:5 › skus copy renders in Chrome at 1440px (11.7s)
+ok 20 browser-tests\ux-copy-foundation.spec.js:21:5 › skus copy renders in Chrome at 390px (11.1s)
+ok 21 browser-tests\ux-copy-foundation.spec.js:21:5 › categories copy renders in Chrome at 1440px (10.3s)
+ok 22 browser-tests\ux-copy-foundation.spec.js:21:5 › categories copy renders in Chrome at 390px (11.4s)
+  1 failed
+  21 passed (6.1m)
+```
+
+## 供应商返回与基础文案复测
+
+```text
+Running 15 tests using 1 worker
+ok  1 browser-tests\supplier-ux.spec.js:46:1 › filters and page survive reload, detail close and procurement workbench return (8.1s)
+ok  2 browser-tests\ux-copy-foundation.spec.js:21:5 › home copy renders in Chrome at 1440px (2.3s)
+ok  3 browser-tests\ux-copy-foundation.spec.js:21:5 › home copy renders in Chrome at 390px (1.4s)
+ok  4 browser-tests\ux-copy-foundation.spec.js:21:5 › customers copy renders in Chrome at 1440px (1.4s)
+ok  5 browser-tests\ux-copy-foundation.spec.js:21:5 › customers copy renders in Chrome at 390px (1.4s)
+ok  6 browser-tests\ux-copy-foundation.spec.js:21:5 › contacts copy renders in Chrome at 1440px (1.8s)
+ok  7 browser-tests\ux-copy-foundation.spec.js:21:5 › contacts copy renders in Chrome at 390px (1.3s)
+ok  8 browser-tests\ux-copy-foundation.spec.js:21:5 › follow-ups copy renders in Chrome at 1440px (1.1s)
+ok  9 browser-tests\ux-copy-foundation.spec.js:21:5 › follow-ups copy renders in Chrome at 390px (1.3s)
+ok 10 browser-tests\ux-copy-foundation.spec.js:21:5 › products copy renders in Chrome at 1440px (1.4s)
+ok 11 browser-tests\ux-copy-foundation.spec.js:21:5 › products copy renders in Chrome at 390px (1.3s)
+ok 12 browser-tests\ux-copy-foundation.spec.js:21:5 › skus copy renders in Chrome at 1440px (1.3s)
+ok 13 browser-tests\ux-copy-foundation.spec.js:21:5 › skus copy renders in Chrome at 390px (1.7s)
+ok 14 browser-tests\ux-copy-foundation.spec.js:21:5 › categories copy renders in Chrome at 1440px (1.7s)
+ok 15 browser-tests\ux-copy-foundation.spec.js:21:5 › categories copy renders in Chrome at 390px (1.5s)
+  15 passed (47.8s)
+```
+
+## 收货发货存储故障复测
+
+```text
+Running 10 tests using 1 worker
+ok  1 browser-tests\iss006-frontend-storage-chrome.spec.js:182:3 › 采购收货: sessionStorage 属性读取异常时阻止提交 (5.8s)
+ok  2 browser-tests\iss006-frontend-storage-chrome.spec.js:190:3 › 采购收货: sessionStorage.getItem 异常时阻止提交 (3.3s)
+ok  3 browser-tests\iss006-frontend-storage-chrome.spec.js:198:3 › 采购收货: setItem 异常后恢复存储，沿用原请求 ID (3.6s)
+ok  4 browser-tests\iss006-frontend-storage-chrome.spec.js:214:3 › 采购收货: removeItem 异常提示核对服务器结果，恢复后重试不重复建单 (3.2s)
+ok  5 browser-tests\iss006-frontend-storage-chrome.spec.js:232:3 › 采购收货: 服务器成功但网络响应丢失，重试只生成一条记录 (2.9s)
+ok  6 browser-tests\iss006-frontend-storage-chrome.spec.js:182:3 › 订单发货: sessionStorage 属性读取异常时阻止提交 (2.9s)
+ok  7 browser-tests\iss006-frontend-storage-chrome.spec.js:190:3 › 订单发货: sessionStorage.getItem 异常时阻止提交 (7.1s)
+ok  8 browser-tests\iss006-frontend-storage-chrome.spec.js:198:3 › 订单发货: setItem 异常后恢复存储，沿用原请求 ID (4.0s)
+ok  9 browser-tests\iss006-frontend-storage-chrome.spec.js:214:3 › 订单发货: removeItem 异常提示核对服务器结果，恢复后重试不重复建单 (4.6s)
+ok 10 browser-tests\iss006-frontend-storage-chrome.spec.js:232:3 › 订单发货: 服务器成功但网络响应丢失，重试只生成一条记录 (4.3s)
+  10 passed (1.0m)
+```
+
+## 分类和历史快照复测
+
+```text
+Running 2 tests using 1 worker
+ok 1 browser-tests\iss028-035-category-schema.spec.js:129:3 › ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-028 根/子分类归类、继承属性和筛选 (20.0s)
+ok 2 browser-tests\iss028-035-category-schema.spec.js:219:3 › ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-035 模板变更不改写已发布 SKU、报价和订单快照 (17.7s)
+  2 passed (50.2s)
 ```

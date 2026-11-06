@@ -5,19 +5,29 @@
     "bytes": 107658
   },
   {
+    "name": "vitest-acceptance-final.log",
+    "sha256": "18fac13d3e8275aee5414ff21684f639994c1a3991037f4c5303a3d9b676ff2d",
+    "bytes": 1294
+  },
+  {
+    "name": "node-delivery-verified.log",
+    "sha256": "453ba931c2d907786c6d281d745199c77634b5fecffdc5b7d1d7004cbd2a40f0",
+    "bytes": 47987
+  },
+  {
     "name": "typography-release-final.log",
     "sha256": "d3637bd0af3cfaea14ecf1cb47bdf71ab0070420ad58ed14596ed47afb00430d",
     "bytes": 194
   },
   {
-    "name": "build-storage-release.log",
-    "sha256": "decb6a3dfa9bb224c86b232d578405f9ae885383924169e629d4c612b939ff28",
-    "bytes": 1715
+    "name": "build-delivery-verified.log",
+    "sha256": "92fc6c30eaf4483c6b5b079f348aee0b67cb3dc355ff76fcae24afb2f4198a7e",
+    "bytes": 2125
   },
   {
-    "name": "chrome-storage-release.log",
-    "sha256": "954128e3284e5cb0fda985cd212544b9037dfba077bf115dec104a33bed269c2",
-    "bytes": 57174
+    "name": "chrome-acceptance-final.log",
+    "sha256": "a62f289c39b8496656bf5ad64cd9eab2233be12f78b73d2bbef8c645a26e947f",
+    "bytes": 57351
   },
   {
     "name": "cash-storage-release.log",
@@ -76,7 +86,42 @@
   },
   {
     "name": "browser-delivery.log",
-    "sha256": "5549a198de05615516ae31958167e9a6ca30719cc7c9f876bd87fd1c71926966",
-    "bytes": 342114
+    "sha256": "79e1ac896f60ebcdbe026a3d99d1c8def3ff9979b7ab236ef472525d61f6b308",
+    "bytes": 814430
+  },
+  {
+    "name": "quote-export-final.log",
+    "sha256": "c438a93c91293af3e6aae37c720ab3a45da446eee41676cd0e4fa8d120455a15",
+    "bytes": 19070
+  },
+  {
+    "name": "purchase-final.log",
+    "sha256": "3654338b6428e4c07b2de763693b393173d083952a63d5311ac914ccbd7e3757",
+    "bytes": 15774
+  },
+  {
+    "name": "moq-verified.log",
+    "sha256": "a76e94ea38047148e65f3ed4387c81d03fdc71fefa2be5458c246f0f2df6ddd2",
+    "bytes": 17433
+  },
+  {
+    "name": "supplier-final.log",
+    "sha256": "46eb7c26df44214961ebd2c5faf114aeca832703e1ed87d85235957662bf1a6e",
+    "bytes": 7268
+  },
+  {
+    "name": "ux-copy-final.log",
+    "sha256": "73da07108944c287365729c6daa23d68578e8ea9148026603fbac0239139d71c",
+    "bytes": 2053
+  },
+  {
+    "name": "storage-fault-verified.log",
+    "sha256": "dd79458235d49b143eebb8c38819be2470ec9233b04bda365b157946308bd109",
+    "bytes": 202223
+  },
+  {
+    "name": "category-verified.log",
+    "sha256": "634e979cba09f90f4f13a18a483732559039c96da6f565510c7caf2499e6449b",
+    "bytes": 21546
   }
 ]

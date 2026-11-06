@@ -28,7 +28,7 @@ navigation.newDraft({ path: '/orders', query: { create: '1', customer: String(cu
 
 `useWorkspaceNavigation().confirmExit()`：退出登录前调用；返回 false 时保留原身份和所有任务，返回 true 后再执行身份包原退出动作。强制会话失效无法阻止时，以清理旧任务和拒绝旧响应为先，不承诺恢复原内存草稿。
 
-`adoptObject(location)`：保存成功且原表单已经标记 clean 后，把当前新建标签接续为已保存对象；不产生一个遗留草稿标签加一个详情标签。`openTask` 用于独立任务，`router.push/replace` 用于当前任务步骤；replace 会保留浏览器历史的替换语义。关闭对象详情时，同一路由的原列表若仍打开，关闭该对象标签并恢复原列表的筛选、页码和滚动。直接链接进入且没有原列表时，当前工作区继续承接列表。
+`adoptObject(location)`：保存成功且原表单已经标记 clean 后，把当前新建标签接续为已保存对象；不产生一个遗留草稿标签加一个详情标签。`openTask` 用于独立任务，`router.push/replace` 用于当前任务步骤；replace 会保留浏览器历史的替换语义。关闭对象详情或明确取消同路由新建草稿时，若原列表仍打开，恢复该列表的筛选、页码和滚动。报价保存并导出期间保留原编辑工作区，文件下载完成或用户结束编辑后再接续详情。直接链接进入且没有原列表时，当前工作区继续承接列表。
 
 当前身份接口增加只读 `user_id` 元数据：真实已认证用户取服务端主键；匿名开发身份为 null。这个字段不是登录或权限判定，不把开发默认姓名变成真实操作人。App 以 user_id（兼容 profile ID）隔离缓存，不以显示姓名或前端角色判断授权。服务端 `development_superadmin_enabled()` 与原权限矩阵、RBAC 开关均保持原规则。
 

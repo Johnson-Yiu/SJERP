@@ -11,7 +11,7 @@
       "timeouts": 1,
       "panels": 1,
       "domNodes": 551,
-      "jsHeap": 44199685
+      "jsHeap": 42872565
     },
     {
       "stage": "twelve-mounted",
@@ -24,7 +24,7 @@
       "timeouts": 0,
       "panels": 12,
       "domNodes": 3852,
-      "jsHeap": 54506155
+      "jsHeap": 56477528
     },
     {
       "stage": "ten-switches",
@@ -37,7 +37,7 @@
       "timeouts": 0,
       "panels": 12,
       "domNodes": 3852,
-      "jsHeap": 52981759
+      "jsHeap": 54981920
     },
     {
       "stage": "closed-eleven",
@@ -50,72 +50,72 @@
       "timeouts": 0,
       "panels": 1,
       "domNodes": 551,
-      "jsHeap": 59847566
+      "jsHeap": 61823399
     }
   ],
   "durations": [
     {
       "action": "open-draft",
       "number": 1,
-      "ms": 269
+      "ms": 295
     },
     {
       "action": "open-draft",
       "number": 2,
-      "ms": 210
+      "ms": 231
     },
     {
       "action": "open-draft",
       "number": 3,
-      "ms": 189
+      "ms": 229
     },
     {
       "action": "open-draft",
       "number": 4,
-      "ms": 402
+      "ms": 349
     },
     {
       "action": "open-draft",
       "number": 5,
-      "ms": 236
+      "ms": 407
     },
     {
       "action": "open-draft",
       "number": 6,
-      "ms": 205
+      "ms": 210
     },
     {
       "action": "open-draft",
       "number": 7,
-      "ms": 235
+      "ms": 263
     },
     {
       "action": "open-draft",
       "number": 8,
-      "ms": 216
+      "ms": 254
     },
     {
       "action": "open-draft",
       "number": 9,
-      "ms": 217
+      "ms": 459
     },
     {
       "action": "open-draft",
       "number": 10,
-      "ms": 243
+      "ms": 234
     },
     {
       "action": "open-draft",
       "number": 11,
-      "ms": 299
+      "ms": 267
     },
     {
       "action": "ten-switches",
-      "ms": 673
+      "ms": 529
     },
     {
       "action": "close-eleven",
-      "ms": 168
+      "ms": 141
     }
   ],
   "notes": "Document/window listener registrations and application timer wrappers are measured; once-listener records may overcount. JS heap is opportunistic and not proof of GC. No browser process memory claim."

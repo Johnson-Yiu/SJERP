@@ -667,3 +667,7 @@ R1-POSTGRES-TEST-ISOLATION-01 从 `2e25b743884123d7ae5599c89586988a12791bf4` 新
 ### REVIEW-INTEGRATION-BATCH-01 ISS-002原行留档
 
 > | ISS-002 | NEEDS_VERIFICATION | [R0-E1 npm audit](R0-E1-综合业务回归与内测准备.md)；首次日期：UNKNOWN（未从一手记录确认） | 2026-11-04核对：当前4388947d70d26bca66ca0bfc76b2383a2fc0d404已包含Python图像依赖升级/锁定提交3961ef6c4b0499adb0689f14be73372692ddac3f，requirements.txt/lock固定Pillow13.0.0；基线CI41782956426以Python3.12通过全量，当前本地pip check正常。r1-iss002-security-audit-final-20261101/README.md明确后续Python漏洞库复验仍未完成，不能称当前无漏洞。历史时点记录：2026-10-27 / `codex/audit-iss002-dependency-security` / 精确来源 SHA `4e4ca504ee398da85fe23cc53d534c6008807e5c`：初始 npm 锁树的 2 moderate、9 high 已逐项核对直接/传递关系和源码可达性；本轮保留精确前端依赖与锁文件并未运行自动修复。 | Pillow 11.3.0 仍在实际图片上传/缩略图/Excel 图片路径，风险未解决，修复需跨大版本；Python 依赖仍缺乏完整 lock 方案，生产解析版本、CI/PostgreSQL 和外部暴露路径未验证。此前集成分支的 11 项 advisory 快照作为历史记录保留，不把本地 audit 数量当成安全结论。证据：[ISS-002 依赖安全审计报告](uat-evidence/iss-002-dependency-audit/README.md)。 | 保持NEEDS_VERIFICATION；运维包核对当前锁文件的安全公告/可达性、pip-audit与部署镜像实际pin，复用已有兼容测试，不重复Pillow升级、不运行无差别audit fix。原后续计划（历史）：先保持 NEEDS_VERIFICATION；另开 Pillow 大版本兼容与生产镜像依赖冻结验收；不得跨大版本升级 Pillow、运行 `npm audit fix` 或将本轮标记为安全审计通过。 | 内测开放外部访问前 | advisory、可达性、修复和延期项逐项复审；Pillow 关闭条件、Python 依赖冻结、精确 HEAD 三项 CI/生产依赖验证通过。 |
+
+### 2026-11-06 INTEGRATION-VALIDATION-04
+
+权限来源 `bbfe475ef546b5d0fc3db8dbda0f456f0b042e9d`、新品提醒来源 `f63e984f33b86fb00c0de1daeb6a66fd4d42fc78` 已整合，核心修复保留；定向证据及限制见 [验收报告](uat-evidence/int04/README.md)。用户要求停止本地全量后仅运行定向；完整默认浏览器业务套件及 GitHub Actions 为 NOT_RUN，旧下载取消根因仍 UNKNOWN，原生打印和真实 Linux 恢复继续待验。既有 Issue 状态不变，不能据此关闭或宣称上线就绪。

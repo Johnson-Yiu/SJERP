@@ -1,0 +1,247 @@
+[
+  {
+    "source": "backend-targeted.log",
+    "file": "backend-targeted.log",
+    "sha256": "1706acef4df434f1fb7d66be6fc6bec5201a77cd3d28fbc9c3ffc86f2be2d9f6"
+  },
+  {
+    "source": "csv-candidate-summary.log",
+    "file": "csv-candidate-summary.log",
+    "sha256": "71981f667cee33039923d2f7b62e0eacea1d0ce92bd4972cd2335feb6860df14"
+  },
+  {
+    "source": "csv-retained-fixed-int04-summary.log",
+    "file": "csv-retained-fixed-int04-summary.log",
+    "sha256": "1bd90726c3b9416713cf5ce2e9c78014fd21b92a08d5cde0f346a71bc89ac6b8"
+  },
+  {
+    "source": "csv-retained-int04-summary.log",
+    "file": "csv-retained-int04-summary.log",
+    "sha256": "ed13d5c94d5e22fd897d63a3463f8e6688831ae0f9d43726fe1482000e9bea83"
+  },
+  {
+    "source": "frontend-targeted.log",
+    "file": "frontend-targeted.log",
+    "sha256": "7144fea72ce225befd9476d6f1ce418c0f4a7b67af52d3eb169562f8f91ef7de"
+  },
+  {
+    "source": "import-int04-summary.log",
+    "file": "import-int04-summary.log",
+    "sha256": "886c43679f1633862403a8c2fbc49c97b40302786dedd131acb41ff3ff131813"
+  },
+  {
+    "source": "previous-full-result.json",
+    "file": "previous-full-result.json",
+    "sha256": "19478fd41fd1c5cd2e62866358b9097815ebed4fb4baed93aba9f66fa969e5d0"
+  },
+  {
+    "source": "quote-int04-summary.log",
+    "file": "quote-int04-summary.log",
+    "sha256": "fca0f794536893a20efa1902aada0e482b583131814f4b0e7d02803ca3aadc5c"
+  },
+  {
+    "source": "restricted-candidate-summary.log",
+    "file": "restricted-candidate-summary.log",
+    "sha256": "5f72c049ce234834212c8ab3190e89356c63ec39c039e960c2689ad49f9d6ee9"
+  },
+  {
+    "source": "restricted-final-summary.log",
+    "file": "restricted-final-summary.log",
+    "sha256": "660eb22367fb878fbbf140f1050d02d2900c6aabb64c0e67f2f418a0f8b920bc"
+  },
+  {
+    "source": "restricted-int04-summary.log",
+    "file": "restricted-int04-summary.log",
+    "sha256": "acfea52ff8ef6dd8dc85b72b56380e029cfb74e4159e89d3ab48b9d99a43e9a4"
+  },
+  {
+    "source": "runner-targeted.log",
+    "file": "runner-targeted.log",
+    "sha256": "d5071b7b253a4fcc3fa211468da77d7d2f2bffd421db1c60e9d19292251bd5c7"
+  },
+  {
+    "source": "previous-full-logs\\backup-command-faults.log",
+    "file": "previous-full-logs--backup-command-faults.log",
+    "sha256": "fcfefa59aae7a8eb44eb81c2f7864c07695d7ca3bacdfd6e84e6d4b5f2ba82c0"
+  },
+  {
+    "source": "previous-full-logs\\django-check.log",
+    "file": "previous-full-logs--django-check.log",
+    "sha256": "f87ceb15410bde28ff826ce26228e0576558258fa64d145847921a593a61ee63"
+  },
+  {
+    "source": "previous-full-logs\\locked-dependencies.log",
+    "file": "previous-full-logs--locked-dependencies.log",
+    "sha256": "521598caff27746af0f3226ed93c5984535f6626f468f1d5f4b21f3d21c1af4b"
+  },
+  {
+    "source": "previous-full-logs\\migration-graph.log",
+    "file": "previous-full-logs--migration-graph.log",
+    "sha256": "f234a6062193485e6d4ff6454889dddf54be85f1b81afdfe7c460cc068d59f8b"
+  },
+  {
+    "source": "previous-full-logs\\migrations-check.log",
+    "file": "previous-full-logs--migrations-check.log",
+    "sha256": "93e6e2d5be3c054add80c0f19101608803f7ca8a7df1fa41f76bbb9a1f570f4a"
+  },
+  {
+    "source": "previous-full-logs\\pip-check.log",
+    "file": "previous-full-logs--pip-check.log",
+    "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf"
+  },
+  {
+    "source": "previous-full-logs\\postgres-version.log",
+    "file": "previous-full-logs--postgres-version.log",
+    "sha256": "e67734a04dcd182e1da50c9739eb32f8e5c5a769dd8aa1da66a3b2adb34375b8"
+  },
+  {
+    "source": "previous-full-logs\\postgres17-full-backup-restore.log",
+    "file": "previous-full-logs--postgres17-full-backup-restore.log",
+    "sha256": "720a6d002be955bdd6a11d348cc2abc62e125aedacd1fda8d59270d0e6b9760d"
+  },
+  {
+    "source": "previous-full-logs\\python-path-identity.log",
+    "file": "previous-full-logs--python-path-identity.log",
+    "sha256": "05833e3c28bcd4f98891570c914baeca8e995c9a738727f2012f0098419c5546"
+  },
+  {
+    "source": "previous-full-logs\\python-version.log",
+    "file": "previous-full-logs--python-version.log",
+    "sha256": "017ddc77faa27bc908abcbc80f4ef5792c1b1f6e515a73e9c27a83f0f1c71695"
+  },
+  {
+    "source": "previous-full-logs\\sqlite-full.log",
+    "file": "previous-full-logs--sqlite-full.log",
+    "sha256": "8f859db995dd54c109483c78b310da1dbd3fb19efb1bdec01a5b64f8168bef88"
+  },
+  {
+    "source": "previous-full-logs\\sqlite-upgrade-0103.log",
+    "file": "previous-full-logs--sqlite-upgrade-0103.log",
+    "sha256": "ef33fd9444e83eae66ee9e82b094a3001c4d0f54d9282e4b7060e4f50b43c387"
+  },
+  {
+    "source": "previous-full-logs\\sqlite-upgrade-latest.log",
+    "file": "previous-full-logs--sqlite-upgrade-latest.log",
+    "sha256": "87801a7805b410c419fb407a4c521618945218775dff6f2400d0576eb8e2bc62"
+  },
+  {
+    "source": "previous-full-logs\\sqlite-upgrade-seed.log",
+    "file": "previous-full-logs--sqlite-upgrade-seed.log",
+    "sha256": "e6919d5cf8066b44e4769b7f581784f17b3c64766d40c17ead3c1b2e90397af3"
+  },
+  {
+    "source": "previous-full-logs\\sqlite-upgrade-verify.log",
+    "file": "previous-full-logs--sqlite-upgrade-verify.log",
+    "sha256": "ce0227454e84b00ad9dde4be73a9e80d3a9eff12bdd55aa94ec229ae88f3bb7c"
+  },
+  {
+    "source": "restricted-final\\browser\\evidence_dir\\login-desktop.png",
+    "file": "restricted-final--browser--evidence_dir--login-desktop.png",
+    "sha256": "e0721f707546414e0707aecfb10e1bb5b3a9ee201e906f6a667bf6f9be59daf6"
+  },
+  {
+    "source": "restricted-final\\browser\\evidence_dir\\login-narrow.png",
+    "file": "restricted-final--browser--evidence_dir--login-narrow.png",
+    "sha256": "603b6be141fdbc6f4b45001fb48cc7eca78a1c4d0a3fd26dad5ea9b1f07b2594"
+  },
+  {
+    "source": "restricted-final\\browser\\evidence_dir\\session-desktop.png",
+    "file": "restricted-final--browser--evidence_dir--session-desktop.png",
+    "sha256": "6fb7422319e6ffff3cb855cd85db2d8903639809a8579ebc62d70c74c734ea0d"
+  },
+  {
+    "source": "restricted-final\\browser\\evidence_dir\\session-narrow.png",
+    "file": "restricted-final--browser--evidence_dir--session-narrow.png",
+    "sha256": "a14c6f7e0175117f5fa32ff383ef0b822d50411f016296af19a63d64525ded0c"
+  },
+  {
+    "source": "restricted-candidate\\browser\\evidence_dir\\login-desktop.png",
+    "file": "restricted-candidate--browser--evidence_dir--login-desktop.png",
+    "sha256": "bdcfd0407c4b239d8c1ab3e530036cfc4bb5000d05075c0901ff5c9a272d06e6"
+  },
+  {
+    "source": "restricted-candidate\\browser\\evidence_dir\\login-narrow.png",
+    "file": "restricted-candidate--browser--evidence_dir--login-narrow.png",
+    "sha256": "22c2ac8a7fb7bef65dee3b358f2a511d440923e70289c08f2691b23a4113cebe"
+  },
+  {
+    "source": "restricted-candidate\\browser\\evidence_dir\\session-desktop.png",
+    "file": "restricted-candidate--browser--evidence_dir--session-desktop.png",
+    "sha256": "c396cfc8fa191775141fb170cf5550c81d606ba6430de118b4b473d98c257e1c"
+  },
+  {
+    "source": "restricted-candidate\\browser\\evidence_dir\\session-narrow.png",
+    "file": "restricted-candidate--browser--evidence_dir--session-narrow.png",
+    "sha256": "3e78a39c17400302c877760918bdb7cf9ee7e1a3b9be85f02795a8e5122e1770"
+  },
+  {
+    "source": "restricted\\browser\\evidence_dir\\login-desktop.png",
+    "file": "restricted--browser--evidence_dir--login-desktop.png",
+    "sha256": "e0721f707546414e0707aecfb10e1bb5b3a9ee201e906f6a667bf6f9be59daf6"
+  },
+  {
+    "source": "restricted\\browser\\evidence_dir\\login-narrow.png",
+    "file": "restricted--browser--evidence_dir--login-narrow.png",
+    "sha256": "5555b831978e437d0ba1eec0c1813e36a0fe198b2bed730d8d203fe5440b184b"
+  },
+  {
+    "source": "restricted\\browser\\evidence_dir\\session-desktop.png",
+    "file": "restricted--browser--evidence_dir--session-desktop.png",
+    "sha256": "6fb7422319e6ffff3cb855cd85db2d8903639809a8579ebc62d70c74c734ea0d"
+  },
+  {
+    "source": "restricted\\browser\\evidence_dir\\session-narrow.png",
+    "file": "restricted--browser--evidence_dir--session-narrow.png",
+    "sha256": "73e1a613a4f8ceea6460e0d713b37d1f9fea8d83e24d21cd841becd7f49f28a9"
+  },
+  {
+    "source": "quote\\browser\\quote-editor-mobile-actions.spec\\chrome-quote-actions-1024.png",
+    "file": "quote--browser--quote-editor-mobile-actions.spec--chrome-quote-actions-1024.png",
+    "sha256": "3ebc732193aa3037ef1a5f857d7fae2f2c6f1f4381a839d45e6c9a79e1f50820"
+  },
+  {
+    "source": "quote\\browser\\quote-editor-mobile-actions.spec\\chrome-quote-actions-1440.png",
+    "file": "quote--browser--quote-editor-mobile-actions.spec--chrome-quote-actions-1440.png",
+    "sha256": "8b31e7c4dc21df47ff0acacae4566adc079aab6641a2ab9221d807e8abf6398a"
+  },
+  {
+    "source": "quote\\browser\\quote-editor-mobile-actions.spec\\chrome-quote-actions-320.png",
+    "file": "quote--browser--quote-editor-mobile-actions.spec--chrome-quote-actions-320.png",
+    "sha256": "1738b255e5a9d8c9f8ed5364458486d0042e0beef5c31d87acf19d3dc13a75d7"
+  },
+  {
+    "source": "quote\\browser\\quote-editor-mobile-actions.spec\\chrome-quote-actions-390.png",
+    "file": "quote--browser--quote-editor-mobile-actions.spec--chrome-quote-actions-390.png",
+    "sha256": "2580e01a83b2f6adf7cb20fa7feb136fd68f849ad22da92dff6c7009b7ddc2a4"
+  },
+  {
+    "source": "quote\\browser\\quote-editor-mobile-actions.spec\\downloaded-quote.xlsx",
+    "file": "quote--browser--quote-editor-mobile-actions.spec--downloaded-quote.xlsx",
+    "sha256": "300b3388fe48e06fa9be5427a577996fcd8000d7b013a11e72106d84aebfe7a2"
+  },
+  {
+    "source": "isolated browser artifact",
+    "file": "customer-template.csv",
+    "sha256": "3e6be84725656a312434d59821255bc1b849a9aa414045d065ca33ad0a49e320"
+  },
+  {
+    "source": "isolated browser artifact",
+    "file": "failure-report.csv",
+    "sha256": "dd8ad63ecd01c30af13d4aecafab624e1f648083804c2655397dd4b04bd1ff0e"
+  },
+  {
+    "source": "isolated browser artifact",
+    "file": "restricted-final-error-context.md",
+    "sha256": "c297d94ab3f1e4a9955bf15dee5c1e3523b4c536822fb5ef3e54140919c02269"
+  },
+  {
+    "source": "isolated browser artifact",
+    "file": "restricted-initial-error-context.md",
+    "sha256": "4e349a672eec0792ed6e9c2cbdc3db786fe8463ca54c5308c88ce373ac64377f"
+  },
+  {
+    "source": "isolated browser artifact",
+    "file": "csv-load-timeout-error-context.md",
+    "sha256": "1f56fe5d75750ba702f0d89d35489208124bf14cfcf6501a7bee0873ad63420e"
+  }
+]

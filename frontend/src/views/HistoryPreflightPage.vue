@@ -102,7 +102,7 @@ function statusClass(status) {
       <div>
         <p class="preflight-eyebrow">只读检查</p>
         <h2>历史资料预检</h2>
-        <p>上传 XLSX 查看检查结果，再按需下载行级问题清单。</p>
+        <p>上传 .xlsx 文件查看检查结果，按需下载问题清单。</p>
       </div>
       <RouterLink class="preflight-takeover-link" to="/history-takeover">
         <span>需要提交承接申请？</span><strong>进入历史资料承接</strong><ArrowRight :size="16" />
@@ -111,7 +111,7 @@ function statusClass(status) {
 
     <section class="preflight-upload panel" aria-labelledby="preflight-upload-title">
       <div class="preflight-section-title">
-        <div><h3 id="preflight-upload-title"><FileUp :size="18" />选择工作簿</h3><p>仅支持 .xlsx 文件，大小按系统限制。</p></div>
+        <div><h3 id="preflight-upload-title"><FileUp :size="18" />选择工作簿</h3><p>请选择 .xlsx 文件，文件大小需符合系统限制。</p></div>
       </div>
       <div class="preflight-upload-row">
         <label class="preflight-file">
@@ -123,7 +123,7 @@ function statusClass(status) {
           {{ loading ? '正在预检…' : '开始预检' }}
         </button>
       </div>
-      <p class="preflight-notice"><CircleHelp :size="16" />预检只读取工作簿和现有资料，不创建承接申请，也不修改库存、应收应付、订单或私有媒体。预检通过不代表已批准或已承接。</p>
+      <p class="preflight-notice"><CircleHelp :size="16" />预检只读取工作簿和现有资料，不创建承接申请，也不修改库存、应收应付、订单或私有媒体。预检通过后，仍需提交申请并通过审核，才能承接。</p>
     </section>
 
     <section v-if="error" class="preflight-error" role="alert"><AlertTriangle :size="18" /><span>{{ error }}</span></section>
@@ -154,10 +154,10 @@ function statusClass(status) {
             {{ showPassedRows ? '仅看问题行' : '查看全部行' }}
           </button>
         </div>
-        <p v-if="!visibleRows.length" class="preflight-empty">{{ showPassedRows ? '没有可显示的预检结果。' : '当前没有行级问题。' }}</p>
+        <p v-if="!visibleRows.length" class="preflight-empty">{{ showPassedRows ? '没有可显示的预检结果。' : '本次预检未发现需要处理的问题。' }}</p>
         <div v-else class="preflight-table-wrap">
           <table class="preflight-table">
-            <thead><tr><th>工作表</th><th>原行号</th><th>原系统记录编号</th><th>来源关联组编号</th><th>结果</th><th>原因</th><th>建议动作</th></tr></thead>
+            <thead><tr><th>工作表</th><th>原行号</th><th>原系统记录编号</th><th>来源关联组编号</th><th>结果</th><th>原因</th><th>建议处理方式</th></tr></thead>
             <tbody>
               <tr v-for="(row, index) in visibleRows" :key="`${row.sheet}-${row.row}-${index}`">
                 <td>{{ row.sheet }}</td><td>{{ row.row }}</td>

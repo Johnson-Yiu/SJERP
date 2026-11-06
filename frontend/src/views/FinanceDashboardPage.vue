@@ -59,7 +59,7 @@ async function openDrill(metric, page = 1, sortBy = 'date', sortOrder = 'asc') {
     if (version !== drillVersion) return
     drill.value = response.data
   } catch (err) {
-    if (version === drillVersion) drillError.value = apiErrorMessage(err) || '构成明细加载失败，请刷新后重试。'
+    if (version === drillVersion) drillError.value = apiErrorMessage(err) || '明细加载失败，请刷新后重试。'
   } finally {
     if (version === drillVersion) drillLoading.value = false
   }

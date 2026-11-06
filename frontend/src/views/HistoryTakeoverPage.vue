@@ -304,7 +304,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
       <div>
         <p class="takeover-eyebrow">受控流程</p>
         <h2>历史资料承接</h2>
-        <p>申请、核实和逐组承接；预检通过不代表已批准或已迁移。</p>
+        <p>提交申请后，核实资料并逐组承接。预检通过后仍需审核批准，才能承接。</p>
       </div>
       <div class="takeover-intro-actions">
         <RouterLink class="takeover-preflight-link" to="/history-preflight">只预检文件</RouterLink>
@@ -316,7 +316,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
     <section v-if="error" class="takeover-alert" role="alert"><AlertTriangle :size="18" />{{ error }}</section>
 
     <section class="takeover-upload panel">
-      <div class="takeover-section-title"><div><h3><FileUp :size="18" />提交承接申请</h3><p>来源行和凭证引用会纳入申请记录。</p></div><button class="takeover-secondary" :disabled="templateLoading" @click="downloadTemplate">{{ templateLoading ? '正在准备…' : '下载承接模板' }}</button></div>
+      <div class="takeover-section-title"><div><h3><FileUp :size="18" />提交承接申请</h3><p>申请记录会保留来源行和凭证引用。</p></div><button class="takeover-secondary" :disabled="templateLoading" @click="downloadTemplate">{{ templateLoading ? '正在准备…' : '下载承接模板' }}</button></div>
       <div class="takeover-upload-row">
         <label class="takeover-file"><span>{{ file?.name || '选择 .xlsx 文件' }}</span><input ref="fileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :disabled="!canApply || saving" @change="chooseFile" /></label>
         <button class="takeover-primary" :disabled="!canApply || !file || saving" @click="submitApplication">{{ saving ? '正在提交…' : '提交申请并预检' }}</button>
@@ -328,7 +328,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
       <aside class="takeover-list panel">
         <div class="takeover-list-head"><h3><History :size="18" />申请记录</h3><button class="takeover-text-button" :disabled="loading" @click="loadApplications()">刷新</button></div>
         <p v-if="loading && !applications.length" class="takeover-empty">正在读取申请…</p>
-        <p v-else-if="!applications.length" class="takeover-empty">还没有历史承接申请</p>
+        <p v-else-if="!applications.length" class="takeover-empty">还没有历史承接申请，请先选择文件并提交申请。</p>
         <button v-for="application in applications" :key="application.id" class="takeover-list-item" :class="{ active: selected?.id === application.id }" @click="loadApplication(application.id)">
           <strong>{{ application.source_file_name }}</strong><span>{{ statuses[application.status] || application.status }} · {{ application.groups?.length || 0 }} 组</span>
           <small>SHA256 {{ application.source_sha256?.slice(0, 12) }}</small>
@@ -347,7 +347,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
           <span>待核实 <strong>{{ formatCount(selected.preflight_summary?.manual_review) }}</strong></span>
           <span>警告 <strong>{{ formatCount(selected.preflight_summary?.warnings) }}</strong></span>
         </div>
-        <p class="takeover-caution">预检状态：{{ selected.preflight_summary?.overall_status || '未完成' }}。审核前须核实真实性、来源凭证、主档依赖和关联冲突。</p>
+        <p class="takeover-caution">预检状态：{{ selected.preflight_summary?.overall_status || '未完成' }}。审核前请核实资料真实性、来源凭证、主档依赖和关联冲突。</p>
 
         <div class="takeover-groups">
           <button v-for="group in selected.groups" :key="group.id" class="takeover-group-tab" :class="{ active: selectedGroupId === group.id }" @click="selectedGroupId = group.id">

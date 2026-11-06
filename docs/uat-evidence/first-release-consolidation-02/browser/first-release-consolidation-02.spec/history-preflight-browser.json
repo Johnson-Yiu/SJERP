@@ -1,0 +1,38 @@
+{
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "identity": {
+    "username": "codex",
+    "role": "超级管理员",
+    "authenticated": true,
+    "development_superadmin": false,
+    "rbac_enforcement": false
+  },
+  "financeNavigation": {
+    "sidebar": {
+      "open": false,
+      "right": 0
+    },
+    "dashboardShortcut": {
+      "label": "银行资金记录",
+      "path": "/rmb-cash-events"
+    },
+    "routeTitle": "银行资金记录",
+    "dimensions": {
+      "viewport": 390,
+      "document": 390
+    }
+  },
+  "historyPreflight": {
+    "status": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "filename": "history-preflight.csv",
+    "bytes": 553,
+    "bom": [
+      239,
+      187,
+      191
+    ],
+    "sourceOrderId": "COD-SO-SRC-1",
+    "containsUnknownPersonalFields": false
+  }
+}

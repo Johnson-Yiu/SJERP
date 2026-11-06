@@ -303,8 +303,8 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
 <template>
   <section class="txn">
     <header>
-      <div><p class="page-lede">登记原币收付款、订单费用与期间费用。流水发生日期用于业务记账，不是银行入账日期；银行实际日期请在银行结汇与凭证中查看。</p></div>
-      <RouterLink v-if="can('transactions', 'view')" class="cash-link" to="/rmb-cash-events">银行结汇与凭证</RouterLink>
+      <div><p class="page-lede">登记原币收付款、订单费用与期间费用。流水发生日期用于业务记账，不是银行入账日期；银行实际日期请在银行资金记录中查看。</p></div>
+      <RouterLink v-if="can('transactions', 'view')" class="cash-link" to="/rmb-cash-events">银行资金记录</RouterLink>
       <button v-if="can('transactions', 'create')" :disabled="!referencesLoaded" @click="openForm">新增记账</button>
     </header>
     <p class="page-lede">{{ BOOK_RMB_NOTE }}</p>

@@ -1,0 +1,7 @@
+{
+  "synthetic_only": true,
+  "customer_id": 1,
+  "sku_id": 1,
+  "source_order_id": "COD-SO-SRC-1",
+  "source_group_id": "COD-G-1"
+}

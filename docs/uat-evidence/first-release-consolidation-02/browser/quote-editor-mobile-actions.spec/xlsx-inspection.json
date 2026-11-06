@@ -1,0 +1,22 @@
+{
+  "file": "downloaded-quote.xlsx",
+  "bytes": 10198,
+  "sha256": "273130b6d1b563d00019854a8b2cb46132eb199997caa5de0192114231e77deb",
+  "sheets": [
+    "PI"
+  ],
+  "dimension": "A1:M35",
+  "values": {
+    "B3": "报价操作验收客户",
+    "B4": "报价操作验收客户",
+    "B5": "Synthetic Test Address",
+    "L9": "SJ20261106DE002",
+    "C11": "R1-QA-MODEL",
+    "D11": "报价操作验收灯具",
+    "J11": 1,
+    "K11": "pcs",
+    "L11": 12.5,
+    "M11": 12.5
+  },
+  "replacement_character_present": false
+}

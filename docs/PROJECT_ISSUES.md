@@ -4,6 +4,12 @@
 
 从 `f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a` 接入来源 `2bff4790f67b81b35a449f143b8cddb6b24e1821`。重复确认已有批次前复用结果查询的操作人和当前订单客户范围校验；受限销售账号收窄范围后再次确认被拒绝且无订单信息，原范围下重复确认仍返回同一结果、不重复建单。保留主体版本与销售导入两条 `0110`，新增 `0119` 迁移汇合。定向 SQLite 7/7 通过、隔离 PostgreSQL 17.11 为 9/9、真实 Chrome codex 超管下载 XLSX 模板并导入/下载实际 CSV；证据见 [验收报告](uat-evidence/sales-order-import-01/README.md)。按要求跳过本地全量及 GitHub Actions；不改既有 Issue 状态、不启用正式 RBAC。
 
+## 2026-11-06 HISTORY-PREFLIGHT-WEB-FIX-01（已修复，待独立复审）
+
+基于 `4c29837f42697596c8c67e8c2d34379a5939eebd` 修复「历史资料预检」竞态：切换所选工作簿时立即清除旧结果并启用新预检；每个请求捕获文件及选择版本，过期预检或下载响应不再覆盖当前结果或触发错误文件下载；预检结果记录来源文件，CSV 使用同一来源文件。定向回归覆盖 A 预检中改选 B、A 迟到响应及改选 B 后只下载 B。内置浏览器实际保存 B 的 CSV，并与 B 工作簿订单来源编号逐项比对。证据见[本包验收记录](uat-evidence/history-preflight-web-fix-01/README.md)。
+
+当前包代码、定向回归和实际浏览器文件核验完成，待独立复审；不新增或关闭 Issue，不改变现有 124 项计数及状态。只运行定向 Vitest 与生产构建，GitHub Actions 为 `NOT_RUN` 并沿用 `[skip ci]`。
+
 ## 2026-11-06 HISTORY-PREFLIGHT-WEB-01（已实现，待独立复审）
 
 从 `b7ce265833320cc62a7b9aa57e08880f6013203f` 的独立工作树 `codex/history-preflight-web-01` 开发 ERP「历史资料预检」页面，复用现有只读 XLSX 预检及 CSV 报告 API。提供选文件、预检汇总、行级问题和 CSV 下载，并与「历史资料承接」提交入口分别导航；未新增迁移或改变正式提交/API权限。合成工作簿覆盖成功、重复来源、错误文件、未授权 403 及 CSV；19 张业务表、应收/应付、库存流水、销售/采购订单和私有媒体上传前后快照相同。自动定向测试和真实 Chrome 页面检查通过。操作步骤、文件和证据见[验收记录](uat-evidence/history-preflight-web-01/README.md)。

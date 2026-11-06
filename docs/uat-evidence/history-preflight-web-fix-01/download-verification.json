@@ -1,0 +1,16 @@
+{
+  "downloaded_file": "history-preflight.csv",
+  "size_bytes": 1912,
+  "sha256": "d25fff18c5ac784ad23d2cd7471019559234585bafbafe1a0d8ea06e9c705ad1",
+  "csv_row_count": 4,
+  "workbook_B_sales_order_source_ids": [
+    "FIXB-SO-1",
+    "FIXB-SO-1"
+  ],
+  "downloaded_csv_sales_order_source_ids": [
+    "FIXB-SO-1",
+    "FIXB-SO-1"
+  ],
+  "multiset_matches_workbook_B": true,
+  "contains_workbook_A_order_ids": false
+}

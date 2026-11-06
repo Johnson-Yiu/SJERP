@@ -4,6 +4,14 @@
 
 以 FIRST-RELEASE-CONSOLIDATION-02 的 `f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a` 为基线接入 `2bff4790f67b81b35a449f143b8cddb6b24e1821`。保留原销售订单 XLSX 导入行为，新增重复确认时对当前操作者及订单数据范围的校验，并以 `0119_merge_sales_order_import` 汇合主体版本 `0110` 支线、历史提醒和销售导入 `0110` 支线。相关验收：SQLite 7 项通过、PostgreSQL 17.11 9/9、真实 Chrome codex 超管 1/1，前端定向 9/9。实际 CSV、XLSX 和桌面/窄屏截图保存在 [验收证据](uat-evidence/sales-order-import-01/README.md)。本地全量和 GitHub Actions 为 `NOT_RUN`；等待独立复审，不部署、不导入真实业务数据。
 
+## HISTORY-PREFLIGHT-WEB-FIX-01（2026-11-06，修复完成，待独立复审）
+
+基于已推送页面提交 `4c29837f42697596c8c67e8c2d34379a5939eebd` 新建独立工作树 `.worktrees/history-preflight-web-fix-01` 和分支 `codex/history-preflight-web-fix-01`。修复文件选择世代和预检来源文件绑定：切换文件立即使旧预检/下载请求失效并清空其展示，B 可在 A 仍未返回时启动；旧 A 成功或失败晚到都不会改写 B 的汇总/行级结果；CSV 仅从当前汇总所对应的工作簿请求。
+
+定向 Vitest 两文件 10/10、`npm run build` 通过。三个场景由延迟 Promise 测试验证。内置浏览器实际选择 `workbook-B-duplicate.xlsx`，页面显示其 4 行/4 阻断及 `FIXB-SO-1` 行；点击下载后保存实际文件 `history-preflight.csv`（1,912 字节）。解析 CSV 与 B 工作簿的销售订单来源编号多重集完全相同：两条均为 `FIXB-SO-1`，没有 A 的 `FIXA-` 编号。隔离 SQLite/私有媒体快照前后 SHA-256 相同。完整复现步骤、命令和文件见[验收报告](uat-evidence/history-preflight-web-fix-01/README.md)。
+
+未运行全量测试或 GitHub Actions；提交使用 `[skip ci]`，CI 为 `NOT_RUN`。新修复待独立复审，不改 Issue 计数/状态、不合并 master、不部署。上一轮完整 Chrome 下载证据缺口由本轮实际文件核验补足。
+
 ## HISTORY-PREFLIGHT-WEB-01（2026-11-06，已实现，待独立复审）
 
 从固定 SHA `b7ce265833320cc62a7b9aa57e08880f6013203f` 创建独立工作树 `.worktrees/history-preflight-web-01` 和分支 `codex/history-preflight-web-01`。新增只读「历史资料预检」页面，复用 `POST /api/import/history-preflight/` 与 `?report=csv`，提供文件选择、汇总、行级问题和 CSV 报告；入口与「历史资料承接」明确分开。没有数据库迁移、真实资料导入或权限架构变更。

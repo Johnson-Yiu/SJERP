@@ -21,6 +21,27 @@ const result = {
   ],
 }
 
+function workbookResult(name, totalRows) {
+  return {
+    ...result,
+    summary: { ...result.summary, total_rows: totalRows },
+    results: [{
+      sheet: '销售订单', row: 2, source_record_id: `${name}-SO-1`, group_id: `${name}-G1`, status: '警告',
+      reasons: [{ message: `${name} 的专属预检结果。` }], suggested_actions: [`核对 ${name} 工作簿。`],
+    }],
+  }
+}
+
+function deferred() {
+  let resolve
+  let reject
+  const promise = new Promise((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise
+    reject = rejectPromise
+  })
+  return { promise, resolve, reject }
+}
+
 function mountPage() {
   return mount(HistoryPreflightPage, {
     global: {
@@ -77,7 +98,9 @@ describe('history preflight page', () => {
 
   it('requests the API CSV response and triggers a named browser download', async () => {
     const csv = new Blob(['\ufeff工作表,原行号\n销售订单,2'], { type: 'text/csv;charset=utf-8' })
-    mocks.post.mockImplementation(async url => url.includes('report=csv') ? { data: csv } : { data: result })
+    mocks.post.mockImplementation(async (url, body) => url.includes('report=csv')
+      ? { data: csv }
+      : { data: workbookResult(body.get('file').name.replace('.xlsx', ''), 1) })
     const createUrl = vi.fn(() => 'blob:synthetic-csv')
     const revokeUrl = vi.fn()
     Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: createUrl })
@@ -85,18 +108,80 @@ describe('history preflight page', () => {
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
     const wrapper = mountPage()
 
-    await selectWorkbook(wrapper)
+    const workbookA = await selectWorkbook(wrapper, 'workbook-A.xlsx')
     await wrapper.get('button.preflight-primary').trigger('click')
     await flushPromises()
+    expect(wrapper.text()).toContain('workbook-A-SO-1')
+
+    const selected = await selectWorkbook(wrapper, 'workbook-B.xlsx')
+    expect(wrapper.find('.preflight-summary').exists()).toBe(false)
+    expect(wrapper.findAll('button').some(button => button.text().includes('下载 CSV 清单'))).toBe(false)
+    await wrapper.get('button.preflight-primary').trigger('click')
+    await flushPromises()
+    expect(wrapper.text()).toContain('workbook-B-SO-1')
     await wrapper.findAll('button').find(button => button.text().includes('下载 CSV 清单')).trigger('click')
     await flushPromises()
 
     const csvCall = mocks.post.mock.calls.find(([url]) => url.includes('report=csv'))
     expect(csvCall?.[0]).toBe('/import/history-preflight/?report=csv')
+    expect(csvCall?.[1].get('file')).toBe(selected)
+    expect(csvCall?.[1].get('file')).not.toBe(workbookA)
     expect(csvCall?.[2]).toEqual({ responseType: 'blob' })
     expect(createUrl).toHaveBeenCalledWith(csv)
     expect(click).toHaveBeenCalledOnce()
     expect(click.mock.contexts[0]?.download).toBe('history-preflight.csv')
+    wrapper.unmount()
+  })
+
+  it('lets the user start B after changing files while A is still being checked', async () => {
+    const pendingA = deferred()
+    const pendingB = deferred()
+    mocks.post.mockImplementation((_url, body) => body.get('file').name === 'workbook-A.xlsx' ? pendingA.promise : pendingB.promise)
+    const wrapper = mountPage()
+
+    await selectWorkbook(wrapper, 'workbook-A.xlsx')
+    await wrapper.get('button.preflight-primary').trigger('click')
+    expect(wrapper.get('button.preflight-primary').element.disabled).toBe(true)
+
+    await selectWorkbook(wrapper, 'workbook-B.xlsx')
+    expect(wrapper.find('.preflight-summary').exists()).toBe(false)
+    expect(wrapper.get('button.preflight-primary').element.disabled).toBe(false)
+    await wrapper.get('button.preflight-primary').trigger('click')
+    expect(mocks.post).toHaveBeenCalledTimes(2)
+    expect(mocks.post.mock.calls[1][1].get('file').name).toBe('workbook-B.xlsx')
+
+    pendingB.resolve({ data: workbookResult('workbook-B', 27) })
+    await flushPromises()
+    expect(wrapper.get('.preflight-summary').text()).toContain('27')
+    expect(wrapper.text()).toContain('workbook-B-SO-1')
+    pendingA.resolve({ data: workbookResult('workbook-A', 11) })
+    await flushPromises()
+    expect(wrapper.get('.preflight-summary').text()).toContain('27')
+    expect(wrapper.text()).toContain('workbook-B-SO-1')
+    expect(wrapper.text()).not.toContain('workbook-A-SO-1')
+    wrapper.unmount()
+  })
+
+  it('ignores A when its response arrives after B has replaced it', async () => {
+    const pendingA = deferred()
+    const pendingB = deferred()
+    mocks.post.mockImplementation((_url, body) => body.get('file').name === 'workbook-A.xlsx' ? pendingA.promise : pendingB.promise)
+    const wrapper = mountPage()
+
+    await selectWorkbook(wrapper, 'workbook-A.xlsx')
+    await wrapper.get('button.preflight-primary').trigger('click')
+    await selectWorkbook(wrapper, 'workbook-B.xlsx')
+    await wrapper.get('button.preflight-primary').trigger('click')
+    pendingB.resolve({ data: workbookResult('workbook-B', 27) })
+    await flushPromises()
+    expect(wrapper.text()).toContain('workbook-B-SO-1')
+
+    pendingA.resolve({ data: workbookResult('workbook-A', 11) })
+    await flushPromises()
+    expect(wrapper.get('.preflight-summary').text()).toContain('27')
+    expect(wrapper.text()).toContain('workbook-B-SO-1')
+    expect(wrapper.text()).not.toContain('workbook-A-SO-1')
+    expect(wrapper.text()).toContain('workbook-B.xlsx')
     wrapper.unmount()
   })
 

@@ -7,19 +7,25 @@ import { api } from '../api'
 const fileInput = ref(null)
 const file = ref(null)
 const preview = ref(null)
+const previewFile = ref(null)
 const loading = ref(false)
 const downloading = ref(false)
 const error = ref('')
 const showPassedRows = ref(false)
+let selectionVersion = 0
 
 const summary = computed(() => preview.value?.summary || {})
 const issueRows = computed(() => (preview.value?.results || []).filter(row => row.status !== '通过'))
 const visibleRows = computed(() => showPassedRows.value ? (preview.value?.results || []) : issueRows.value)
 
 function chooseFile(event) {
+  selectionVersion += 1
   file.value = event.target.files?.[0] || null
   preview.value = null
+  previewFile.value = null
   error.value = ''
+  loading.value = false
+  downloading.value = false
   showPassedRows.value = false
 }
 
@@ -28,34 +34,44 @@ function fileSize(bytes) {
   return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
 
-function formData() {
+function formData(workbook) {
   const body = new FormData()
-  body.append('file', file.value)
+  body.append('file', workbook)
   return body
 }
 
 async function runPreflight() {
   if (!file.value || loading.value) return
+  const workbook = file.value
+  const version = selectionVersion
   loading.value = true
   error.value = ''
   preview.value = null
+  previewFile.value = null
   showPassedRows.value = false
   try {
-    const response = await api.post('/import/history-preflight/', formData())
+    const response = await api.post('/import/history-preflight/', formData(workbook))
+    if (version !== selectionVersion || file.value !== workbook) return
     preview.value = response.data
+    previewFile.value = workbook
   } catch (e) {
-    error.value = e.message || '预检失败，请检查文件后重试。'
+    if (version === selectionVersion && file.value === workbook) {
+      error.value = e.message || '预检失败，请检查文件后重试。'
+    }
   } finally {
-    loading.value = false
+    if (version === selectionVersion && file.value === workbook) loading.value = false
   }
 }
 
 async function downloadCsv() {
-  if (!file.value || !preview.value || downloading.value) return
+  const workbook = previewFile.value
+  if (!workbook || workbook !== file.value || !preview.value || downloading.value) return
+  const version = selectionVersion
   downloading.value = true
   error.value = ''
   try {
-    const response = await api.post('/import/history-preflight/?report=csv', formData(), { responseType: 'blob' })
+    const response = await api.post('/import/history-preflight/?report=csv', formData(workbook), { responseType: 'blob' })
+    if (version !== selectionVersion || file.value !== workbook || previewFile.value !== workbook) return
     const url = URL.createObjectURL(response.data)
     const anchor = document.createElement('a')
     anchor.href = url
@@ -67,9 +83,11 @@ async function downloadCsv() {
       URL.revokeObjectURL(url)
     }, 1000)
   } catch (e) {
-    error.value = e.message || 'CSV 下载失败，请重试。'
+    if (version === selectionVersion && file.value === workbook && previewFile.value === workbook) {
+      error.value = e.message || 'CSV 下载失败，请重试。'
+    }
   } finally {
-    downloading.value = false
+    if (version === selectionVersion) downloading.value = false
   }
 }
 
@@ -110,10 +128,10 @@ function statusClass(status) {
 
     <section v-if="error" class="preflight-error" role="alert"><AlertTriangle :size="18" /><span>{{ error }}</span></section>
 
-    <template v-if="preview">
+    <template v-if="preview && previewFile === file">
       <section class="preflight-summary panel" aria-labelledby="preflight-summary-title">
         <div class="preflight-section-title">
-          <div><h3 id="preflight-summary-title">预检汇总</h3><p>{{ file?.name }}</p></div>
+          <div><h3 id="preflight-summary-title">预检汇总</h3><p>{{ previewFile?.name }}</p></div>
           <button class="preflight-secondary" type="button" :disabled="downloading" @click="downloadCsv">
             <Download :size="16" />{{ downloading ? '正在准备 CSV…' : '下载 CSV 清单' }}
           </button>

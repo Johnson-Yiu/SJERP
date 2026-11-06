@@ -1,0 +1,15 @@
+{
+  "published_logs_verified": 96,
+  "report_links_verified": 11,
+  "raw_bytes_preserved_except_token_values": true,
+  "sqlite_full": {
+    "total": 1450,
+    "passed": 1364,
+    "skipped": 86,
+    "failed": 0
+  },
+  "frontend_unit": 730,
+  "pg_targeted": 9,
+  "http_requests": 29,
+  "github_actions": "NOT_RUN"
+}

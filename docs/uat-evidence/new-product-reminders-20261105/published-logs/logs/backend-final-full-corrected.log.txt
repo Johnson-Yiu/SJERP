@@ -1,0 +1,550 @@
+Creating test database for alias 'default'...
+
+Cloning test database for alias 'default'...
+
+Cloning test database for alias 'default'...
+
+Cloning test database for alias 'default'...
+
+Cloning test database for alias 'default'...
+
+Bad Request: /api/access-roles/1/permission-matrix/
+Bad Request: /api/categories/reorder/
+Bad Request: /api/categories/1/
+Bad Request: /api/customers/
+Forbidden: /api/actual-rmb-cash/
+Forbidden: /api/actual-rmb-cash/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+....Forbidden: /api/finance-ledger/voucher-download/
+Internal Server Error: /api/shipments/1/copy-estimated-packing/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 1519, in copy_estimated_packing
+    copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\services\packaging.py", line 161, in copy_estimated_to_actual
+    serializer.save(shipment=shipment)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\serializers.py", line 2905, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\tests\test_actual_packing.py", line 464, in fail_after_first_carton
+    raise RuntimeError("copy failed after first carton")
+RuntimeError: copy failed after first carton
+Bad Request: /api/shipments/1/packages/
+..........................Internal Server Error: /api/shipments/1/packages/1/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 1500, in update_package
+    record_operation(request=request, instance=shipment, action="custom", action_label="ɾ��װ����ϸ", before={"package": before}, metadata={"package_id": package_id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: audit save failed
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/2/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/2/packages/
+...Internal Server Error: /api/shipments/1/packages/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 1483, in packages
+    package = serializer.save(shipment=shipment)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\serializers.py", line 2905, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+....Internal Server Error: /api/shipments/1/packages/1/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 1503, in update_package
+    serializer.is_valid(raise_exception=True); serializer.save()
+                                               ^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\serializers.py", line 205, in save
+    self.instance = self.update(self.instance, validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\serializers.py", line 2917, in update
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+Bad Request: /api/shipments/1/packages/1/
+Method Not Allowed: /api/operation-logs/
+Method Not Allowed: /api/operation-logs/1/
+Method Not Allowed: /api/operation-logs/1/
+Conflict: /api/rmb-cash-events/2/confirm/
+Internal Server Error: /api/rmb-cash-events/2/confirm/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\cash_api.py", line 151, in confirm
+    return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\services\cash_events.py", line 395, in confirm_event
+    event.save(update_fields=["status", "confirmed_at", "confirmed_actor", "updated_at"])
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: event save failed
+Bad Request: /api/shipments/2/packages/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/shipments/2/packages/
+Bad Request: /api/rmb-cash-events/1/confirm/
+Conflict: /api/rmb-cash-events/2/confirm/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Conflict: /api/rmb-cash-events/
+Internal Server Error: /api/rmb-cash-events/2/confirm/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\cash_api.py", line 151, in confirm
+    return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\services\cash_events.py", line 386, in confirm_event
+    CashDuplicateReview.objects.create(event=event, candidate_ids=[c["id"] for c in candidates["items"]],
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: audit failed
+Conflict: /api/rmb-cash-events/2/confirm/
+......Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Conflict: /api/rmb-cash-events/2/confirm/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Conflict: /api/rmb-cash-events/4/confirm/
+Bad Request: /api/rmb-cash-events/1/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+Bad Request: /api/rmb-cash-events/1/cancel/
+Bad Request: /api/rmb-cash-events/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/1/confirm/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/shipments/1/packages/
+.......................................Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/product-certificates/6/
+Bad Request: /api/product-certificates/6/
+........Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/1/confirm/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Not Found: /api/rmb-cash-events/not-an-id/
+Bad Request: /api/purchase-orders/1/
+Bad Request: /api/purchase-orders/1/
+Bad Request: /api/rmb-cash-events/preview/
+.................Bad Request: /api/orders/1/cancel/
+Bad Request: /api/orders/1/complete/
+Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/2/confirm/
+....Bad Request: /api/inventory-movements/1/
+Conflict: /api/purchase-orders/1/receive/
+Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/1/reverse/
+Bad Request: /api/orders/1/
+Bad Request: /api/orders/1/start-production/
+Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+.......sBad Request: /api/orders/2/
+Bad Request: /api/orders/1/ship/
+......Bad Request: /api/contacts/1/
+Bad Request: /api/purchase-orders/1/cancel/
+Bad Request: /api/customers/1/
+Bad Request: /api/customers/2/
+Bad Request: /api/purchase-orders/1/cancel/
+Bad Request: /api/customers/3/
+Bad Request: /api/customers/4/
+.....Internal Server Error: /api/purchase-orders/1/pay/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 563, in pay
+    record_operation(request=request, instance=purchase, action="custom", action_label="�ɹ�������", before=before, metadata={"transaction_id": payment.id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\tests\test_core_business_closeout.py", line 282, in fail_second
+    if len(labels)==2: raise RuntimeError('synthetic second payment audit failure')
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: synthetic second payment audit failure
+.Bad Request: /api/purchase-orders/1/receive/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/place/
+Bad Request: /api/purchase-orders/1/
+Internal Server Error: /api/purchase-orders/1/receive/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 510, in receive
+    record_operation(request=request, instance=purchase, action="custom", action_label="�Ǽǲɹ�����", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+.........Bad Request: /api/follow-ups/
+.Not Found: /api/follow-ups/2/attachments/1/
+Bad Request: /api/follow-ups/1/
+Bad Request: /api/follow-ups/1/
+Bad Request: /api/follow-ups/1/attachments/
+...............Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/2/confirm/
+Bad Request: /api/orders/1/
+Bad Request: /api/quotes/1/mark-sent/
+Bad Request: /api/quotes/1/reject/
+Bad Request: /api/quotes/1/expire/
+.........Bad Request: /api/orders/1/
+..Destroying test database for alias 'default'...
+
+Destroying test database for alias 'default'...
+
+Destroying test database for alias 'default'...
+
+Destroying test database for alias 'default'...
+
+Destroying test database for alias 'default'...
+
+Traceback (most recent call last):
+Found 1450 test(s).
+System check identified no issues (0 silenced).
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\manage.py", line 13, in <module>
+    main()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\new-product-reminders-20261105\backend\manage.py", line 9, in main
+    execute_from_command_line(sys.argv)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\__init__.py", line 443, in execute_from_command_line
+    utility.execute()
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\__init__.py", line 437, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\commands\test.py", line 24, in run_from_argv
+    super().run_from_argv(argv)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\base.py", line 420, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\base.py", line 464, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\commands\test.py", line 63, in handle
+    failures = test_runner.run_tests(test_labels)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 1134, in run_tests
+    result = self.run_suite(suite)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 1061, in run_suite
+    return runner.run(suite)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\runner.py", line 240, in run
+    test(result)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\test\runner.py", line 586, in run
+    subsuite_index, events = test_results.next(timeout=0.1)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\multiprocessing\pool.py", line 873, in next
+    raise value
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\multiprocessing\pool.py", line 540, in _handle_tasks
+    put(task)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\multiprocessing\connection.py", line 206, in send
+    self._send_bytes(_ForkingPickler.dumps(obj))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\multiprocessing\reduction.py", line 51, in dumps
+    cls(buf, protocol).dump(obj)
+_pickle.PicklingError: Can't pickle <class 'finance_delivered_defect_repros.AuthorizedRoleDefectReproduction'>: import of module 'finance_delivered_defect_repros' failed
+Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/

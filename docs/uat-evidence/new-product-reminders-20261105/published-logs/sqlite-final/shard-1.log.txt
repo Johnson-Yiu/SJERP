@@ -1,0 +1,650 @@
+Found 1450 test(s).
+FULL_DISCOVERY 1450 SHARD 1 SELECTED 483
+Creating test database for alias 'default'...
+.........Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+.Internal Server Error: /api/shipments/1/copy-estimated-packing/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 1519, in copy_estimated_packing
+    copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\services\packaging.py", line 161, in copy_estimated_to_actual
+    serializer.save(shipment=shipment)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\serializers.py", line 2905, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\tests\test_actual_packing.py", line 464, in fail_after_first_carton
+    raise RuntimeError("copy failed after first carton")
+RuntimeError: copy failed after first carton
+.Internal Server Error: /api/shipments/1/packages/1/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 1500, in update_package
+    record_operation(request=request, instance=shipment, action="custom", action_label="删除装箱明细", before={"package": before}, metadata={"package_id": package_id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: audit save failed
+..Bad Request: /api/shipments/2/packages/
+.Bad Request: /api/shipments/1/packages/1/
+.Bad Request: /api/shipments/2/packages/
+...Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+...Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+.......Conflict: /api/rmb-cash-events/2/confirm/
+.Internal Server Error: /api/rmb-cash-events/2/confirm/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\cash_api.py", line 151, in confirm
+    return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\services\cash_events.py", line 386, in confirm_event
+    CashDuplicateReview.objects.create(event=event, candidate_ids=[c["id"] for c in candidates["items"]],
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: audit failed
+...Conflict: /api/rmb-cash-events/2/confirm/
+Conflict: /api/rmb-cash-events/4/confirm/
+.Bad Request: /api/rmb-cash-events/1/cancel/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/preview/
+...Bad Request: /api/product-certificates/6/
+Bad Request: /api/product-certificates/6/
+..Bad Request: /api/orders/1/cancel/
+.Bad Request: /api/orders/1/
+Bad Request: /api/orders/1/start-production/
+Bad Request: /api/orders/2/
+...Bad Request: /api/purchase-orders/1/cost-allocation/
+.Bad Request: /api/purchase-orders/1/cost-allocation/
+Internal Server Error: /api/purchase-orders/1/receive/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 510, in receive
+    record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+.Bad Request: /api/inventory-movements/1/reverse/
+..Bad Request: /api/contacts/1/
+....Bad Request: /api/follow-ups/1/attachments/
+..Bad Request: /api/orders/1/
+Bad Request: /api/orders/1/
+..........Bad Request: /api/import/csv/
+.............Bad Request: /api/finance-ledger/transfers/
+.Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+..Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/fail/
+Bad Request: /api/finance-ledger/post/
+...Not Found: /api/media/finance-vouchers/2026/11/c386bfcce2184c2882e57350fae5a0f5.pdf
+.Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+....Request Entity Too Large: /api/finance-ledger/vouchers/
+..........Bad Request: /api/finance-ledger/transfers/
+...........Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/1/
+....Bad Request: /api/orders/1/ship/
+Bad Request: /api/orders/1/ship/
+.Bad Request: /api/orders/1/ship/
+.........Bad Request: /api/inventory-movements/2/
+..Internal Server Error: /api/purchase-orders/1/receipts/1/reverse/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 532, in reverse_receipt
+    record_operation(
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+.Internal Server Error: /api/purchase-orders/1/receive/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 510, in receive
+    record_operation(request=request, instance=purchase, action="custom", action_label="登记采购到货", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+.Internal Server Error: /api/orders/1/ship/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 2337, in ship
+    record_operation(request=request, instance=order, action="custom", action_label="确认订单发货", before=before, after=after, metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+.................Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/
+.Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+..Bad Request: /api/import/history-preflight/
+Bad Request: /api/import/history-preflight/
+........Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/1/
+........Bad Request: /api/import/history-takeovers/
+Bad Request: /api/import/history-takeovers/
+...Bad Request: /api/import/history-takeovers/1/groups/1/correction-review/
+.Not Found: /api/import/history-takeovers/2/
+Not Found: /api/import/history-takeovers/2/review-report.csv
+Conflict: /api/import/history-takeovers/
+.Bad Request: /api/import/history-takeovers/2/groups/3/review/
+Bad Request: /api/import/history-takeovers/2/groups/3/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/review/
+..Bad Request: /api/hs-codes/1/assign-products/
+.Bad Request: /api/rmb-cash-events/1/confirm/
+.Bad Request: /api/inventory-movements/1/reverse/
+Bad Request: /api/inventory-movements/2/reverse/
+.Bad Request: /api/inventory-movements/1/reverse/
+..Internal Server Error: /api/inventory-movements/1/reverse/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 2921, in reverse
+    record_operation(
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: first audit failure
+.Bad Request: /api/shipments/1/reverse/
+....Conflict: /api/purchase-orders/1/receive/
+..........Bad Request: /api/customers/
+Bad Request: /api/customers/
+......Bad Request: /api/new-product-reminders/1/
+Bad Request: /api/new-product-reminders/1/
+Bad Request: /api/new-product-reminders/1/
+Bad Request: /api/new-product-reminders/1/
+Bad Request: /api/new-product-reminders/1/
+Bad Request: /api/new-product-reminders/1/
+Conflict: /api/new-product-reminders/1/
+Method Not Allowed: /api/new-product-reminders/1/
+Method Not Allowed: /api/new-product-reminders/
+Method Not Allowed: /api/new-product-reminders/bulk-delete/
+Bad Request: /api/customers/1/
+Bad Request: /api/contacts/1/
+Bad Request: /api/products/1/
+Bad Request: /api/follow-ups/1/
+.Bad Request: /api/new-product-reminders/1/void/
+Conflict: /api/new-product-reminders/1/
+Conflict: /api/new-product-reminders/1/void/
+Conflict: /api/new-product-reminders/1/
+Conflict: /api/new-product-reminders/1/void/
+Not Found: /api/new-product-reminders/1/restore/
+...Internal Server Error: /api/orders/1/quantity-adjustments/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 2211, in quantity_adjustments
+    adjustment, replayed, preview = apply_quantity_adjustment(
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\services\order_quantity_adjustments.py", line 425, in apply_quantity_adjustment
+    rebalance_sku_reservations(SKU.objects.get(pk=sku_id))
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: reservation failure
+..Bad Request: /api/orders/1/quantity-adjustments/
+......Bad Request: /api/packaging-templates/1/
+...........Bad Request: /api/shipments/1/export-packing-list/
+.Bad Request: /api/shipments/1/export-packing-list/
+..Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+..............Bad Request: /api/products/1/
+.Bad Request: /api/purchase-orders/1/cost-allocation/
+.........Bad Request: /api/purchase-orders/1/
+......Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+..Internal Server Error: /api/quotes/1/revise/
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\views.py", line 1883, in revise
+    create_quote_items(revision, item_data, source_items=source_items)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12.16-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: Synthetic item failure
+...Bad Request: /api/orders/1/complete/
+.Bad Request: /api/orders/1/complete/
+...Bad Request: /api/quotes/
+...Bad Request: /api/orders/
+.....Bad Request: /api/quotes/1/revise/
+...Unprocessable Entity: /api/quotes/1/export/
+.Unprocessable Entity: /api/quotes/1/export/
+.......Bad Request: /api/transactions/
+.......Bad Request: /api/reports/details/
+.......Service Unavailable: /api/import/csv/execute/
+..Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+..Bad Request: /api/import/csv/execute/
+.Request Entity Too Large: /api/import/csv/preview/
+Request Entity Too Large: /api/import/csv/execute/
+Request Entity Too Large: /api/import/csv/
+.Service Unavailable: /api/import/csv/preview/
+..............Bad Request: /api/skus/
+..Bad Request: /api/quotes/
+.Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+......Bad Request: /api/products/1/combination-rules/
+...Bad Request: /api/skus/2/
+..Bad Request: /api/skus/1/
+.....Bad Request: /api/skus/
+Bad Request: /api/skus/1/
+..Bad Request: /api/skus/1/
+.Bad Request: /api/skus/2/
+..Bad Request: /api/skus/
+.Bad Request: /api/products/1/sku-plan/publish/
+..Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/skus/batch-create/
+.Bad Request: /api/skus/1/
+..Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+...Bad Request: /api/products/1/supplier-candidate-pool/
+Bad Request: /api/products/1/supplier-candidate-pool/
+.......Bad Request: /api/purchase-orders/1/
+Bad Request: /api/purchase-orders/1/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+.....Bad Request: /api/inventory-movements/1/
+....Bad Request: /api/inventory-movements/batch/
+Bad Request: /api/inventory-movements/batch/
+...Bad Request: /api/purchase-orders/1/
+.Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+.............Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+.ss.s.s......sssBad Request: /api/finance-ledger/approve/
+.ss...ssss.s.....sss..D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\tests\test_legacy_qa_tools.py:92: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+.D:\Codex项目\森爵照明管理系统\.worktrees\new-product-reminders-20261105\backend\crm\tests\test_legacy_qa_tools.py:107: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+.ssssssss........sss..Attachment recovery copy retained: backup=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-d26txrrb\.private-attachment-recovery\bcae5e2295e94f6fbbe5f1f0dd684443.bin manifest=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-d26txrrb\.private-attachment-recovery\bcae5e2295e94f6fbbe5f1f0dd684443.json
+..ss...Bad Request: /api/purchase-orders/2/receive/
+Bad Request: /api/purchase-orders/2/cancel/
+Bad Request: /api/orders/1/cancel/
+Bad Request: /api/purchase-orders/2/receipts/1/reverse/
+System check identified no issues (0 silenced).
+P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/", "response_bytes": 1400, "response_charset": "utf-8", "response_sha256": "a74a22285b240fadc41a58c962c6d4949fb4e595e177af6bcb418027b8db039d", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/2/mark-sent/", "response_bytes": 1402, "response_charset": "utf-8", "response_sha256": "fe70eee7843b39461a4c33d16874a00e487841db46b7c536b1ddf90ddeec565f", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/2/accept/", "response_bytes": 1406, "response_charset": "utf-8", "response_sha256": "932f7f8a68fdfd129e56acfc128895fcd26e5536c75cfc366373c0b823fea41f", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/quotes/2/order-draft/", "response_bytes": 629, "response_charset": "utf-8", "response_sha256": "560e044bd33d9d57a7f41ac8d792bbcd5d2fb7c5e4e157cc3d20b7dd306e3a50", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/", "response_bytes": 1547, "response_charset": "utf-8", "response_sha256": "84adad100914f202174d95d285f2c0e97f481ad589373ff718b2173e7f545cb3", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/1/items/1/supplier-allocation/", "response_bytes": 503, "response_charset": "utf-8", "response_sha256": "233b029ed461da55b82dfb9d79e224dc62bc733a2750f7849717aa709abbb898", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/1/confirm/", "response_bytes": 2240, "response_charset": "utf-8", "response_sha256": "8500de75a3f79291dcb8a7636e4f188e2bd88cff1876a2631a15a0bb74966e4b", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/1/start-production/", "response_bytes": 2241, "response_charset": "utf-8", "response_sha256": "f20b341ed295d5359eb746a87453fd7b150af40c796e068e0703b7f5e9ddf26d", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/orders/1/procurement-plan/", "response_bytes": 836, "response_charset": "utf-8", "response_sha256": "1508a70faa2733ff5f9520350c885acfb216788bafb25eaa8a7159b64b9f5564", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/1/generate-purchase-drafts/", "response_bytes": 1717, "response_charset": "utf-8", "response_sha256": "173cf5dfaf1fad6c0c1d44bcdea5c2b90569f79b4dd9beead5650912d83b8003", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/1/cancel/", "response_bytes": 1742, "response_charset": "utf-8", "response_sha256": "89fe27094dca890397a16d42e39f92365f16379d42be923a7899b7d4a4189807", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/orders/1/procurement-plan/", "response_bytes": 836, "response_charset": "utf-8", "response_sha256": "1508a70faa2733ff5f9520350c885acfb216788bafb25eaa8a7159b64b9f5564", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/1/generate-purchase-drafts/", "response_bytes": 1717, "response_charset": "utf-8", "response_sha256": "9b2dd0359e99364c9371d528df9bcef89c082f9794879a07fb8da406ecdcbc9f", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "PATCH", "path": "/api/purchase-orders/2/", "response_bytes": 1826, "response_charset": "utf-8", "response_sha256": "d5e14c9ffaf2c70a413ab0e35110b153c6bb01ed9916e2a36be4bf3fadcb1c7d", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/2/place/", "response_bytes": 2881, "response_charset": "utf-8", "response_sha256": "9c03d433142b8976a3da55e361b7d03d4f7cbb1d442e086e1144b42dfcbea0de", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/payment-plans/?direction=payable&purchase_order=2", "response_bytes": 1058, "response_charset": "utf-8", "response_sha256": "225c56bdc433fb8269492626da0a12a7dcf062cba8f1b00158b8b8b4461079d7", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/payment-plans/3/settle/", "response_bytes": 766, "response_charset": "utf-8", "response_sha256": "c6012b40f20d39358a2c8a1e9b607e3bc9b18026c8da488e08ad775bda224383", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/transactions/1/void/", "response_bytes": 822, "response_charset": "utf-8", "response_sha256": "89e86aee2cfaca9d7d25e7a674989478c82536d94d7e8dc7b75d7212df546459", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/2/receive/", "response_bytes": 223, "response_charset": "utf-8", "response_sha256": "4f35953a95beff7940a5d6e92cac77a18b0e2751a127dd71ed7b124c53df4e27", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "超到必须选择原因。", "error_response_raw_hex": "7b2264657461696c223a22e8b685e588b0e5bf85e9a1bbe98089e68ba9e58e9fe59ba0e38082227d", "method": "POST", "path": "/api/purchase-orders/2/receive/", "response_bytes": 40, "response_charset": "utf-8", "response_sha256": "81ccf474aedf60bfb7e2998b8acae5634e51ff1c7dedabe55950c8ef542ad250", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "当前采购单状态不能取消。", "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898de98787e8b4ade58d95e78ab6e68081e4b88de883bde58f96e6b688e38082227d", "method": "POST", "path": "/api/purchase-orders/2/cancel/", "response_bytes": 49, "response_charset": "utf-8", "response_sha256": "545b9080e5c83916647585703afc4857218556f1e0a51eca4b2bb0c16bb1d3d1", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/1/ship/", "response_bytes": 65, "response_charset": "utf-8", "response_sha256": "45f0f628d8d6c548c3e80c38adbee90c03fa9b233ec89912bb15af651771d3c1", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "订单已有有效发货记录，不能直接取消。", "error_response_raw_hex": "7b2264657461696c223a22e8aea2e58d95e5b7b2e69c89e69c89e69588e58f91e8b4a7e8aeb0e5bd95efbc8ce4b88de883bde79bb4e68ea5e58f96e6b688e38082227d", "method": "POST", "path": "/api/orders/1/cancel/", "response_bytes": 67, "response_charset": "utf-8", "response_sha256": "518c00e633070c8bb16b0b4ea8e332883ccd17af228371b83a518e99e5e8ddad", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "当前 SKU 实际库存不足以冲销，请先处理后续出库。", "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898d20534b5520e5ae9ee99985e5ba93e5ad98e4b88de8b6b3e4bba5e586b2e99480efbc8ce8afb7e58588e5a484e79086e5908ee7bbade587bae5ba93e38082227d", "method": "POST", "path": "/api/purchase-orders/2/receipts/1/reverse/", "response_bytes": 81, "response_charset": "utf-8", "response_sha256": "e77ac07f6e6ebbeee86d9d66ac4b57c720263f85d4e9f38b63285b3f8c00680f", "status": 400}................s.........
+----------------------------------------------------------------------
+Ran 483 tests in 721.611s
+
+OK (skipped=31)
+Destroying test database for alias 'default'...
+
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/shipments/1/reverse/", "response_bytes": 203, "response_charset": "utf-8", "response_sha256": "3121b649970617e8a99571533210e46c2d6ab234f557f9fe4b1b78dfe7af9544", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/2/receipts/1/reverse/", "response_bytes": 383, "response_charset": "utf-8", "response_sha256": "7655c5cbc02423a60297e7c416bc429054e05306f3ff7362c43f45b4f573d306", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/2/cancel/", "response_bytes": 3352, "response_charset": "utf-8", "response_sha256": "8ab432e43bca19e82a10b666bdf6b63f8cc82408dceefeb67f8792feadaf564b", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/1/cancel/", "response_bytes": 2314, "response_charset": "utf-8", "response_sha256": "e4f1c0f3ace3e98fed05abd02ce14e2827eb99e0683ebb9c2487d19c7e4f4f72", "status": 200}

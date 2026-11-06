@@ -1,0 +1,49 @@
+[parallel setup +721ms] created C:\Users\Johnson\AppData\Local\Temp\sunjack-parallel-worktrees-83w9PR
+[parallel setup +8908ms] both shadow worktrees ready
+[worktree-a +10ms] spawned owned runner pid=30136
+[worktree-b +6ms] spawned owned runner pid=12420
+[worktree-b +4364ms] Isolation run 0d4ecb46-3893-419c-8988-24b4f3f4289e; API 127.0.0.1:3025; Vite 127.0.0.1:3026
+[worktree-b +4364ms] Isolated SQLite: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-pL4yKf\db.sqlite3
+Isolated MEDIA_ROOT: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-pL4yKf\media
+Playwright selection: infrastructure smoke tests
+Isolated RBAC mode: development superadmin
+[isolation] Pre-migration isolation verification
+[worktree-a +4621ms] Isolation run dcd1ff55-324d-4464-a89a-401c2ecdd0a0; API 127.0.0.1:3027; Vite 127.0.0.1:3028
+[worktree-a +4622ms] Isolated SQLite: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-vC03zK\db.sqlite3
+[worktree-a +4622ms] Isolated MEDIA_ROOT: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-vC03zK\media
+[worktree-a +4622ms] Playwright selection: infrastructure smoke tests
+[worktree-a +4622ms] Isolated RBAC mode: development superadmin
+[worktree-a +4623ms] [isolation] Pre-migration isolation verification
+[worktree-a +56392ms] {'runId': 'dcd1ff55-324d-4464-a89a-401c2ecdd0a0', 'token': '[REDACTED_EPHEMERAL_ISOLATION_TOKEN]', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-vC03zK\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-vC03zK\\media', 'rbacEnforcement': False}
+[worktree-a +56867ms] [isolation] Pre-migration isolation verification: passed
+[worktree-a +56868ms] [isolation] Django system check
+[worktree-b +57709ms] {'runId': '0d4ecb46-3893-419c-8988-24b4f3f4289e', 'token': '[REDACTED_EPHEMERAL_ISOLATION_TOKEN]', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-pL4yKf\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-pL4yKf\\media', 'rbacEnforcement': False}
+[worktree-b +58263ms] [isolation] Pre-migration isolation verification: passed
+[worktree-b +58264ms] [isolation] Django system check
+[worktree-a +93922ms] System check identified no issues (0 silenced).
+[worktree-a +94532ms] [isolation] Django system check: passed
+[worktree-a +94532ms] [isolation] Isolated database migrations
+[worktree-b +97084ms] System check identified no issues (0 silenced).
+[worktree-b +97683ms] [isolation] Django system check: passed
+[worktree-b +97683ms] [isolation] Isolated database migrations
+[worktree-a +111092ms] test cancelled; stopping owned runner pid=30136
+[worktree-b +111089ms] test cancelled; stopping owned runner pid=12420
+✖ two independent worktree runtimes can start concurrently without sharing ports or data (120016.5607ms)
+[worktree-a +115074ms] closed code=null signal=SIGTERM
+[worktree-a +115074ms] owned runner cleanup finished
+[worktree-b +115096ms] closed code=null signal=SIGTERM
+[worktree-b +115097ms] owned runner cleanup finished
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 0
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 131576.1408
+
+✖ failing tests:
+
+test at infrastructure-tests\runner-validation.test.mjs:438:1
+✖ two independent worktree runtimes can start concurrently without sharing ports or data (120016.5607ms)
+  'test timed out after 120000ms'

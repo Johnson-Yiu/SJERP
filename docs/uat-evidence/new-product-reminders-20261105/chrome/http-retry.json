@@ -1,0 +1,13 @@
+[
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1",
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "count": 0,
+      "next": null,
+      "previous": null,
+      "results": []
+    }
+  }
+]

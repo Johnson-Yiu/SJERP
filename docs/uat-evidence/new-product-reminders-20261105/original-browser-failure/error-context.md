@@ -1,0 +1,269 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: iss008-chinese-aliases.spec.js >> customer edit, country aliases and quote customer picker remain usable at 1440px
+- Location: browser-tests\iss008-chinese-aliases.spec.js:57:3
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=f2e3]:
+  - complementary [ref=f2e4]:
+    - generic [ref=f2e5]:
+      - generic [ref=f2e6]: S
+      - generic [ref=f2e7]:
+        - strong [ref=f2e8]: 森爵照明管理系统
+        - text: 客户 · 销售 · 产品
+    - navigation [ref=f2e9]:
+      - generic [ref=f2e10]: 经营
+      - link "经营概览" [ref=f2e11] [cursor=pointer]:
+        - /url: /
+      - link "报表中心" [ref=f2e18] [cursor=pointer]:
+        - /url: /reports
+      - link "历史订单分析" [ref=f2e25] [cursor=pointer]:
+        - /url: /historical-orders
+      - generic [ref=f2e31]: 客户
+      - link "客户管理" [ref=f2e32] [cursor=pointer]:
+        - /url: /customers
+      - link "联系人" [ref=f2e39] [cursor=pointer]:
+        - /url: /contacts
+      - link "跟进记录" [ref=f2e45] [cursor=pointer]:
+        - /url: /follow-ups
+      - generic [ref=f2e49]: 销售
+      - link "报价管理" [ref=f2e50] [cursor=pointer]:
+        - /url: /quotes
+      - link "订单管理" [ref=f2e55] [cursor=pointer]:
+        - /url: /orders
+      - generic [ref=f2e61]: 采购与库存
+      - link "供应商管理" [ref=f2e62] [cursor=pointer]:
+        - /url: /suppliers
+      - link "采购管理" [ref=f2e69] [cursor=pointer]:
+        - /url: /purchase-orders
+      - link "库存" [ref=f2e75] [cursor=pointer]:
+        - /url: /inventory
+      - link "库存流水" [ref=f2e80] [cursor=pointer]:
+        - /url: /inventory-movements
+      - generic [ref=f2e85]: 产品资料
+      - link "产品管理" [ref=f2e86] [cursor=pointer]:
+        - /url: /products
+      - link "SKU 管理" [ref=f2e92] [cursor=pointer]:
+        - /url: /skus
+      - link "产品分类" [ref=f2e104] [cursor=pointer]:
+        - /url: /categories
+      - link "产品参数" [ref=f2e110] [cursor=pointer]:
+        - /url: /product-parameters
+      - link "包装管理" [ref=f2e113] [cursor=pointer]:
+        - /url: /sku-packaging
+      - link "交易单位" [ref=f2e119] [cursor=pointer]:
+        - /url: /sku-trade-units
+      - link "产品证书" [ref=f2e131] [cursor=pointer]:
+        - /url: /product-certificates
+      - link "HS 编码维护" [ref=f2e136] [cursor=pointer]:
+        - /url: /hs-codes
+      - generic [ref=f2e139]: 财务与工具
+      - link "财务概览" [ref=f2e140] [cursor=pointer]:
+        - /url: /finance
+      - link "应收计划" [ref=f2e146] [cursor=pointer]:
+        - /url: /receivables
+      - link "应付计划" [ref=f2e152] [cursor=pointer]:
+        - /url: /payables
+      - link "财务流水" [ref=f2e158] [cursor=pointer]:
+        - /url: /transactions
+      - link "人民币资金" [ref=f2e164] [cursor=pointer]:
+        - /url: /rmb-cash-events
+      - link "账户资金" [ref=f2e170] [cursor=pointer]:
+        - /url: /finance-ledger
+      - link "数据导入" [ref=f2e176] [cursor=pointer]:
+        - /url: /import
+      - link "历史资料承接" [ref=f2e181] [cursor=pointer]:
+        - /url: /history-takeover
+      - generic [ref=f2e187]: 组织与系统
+      - link "组织与权限" [ref=f2e188] [cursor=pointer]:
+        - /url: /organization
+    - generic [ref=f2e193]:
+      - generic [ref=f2e194]: 开
+      - generic [ref=f2e196]:
+        - strong [ref=f2e197]: 开发身份：开发验收
+        - generic [ref=f2e198]: · 全部功能与数据权限
+  - main [ref=f2e199]:
+    - generic [ref=f2e200]:
+      - generic [ref=f2e201]:
+        - text: Quotation desk
+        - heading "报价管理" [level=1] [ref=f2e202]
+      - generic [ref=f2e203]:
+        - generic [ref=f2e204]: 11月5日周四
+        - generic "开发验收" [ref=f2e205]: 开
+    - generic [ref=f2e207]:
+      - generic [ref=f2e208]:
+        - paragraph [ref=f2e209]: 管理报价、修订版及转单进度。
+        - button "新建报价" [ref=f2e210] [cursor=pointer]
+      - region "报价汇总" [ref=f2e212]:
+        - article [ref=f2e213]:
+          - generic [ref=f2e214]: 报价主单
+          - strong [ref=f2e215]: "0"
+          - generic [ref=f2e219]: 主单数量
+        - article [ref=f2e220]:
+          - generic [ref=f2e221]: 报价修订版
+          - strong [ref=f2e222]: "0"
+          - generic [ref=f2e227]: 含全部版本
+        - article [ref=f2e228]:
+          - generic [ref=f2e229]: 跟进中
+          - strong [ref=f2e230]: "0"
+          - generic [ref=f2e235]: 草稿或已发送
+        - article [ref=f2e236]:
+          - generic [ref=f2e237]: 客户已接受
+          - strong [ref=f2e238]: "0"
+          - generic [ref=f2e243]: 已接受报价
+      - generic [ref=f2e244]:
+        - textbox "搜索报价单号或客户" [ref=f2e249]
+        - combobox "按报价状态筛选" [ref=f2e250]:
+          - option "全部状态" [selected]
+          - option "草稿"
+          - option "已发送"
+          - option "已接受"
+          - option "已拒绝"
+          - option "已过期"
+        - combobox "按客户筛选" [ref=f2e251]:
+          - option "全部客户" [selected]
+          - option "中文国家选择客户"
+        - combobox "报价排序" [ref=f2e252]:
+          - option "最近更新时间" [selected]
+          - option "最早更新时间"
+          - option "报价日期（新到旧）"
+          - option "报价日期（旧到新）"
+        - button "重置" [ref=f2e253] [cursor=pointer]
+      - status [ref=f2e258]:
+        - heading "暂无报价" [level=3] [ref=f2e259]
+        - paragraph [ref=f2e260]: 点击“新建报价”开始录入。
+      - form "报价编辑器" [ref=f2e262]:
+        - generic [ref=f2e263]:
+          - generic [ref=f2e264]:
+            - heading "新建报价单" [level=3] [ref=f2e265]
+            - generic [ref=f2e266]: 报价单草稿
+          - button "关闭报价编辑器" [ref=f2e267] [cursor=pointer]
+        - group [ref=f2e272]:
+          - generic [ref=f2e273]:
+            - generic [ref=f2e274]:
+              - generic [ref=f2e275]: 客户 *
+              - combobox [ref=f2e276]:
+                - option "请选择"
+                - option "中文国家选择客户" [selected]
+            - generic [ref=f2e277]:
+              - generic [ref=f2e278]: 报价单号
+              - textbox [disabled] [ref=f2e279]: 保存后自动生成
+            - generic [ref=f2e280]:
+              - generic [ref=f2e281]: 报价日期 *
+              - generic [ref=f2e282]:
+                - textbox "年份" [ref=f2e283]: "2026"
+                - generic [ref=f2e284]: /
+                - textbox "月份" [ref=f2e285]: "11"
+                - generic [ref=f2e286]: /
+                - textbox "日期" [ref=f2e287]: "05"
+                - button "打开日期选择器" [ref=f2e288] [cursor=pointer]
+                - textbox: 2026-11-05
+            - generic [ref=f2e291]:
+              - generic [ref=f2e292]: 有效期
+              - generic [ref=f2e293]:
+                - spinbutton "有效期天数" [ref=f2e294]: "30"
+                - generic [ref=f2e295]: 天
+                - generic [ref=f2e296]:
+                  - textbox "年份" [ref=f2e297]: "2026"
+                  - generic [ref=f2e298]: /
+                  - textbox "月份" [ref=f2e299]: "12"
+                  - generic [ref=f2e300]: /
+                  - textbox "日期" [ref=f2e301]: "05"
+                  - button "打开日期选择器" [ref=f2e302] [cursor=pointer]
+                  - textbox: 2026-12-05
+            - generic [ref=f2e305]:
+              - generic [ref=f2e306]: 状态
+              - textbox [ref=f2e307]: 草稿
+            - generic [ref=f2e308]:
+              - generic [ref=f2e309]: 币种
+              - combobox "单据币种" [ref=f2e310]:
+                - option "USD" [selected]
+                - option "CNY"
+                - option "EUR"
+                - option "GBP"
+            - generic [ref=f2e311]:
+              - generic [ref=f2e312]: 对人民币汇率
+              - spinbutton "对人民币汇率" [ref=f2e313]: "7.2"
+            - generic [ref=f2e314]:
+              - generic [ref=f2e315]: 交期（天）
+              - spinbutton [ref=f2e316]: "10"
+            - generic [ref=f2e317]:
+              - generic [ref=f2e318]: 定金比例（%）
+              - spinbutton [ref=f2e319]: "30"
+          - generic [ref=f2e321]:
+            - strong [ref=f2e322]: 报价明细
+            - generic [ref=f2e323]: 选择 SKU 后填写数量、交易单位和单价。
+          - generic [ref=f2e324]:
+            - generic [ref=f2e325]:
+              - generic [ref=f2e326]:
+                - strong [ref=f2e327]: 选择 SKU
+                - generic [ref=f2e328]:
+                  - searchbox "搜索 SKU、型号或描述" [ref=f2e329]
+                  - button "按产品分类筛选" [ref=f2e330] [cursor=pointer]:
+                    - generic [ref=f2e331]: 全部分类
+              - generic [ref=f2e335] [cursor=pointer]:
+                - 'checkbox "未命名 SKU SKU: — Sales Model: — 币种未设置 0.00" [ref=f2e336]'
+                - generic [ref=f2e337]:
+                  - generic [ref=f2e338]: 未命名 SKU
+                  - generic [ref=f2e339]:
+                    - generic [ref=f2e340]: "SKU: —"
+                    - generic [ref=f2e341]: "Sales Model: —"
+                - emphasis [ref=f2e342]: 币种未设置 0.00
+            - complementary [ref=f2e343]:
+              - paragraph [ref=f2e344]: 从左侧勾选 SKU 后，可在这里查看详情。
+          - paragraph [ref=f2e345]: 请先从上方选择至少一个 SKU。
+          - generic [ref=f2e346]:
+            - generic [ref=f2e347]:
+              - text: 运费
+              - spinbutton "运费" [ref=f2e348]: "0.00"
+            - generic [ref=f2e349]:
+              - text: 折扣
+              - spinbutton "折扣" [ref=f2e350]: "0.00"
+            - generic [ref=f2e351]:
+              - text: 商品小计 USD 0.00
+              - generic [ref=f2e352]: 合计
+              - strong [ref=f2e353]: USD 0.00
+          - strong [ref=f2e355]: 收件信息 / 条款
+          - generic [ref=f2e356]:
+            - generic [ref=f2e357]:
+              - generic [ref=f2e358]: 收件人
+              - textbox "收件人" [ref=f2e359]: 中文国家选择客户
+            - generic [ref=f2e360]:
+              - generic [ref=f2e361]: 买方地址
+              - textbox "买方地址" [ref=f2e362]
+            - generic [ref=f2e363]:
+              - generic [ref=f2e364]: 买方邮箱
+              - textbox "买方邮箱" [ref=f2e365]
+            - generic [ref=f2e366]:
+              - generic [ref=f2e367]: 买方电话
+              - textbox "买方电话" [ref=f2e368]
+          - generic [ref=f2e369]:
+            - generic [ref=f2e370]:
+              - generic [ref=f2e371]: 贸易条款
+              - textbox [ref=f2e372]: FOB Shenzhen
+            - generic [ref=f2e373]:
+              - generic [ref=f2e374]: 运输信息
+              - textbox [ref=f2e375]
+            - generic [ref=f2e376]:
+              - generic [ref=f2e377]: 补充备注
+              - textbox [ref=f2e378]
+        - generic [ref=f2e379]:
+          - button "取消" [ref=f2e380] [cursor=pointer]
+          - button "预览报价单" [ref=f2e381] [cursor=pointer]
+          - button "保存报价" [ref=f2e385] [cursor=pointer]
+          - button "保存并导出 Excel" [ref=f2e390] [cursor=pointer]
+```

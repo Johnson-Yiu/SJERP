@@ -27,6 +27,7 @@ const resourceModules = {
 
 export const routes = [
   { path: '/login', name: 'login', component: () => import('./views/LoginPage.vue'), meta: { title: '登录' } },
+  { path: '/new-product-reminders', component: () => import('./components/NewProductReminders.vue'), meta: { title: '新品提醒', module: 'followups' } },
   { path: '/finance-ledger', component: () => import('./views/FinanceLedgerPage.vue'), meta: { title: '账户资金', eyebrow: 'Account cash', module: 'finance' } },
   { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units', module: 'trade_units' } },
   { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics', module: 'reports' } },

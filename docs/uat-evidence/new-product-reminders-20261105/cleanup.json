@@ -1,0 +1,38 @@
+{
+  "owned_uat_servers_stopped": true,
+  "ports": [
+    {
+      "port": 8176,
+      "released": true,
+      "connect_code": 10035
+    },
+    {
+      "port": 8177,
+      "released": true,
+      "connect_code": 10035
+    },
+    {
+      "port": 5276,
+      "released": true,
+      "connect_code": 10035
+    }
+  ],
+  "retained_synthetic_databases": [
+    {
+      "file": ".private/uat-synthetic.sqlite3",
+      "sha256": "03baa74eb298ae367c56d91a19b88df87116afd1798ba43f14ac16380272bbef",
+      "publication": "local only; synthetic sessions not pushed"
+    },
+    {
+      "file": ".private/scope-synthetic.sqlite3",
+      "sha256": "dff1418ed1a6fe88cb32481016cac4476b2eb909fe7abe4aadf8ac07b7a4c564",
+      "publication": "local only; synthetic sessions not pushed"
+    }
+  ],
+  "pg_cleanup": {
+    "source_sha": "013be1f5c684558e93882c789777cd2bf35da824",
+    "regression_exit": 0,
+    "cluster_cleanup": "complete",
+    "source_media_unchanged": true
+  }
+}

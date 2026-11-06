@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/new-product-reminders-20261105/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  18:53:22
+   Duration  28.89s (transform 549ms, setup 723ms, import 466ms, tests 309ms, environment 24.87s)
+

@@ -1,0 +1,4 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/new-product-reminders-20261105/frontend
+
+[vitest-pool]: Timeout terminating forks worker for test files D:/Codex项目/森爵照明管理系统/.worktrees/new-product-reminders-20261105/frontend/tests/sales-safety.spec.js.

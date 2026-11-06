@@ -1,0 +1,315 @@
+[
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1",
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "count": 0,
+      "next": null,
+      "previous": null,
+      "results": []
+    }
+  },
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/",
+    "method": "POST",
+    "status": 201,
+    "body": {
+      "id": 1,
+      "requirement": "合成壁灯 1440",
+      "specification": "IP65 3000K",
+      "other_requirements": "庭院入口；尚未建档",
+      "tag": "新品提醒",
+      "customer_name": "合成验收客户甲",
+      "created_at": "2026-11-05T19:00:21.282030+08:00",
+      "updated_at": "2026-11-05T19:00:21.282030+08:00",
+      "request_key": "6fbd4c5c-fbe7-4d43-8b9f-817d2b31b8d5",
+      "version": 1,
+      "created_by": "开发超级管理员（非实名员工）",
+      "voided_at": null,
+      "voided_by": "",
+      "void_reason": "",
+      "customer": 1,
+      "follow_up": null,
+      "contact": null,
+      "product": null
+    }
+  },
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/1/history/",
+    "method": "GET",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "created_at": "2026-11-05T11:00:21.285447Z",
+        "action_label": "创建新品提醒",
+        "metadata": {
+          "actor": "开发超级管理员（非实名员工）"
+        },
+        "before_data": {},
+        "after_data": {
+          "id": 1,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "合成壁灯 1440",
+          "specification": "IP65 3000K",
+          "other_requirements": "庭院入口；尚未建档",
+          "version": 1,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": ""
+        }
+      }
+    ]
+  },
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1",
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "count": 1,
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "id": 1,
+          "requirement": "合成壁灯 1440",
+          "specification": "IP65 3000K",
+          "other_requirements": "庭院入口；尚未建档",
+          "tag": "新品提醒",
+          "customer_name": "合成验收客户甲",
+          "created_at": "2026-11-05T19:00:21.282030+08:00",
+          "updated_at": "2026-11-05T19:00:21.282030+08:00",
+          "request_key": "6fbd4c5c-fbe7-4d43-8b9f-817d2b31b8d5",
+          "version": 1,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": "",
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1",
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "count": 1,
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "id": 1,
+          "requirement": "合成壁灯 1440",
+          "specification": "IP65 3000K",
+          "other_requirements": "庭院入口；尚未建档",
+          "tag": "新品提醒",
+          "customer_name": "合成验收客户甲",
+          "created_at": "2026-11-05T19:00:21.282030+08:00",
+          "updated_at": "2026-11-05T19:00:21.282030+08:00",
+          "request_key": "6fbd4c5c-fbe7-4d43-8b9f-817d2b31b8d5",
+          "version": 1,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": "",
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null
+        }
+      ]
+    }
+  },
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/1/",
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "id": 1,
+      "requirement": "合成壁灯 1440",
+      "specification": "IP65 3000K",
+      "other_requirements": "庭院入口；尚未建档",
+      "tag": "新品提醒",
+      "customer_name": "合成验收客户甲",
+      "created_at": "2026-11-05T19:00:21.282030+08:00",
+      "updated_at": "2026-11-05T19:00:21.282030+08:00",
+      "request_key": "6fbd4c5c-fbe7-4d43-8b9f-817d2b31b8d5",
+      "version": 1,
+      "created_by": "开发超级管理员（非实名员工）",
+      "voided_at": null,
+      "voided_by": "",
+      "void_reason": "",
+      "customer": 1,
+      "follow_up": null,
+      "contact": null,
+      "product": null
+    }
+  },
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/1/history/",
+    "method": "GET",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "created_at": "2026-11-05T11:00:21.285447Z",
+        "action_label": "创建新品提醒",
+        "metadata": {
+          "actor": "开发超级管理员（非实名员工）"
+        },
+        "before_data": {},
+        "after_data": {
+          "id": 1,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "合成壁灯 1440",
+          "specification": "IP65 3000K",
+          "other_requirements": "庭院入口；尚未建档",
+          "version": 1,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": ""
+        }
+      }
+    ]
+  },
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/1/",
+    "method": "PATCH",
+    "status": 200,
+    "body": {
+      "id": 1,
+      "requirement": "合成壁灯 1440",
+      "specification": "IP67 4000K",
+      "other_requirements": "庭院入口；尚未建档",
+      "tag": "新品提醒",
+      "customer_name": "合成验收客户甲",
+      "created_at": "2026-11-05T19:00:21.282030+08:00",
+      "updated_at": "2026-11-05T19:00:22.862978+08:00",
+      "request_key": "6fbd4c5c-fbe7-4d43-8b9f-817d2b31b8d5",
+      "version": 2,
+      "created_by": "开发超级管理员（非实名员工）",
+      "voided_at": null,
+      "voided_by": "",
+      "void_reason": "",
+      "customer": 1,
+      "follow_up": null,
+      "contact": null,
+      "product": null
+    }
+  },
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/1/history/",
+    "method": "GET",
+    "status": 200,
+    "body": [
+      {
+        "id": 1,
+        "created_at": "2026-11-05T11:00:21.285447Z",
+        "action_label": "创建新品提醒",
+        "metadata": {
+          "actor": "开发超级管理员（非实名员工）"
+        },
+        "before_data": {},
+        "after_data": {
+          "id": 1,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "合成壁灯 1440",
+          "specification": "IP65 3000K",
+          "other_requirements": "庭院入口；尚未建档",
+          "version": 1,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": ""
+        }
+      },
+      {
+        "id": 2,
+        "created_at": "2026-11-05T11:00:22.863974Z",
+        "action_label": "修改新品提醒",
+        "metadata": {
+          "actor": "开发超级管理员（非实名员工）"
+        },
+        "before_data": {
+          "id": 1,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "合成壁灯 1440",
+          "specification": "IP65 3000K",
+          "other_requirements": "庭院入口；尚未建档",
+          "version": 1,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": ""
+        },
+        "after_data": {
+          "id": 1,
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null,
+          "requirement": "合成壁灯 1440",
+          "specification": "IP67 4000K",
+          "other_requirements": "庭院入口；尚未建档",
+          "version": 2,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": ""
+        }
+      }
+    ]
+  },
+  {
+    "url": "http://127.0.0.1:5276/api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1",
+    "method": "GET",
+    "status": 200,
+    "body": {
+      "count": 1,
+      "next": null,
+      "previous": null,
+      "results": [
+        {
+          "id": 1,
+          "requirement": "合成壁灯 1440",
+          "specification": "IP67 4000K",
+          "other_requirements": "庭院入口；尚未建档",
+          "tag": "新品提醒",
+          "customer_name": "合成验收客户甲",
+          "created_at": "2026-11-05T19:00:21.282030+08:00",
+          "updated_at": "2026-11-05T19:00:22.862978+08:00",
+          "request_key": "6fbd4c5c-fbe7-4d43-8b9f-817d2b31b8d5",
+          "version": 2,
+          "created_by": "开发超级管理员（非实名员工）",
+          "voided_at": null,
+          "voided_by": "",
+          "void_reason": "",
+          "customer": 1,
+          "follow_up": null,
+          "contact": null,
+          "product": null
+        }
+      ]
+    }
+  }
+]

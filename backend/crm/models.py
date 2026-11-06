@@ -2286,3 +2286,33 @@ class SalesRule(TimestampedModel):
 
     class Meta:
         constraints = [models.CheckConstraint(condition=models.Q(minimum_quantity__gt=0), name="sales_moq_positive")]
+
+
+class ReminderQuerySet(models.QuerySet):
+    def delete(self):
+        raise ValidationError("新品提醒不可删除，请使用作废。")
+
+
+class NewProductReminder(TimestampedModel):
+    """One independent customer requirement; never inferred from legacy notes."""
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="new_product_reminders")
+    follow_up = models.ForeignKey(FollowUp, on_delete=models.PROTECT, null=True, blank=True, related_name="new_product_reminders")
+    contact = models.ForeignKey(Contact, on_delete=models.PROTECT, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=True, blank=True)
+    objects = ReminderQuerySet.as_manager()
+    requirement = models.TextField("所找产品")
+    specification = models.TextField("规格", blank=True)
+    other_requirements = models.TextField("其他要求", blank=True)
+    request_key = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    version = models.PositiveIntegerField(default=1)
+    created_by = models.CharField(max_length=180)
+    voided_at = models.DateTimeField(null=True, blank=True)
+    voided_by = models.CharField(max_length=180, blank=True)
+    void_reason = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+        constraints = [models.CheckConstraint(condition=(models.Q(voided_at__isnull=True, voided_by="", void_reason="") | (models.Q(voided_at__isnull=False) & ~models.Q(voided_by="") & ~models.Q(void_reason=""))), name="reminder_void_complete")]
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("新品提醒不可删除，请使用作废。")

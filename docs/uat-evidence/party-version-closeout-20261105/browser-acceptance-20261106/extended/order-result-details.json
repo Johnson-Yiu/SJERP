@@ -1,0 +1,56 @@
+{
+  "details": {
+    "schema": "party-document-details-v1",
+    "buyer": {
+      "name": "Synthetic Target Buyer 9F1665D5",
+      "country": null,
+      "address": null,
+      "tax_id": "",
+      "contact": null,
+      "phone": null,
+      "email": null,
+      "billing_address": "Synthetic new order billing",
+      "shipping_address": null,
+      "recipient": null
+    },
+    "seller": {
+      "name": null,
+      "country": null,
+      "address": null,
+      "tax_id": null,
+      "contact": null,
+      "phone": null,
+      "email": null,
+      "billing_address": null,
+      "shipping_address": null,
+      "recipient": null
+    }
+  },
+  "original_details": {
+    "schema": "party-document-details-v1",
+    "buyer": {
+      "name": "Synthetic Target Buyer 9F1665D5",
+      "country": null,
+      "address": null,
+      "tax_id": "",
+      "contact": null,
+      "phone": null,
+      "email": null,
+      "billing_address": "Synthetic new order billing",
+      "shipping_address": null,
+      "recipient": null
+    },
+    "seller": {
+      "name": null,
+      "country": null,
+      "address": null,
+      "tax_id": null,
+      "contact": null,
+      "phone": null,
+      "email": null,
+      "billing_address": null,
+      "shipping_address": null,
+      "recipient": null
+    }
+  }
+}

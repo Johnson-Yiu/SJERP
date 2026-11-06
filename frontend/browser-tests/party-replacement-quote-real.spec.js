@@ -13,7 +13,7 @@ test('synthetic quote replacement uses independent approval and synthetic saved 
   const evidence = path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'replacement-quote')
   fs.mkdirSync(evidence, { recursive: true })
   const apiBase = process.env.ISOLATED_PLAYWRIGHT_API_BASE_URL
-  const a = await browser.newContext({ viewport: { width: 390, height: 844 } }), b = await browser.newContext({ viewport: { width: 390, height: 844 } })
+  const a = await browser.newContext({ viewport: { width: 1440, height: 900 } }), b = await browser.newContext({ viewport: { width: 390, height: 844 } })
   async function login(context, username) {
     const p = await context.newPage(); await p.goto(`${apiBase}/admin/login/`)
     await p.locator('[name="username"]').fill(username); await p.locator('[name="password"]').fill('synthetic-only-password')
@@ -36,6 +36,8 @@ test('synthetic quote replacement uses independent approval and synthetic saved 
     const proposed = maker.waitForResponse(r => r.url().endsWith('/party-change/') && r.request().method() === 'POST')
     await form.getByRole('button', { name: '提交替换申请' }).click(); expect((await proposed).status()).toBe(201)
     const reviewer = await open(b), review = reviewer.locator('.party-change-panel')
+    await review.locator('.party-request').first().scrollIntoViewIfNeeded(); await reviewer.screenshot({ path: path.join(evidence, 'review-390.png') })
+    await maker.reload(); await maker.getByRole('button', { name: '主体更正' }).click(); await maker.locator('.party-request').first().scrollIntoViewIfNeeded(); await maker.screenshot({ path: path.join(evidence, 'review-desktop.png') })
     await review.locator('.party-request .party-approval-note input').first().fill('Synthetic independent review')
     const approved = reviewer.waitForResponse(r => r.url().includes('/approve/') && r.request().method() === 'POST')
     await review.getByRole('button', { name: '批准主体替换记录' }).click(); expect((await approved).status()).toBe(200)

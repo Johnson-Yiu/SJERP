@@ -1,0 +1,56 @@
+{
+  "details": {
+    "schema": "party-document-details-v1",
+    "buyer": {
+      "name": null,
+      "country": null,
+      "address": null,
+      "tax_id": null,
+      "contact": null,
+      "phone": null,
+      "email": null,
+      "billing_address": null,
+      "shipping_address": null,
+      "recipient": null
+    },
+    "seller": {
+      "name": "Synthetic Target Seller 30884124",
+      "country": null,
+      "address": null,
+      "tax_id": "",
+      "contact": null,
+      "phone": null,
+      "email": null,
+      "billing_address": "Synthetic new purchase billing",
+      "shipping_address": null,
+      "recipient": null
+    }
+  },
+  "original_details": {
+    "schema": "party-document-details-v1",
+    "buyer": {
+      "name": null,
+      "country": null,
+      "address": null,
+      "tax_id": null,
+      "contact": null,
+      "phone": null,
+      "email": null,
+      "billing_address": null,
+      "shipping_address": null,
+      "recipient": null
+    },
+    "seller": {
+      "name": "Synthetic Target Seller 30884124",
+      "country": null,
+      "address": null,
+      "tax_id": "",
+      "contact": null,
+      "phone": null,
+      "email": null,
+      "billing_address": "Synthetic new purchase billing",
+      "shipping_address": null,
+      "recipient": null
+    }
+  }
+}

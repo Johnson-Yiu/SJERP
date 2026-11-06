@@ -46,6 +46,7 @@ async function action(operation, request = null) {
   finally { if (current === generation || !loading.value) busy.value = false }
 }
 function textValue(value) { return value == null || value === '' ? '未记录' : value }
+function proposedTextValue(value) { return value == null ? '未知' : value === '' ? '已留空' : value }
 function canReview(row) { return row.initiator_id && String(row.initiator_id) !== String(data.value?.current_user_id) }
 </script>
 
@@ -78,7 +79,7 @@ function canReview(row) { return row.initiator_id && String(row.initiator_id) !=
         <article v-for="row in data.requests" :key="row.id" class="party-row">
           <strong>申请 #{{ row.id }} · {{ row.status === 'applied' && row.change_type === 'replacement' ? '已生成关联草稿' : (({pending:'待审批', approved:'已批准', applied:'已生效', rejected:'已拒绝', withdrawn:'已撤回', invalidated:'已失效'})[row.status] || '状态未知') }}</strong>
           <p>申请账号 ID：{{ row.initiator_id }} · {{ row.reason }} · 依据：{{ row.evidence }}</p>
-          <dl class="party-grid"><template v-for="[key, label] in fields" :key="key"><dt>{{ label }}</dt><dd>{{ textValue(row.base_snapshot?.[key]) }} → {{ textValue(row.proposed_snapshot?.[key]) }}</dd></template></dl>
+          <dl class="party-grid"><template v-for="[key, label] in fields" :key="key"><dt>{{ label }}</dt><dd>{{ textValue(row.base_snapshot?.[key]) }} → {{ proposedTextValue(row.proposed_snapshot?.[key]) }}</dd></template></dl>
           <PartyDetailsChanges :before="row.base_snapshot?.party_details" :after="row.proposed_snapshot?.party_details" />
           <p v-if="row.approval">审批账号 ID：{{ row.approval.approver_id }} · {{ row.approval.note }}</p>
           <p v-if="row.terminal_event">处理账号 ID：{{ row.terminal_event.actor_id }} · {{ row.terminal_event.note }}</p>

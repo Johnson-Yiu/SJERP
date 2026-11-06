@@ -1,0 +1,233 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/party-version-closeout-20261105/frontend
+
+ ❯ tests/ux-copy-sales-purchase.spec.js (3 tests | 1 failed) 9ms
+   × purchase copy keeps MOQ as an exception path and preserves multi-order allocation wording 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/ux-copy-sales-purchase.spec.js:30:1 > purchase copy keeps MOQ as an exception path and preserves multi-order allocation wording
+AssertionError: The input did not match the regular expression /后续供应商主档修改不会覆盖/. Input:
+
+'<script setup>\r\n' +
+  "import { computed, ref, watch } from 'vue'\r\n" +
+  "import { useRoute } from 'vue-router'\r\n" +
+  "import { X } from 'lucide-vue-next'\r\n" +
+  "import ContractAmountAdjustments from './ContractAmountAdjustments.vue'\r\n" +
+  "import DocumentPartyVersions from './DocumentPartyVersions.vue'\r\n" +
+  "import PartyDetailsPanel from './PartyDetailsPanel.vue'\r\n" +
+  "import { tradeLabel } from '../utils/tradeUnits'\r\n" +
+  "import { orderDetailLocation } from '../utils/detailNavigation'\r\n" +
+  "import { purchaseTasks, receiptProgress, purchaseArrival } from '../utils/purchaseOverview.js'\r\n" +
+  "import { useDetailTab } from '../utils/useDetailTab'\r\n" +
+  "import { useAccessControl } from '../accessControl'\r\n" +
+  'const props = defineProps({ purchase: Object, loading: Boolean, error: String, skus: { type: Array, default: () => [] } })\r\n' +
+  "const emit = defineEmits(['close', 'retry', 'confirm', 'edit', 'delete', 'cancel', 'pay', 'allocate-cost', 'receive', 'reverse-receipt', 'changed'])\r\n" +
+  "const activeTab = useDetailTab('/purchase-orders', ['overview', 'items', 'receipt', 'payment', 'orders'], 'overview', () => props.purchase?.id)\r\n" +
+  "const tabs = computed(() => [['overview', '概览'], ['items', '采购明细'], ['receipt', '收货'], ['payment', '供应商应付'], ['orders', '关联销售订单']].filter(([key]) => key !== 'payment' || hasPaymentSummary.value))\r\n" +
+  'const row = computed(() => props.purchase)\r\n' +
+  'const effectiveParty = ref(null)\r\n' +
+  'watch(() => props.purchase?.id, () => { effectiveParty.value = null })\r\n' +
+  'const route = useRoute()\r\n' +
+  'const { can } = useAccessControl()\r\n' +
+  'const items = computed(() => row.value?.items || [])\r\n' +
+  'const tasks = computed(() => row.value ? purchaseTasks(row.value) : [])\r\n' +
+  'const progress = computed(() => receiptProgress(items.value))\r\n' +
+  "const formal = computed(() => row.value && !['draft', 'cancelled'].includes(row.value.status))\r\n" +
+  'const partyName = computed(() => {\r\n' +
+  "  if (!row.value) return '—'\r\n" +
+  "  return formal.value ? (effectiveParty.value?.name || row.value.effective_party?.name || row.value.supplier_name_snapshot || '历史主体未记录') : (row.value.supplier_name || '—')\r\n" +
+  '})\r\n' +
+  'const partyMasterReference = computed(() => {\r\n' +
+  "  if (!formal.value || !row.value?.supplier_name || !row.value.supplier_name_snapshot) return ''\r\n" +
+  "  return row.value.supplier_name !== row.value.supplier_name_snapshot ? `当前主档参考：${row.value.supplier_name}` : ''\r\n" +
+  '})\r\n' +
+  'const partySnapshotRows = computed(() => formal.value ? [\r\n' +
+  "  ['供应商名称', row.value.supplier_name_snapshot],\r\n" +
+  "  ['地址', row.value.supplier_address_snapshot],\r\n" +
+  "  ['联系人', row.value.supplier_contact_name_snapshot],\r\n" +
+  "  ['电话', row.value.supplier_phone_snapshot],\r\n" +
+  "  ['邮箱', row.value.supplier_email_snapshot],\r\n" +
+  '] : [])\r\n' +
+  'const hasPaymentSummary = computed(() => row.value?.paid_amount != null && row.value?.unpaid_amount != null)\n' +
+  "const canPay = computed(() => can('purchases', 'update') && formal.value && Number(row.value.unpaid_amount) > 0)\r\n" +
+  'const paymentPercent = computed(() => Number(row.value?.total_amount) > 0 ? Math.min(100, Math.round(Number(row.value.paid_amount || 0) / Number(row.value.total_amount) * 100)) : 0)\r\n' +
+  "const money = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })\r\n" +
+  'function dateTime(value) {\r\n' +
+  "  return value ? new Date(value).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : '—'\r\n" +
+  '}\r\n' +
+  'const product = item => item.display_name || props.skus.find(sku => Number(sku.id) === Number(item.sku))?.display_name_cn || item.sku_code\r\n' +
+  "function taskAction(task) { if (task.target === 'confirm') { if (can('purchases', 'update')) emit('confirm', row.value) } else activeTab.value = task.target }\r\n" +
+  '</script>\r\n' +
+  '<template>\r\n' +
+  `  <div class="purchase-workbench-mask" @mousedown.self="emit('close')" @keydown.esc="emit('close')">\r\n` +
+  '    <section class="purchase-workbench" role="dialog" aria-modal="true" aria-label="采购工作台" tabindex="-1">\r\n' +
+  '      <header class="workbench-header">\r\n' +
+  `        <button class="close-action" aria-label="关闭采购详情" @click="emit('close')"><X :size="18" /><span>关闭</span></button>\r\n` +
+  '        <template v-if="row"><div class="workbench-context">采购工作台</div>\r\n' +
+  `          <p>{{ partyName }} · 下单日期 {{ row.order_date || '—' }}<small v-if="partyMasterReference" class="party-reference">{{ partyMasterReference }}</small></p>\r\n` +
+  '          <h2>{{ row.purchase_no }} <span class="status" :class="row.status">{{ row.status_display }}</span></h2>\r\n' +
+  `          <p>预计到货 {{ row.expected_arrival_date || '—' }} <span v-if="purchaseArrival(row)">{{ purchaseArrival(row).label }}</span></p>\r\n` +
+  '          <div class="header-actions">\r\n' +
+  `            <button v-if="can('purchases', 'update') && row.status === 'draft'" class="primary" @click="emit('confirm', row)">确认采购下单</button>\r\n` +
+  `            <button v-if="can('purchases', 'update') && row.status === 'draft'" class="secondary" @click="emit('edit', row)">编辑草稿</button>\r\n` +
+  `            <button v-if="can('purchases', 'delete') && row.status === 'draft'" class="destructive" @click="emit('delete', row)">删除草稿</button>\r\n` +
+  `            <button v-if="can('purchases', 'update') && ['draft', 'ordered'].includes(row.status)" class="destructive" @click="emit('cancel', row)">取消采购单</button>\r\n` +
+  '          </div>\r\n' +
+  '        </template><h2 v-else>采购工作台</h2>\r\n' +
+  '      </header>\r\n' +
+  '      <div v-if="loading" class="workbench-body" role="status">正在加载采购详情…</div>\r\n' +
+  `      <div v-else-if="error" class="workbench-body" role="alert">{{ error }} <button @click="emit('retry')">重试</button></div>\r\n` +
+  '      <template v-else-if="row">\r\n' +
+  '        <nav class="workbench-tabs" aria-label="采购工作台页签"><button v-for="[key,label] in tabs" :key="key" :class="{ active: activeTab === key }" :aria-pressed="activeTab === key" @click="activeTab = key">{{ label }}</button></nav>\r\n' +
+  '        <main class="workbench-body">\r\n' +
+  '          <slot name="feedback" />\r\n' +
+  `          <template v-if="activeTab === 'overview'">\r\n` +
+  `            <PartyDetailsPanel v-if="can('suppliers', 'view')" kind="purchase_order" :id="row.id" :status="row.status" :can-edit="can('purchases', 'update') && !row.historical_only" />\r\n` +
+  `            <article v-if="formal" class="card party-snapshot-card"><h3>原始交易主体快照</h3><p v-if="partySnapshotRows.some(([, value]) => value)">正式下单时保存的供应商资料；更正后的有效版本请查看主体版本。</p><p v-else class="muted">历史主体未记录，以下不使用当前主档补造历史事实。</p><dl v-if="partySnapshotRows.some(([, value]) => value)"><template v-for="[label, value] in partySnapshotRows" :key="label"><dt>{{ label }}</dt><dd>{{ value || '未记录' }}</dd></template></dl><p v-if="!partySnapshotRows.some(([, value]) => value) && row.supplier_name" class="party-reference">当前主档参考：{{ row.supplier_name }}</p></article>\r\n` +
+  `            <DocumentPartyVersions v-if="formal && can('suppliers', 'view')" kind="purchase_order" :id="row.id" :source-party-id="row.supplier" @updated="effectiveParty = $event" />\r\n` +
+  '            <article class="card"><h3>采购摘要</h3><div class="summary-grid"><div><small>采购金额</small><strong>{{ row.currency }} {{ money(row.total_amount) }}</strong></div><div><small>商品项数</small><strong>{{ items.length }}</strong></div><div v-if="hasPaymentSummary"><small>已付金额</small><strong>{{ row.currency }} {{ money(row.paid_amount) }}</strong></div><div v-if="hasPaymentSummary"><small>未付金额</small><strong>{{ row.currency }} {{ money(row.unpaid_amount) }}</strong></div></div></article>\n' +
+  `            <article v-if="row.moq_exception" class="card moq-exception-card" data-testid="purchase-moq-exception"><h3>MOQ 例外确认</h3><p>本采购单下单时存在低于供应商 MOQ 的明细，已记录例外原因。</p><dl><dt>例外原因</dt><dd>{{ row.moq_exception.reason }}</dd><dt>确认时间</dt><dd>{{ dateTime(row.moq_exception.created_at) }}</dd><template v-if="row.moq_exception.operator_name"><dt>确认人员</dt><dd>{{ row.moq_exception.operator_name }}</dd></template></dl><ul><li v-for="item in row.moq_exception.details" :key="item.purchase_item_ids.join('-')">{{ item.sku_code || 'SKU' }}：实际 {{ item.actual_quantity }} {{ item.base_unit || '' }} · MOQ {{ item.moq }} {{ item.base_unit || '' }} · 差额 {{ item.shortage }} {{ item.base_unit || '' }}</li></ul></article>\r\n` +
+  `            <article class="card current-todo"><h3>当前待办</h3><div v-for="task in tasks" :key="task.title" class="task-row"><div><b>{{ task.title }}</b><p>{{ task.description }}</p></div><button v-if="can('purchases', 'update') && task.action && task.target !== 'confirm'" @click="taskAction(task)">{{ task.action }}</button></div><p v-if="!tasks.length">当前没有待处理事项。</p></article>\r\n` +
+  '            <div class="overview-grid">\r\n' +
+  `              <article class="card"><h3>到货进度</h3><dl><dt>{{ progress.lines ? '采购明细' : '采购数量' }}</dt><dd>{{ progress.ordered }} {{ progress.unit }}</dd><dt>{{ progress.lines ? '已完成明细' : '已到货' }}</dt><dd>{{ progress.received }}</dd><dt>{{ progress.lines ? '待到货明细' : '待到货' }}</dt><dd>{{ progress.remaining }}</dd><dt>完成比例</dt><dd>{{ progress.percent }}%</dd></dl></article>\r\n` +
+  `              <article v-if="hasPaymentSummary" class="card"><h3>付款进度</h3><dl><dt>应付 / 合同金额</dt><dd>{{ row.currency }} {{ money(row.total_amount) }}</dd><dt>已付</dt><dd>{{ money(row.paid_amount) }}</dd><dt>未付</dt><dd>{{ money(row.unpaid_amount) }}</dd><dt>付款百分比</dt><dd>{{ paymentPercent }}%</dd></dl><button v-if="canPay" @click="emit('pay', row)">登记付款</button></article>\n` +
+  `              <article class="card"><h3>采购成本分配</h3><p>将采购成本和公共费用分配到关联销售订单。</p><button v-if="can('purchases', 'update') && formal" @click="emit('allocate-cost', row)">分配采购成本 / 公共费用</button></article>\r\n` +
+  '            </div>\r\n' +
+  '            <p v-if="row.cancellation_reason" class="card">取消原因：{{ row.cancellation_reason }} <small>{{ row.cancelled_at }}</small></p>\r\n' +
+  `            <ContractAmountAdjustments v-if="can('purchases', 'update') && row.status !== 'draft'" contract-type="purchase_order" :contract="row" @changed="emit('changed')" />\r\n` +
+  '          </template>\r\n' +
+  `          <article v-if="activeTab === 'items'" class="card table-wrap"><h3>采购明细</h3><table class="data-table"><thead><tr><th>SKU / 产品</th><th>供应商来源</th><th>采购数量</th><th>采购单价</th><th>金额</th><th>已到</th><th>待到</th><th>状态</th></tr></thead><tbody><tr v-for="item in items" :key="item.id"><td><b>{{ item.sku_code }}</b><small>{{ product(item) }}</small>`... 9212 more characters
+
+
+- Expected:
+/后续供应商主档修改不会覆盖/
+
++ Received:
+"<script setup>
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { X } from 'lucide-vue-next'
+import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
+import DocumentPartyVersions from './DocumentPartyVersions.vue'
+import PartyDetailsPanel from './PartyDetailsPanel.vue'
+import { tradeLabel } from '../utils/tradeUnits'
+import { orderDetailLocation } from '../utils/detailNavigation'
+import { purchaseTasks, receiptProgress, purchaseArrival } from '../utils/purchaseOverview.js'
+import { useDetailTab } from '../utils/useDetailTab'
+import { useAccessControl } from '../accessControl'
+const props = defineProps({ purchase: Object, loading: Boolean, error: String, skus: { type: Array, default: () => [] } })
+const emit = defineEmits(['close', 'retry', 'confirm', 'edit', 'delete', 'cancel', 'pay', 'allocate-cost', 'receive', 'reverse-receipt', 'changed'])
+const activeTab = useDetailTab('/purchase-orders', ['overview', 'items', 'receipt', 'payment', 'orders'], 'overview', () => props.purchase?.id)
+const tabs = computed(() => [['overview', '概览'], ['items', '采购明细'], ['receipt', '收货'], ['payment', '供应商应付'], ['orders', '关联销售订单']].filter(([key]) => key !== 'payment' || hasPaymentSummary.value))
+const row = computed(() => props.purchase)
+const effectiveParty = ref(null)
+watch(() => props.purchase?.id, () => { effectiveParty.value = null })
+const route = useRoute()
+const { can } = useAccessControl()
+const items = computed(() => row.value?.items || [])
+const tasks = computed(() => row.value ? purchaseTasks(row.value) : [])
+const progress = computed(() => receiptProgress(items.value))
+const formal = computed(() => row.value && !['draft', 'cancelled'].includes(row.value.status))
+const partyName = computed(() => {
+  if (!row.value) return '—'
+  return formal.value ? (effectiveParty.value?.name || row.value.effective_party?.name || row.value.supplier_name_snapshot || '历史主体未记录') : (row.value.supplier_name || '—')
+})
+const partyMasterReference = computed(() => {
+  if (!formal.value || !row.value?.supplier_name || !row.value.supplier_name_snapshot) return ''
+  return row.value.supplier_name !== row.value.supplier_name_snapshot ? `当前主档参考：${row.value.supplier_name}` : ''
+})
+const partySnapshotRows = computed(() => formal.value ? [
+  ['供应商名称', row.value.supplier_name_snapshot],
+  ['地址', row.value.supplier_address_snapshot],
+  ['联系人', row.value.supplier_contact_name_snapshot],
+  ['电话', row.value.supplier_phone_snapshot],
+  ['邮箱', row.value.supplier_email_snapshot],
+] : [])
+const hasPaymentSummary = computed(() => row.value?.paid_amount != null && row.value?.unpaid_amount != null)
+const canPay = computed(() => can('purchases', 'update') && formal.value && Number(row.value.unpaid_amount) > 0)
+const paymentPercent = computed(() => Number(row.value?.total_amount) > 0 ? Math.min(100, Math.round(Number(row.value.paid_amount || 0) / Number(row.value.total_amount) * 100)) : 0)
+const money = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+function dateTime(value) {
+  return value ? new Date(value).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : '—'
+}
+const product = item => item.display_name || props.skus.find(sku => Number(sku.id) === Number(item.sku))?.display_name_cn || item.sku_code
+function taskAction(task) { if (task.target === 'confirm') { if (can('purchases', 'update')) emit('confirm', row.value) } else activeTab.value = task.target }
+</script>
+<template>
+  <div class=\"purchase-workbench-mask\" @mousedown.self=\"emit('close')\" @keydown.esc=\"emit('close')\">
+    <section class=\"purchase-workbench\" role=\"dialog\" aria-modal=\"true\" aria-label=\"采购工作台\" tabindex=\"-1\">
+      <header class=\"workbench-header\">
+        <button class=\"close-action\" aria-label=\"关闭采购详情\" @click=\"emit('close')\"><X :size=\"18\" /><span>关闭</span></button>
+        <template v-if=\"row\"><div class=\"workbench-context\">采购工作台</div>
+          <p>{{ partyName }} · 下单日期 {{ row.order_date || '—' }}<small v-if=\"partyMasterReference\" class=\"party-reference\">{{ partyMasterReference }}</small></p>
+          <h2>{{ row.purchase_no }} <span class=\"status\" :class=\"row.status\">{{ row.status_display }}</span></h2>
+          <p>预计到货 {{ row.expected_arrival_date || '—' }} <span v-if=\"purchaseArrival(row)\">{{ purchaseArrival(row).label }}</span></p>
+          <div class=\"header-actions\">
+            <button v-if=\"can('purchases', 'update') && row.status === 'draft'\" class=\"primary\" @click=\"emit('confirm', row)\">确认采购下单</button>
+            <button v-if=\"can('purchases', 'update') && row.status === 'draft'\" class=\"secondary\" @click=\"emit('edit', row)\">编辑草稿</button>
+            <button v-if=\"can('purchases', 'delete') && row.status === 'draft'\" class=\"destructive\" @click=\"emit('delete', row)\">删除草稿</button>
+            <button v-if=\"can('purchases', 'update') && ['draft', 'ordered'].includes(row.status)\" class=\"destructive\" @click=\"emit('cancel', row)\">取消采购单</button>
+          </div>
+        </template><h2 v-else>采购工作台</h2>
+      </header>
+      <div v-if=\"loading\" class=\"workbench-body\" role=\"status\">正在加载采购详情…</div>
+      <div v-else-if=\"error\" class=\"workbench-body\" role=\"alert\">{{ error }} <button @click=\"emit('retry')\">重试</button></div>
+      <template v-else-if=\"row\">
+        <nav class=\"workbench-tabs\" aria-label=\"采购工作台页签\"><button v-for=\"[key,label] in tabs\" :key=\"key\" :class=\"{ active: activeTab === key }\" :aria-pressed=\"activeTab === key\" @click=\"activeTab = key\">{{ label }}</button></nav>
+        <main class=\"workbench-body\">
+          <slot name=\"feedback\" />
+          <template v-if=\"activeTab === 'overview'\">
+            <PartyDetailsPanel v-if=\"can('suppliers', 'view')\" kind=\"purchase_order\" :id=\"row.id\" :status=\"row.status\" :can-edit=\"can('purchases', 'update') && !row.historical_only\" />
+            <article v-if=\"formal\" class=\"card party-snapshot-card\"><h3>原始交易主体快照</h3><p v-if=\"partySnapshotRows.some(([, value]) => value)\">正式下单时保存的供应商资料；更正后的有效版本请查看主体版本。</p><p v-else class=\"muted\">历史主体未记录，以下不使用当前主档补造历史事实。</p><dl v-if=\"partySnapshotRows.some(([, value]) => value)\"><template v-for=\"[label, value] in partySnapshotRows\" :key=\"label\"><dt>{{ label }}</dt><dd>{{ value || '未记录' }}</dd></template></dl><p v-if=\"!partySnapshotRows.some(([, value]) => value) && row.supplier_name\" class=\"party-reference\">当前主档参考：{{ row.supplier_name }}</p></article>
+            <DocumentPartyVersions v-if=\"formal && can('suppliers', 'view')\" kind=\"purchase_order\" :id=\"row.id\" :source-party-id=\"row.supplier\" @updated=\"effectiveParty = $event\" />
+            <article class=\"card\"><h3>采购摘要</h3><div class=\"summary-grid\"><div><small>采购金额</small><strong>{{ row.currency }} {{ money(row.total_amount) }}</strong></div><div><small>商品项数</small><strong>{{ items.length }}</strong></div><div v-if=\"hasPaymentSummary\"><small>已付金额</small><strong>{{ row.currency }} {{ money(row.paid_amount) }}</strong></div><div v-if=\"hasPaymentSummary\"><small>未付金额</small><strong>{{ row.currency }} {{ money(row.unpaid_amount) }}</strong></div></div></article>
+            <article v-if=\"row.moq_exception\" class=\"card moq-exception-card\" data-testid=\"purchase-moq-exception\"><h3>MOQ 例外确认</h3><p>本采购单下单时存在低于供应商 MOQ 的明细，已记录例外原因。</p><dl><dt>例外原因</dt><dd>{{ row.moq_exception.reason }}</dd><dt>确认时间</dt><dd>{{ dateTime(row.moq_exception.created_at) }}</dd><template v-if=\"row.moq_exception.operator_name\"><dt>确认人员</dt><dd>{{ row.moq_exception.operator_name }}</dd></template></dl><ul><li v-for=\"item in row.moq_exception.details\" :key=\"item.purchase_item_ids.join('-')\">{{ item.sku_code || 'SKU' }}：实际 {{ item.actual_quantity }} {{ item.base_unit || '' }} · MOQ {{ item.moq }} {{ item.base_unit || '' }} · 差额 {{ item.shortage }} {{ item.base_unit || '' }}</li></ul></article>
+            <article class=\"card current-todo\"><h3>当前待办</h3><div v-for=\"task in tasks\" :key=\"task.title\" class=\"task-row\"><div><b>{{ task.title }}</b><p>{{ task.description }}</p></div><button v-if=\"can('purchases', 'update') && task.action && task.target !== 'confirm'\" @click=\"taskAction(task)\">{{ task.action }}</button></div><p v-if=\"!tasks.length\">当前没有待处理事项。</p></article>
+            <div class=\"overview-grid\">
+              <article class=\"card\"><h3>到货进度</h3><dl><dt>{{ progress.lines ? '采购明细' : '采购数量' }}</dt><dd>{{ progress.ordered }} {{ progress.unit }}</dd><dt>{{ progress.lines ? '已完成明细' : '已到货' }}</dt><dd>{{ progress.received }}</dd><dt>{{ progress.lines ? '待到货明细' : '待到货' }}</dt><dd>{{ progress.remaining }}</dd><dt>完成比例</dt><dd>{{ progress.percent }}%</dd></dl></article>
+              <article v-if=\"hasPaymentSummary\" class=\"card\"><h3>付款进度</h3><dl><dt>应付 / 合同金额</dt><dd>{{ row.currency }} {{ money(row.total_amount) }}</dd><dt>已付</dt><dd>{{ money(row.paid_amount) }}</dd><dt>未付</dt><dd>{{ money(row.unpaid_amount) }}</dd><dt>付款百分比</dt><dd>{{ paymentPercent }}%</dd></dl><button v-if=\"canPay\" @click=\"emit('pay', row)\">登记付款</button></article>
+              <article class=\"card\"><h3>采购成本分配</h3><p>将采购成本和公共费用分配到关联销售订单。</p><button v-if=\"can('purchases', 'update') && formal\" @click=\"emit('allocate-cost', row)\">分配采购成本 / 公共费用</button></article>
+            </div>
+            <p v-if=\"row.cancellation_reason\" class=\"card\">取消原因：{{ row.cancellation_reason }} <small>{{ row.cancelled_at }}</small></p>
+            <ContractAmountAdjustments v-if=\"can('purchases', 'update') && row.status !== 'draft'\" contract-type=\"purchase_order\" :contract=\"row\" @changed=\"emit('changed')\" />
+          </template>
+          <article v-if=\"activeTab === 'items'\" class=\"card table-wrap\"><h3>采购明细</h3><table class=\"data-table\"><thead><tr><th>SKU / 产品</th><th>供应商来源</th><th>采购数量</th><th>采购单价</th><th>金额</th><th>已到</th><th>待到</th><th>状态</th></tr></thead><tbody><tr v-for=\"item in items\" :key=\"item.id\"><td><b>{{ item.sku_code }}</b><small>{{ product(item) }}</small></td><td>{{ item.supplier_name || '—' }}<small>{{ item.supplier_model || '—' }}<span v-if=\"item.supplier_sku_code\"> · {{ item.supplier_sku_code }}</span></small><small v-for=\"(value,key) in item.supplier_characteristics_snapshot\" :key=\"key\">{{ key }}：{{ value }}</small></td><td>{{ item.trade_quantity ?? item.quantity }} {{ tradeLabel(item) }}<small v-if=\"item.trade_unit\">{{ item.quantity }} {{ item.trade_snapshot?.base_unit }}</small></td><td>{{ row.currency }} {{ money(item.trade_unit_price ?? item.unit_price) }}</td><td>{{ row.currency }} {{ money(item.total_amount ?? Number(item.quantity) * Number(item.unit_price)) }}</td><td>{{ item.received_quantity }} {{ item.trade_snapshot?.base_unit }}</td><td>{{ item.remaining_quantity }} {{ item.trade_snapshot?.base_unit }}</td><td>{{ row.status === 'draft' ? '未下单' : row.status === 'cancelled' ? '已取消' : Number(item.remaining_quantity) > 0 ? '待到货' : '已到齐' }}</td></tr></tbody></table></article>
+          <div v-if=\"activeTab === 'receipt'\" class=\"purchase-detail\"><p class=\"card\">核对型号、数量和外观后登记合格数量。不合格品不计可用库存，请备注拒收或待补货情况。</p><article v-for=\"item in items\" :key=\"item.id\" class=\"card\"><div class=\"receipt-heading\"><div><h3>{{ item.sku_code }} · {{ product(item) }}</h3><p>下单 {{ item.trade_quantity ?? item.quantity }} {{ tradeLabel(item) }} <small v-if=\"item.trade_unit\">（{{ item.quantity }} {{ item.trade_snapshot?.base_unit }}）</small> · 已到 {{ item.received_quantity }} {{ item.trade_snapshot?.base_unit }} · 剩余 {{ item.remaining_quantity }} {{ item.trade_snapshot?.base_unit }}<span v-if=\"Number(item.overage_quantity) > 0\"> · 超到 {{ item.overage_quantity }} {{ item.trade_snapshot?.base_unit }}</span></p></div><button v-if=\"can('purchases', 'update') && formal\" @click=\"emit('receive', row, item)\">验货入库</button></div><h4>入库记录</h4><div v-for=\"receipt in item.receipts\" :key=\"receipt.id\" class=\"receipt-history-row\"><span>{{ receipt.receipt_date }} · 到货 {{ receipt.quantity }} · {{ row.currency }} {{ money(receipt.unit_cost) }}<small v-if=\"receipt.overage_summary\">{{ receipt.overage_summary }}</small></span><button v-if=\"can('purchases', 'update') && !receipt.reversed_at\" @click=\"emit('reverse-receipt', row, item, receipt)\">冲销</button><span v-else>已冲销</span></div><p v-if=\"!item.receipts?.length\">暂无入库记录</p></article></div>
+          <article v-if=\"activeTab === 'payment' && hasPaymentSummary\" class=\"card\"><h3>供应商付款</h3><div class=\"summary-grid\"><div><small>采购金额</small><strong>{{ row.currency }} {{ money(row.total_amount) }}</strong></div><div><small>已付</small><strong>{{ row.currency }} {{ money(row.paid_amount) }}</strong></div><div><small>未付</small><strong>{{ row.currency }} {{ money(row.unpaid_amount) }}</strong></div></div><button v-if=\"canPay\" @click=\"emit('pay', row)\">登记付款</button><p v-if=\"Number(row.unpaid_amount) <= 0\">本采购单已无待付余额</p><p v-else-if=\"!formal\">{{ row.status === 'draft' ? '采购草稿尚未下单，确认采购下单后可登记付款。' : '采购已取消，仅保留历史付款信息。' }}</p></article>
+          <article v-if=\"activeTab === 'payment' && hasPaymentSummary\" class=\"card table-wrap\"><h3>应付计划</h3><table v-if=\"row.payment_plans?.length\" class=\"data-table payable-table\"><thead><tr><th>预计日期</th><th>阶段</th><th>应付</th><th>已付</th><th>待付</th><th>状态</th></tr></thead><tbody><tr v-for=\"plan in row.payment_plans\" :key=\"plan.id\"><td>{{ plan.due_date || '暂未确定' }}</td><td>{{ plan.notes || '—' }}</td><td>{{ plan.currency }} {{ money(plan.planned_amount) }}</td><td>{{ plan.currency }} {{ money(plan.settled_amount) }}</td><td>{{ plan.currency }} {{ money(plan.remaining_amount) }}</td><td>{{ { open: '待结清', settled: '已结清', cancelled: '已取消' }[plan.status] || plan.status }}</td></tr></tbody></table><p v-else>{{ row.status === 'draft' ? '确认采购下单后生成应付计划。' : '暂无应付计划。' }}</p></article>
+          <article v-if=\"activeTab === 'orders'\" class=\"card related-order-panel\"><h3>关联销售订单</h3><RouterLink v-for=\"order in row.related_orders || []\" :key=\"order.id\" class=\"order-navigation-link order-card\" :to=\"orderDetailLocation(order.id, 'overview', route?.fullPath)\">{{ order.order_no }}<small v-if=\"order.customer_name\">{{ order.customer_name }}</small></RouterLink><p v-if=\"!row.related_orders?.length\">暂无关联销售订单</p></article>
+        </main>
+      </template>
+    </section>
+  </div>
+</template>
+<style scoped>
+.party-reference{display:block;color:#b6d3ca;font-size:11px;margin-top:4px}
+.party-snapshot-card dl{margin-top:12px}
+.payable-table{min-width:700px}.payable-table th,.payable-table td{white-space:nowrap}
+.purchase-workbench-mask{position:fixed;inset:0;background:#10261d66;z-index:60;display:flex;justify-content:flex-end}.purchase-workbench{width:min(1080px,100%);height:100%;display:flex;flex-direction:column;background:#F6F8F5;box-shadow:-12px 0 40px #10261d22}.workbench-header{flex-shrink:0;position:relative;background:#123C36;padding:20px 28px 22px;color:white}.workbench-header h2{font-size:24px;font-weight:700;margin:8px 36px 10px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}.workbench-header p{font-size:12px;color:#B6D3CA;margin:0 36px 0 0}.close-action{position:absolute;right:20px;top:20px;background:transparent!important;color:white!important;border:0!important;padding:6px!important}.header-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.header-actions button{height:36px;border-radius:8px;font-size:14px}.header-actions .primary{padding:0 13px;border:1px solid #B8DCCF;background:#F5FCF8;color:#174C41;font-weight:700}.header-actions .secondary{padding:0 11px;border:1px solid #FFFFFF28;background:#FFFFFF12;color:white}.header-actions .destructive{padding:0 11px;border:1px solid #E7CACA;background:#FFF7F7;color:#A84444;font-weight:600}.workbench-tabs{flex:0 0 auto;display:flex;background:white;border-bottom:1px solid #E0E8E4;padding:0 28px;overflow:auto;flex-shrink:0}.workbench-tabs button{border:0;border-radius:0;background:none;padding:15px 18px;white-space:nowrap;color:#71817B}.workbench-tabs .active{color:#174C41;border-bottom:3px solid #174C41;font-weight:700}.workbench-body{min-height:0;overscroll-behavior:contain;padding:22px 28px;overflow:auto;flex:1}.card{padding:18px;border-radius:13px;border:1px solid #E0E8E4;background:white;margin-bottom:16px}.card h3{margin:0 0 16px;font-size:16px;font-weight:700;color:#1D3F36}.card p{font-size:12px;color:#71817B;line-height:1.7}.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:12px}.summary-grid small{display:block;color:#71817B;font-size:12px}.summary-grid strong{display:block;color:#174C41;font-size:18px;margin-top:8px;overflow-wrap:anywhere}.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.overview-grid .card{margin-bottom:0}.overview-grid{margin-bottom:16px}.task-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:10px 12px;background:#F8FBF9;border-radius:9px;margin-top:8px}.task-row b{font-size:14px;color:#294A41}.task-row p{margin:4px 0 0}.purchase-workbench button{cursor:pointer}.workbench-body button{height:32px;padding:0 10px;border-radius:7px;border:1px solid #CFE1D9;background:white;color:#236657;font-size:13px;font-weight:700;flex-shrink:0}dl{display:grid;grid-template-columns:1fr auto;gap:12px;font-size:13px}dt{color:#71817B}dd{margin:0;color:#294A41;font-weight:600}.data-table{min-width:850px}.data-table small{display:block;font-size:12px;color:#71817B;margin-top:4px}.receipt-heading,.receipt-history-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.receipt-history-row{padding:12px 0;border-top:1px solid #E0E8E4;font-size:13px;color:#294A41}.receipt-history-row small{display:block;color:#71817B;margin-top:4px}.order-card{display:block;border:1px solid #E0E8E4;border-radius:9px;padding:14px;margin-top:10px;color:#236657;text-decoration:none;font-weight:700}.order-card small{display:block;color:#71817B;margin-top:6px;font-weight:400}@media(max-width:980px){.purchase-workbench{width:100%}}@media(max-width:700px){.overview-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr 1fr}.workbench-body{min-height:0;overscroll-behavior:contain;padding:16px}.workbench-header{padding:20px 20px 22px}.workbench-tabs{padding:0 8px}.task-row,.receipt-heading{flex-wrap:wrap}}
+</style>
+
+<style scoped>
+.workbench-header{padding:22px 26px}.workbench-context{font-size:var(--text-caption);color:#b6d3ca;margin-bottom:20px}.close-action{display:flex;align-items:center;gap:7px;min-height:38px;padding:8px 11px!important;border:1px solid #ffffff45!important;border-radius:9px;background:#ffffff1a!important;font-size:var(--text-body);font-weight:700;right:26px;top:22px}.workbench-header h2{margin-right:90px}.workbench-tabs{padding:0 26px}.workbench-tabs button{min-height:44px;padding:10px 13px;border-bottom:2px solid transparent;font-size:var(--text-body)}.workbench-tabs .active{border-bottom:2px solid #1f6657}.card{padding:16px}.header-actions .destructive{margin-left:8px}
+.moq-exception-card{border-color:#eadbb5;background:#fffaf0}.moq-exception-card h3{color:#805c25}.moq-exception-card dd{max-width:620px;text-align:right;overflow-wrap:anywhere}.moq-exception-card ul{margin:14px 0 0;padding-left:20px;color:#805c25;font-size:13px;line-height:1.8}
+</style>
+"
+
+ ❯ tests/ux-copy-sales-purchase.spec.js:48:10
+     46|   assert.match(purchaseDetail, /确认采购下单/)
+     47|   assert.match(purchaseDetail, /交易主体快照/)
+     48|   assert.match(purchaseDetail, /后续供应商主档修改不会覆盖/)
+       |          ^
+     49|   assert.doesNotMatch(purchasePage, /payment_terms_config/)
+     50| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 80 passed (81)
+      Tests  1 failed | 766 passed (767)
+   Start at  11:21:26
+   Duration  346.81s (transform 6.63s, setup 33.02s, import 24.80s, tests 38.87s, environment 220.74s)
+

@@ -48,6 +48,7 @@ it('starts replacement structured facts as unknown rather than copying the sourc
   const baseline = { fingerprint: 'base', snapshot: { party_details: { schema: 'party-document-details-v1', buyer: { ...side, name: '旧主体', address: '不能复制的旧地址' }, seller: { ...side } } } }
   const wrapper = mount(PartyReplacementForm, { props: { kind: 'order', mode: 'propose', sourceId: 7, baseline } })
   await flushPromises()
+  expect(wrapper.text()).not.toContain('报价暂不能创建替换新单')
   await label(wrapper, '目标客户').get('select').setValue('2')
   for (const item of wrapper.findAll('label').filter(item => item.text().startsWith('拟议')).flatMap(item => item.findAll('button')).filter(item => item.text() === '确认留空')) await item.trigger('click')
   await label(wrapper, '原因').get('textarea').setValue('合成原因')

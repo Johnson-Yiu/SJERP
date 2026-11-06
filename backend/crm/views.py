@@ -1946,12 +1946,12 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "bank_notice": export_dto.template_snapshot["notice"],
             "template_sha256": export_dto.template_snapshot["sha256"],
             "buyer": {
-                "company_name": quote.buyer_company_name,
-                "tax_id": quote.buyer_tax_id,
-                "name": quote.recipient_name,
-                "address": quote.buyer_address,
-                "email": quote.buyer_email,
-                "phone": quote.buyer_phone,
+                "company_name": export_dto.buyer["company_name"],
+                "tax_id": export_dto.buyer["tax_id"],
+                "name": export_dto.buyer["recipient"],
+                "address": export_dto.buyer["address"],
+                "email": export_dto.buyer["email"],
+                "phone": export_dto.buyer["phone"],
             },
             "terms": {
                 "quote_date": quote.quote_date,

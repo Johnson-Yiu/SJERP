@@ -1,0 +1,20 @@
+{
+  "template_id": "standard_en_no_discount",
+  "status": "sent",
+  "approved_correction": true,
+  "customer_master_changed_after_approval": true,
+  "buyer_cells_B3_B8": [
+    "SYNTHETIC APPROVED BUYER",
+    "SYNTHETIC APPROVED RECIPIENT",
+    "SYNTHETIC APPROVED ADDRESS",
+    null,
+    "buyer@example.invalid",
+    "+00 000 222"
+  ],
+  "seller_I3": "SYNTHETIC SELLER",
+  "bank_first_value": "SYNTHETIC BANK VALUE 1",
+  "template_sha256": "430ea94ce29c124f6257098fbdfb0159f7f8c3ba0c5d7a847c969978c0c18b35",
+  "xlsx_sha256": "60638ba86e83e2777954872c2c127eef4a48141344e6d6c4a47bebcde4d4df36",
+  "pi_status": 200,
+  "xlsx_status": 200
+}

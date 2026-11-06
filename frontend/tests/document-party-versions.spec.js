@@ -63,6 +63,11 @@ describe('document party versions', () => {
     expect(wrapper.text()).toContain('处理账号 ID：8')
     expect(button(wrapper, '撤回申请')).toBeUndefined()
   })
+  it('distinguishes an explicitly blank proposal from an unrecorded original', async () => {
+    state.requests = [{ id: 10, status: 'pending', initiator_id: 8, reason: '原因', evidence: '依据', base_snapshot: { ...snapshot, address: '' }, proposed_snapshot: { ...snapshot, address: '' } }]
+    const wrapper = await open()
+    expect(wrapper.text()).toContain('未记录 → 已留空')
+  })
   it('includes edited full details in the signed proposal without changing the baseline', async () => {
     const keys = ['name', 'country', 'address', 'tax_id', 'contact', 'phone', 'email', 'billing_address', 'shipping_address', 'recipient']
     const side = Object.fromEntries(keys.map(key => [key, null])); side.billing_address = 'Old billing'

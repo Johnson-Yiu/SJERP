@@ -294,6 +294,64 @@ class CSVImportPreviewAudit(models.Model):
         raise ValidationError("CSV 导入审计只允许追加，历史记录不可删除。")
 
 
+class SalesOrderImportBatch(models.Model):
+    """Persist the result for one confirmed preview so retries are idempotent."""
+
+    STATUS_CHOICES = [
+        ("succeeded", "成功"),
+        ("partial", "部分完成"),
+        ("failed", "未创建订单"),
+    ]
+
+    preview_id = models.UUIDField("预览标识", unique=True, editable=False)
+    file_sha256 = models.CharField("文件 SHA256", max_length=64)
+    operator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="sales_order_import_batches",
+        null=True,
+        blank=True,
+    )
+    status = models.CharField("批次状态", max_length=20, choices=STATUS_CHOICES)
+    result = models.JSONField("导入结果", default=dict, blank=True)
+    created_at = models.DateTimeField("操作时间", auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
+
+class SalesOrderImportSourceOrder(models.Model):
+    """Immutable source reference that prevents re-creating an imported order."""
+
+    source_order_no = models.CharField("来源订单编号", max_length=160, unique=True)
+    customer_code = models.CharField("客户编号", max_length=30)
+    content_sha256 = models.CharField("订单内容 SHA256", max_length=64)
+    order = models.OneToOneField(
+        "Order",
+        on_delete=models.PROTECT,
+        related_name="sales_import_source",
+    )
+    batch = models.ForeignKey(
+        SalesOrderImportBatch,
+        on_delete=models.PROTECT,
+        related_name="source_orders",
+    )
+    created_at = models.DateTimeField("导入时间", auto_now_add=True)
+
+    class Meta:
+        ordering = ["id"]
+
+    objects = CSVImportAuditQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        if self.pk and not self._state.adding:
+            raise ValidationError("销售订单来源编号只允许追加，历史记录不可修改。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("销售订单来源编号只允许追加，历史记录不可删除。")
+
+
 class SharedReportTemplate(TimestampedModel):
     """A validated report query definition shared with the reporting team."""
 

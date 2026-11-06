@@ -1,5 +1,11 @@
 # SUNJACK-ERP 项目问题台账
 
+## 2026-11-06 SALES-ORDER-IMPORT-01
+
+用户授权从 `codex/sunjack-first-release-core-uat-01` 固定提交 `1a2ec0f5c940386e445e59967d498ca1187aa6be` 建立独立工作树 `codex/sales-order-import-01`。在「数据导入」增加销售订单 XLSX 模板、上传预览、整单草稿创建、结果查看与错误清单下载。来源订单编号合并多 SKU 明细，按编号匹配客户/SKU/交易单位；沿用订单草稿校验及客户数据范围。预览不写业务数据，重复来源编号不可重建或覆盖；导入不确认订单、不占库存、不生成应收计划、不登记发货。旧订单按文案引导至历史资料预检和承接。
+
+SQLite 定向后端 6 通过/2 项 PostgreSQL 并发检查按条件跳过；专用 PostgreSQL 17.11 定向后端 8/8 通过，包括重复提交、竞争同来源编号、错行整单回滚、权限/客户范围与原订单确认流程。前端定向 9/9，构建通过；真实 Chrome 完成模板下载、合成订单预览/创建、结果呈现和错误 CSV 下载，截图与日志见[验收证据](uat-evidence/sales-order-import-20261106/README.md)。不运行本地全量或 CI。该包未新增 Issue、未改变现有 Issue 状态，仍为 124 个唯一 ID：FIXED_PENDING_REVIEW=87、NEEDS_VERIFICATION=14、BLOCKED=13、OPEN=0、CLOSED=10。
+
 ## 2026-11-06 首发核心链路定向 UAT
 
 在固定基线 `aa15c9ba7584599e918c1dd14723d31e31158b3d` 的隔离分支上，以合成数据走报价/XLSX、销售订单、采购/收货、库存/发货、收付款/余额核对，并复测新品提醒入口和多工作区自然会话过期。核心操作与数据核对通过；本轮未新增 Issue、未改变既有 Issue 状态。ISS-020 的完整 Playwright 报价下载取消记录仍是首发 XLSX 验收门槛；ISS-037 主体版本/审批和 ISS-121 历史实际导入仅按条件性共享门槛交各自工作包，本轮未运行相关流程、未产生新复现。详细结果见 [FIRST-RELEASE-CORE-UAT-01](uat-evidence/first-release-core-uat-01/README.md)。当前 124 个唯一 ID：FIXED_PENDING_REVIEW=87、NEEDS_VERIFICATION=14、BLOCKED=13、OPEN=0、CLOSED=10。

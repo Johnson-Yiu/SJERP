@@ -61,7 +61,7 @@ onMounted(load)
       <section class="dashboard-section" aria-labelledby="sales-section-title">
         <div class="section-heading"><div><h2 id="sales-section-title">销售与客户</h2><p>按订单日期和合同金额统计，按订单汇率折算成人民币；不等于实际收款。</p></div><span>{{ yearStart }} — {{ asOf }}</span></div>
         <div class="metric-grid">
-          <article v-if="can('orders', 'view')" class="metric-card featured"><span>本年截至今日销售额</span><strong>{{ money(data.summary.sales_ytd) }}</strong><small>{{ yearStart }} — {{ asOf }}</small><small v-if="trend !== null" :class="Number(trend) >= 0 ? 'up' : 'down'">{{ Number(trend) > 0 ? '+' : '' }}{{ trend }}% 较去年同期</small><small v-else>去年同期为零，暂不计算变化率</small></article>
+          <article v-if="can('orders', 'view')" class="metric-card featured"><span>本年截至今日销售额</span><strong>{{ money(data.summary.sales_ytd) }}</strong><small>{{ yearStart }} — {{ asOf }}</small><small v-if="trend !== null" :class="Number(trend) >= 0 ? 'up' : 'down'">{{ Number(trend) > 0 ? '+' : '' }}{{ trend }}% 较去年同期</small><small v-else>去年同期为零，无法计算变化率</small></article>
           <article v-if="can('orders', 'view')" class="metric-card"><span>本年截至今日订单数</span><strong>{{ data.summary.orders_ytd }}</strong><small>{{ yearStart }} — {{ asOf }} · 正式订单</small></article>
           <article v-if="can('customers', 'view')" class="metric-card"><span>合作中客户</span><strong>{{ data.summary.active_customers }}</strong><small>按当前客户档案统计</small></article>
           <article v-if="can('followups', 'view')" class="metric-card"><span>当前待跟进</span><strong>{{ data.summary.follow_ups_due }}</strong><small>含今天到期和已逾期的跟进</small></article>

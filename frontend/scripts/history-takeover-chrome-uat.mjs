@@ -44,10 +44,10 @@ try {
     screenshots.push('history-takeover-desktop-before-review.png')
     await page.getByLabel('审核依据').fill('合成验收：核对隔离工作簿、合成主体和来源凭证引用。')
     await page.getByLabel('已依据原始凭证核实所有待核实项').check()
-    await page.getByRole('button', { name: '批准本组' }).click()
-    await expect(page.getByRole('button', { name: '逐组执行' })).toBeVisible()
+    await page.getByRole('button', { name: '批准', exact: true }).click()
+    await expect(page.getByRole('button', { name: '承接', exact: true })).toBeVisible()
     page.once('dialog', dialog => dialog.accept())
-    await page.getByRole('button', { name: '逐组执行' }).click()
+    await page.getByRole('button', { name: '承接', exact: true }).click()
   }
   await expect(page.getByRole('heading', { name: '执行结果' })).toBeVisible({ timeout: 15000 })
   await expect(page.getByText(/正式资金、库存流水、履约记录、采购成本分配均为 0/)).toBeVisible()

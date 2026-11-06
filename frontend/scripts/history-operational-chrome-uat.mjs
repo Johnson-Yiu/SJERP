@@ -21,20 +21,20 @@ try {
   if (!await page.getByRole('heading', { name: '执行结果' }).count()) {
     await page.getByLabel('审核依据').fill('合成资料：核对来源、依赖与凭证')
     await page.getByLabel('已依据原始凭证核实所有待核实项').check()
-    await page.getByRole('button', { name: '批准本组' }).click()
-    await expect(page.getByRole('button', { name: '逐组执行' })).toBeVisible()
+    await page.getByRole('button', { name: '批准', exact: true }).click()
+    await expect(page.getByRole('button', { name: '承接', exact: true })).toBeVisible()
     page.once('dialog', dialog => dialog.accept())
-    await page.getByRole('button', { name: '逐组执行' }).click()
+    await page.getByRole('button', { name: '承接', exact: true }).click()
   }
   await expect(page.getByRole('heading', { name: '执行结果' })).toBeVisible()
   for (const name of ['历史资金接续', '库存盘点基准', '未结余额与剩余业务']) {
     await page.getByText(name, { exact: true }).click()
   }
-  await page.getByRole('button', { name: '读取资金来源、账户和凭证' }).click()
+  await page.getByRole('button', { name: '加载资金来源、账户和凭证' }).click()
   await expect(page.getByText('TX-SO-1', { exact: false }).first()).toBeVisible()
-  await page.getByRole('button', { name: '读取盘点来源' }).click()
+  await page.getByRole('button', { name: '加载盘点来源' }).click()
   await expect(page.getByText('SYN-WH-01', { exact: false }).first()).toBeVisible()
-  await page.getByRole('button', { name: '读取合同与未结来源' }).click()
+  await page.getByRole('button', { name: '加载合同与未结来源' }).click()
   await expect(page.getByText('PLAN-SO-1', { exact: false }).first()).toBeVisible()
   const screenshots = []
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {

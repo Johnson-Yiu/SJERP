@@ -72,7 +72,7 @@ watch(() => [props.query, props.selection], () => { page.value = 1; data.value =
     <div v-else-if="error" role="alert" class="detail-panel-error">{{ error }} <button type="button" @click="load">重试</button></div>
     <template v-else-if="data">
       <div class="detail-panel-summary"><span>明细记录 {{ data.count }} 条 · 去重单据 {{ data.totals.count }} 张</span><span>合同金额合计 ¥ {{ formatAmount(data.totals.amount) }} · 数量 {{ totalText }}</span></div>
-      <div v-if="!rows.length" class="detail-panel-state" role="status">当前筛选范围内，该分组暂无可展示的原始业务记录。</div>
+      <div v-if="!rows.length" class="detail-panel-state" role="status">所选范围内，这个分组暂无原始业务记录。</div>
       <div v-else class="detail-table-wrap">
         <table class="detail-table">
           <thead><tr><th>{{ isPurchase ? '采购单号' : '销售订单编号' }}</th><th>{{ isPurchase ? '下单日期' : '订单日期' }}</th><th>{{ partyLabel }}</th><th>SKU / 商品名称</th><th>{{ isPurchase ? '采购数量 / 单位' : '商品数量 / 交易单位' }}</th><th>合同金额（人民币）</th><th>状态</th><th>原始单据</th></tr></thead>

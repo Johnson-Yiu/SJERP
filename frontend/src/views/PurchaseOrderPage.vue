@@ -350,7 +350,7 @@ const moqCheckUnavailable = computed(() => {
     if (seen.has(key)) return []
     seen.add(key)
     if (supplierSkuLoading.value[key]) return [{ key, message: '供应商供货档案正在加载，暂无法判断 MOQ。' }]
-    if (supplierSkuErrors.value[key]) return [{ key, message: '供应商供货档案加载失败，暂无法判断 MOQ；请重试加载。' }]
+    if (supplierSkuErrors.value[key]) return [{ key, message: '供应商供货档案加载失败，暂时无法判断 MOQ。请重新加载。' }]
     return []
   })
 })

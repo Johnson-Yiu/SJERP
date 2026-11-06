@@ -357,6 +357,8 @@ class HistoryImportPreflightTests(TestCase):
         self.assertTrue(all(item["status"] == "阻断" for item in order_rows))
         self.assertTrue(any("数据库中已有相同销售订单编号" in reason["message"] for item in order_rows for reason in item["reasons"]))
         self.assertTrue(any("重复" in reason["message"] for item in order_rows for reason in item["reasons"]))
+        self.assertTrue(any("原系统记录编号重复" in reason["message"] for item in order_rows for reason in item["reasons"]))
+        self.assertFalse(any("source_record_id" in reason["message"] for item in order_rows for reason in item["reasons"]))
         self.assertEqual(self.business_snapshot(), before)
 
     def test_reuploading_same_workbook_is_repeatable_and_remains_read_only(self):

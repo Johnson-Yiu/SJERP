@@ -14,6 +14,7 @@ test('formatApiError preserves field and nested item context', () => {
 test('apiErrorMessage uses understandable network and server fallbacks', () => {
   assert.equal(apiErrorMessage({ isApiError: true, code: 'ERR_NETWORK' }), '网络连接失败，请检查网络后重试。')
   assert.equal(apiErrorMessage({ isApiError: true, status: 503, data: { detail: 'traceback' } }), '服务器暂时不可用，请稍后重试。')
+  assert.equal(apiErrorMessage({ isApiError: true, status: 403, data: { detail: '身份认证信息未提供。' } }), '请登录后再继续。')
 })
 
 test('API errors retain status, parsed data and the original response', async () => {

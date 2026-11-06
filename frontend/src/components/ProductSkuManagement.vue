@@ -172,7 +172,7 @@ watch(() => props.refreshKey, () => { void load() })
 
 <template>
  <section class="sku-management" aria-label="SKU 参数与供应商管理">
-  <div class="management-head"><div><h3>{{ initialTab === 'rules' ? '供应能力规则' : 'SKU 档案与供应商分配' }}</h3><p>一份 SKU 清单管理规格与供货候选；实际采购供应商在销售订单或采购单中确认。</p></div></div>
+  <div class="management-head"><div><h3>{{ initialTab === 'rules' ? '供应能力规则' : 'SKU 档案与供应商分配' }}</h3><p>在 SKU 清单中管理规格和候选供应商；实际采购供应商在销售订单或采购单中确认。</p></div></div>
   <p v-if="error" role="alert" class="error">{{ error }}</p><p v-if="notice" role="status" class="notice">{{ notice }}</p>
   <p v-if="loading">正在加载…</p>
   <template v-if="!loading">

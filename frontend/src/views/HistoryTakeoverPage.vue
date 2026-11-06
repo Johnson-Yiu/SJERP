@@ -45,6 +45,7 @@ const statuses = {
   approved: '已批准', executed: '已归档', withdrawn: '已撤回', pending: '待审核', blocked: '存在阻断',
   needs_reapproval: '需重新审核',
 }
+const coverageLabels = { complete: '资料完整', partial: '资料不完整', unknown: '资料范围待核实' }
 const handoffLabels = { not_connected: '尚未接续', pending_review: '待复核', approved: '已复核，待启用', posted: '已启用', reversed: '已撤销', sources_posted: '来源资金已记账', drafts_created: '未结余额已启用，接续草稿已生成', no_remaining: '无剩余履约', unmapped: '待映射', pending: '待复核', cancelled: '已取消', failed: '已核实失败', draft: '草稿', confirmed: '已确认', ordered: '已下单', partial: '部分到货', shipped: '已发货', completed: '已完成', production: '生产中' }
 const overallLabels = { not_archived: '未归档', archived: '已归档，待准备接续', pending_review: '接续资料待复核', ready: '可接续或待确认接续单', connected: '适用项目已接续' }
 function handoffLabel(value) { return handoffLabels[value] || value }
@@ -328,7 +329,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
       <aside class="takeover-list panel">
         <div class="takeover-list-head"><h3><History :size="18" />申请记录</h3><button class="takeover-text-button" :disabled="loading" @click="loadApplications()">刷新</button></div>
         <p v-if="loading && !applications.length" class="takeover-empty">正在读取申请…</p>
-        <p v-else-if="!applications.length" class="takeover-empty">还没有历史承接申请，请先选择文件并提交申请。</p>
+        <p v-else-if="!applications.length" class="takeover-empty">暂无可显示的申请记录。提交申请后可在这里查看。</p>
         <button v-for="application in applications" :key="application.id" class="takeover-list-item" :class="{ active: selected?.id === application.id }" @click="loadApplication(application.id)">
           <strong>{{ application.source_file_name }}</strong><span>{{ statuses[application.status] || application.status }} · {{ application.groups?.length || 0 }} 组</span>
           <small>SHA256 {{ application.source_sha256?.slice(0, 12) }}</small>
@@ -356,7 +357,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
         </div>
 
         <article v-if="selectedGroup" class="takeover-group-detail">
-          <div class="takeover-group-head"><div><h4>关联组 {{ selectedGroup.source_group_id }}</h4><p>{{ selectedGroup.source_system }} · {{ selectedGroup.coverage_status }} · {{ selectedGroup.truth_status }}</p></div><span class="takeover-status">{{ statuses[selectedGroup.status] || selectedGroup.status }}</span></div>
+          <div class="takeover-group-head"><div><h4>关联组 {{ selectedGroup.source_group_id }}</h4><p>{{ selectedGroup.source_system }} · {{ coverageLabels[selectedGroup.coverage_status] || selectedGroup.coverage_status }} · {{ selectedGroup.truth_status }}</p></div><span class="takeover-status">{{ statuses[selectedGroup.status] || selectedGroup.status }}</span></div>
           <p v-if="selectedGroup.evidence_reference" class="takeover-evidence">来源凭证：{{ selectedGroup.evidence_reference }}</p>
           <div v-for="result in reviewResults" :key="`${result.sheet}-${result.row}`" class="takeover-result-row" :class="`state-${result.status}`">
             <strong>{{ result.sheet }} · 第 {{ result.row }} 行 · {{ result.status }}</strong>
@@ -380,7 +381,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 
           <div v-if="selectedGroup.remainder_snapshot?.sales_orders?.length || selectedGroup.remainder_snapshot?.purchase_orders?.length" class="takeover-remainder">
             <h4>未结业务测算</h4>
-            <p>展示核实履约后的剩余数量；审核并启用后可建立接续草稿。</p>
+            <p>这里显示核实履约后的剩余数量；审核并启用后，可以建立接续草稿。</p>
             <div v-for="order in openOrders" :key="order.source_record_id" class="takeover-remainder-item">
               <strong>{{ order.source_document_no }}</strong><span>{{ order.source_lifecycle_state }}</span>
               <small v-for="line in order.lines" :key="line.source_line_id">行 {{ line.source_line_id }}：已履约 {{ line.verified_net_fulfilled_quantity_base }} / {{ line.ordered_quantity_base }}，剩余 {{ line.remaining_quantity_base }} {{ line.unit_snapshot }}</small>
@@ -391,9 +392,9 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             <label>审核依据<textarea v-model="note" rows="3" placeholder="写明真实性、来源凭证和依赖核对结果" /></label>
             <label class="takeover-checkbox"><input v-model="confirmManual" type="checkbox" />已依据原始凭证核实所有待核实项</label>
             <div class="takeover-actions">
-              <button class="takeover-secondary" :disabled="saving || !note.trim()" @click="review(selectedGroup, 'reject')">拒绝本组</button>
-              <button class="takeover-primary" :disabled="saving || !note.trim()" @click="review(selectedGroup, 'approve')"><Check :size="16" />批准本组</button>
-              <button v-if="selectedGroup.status === 'approved'" class="takeover-primary" :disabled="saving" @click="groupAction(selectedGroup, 'execute')">逐组执行</button>
+              <button class="takeover-secondary" :disabled="saving || !note.trim()" @click="review(selectedGroup, 'reject')">拒绝</button>
+              <button class="takeover-primary" :disabled="saving || !note.trim()" @click="review(selectedGroup, 'approve')"><Check :size="16" />批准</button>
+              <button v-if="selectedGroup.status === 'approved'" class="takeover-primary" :disabled="saving" @click="groupAction(selectedGroup, 'execute')">承接</button>
               <button class="takeover-text-button" :disabled="saving" @click="groupAction(selectedGroup, 'withdraw', { reason: note })"><RotateCcw :size="15" />撤回</button>
             </div>
           </div>
@@ -405,7 +406,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             <details v-if="canReview" class="takeover-resolution">
               <summary>历史资金接续</summary>
               <p>先在资金管理中建立自有账户并上传实际凭证。填写实际人民币金额和实际日期；保存后须由另一名授权人员复核，再核对凭证记账。</p>
-              <button class="takeover-secondary" :disabled="saving" @click="loadFinance">读取资金来源、账户和凭证</button>
+              <button class="takeover-secondary" :disabled="saving" @click="loadFinance">加载资金来源、账户和凭证</button>
               <div v-for="item in financeSources" :key="item.source_id" class="takeover-remainder-item">
                 <strong>{{ item.source_record_id }} · {{ item.source.direction }} {{ item.source.amount }} {{ item.source.currency }}</strong>
                 <span>{{ handoffLabel(item.status) }}<template v-if="item.fact_id"> · 资金事实 #{{ item.fact_id }}</template></span>
@@ -430,8 +431,8 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             </details>
             <details v-if="canReview" class="takeover-resolution">
               <summary>库存盘点基准</summary>
-              <p>盘点基准不会重放历史出入库。仓库归属和货物所有权分别核实；只有自有货物计入可用库存。已有库存流水或预留的 SKU 需先人工核对。</p>
-              <button class="takeover-secondary" :disabled="saving" @click="loadInventory">读取盘点来源</button>
+              <p>盘点基准不会重新登记历史出入库。请分别核实仓库归属和货物所有权；只有自有货物计入可用库存。已有库存流水或预留的 SKU 需先人工核对。</p>
+              <button class="takeover-secondary" :disabled="saving" @click="loadInventory">加载盘点来源</button>
               <p v-if="inventoryStatus">当前状态：{{ handoffLabel(inventoryStatus.status) }}；基准记录 {{ inventoryStatus.baselines?.length || 0 }} 条。</p>
               <div v-for="row in inventoryRows" :key="row.source_id" class="takeover-remainder-item">
                 <strong>{{ row.source.sku_code }} · {{ row.source.counted_quantity }} {{ row.source.unit_snapshot }}</strong>
@@ -456,7 +457,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             <details v-if="canReview" class="takeover-resolution">
               <summary>未结余额与剩余业务</summary>
               <p>逐项核实原币未结余额、剩余明细和依据。历史收付款不会再次产生资金流水；剩余业务先生成草稿，再通过正常确认、下单和履约办理。</p>
-              <button class="takeover-secondary" :disabled="saving" @click="loadOperational">读取合同与未结来源</button>
+              <button class="takeover-secondary" :disabled="saving" @click="loadOperational">加载合同与未结来源</button>
               <p v-if="operationalStatus">当前状态：{{ handoffLabel(operationalStatus.status) }}。</p>
               <template v-if="operationalStatus && !['drafts_created', 'reversed'].includes(operationalStatus.status)">
                 <div class="takeover-form-grid">
@@ -507,7 +508,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                 </div>
               </template>
               <template v-if="operationalStatus?.links?.length">
-                <p>原单保留历史记录，未结计划只反映启用时仍欠金额；后续金额变更走正式修订。</p>
+                <p>原单保留为历史记录，未结计划只反映启用时仍欠的金额；之后如需更改金额，请通过正式修订办理。</p>
                 <div v-for="link in operationalStatus.links" :key="link.id" class="takeover-remainder-item">
                   <strong>{{ link.archived_no }} · 未结 {{ link.outstanding_balance }} {{ link.currency }}</strong><span>{{ handoffLabel(link.continuation_status) }}</span>
                   <small v-if="link.continuation_no">接续单：{{ link.continuation_no }}</small><small v-else>没有剩余履约</small>

@@ -45,6 +45,7 @@ export function apiErrorMessage(errorOrData) {
     }
     if (status >= 500) return '服务器暂时不可用，请稍后重试。'
     const formatted = formatApiError(errorOrData.data ?? errorOrData.response?.data)
+    if (formatted === '身份认证信息未提供。') return '请登录后再继续。'
     if (formatted) return formatted
     return status === 400 ? '请求未能通过校验，请检查填写内容。' : `请求失败（HTTP ${status}），请稍后重试。`
   }

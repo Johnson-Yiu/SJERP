@@ -48,7 +48,7 @@ from .sales_scope import effective_data_scope, scope_customer_queryset
 MAX_ROWS = 5000
 MAX_SHEETS = 12
 MAX_UNCOMPRESSED_BYTES = 200 * 1024 * 1024
-PREVIEW_ONLY_NOTICE = "预检通过仅表示当前规则检查通过，不代表已审批或已迁移。"
+PREVIEW_ONLY_NOTICE = "预检通过表示符合当前检查规则；仍需提交申请并通过审核，才能承接。"
 STATUS_RANK = {"通过": 0, "警告": 1, "待人工核实": 2, "阻断": 3}
 TRUTH_STATES = {"真实", "模拟", "待核实"}
 
@@ -588,7 +588,7 @@ def _validate_unit_snapshot(record, result, sku):
     trade_unit = str(data.get("trade_unit_snapshot") or "").strip()
     trade_values = [data.get("trade_quantity"), data.get("trade_unit_price"), data.get("trade_factor_snapshot"), data.get("allow_fraction_snapshot")]
     if not base_unit or not unit_snapshot:
-        _issue(result, "待人工核实", "单位历史快照不完整。", "从原单据或交易单位快照补齐；不得按当前 SKU 单位推断。")
+        _issue(result, "待人工核实", "历史单位快照不完整。", "请根据原单据或交易单位快照补齐，不要按当前 SKU 单位推断。")
     if sku and base_unit and base_unit != sku.unit:
         _issue(result, "警告", "历史基础单位与当前 SKU 基础单位不同。", "保留历史单位；核对单位变更记录，不用当前单位替换。")
     if not trade_unit:
@@ -602,7 +602,7 @@ def _validate_unit_snapshot(record, result, sku):
         return
     trade_quantity, factor = data["trade_quantity"], data["trade_factor_snapshot"]
     if factor <= 0 or data["quantity_base"] != trade_quantity * factor:
-        _issue(result, "阻断", "基础数量与交易数量×历史换算系数不守恒。", "按原始交易单位和数量核对后修正。")
+        _issue(result, "阻断", "历史换算系数须大于 0，且基础数量须等于交易数量乘以历史换算系数。", "请按原始交易单位和数量核对后修正。")
     if data["allow_fraction_snapshot"] is False and trade_quantity != trade_quantity.to_integral_value():
         _issue(result, "阻断", "历史交易单位不可拆分，但交易数量包含分数。", "核对原始包装规则；不得忽略不可拆分限制。")
     if base_unit and unit_snapshot and trade_unit != unit_snapshot:
@@ -798,7 +798,8 @@ def _normalize_and_validate(rows):
             for (_group_id, value), duplicates in grouped.items():
                 if len(duplicates) > 1:
                     for record in duplicates:
-                        _issue(results[(sheet, record["row"])], "阻断", f"同一来源关联组内 {key} 重复。", "核对原系统记录编号；不同来源组允许编号相同，相同业务字段不代表可以自动合并。", [_row_relation(sheet, item) for item in duplicates if item is not record])
+                        label = next(column["label"] for column in SHEET_SCHEMAS[sheet] if column["key"] == key)
+                        _issue(results[(sheet, record["row"])], "阻断", f"同一来源关联组内的{label}重复。", "请核对原系统记录编号；不同来源组可以使用相同编号，但业务字段相同不代表可以自动合并。", [_row_relation(sheet, item) for item in duplicates if item is not record])
     for sheet, parent_key in (("销售明细", "source_order_id"), ("采购明细", "source_purchase_id")):
         composite = defaultdict(list)
         for record in rows[sheet]:

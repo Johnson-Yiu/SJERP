@@ -31,7 +31,7 @@ function batch(id, mode) {
       <button @click="manager.move(tab.id, -1)">向左移动</button><button @click="manager.move(tab.id, 1)">向右移动</button>
       <button @click="menu = ''">收起</button>
     </div>
-    <div v-if="manager.active.value?.stale" class="workspace-update" role="status"><span>相关数据已更新。请先保存或取消当前编辑，再重新载入。</span><button type="button" class="btn btn-secondary" @click="manager.reload(manager.active.value)">重新载入</button></div>
+    <div v-if="manager.active.value?.stale" class="workspace-update" role="status"><span>数据已更新。请先保存或取消当前编辑，再重新载入。</span><button type="button" class="btn btn-secondary" @click="manager.reload(manager.active.value)">重新载入</button></div>
     <p v-if="manager.notice.value" role="alert" class="workspace-limit">{{ manager.notice.value }}</p>
   </div>
 </template>

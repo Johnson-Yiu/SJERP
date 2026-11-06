@@ -66,7 +66,7 @@ for (const [index, width] of [1440, 390].entries()) {
     await page.locator('.allocation-table input[type="number"]').fill('5.00')
     await page.locator('.verification-toggle input').check()
     await uploadBankVoucherThroughUi(page)
-    await page.getByRole('button', { name: '后端预览' }).click()
+    await page.getByRole('button', { name: '预览' }).click()
     await expect(page.locator('.preview-box')).toBeVisible()
     await expect(page.locator('.warning-box').filter({ hasText: '疑似重复' })).toBeVisible()
     await page.getByRole('button', { name: '登记待确认草稿' }).click()

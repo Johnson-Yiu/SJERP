@@ -28,7 +28,7 @@ describe('account cash request identity', () => {
     const form = await openInstructions()
     await form.trigger('submit'); await flushPromises()
     expect(api.post).not.toHaveBeenCalled()
-    expect(wrapper.text()).toContain('请求身份需核查')
+    expect(wrapper.text()).toContain('请先核查请求标识')
   })
   it('retains a failed request key and prevents an unknown outcome becoming a new operation', async () => {
     const form = await openInstructions()
@@ -46,6 +46,6 @@ describe('account cash request identity', () => {
     const form = await openInstructions()
     await form.trigger('submit'); await flushPromises()
     expect(api.post).not.toHaveBeenCalled()
-    expect(wrapper.text()).toContain('请求身份需核查')
+    expect(wrapper.text()).toContain('请先核查请求标识')
   })
 })

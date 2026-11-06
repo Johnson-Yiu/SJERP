@@ -149,7 +149,7 @@ function statusClass(status) {
 
       <section class="preflight-results panel" aria-labelledby="preflight-results-title">
         <div class="preflight-section-title">
-          <div><h3 id="preflight-results-title">行级问题</h3><p>显示 {{ showPassedRows ? visibleRows.length : issueRows.length }} 行{{ showPassedRows ? '' : '问题记录' }} / 共 {{ summary.total_rows ?? 0 }} 行</p></div>
+          <div><h3 id="preflight-results-title">预检明细</h3><p>显示 {{ showPassedRows ? visibleRows.length : issueRows.length }} 行{{ showPassedRows ? '' : '问题记录' }} / 共 {{ summary.total_rows ?? 0 }} 行</p></div>
           <button class="preflight-text-button" type="button" @click="showPassedRows = !showPassedRows">
             {{ showPassedRows ? '仅看问题行' : '查看全部行' }}
           </button>

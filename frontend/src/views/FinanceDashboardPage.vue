@@ -160,7 +160,7 @@ onMounted(load)
 
 <template>
   <section class="finance-page">
-    <header><div><p class="page-lede">合同、应收应付与两种资金口径分开列示。合同按订单日期，账面收支按流水发生日期，银行实际资金按银行实际日期；当前待结与未核销是当前余额。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>
+    <header><div><p class="page-lede">合同、应收应付和两种资金数据分开显示。合同按订单日期统计，账面收支按流水发生日期统计，银行实际资金按银行实际日期统计；待结与未核销显示当前余额。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>
     <form class="report-filters" aria-label="概览日期范围" @submit.prevent="applyPeriod"><label>开始日期<input v-model="dateFrom" type="date" required></label><label>结束日期<input v-model="dateTo" type="date" required></label><button :disabled="loading || !!rangeError">查询</button><button type="button" class="secondary" @click="resetPeriod">本月至今</button><button v-if="can('finance', 'export')" type="button" class="secondary" :disabled="loading || exporting || !data.period || !!error" @click="exportReport">{{ exporting ? '正在导出…' : '导出 CSV' }}</button></form>
     <p v-if="rangeError" class="error" role="alert">{{ rangeError }}</p>
     <p v-if="exportError" class="error" role="alert">{{ exportError }}</p>
@@ -193,7 +193,7 @@ onMounted(load)
       <p v-if="actualCashError" class="error" role="alert">{{ actualCashError }} <button type="button" class="secondary" @click="loadActualCash">重新加载</button></p>
       <p v-else-if="actualCashLoading" class="definition-note" role="status">正在加载已确认银行资金…</p>
       <template v-else-if="actualCash">
-        <p class="definition-note">既有银行事实仅统计系统中已登记并人工确认的银行资金事件；新增账户事实须核实自有归属、实际日期和私有凭证。基准与已核实内部本金不计公司毛流量。</p>
+        <p class="definition-note">既有银行事实只统计系统中已登记并人工确认的银行资金事件；新增账户事实时，须核实账户是否自有、实际日期和私有凭证。基准与已核实内部本金不计入公司毛流量。</p>
         <div v-if="actualCash.by_account_type" class="cards actual-cash-cards"><article v-for="row in actualCash.by_account_type" :key="row.account_type"><span>{{ row.label }}净变动</span><strong>¥{{ money(row.net) }}</strong><p>流入 ¥{{ money(row.inflow) }} / 流出 ¥{{ money(row.outflow) }}</p></article></div>
         <p class="definition-note">{{ actualCash.note }} 未设置统计启用日期；本区域不推测未登记资金、期初余额、期末余额或公司全部银行余额。</p>
         <div class="cards actual-cash-cards"><article><span>实际流入</span><strong>¥{{ money(actualCash.totals.inflow) }}</strong></article><article><span>实际流出</span><strong>¥{{ money(actualCash.totals.outflow) }}</strong></article><article><span>净流入 / 净流出</span><strong>¥{{ money(actualCash.totals.net) }}</strong></article><article><span>已确认银行事件</span><strong>{{ actualCash.totals.count }} 笔</strong></article></div>

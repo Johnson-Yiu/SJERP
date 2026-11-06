@@ -1,0 +1,6844 @@
+[
+  {
+    "file": "frontend\\src\\App.vue",
+    "actions": [
+      {
+        "line": 68,
+        "event": "@click=\"menuOpen = false\""
+      },
+      {
+        "line": 77,
+        "event": "@click=\"menuOpen = false\""
+      },
+      {
+        "line": 92,
+        "event": "@click=\"menuOpen = true\""
+      }
+    ],
+    "handlers": []
+  },
+  {
+    "file": "frontend\\src\\components\\AppDialogHost.vue",
+    "actions": [
+      {
+        "line": 58,
+        "event": "@keydown.ctrl.enter.prevent=\"confirm\""
+      },
+      {
+        "line": 62,
+        "event": "@click=\"cancel\""
+      },
+      {
+        "line": 63,
+        "event": "@click=\"confirm\""
+      },
+      {
+        "line": 69,
+        "event": "@click=\"dismissToast(toast.id)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 16,
+        "name": "cancel"
+      },
+      {
+        "line": 22,
+        "name": "confirm"
+      },
+      {
+        "line": 38,
+        "name": "onKeydown"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\CategoryMultiPicker.vue",
+    "actions": [
+      {
+        "line": 51,
+        "event": "@change=\"toggle(category, $event.target.checked)\""
+      },
+      {
+        "line": 51,
+        "event": "@click=\"browse(category,index)\""
+      },
+      {
+        "line": 52,
+        "event": "@click=\"remove(id)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 10,
+        "name": "isDescendant"
+      },
+      {
+        "line": 32,
+        "name": "browse"
+      },
+      {
+        "line": 33,
+        "name": "toggle"
+      },
+      {
+        "line": 38,
+        "name": "remove"
+      },
+      {
+        "line": 39,
+        "name": "labelFor"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\CategoryPathFilter.vue",
+    "actions": [
+      {
+        "line": 59,
+        "event": "@click=\"toggle\""
+      },
+      {
+        "line": 61,
+        "event": "@click=\"all\""
+      },
+      {
+        "line": 62,
+        "event": "@click=\"choose(node, level)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 21,
+        "name": "close"
+      },
+      {
+        "line": 22,
+        "name": "toggle"
+      },
+      {
+        "line": 46,
+        "name": "choose"
+      },
+      {
+        "line": 51,
+        "name": "all"
+      },
+      {
+        "line": 52,
+        "name": "outside"
+      },
+      {
+        "line": 53,
+        "name": "keydown"
+      },
+      {
+        "line": 54,
+        "name": "scroll"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\CertificateExpiryBadge.vue",
+    "actions": [],
+    "handlers": []
+  },
+  {
+    "file": "frontend\\src\\components\\ComboInput.vue",
+    "actions": [
+      {
+        "line": 70,
+        "event": "@click=\"remove(value)\""
+      },
+      {
+        "line": 70,
+        "event": "@keydown=\"keydown\""
+      },
+      {
+        "line": 72,
+        "event": "@click=\"choose(option)\""
+      },
+      {
+        "line": 73,
+        "event": "@click=\"choose({ value: text.trim(), label: text.trim() })\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 32,
+        "name": "focus"
+      },
+      {
+        "line": 33,
+        "name": "normalize"
+      },
+      {
+        "line": 34,
+        "name": "input"
+      },
+      {
+        "line": 35,
+        "name": "append"
+      },
+      {
+        "line": 41,
+        "name": "choose"
+      },
+      {
+        "line": 42,
+        "name": "remove"
+      },
+      {
+        "line": 43,
+        "name": "keydown"
+      },
+      {
+        "line": 65,
+        "name": "commit"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\ContractAmountAdjustments.vue",
+    "actions": [
+      {
+        "line": 39,
+        "event": "@click=\"create\""
+      },
+      {
+        "line": 41,
+        "event": "@click=\"act(row, 'approve')\""
+      },
+      {
+        "line": 41,
+        "event": "@click=\"act(row, 'reject')\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 12,
+        "name": "load"
+      },
+      {
+        "line": 17,
+        "name": "create"
+      },
+      {
+        "line": 25,
+        "name": "act"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\EntityDetailModal.vue",
+    "actions": [
+      {
+        "line": 361,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 362,
+        "event": "@click=\"load()\""
+      },
+      {
+        "line": 367,
+        "event": "@click=\"stack.length ? back() : requestClose()\""
+      },
+      {
+        "line": 370,
+        "event": "@click=\"emit('edit', { entity: currentEntity, id: currentId })\""
+      },
+      {
+        "line": 371,
+        "event": "@click=\"deleteFollowUp\""
+      },
+      {
+        "line": 372,
+        "event": "@click=\"stack.length ? back() : requestClose()\""
+      },
+      {
+        "line": 373,
+        "event": "@click=\"openQuoteForCustomer(relationCustomerId)\""
+      },
+      {
+        "line": 374,
+        "event": "@click=\"openWhatsApp\""
+      },
+      {
+        "line": 419,
+        "event": "@click=\"drill(followUpCustomer)\""
+      },
+      {
+        "line": 419,
+        "event": "@click=\"drill(followUpContact)\""
+      },
+      {
+        "line": 428,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 429,
+        "event": "@click=\"back\""
+      },
+      {
+        "line": 434,
+        "event": "@click=\"openCustomerFollowUp\""
+      },
+      {
+        "line": 435,
+        "event": "@click=\"openQuoteForCustomer(relationCustomerId)\""
+      },
+      {
+        "line": 437,
+        "event": "@click=\"emit('edit')\""
+      },
+      {
+        "line": 438,
+        "event": "@click=\"managementNavigation\""
+      },
+      {
+        "line": 439,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 446,
+        "event": "@changed=\"refreshSkuManagement\""
+      },
+      {
+        "line": 452,
+        "event": "@click=\"selectSection('purchases')\""
+      },
+      {
+        "line": 452,
+        "event": "@click=\"selectSection('supplier-skus')\""
+      },
+      {
+        "line": 455,
+        "event": "@click=\"toggleSkuMultiSelect\""
+      },
+      {
+        "line": 455,
+        "event": "@click=\"deactivateSelectedSkus\""
+      },
+      {
+        "line": 455,
+        "event": "@click=\"reactivateSelectedSkus\""
+      },
+      {
+        "line": 455,
+        "event": "@click=\"toggleInactiveSkus\""
+      },
+      {
+        "line": 455,
+        "event": "@click=\"openSkuCreate\""
+      },
+      {
+        "line": 455,
+        "event": "@click=\"openRelatedCreate\""
+      },
+      {
+        "line": 457,
+        "event": "@click=\"selectSection(section.key)\""
+      },
+      {
+        "line": 457,
+        "event": "@click=\"selectSection('__operation_logs')\""
+      },
+      {
+        "line": 461,
+        "event": "@change=\"toggleAllSkuSelection\""
+      },
+      {
+        "line": 462,
+        "event": "@click=\"!skuMultiSelect && drill(row)\""
+      },
+      {
+        "line": 462,
+        "event": "@change=\"toggleSkuSelection(row.id)\""
+      },
+      {
+        "line": 462,
+        "event": "@click.stop=\"drill(row)\""
+      },
+      {
+        "line": 471,
+        "event": "@changed=\"refreshSkuManagement\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 79,
+        "name": "restoreCustomerTab"
+      },
+      {
+        "line": 88,
+        "name": "selectCleanSection"
+      },
+      {
+        "line": 130,
+        "name": "refreshSkuManagement"
+      },
+      {
+        "line": 136,
+        "name": "load"
+      },
+      {
+        "line": 155,
+        "name": "loadOperationLogs"
+      },
+      {
+        "line": 163,
+        "name": "drill"
+      },
+      {
+        "line": 174,
+        "name": "backClean"
+      },
+      {
+        "line": 178,
+        "name": "sectionRowId"
+      },
+      {
+        "line": 182,
+        "name": "openWhatsApp"
+      },
+      {
+        "line": 186,
+        "name": "deleteFollowUp"
+      },
+      {
+        "line": 197,
+        "name": "relationContext"
+      },
+      {
+        "line": 214,
+        "name": "openQuoteForCustomer"
+      },
+      {
+        "line": 222,
+        "name": "relationQuery"
+      },
+      {
+        "line": 234,
+        "name": "createLabel"
+      },
+      {
+        "line": 238,
+        "name": "openCustomerFollowUp"
+      },
+      {
+        "line": 247,
+        "name": "managementNavigation"
+      },
+      {
+        "line": 250,
+        "name": "openRelatedCreate"
+      },
+      {
+        "line": 259,
+        "name": "detailReturnPath"
+      },
+      {
+        "line": 263,
+        "name": "openSkuCreate"
+      },
+      {
+        "line": 264,
+        "name": "skuCreated"
+      },
+      {
+        "line": 270,
+        "name": "relatedSaved"
+      },
+      {
+        "line": 277,
+        "name": "toggleSkuSelection"
+      },
+      {
+        "line": 282,
+        "name": "toggleAllSkuSelection"
+      },
+      {
+        "line": 285,
+        "name": "toggleSkuMultiSelect"
+      },
+      {
+        "line": 289,
+        "name": "deactivateSelectedSkus"
+      },
+      {
+        "line": 299,
+        "name": "reactivateSelectedSkus"
+      },
+      {
+        "line": 309,
+        "name": "toggleInactiveSkus"
+      },
+      {
+        "line": 316,
+        "name": "format"
+      },
+      {
+        "line": 333,
+        "name": "formatAttachmentSize"
+      },
+      {
+        "line": 339,
+        "name": "valueClass"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\InventoryMovementCreateModal.vue",
+    "actions": [
+      {
+        "line": 86,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 87,
+        "event": "@click=\"close\""
+      },
+      {
+        "line": 89,
+        "event": "@click=\"init\""
+      },
+      {
+        "line": 107,
+        "event": "@click=\"close\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 14,
+        "name": "close"
+      },
+      {
+        "line": 51,
+        "name": "init"
+      },
+      {
+        "line": 62,
+        "name": "lineFor"
+      },
+      {
+        "line": 63,
+        "name": "save"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\InventoryPagination.vue",
+    "actions": [
+      {
+        "line": 10,
+        "event": "@click=\"emit('change', page - 1)\""
+      },
+      {
+        "line": 11,
+        "event": "@click=\"emit('change', page + 1)\""
+      }
+    ],
+    "handlers": []
+  },
+  {
+    "file": "frontend\\src\\components\\ListEmptyState.vue",
+    "actions": [
+      {
+        "line": 11,
+        "event": "@click=\"$emit('clear')\""
+      }
+    ],
+    "handlers": []
+  },
+  {
+    "file": "frontend\\src\\components\\OperationLogPanel.vue",
+    "actions": [],
+    "handlers": [
+      {
+        "line": 9,
+        "name": "dateTime"
+      },
+      {
+        "line": 12,
+        "name": "displayValue"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\OrderDetailModal.vue",
+    "actions": [
+      {
+        "line": 482,
+        "event": "@submit.prevent=\"quantityAdjustmentPreview ? submitQuantityAdjustment() : previewQuantityAdjustment()\""
+      },
+      {
+        "line": 508,
+        "event": "@click=\"closeQuantityAdjustment\""
+      },
+      {
+        "line": 512,
+        "event": "@submit.prevent=\"submitShipment\""
+      },
+      {
+        "line": 536,
+        "event": "@click=\"closeShipmentDialog\""
+      },
+      {
+        "line": 539,
+        "event": "@submit.prevent=\"submitShipmentReversal\""
+      },
+      {
+        "line": 539,
+        "event": "@click=\"shipmentReversalTarget = null\""
+      },
+      {
+        "line": 540,
+        "event": "@submit.prevent=\"submitCancellation\""
+      },
+      {
+        "line": 540,
+        "event": "@click=\"cancelOpen = false\""
+      },
+      {
+        "line": 545,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 548,
+        "event": "@click=\"emit('close')\""
+      },
+      {
+        "line": 548,
+        "event": "@click=\"emit('edit')\""
+      },
+      {
+        "line": 548,
+        "event": "@click=\"lifecycleAction('confirm', '确认后订单将进入正式履约，并生成库存预留和应收计划。是否继续？')\""
+      },
+      {
+        "line": 548,
+        "event": "@click=\"lifecycleAction('start-production')\""
+      },
+      {
+        "line": 548,
+        "event": "@click=\"lifecycleAction('complete')\""
+      },
+      {
+        "line": 548,
+        "event": "@click=\"openCancellation\""
+      },
+      {
+        "line": 552,
+        "event": "@click=\"activeTab = tab[0]\""
+      },
+      {
+        "line": 558,
+        "event": "@click=\"performTask(task)\""
+      },
+      {
+        "line": 559,
+        "event": "@click=\"activeTab = 'fulfillment'\""
+      },
+      {
+        "line": 562,
+        "event": "@click=\"openQuantityAdjustment\""
+      },
+      {
+        "line": 563,
+        "event": "@click=\"emit('open-quote', workbench.source_quote.id)\""
+      },
+      {
+        "line": 565,
+        "event": "@changed=\"load\""
+      },
+      {
+        "line": 573,
+        "event": "@click=\"generatePackingPlan\""
+      },
+      {
+        "line": 575,
+        "event": "@click=\"regeneratePackingPlan\""
+      },
+      {
+        "line": 589,
+        "event": "@click=\"openShipmentDialog()\""
+      },
+      {
+        "line": 589,
+        "event": "@click=\"openProcurementDrafts\""
+      },
+      {
+        "line": 603,
+        "event": "@click=\"ship(item)\""
+      },
+      {
+        "line": 603,
+        "event": "@click=\"openSupplierAllocation(item)\""
+      },
+      {
+        "line": 611,
+        "event": "@click=\"openShipmentReversal(shipment)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 82,
+        "name": "performTask"
+      },
+      {
+        "line": 97,
+        "name": "sharedSkuProcurement"
+      },
+      {
+        "line": 98,
+        "name": "linePacking"
+      },
+      {
+        "line": 102,
+        "name": "purchasePartyName"
+      },
+      {
+        "line": 106,
+        "name": "purchasePartyReference"
+      },
+      {
+        "line": 110,
+        "name": "money"
+      },
+      {
+        "line": 111,
+        "name": "date"
+      },
+      {
+        "line": 112,
+        "name": "newRequestKey"
+      },
+      {
+        "line": 116,
+        "name": "comparableQuantity"
+      },
+      {
+        "line": 125,
+        "name": "quantityLineChanged"
+      },
+      {
+        "line": 136,
+        "name": "quantityAdjustmentPayload"
+      },
+      {
+        "line": 147,
+        "name": "quantityAdjustmentErrorMessage"
+      },
+      {
+        "line": 150,
+        "name": "openQuantityAdjustment"
+      },
+      {
+        "line": 168,
+        "name": "closeQuantityAdjustment"
+      },
+      {
+        "line": 171,
+        "name": "previewQuantityAdjustment"
+      },
+      {
+        "line": 187,
+        "name": "submitQuantityAdjustment"
+      },
+      {
+        "line": 238,
+        "name": "localDateInputValue"
+      },
+      {
+        "line": 259,
+        "name": "shipmentLineValid"
+      },
+      {
+        "line": 266,
+        "name": "getShipmentSku"
+      },
+      {
+        "line": 278,
+        "name": "openShipmentDialog"
+      },
+      {
+        "line": 323,
+        "name": "closeShipmentDialog"
+      },
+      {
+        "line": 328,
+        "name": "shipmentOverageSummary"
+      },
+      {
+        "line": 337,
+        "name": "shipmentErrorMessage"
+      },
+      {
+        "line": 342,
+        "name": "submitShipment"
+      },
+      {
+        "line": 379,
+        "name": "lifecycleAction"
+      },
+      {
+        "line": 389,
+        "name": "openCancellation"
+      },
+      {
+        "line": 390,
+        "name": "submitCancellation"
+      },
+      {
+        "line": 399,
+        "name": "ship"
+      },
+      {
+        "line": 400,
+        "name": "openShipmentReversal"
+      },
+      {
+        "line": 405,
+        "name": "submitShipmentReversal"
+      },
+      {
+        "line": 419,
+        "name": "generatePackingPlan"
+      },
+      {
+        "line": 427,
+        "name": "regeneratePackingPlan"
+      },
+      {
+        "line": 433,
+        "name": "packingStatusLabel"
+      },
+      {
+        "line": 436,
+        "name": "packingTemplateName"
+      },
+      {
+        "line": 439,
+        "name": "openSupplierAllocation"
+      },
+      {
+        "line": 440,
+        "name": "supplierAllocationSaved"
+      },
+      {
+        "line": 441,
+        "name": "openProcurementDrafts"
+      },
+      {
+        "line": 442,
+        "name": "procurementDraftsCreated"
+      },
+      {
+        "line": 447,
+        "name": "load"
+      },
+      {
+        "line": 462,
+        "name": "loadOperationLogs"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\OrderDraftModal.vue",
+    "actions": [
+      {
+        "line": 128,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 131,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 141,
+        "event": "@click=\"tailPolicyHelpOpen = !tailPolicyHelpOpen\""
+      },
+      {
+        "line": 142,
+        "event": "@change=\"changeCurrency\""
+      },
+      {
+        "line": 147,
+        "event": "@click=\"form.items.splice(index + 1, 0, { ...item })\""
+      },
+      {
+        "line": 147,
+        "event": "@click=\"form.items.splice(index, 1)\""
+      },
+      {
+        "line": 152,
+        "event": "@click=\"requestClose\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 30,
+        "name": "resetForm"
+      },
+      {
+        "line": 52,
+        "name": "selectSku"
+      },
+      {
+        "line": 64,
+        "name": "syncSelectedSkus"
+      },
+      {
+        "line": 76,
+        "name": "changeCurrency"
+      },
+      {
+        "line": 82,
+        "name": "money"
+      },
+      {
+        "line": 86,
+        "name": "setOrderDate"
+      },
+      {
+        "line": 91,
+        "name": "setExpectedShipDate"
+      },
+      {
+        "line": 95,
+        "name": "setLeadTimeDays"
+      },
+      {
+        "line": 100,
+        "name": "save"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\PageLoadState.vue",
+    "actions": [
+      {
+        "line": 14,
+        "event": "@click=\"emit('retry')\""
+      },
+      {
+        "line": 17,
+        "event": "@click=\"emit('retry')\""
+      }
+    ],
+    "handlers": []
+  },
+  {
+    "file": "frontend\\src\\components\\PaymentTermsEditor.vue",
+    "actions": [
+      {
+        "line": 19,
+        "event": "@change=\"change(index, 'due_basis', $event.target.value)\""
+      },
+      {
+        "line": 21,
+        "event": "@click=\"remove(index)\""
+      },
+      {
+        "line": 24,
+        "event": "@click=\"add\""
+      },
+      {
+        "line": 24,
+        "event": "@click=\"emit('update:modelValue', copyPaymentTerms())\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 9,
+        "name": "change"
+      },
+      {
+        "line": 10,
+        "name": "add"
+      },
+      {
+        "line": 11,
+        "name": "remove"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\ProcurementDraftModal.vue",
+    "actions": [
+      {
+        "line": 51,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 62,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 62,
+        "event": "@click=\"submit\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 13,
+        "name": "reset"
+      },
+      {
+        "line": 28,
+        "name": "message"
+      },
+      {
+        "line": 29,
+        "name": "submit"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\ProductSalesRules.vue",
+    "actions": [
+      {
+        "line": 40,
+        "event": "@click=\"edit()\""
+      },
+      {
+        "line": 42,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 46,
+        "event": "@change=\"selectSku\""
+      },
+      {
+        "line": 50,
+        "event": "@click=\"draft = null\""
+      },
+      {
+        "line": 52,
+        "event": "@click=\"edit(row)\""
+      },
+      {
+        "line": 52,
+        "event": "@click=\"toggle(row)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 8,
+        "name": "load"
+      },
+      {
+        "line": 16,
+        "name": "edit"
+      },
+      {
+        "line": 21,
+        "name": "selectSku"
+      },
+      {
+        "line": 22,
+        "name": "save"
+      },
+      {
+        "line": 31,
+        "name": "toggle"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\ProductSkuManagement.vue",
+    "actions": [
+      {
+        "line": 178,
+        "event": "@click=\"clearPoolFilters\""
+      },
+      {
+        "line": 181,
+        "event": "@change=\"parameterFilters[parameter.key] = $event.target.checked ? [...(parameterFilters[parameter.key] || []), value] : (parameterFilters[parameter.key] || []).filter(v => v !== value)\""
+      },
+      {
+        "line": 184,
+        "event": "@click=\"bindingOpen = true\""
+      },
+      {
+        "line": 185,
+        "event": "@click=\"setSelectedActive(false)\""
+      },
+      {
+        "line": 186,
+        "event": "@click=\"setSelectedActive(true)\""
+      },
+      {
+        "line": 187,
+        "event": "@click=\"selectedIds=[]\""
+      },
+      {
+        "line": 190,
+        "event": "@change=\"selectAll($event.target.checked)\""
+      },
+      {
+        "line": 194,
+        "event": "@click=\"openSkuRecord(row)\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"openSkuRecord(row)\""
+      },
+      {
+        "line": 207,
+        "event": "@click=\"editRule()\""
+      },
+      {
+        "line": 209,
+        "event": "@click=\"editRule(row)\""
+      },
+      {
+        "line": 209,
+        "event": "@click=\"toggleRule(row)\""
+      },
+      {
+        "line": 211,
+        "event": "@submit.prevent=\"saveRule\""
+      },
+      {
+        "line": 214,
+        "event": "@click=\"previewRule\""
+      },
+      {
+        "line": 214,
+        "event": "@click=\"rule=null\""
+      },
+      {
+        "line": 220,
+        "event": "@click=\"startDraft\""
+      },
+      {
+        "line": 222,
+        "event": "@click=\"addDefinition\""
+      },
+      {
+        "line": 226,
+        "event": "@click=\"splitSku(s)\""
+      },
+      {
+        "line": 226,
+        "event": "@click=\"removeVariant(s,index)\""
+      },
+      {
+        "line": 227,
+        "event": "@click=\"analyzeDraft\""
+      },
+      {
+        "line": 227,
+        "event": "@click=\"discardDraft\""
+      },
+      {
+        "line": 228,
+        "event": "@click=\"publishDraft\""
+      },
+      {
+        "line": 230,
+        "event": "@click=\"cancelIdentityPublish\""
+      },
+      {
+        "line": 230,
+        "event": "@click=\"cancelIdentityPublish\""
+      },
+      {
+        "line": 230,
+        "event": "@click=\"confirmIdentityPublish\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 38,
+        "name": "lastPurchaseSupplier"
+      },
+      {
+        "line": 43,
+        "name": "parseTraits"
+      },
+      {
+        "line": 52,
+        "name": "run"
+      },
+      {
+        "line": 57,
+        "name": "load"
+      },
+      {
+        "line": 68,
+        "name": "openSkuRecord"
+      },
+      {
+        "line": 69,
+        "name": "selectAll"
+      },
+      {
+        "line": 70,
+        "name": "setSelectedActive"
+      },
+      {
+        "line": 84,
+        "name": "bindingSaved"
+      },
+      {
+        "line": 85,
+        "name": "clearPoolFilters"
+      },
+      {
+        "line": 86,
+        "name": "editRule"
+      },
+      {
+        "line": 93,
+        "name": "rulePayload"
+      },
+      {
+        "line": 107,
+        "name": "addDefinition"
+      },
+      {
+        "line": 110,
+        "name": "variants"
+      },
+      {
+        "line": 111,
+        "name": "editValue"
+      },
+      {
+        "line": 116,
+        "name": "splitSku"
+      },
+      {
+        "line": 120,
+        "name": "removeVariant"
+      },
+      {
+        "line": 124,
+        "name": "saveDraft"
+      },
+      {
+        "line": 132,
+        "name": "diffSegments"
+      },
+      {
+        "line": 142,
+        "name": "publishPlan"
+      },
+      {
+        "line": 156,
+        "name": "confirmIdentityPublish"
+      },
+      {
+        "line": 162,
+        "name": "cancelIdentityPublish"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\ProductWorkspace.vue",
+    "actions": [
+      {
+        "line": 39,
+        "event": "@click=\"navigate('__overview')\""
+      },
+      {
+        "line": 40,
+        "event": "@click=\"navigate(tab.key)\""
+      },
+      {
+        "line": 41,
+        "event": "@click=\"navigate('sales-rules')\""
+      },
+      {
+        "line": 42,
+        "event": "@click=\"navigate('__operation_logs')\""
+      },
+      {
+        "line": 47,
+        "event": "@click=\"navigate(key)\""
+      },
+      {
+        "line": 47,
+        "event": "@click=\"emit('drill',row)\""
+      },
+      {
+        "line": 50,
+        "event": "@click=\"reset\""
+      },
+      {
+        "line": 55,
+        "event": "@click=\"emit('drill',row)\""
+      },
+      {
+        "line": 56,
+        "event": "@click=\"navigate('inventory')\""
+      },
+      {
+        "line": 56,
+        "event": "@click=\"emit('drill',row)\""
+      },
+      {
+        "line": 59,
+        "event": "@changed=\"emit('changed')\""
+      },
+      {
+        "line": 60,
+        "event": "@click=\"emit('createSku')\""
+      },
+      {
+        "line": 60,
+        "event": "@changed=\"emit('changed')\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 33,
+        "name": "reset"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\PurchaseCostAllocationModal.vue",
+    "actions": [
+      {
+        "line": 89,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 93,
+        "event": "@click=\"convertLegacy\""
+      },
+      {
+        "line": 93,
+        "event": "@click=\"changed\""
+      },
+      {
+        "line": 95,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 95,
+        "event": "@change=\"changed\""
+      },
+      {
+        "line": 102,
+        "event": "@change=\"row.order = null; row.target_name = ''\""
+      },
+      {
+        "line": 106,
+        "event": "@click=\"remove(row)\""
+      },
+      {
+        "line": 108,
+        "event": "@click=\"add(item)\""
+      },
+      {
+        "line": 117,
+        "event": "@click=\"form.expenses.splice(index, 1); changed()\""
+      },
+      {
+        "line": 119,
+        "event": "@click=\"form.expenses.push({ name: '运费', amount: '', method: 'amount' }); changed()\""
+      },
+      {
+        "line": 129,
+        "event": "@click=\"requestClose\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 22,
+        "name": "payload"
+      },
+      {
+        "line": 29,
+        "name": "changed"
+      },
+      {
+        "line": 39,
+        "name": "errorText"
+      },
+      {
+        "line": 43,
+        "name": "updatePreview"
+      },
+      {
+        "line": 55,
+        "name": "convertLegacy"
+      },
+      {
+        "line": 62,
+        "name": "remaining"
+      },
+      {
+        "line": 63,
+        "name": "add"
+      },
+      {
+        "line": 64,
+        "name": "remove"
+      },
+      {
+        "line": 65,
+        "name": "allocationTargetLabel"
+      },
+      {
+        "line": 70,
+        "name": "save"
+      },
+      {
+        "line": 81,
+        "name": "requestClose"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\PurchaseDetailModal.vue",
+    "actions": [
+      {
+        "line": 48,
+        "event": "@keydown.esc=\"emit('close')\""
+      },
+      {
+        "line": 51,
+        "event": "@click=\"emit('close')\""
+      },
+      {
+        "line": 57,
+        "event": "@click=\"emit('confirm', row)\""
+      },
+      {
+        "line": 58,
+        "event": "@click=\"emit('edit', row)\""
+      },
+      {
+        "line": 59,
+        "event": "@click=\"emit('delete', row)\""
+      },
+      {
+        "line": 60,
+        "event": "@click=\"emit('cancel', row)\""
+      },
+      {
+        "line": 65,
+        "event": "@click=\"emit('retry')\""
+      },
+      {
+        "line": 67,
+        "event": "@click=\"activeTab = key\""
+      },
+      {
+        "line": 74,
+        "event": "@click=\"taskAction(task)\""
+      },
+      {
+        "line": 77,
+        "event": "@click=\"emit('pay', row)\""
+      },
+      {
+        "line": 78,
+        "event": "@click=\"emit('allocate-cost', row)\""
+      },
+      {
+        "line": 81,
+        "event": "@changed=\"emit('changed')\""
+      },
+      {
+        "line": 84,
+        "event": "@click=\"emit('receive', row, item)\""
+      },
+      {
+        "line": 84,
+        "event": "@click=\"emit('reverse-receipt', row, item, receipt)\""
+      },
+      {
+        "line": 85,
+        "event": "@click=\"emit('pay', row)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 41,
+        "name": "dateTime"
+      },
+      {
+        "line": 45,
+        "name": "taskAction"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\PurchasePaymentModal.vue",
+    "actions": [
+      {
+        "line": 29,
+        "event": "@keydown.esc=\"!saving && emit('close')\""
+      },
+      {
+        "line": 31,
+        "event": "@click=\"emit('close')\""
+      },
+      {
+        "line": 33,
+        "event": "@submit.prevent=\"submit\""
+      },
+      {
+        "line": 39,
+        "event": "@click=\"emit('close')\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 10,
+        "name": "submit"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\PurchaseSupplierPicker.vue",
+    "actions": [
+      {
+        "line": 18,
+        "event": "@click=\"emit('close')\""
+      },
+      {
+        "line": 18,
+        "event": "@change=\"choose(candidate)\""
+      },
+      {
+        "line": 18,
+        "event": "@click=\"emit('selected', { supplier: choice.supplier, supplier_sku: sourceId })\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 16,
+        "name": "choose"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\QuoteDetailModal.vue",
+    "actions": [
+      {
+        "line": 167,
+        "event": "@click=\"load()\""
+      },
+      {
+        "line": 170,
+        "event": "@click=\"emit('close')\""
+      },
+      {
+        "line": 170,
+        "event": "@click=\"returnToPreviousVersion\""
+      },
+      {
+        "line": 173,
+        "event": "@click=\"changeStatus('mark-sent')\""
+      },
+      {
+        "line": 174,
+        "event": "@click=\"changeStatus('accept')\""
+      },
+      {
+        "line": 175,
+        "event": "@click=\"changeStatus('reject')\""
+      },
+      {
+        "line": 176,
+        "event": "@click=\"changeStatus('expire')\""
+      },
+      {
+        "line": 178,
+        "event": "@click=\"emit('revise', quote)\""
+      },
+      {
+        "line": 178,
+        "event": "@click=\"openPreview()\""
+      },
+      {
+        "line": 178,
+        "event": "@click=\"exportQuote\""
+      },
+      {
+        "line": 178,
+        "event": "@click=\"createOrder\""
+      },
+      {
+        "line": 183,
+        "event": "@click=\"activeTab = tab[0]\""
+      },
+      {
+        "line": 188,
+        "event": "@click=\"activeTab = 'lineage'\""
+      },
+      {
+        "line": 188,
+        "event": "@click=\"openPreview(row.id)\""
+      },
+      {
+        "line": 188,
+        "event": "@click=\"changeVersion(row)\""
+      },
+      {
+        "line": 189,
+        "event": "@click=\"activeTab = 'orders'\""
+      },
+      {
+        "line": 194,
+        "event": "@click=\"openPreview(row.id)\""
+      },
+      {
+        "line": 194,
+        "event": "@click=\"changeVersion(row)\""
+      },
+      {
+        "line": 196,
+        "event": "@click=\"openPreview(order.quote)\""
+      },
+      {
+        "line": 196,
+        "event": "@click=\"emit('open-order', order.id)\""
+      },
+      {
+        "line": 198,
+        "event": "@click=\"noteEditorOpen = true\""
+      },
+      {
+        "line": 198,
+        "event": "@click=\"closeNoteEditor\""
+      },
+      {
+        "line": 198,
+        "event": "@click=\"createNote\""
+      },
+      {
+        "line": 198,
+        "event": "@click=\"deactivateNote(note)\""
+      },
+      {
+        "line": 198,
+        "event": "@click=\"restoreNote(note)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 62,
+        "name": "money"
+      },
+      {
+        "line": 63,
+        "name": "revisionLabel"
+      },
+      {
+        "line": 64,
+        "name": "isRichTextEmpty"
+      },
+      {
+        "line": 65,
+        "name": "dateTime"
+      },
+      {
+        "line": 67,
+        "name": "load"
+      },
+      {
+        "line": 79,
+        "name": "loadOperationLogs"
+      },
+      {
+        "line": 90,
+        "name": "changeStatus"
+      },
+      {
+        "line": 101,
+        "name": "openPreview"
+      },
+      {
+        "line": 116,
+        "name": "exportQuote"
+      },
+      {
+        "line": 121,
+        "name": "createNote"
+      },
+      {
+        "line": 128,
+        "name": "deactivateNote"
+      },
+      {
+        "line": 135,
+        "name": "restoreNote"
+      },
+      {
+        "line": 141,
+        "name": "changeVersion"
+      },
+      {
+        "line": 146,
+        "name": "openVersion"
+      },
+      {
+        "line": 151,
+        "name": "returnToPreviousVersion"
+      },
+      {
+        "line": 155,
+        "name": "createOrder"
+      },
+      {
+        "line": 156,
+        "name": "closeNoteEditor"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\QuoteEditorModal.vue",
+    "actions": [
+      {
+        "line": 323,
+        "event": "@submit.prevent=\"save(false)\""
+      },
+      {
+        "line": 324,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 327,
+        "event": "@click=\"retryExport\""
+      },
+      {
+        "line": 331,
+        "event": "@change=\"selectCustomer\""
+      },
+      {
+        "line": 335,
+        "event": "@change=\"changeCurrency\""
+      },
+      {
+        "line": 343,
+        "event": "@click=\"draft.items.splice(index + 1, 0, { ...item })\""
+      },
+      {
+        "line": 343,
+        "event": "@click=\"draft.items.splice(index, 1)\""
+      },
+      {
+        "line": 345,
+        "event": "@click=\"refreshInventoryAvailability\""
+      },
+      {
+        "line": 357,
+        "event": "@click=\"packingOpen = !packingOpen\""
+      },
+      {
+        "line": 357,
+        "event": "@click=\"openPackaging(sku)\""
+      },
+      {
+        "line": 364,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 364,
+        "event": "@click=\"openPreview\""
+      },
+      {
+        "line": 364,
+        "event": "@click=\"save(false)\""
+      },
+      {
+        "line": 364,
+        "event": "@click=\"save(true)\""
+      },
+      {
+        "line": 366,
+        "event": "@submit.prevent=\"savePackaging\""
+      },
+      {
+        "line": 366,
+        "event": "@click=\"requestPackagingClose\""
+      },
+      {
+        "line": 366,
+        "event": "@click=\"requestPackagingClose\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 55,
+        "name": "makeDraft"
+      },
+      {
+        "line": 73,
+        "name": "setQuoteDate"
+      },
+      {
+        "line": 78,
+        "name": "setValidUntil"
+      },
+      {
+        "line": 82,
+        "name": "setValidityDays"
+      },
+      {
+        "line": 103,
+        "name": "changeCurrency"
+      },
+      {
+        "line": 109,
+        "name": "money"
+      },
+      {
+        "line": 111,
+        "name": "skuDescription"
+      },
+      {
+        "line": 112,
+        "name": "makeItem"
+      },
+      {
+        "line": 154,
+        "name": "formatInventoryQuantity"
+      },
+      {
+        "line": 157,
+        "name": "refreshInventoryAvailability"
+      },
+      {
+        "line": 189,
+        "name": "packagingFor"
+      },
+      {
+        "line": 204,
+        "name": "openPackaging"
+      },
+      {
+        "line": 205,
+        "name": "savePackaging"
+      },
+      {
+        "line": 212,
+        "name": "syncSelectedSkus"
+      },
+      {
+        "line": 220,
+        "name": "activateSku"
+      },
+      {
+        "line": 224,
+        "name": "editRecipient"
+      },
+      {
+        "line": 225,
+        "name": "selectCustomer"
+      },
+      {
+        "line": 242,
+        "name": "validate"
+      },
+      {
+        "line": 252,
+        "name": "payload"
+      },
+      {
+        "line": 265,
+        "name": "checkSalesRules"
+      },
+      {
+        "line": 280,
+        "name": "openPreview"
+      },
+      {
+        "line": 292,
+        "name": "save"
+      },
+      {
+        "line": 311,
+        "name": "retryExport"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\QuotePreviewModal.vue",
+    "actions": [
+      {
+        "line": 72,
+        "event": "@click=\"printPreview\""
+      },
+      {
+        "line": 73,
+        "event": "@click=\"$emit('close')\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 17,
+        "name": "money"
+      },
+      {
+        "line": 28,
+        "name": "printPreview"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\RelatedCreateModal.vue",
+    "actions": [
+      {
+        "line": 348,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 351,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 362,
+        "event": "@change=\"changeFollowUpMode\""
+      },
+      {
+        "line": 373,
+        "event": "@change=\"onFieldChange(field)\""
+      },
+      {
+        "line": 388,
+        "event": "@change=\"onFollowUpFileInput\""
+      },
+      {
+        "line": 389,
+        "event": "@click=\"removePendingFollowUpFile(index)\""
+      },
+      {
+        "line": 402,
+        "event": "@click=\"tailPolicyHelpOpen = !tailPolicyHelpOpen\""
+      },
+      {
+        "line": 404,
+        "event": "@click=\"applyUsdCnyReference\""
+      },
+      {
+        "line": 410,
+        "event": "@click=\"form.items.splice(index + 1, 0, { ...item })\""
+      },
+      {
+        "line": 415,
+        "event": "@click=\"form.items.splice(index, 1)\""
+      },
+      {
+        "line": 429,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 430,
+        "event": "@click=\"init\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 36,
+        "name": "visibleGenericField"
+      },
+      {
+        "line": 37,
+        "name": "changeFollowUpMode"
+      },
+      {
+        "line": 84,
+        "name": "syncSelectedSkus"
+      },
+      {
+        "line": 97,
+        "name": "dateParts"
+      },
+      {
+        "line": 104,
+        "name": "datetimeLocal"
+      },
+      {
+        "line": 108,
+        "name": "syncFollowUpDaysFromDate"
+      },
+      {
+        "line": 113,
+        "name": "updateFollowUpDate"
+      },
+      {
+        "line": 122,
+        "name": "setFollowUpDate"
+      },
+      {
+        "line": 126,
+        "name": "addFollowUpFiles"
+      },
+      {
+        "line": 139,
+        "name": "removePendingFollowUpFile"
+      },
+      {
+        "line": 140,
+        "name": "onFollowUpFileInput"
+      },
+      {
+        "line": 144,
+        "name": "onFollowUpFileDrop"
+      },
+      {
+        "line": 145,
+        "name": "uploadFollowUpFiles"
+      },
+      {
+        "line": 152,
+        "name": "onDateFieldChange"
+      },
+      {
+        "line": 156,
+        "name": "visibleOptions"
+      },
+      {
+        "line": 166,
+        "name": "isInherited"
+      },
+      {
+        "line": 170,
+        "name": "applyDefaultContact"
+      },
+      {
+        "line": 176,
+        "name": "onFieldChange"
+      },
+      {
+        "line": 182,
+        "name": "initGeneric"
+      },
+      {
+        "line": 205,
+        "name": "initDocument"
+      },
+      {
+        "line": 227,
+        "name": "loadUsdCnyReference"
+      },
+      {
+        "line": 233,
+        "name": "applyUsdCnyReference"
+      },
+      {
+        "line": 234,
+        "name": "init"
+      },
+      {
+        "line": 248,
+        "name": "initQuote"
+      },
+      {
+        "line": 258,
+        "name": "closeQuote"
+      },
+      {
+        "line": 263,
+        "name": "selectSku"
+      },
+      {
+        "line": 270,
+        "name": "setDocumentDate"
+      },
+      {
+        "line": 276,
+        "name": "setDocumentTargetDate"
+      },
+      {
+        "line": 281,
+        "name": "setDocumentDurationDays"
+      },
+      {
+        "line": 285,
+        "name": "payloadGeneric"
+      },
+      {
+        "line": 299,
+        "name": "save"
+      },
+      {
+        "line": 332,
+        "name": "money"
+      },
+      {
+        "line": 335,
+        "name": "formatAttachmentSize"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\RichTextEditor.vue",
+    "actions": [
+      {
+        "line": 37,
+        "event": "@click=\"format('formatBlock', 'p')\""
+      },
+      {
+        "line": 38,
+        "event": "@click=\"format('bold')\""
+      },
+      {
+        "line": 39,
+        "event": "@click=\"format('insertUnorderedList')\""
+      },
+      {
+        "line": 40,
+        "event": "@click=\"format('insertOrderedList')\""
+      },
+      {
+        "line": 41,
+        "event": "@click=\"addLink\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 10,
+        "name": "sync"
+      },
+      {
+        "line": 13,
+        "name": "format"
+      },
+      {
+        "line": 18,
+        "name": "addLink"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\SegmentedDateInput.vue",
+    "actions": [
+      {
+        "line": 89,
+        "event": "@click=\"openPicker\""
+      },
+      {
+        "line": 90,
+        "event": "@change=\"applyPickerValue\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 10,
+        "name": "setParts"
+      },
+      {
+        "line": 22,
+        "name": "digits"
+      },
+      {
+        "line": 23,
+        "name": "validDate"
+      },
+      {
+        "line": 44,
+        "name": "emitValue"
+      },
+      {
+        "line": 48,
+        "name": "onYearInput"
+      },
+      {
+        "line": 53,
+        "name": "onMonthInput"
+      },
+      {
+        "line": 58,
+        "name": "onDayInput"
+      },
+      {
+        "line": 63,
+        "name": "onHourInput"
+      },
+      {
+        "line": 68,
+        "name": "onMinuteInput"
+      },
+      {
+        "line": 69,
+        "name": "openPicker"
+      },
+      {
+        "line": 73,
+        "name": "applyPickerValue"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\ShipmentActualPacking.vue",
+    "actions": [
+      {
+        "line": 131,
+        "event": "@click=\"load(shipment, true)\""
+      },
+      {
+        "line": 133,
+        "event": "@click=\"exportPackingList(shipment)\""
+      },
+      {
+        "line": 135,
+        "event": "@click=\"openEditor(shipment)\""
+      },
+      {
+        "line": 135,
+        "event": "@click=\"copy(shipment)\""
+      },
+      {
+        "line": 137,
+        "event": "@click=\"openEditor(shipment, row)\""
+      },
+      {
+        "line": 137,
+        "event": "@click=\"remove(shipment, row)\""
+      },
+      {
+        "line": 140,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 144,
+        "event": "@click=\"editor.items.splice(index, 1)\""
+      },
+      {
+        "line": 145,
+        "event": "@click=\"editor.items.push({ sku: '', quantity: '' })\""
+      },
+      {
+        "line": 146,
+        "event": "@click=\"editor = null\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 17,
+        "name": "errorMessage"
+      },
+      {
+        "line": 23,
+        "name": "load"
+      },
+      {
+        "line": 32,
+        "name": "openEditor"
+      },
+      {
+        "line": 43,
+        "name": "validateEditor"
+      },
+      {
+        "line": 61,
+        "name": "save"
+      },
+      {
+        "line": 78,
+        "name": "remove"
+      },
+      {
+        "line": 90,
+        "name": "copy"
+      },
+      {
+        "line": 103,
+        "name": "exportErrorMessage"
+      },
+      {
+        "line": 111,
+        "name": "exportPackingList"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\SimpleRichTextEditor.vue",
+    "actions": [
+      {
+        "line": 61,
+        "event": "@click=\"inline('**')\""
+      },
+      {
+        "line": 62,
+        "event": "@click=\"inline('_')\""
+      },
+      {
+        "line": 63,
+        "event": "@click=\"list(false)\""
+      },
+      {
+        "line": 64,
+        "event": "@click=\"list(true)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 9,
+        "name": "replaceSelection"
+      },
+      {
+        "line": 15,
+        "name": "inline"
+      },
+      {
+        "line": 21,
+        "name": "list"
+      },
+      {
+        "line": 27,
+        "name": "readAsDataUrl"
+      },
+      {
+        "line": 35,
+        "name": "onPaste"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\SkuCombinationRuleEditor.vue",
+    "actions": [
+      {
+        "line": 29,
+        "event": "@click=\"add\""
+      },
+      {
+        "line": 30,
+        "event": "@change=\"rule.whenText = ''\""
+      },
+      {
+        "line": 30,
+        "event": "@change=\"rule.valueText = ''\""
+      },
+      {
+        "line": 30,
+        "event": "@click=\"rules.splice(index,1)\""
+      },
+      {
+        "line": 31,
+        "event": "@click=\"check(false)\""
+      },
+      {
+        "line": 31,
+        "event": "@click=\"check(true)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 14,
+        "name": "add"
+      },
+      {
+        "line": 16,
+        "name": "check"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\SkuContextBanner.vue",
+    "actions": [
+      {
+        "line": 9,
+        "event": "@click=\"$emit('clear')\""
+      }
+    ],
+    "handlers": []
+  },
+  {
+    "file": "frontend\\src\\components\\SkuPickerPanel.vue",
+    "actions": [
+      {
+        "line": 60,
+        "event": "@click=\"activate(sku)\""
+      },
+      {
+        "line": 61,
+        "event": "@click.stop=\"toggle(sku)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 19,
+        "name": "categoryNames"
+      },
+      {
+        "line": 35,
+        "name": "label"
+      },
+      {
+        "line": 36,
+        "name": "skuCode"
+      },
+      {
+        "line": 37,
+        "name": "toggle"
+      },
+      {
+        "line": 46,
+        "name": "activate"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\SummaryCards.vue",
+    "actions": [],
+    "handlers": []
+  },
+  {
+    "file": "frontend\\src\\components\\SupplierAllocationModal.vue",
+    "actions": [
+      {
+        "line": 55,
+        "event": "@click=\"emit('close')\""
+      },
+      {
+        "line": 58,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 64,
+        "event": "@click=\"choose(candidate)\""
+      },
+      {
+        "line": 65,
+        "event": "@change=\"choose(candidate)\""
+      },
+      {
+        "line": 66,
+        "event": "@change=\"selectedSupplierSku = Number($event.target.value)\""
+      },
+      {
+        "line": 73,
+        "event": "@click=\"emit('close')\""
+      },
+      {
+        "line": 73,
+        "event": "@click=\"save\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 22,
+        "name": "sourceForCandidate"
+      },
+      {
+        "line": 28,
+        "name": "money"
+      },
+      {
+        "line": 29,
+        "name": "choose"
+      },
+      {
+        "line": 30,
+        "name": "message"
+      },
+      {
+        "line": 31,
+        "name": "load"
+      },
+      {
+        "line": 41,
+        "name": "save"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\SupplierBatchBindingDrawer.vue",
+    "actions": [
+      {
+        "line": 39,
+        "event": "@click=\"requestClose\""
+      },
+      {
+        "line": 42,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 43,
+        "event": "@change=\"selectVisible($event.target.checked)\""
+      },
+      {
+        "line": 44,
+        "event": "@click=\"selected = []\""
+      },
+      {
+        "line": 46,
+        "event": "@click=\"selected = selected.filter(id => id !== supplier.id)\""
+      },
+      {
+        "line": 48,
+        "event": "@click=\"save\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 15,
+        "name": "selectVisible"
+      },
+      {
+        "line": 19,
+        "name": "load"
+      },
+      {
+        "line": 28,
+        "name": "save"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\TradeUnitPicker.vue",
+    "actions": [
+      {
+        "line": 24,
+        "event": "@change=\"select\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 7,
+        "name": "select"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\AccessDeniedPage.vue",
+    "actions": [
+      {
+        "line": 37,
+        "event": "@click=\"retry\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 15,
+        "name": "retry"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\CashEventPage.vue",
+    "actions": [
+      {
+        "line": 361,
+        "event": "@click=\"openCreate\""
+      },
+      {
+        "line": 369,
+        "event": "@click=\"loadEvents\""
+      },
+      {
+        "line": 375,
+        "event": "@click=\"openDetail(row)\""
+      },
+      {
+        "line": 375,
+        "event": "@click.stop=\"openDetail(row)\""
+      },
+      {
+        "line": 378,
+        "event": "@click=\"selected = null\""
+      },
+      {
+        "line": 378,
+        "event": "@click=\"selected = null\""
+      },
+      {
+        "line": 380,
+        "event": "@click.self=\"closeForm\""
+      },
+      {
+        "line": 380,
+        "event": "@submit.prevent=\"formStep === 'form' ? (preview ? registerDraft() : previewEvent()) : undefined\""
+      },
+      {
+        "line": 380,
+        "event": "@click=\"closeForm\""
+      },
+      {
+        "line": 381,
+        "event": "@click=\"lookupRequest\""
+      },
+      {
+        "line": 390,
+        "event": "@change=\"voucherFile = $event.target.files[0]\""
+      },
+      {
+        "line": 390,
+        "event": "@click=\"uploadPrivateVoucher\""
+      },
+      {
+        "line": 393,
+        "event": "@change=\"onKindChange\""
+      },
+      {
+        "line": 393,
+        "event": "@change=\"onCurrencyChange\""
+      },
+      {
+        "line": 395,
+        "event": "@click=\"loadSources\""
+      },
+      {
+        "line": 395,
+        "event": "@click=\"loadSources\""
+      },
+      {
+        "line": 395,
+        "event": "@click=\"addSource(row)\""
+      },
+      {
+        "line": 395,
+        "event": "@click=\"removeSource(item.id)\""
+      },
+      {
+        "line": 401,
+        "event": "@click=\"closeForm\""
+      },
+      {
+        "line": 401,
+        "event": "@click=\"previewEvent\""
+      },
+      {
+        "line": 401,
+        "event": "@click=\"registerDraft\""
+      },
+      {
+        "line": 403,
+        "event": "@change=\"voucherFile = $event.target.files[0]\""
+      },
+      {
+        "line": 403,
+        "event": "@click=\"uploadPrivateVoucher\""
+      },
+      {
+        "line": 403,
+        "event": "@click=\"showCancelReason = false\""
+      },
+      {
+        "line": 403,
+        "event": "@click=\"cancelDraft\""
+      },
+      {
+        "line": 403,
+        "event": "@click=\"closeForm\""
+      },
+      {
+        "line": 403,
+        "event": "@click=\"showCancelReason = true\""
+      },
+      {
+        "line": 403,
+        "event": "@click=\"confirmEvent\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 72,
+        "name": "makeKey"
+      },
+      {
+        "line": 76,
+        "name": "resetForm"
+      },
+      {
+        "line": 95,
+        "name": "clearDraftSnapshot"
+      },
+      {
+        "line": 99,
+        "name": "persistedDraftForm"
+      },
+      {
+        "line": 102,
+        "name": "draftSnapshot"
+      },
+      {
+        "line": 110,
+        "name": "persistDraftSnapshot"
+      },
+      {
+        "line": 114,
+        "name": "clearExpiredDraftSnapshot"
+      },
+      {
+        "line": 125,
+        "name": "restoreDraftSnapshot"
+      },
+      {
+        "line": 150,
+        "name": "money"
+      },
+      {
+        "line": 155,
+        "name": "statusLabel"
+      },
+      {
+        "line": 156,
+        "name": "kindLabel"
+      },
+      {
+        "line": 157,
+        "name": "directionLabel"
+      },
+      {
+        "line": 158,
+        "name": "sourceLabel"
+      },
+      {
+        "line": 159,
+        "name": "allocationFor"
+      },
+      {
+        "line": 160,
+        "name": "needsExplicitPrecision"
+      },
+      {
+        "line": 164,
+        "name": "sourceTotal"
+      },
+      {
+        "line": 165,
+        "name": "filteredSources"
+      },
+      {
+        "line": 169,
+        "name": "stableSerialize"
+      },
+      {
+        "line": 174,
+        "name": "payloadFingerprint"
+      },
+      {
+        "line": 175,
+        "name": "eventPayload"
+      },
+      {
+        "line": 186,
+        "name": "uploadPrivateVoucher"
+      },
+      {
+        "line": 200,
+        "name": "clientError"
+      },
+      {
+        "line": 214,
+        "name": "loadEvents"
+      },
+      {
+        "line": 224,
+        "name": "loadSources"
+      },
+      {
+        "line": 239,
+        "name": "openCreate"
+      },
+      {
+        "line": 247,
+        "name": "closeForm"
+      },
+      {
+        "line": 248,
+        "name": "addSource"
+      },
+      {
+        "line": 252,
+        "name": "removeSource"
+      },
+      {
+        "line": 253,
+        "name": "markAllocationEdited"
+      },
+      {
+        "line": 254,
+        "name": "onKindChange"
+      },
+      {
+        "line": 260,
+        "name": "onCurrencyChange"
+      },
+      {
+        "line": 261,
+        "name": "previewEvent"
+      },
+      {
+        "line": 278,
+        "name": "registerDraft"
+      },
+      {
+        "line": 293,
+        "name": "lookupRequest"
+      },
+      {
+        "line": 300,
+        "name": "confirmEvent"
+      },
+      {
+        "line": 315,
+        "name": "cancelDraft"
+      },
+      {
+        "line": 322,
+        "name": "openDetail"
+      },
+      {
+        "line": 323,
+        "name": "filteredEvents"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\CategoryPage.vue",
+    "actions": [
+      {
+        "line": 362,
+        "event": "@click=\"openCategory()\""
+      },
+      {
+        "line": 372,
+        "event": "@click=\"openCategory()\""
+      },
+      {
+        "line": 374,
+        "event": "@click=\"expandAll(true)\""
+      },
+      {
+        "line": 374,
+        "event": "@click=\"expandAll(false)\""
+      },
+      {
+        "line": 374,
+        "event": "@click=\"load()\""
+      },
+      {
+        "line": 379,
+        "event": "@click=\"selectCategory(row.node.id)\""
+      },
+      {
+        "line": 380,
+        "event": "@click.stop=\"toggleCategoryExpansion(row.node.id)\""
+      },
+      {
+        "line": 394,
+        "event": "@click=\"openCategory(null, selected.id)\""
+      },
+      {
+        "line": 394,
+        "event": "@click=\"openCategory(selected)\""
+      },
+      {
+        "line": 394,
+        "event": "@click=\"removeCategory(selected)\""
+      },
+      {
+        "line": 397,
+        "event": "@click=\"startAttribute\""
+      },
+      {
+        "line": 400,
+        "event": "@click.stop=\"saveAttributeName(attribute)\""
+      },
+      {
+        "line": 400,
+        "event": "@change.stop=\"toggleRule(attribute, 'include_in_sku', $event)\""
+      },
+      {
+        "line": 400,
+        "event": "@change.stop=\"toggleRule(attribute, 'include_in_sales_model', $event)\""
+      },
+      {
+        "line": 400,
+        "event": "@change.stop=\"toggleRule(attribute, 'uppercase', $event)\""
+      },
+      {
+        "line": 400,
+        "event": "@change.stop=\"toggleRule(attribute, 'required', $event)\""
+      },
+      {
+        "line": 400,
+        "event": "@click.stop=\"startEditAttribute(attribute)\""
+      },
+      {
+        "line": 400,
+        "event": "@click.stop.prevent=\"removeAttribute(attribute)\""
+      },
+      {
+        "line": 401,
+        "event": "@change=\"toggleNewRequired\""
+      },
+      {
+        "line": 401,
+        "event": "@click=\"saveNewAttribute\""
+      },
+      {
+        "line": 401,
+        "event": "@click=\"cancelNewAttribute\""
+      },
+      {
+        "line": 407,
+        "event": "@submit.prevent=\"saveCategory\""
+      },
+      {
+        "line": 407,
+        "event": "@click=\"closeCategory\""
+      },
+      {
+        "line": 407,
+        "event": "@click=\"closeCategory\""
+      },
+      {
+        "line": 409,
+        "event": "@click=\"cancelAttributeReorder\""
+      },
+      {
+        "line": 409,
+        "event": "@click=\"cancelAttributeReorder\""
+      },
+      {
+        "line": 409,
+        "event": "@click=\"confirmAttributeReorder\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 33,
+        "name": "apiErrorMessage"
+      },
+      {
+        "line": 42,
+        "name": "selectCategory"
+      },
+      {
+        "line": 43,
+        "name": "cancelNewAttribute"
+      },
+      {
+        "line": 44,
+        "name": "closeCategory"
+      },
+      {
+        "line": 45,
+        "name": "expandAll"
+      },
+      {
+        "line": 89,
+        "name": "notify"
+      },
+      {
+        "line": 90,
+        "name": "restoreViewport"
+      },
+      {
+        "line": 101,
+        "name": "load"
+      },
+      {
+        "line": 121,
+        "name": "openCategory"
+      },
+      {
+        "line": 128,
+        "name": "saveCategory"
+      },
+      {
+        "line": 139,
+        "name": "removeCategory"
+      },
+      {
+        "line": 144,
+        "name": "startAttribute"
+      },
+      {
+        "line": 148,
+        "name": "categoryLineage"
+      },
+      {
+        "line": 159,
+        "name": "rebuildEffectiveAttributes"
+      },
+      {
+        "line": 175,
+        "name": "applyCreatedAttribute"
+      },
+      {
+        "line": 183,
+        "name": "toggleNewRequired"
+      },
+      {
+        "line": 190,
+        "name": "saveNewAttribute"
+      },
+      {
+        "line": 204,
+        "name": "startEditAttribute"
+      },
+      {
+        "line": 210,
+        "name": "saveAttributeName"
+      },
+      {
+        "line": 221,
+        "name": "toggleRule"
+      },
+      {
+        "line": 251,
+        "name": "removeAttribute"
+      },
+      {
+        "line": 256,
+        "name": "startAttributeDrag"
+      },
+      {
+        "line": 262,
+        "name": "dropAttribute"
+      },
+      {
+        "line": 279,
+        "name": "confirmAttributeReorder"
+      },
+      {
+        "line": 289,
+        "name": "cancelAttributeReorder"
+      },
+      {
+        "line": 290,
+        "name": "reorderDiff"
+      },
+      {
+        "line": 302,
+        "name": "dragStart"
+      },
+      {
+        "line": 309,
+        "name": "dragEnd"
+      },
+      {
+        "line": 315,
+        "name": "dragOverChild"
+      },
+      {
+        "line": 320,
+        "name": "dragOverNode"
+      },
+      {
+        "line": 326,
+        "name": "clearNodeDropTarget"
+      },
+      {
+        "line": 330,
+        "name": "dropOnNode"
+      },
+      {
+        "line": 346,
+        "name": "moveDragged"
+      },
+      {
+        "line": 351,
+        "name": "directAttribute"
+      },
+      {
+        "line": 352,
+        "name": "toggleCategoryExpansion"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\Dashboard.vue",
+    "actions": [
+      {
+        "line": 53,
+        "event": "@click=\"load\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 14,
+        "name": "load"
+      },
+      {
+        "line": 44,
+        "name": "money"
+      },
+      {
+        "line": 45,
+        "name": "short"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\DocumentPage.vue",
+    "actions": [
+      {
+        "line": 493,
+        "event": "@click=\"create\""
+      },
+      {
+        "line": 497,
+        "event": "@change=\"setOrderFilter('status', $event.target.value)\""
+      },
+      {
+        "line": 497,
+        "event": "@change=\"setOrderFilter('todo', $event.target.value)\""
+      },
+      {
+        "line": 497,
+        "event": "@click=\"resetOrderFilters\""
+      },
+      {
+        "line": 497,
+        "event": "@change=\"setQuoteFilter('status', $event.target.value)\""
+      },
+      {
+        "line": 497,
+        "event": "@change=\"setQuoteFilter('customer', $event.target.value)\""
+      },
+      {
+        "line": 497,
+        "event": "@change=\"setQuoteFilter('ordering', $event.target.value)\""
+      },
+      {
+        "line": 497,
+        "event": "@click=\"resetQuoteFilters\""
+      },
+      {
+        "line": 498,
+        "event": "@click=\"loadOptions\""
+      },
+      {
+        "line": 504,
+        "event": "@click=\"openDetail(row)\""
+      },
+      {
+        "line": 504,
+        "event": "@keydown.enter=\"openDetail(row)\""
+      },
+      {
+        "line": 504,
+        "event": "@click.stop=\"edit(row)\""
+      },
+      {
+        "line": 504,
+        "event": "@click.stop=\"remove(row)\""
+      },
+      {
+        "line": 507,
+        "event": "@click=\"activateQuoteTreeRow(row)\""
+      },
+      {
+        "line": 507,
+        "event": "@keydown.enter=\"activateQuoteTreeRow(row)\""
+      },
+      {
+        "line": 507,
+        "event": "@click.stop=\"toggleQuoteNode(row.id)\""
+      },
+      {
+        "line": 507,
+        "event": "@click.stop=\"openDetail(row)\""
+      },
+      {
+        "line": 507,
+        "event": "@click.stop=\"edit(row)\""
+      },
+      {
+        "line": 507,
+        "event": "@click.stop=\"exportQuote(row)\""
+      },
+      {
+        "line": 511,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 512,
+        "event": "@click=\"closeEditor\""
+      },
+      {
+        "line": 520,
+        "event": "@change=\"changeSourceQuote\""
+      },
+      {
+        "line": 521,
+        "event": "@change=\"changeCurrency\""
+      },
+      {
+        "line": 529,
+        "event": "@click=\"form.items.splice(index + 1, 0, { ...item })\""
+      },
+      {
+        "line": 534,
+        "event": "@click=\"form.items.splice(index, 1)\""
+      },
+      {
+        "line": 541,
+        "event": "@click=\"closeEditor\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 77,
+        "name": "fresh"
+      },
+      {
+        "line": 91,
+        "name": "notify"
+      },
+      {
+        "line": 93,
+        "name": "load"
+      },
+      {
+        "line": 119,
+        "name": "loadCustomerOptions"
+      },
+      {
+        "line": 128,
+        "name": "loadQuoteCustomerOptions"
+      },
+      {
+        "line": 131,
+        "name": "loadOptions"
+      },
+      {
+        "line": 145,
+        "name": "create"
+      },
+      {
+        "line": 159,
+        "name": "edit"
+      },
+      {
+        "line": 179,
+        "name": "setOrderDate"
+      },
+      {
+        "line": 184,
+        "name": "setExpectedShipDate"
+      },
+      {
+        "line": 188,
+        "name": "setOrderLeadTimeDays"
+      },
+      {
+        "line": 193,
+        "name": "discardEditor"
+      },
+      {
+        "line": 194,
+        "name": "closeQuoteEditor"
+      },
+      {
+        "line": 195,
+        "name": "changeCurrency"
+      },
+      {
+        "line": 201,
+        "name": "selectSku"
+      },
+      {
+        "line": 205,
+        "name": "loadSourceQuote"
+      },
+      {
+        "line": 233,
+        "name": "changeSourceQuote"
+      },
+      {
+        "line": 241,
+        "name": "save"
+      },
+      {
+        "line": 269,
+        "name": "handleQuoteSaved"
+      },
+      {
+        "line": 277,
+        "name": "handleQuoteStatusUpdated"
+      },
+      {
+        "line": 278,
+        "name": "exportQuote"
+      },
+      {
+        "line": 279,
+        "name": "remove"
+      },
+      {
+        "line": 280,
+        "name": "delayed"
+      },
+      {
+        "line": 290,
+        "name": "setOrderFilter"
+      },
+      {
+        "line": 298,
+        "name": "resetOrderFilters"
+      },
+      {
+        "line": 307,
+        "name": "money"
+      },
+      {
+        "line": 308,
+        "name": "orderPartyName"
+      },
+      {
+        "line": 312,
+        "name": "orderPartyReference"
+      },
+      {
+        "line": 316,
+        "name": "quotePartyName"
+      },
+      {
+        "line": 319,
+        "name": "quotePartyReference"
+      },
+      {
+        "line": 323,
+        "name": "documentTimestamp"
+      },
+      {
+        "line": 332,
+        "name": "syncSelectedSkus"
+      },
+      {
+        "line": 344,
+        "name": "syncDetailFromRoute"
+      },
+      {
+        "line": 349,
+        "name": "routeCreatePrefillSignature"
+      },
+      {
+        "line": 353,
+        "name": "syncModalFromRoute"
+      },
+      {
+        "line": 382,
+        "name": "closeDocumentDetail"
+      },
+      {
+        "line": 387,
+        "name": "openDetail"
+      },
+      {
+        "line": 388,
+        "name": "clearSkuFilter"
+      },
+      {
+        "line": 389,
+        "name": "activateQuoteTreeRow"
+      },
+      {
+        "line": 390,
+        "name": "toggleQuoteNode"
+      },
+      {
+        "line": 429,
+        "name": "setQuoteFilter"
+      },
+      {
+        "line": 435,
+        "name": "resetQuoteFilters"
+      },
+      {
+        "line": 444,
+        "name": "reviseFromDetail"
+      },
+      {
+        "line": 445,
+        "name": "openOrderDraft"
+      },
+      {
+        "line": 455,
+        "name": "handleOrderDraftSaved"
+      },
+      {
+        "line": 462,
+        "name": "openOrderDetail"
+      },
+      {
+        "line": 463,
+        "name": "openSourceQuote"
+      },
+      {
+        "line": 464,
+        "name": "clearDocumentFilters"
+      },
+      {
+        "line": 465,
+        "name": "editRelatedOrder"
+      },
+      {
+        "line": 472,
+        "name": "handleOrderEdit"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\FinanceDashboardPage.vue",
+    "actions": [
+      {
+        "line": 161,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 162,
+        "event": "@submit.prevent=\"applyPeriod\""
+      },
+      {
+        "line": 162,
+        "event": "@click=\"resetPeriod\""
+      },
+      {
+        "line": 162,
+        "event": "@click=\"exportReport\""
+      },
+      {
+        "line": 171,
+        "event": "@click=\"openDrill(key)\""
+      },
+      {
+        "line": 174,
+        "event": "@click=\"openDrill(key)\""
+      },
+      {
+        "line": 177,
+        "event": "@click=\"closeDrill\""
+      },
+      {
+        "line": 184,
+        "event": "@click=\"sortDrill('record')\""
+      },
+      {
+        "line": 184,
+        "event": "@click=\"sortDrill('date')\""
+      },
+      {
+        "line": 184,
+        "event": "@click=\"sortDrill('amount')\""
+      },
+      {
+        "line": 185,
+        "event": "@click=\"openDrill(drill.metric, drill.page - 1, drill.sort_by, drill.sort_order)\""
+      },
+      {
+        "line": 185,
+        "event": "@click=\"openDrill(drill.metric, drill.page + 1, drill.sort_by, drill.sort_order)\""
+      },
+      {
+        "line": 189,
+        "event": "@click=\"showActualCashEvents\""
+      },
+      {
+        "line": 189,
+        "event": "@click=\"exportActualCash\""
+      },
+      {
+        "line": 191,
+        "event": "@click=\"loadActualCash\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 37,
+        "name": "money"
+      },
+      {
+        "line": 38,
+        "name": "canDrill"
+      },
+      {
+        "line": 44,
+        "name": "drillAmount"
+      },
+      {
+        "line": 47,
+        "name": "drillBasisLabel"
+      },
+      {
+        "line": 50,
+        "name": "openDrill"
+      },
+      {
+        "line": 65,
+        "name": "closeDrill"
+      },
+      {
+        "line": 66,
+        "name": "sortDrill"
+      },
+      {
+        "line": 71,
+        "name": "showActualCashEvents"
+      },
+      {
+        "line": 72,
+        "name": "load"
+      },
+      {
+        "line": 99,
+        "name": "loadActualCash"
+      },
+      {
+        "line": 116,
+        "name": "applyPeriod"
+      },
+      {
+        "line": 121,
+        "name": "syncPeriod"
+      },
+      {
+        "line": 125,
+        "name": "resetPeriod"
+      },
+      {
+        "line": 130,
+        "name": "exportReport"
+      },
+      {
+        "line": 143,
+        "name": "exportActualCash"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\FinanceLedgerPage.vue",
+    "actions": [
+      {
+        "line": 110,
+        "event": "@click=\"run(load)\""
+      },
+      {
+        "line": 113,
+        "event": "@click=\"tab = key\""
+      },
+      {
+        "line": 115,
+        "event": "@click=\"run(load)\""
+      },
+      {
+        "line": 115,
+        "event": "@click=\"downloadCsv\""
+      },
+      {
+        "line": 123,
+        "event": "@submit.prevent=\"run(() => api.post('/finance-ledger/accounts/', accountForm), '账户已建立。')\""
+      },
+      {
+        "line": 124,
+        "event": "@submit.prevent=\"run(() => api.post('/finance-ledger/mappings/', mapping), '旧账户映射已留痕。')\""
+      },
+      {
+        "line": 125,
+        "event": "@submit.prevent=\"run(() => api.post('/finance-ledger/verify_account/', ownership), '账户归属核实已留痕。')\""
+      },
+      {
+        "line": 129,
+        "event": "@submit.prevent=\"upload\""
+      },
+      {
+        "line": 129,
+        "event": "@change=\"file = $event.target.files[0]\""
+      },
+      {
+        "line": 133,
+        "event": "@submit.prevent=\"submit\""
+      },
+      {
+        "line": 133,
+        "event": "@click=\"newDraft\""
+      },
+      {
+        "line": 135,
+        "event": "@click=\"allocations.push({ order: '', amount: '' })\""
+      },
+      {
+        "line": 136,
+        "event": "@click=\"run(async () => { preview = (await api.post('/finance-ledger/preview/', payload())).data }, '只读预检完成，尚未写入。')\""
+      },
+      {
+        "line": 139,
+        "event": "@click=\"instructionAction('approve', i)\""
+      },
+      {
+        "line": 139,
+        "event": "@click=\"instructionAction('post', i)\""
+      },
+      {
+        "line": 139,
+        "event": "@click=\"instructionAction('cancel', i)\""
+      },
+      {
+        "line": 139,
+        "event": "@click=\"instructionAction('fail', i)\""
+      },
+      {
+        "line": 141,
+        "event": "@submit.prevent=\"run(() => api.post('/finance-ledger/reviews/', review), '核对记录已保存。')\""
+      },
+      {
+        "line": 142,
+        "event": "@submit.prevent=\"run(() => api.post('/finance-ledger/transfers/', transfer), '两端本金核实已保存。')\""
+      },
+      {
+        "line": 142,
+        "event": "@submit.prevent=\"run(() => api.post('/finance-ledger/classifications/', classification), '分类核实已追加，原事实保留。')\""
+      },
+      {
+        "line": 143,
+        "event": "@submit.prevent=\"run(() => api.post('/finance-ledger/transfers/', transfer), '既有两端本金已留痕核实。')\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 33,
+        "name": "storeIdentity"
+      },
+      {
+        "line": 37,
+        "name": "newDraft"
+      },
+      {
+        "line": 42,
+        "name": "load"
+      },
+      {
+        "line": 47,
+        "name": "run"
+      },
+      {
+        "line": 54,
+        "name": "payload"
+      },
+      {
+        "line": 63,
+        "name": "submit"
+      },
+      {
+        "line": 69,
+        "name": "instructionAction"
+      },
+      {
+        "line": 77,
+        "name": "upload"
+      },
+      {
+        "line": 82,
+        "name": "downloadCsv"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\HistoryOrdersPage.vue",
+    "actions": [
+      {
+        "line": 142,
+        "event": "@click=\"tab = 'sales'\""
+      },
+      {
+        "line": 142,
+        "event": "@click=\"tab = 'purchase'\""
+      },
+      {
+        "line": 146,
+        "event": "@click=\"resetForm\""
+      },
+      {
+        "line": 154,
+        "event": "@click=\"addLine\""
+      },
+      {
+        "line": 154,
+        "event": "@click=\"removeLine(index)\""
+      },
+      {
+        "line": 156,
+        "event": "@click=\"save\""
+      },
+      {
+        "line": 160,
+        "event": "@click=\"refreshAnalysis\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 63,
+        "name": "formatAnalysisAmount"
+      },
+      {
+        "line": 67,
+        "name": "addLine"
+      },
+      {
+        "line": 68,
+        "name": "removeLine"
+      },
+      {
+        "line": 69,
+        "name": "resetForm"
+      },
+      {
+        "line": 75,
+        "name": "validateForm"
+      },
+      {
+        "line": 83,
+        "name": "loadOptional"
+      },
+      {
+        "line": 89,
+        "name": "load"
+      },
+      {
+        "line": 106,
+        "name": "refreshAnalysis"
+      },
+      {
+        "line": 113,
+        "name": "save"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\HistoryTakeoverPage.vue",
+    "actions": [
+      {
+        "line": 314,
+        "event": "@click=\"downloadTemplate\""
+      },
+      {
+        "line": 316,
+        "event": "@change=\"chooseFile\""
+      },
+      {
+        "line": 317,
+        "event": "@click=\"submitApplication\""
+      },
+      {
+        "line": 324,
+        "event": "@click=\"loadApplications()\""
+      },
+      {
+        "line": 327,
+        "event": "@click=\"loadApplication(application.id)\""
+      },
+      {
+        "line": 336,
+        "event": "@click=\"downloadReport\""
+      },
+      {
+        "line": 348,
+        "event": "@click=\"selectedGroupId = group.id\""
+      },
+      {
+        "line": 373,
+        "event": "@click=\"addMasterResolution\""
+      },
+      {
+        "line": 389,
+        "event": "@click=\"review(selectedGroup, 'reject')\""
+      },
+      {
+        "line": 390,
+        "event": "@click=\"review(selectedGroup, 'approve')\""
+      },
+      {
+        "line": 391,
+        "event": "@click=\"groupAction(selectedGroup, 'execute')\""
+      },
+      {
+        "line": 392,
+        "event": "@click=\"groupAction(selectedGroup, 'withdraw', { reason: note })\""
+      },
+      {
+        "line": 403,
+        "event": "@click=\"loadFinance\""
+      },
+      {
+        "line": 408,
+        "event": "@click=\"financeAction('finance-approve', item.source_id)\""
+      },
+      {
+        "line": 409,
+        "event": "@click=\"financeAction('finance-post', item.source_id)\""
+      },
+      {
+        "line": 410,
+        "event": "@click=\"financeAction('finance-cancel', item.source_id)\""
+      },
+      {
+        "line": 411,
+        "event": "@click=\"financeAction('finance-fail', item.source_id)\""
+      },
+      {
+        "line": 424,
+        "event": "@click=\"financeAction('finance-submit')\""
+      },
+      {
+        "line": 429,
+        "event": "@click=\"loadInventory\""
+      },
+      {
+        "line": 445,
+        "event": "@click=\"inventoryAction('inventory-propose')\""
+      },
+      {
+        "line": 446,
+        "event": "@click=\"inventoryAction('inventory-approve')\""
+      },
+      {
+        "line": 447,
+        "event": "@click=\"inventoryAction('inventory-execute')\""
+      },
+      {
+        "line": 448,
+        "event": "@click=\"inventoryAction('inventory-reverse')\""
+      },
+      {
+        "line": 454,
+        "event": "@click=\"loadOperational\""
+      },
+      {
+        "line": 499,
+        "event": "@click=\"operationalAction('operational-propose')\""
+      },
+      {
+        "line": 500,
+        "event": "@click=\"operationalAction('operational-approve')\""
+      },
+      {
+        "line": 501,
+        "event": "@click=\"operationalAction('operational-execute')\""
+      },
+      {
+        "line": 511,
+        "event": "@click=\"confirmContinuation(link)\""
+      },
+      {
+        "line": 515,
+        "event": "@click=\"operationalAction('operational-reverse')\""
+      },
+      {
+        "line": 521,
+        "event": "@click=\"submitCorrection\""
+      },
+      {
+        "line": 525,
+        "event": "@click=\"reviewCorrection(event,'reject')\""
+      },
+      {
+        "line": 525,
+        "event": "@click=\"reviewCorrection(event,'approve')\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 48,
+        "name": "handoffLabel"
+      },
+      {
+        "line": 82,
+        "name": "loadApplications"
+      },
+      {
+        "line": 94,
+        "name": "loadApplication"
+      },
+      {
+        "line": 106,
+        "name": "chooseFile"
+      },
+      {
+        "line": 108,
+        "name": "downloadTemplate"
+      },
+      {
+        "line": 120,
+        "name": "submitApplication"
+      },
+      {
+        "line": 133,
+        "name": "groupAction"
+      },
+      {
+        "line": 144,
+        "name": "loadFinance"
+      },
+      {
+        "line": 160,
+        "name": "financeAction"
+      },
+      {
+        "line": 184,
+        "name": "loadInventory"
+      },
+      {
+        "line": 199,
+        "name": "inventoryAction"
+      },
+      {
+        "line": 214,
+        "name": "loadOperational"
+      },
+      {
+        "line": 240,
+        "name": "operationalAction"
+      },
+      {
+        "line": 261,
+        "name": "confirmContinuation"
+      },
+      {
+        "line": 273,
+        "name": "review"
+      },
+      {
+        "line": 277,
+        "name": "addMasterResolution"
+      },
+      {
+        "line": 281,
+        "name": "submitCorrection"
+      },
+      {
+        "line": 288,
+        "name": "reviewCorrection"
+      },
+      {
+        "line": 292,
+        "name": "downloadReport"
+      },
+      {
+        "line": 296,
+        "name": "formatCount"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\HSCodePage.vue",
+    "actions": [
+      {
+        "line": 47,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 47,
+        "event": "@click=\"create\""
+      },
+      {
+        "line": 51,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 53,
+        "event": "@submit.prevent=\"filtersChanged\""
+      },
+      {
+        "line": 53,
+        "event": "@change=\"filtersChanged\""
+      },
+      {
+        "line": 53,
+        "event": "@change=\"filtersChanged\""
+      },
+      {
+        "line": 53,
+        "event": "@click=\"resetFilters\""
+      },
+      {
+        "line": 55,
+        "event": "@click=\"openAssignment(row)\""
+      },
+      {
+        "line": 55,
+        "event": "@click=\"edit(row)\""
+      },
+      {
+        "line": 56,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 56,
+        "event": "@click=\"close\""
+      },
+      {
+        "line": 56,
+        "event": "@click=\"close\""
+      },
+      {
+        "line": 57,
+        "event": "@click=\"close\""
+      },
+      {
+        "line": 57,
+        "event": "@click=\"selectVisible(true)\""
+      },
+      {
+        "line": 57,
+        "event": "@click=\"selectVisible(false)\""
+      },
+      {
+        "line": 57,
+        "event": "@change=\"toggleProduct(product.id)\""
+      },
+      {
+        "line": 57,
+        "event": "@click=\"close\""
+      },
+      {
+        "line": 57,
+        "event": "@click=\"saveAssignment\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 24,
+        "name": "errorText"
+      },
+      {
+        "line": 25,
+        "name": "filtersChanged"
+      },
+      {
+        "line": 26,
+        "name": "resetFilters"
+      },
+      {
+        "line": 29,
+        "name": "load"
+      },
+      {
+        "line": 34,
+        "name": "create"
+      },
+      {
+        "line": 35,
+        "name": "edit"
+      },
+      {
+        "line": 36,
+        "name": "save"
+      },
+      {
+        "line": 39,
+        "name": "openAssignment"
+      },
+      {
+        "line": 40,
+        "name": "toggleProduct"
+      },
+      {
+        "line": 41,
+        "name": "selectVisible"
+      },
+      {
+        "line": 42,
+        "name": "saveAssignment"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\ImportPage.vue",
+    "actions": [
+      {
+        "line": 100,
+        "event": "@click=\"downloadTemplate\""
+      },
+      {
+        "line": 101,
+        "event": "@click=\"loadTemplates\""
+      },
+      {
+        "line": 101,
+        "event": "@change=\"choose\""
+      },
+      {
+        "line": 102,
+        "event": "@click=\"preview\""
+      },
+      {
+        "line": 108,
+        "event": "@click=\"errorPage--\""
+      },
+      {
+        "line": 108,
+        "event": "@click=\"errorPage++\""
+      },
+      {
+        "line": 109,
+        "event": "@click=\"downloadFailures\""
+      },
+      {
+        "line": 110,
+        "event": "@click=\"execute\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 21,
+        "name": "errorCopy"
+      },
+      {
+        "line": 26,
+        "name": "loadTemplates"
+      },
+      {
+        "line": 33,
+        "name": "invalidatePreview"
+      },
+      {
+        "line": 34,
+        "name": "choose"
+      },
+      {
+        "line": 36,
+        "name": "downloadCsv"
+      },
+      {
+        "line": 41,
+        "name": "downloadTemplate"
+      },
+      {
+        "line": 45,
+        "name": "preview"
+      },
+      {
+        "line": 63,
+        "name": "downloadFailures"
+      },
+      {
+        "line": 67,
+        "name": "execute"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\InventoryPage.vue",
+    "actions": [
+      {
+        "line": 197,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 198,
+        "event": "@click=\"toggleAttention\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"closeDetail\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"selectDetailTab('movements')\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"selectDetailTab('orders')\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"selectDetailTab('movements')\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"selectDetailTab('purchases')\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"selectDetailTab('purchases')\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"closeDetail\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"loadDetail\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"selectDetailTab(tab.key)\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"loadDetail\""
+      },
+      {
+        "line": 202,
+        "event": "@click=\"toggleDetailSort(column.key)\""
+      },
+      {
+        "line": 203,
+        "event": "@click=\"toggleSort(column[0])\""
+      },
+      {
+        "line": 203,
+        "event": "@click=\"openDetail(row)\""
+      },
+      {
+        "line": 203,
+        "event": "@change=\"page => updateQuery({ page: page > 1 ? String(page) : undefined })\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 25,
+        "name": "updateQuery"
+      },
+      {
+        "line": 43,
+        "name": "toggleAttention"
+      },
+      {
+        "line": 92,
+        "name": "totalsByUnit"
+      },
+      {
+        "line": 103,
+        "name": "sortValue"
+      },
+      {
+        "line": 107,
+        "name": "toggleSort"
+      },
+      {
+        "line": 108,
+        "name": "sortLabel"
+      },
+      {
+        "line": 109,
+        "name": "detailSortValue"
+      },
+      {
+        "line": 114,
+        "name": "toggleDetailSort"
+      },
+      {
+        "line": 115,
+        "name": "detailSortLabel"
+      },
+      {
+        "line": 116,
+        "name": "formatDetailCell"
+      },
+      {
+        "line": 124,
+        "name": "detailRecordLocation"
+      },
+      {
+        "line": 136,
+        "name": "selectDetailTab"
+      },
+      {
+        "line": 137,
+        "name": "stockState"
+      },
+      {
+        "line": 144,
+        "name": "load"
+      },
+      {
+        "line": 155,
+        "name": "clearInventoryFilters"
+      },
+      {
+        "line": 156,
+        "name": "openDetail"
+      },
+      {
+        "line": 157,
+        "name": "loadDetail"
+      },
+      {
+        "line": 184,
+        "name": "closeDetail"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\OrganizationPage.vue",
+    "actions": [
+      {
+        "line": 118,
+        "event": "@click=\"refresh\""
+      },
+      {
+        "line": 124,
+        "event": "@click=\"selectRole(role.id)\""
+      },
+      {
+        "line": 125,
+        "event": "@click=\"selectRoleByCode(roleByPosition[position.code])\""
+      },
+      {
+        "line": 129,
+        "event": "@click=\"selectRole(role.id)\""
+      },
+      {
+        "line": 135,
+        "event": "@change=\"updatePermission(module.code,action[0],$event.target.checked)\""
+      },
+      {
+        "line": 138,
+        "event": "@click=\"retryReadback\""
+      },
+      {
+        "line": 138,
+        "event": "@click=\"discard\""
+      },
+      {
+        "line": 138,
+        "event": "@click=\"savePermissions\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 26,
+        "name": "permissionFor"
+      },
+      {
+        "line": 27,
+        "name": "changed"
+      },
+      {
+        "line": 29,
+        "name": "resetDraft"
+      },
+      {
+        "line": 41,
+        "name": "selectRole"
+      },
+      {
+        "line": 47,
+        "name": "selectRoleByCode"
+      },
+      {
+        "line": 48,
+        "name": "updatePermission"
+      },
+      {
+        "line": 56,
+        "name": "discard"
+      },
+      {
+        "line": 60,
+        "name": "readback"
+      },
+      {
+        "line": 78,
+        "name": "savePermissions"
+      },
+      {
+        "line": 91,
+        "name": "retryReadback"
+      },
+      {
+        "line": 98,
+        "name": "fetchOverview"
+      },
+      {
+        "line": 111,
+        "name": "refresh"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\PackagingPage.vue",
+    "actions": [
+      {
+        "line": 81,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 81,
+        "event": "@click=\"create\""
+      },
+      {
+        "line": 83,
+        "event": "@submit.prevent=\"filtersChanged\""
+      },
+      {
+        "line": 83,
+        "event": "@change=\"filtersChanged\""
+      },
+      {
+        "line": 83,
+        "event": "@change=\"filtersChanged\""
+      },
+      {
+        "line": 83,
+        "event": "@click=\"resetFilters\""
+      },
+      {
+        "line": 83,
+        "event": "@click=\"setSort(column.key)\""
+      },
+      {
+        "line": 83,
+        "event": "@click=\"details(x)\""
+      },
+      {
+        "line": 83,
+        "event": "@click=\"linked(x)\""
+      },
+      {
+        "line": 83,
+        "event": "@click=\"details(x)\""
+      },
+      {
+        "line": 83,
+        "event": "@click=\"duplicate(x)\""
+      },
+      {
+        "line": 83,
+        "event": "@click=\"edit(x)\""
+      },
+      {
+        "line": 85,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 85,
+        "event": "@click=\"closeForm\""
+      },
+      {
+        "line": 85,
+        "event": "@click=\"policyHelpOpen = !policyHelpOpen\""
+      },
+      {
+        "line": 85,
+        "event": "@click=\"closeForm\""
+      },
+      {
+        "line": 87,
+        "event": "@click=\"closePanel\""
+      },
+      {
+        "line": 87,
+        "event": "@click=\"closePanel\""
+      },
+      {
+        "line": 87,
+        "event": "@click=\"edit(active);closePanel()\""
+      },
+      {
+        "line": 87,
+        "event": "@click=\"linked(active)\""
+      },
+      {
+        "line": 88,
+        "event": "@click=\"closePanel\""
+      },
+      {
+        "line": 88,
+        "event": "@click=\"closePanel\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 26,
+        "name": "filtersChanged"
+      },
+      {
+        "line": 27,
+        "name": "resetFilters"
+      },
+      {
+        "line": 45,
+        "name": "notice"
+      },
+      {
+        "line": 46,
+        "name": "resetForm"
+      },
+      {
+        "line": 48,
+        "name": "restorePanel"
+      },
+      {
+        "line": 50,
+        "name": "load"
+      },
+      {
+        "line": 51,
+        "name": "create"
+      },
+      {
+        "line": 52,
+        "name": "edit"
+      },
+      {
+        "line": 53,
+        "name": "showPanel"
+      },
+      {
+        "line": 54,
+        "name": "details"
+      },
+      {
+        "line": 55,
+        "name": "linked"
+      },
+      {
+        "line": 56,
+        "name": "closePanel"
+      },
+      {
+        "line": 57,
+        "name": "setSort"
+      },
+      {
+        "line": 58,
+        "name": "sortIcon"
+      },
+      {
+        "line": 59,
+        "name": "physicalTemplateChanged"
+      },
+      {
+        "line": 64,
+        "name": "save"
+      },
+      {
+        "line": 75,
+        "name": "duplicate"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\PaymentPlanPage.vue",
+    "actions": [
+      {
+        "line": 197,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 208,
+        "event": "@click=\"clearOrderContext\""
+      },
+      {
+        "line": 211,
+        "event": "@submit.prevent=\"submitFilters\""
+      },
+      {
+        "line": 217,
+        "event": "@click=\"resetFilters\""
+      },
+      {
+        "line": 221,
+        "event": "@click=\"openEdit(row)\""
+      },
+      {
+        "line": 221,
+        "event": "@click=\"openSettle(row)\""
+      },
+      {
+        "line": 222,
+        "event": "@click.self=\"selected = null\""
+      },
+      {
+        "line": 222,
+        "event": "@submit.prevent=\"settle\""
+      },
+      {
+        "line": 222,
+        "event": "@click=\"selected = null\""
+      },
+      {
+        "line": 222,
+        "event": "@click=\"selected = null\""
+      },
+      {
+        "line": 223,
+        "event": "@click.self=\"editing = null\""
+      },
+      {
+        "line": 223,
+        "event": "@submit.prevent=\"savePlan\""
+      },
+      {
+        "line": 223,
+        "event": "@click=\"editing = null\""
+      },
+      {
+        "line": 223,
+        "event": "@click=\"editing = null\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 23,
+        "name": "openEdit"
+      },
+      {
+        "line": 28,
+        "name": "savePlan"
+      },
+      {
+        "line": 54,
+        "name": "contractLocation"
+      },
+      {
+        "line": 68,
+        "name": "queryValue"
+      },
+      {
+        "line": 69,
+        "name": "syncFiltersFromRoute"
+      },
+      {
+        "line": 78,
+        "name": "nextFilterQuery"
+      },
+      {
+        "line": 90,
+        "name": "applyFilters"
+      },
+      {
+        "line": 98,
+        "name": "submitFilters"
+      },
+      {
+        "line": 100,
+        "name": "load"
+      },
+      {
+        "line": 131,
+        "name": "loadOrderContext"
+      },
+      {
+        "line": 157,
+        "name": "clearOrderContext"
+      },
+      {
+        "line": 161,
+        "name": "resetFilters"
+      },
+      {
+        "line": 165,
+        "name": "clearListFilters"
+      },
+      {
+        "line": 169,
+        "name": "openSettle"
+      },
+      {
+        "line": 180,
+        "name": "settle"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\ProductPage.vue",
+    "actions": [
+      {
+        "line": 290,
+        "event": "@click=\"openCreate\""
+      },
+      {
+        "line": 292,
+        "event": "@keydown.enter=\"applyFilters\""
+      },
+      {
+        "line": 292,
+        "event": "@change=\"applyFilters\""
+      },
+      {
+        "line": 292,
+        "event": "@change=\"applyFilters\""
+      },
+      {
+        "line": 292,
+        "event": "@click=\"applyFilters\""
+      },
+      {
+        "line": 292,
+        "event": "@click=\"clearProductFilters\""
+      },
+      {
+        "line": 292,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 293,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 297,
+        "event": "@click=\"openDetail(product.id)\""
+      },
+      {
+        "line": 297,
+        "event": "@keydown.enter=\"openDetail(product.id)\""
+      },
+      {
+        "line": 297,
+        "event": "@click.stop=\"openEdit(product)\""
+      },
+      {
+        "line": 297,
+        "event": "@click.stop=\"remove(product)\""
+      },
+      {
+        "line": 300,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 300,
+        "event": "@click=\"closeModal\""
+      },
+      {
+        "line": 300,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 303,
+        "event": "@click.stop=\"openPicker('primary')\""
+      },
+      {
+        "line": 303,
+        "event": "@click.stop=\"selectCategory(category.id)\""
+      },
+      {
+        "line": 303,
+        "event": "@click.stop=\"chooseCascadeCategory(category, columnIndex)\""
+      },
+      {
+        "line": 304,
+        "event": "@click=\"toggleSupplier(supplier.id)\""
+      },
+      {
+        "line": 304,
+        "event": "@change=\"toggleSupplier(supplier.id)\""
+      },
+      {
+        "line": 305,
+        "event": "@click.stop=\"addAdditionalCategory\""
+      },
+      {
+        "line": 305,
+        "event": "@click.stop=\"openPicker(index)\""
+      },
+      {
+        "line": 305,
+        "event": "@click.stop=\"removeAdditionalCategory(index)\""
+      },
+      {
+        "line": 305,
+        "event": "@click.stop=\"selectCategory(category.id)\""
+      },
+      {
+        "line": 305,
+        "event": "@click.stop=\"chooseCascadeCategory(category, columnIndex)\""
+      },
+      {
+        "line": 307,
+        "event": "@click=\"closeModal\""
+      },
+      {
+        "line": 308,
+        "event": "@click=\"prefixReview = null\""
+      },
+      {
+        "line": 308,
+        "event": "@click=\"prefixReview = null\""
+      },
+      {
+        "line": 308,
+        "event": "@click=\"confirmPrefixChange\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 47,
+        "name": "applyFilters"
+      },
+      {
+        "line": 102,
+        "name": "notify"
+      },
+      {
+        "line": 103,
+        "name": "load"
+      },
+      {
+        "line": 130,
+        "name": "clearProductFilters"
+      },
+      {
+        "line": 131,
+        "name": "openCreate"
+      },
+      {
+        "line": 144,
+        "name": "openEdit"
+      },
+      {
+        "line": 155,
+        "name": "closeModal"
+      },
+      {
+        "line": 156,
+        "name": "closeDetail"
+      },
+      {
+        "line": 164,
+        "name": "openDetail"
+      },
+      {
+        "line": 165,
+        "name": "editDetail"
+      },
+      {
+        "line": 169,
+        "name": "categoryAncestors"
+      },
+      {
+        "line": 175,
+        "name": "openPicker"
+      },
+      {
+        "line": 181,
+        "name": "chooseCascadeCategory"
+      },
+      {
+        "line": 186,
+        "name": "selectCategory"
+      },
+      {
+        "line": 192,
+        "name": "addAdditionalCategory"
+      },
+      {
+        "line": 193,
+        "name": "removeAdditionalCategory"
+      },
+      {
+        "line": 194,
+        "name": "toggleSupplier"
+      },
+      {
+        "line": 201,
+        "name": "productPayload"
+      },
+      {
+        "line": 214,
+        "name": "sameIds"
+      },
+      {
+        "line": 217,
+        "name": "prefixChanged"
+      },
+      {
+        "line": 220,
+        "name": "hasOtherProductChanges"
+      },
+      {
+        "line": 230,
+        "name": "save"
+      },
+      {
+        "line": 255,
+        "name": "confirmPrefixChange"
+      },
+      {
+        "line": 275,
+        "name": "remove"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\PurchaseOrderPage.vue",
+    "actions": [
+      {
+        "line": 492,
+        "event": "@click=\"load({ includeReferenceData: true })\""
+      },
+      {
+        "line": 492,
+        "event": "@click=\"startCreate\""
+      },
+      {
+        "line": 493,
+        "event": "@click=\"load({ includeReferenceData: true })\""
+      },
+      {
+        "line": 502,
+        "event": "@click=\"resetFilters\""
+      },
+      {
+        "line": 509,
+        "event": "@click=\"closeCreate\""
+      },
+      {
+        "line": 511,
+        "event": "@submit.prevent=\"createPurchase\""
+      },
+      {
+        "line": 515,
+        "event": "@change=\"onSupplierChanged\""
+      },
+      {
+        "line": 519,
+        "event": "@change=\"onCurrencyChanged\""
+      },
+      {
+        "line": 533,
+        "event": "@click=\"draft.items.splice(index, 1)\""
+      },
+      {
+        "line": 536,
+        "event": "@change=\"applySupplierSkuPrice(item)\""
+      },
+      {
+        "line": 536,
+        "event": "@click=\"loadSupplierSkuOptions(item)\""
+      },
+      {
+        "line": 537,
+        "event": "@click=\"matchingItem = item\""
+      },
+      {
+        "line": 545,
+        "event": "@click=\"draft.items.splice(index + 1, 0, { ...item })\""
+      },
+      {
+        "line": 551,
+        "event": "@click=\"closeCreate\""
+      },
+      {
+        "line": 555,
+        "event": "@click=\"togglePurchaseDetail(row)\""
+      },
+      {
+        "line": 555,
+        "event": "@keydown.enter.self=\"togglePurchaseDetail(row)\""
+      },
+      {
+        "line": 555,
+        "event": "@click.stop=\"togglePurchaseDetail(row)\""
+      },
+      {
+        "line": 557,
+        "event": "@changed=\"load\""
+      },
+      {
+        "line": 558,
+        "event": "@click.self=\"!receiptSaving && (receiptTarget = null)\""
+      },
+      {
+        "line": 559,
+        "event": "@submit.prevent=\"submitReceipt\""
+      },
+      {
+        "line": 574,
+        "event": "@click=\"receiptTarget = null\""
+      },
+      {
+        "line": 577,
+        "event": "@click.self=\"!reversalSaving && (reversalTarget = null)\""
+      },
+      {
+        "line": 577,
+        "event": "@submit.prevent=\"submitReceiptReversal\""
+      },
+      {
+        "line": 577,
+        "event": "@click=\"reversalTarget = null\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 48,
+        "name": "updateFilter"
+      },
+      {
+        "line": 55,
+        "name": "loadDetail"
+      },
+      {
+        "line": 71,
+        "name": "closeDetail"
+      },
+      {
+        "line": 85,
+        "name": "newDraft"
+      },
+      {
+        "line": 96,
+        "name": "onCurrencyChanged"
+      },
+      {
+        "line": 110,
+        "name": "paymentSaved"
+      },
+      {
+        "line": 111,
+        "name": "openCostAllocation"
+      },
+      {
+        "line": 127,
+        "name": "openReceipt"
+      },
+      {
+        "line": 137,
+        "name": "submitReceipt"
+      },
+      {
+        "line": 158,
+        "name": "openReceiptReversal"
+      },
+      {
+        "line": 166,
+        "name": "submitReceiptReversal"
+      },
+      {
+        "line": 183,
+        "name": "supplierPartyName"
+      },
+      {
+        "line": 187,
+        "name": "supplierPartyReference"
+      },
+      {
+        "line": 198,
+        "name": "purchaseListParams"
+      },
+      {
+        "line": 206,
+        "name": "loadPurchaseRows"
+      },
+      {
+        "line": 219,
+        "name": "loadReferenceOptions"
+      },
+      {
+        "line": 238,
+        "name": "load"
+      },
+      {
+        "line": 248,
+        "name": "resetFilters"
+      },
+      {
+        "line": 255,
+        "name": "clearSkuFilter"
+      },
+      {
+        "line": 256,
+        "name": "togglePurchaseDetail"
+      },
+      {
+        "line": 257,
+        "name": "startCreate"
+      },
+      {
+        "line": 264,
+        "name": "editDraft"
+      },
+      {
+        "line": 296,
+        "name": "discardCreate"
+      },
+      {
+        "line": 298,
+        "name": "matchedSupplier"
+      },
+      {
+        "line": 309,
+        "name": "supplierSourceKey"
+      },
+      {
+        "line": 310,
+        "name": "supplierSourcesFor"
+      },
+      {
+        "line": 348,
+        "name": "loadSupplierSkuOptions"
+      },
+      {
+        "line": 364,
+        "name": "resetSupplierLine"
+      },
+      {
+        "line": 365,
+        "name": "changeSupplier"
+      },
+      {
+        "line": 379,
+        "name": "onSupplierChanged"
+      },
+      {
+        "line": 385,
+        "name": "supplierPriceWarning"
+      },
+      {
+        "line": 391,
+        "name": "applySupplierSkuPrice"
+      },
+      {
+        "line": 401,
+        "name": "syncSelectedSkus"
+      },
+      {
+        "line": 413,
+        "name": "createPurchase"
+      },
+      {
+        "line": 414,
+        "name": "moqExceptionMessage"
+      },
+      {
+        "line": 418,
+        "name": "place"
+      },
+      {
+        "line": 451,
+        "name": "cancelPurchase"
+      },
+      {
+        "line": 452,
+        "name": "deleteDraft"
+      },
+      {
+        "line": 453,
+        "name": "pay"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\ReportsPage.vue",
+    "actions": [
+      {
+        "line": 280,
+        "event": "@click=\"loadCatalog\""
+      },
+      {
+        "line": 282,
+        "event": "@click=\"undoRemove\""
+      },
+      {
+        "line": 284,
+        "event": "@submit.prevent=\"submitQuery\""
+      },
+      {
+        "line": 285,
+        "event": "@change=\"choosePreset\""
+      },
+      {
+        "line": 286,
+        "event": "@change=\"sourceChanged\""
+      },
+      {
+        "line": 287,
+        "event": "@click=\"chooseDates(key)\""
+      },
+      {
+        "line": 288,
+        "event": "@change=\"loadOptions\""
+      },
+      {
+        "line": 288,
+        "event": "@click=\"loadOptions\""
+      },
+      {
+        "line": 288,
+        "event": "@click=\"addFilter\""
+      },
+      {
+        "line": 288,
+        "event": "@click=\"activeFilters.splice(index,1)\""
+      },
+      {
+        "line": 288,
+        "event": "@click=\"activeFilters=[]\""
+      },
+      {
+        "line": 289,
+        "event": "@click=\"saveBlock\""
+      },
+      {
+        "line": 292,
+        "event": "@click=\"previousDrill\""
+      },
+      {
+        "line": 297,
+        "event": "@click=\"restoreBlock(block)\""
+      },
+      {
+        "line": 297,
+        "event": "@click=\"moveBlock(index,-1)\""
+      },
+      {
+        "line": 297,
+        "event": "@click=\"moveBlock(index,1)\""
+      },
+      {
+        "line": 297,
+        "event": "@click=\"removeBlock(block.id)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 31,
+        "name": "draftConfig"
+      },
+      {
+        "line": 37,
+        "name": "draftFilters"
+      },
+      {
+        "line": 51,
+        "name": "dimensionLabel"
+      },
+      {
+        "line": 52,
+        "name": "apply"
+      },
+      {
+        "line": 70,
+        "name": "submitQuery"
+      },
+      {
+        "line": 71,
+        "name": "chooseDates"
+      },
+      {
+        "line": 72,
+        "name": "sourceChanged"
+      },
+      {
+        "line": 79,
+        "name": "choosePreset"
+      },
+      {
+        "line": 87,
+        "name": "invalidateOptions"
+      },
+      {
+        "line": 89,
+        "name": "loadOptions"
+      },
+      {
+        "line": 100,
+        "name": "addFilter"
+      },
+      {
+        "line": 105,
+        "name": "setFilter"
+      },
+      {
+        "line": 106,
+        "name": "snapshot"
+      },
+      {
+        "line": 107,
+        "name": "drill"
+      },
+      {
+        "line": 120,
+        "name": "previousDrill"
+      },
+      {
+        "line": 130,
+        "name": "loaded"
+      },
+      {
+        "line": 138,
+        "name": "persist"
+      },
+      {
+        "line": 143,
+        "name": "saveBlock"
+      },
+      {
+        "line": 148,
+        "name": "restoreBlock"
+      },
+      {
+        "line": 156,
+        "name": "removeBlock"
+      },
+      {
+        "line": 157,
+        "name": "undoRemove"
+      },
+      {
+        "line": 158,
+        "name": "moveBlock"
+      },
+      {
+        "line": 159,
+        "name": "listData"
+      },
+      {
+        "line": 160,
+        "name": "loadSharedTemplates"
+      },
+      {
+        "line": 166,
+        "name": "useSharedTemplate"
+      },
+      {
+        "line": 174,
+        "name": "beginSharedTemplateCreate"
+      },
+      {
+        "line": 179,
+        "name": "editSharedTemplate"
+      },
+      {
+        "line": 184,
+        "name": "closeTemplateEditor"
+      },
+      {
+        "line": 185,
+        "name": "saveSharedTemplate"
+      },
+      {
+        "line": 203,
+        "name": "changeSharedTemplateState"
+      },
+      {
+        "line": 213,
+        "name": "publishSharedTemplate"
+      },
+      {
+        "line": 214,
+        "name": "unpublishSharedTemplate"
+      },
+      {
+        "line": 215,
+        "name": "deleteSharedTemplate"
+      },
+      {
+        "line": 225,
+        "name": "showTemplateHistory"
+      },
+      {
+        "line": 229,
+        "name": "hydrateRoute"
+      },
+      {
+        "line": 256,
+        "name": "loadCatalog"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\ResourcePage.vue",
+    "actions": [
+      {
+        "line": 887,
+        "event": "@click=\"openCreate\""
+      },
+      {
+        "line": 888,
+        "event": "@click=\"loadMovementSkus\""
+      },
+      {
+        "line": 890,
+        "event": "@click=\"setCertificateFilter(value)\""
+      },
+      {
+        "line": 891,
+        "event": "@click=\"setCertificateFilter('')\""
+      },
+      {
+        "line": 892,
+        "event": "@click=\"clearFollowUpDueFilter\""
+      },
+      {
+        "line": 893,
+        "event": "@change=\"updateLedgerQuery({product:$event.target.value||undefined,page:undefined})\""
+      },
+      {
+        "line": 893,
+        "event": "@change=\"updateLedgerQuery({sort:$event.target.value,page:undefined})\""
+      },
+      {
+        "line": 893,
+        "event": "@click=\"clearListFilters\""
+      },
+      {
+        "line": 893,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 893,
+        "event": "@click=\"loadParameterProducts\""
+      },
+      {
+        "line": 893,
+        "event": "@change=\"updateLedgerQuery({product:$event.target.value || undefined})\""
+      },
+      {
+        "line": 893,
+        "event": "@click=\"updateLedgerQuery({product:undefined,search:undefined}); query = ''\""
+      },
+      {
+        "line": 893,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 893,
+        "event": "@click=\"router.push({path:'/products',query:{detail:route.query.product}})\""
+      },
+      {
+        "line": 893,
+        "event": "@click=\"loadParameterProducts\""
+      },
+      {
+        "line": 894,
+        "event": "@change=\"setCustomerFilter('owner_profile', $event.target.value)\""
+      },
+      {
+        "line": 894,
+        "event": "@change=\"setCustomerFilter('country', $event.target.value)\""
+      },
+      {
+        "line": 894,
+        "event": "@change=\"setCustomerFilter('status', $event.target.value)\""
+      },
+      {
+        "line": 894,
+        "event": "@click=\"clearListFilters\""
+      },
+      {
+        "line": 894,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 895,
+        "event": "@click=\"loadCustomerFilterOptions\""
+      },
+      {
+        "line": 898,
+        "event": "@change=\"setCrmFilter('customer', $event.target.value)\""
+      },
+      {
+        "line": 899,
+        "event": "@change=\"setCrmFilter('primary', $event.target.value)\""
+      },
+      {
+        "line": 901,
+        "event": "@change=\"setCrmFilter('owner', $event.target.value)\""
+      },
+      {
+        "line": 902,
+        "event": "@change=\"setCrmFilter('type', $event.target.value)\""
+      },
+      {
+        "line": 903,
+        "event": "@change=\"setCrmFilter('from', $event.target.value)\""
+      },
+      {
+        "line": 904,
+        "event": "@change=\"setCrmFilter('to', $event.target.value)\""
+      },
+      {
+        "line": 905,
+        "event": "@change=\"setCrmFilter('sort', $event.target.value)\""
+      },
+      {
+        "line": 906,
+        "event": "@click=\"setCrmFilter('due', route.query.due === 'true' ? '' : 'true')\""
+      },
+      {
+        "line": 908,
+        "event": "@click=\"clearListFilters\""
+      },
+      {
+        "line": 909,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 911,
+        "event": "@click=\"loadCrmFilterOptions\""
+      },
+      {
+        "line": 915,
+        "event": "@change=\"updateLedgerQuery({type:$event.target.value || undefined})\""
+      },
+      {
+        "line": 916,
+        "event": "@change=\"updateLedgerQuery({direction:$event.target.value || undefined})\""
+      },
+      {
+        "line": 917,
+        "event": "@change=\"updateLedgerQuery({source:$event.target.value || undefined})\""
+      },
+      {
+        "line": 918,
+        "event": "@click=\"resetLedgerFilters\""
+      },
+      {
+        "line": 921,
+        "event": "@change=\"updateLedgerQuery({supplyCategory:$event.target.value || undefined})\""
+      },
+      {
+        "line": 921,
+        "event": "@click=\"clearListFilters\""
+      },
+      {
+        "line": 921,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 921,
+        "event": "@click=\"loadSupplierCategories\""
+      },
+      {
+        "line": 926,
+        "event": "@click=\"openDetail(row.id)\""
+      },
+      {
+        "line": 926,
+        "event": "@keydown.enter=\"openDetail(row.id)\""
+      },
+      {
+        "line": 928,
+        "event": "@click.stop=\"router.push({path:'/products',query:{detail:String(row.product),returnTo:route.fullPath}})\""
+      },
+      {
+        "line": 929,
+        "event": "@click.stop=\"openContactCustomer(row)\""
+      },
+      {
+        "line": 940,
+        "event": "@click.stop=\"openDetail(row.id)\""
+      },
+      {
+        "line": 940,
+        "event": "@click.stop=\"openEdit(row)\""
+      },
+      {
+        "line": 940,
+        "event": "@click.stop=\"toggleSupplierLifecycle(row)\""
+      },
+      {
+        "line": 940,
+        "event": "@click.stop=\"reverseInventoryMovement(row)\""
+      },
+      {
+        "line": 940,
+        "event": "@click.stop=\"remove(row)\""
+      },
+      {
+        "line": 946,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 947,
+        "event": "@click=\"closeModal\""
+      },
+      {
+        "line": 949,
+        "event": "@click=\"retryRemoteOption(field)\""
+      },
+      {
+        "line": 951,
+        "event": "@change=\"changeFollowUpMode\""
+      },
+      {
+        "line": 960,
+        "event": "@change=\"onCertificateFileSelected\""
+      },
+      {
+        "line": 961,
+        "event": "@change=\"onFieldChange(field)\""
+      },
+      {
+        "line": 983,
+        "event": "@change=\"setPrimaryContact(index)\""
+      },
+      {
+        "line": 987,
+        "event": "@click=\"removeCustomerContact(index)\""
+      },
+      {
+        "line": 999,
+        "event": "@click=\"addCustomerContact\""
+      },
+      {
+        "line": 1006,
+        "event": "@change=\"onFollowUpFileInput\""
+      },
+      {
+        "line": 1013,
+        "event": "@click=\"deleteSavedFollowUpAttachment(attachment)\""
+      },
+      {
+        "line": 1016,
+        "event": "@click=\"removePendingFollowUpFile(index)\""
+      },
+      {
+        "line": 1023,
+        "event": "@click=\"closeModal\""
+      },
+      {
+        "line": 1027,
+        "event": "@changed=\"handleDetailChanged\""
+      },
+      {
+        "line": 1029,
+        "event": "@change=\"page => (isCrmPage ? updateCrmQuery({ page: page > 1 ? String(page) : undefined }) : updateLedgerQuery({ page: page > 1 ? String(page) : undefined }))\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 43,
+        "name": "loadParameterProducts"
+      },
+      {
+        "line": 100,
+        "name": "updateLedgerQuery"
+      },
+      {
+        "line": 109,
+        "name": "resetLedgerFilters"
+      },
+      {
+        "line": 110,
+        "name": "updateCrmQuery"
+      },
+      {
+        "line": 116,
+        "name": "ledgerDataQuery"
+      },
+      {
+        "line": 119,
+        "name": "setCertificateFilter"
+      },
+      {
+        "line": 120,
+        "name": "loadCrmFilterOptions"
+      },
+      {
+        "line": 131,
+        "name": "setCrmFilter"
+      },
+      {
+        "line": 132,
+        "name": "clearDueFollowUpFilter"
+      },
+      {
+        "line": 133,
+        "name": "loadCustomerFilterOptions"
+      },
+      {
+        "line": 145,
+        "name": "setCustomerFilter"
+      },
+      {
+        "line": 160,
+        "name": "changeFollowUpMode"
+      },
+      {
+        "line": 196,
+        "name": "editorFieldLabel"
+      },
+      {
+        "line": 266,
+        "name": "emptyContact"
+      },
+      {
+        "line": 269,
+        "name": "addCustomerContact"
+      },
+      {
+        "line": 270,
+        "name": "removeCustomerContact"
+      },
+      {
+        "line": 276,
+        "name": "setPrimaryContact"
+      },
+      {
+        "line": 280,
+        "name": "clearToast"
+      },
+      {
+        "line": 281,
+        "name": "notify"
+      },
+      {
+        "line": 282,
+        "name": "load"
+      },
+      {
+        "line": 381,
+        "name": "delayedSearch"
+      },
+      {
+        "line": 385,
+        "name": "clearListFilters"
+      },
+      {
+        "line": 399,
+        "name": "loadSupplierCategories"
+      },
+      {
+        "line": 403,
+        "name": "loadOptions"
+      },
+      {
+        "line": 407,
+        "name": "loadRemoteOption"
+      },
+      {
+        "line": 420,
+        "name": "retryRemoteOption"
+      },
+      {
+        "line": 421,
+        "name": "loadMovementSkus"
+      },
+      {
+        "line": 425,
+        "name": "visibleEditorField"
+      },
+      {
+        "line": 428,
+        "name": "visibleOptions"
+      },
+      {
+        "line": 433,
+        "name": "datetimeLocal"
+      },
+      {
+        "line": 438,
+        "name": "syncFollowUpDaysFromDate"
+      },
+      {
+        "line": 443,
+        "name": "updateFollowUpDate"
+      },
+      {
+        "line": 452,
+        "name": "setFollowUpDate"
+      },
+      {
+        "line": 456,
+        "name": "addFollowUpFiles"
+      },
+      {
+        "line": 469,
+        "name": "removePendingFollowUpFile"
+      },
+      {
+        "line": 470,
+        "name": "onFollowUpFileInput"
+      },
+      {
+        "line": 474,
+        "name": "onFollowUpFileDrop"
+      },
+      {
+        "line": 475,
+        "name": "uploadFollowUpFiles"
+      },
+      {
+        "line": 482,
+        "name": "deleteSavedFollowUpAttachment"
+      },
+      {
+        "line": 499,
+        "name": "onDateFieldChange"
+      },
+      {
+        "line": 503,
+        "name": "loadContactDuplicateRows"
+      },
+      {
+        "line": 521,
+        "name": "applyDefaultContact"
+      },
+      {
+        "line": 528,
+        "name": "onFieldChange"
+      },
+      {
+        "line": 535,
+        "name": "normalizeSupplierCode"
+      },
+      {
+        "line": 539,
+        "name": "loadCurrentOperator"
+      },
+      {
+        "line": 544,
+        "name": "resetForm"
+      },
+      {
+        "line": 555,
+        "name": "normalizeWebsite"
+      },
+      {
+        "line": 560,
+        "name": "isInherited"
+      },
+      {
+        "line": 564,
+        "name": "onCertificateFileSelected"
+      },
+      {
+        "line": 567,
+        "name": "openCreate"
+      },
+      {
+        "line": 601,
+        "name": "openEdit"
+      },
+      {
+        "line": 639,
+        "name": "discardModal"
+      },
+      {
+        "line": 646,
+        "name": "openDetail"
+      },
+      {
+        "line": 653,
+        "name": "openContactCustomer"
+      },
+      {
+        "line": 657,
+        "name": "contactDetailUrl"
+      },
+      {
+        "line": 660,
+        "name": "closeDetail"
+      },
+      {
+        "line": 667,
+        "name": "clearSkuFilter"
+      },
+      {
+        "line": 668,
+        "name": "clearFollowUpDueFilter"
+      },
+      {
+        "line": 672,
+        "name": "detailReturnPath"
+      },
+      {
+        "line": 680,
+        "name": "payload"
+      },
+      {
+        "line": 697,
+        "name": "certificatePayload"
+      },
+      {
+        "line": 705,
+        "name": "save"
+      },
+      {
+        "line": 761,
+        "name": "handleInventoryMovementCreated"
+      },
+      {
+        "line": 768,
+        "name": "remove"
+      },
+      {
+        "line": 774,
+        "name": "toggleSupplierLifecycle"
+      },
+      {
+        "line": 787,
+        "name": "reverseInventoryMovement"
+      },
+      {
+        "line": 804,
+        "name": "display"
+      },
+      {
+        "line": 818,
+        "name": "isReadOnlyAutomaticMovement"
+      },
+      {
+        "line": 819,
+        "name": "canReverseInventoryMovement"
+      },
+      {
+        "line": 820,
+        "name": "formatAttachmentSize"
+      },
+      {
+        "line": 826,
+        "name": "cellClass"
+      },
+      {
+        "line": 827,
+        "name": "editFromDetail"
+      },
+      {
+        "line": 839,
+        "name": "handleDetailChanged"
+      },
+      {
+        "line": 844,
+        "name": "syncModalFromRoute"
+      },
+      {
+        "line": 870,
+        "name": "routeCreatePrefillSignature"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\SKUPage.vue",
+    "actions": [
+      {
+        "line": 804,
+        "event": "@click=\"abbreviationGuideOpen=false\""
+      },
+      {
+        "line": 806,
+        "event": "@click=\"openCreate\""
+      },
+      {
+        "line": 808,
+        "event": "@keydown.enter=\"applyListFilters\""
+      },
+      {
+        "line": 808,
+        "event": "@change=\"applyListFilters\""
+      },
+      {
+        "line": 808,
+        "event": "@change=\"applyListFilters\""
+      },
+      {
+        "line": 808,
+        "event": "@click=\"applyListFilters\""
+      },
+      {
+        "line": 808,
+        "event": "@click=\"clearSkuFilters\""
+      },
+      {
+        "line": 808,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 809,
+        "event": "@click=\"loadSkuReferenceOptions\""
+      },
+      {
+        "line": 810,
+        "event": "@click=\"openDetail(row)\""
+      },
+      {
+        "line": 810,
+        "event": "@keydown.enter=\"openDetail(row)\""
+      },
+      {
+        "line": 810,
+        "event": "@click.stop=\"openVersions(row)\""
+      },
+      {
+        "line": 810,
+        "event": "@click.stop=\"openEdit(row)\""
+      },
+      {
+        "line": 810,
+        "event": "@click.stop=\"deactivateRow(row)\""
+      },
+      {
+        "line": 813,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 813,
+        "event": "@click=\"closeModal\""
+      },
+      {
+        "line": 813,
+        "event": "@click=\"closeModal\""
+      },
+      {
+        "line": 813,
+        "event": "@click=\"loadSkuReferenceOptions\""
+      },
+      {
+        "line": 814,
+        "event": "@click=\"goToEditorStep(step.number)\""
+      },
+      {
+        "line": 817,
+        "event": "@change=\"onProductChanged\""
+      },
+      {
+        "line": 817,
+        "event": "@change=\"onImageSelected\""
+      },
+      {
+        "line": 817,
+        "event": "@click=\"chooseImage\""
+      },
+      {
+        "line": 817,
+        "event": "@click=\"clearImageSelection\""
+      },
+      {
+        "line": 818,
+        "event": "@click=\"openSupplierSourceCreate\""
+      },
+      {
+        "line": 818,
+        "event": "@click=\"loadSupplierSources(editingId)\""
+      },
+      {
+        "line": 818,
+        "event": "@click=\"openSupplierSourceEdit(source)\""
+      },
+      {
+        "line": 818,
+        "event": "@click=\"setSupplierSourcePreferred(source)\""
+      },
+      {
+        "line": 818,
+        "event": "@click=\"toggleSupplierSource(source)\""
+      },
+      {
+        "line": 827,
+        "event": "@click=\"abbreviationGuideOpen = true\""
+      },
+      {
+        "line": 827,
+        "event": "@click=\"useHistoricalValue(group, attribute, option.value)\""
+      },
+      {
+        "line": 827,
+        "event": "@click=\"abbreviationGuideOpen = true\""
+      },
+      {
+        "line": 827,
+        "event": "@click=\"applyDefaultAbbreviation(group, attribute, value)\""
+      },
+      {
+        "line": 828,
+        "event": "@change=\"chooseCombination(item.key,$event.target.checked)\""
+      },
+      {
+        "line": 829,
+        "event": "@click=\"clearBatchFilters\""
+      },
+      {
+        "line": 829,
+        "event": "@click=\"applyBatchPackaging\""
+      },
+      {
+        "line": 829,
+        "event": "@click=\"undoBatchFill\""
+      },
+      {
+        "line": 829,
+        "event": "@click=\"clearBatchFills\""
+      },
+      {
+        "line": 829,
+        "event": "@click=\"toggleBatchTag(tag)\""
+      },
+      {
+        "line": 829,
+        "event": "@click=\"clearPackaging(detailFor(preview))\""
+      },
+      {
+        "line": 829,
+        "event": "@click=\"choosePackaging(detailFor(preview), template)\""
+      },
+      {
+        "line": 829,
+        "event": "@click=\"openPackagingCreate(detailFor(preview))\""
+      },
+      {
+        "line": 830,
+        "event": "@click=\"closeModal\""
+      },
+      {
+        "line": 832,
+        "event": "@click=\"cancelIdentitySave\""
+      },
+      {
+        "line": 832,
+        "event": "@click=\"cancelIdentitySave\""
+      },
+      {
+        "line": 832,
+        "event": "@click=\"confirmIdentitySave\""
+      },
+      {
+        "line": 833,
+        "event": "@submit.prevent=\"saveSupplierSource\""
+      },
+      {
+        "line": 833,
+        "event": "@click=\"closeSupplierSourceDialog\""
+      },
+      {
+        "line": 833,
+        "event": "@click=\"loadSkuReferenceOptions\""
+      },
+      {
+        "line": 833,
+        "event": "@click=\"closeSupplierSourceDialog\""
+      },
+      {
+        "line": 834,
+        "event": "@submit.prevent=\"createPackaging\""
+      },
+      {
+        "line": 834,
+        "event": "@click=\"requestPackagingClose\""
+      },
+      {
+        "line": 834,
+        "event": "@click=\"loadSkuReferenceOptions\""
+      },
+      {
+        "line": 834,
+        "event": "@click=\"requestPackagingClose\""
+      },
+      {
+        "line": 835,
+        "event": "@click=\"versionsOpen=false\""
+      },
+      {
+        "line": 835,
+        "event": "@click=\"openVersions(versionsRow)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 33,
+        "name": "applyListFilters"
+      },
+      {
+        "line": 35,
+        "name": "editDetail"
+      },
+      {
+        "line": 36,
+        "name": "openDetail"
+      },
+      {
+        "line": 37,
+        "name": "closeDetail"
+      },
+      {
+        "line": 46,
+        "name": "goToEditorStep"
+      },
+      {
+        "line": 52,
+        "name": "trackEditorStep"
+      },
+      {
+        "line": 74,
+        "name": "translateLightingTerms"
+      },
+      {
+        "line": 85,
+        "name": "chooseCombination"
+      },
+      {
+        "line": 97,
+        "name": "tradeUnitsLocation"
+      },
+      {
+        "line": 190,
+        "name": "useHistoricalValue"
+      },
+      {
+        "line": 216,
+        "name": "suggestedAbbreviation"
+      },
+      {
+        "line": 220,
+        "name": "applyAbbreviationSuggestions"
+      },
+      {
+        "line": 229,
+        "name": "loadAbbreviationSuggestions"
+      },
+      {
+        "line": 239,
+        "name": "diffSegments"
+      },
+      {
+        "line": 269,
+        "name": "applyDefaultAbbreviation"
+      },
+      {
+        "line": 299,
+        "name": "previewCombinationRules"
+      },
+      {
+        "line": 303,
+        "name": "savedCombinationRules"
+      },
+      {
+        "line": 315,
+        "name": "newDetail"
+      },
+      {
+        "line": 316,
+        "name": "detailFor"
+      },
+      {
+        "line": 320,
+        "name": "syncDetails"
+      },
+      {
+        "line": 327,
+        "name": "notify"
+      },
+      {
+        "line": 328,
+        "name": "reportSaveError"
+      },
+      {
+        "line": 333,
+        "name": "revokeImagePreview"
+      },
+      {
+        "line": 336,
+        "name": "resetImagePicker"
+      },
+      {
+        "line": 342,
+        "name": "chooseImage"
+      },
+      {
+        "line": 343,
+        "name": "onImageSelected"
+      },
+      {
+        "line": 355,
+        "name": "clearImageSelection"
+      },
+      {
+        "line": 359,
+        "name": "uploadImage"
+      },
+      {
+        "line": 364,
+        "name": "clearImage"
+      },
+      {
+        "line": 367,
+        "name": "load"
+      },
+      {
+        "line": 386,
+        "name": "loadSkuReferenceOptions"
+      },
+      {
+        "line": 399,
+        "name": "clearSkuFilters"
+      },
+      {
+        "line": 400,
+        "name": "openCreate"
+      },
+      {
+        "line": 427,
+        "name": "openCreateFromRoute"
+      },
+      {
+        "line": 433,
+        "name": "discardModal"
+      },
+      {
+        "line": 443,
+        "name": "openEdit"
+      },
+      {
+        "line": 477,
+        "name": "loadSupplierSources"
+      },
+      {
+        "line": 491,
+        "name": "resetSupplierSourceForm"
+      },
+      {
+        "line": 492,
+        "name": "openSupplierSourceCreate"
+      },
+      {
+        "line": 493,
+        "name": "openSupplierSourceEdit"
+      },
+      {
+        "line": 495,
+        "name": "saveSupplierSource"
+      },
+      {
+        "line": 514,
+        "name": "setSupplierSourcePreferred"
+      },
+      {
+        "line": 518,
+        "name": "toggleSupplierSource"
+      },
+      {
+        "line": 523,
+        "name": "onProductChanged"
+      },
+      {
+        "line": 535,
+        "name": "packagingText"
+      },
+      {
+        "line": 536,
+        "name": "packagingSearchText"
+      },
+      {
+        "line": 542,
+        "name": "matchingPackaging"
+      },
+      {
+        "line": 543,
+        "name": "choosePackaging"
+      },
+      {
+        "line": 544,
+        "name": "clearPackaging"
+      },
+      {
+        "line": 573,
+        "name": "isBatchTagActive"
+      },
+      {
+        "line": 574,
+        "name": "toggleBatchTag"
+      },
+      {
+        "line": 578,
+        "name": "clearBatchFilters"
+      },
+      {
+        "line": 582,
+        "name": "resetBatchFillState"
+      },
+      {
+        "line": 588,
+        "name": "clearBatchFillInputs"
+      },
+      {
+        "line": 592,
+        "name": "detailSnapshot"
+      },
+      {
+        "line": 593,
+        "name": "restoreDetailSnapshot"
+      },
+      {
+        "line": 594,
+        "name": "applyBatchPackaging"
+      },
+      {
+        "line": 615,
+        "name": "undoBatchFill"
+      },
+      {
+        "line": 624,
+        "name": "clearBatchFills"
+      },
+      {
+        "line": 634,
+        "name": "cleanDetail"
+      },
+      {
+        "line": 635,
+        "name": "resetPackagingForm"
+      },
+      {
+        "line": 636,
+        "name": "openPackagingCreate"
+      },
+      {
+        "line": 637,
+        "name": "closePackagingPickerOnOutsideClick"
+      },
+      {
+        "line": 638,
+        "name": "createPackaging"
+      },
+      {
+        "line": 654,
+        "name": "packagingInput"
+      },
+      {
+        "line": 658,
+        "name": "openVersions"
+      },
+      {
+        "line": 668,
+        "name": "persistSave"
+      },
+      {
+        "line": 722,
+        "name": "confirmIdentitySave"
+      },
+      {
+        "line": 732,
+        "name": "cancelIdentitySave"
+      },
+      {
+        "line": 733,
+        "name": "save"
+      },
+      {
+        "line": 774,
+        "name": "deactivateRow"
+      },
+      {
+        "line": 789,
+        "name": "openEditFromRoute"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\TradeUnitsPage.vue",
+    "actions": [
+      {
+        "line": 53,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 61,
+        "event": "@click=\"newUnit\""
+      },
+      {
+        "line": 61,
+        "event": "@click=\"edit(row)\""
+      },
+      {
+        "line": 61,
+        "event": "@click=\"change(row,{active:!row.active})\""
+      },
+      {
+        "line": 61,
+        "event": "@click=\"change(row,{is_default:!row.is_default})\""
+      },
+      {
+        "line": 62,
+        "event": "@submit.prevent=\"create\""
+      },
+      {
+        "line": 62,
+        "event": "@click=\"newUnit\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 23,
+        "name": "reset"
+      },
+      {
+        "line": 24,
+        "name": "selectSku"
+      },
+      {
+        "line": 29,
+        "name": "load"
+      },
+      {
+        "line": 30,
+        "name": "newUnit"
+      },
+      {
+        "line": 31,
+        "name": "edit"
+      },
+      {
+        "line": 32,
+        "name": "create"
+      },
+      {
+        "line": 42,
+        "name": "change"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\views\\TransactionPage.vue",
+    "actions": [
+      {
+        "line": 306,
+        "event": "@click=\"openForm\""
+      },
+      {
+        "line": 311,
+        "event": "@click=\"loadReferenceOptions\""
+      },
+      {
+        "line": 314,
+        "event": "@submit.prevent=\"submitFilters\""
+      },
+      {
+        "line": 320,
+        "event": "@click=\"resetFilters\""
+      },
+      {
+        "line": 328,
+        "event": "@click=\"openAllocate(row)\""
+      },
+      {
+        "line": 328,
+        "event": "@click=\"openVoid(row)\""
+      },
+      {
+        "line": 332,
+        "event": "@click.self=\"closeForm\""
+      },
+      {
+        "line": 333,
+        "event": "@submit.prevent=\"save\""
+      },
+      {
+        "line": 334,
+        "event": "@click=\"closeForm\""
+      },
+      {
+        "line": 339,
+        "event": "@change=\"syncKind\""
+      },
+      {
+        "line": 347,
+        "event": "@change=\"onCurrencyChange\""
+      },
+      {
+        "line": 352,
+        "event": "@click=\"searchOrders\""
+      },
+      {
+        "line": 353,
+        "event": "@click=\"chooseOrder(row)\""
+      },
+      {
+        "line": 356,
+        "event": "@change=\"choosePurchase\""
+      },
+      {
+        "line": 367,
+        "event": "@click=\"closeForm\""
+      },
+      {
+        "line": 370,
+        "event": "@click.self=\"allocation = null\""
+      },
+      {
+        "line": 370,
+        "event": "@submit.prevent=\"allocate\""
+      },
+      {
+        "line": 370,
+        "event": "@click=\"allocation = null\""
+      },
+      {
+        "line": 370,
+        "event": "@click=\"allocation = null\""
+      },
+      {
+        "line": 371,
+        "event": "@click.self=\"voidTarget = null\""
+      },
+      {
+        "line": 371,
+        "event": "@submit.prevent=\"submitVoid\""
+      },
+      {
+        "line": 371,
+        "event": "@click=\"voidTarget = null\""
+      },
+      {
+        "line": 371,
+        "event": "@click=\"voidTarget = null\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 93,
+        "name": "closeForm"
+      },
+      {
+        "line": 107,
+        "name": "kindLabel"
+      },
+      {
+        "line": 108,
+        "name": "directionLabel"
+      },
+      {
+        "line": 109,
+        "name": "queryValue"
+      },
+      {
+        "line": 110,
+        "name": "syncFiltersFromRoute"
+      },
+      {
+        "line": 118,
+        "name": "nextFilterQuery"
+      },
+      {
+        "line": 128,
+        "name": "applyFilters"
+      },
+      {
+        "line": 136,
+        "name": "resetFilters"
+      },
+      {
+        "line": 141,
+        "name": "clearFilters"
+      },
+      {
+        "line": 146,
+        "name": "submitFilters"
+      },
+      {
+        "line": 147,
+        "name": "contractLocation"
+      },
+      {
+        "line": 152,
+        "name": "allocationLocation"
+      },
+      {
+        "line": 157,
+        "name": "syncKind"
+      },
+      {
+        "line": 171,
+        "name": "openForm"
+      },
+      {
+        "line": 183,
+        "name": "onCurrencyChange"
+      },
+      {
+        "line": 187,
+        "name": "load"
+      },
+      {
+        "line": 200,
+        "name": "searchOrders"
+      },
+      {
+        "line": 209,
+        "name": "chooseOrder"
+      },
+      {
+        "line": 216,
+        "name": "choosePurchase"
+      },
+      {
+        "line": 220,
+        "name": "save"
+      },
+      {
+        "line": 253,
+        "name": "openVoid"
+      },
+      {
+        "line": 260,
+        "name": "submitVoid"
+      },
+      {
+        "line": 274,
+        "name": "openAllocate"
+      },
+      {
+        "line": 279,
+        "name": "allocate"
+      },
+      {
+        "line": 285,
+        "name": "loadReferenceOptions"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\reports\\ReportBlock.vue",
+    "actions": [
+      {
+        "line": 104,
+        "event": "@click=\"exportCsv\""
+      },
+      {
+        "line": 107,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 117,
+        "event": "@click=\"drill(row)\""
+      },
+      {
+        "line": 120,
+        "event": "@click=\"drill(row,index)\""
+      },
+      {
+        "line": 120,
+        "event": "@click.stop=\"openDetails(row)\""
+      },
+      {
+        "line": 121,
+        "event": "@click=\"page--\""
+      },
+      {
+        "line": 121,
+        "event": "@click=\"page++\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 22,
+        "name": "load"
+      },
+      {
+        "line": 73,
+        "name": "drill"
+      },
+      {
+        "line": 79,
+        "name": "openDetails"
+      },
+      {
+        "line": 85,
+        "name": "exportCsv"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\reports\\ReportDetailPanel.vue",
+    "actions": [
+      {
+        "line": 67,
+        "event": "@click=\"emit('close')\""
+      },
+      {
+        "line": 70,
+        "event": "@click=\"load\""
+      },
+      {
+        "line": 91,
+        "event": "@change=\"changeOrdering\""
+      },
+      {
+        "line": 91,
+        "event": "@click=\"changePage(data.page - 1)\""
+      },
+      {
+        "line": 91,
+        "event": "@click=\"changePage(data.page + 1)\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 39,
+        "name": "load"
+      },
+      {
+        "line": 51,
+        "name": "changePage"
+      },
+      {
+        "line": 55,
+        "name": "changeOrdering"
+      }
+    ]
+  },
+  {
+    "file": "frontend\\src\\components\\reports\\SharedReportTemplates.vue",
+    "actions": [
+      {
+        "line": 44,
+        "event": "@click=\"emit('refresh')\""
+      },
+      {
+        "line": 44,
+        "event": "@click=\"emit('begin-create')\""
+      },
+      {
+        "line": 46,
+        "event": "@click=\"emit('refresh')\""
+      },
+      {
+        "line": 52,
+        "event": "@click=\"emit('use', template)\""
+      },
+      {
+        "line": 52,
+        "event": "@click=\"emit('edit', template)\""
+      },
+      {
+        "line": 52,
+        "event": "@click=\"request(template.published ? 'unpublish' : 'publish', template)\""
+      },
+      {
+        "line": 52,
+        "event": "@click=\"request('delete', template)\""
+      },
+      {
+        "line": 52,
+        "event": "@click=\"emit('history', template)\""
+      },
+      {
+        "line": 54,
+        "event": "@click=\"confirmPending\""
+      },
+      {
+        "line": 54,
+        "event": "@click=\"cancelPending\""
+      },
+      {
+        "line": 57,
+        "event": "@submit.prevent=\"submit\""
+      },
+      {
+        "line": 61,
+        "event": "@click=\"emit('close-editor')\""
+      },
+      {
+        "line": 64,
+        "event": "@click=\"emit('close-history')\""
+      }
+    ],
+    "handlers": [
+      {
+        "line": 22,
+        "name": "request"
+      },
+      {
+        "line": 26,
+        "name": "confirmPending"
+      },
+      {
+        "line": 31,
+        "name": "cancelPending"
+      },
+      {
+        "line": 32,
+        "name": "submit"
+      },
+      {
+        "line": 36,
+        "name": "actionLabel"
+      },
+      {
+        "line": 37,
+        "name": "timeLabel"
+      }
+    ]
+  }
+]

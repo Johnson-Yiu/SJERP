@@ -1,0 +1,979 @@
+[
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统",
+    "HEAD": "608c0194a44221a0ec758f23f8628998668a96c7",
+    "branch": "refs/heads/master",
+    "status": " M AGENTS.md\n M backend/config/settings.py\n M backend/crm/context.py\n M backend/crm/models.py\n M backend/crm/permissions.py\n M backend/crm/reporting.py\n M backend/crm/serializers.py\n M backend/crm/views.py\n M frontend/src/App.vue\n M frontend/src/api.js\n M frontend/src/api.test.js\n M frontend/src/components/EntityDetailModal.vue\n M frontend/src/components/OrderDetailModal.test.js\n M frontend/src/components/OrderDetailModal.vue\n M frontend/src/components/PurchaseDetailModal.vue\n M frontend/src/components/QuoteDetailModal.test.js\n M frontend/src/components/QuoteDetailModal.vue\n M frontend/src/components/QuoteEditorModal.vue\n M frontend/src/components/QuotePreviewModal.vue\n M frontend/src/components/RelatedCreateModal.vue\n M frontend/src/components/reports/ReportBlock.vue\n M frontend/src/composables/useUnsavedChangesGuard.js\n M frontend/src/resourceConfigs.js\n M frontend/src/router.js\n M frontend/src/styles.css\n M frontend/src/views/CategoryPage.vue\n M frontend/src/views/DocumentPage.test.js\n M frontend/src/views/DocumentPage.vue\n M frontend/src/views/FinanceDashboardPage.vue\n M frontend/src/views/HSCodePage.vue\n M frontend/src/views/ImportPage.vue\n M frontend/src/views/InventoryPage.test.js\n M frontend/src/views/InventoryPage.vue\n M frontend/src/views/OrganizationPage.vue\n M frontend/src/views/PackagingPage.vue\n M frontend/src/views/PaymentPlanPage.vue\n M frontend/src/views/ProductPage.vue\n M frontend/src/views/PurchaseOrderPage.vue\n M frontend/src/views/ResourcePage.test.js\n M frontend/src/views/ResourcePage.vue\n M frontend/src/views/SKUPage.test.js\n M frontend/src/views/SKUPage.vue\n M frontend/src/views/SummaryCardsIntegration.test.js\n M frontend/src/views/TaskK1Pagination.test.js\n M frontend/src/views/TradeUnitsPage.vue\n M frontend/src/views/TransactionPage.vue\n M frontend/tests/inventory-ledger.spec.js\n M frontend/tests/payment-plan-filters.spec.js\n M frontend/tests/phase2a-list-shell.spec.js\n M frontend/tests/unsaved-changes.spec.js\n M frontend/vite.config.js\n",
+    "frontend_diff": "warning: in the working copy of 'frontend/src/App.vue', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'frontend/src/composables/useUnsavedChangesGuard.js', LF will be replaced by CRLF the next time Git touches it\ndiff --git a/frontend/src/App.vue b/frontend/src/App.vue\nindex 9f8f7192..870d8835 100644\n--- a/frontend/src/App.vue\n+++ b/frontend/src/App.vue\n@@ -1,55 +1,62 @@\n <script setup>\n-import { computed, onMounted, reactive, ref } from 'vue'\n+import { computed, onMounted, ref } from 'vue'\n import { useRoute } from 'vue-router'\n import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode } from 'lucide-vue-next'\n-import { api } from './api'\n import AppDialogHost from './components/AppDialogHost.vue'\n import { pageIdentityKey } from './utils/routePageState'\n+import { accessState, can, canAccessOrganization, loadAccessControl } from './accessControl'\n \n const route = useRoute()\n const menuOpen = ref(false)\n-const operator = reactive({ name: '加载中', role: '身份待确认', development_superadmin: false, has_all_permissions: false })\n+const operator = computed(() => accessState.operator || { name: accessState.error ? '权限状态不可用' : '加载中', role: '身份待确认', development_superadmin: false, has_all_permissions: false })\n const nav = [\n   { section: '经营' },\n-  { label: '经营概览', path: '/', icon: LayoutDashboard },\n-  { label: '报表中心', path: '/reports', icon: LayoutDashboard },\n+  { label: '经营概览', path: '/', module: 'dashboard', icon: LayoutDashboard },\n+  { label: '报表中心', path: '/reports', module: 'reports', icon: LayoutDashboard },\n   { section: '客户' },\n-  { label: '客户管理', path: '/customers', icon: Users },\n-  { label: '联系人', path: '/contacts', icon: ContactRound },\n-  { label: '跟进记录', path: '/follow-ups', icon: MessageSquareText },\n+  { label: '客户管理', path: '/customers', module: 'customers', icon: Users },\n+  { label: '联系人', path: '/contacts', module: 'contacts', icon: ContactRound },\n+  { label: '跟进记录', path: '/follow-ups', module: 'followups', icon: MessageSquareText },\n   { section: '销售' },\n-  { label: '报价管理', path: '/quotes', icon: FileText },\n-  { label: '订单管理', path: '/orders', icon: ShoppingCart },\n+  { label: '报价管理', path: '/quotes', module: 'quotes', icon: FileText },\n+  { label: '订单管理', path: '/orders', module: 'orders', icon: ShoppingCart },\n   { section: '采购与库存' },\n-  { label: '供应商管理', path: '/suppliers', icon: Truck },\n-  { label: '采购管理', path: '/purchase-orders', icon: ShoppingCart },\n-  { label: '库存', path: '/inventory', icon: Warehouse },\n-  { label: '库存流水', path: '/inventory-movements', icon: Warehouse },\n+  { label: '供应商管理', path: '/suppliers', module: 'suppliers', icon: Truck },\n+  { label: '采购管理', path: '/purchase-orders', module: 'purchases', icon: ShoppingCart },\n+  { label: '库存', path: '/inventory', module: 'inventory', icon: Warehouse },\n+  { label: '库存流水', path: '/inventory-movements', module: 'inventory', icon: Warehouse },\n   { section: '产品资料' },\n-  { label: '产品管理', path: '/products', icon: Package },\n-  { label: 'SKU 管理', path: '/skus', icon: Boxes },\n-  { label: '产品分类', path: '/categories', icon: Tags },\n-  { label: '产品参数', path: '/product-parameters', icon: SlidersHorizontal },\n-  { label: '包装管理', path: '/sku-packaging', icon: Package },\n-  { label: '交易单位', path: '/sku-trade-units', icon: Boxes },\n-  { label: '产品证书', path: '/product-certificates', icon: BadgeCheck },\n-  { label: 'HS 编码维护', path: '/hs-codes', icon: Barcode, requiresAdmin: true },\n+  { label: '产品管理', path: '/products', module: 'products', icon: Package },\n+  { label: 'SKU 管理', path: '/skus', module: 'skus', icon: Boxes },\n+  { label: '产品分类', path: '/categories', module: 'categories', icon: Tags },\n+  { label: '产品参数', path: '/product-parameters', module: 'parameters', icon: SlidersHorizontal },\n+  { label: '包装管理', path: '/sku-packaging', module: 'packaging', icon: Package },\n+  { label: '交易单位', path: '/sku-trade-units', module: 'trade_units', icon: Boxes },\n+  { label: '产品证书', path: '/product-certificates', module: 'certificates', icon: BadgeCheck },\n+  { label: 'HS 编码维护', path: '/hs-codes', module: 'hs_codes', icon: Barcode },\n   { section: '财务与工具' },\n-  { label: '财务概览', path: '/finance', icon: WalletCards },\n-  { label: '应收计划', path: '/receivables', icon: WalletCards },\n-  { label: '应付计划', path: '/payables', icon: WalletCards },\n-  { label: '财务流水', path: '/transactions', icon: WalletCards },\n-  { label: '数据导入', path: '/import', icon: Upload },\n+  { label: '财务概览', path: '/finance', module: 'finance', icon: WalletCards },\n+  { label: '应收计划', path: '/receivables', module: 'finance', icon: WalletCards },\n+  { label: '应付计划', path: '/payables', module: 'finance', icon: WalletCards },\n+  { label: '财务流水', path: '/transactions', module: 'transactions', icon: WalletCards },\n+  { label: '数据导入', path: '/import', module: 'imports', icon: Upload },\n   { section: '组织与系统' },\n-  { label: '组织与权限', path: '/organization', icon: ShieldCheck },\n+  { label: '组织与权限', path: '/organization', module: 'organization', icon: ShieldCheck },\n ]\n const currentDate = computed(() => new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' }).format(new Date()))\n-const operatorInitial = computed(() => operator.name && operator.name !== '加载中' ? operator.name.trim().slice(0, 1).toUpperCase() : '—')\n-const isAdmin = computed(() => operator.can_manage_hs_codes === true)\n-const visibleNav = computed(() => nav.filter(item => !item.requiresAdmin || isAdmin.value))\n-onMounted(async () => {\n-  try { Object.assign(operator, (await api.get('/session/current-operator/')).data) } catch { /* 保留默认展示 */ }\n+const operatorInitial = computed(() => operator.value.name && operator.value.name !== '加载中' ? operator.value.name.trim().slice(0, 1).toUpperCase() : '—')\n+const visibleNav = computed(() => {\n+  const result = []\n+  let title = '', entries = []\n+  const flush = () => { if (entries.length) result.push({ section: title }, ...entries); entries = [] }\n+  for (const item of nav) {\n+    if (item.section) { flush(); title = item.section }\n+    else if (item.path === '/organization' ? canAccessOrganization() : can(item.module, 'view')) entries.push(item)\n+  }\n+  flush()\n+  return result\n })\n+onMounted(() => { loadAccessControl().catch(() => {}) })\n </script>\n \n <template>\n@@ -73,6 +80,7 @@ onMounted(async () => {\n         <div class=\"team-avatars\"><span>{{ operatorInitial }}</span></div>\n         <div><strong>{{ operator.development_superadmin ? '开发身份' : '当前账号' }}：{{ operator.name }}</strong><small>{{ operator.role }} · {{ operator.has_all_permissions ? '全部功能与数据权限' : '按账号授权' }}</small></div>\n       </div>\n+      <div v-if=\"accessState.error\" class=\"access-state-error\" role=\"alert\">权限状态加载失败：{{ accessState.error }}</div>\n     </aside>\n \n     <main class=\"main\">\ndiff --git a/frontend/src/api.js b/frontend/src/api.js\nindex ab9f5113..ad4d6156 100644\n--- a/frontend/src/api.js\n+++ b/frontend/src/api.js\n@@ -1,4 +1,6 @@\n import axios from 'axios'\n+import { apiErrorMessage } from './utils/apiErrors.js'\n+export { apiErrorMessage, formatApiError } from './utils/apiErrors.js'\n \n export const api = axios.create({ baseURL: '/api', timeout: 15000 })\n \n@@ -22,9 +24,9 @@ api.interceptors.response.use(\n     if (data instanceof Blob) {\n       try { data = JSON.parse(await data.text()) } catch { /* Keep the generic fallback for non-JSON blobs. */ }\n     }\n-    const nestedMessages = value => value == null ? [] : typeof value === 'object' ? Object.values(value).flatMap(nestedMessages) : [String(value)]\n-    const message = (data?.packaging_profile_input ? nestedMessages(data.packaging_profile_input).join('；') : '') || data?.detail || (data && typeof data === 'object' ? Object.values(data).flat().join('；') : '') || (retryable ? '后端服务暂时不可用，请稍后重试。' : '请求失败，请稍后重试。')\n-    return Promise.reject(new Error(message))\n+    const normalized = new Error(apiErrorMessage({ isApiError: true, status, data, code: error.code }))\n+    Object.assign(normalized, { status: status || null, data, rawData: error.response?.data, response: error.response, code: error.code, isApiError: true })\n+    return Promise.reject(normalized)\n   },\n )\n \ndiff --git a/frontend/src/composables/useUnsavedChangesGuard.js b/frontend/src/composables/useUnsavedChangesGuard.js\nindex 40da5724..cfad7b79 100644\n--- a/frontend/src/composables/useUnsavedChangesGuard.js\n+++ b/frontend/src/composables/useUnsavedChangesGuard.js\n@@ -33,9 +33,9 @@ export function unsavedSnapshot(value) {\n   })\n }\n \n-export function useUnsavedChangesGuard({ data, enabled = () => true, router: suppliedRouter } = {}) {\n+export function useUnsavedChangesGuard({ data, enabled = () => true, router: suppliedRouter, routeGuard = true, scope: suppliedScope } = {}) {\n   const router = suppliedRouter || inject(routerKey, null)\n-  const scope = inject(scopeKey, null)\n+  const scope = suppliedScope || inject(scopeKey, null)\n   const baseline = ref(null)\n   const dirty = computed(() => enabled() && baseline.value !== null && unsavedSnapshot(data()) !== baseline.value)\n   const markClean = () => { baseline.value = unsavedSnapshot(data()) }\n@@ -54,10 +54,14 @@ export function useUnsavedChangesGuard({ data, enabled = () => true, router: sup\n     await close()\n     return true\n   }\n-  const removeRouteGuard = router?.beforeEach(async (to, from) => {\n-    if (to.fullPath === from.fullPath || !dirty.value) return true\n-    return await confirmLeave()\n-  })\n+  const removeRouteGuard = routeGuard ? router?.beforeEach(async (to, from) => {\n+    if (to.fullPath === from.fullPath) return true\n+    if (dirty.value && !await confirmLeave()) return false\n+    if (scope) {\n+      for (const child of scope.children) if (child !== scopedGuard && !await child.confirmLeave()) return false\n+    }\n+    return true\n+  }) : undefined\n   const removeAfterGuard = router?.afterEach((to, from, failure) => {\n     if (!failure && to.fullPath !== from.fullPath && dirty.value) markClean()\n   })\ndiff --git a/frontend/src/router.js b/frontend/src/router.js\nindex bc0d0483..bd5fe8d9 100644\n--- a/frontend/src/router.js\n+++ b/frontend/src/router.js\n@@ -16,35 +16,54 @@ import PackagingPage from './views/PackagingPage.vue'\n import HSCodePage from './views/HSCodePage.vue'\n import { resourceConfigs } from './resourceConfigs'\n import { installModalNavigationGuard } from './utils/modalNavigation'\n+import AccessDeniedPage from './views/AccessDeniedPage.vue'\n+import { can, canAccessOrganization, loadAccessControl } from './accessControl'\n+\n+const resourceModules = {\n+  suppliers: 'suppliers', customers: 'customers', contacts: 'contacts', 'follow-ups': 'followups',\n+  'inventory-movements': 'inventory', 'product-parameters': 'parameters', 'product-certificates': 'certificates',\n+}\n \n export const routes = [\n-  { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units' } },\n-  { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics' } },\n-  { path: '/', component: Dashboard, meta: { title: '经营概览', eyebrow: 'Business overview' } },\n+  { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units', module: 'trade_units' } },\n+  { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics', module: 'reports' } },\n+  { path: '/', component: Dashboard, meta: { title: '经营概览', eyebrow: 'Business overview', module: 'dashboard' } },\n   ...Object.entries(resourceConfigs).filter(([path]) => !['categories', 'products', 'skus', 'transactions'].includes(path)).map(([path, config]) => ({\n     path: `/${path}`,\n     component: ResourcePage,\n     props: { config },\n-    meta: { title: config.title, eyebrow: config.eyebrow },\n+    meta: { title: config.title, eyebrow: config.eyebrow, module: resourceModules[path] || path },\n   })),\n-  { path: '/categories', component: CategoryPage, meta: { title: '产品分类', eyebrow: 'Catalog structure' } },\n-  { path: '/products', component: ProductPage, meta: { title: '产品管理', eyebrow: 'Product catalog' } },\n-  { path: '/skus', component: SKUPage, meta: { title: 'SKU 管理', eyebrow: 'Sellable variants' } },\n-  { path: '/sku-packaging', component: PackagingPage, meta: { title: '包装管理', eyebrow: 'Packaging maintenance' } },\n-  { path: '/hs-codes', component: HSCodePage, meta: { title: 'HS 编码维护', eyebrow: 'Customs classification' } },\n-  { path: '/quotes', component: DocumentPage, props: { type: 'quotes' }, meta: { title: '报价管理', eyebrow: 'Quotation desk' } },\n-  { path: '/orders', component: DocumentPage, props: { type: 'orders' }, meta: { title: '订单管理', eyebrow: 'Sales orders' } },\n-  { path: '/import', component: ImportPage, meta: { title: '数据导入', eyebrow: 'Data onboarding' } },\n-  { path: '/organization', component: OrganizationPage, meta: { title: '组织与权限', eyebrow: 'Organization & access' } },\n-  { path: '/inventory', component: InventoryPage, meta: { title: '库存', eyebrow: 'Current inventory' } },\n-  { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: '采购管理', eyebrow: 'Procurement desk' } },\n-  { path: '/finance', component: FinanceDashboardPage, meta: { title: '财务概览', eyebrow: 'Operating finance' } },\n-  { path: '/receivables', component: PaymentPlanPage, props: { direction: 'receivable' }, meta: { title: '应收计划', eyebrow: 'Accounts receivable' } },\n-  { path: '/payables', component: PaymentPlanPage, props: { direction: 'payable' }, meta: { title: '应付计划', eyebrow: 'Accounts payable' } },\n-  { path: '/transactions', component: TransactionPage, meta: { title: '财务流水', eyebrow: 'Cash ledger' } },\n+  { path: '/categories', component: CategoryPage, meta: { title: '产品分类', eyebrow: 'Catalog structure', module: 'categories' } },\n+  { path: '/products', component: ProductPage, meta: { title: '产品管理', eyebrow: 'Product catalog', module: 'products' } },\n+  { path: '/skus', component: SKUPage, meta: { title: 'SKU 管理', eyebrow: 'Sellable variants', module: 'skus' } },\n+  { path: '/sku-packaging', component: PackagingPage, meta: { title: '包装管理', eyebrow: 'Packaging maintenance', module: 'packaging' } },\n+  { path: '/hs-codes', component: HSCodePage, meta: { title: 'HS 编码维护', eyebrow: 'Customs classification', module: 'hs_codes' } },\n+  { path: '/quotes', component: DocumentPage, props: { type: 'quotes' }, meta: { title: '报价管理', eyebrow: 'Quotation desk', module: 'quotes' } },\n+  { path: '/orders', component: DocumentPage, props: { type: 'orders' }, meta: { title: '订单管理', eyebrow: 'Sales orders', module: 'orders' } },\n+  { path: '/import', component: ImportPage, meta: { title: '数据导入', eyebrow: 'Data onboarding', module: 'imports' } },\n+  { path: '/organization', component: OrganizationPage, meta: { title: '组织与权限', eyebrow: 'Organization & access', module: 'organization' } },\n+  { path: '/inventory', component: InventoryPage, meta: { title: '库存', eyebrow: 'Current inventory', module: 'inventory' } },\n+  { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: '采购管理', eyebrow: 'Procurement desk', module: 'purchases' } },\n+  { path: '/finance', component: FinanceDashboardPage, meta: { title: '财务概览', eyebrow: 'Operating finance', module: 'finance' } },\n+  { path: '/receivables', component: PaymentPlanPage, props: { direction: 'receivable' }, meta: { title: '应收计划', eyebrow: 'Accounts receivable', module: 'finance' } },\n+  { path: '/payables', component: PaymentPlanPage, props: { direction: 'payable' }, meta: { title: '应付计划', eyebrow: 'Accounts payable', module: 'finance' } },\n+  { path: '/transactions', component: TransactionPage, meta: { title: '财务流水', eyebrow: 'Cash ledger', module: 'transactions' } },\n+  { path: '/access-denied', name: 'access-denied', component: AccessDeniedPage, meta: { accessStatus: true, title: '访问受限', eyebrow: 'Access denied' } },\n+  { path: '/access-status-error', name: 'access-status-error', component: AccessDeniedPage, meta: { accessStatus: true, title: '权限状态', eyebrow: 'Access status' } },\n ]\n \n const router = createRouter({ history: createWebHistory(), routes })\n installModalNavigationGuard(router)\n \n+router.beforeEach(async to => {\n+  if (to.meta.accessStatus) return true\n+  try { await loadAccessControl() }\n+  catch { return { name: 'access-status-error', replace: true } }\n+  const module = to.meta.module\n+  const permitted = to.path === '/organization' ? canAccessOrganization() : can(module, 'view')\n+  if (module && !permitted) return { name: 'access-denied', query: { from: to.fullPath }, replace: true }\n+  return true\n+})\n+\n export default router\n"
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/visualizations/2026/10/08/01a11977-80e0-77b0-ad46-fafa2f93bdc7/erp-phase-2c-evidence",
+    "HEAD": "10afa1acd0e7956ae5db545b5582ec4f05474d13",
+    "branch": "refs/heads/ux-review-evidence",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/audit-iss002-dependency-security/森爵照明管理系统",
+    "HEAD": "4e4ca504ee398da85fe23cc53d534c6008807e5c",
+    "branch": "refs/heads/codex/audit-iss002-dependency-security",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/fix-iss008-chinese-aliases/森爵照明管理系统",
+    "HEAD": "80dc73ae4ae47f9e04969f39b441af206d34306b",
+    "branch": "refs/heads/codex/fix-iss008-chinese-aliases",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/fix-iss036-factor-one/森爵照明管理系统",
+    "HEAD": "6db1ef53e4b78c20156e66071b37b7e6f29a6476",
+    "branch": "refs/heads/codex/fix-iss036-factor-one",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/fix-iss036-invalid-snapshot/森爵照明管理系统",
+    "HEAD": "80a93559852d9d679c86d71250549261c7c2bbd1",
+    "branch": "refs/heads/codex/fix-iss036-invalid-snapshot",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/history-operational-closeout-20261104/森爵照明管理系统",
+    "HEAD": "ba4274742727a6794608dc8581a49b3692d865a6",
+    "branch": "refs/heads/codex/history-operational-closeout-20261104",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/history-takeover-batch-20261104/森爵照明管理系统",
+    "HEAD": "a0729a0965850028fe52f5b6fcc3e825f23b1289",
+    "branch": "refs/heads/codex/history-takeover-batch-20261104",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/integration-021-029-027/森爵照明管理系统",
+    "HEAD": "28ba758388429f57c2e3516e12385a88ce6646a3",
+    "branch": "refs/heads/codex/integration-021-029-027",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/integration-049-053-067/森爵照明管理系统",
+    "HEAD": "54925e0a10a48c16ba3b66bbab9e433f48a0e2d7",
+    "branch": "refs/heads/codex/integration-049-053-067",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/integration-pre-pilot-01-local/森爵照明管理系统",
+    "HEAD": "54e715bdc568b80ba624186fecd866550676cf38",
+    "branch": "refs/heads/codex/integration-pre-pilot-01",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/integration-r1-browser-suite-20261028/森爵照明管理系统",
+    "HEAD": "84da66e963414002576b653cf8d9340dafcbc2d6",
+    "status": " M docs/uat-evidence/iss-017-private-files/certificate-desktop.png\n M docs/uat-evidence/iss-019-report-csv/reports-unsaved-filter-1440.png\n M docs/uat-evidence/iss-039-integration/authorized-1440px.png\n M docs/uat-evidence/iss-039-integration/authorized-700px.png\n M docs/uat-evidence/iss-039-integration/authorized-refresh-1440px.png\n M docs/uat-evidence/iss-039-integration/readonly-1440px.png\n M docs/uat-evidence/iss-041-detail-drill/reports-detail-1440.png\n M docs/uat-evidence/iss-041-detail-drill/reports-detail-700.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1024px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1440px.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-1440.png\n M docs/uat-evidence/r1-repair-07/after-dom-1024.json\n M docs/uat-evidence/r1-repair-07/after-dom-1440.json\n M docs/uat-evidence/r1-repair-07/after-dom-390.json\n M docs/uat-evidence/r1-repair-07/after-dom-700.json\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/integration-r1-repairs-20261028/森爵照明管理系统",
+    "HEAD": "bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb",
+    "branch": "refs/heads/codex/integration-r1-repairs-20261028",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-017-private-files/森爵照明管理系统",
+    "HEAD": "c5fc1c11b9728655a363a4f2a5ba0544584a8d07",
+    "branch": "refs/heads/codex/iss-017-private-files",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-019-report-csv/森爵照明管理系统",
+    "HEAD": "2776fecfadcdf6992ef52e69af8c36697c620b51",
+    "branch": "refs/heads/codex/iss-019-report-csv",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-022-procurement-moq/森爵照明管理系统",
+    "HEAD": "6e7aaedd2cccef3150a5c7ee3135fd5f37dcee47",
+    "branch": "refs/heads/codex/iss-022-procurement-moq",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-029-quote-recipient-snapshot/森爵照明管理系统",
+    "HEAD": "bb68ead4fd248fc446c259a5a142b798b4cd124a",
+    "branch": "refs/heads/codex/iss-029-quote-recipient-snapshot",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-036-carton-units/森爵照明管理系统",
+    "HEAD": "3fe05aa1fe08f859cd6b737150d67b4c1066b248",
+    "branch": "refs/heads/codex/iss-036-carton-units",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-048-finance-drill/森爵照明管理系统",
+    "HEAD": "c356e57014d28295485d52df23612c2fe6c02444",
+    "branch": "refs/heads/codex/iss-048-finance-drill",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-053-purchase-status/森爵照明管理系统",
+    "HEAD": "caf0aadf5f7305d5c0d69020a07d2aeab71e4f34",
+    "branch": "refs/heads/codex/iss-053-purchase-status",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-075-payment-terms/森爵照明管理系统",
+    "HEAD": "771307b19667256453c7c22ebf60256ffd2a26dd",
+    "branch": "refs/heads/codex/iss-075-payment-terms",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-080-contact-duplicates/森爵照明管理系统",
+    "HEAD": "9fe9f479bc47fd7470c80822c89fa59d7d71cbf5",
+    "branch": "refs/heads/codex/iss-080-contact-duplicates",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-097-admin-permissions/森爵照明管理系统",
+    "HEAD": "9ee4bd4b1eb14f45e08a4b83f0b1cd1b294cde37",
+    "branch": "refs/heads/codex/iss-097-admin-permissions",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/iss-107-finance-labels/森爵照明管理系统",
+    "HEAD": "60df1b045c06c7f2146b44e4a60866b1786024cc",
+    "branch": "refs/heads/codex/iss-107-finance-labels",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/next-iss-037-integration/森爵照明管理系统",
+    "HEAD": "6d3496d0cc45213f4aab26950cd5ab8629996de8",
+    "branch": "refs/heads/codex/next-iss-037-integration",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-inv-03/森爵照明管理系统",
+    "HEAD": "d82643907f2886ecc412fdfa8839d2b8cc165751",
+    "branch": "refs/heads/codex/r1-inv-03",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-iss-021-audit-01/森爵照明管理系统",
+    "HEAD": "12c0ea9d60537d202393266f7850fcc188276860",
+    "branch": "refs/heads/codex/r1-iss-021-audit-01",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-iss-021-dev/森爵照明管理系统",
+    "HEAD": "92d32ad856fdd056fab0be56a70a9af52fbb99f2",
+    "branch": "refs/heads/codex/r1-iss-021-dev",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-iss-037-audit-01",
+    "HEAD": "4d3032b914cde951bae1d1da669e0d737e4b8d52",
+    "branch": "refs/heads/codex/r1-iss-037-audit-01",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-iss-037-p1/森爵照明管理系统",
+    "HEAD": "ff59be7a8c49f3a7a33a1702e74e0e29f742aa1f",
+    "branch": "refs/heads/codex/r1-iss-037-p1",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-iss-039",
+    "HEAD": "ac52d3d126a6dbeb9225e6044fa8da234c72db8f",
+    "branch": "refs/heads/codex/r1-iss-039",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-iss006-postgres-concurrency-gaps/森爵照明管理系统",
+    "HEAD": "2e25b743884123d7ae5599c89586988a12791bf4",
+    "branch": "refs/heads/codex/r1-iss006-postgres-concurrency-gaps-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-iss018-backup-restore-drill-20261103/森爵照明管理系统",
+    "HEAD": "cce6a3556bae9c1c13c4d76aa1c0e3c03595d16f",
+    "branch": "refs/heads/codex/r1-iss018-backup-restore-drill-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-iss018-postgres-boundary-20261102/森爵照明管理系统",
+    "HEAD": "704b0df6cc7fa18ce8ed29567afa8d13d605557e",
+    "branch": "refs/heads/codex/r1-iss018-postgres-boundary-20261102",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-iss121-preflight/森爵照明管理系统",
+    "HEAD": "951adda34b5c60b303725702514cdacac17cc58d",
+    "branch": "refs/heads/codex/r1-iss121-history-import-preflight-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-moq-02/森爵照明管理系统",
+    "HEAD": "aa35db2a49b6152e35f57b74edff95914735864d",
+    "branch": "refs/heads/codex/r1-moq-02",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-po-04",
+    "HEAD": "2dde7c6b5b8ba29df56eb1a3e771a82739859277",
+    "branch": "refs/heads/codex/r1-po-04",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-postgres-supplier-fixtures-full-20261102/森爵照明管理系统",
+    "HEAD": "644f6a908a755f9d2293dba74c609471f86fcd5d",
+    "branch": "refs/heads/codex/r1-postgres-supplier-fixtures-full-20261102",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-postgres-test-isolation-20261102/森爵照明管理系统",
+    "HEAD": "9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2",
+    "branch": "refs/heads/codex/r1-postgres-test-isolation-20261102",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-sku-01/森爵照明管理系统",
+    "HEAD": "57d8c2df573b11621a940a756ef7ed34531e7af6",
+    "branch": "refs/heads/codex/r1-sku-01",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-sku-01-fix-01/森爵照明管理系统",
+    "HEAD": "450476355ffe03b9a32e69226d8b3c2e179ea155",
+    "branch": "refs/heads/codex/r1-sku-01-fix-01",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/r1-sku-01-fix-02/森爵照明管理系统",
+    "HEAD": "fed49cd2b25524d79715d8c241a9ff7f0536218c",
+    "branch": "refs/heads/codex/r1-sku-01-fix-02",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/repair-browser-navigation-timeouts/森爵照明管理系统",
+    "HEAD": "e20f8a7bc506c299644b6c828c9b5574ee688f46",
+    "branch": "refs/heads/codex/repair-browser-navigation-timeouts",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/repair-orders-390-layout/森爵照明管理系统",
+    "HEAD": "58541e94918e2d912c2b75d2371a8d625e1fc9d4",
+    "branch": "refs/heads/codex/repair-orders-390-layout",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "C:/Users/Johnson/.codex/worktrees/repair-supplier-purchase-ux-5310/森爵照明管理系统",
+    "HEAD": "fe1cc16c3950e256fa564ea4508e08414ae8810b",
+    "branch": "refs/heads/codex/repair-supplier-purchase-ux-20261028",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.r0-f9-worktree",
+    "HEAD": "48a2126b07670c5e228180d7e6ca100fa12dbb64",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.r0f1-review",
+    "HEAD": "b916fab613806a9fd00636cc87496803557d45a8",
+    "branch": "refs/heads/codex-r0-f5-contacts-followups",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/access-readiness-20261105",
+    "HEAD": "642f3f1772cb8217a36b8c8b6a5e7f4d9e397f0a",
+    "branch": "refs/heads/codex/access-readiness-20261105",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/audit-iss045-legacy-test-scripts",
+    "HEAD": "966deaa209cd5b115704a67e58aeb12783b9a60a",
+    "branch": "refs/heads/codex/audit-iss045-legacy-test-scripts",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/audit-ux-visual-20261029",
+    "HEAD": "d3b9be06da578b988a78d595eab21fccb2983520",
+    "branch": "refs/heads/codex/audit-ux-visual-20261029",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/candidate-regression-20261029",
+    "HEAD": "90f622528a7d534983313220d0824f3d461c03a3",
+    "branch": "refs/heads/codex/verify-candidate-regression-20261029",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/core-business-closeout-20261105",
+    "HEAD": "78bcedb217d3d6ca0a05c9348e72d37c35801312",
+    "branch": "refs/heads/codex/core-business-closeout-20261105",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/core-workspace-ux-batch-20261104",
+    "HEAD": "e302199f7890c686a309f54aebe8cc31b6202f52",
+    "branch": "refs/heads/codex/core-workspace-ux-batch-20261104",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/export-stability-closeout-20261105",
+    "HEAD": "dc57b06e856f4640c804e5d14659e40b4093c4e4",
+    "branch": "refs/heads/codex/export-stability-closeout-20261105",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/finance-adversarial-review-20261104",
+    "HEAD": "e301a86044ffe56b72172a94dc3b00ae09401b05",
+    "branch": "refs/heads/codex/finance-adversarial-review-20261104",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/finance-closeout-batch-20261104",
+    "HEAD": "3a07e7ef1a9e63c98077d45492ba23b798c7fcdd",
+    "branch": "refs/heads/codex/finance-closeout-batch-20261104",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/fix-unified-ci-env-20261101",
+    "HEAD": "cd479ea5ad7cd923f5b1798c0f296f960ae46dae",
+    "branch": "refs/heads/codex/fix-unified-ci-env-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/integration-047-097-080",
+    "HEAD": "7951ecb8c6196f773128ad5978bfcd0a5b30c6b5",
+    "branch": "refs/heads/codex/integration-047-097-080",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/integration-pre-pilot-02",
+    "HEAD": "d189084554a2a2da0d701b488a34ebc50723fa17",
+    "branch": "refs/heads/codex/integration-pre-pilot-02",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/internal-workspace-tabs-20261105",
+    "HEAD": "10afcf16fbfc1d0c01a175094012b4b696483cfb",
+    "branch": "refs/heads/codex/internal-workspace-tabs-20261105",
+    "status": " M frontend/src/App.vue\n M frontend/src/api.js\n M frontend/src/components/ContractAmountAdjustments.vue\n M frontend/src/components/EntityDetailModal.vue\n M frontend/src/components/InventoryMovementCreateModal.vue\n M frontend/src/components/OrderDetailModal.vue\n M frontend/src/components/OrderDraftModal.vue\n M frontend/src/components/ProcurementDraftModal.vue\n M frontend/src/components/ProductSalesRules.vue\n M frontend/src/components/ProductSkuManagement.vue\n M frontend/src/components/PurchaseCostAllocationModal.vue\n M frontend/src/components/PurchasePaymentModal.vue\n M frontend/src/components/PurchaseSupplierPicker.vue\n M frontend/src/components/QuoteDetailModal.vue\n M frontend/src/components/QuoteEditorModal.vue\n M frontend/src/components/RelatedCreateModal.vue\n M frontend/src/components/ShipmentActualPacking.vue\n M frontend/src/components/SkuCombinationRuleEditor.vue\n M frontend/src/components/SupplierAllocationModal.vue\n M frontend/src/components/SupplierBatchBindingDrawer.vue\n M frontend/src/components/reports/ReportBlock.vue\n M frontend/src/components/reports/ReportDetailPanel.vue\n M frontend/src/composables/useUnsavedChangesGuard.js\n M frontend/src/router.js\n M frontend/src/styles.css\n M frontend/src/utils/routePageState.js\n M frontend/src/views/CashEventPage.vue\n M frontend/src/views/CategoryPage.vue\n M frontend/src/views/Dashboard.vue\n M frontend/src/views/DocumentPage.vue\n M frontend/src/views/FinanceDashboardPage.vue\n M frontend/src/views/FinanceLedgerPage.vue\n M frontend/src/views/HSCodePage.vue\n M frontend/src/views/HistoryOrdersPage.vue\n M frontend/src/views/HistoryTakeoverPage.vue\n M frontend/src/views/ImportPage.vue\n M frontend/src/views/InventoryPage.vue\n M frontend/src/views/OrganizationPage.vue\n M frontend/src/views/PackagingPage.vue\n M frontend/src/views/PaymentPlanPage.vue\n M frontend/src/views/ProductPage.vue\n M frontend/src/views/PurchaseOrderPage.vue\n M frontend/src/views/ReportsPage.vue\n M frontend/src/views/ResourcePage.vue\n M frontend/src/views/SKUPage.vue\n M frontend/src/views/TradeUnitsPage.vue\n M frontend/src/views/TransactionPage.vue\n",
+    "frontend_diff": "diff --git a/frontend/src/App.vue b/frontend/src/App.vue\nindex 97504faf..1f473fd5 100644\n--- a/frontend/src/App.vue\n+++ b/frontend/src/App.vue\n@@ -1,12 +1,24 @@\n <script setup>\n-import { computed, onMounted, ref } from 'vue'\n-import { useRoute } from 'vue-router'\n+import { computed, onMounted, onBeforeUnmount, ref, provide, watch } from 'vue'\n+import { useRoute, useRouter } from 'vue-router'\n import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode, History } from 'lucide-vue-next'\n-import AppDialogHost from './components/AppDialogHost.vue'\n-import { pageIdentityKey } from './utils/routePageState'\n+import AppDialogHost from './components/AppDialogHost.vue'\n+import WorkspaceTabs from './components/WorkspaceTabs.vue'\n+import WorkspacePane from './components/WorkspacePane.vue'\n+import { createWorkspaceManager } from './workspaceManager'\n+import { workspaceManagerKey } from './composables/useWorkspaceNavigation'\n import { accessState, can, canAccessHistoricalOrders, canAccessOrganization, loadAccessControl } from './accessControl'\n \n const route = useRoute()\n+const rootRouter = useRouter()\n+const manager = createWorkspaceManager(rootRouter)\n+provide(workspaceManagerKey, manager)\n+watch(() => accessState.operator, value => {\n+  const identity = value ? String(value.user_id ?? value.id ?? (value.development_superadmin ? 'development' : value.name)) : 'anonymous'\n+  manager.reset(identity)\n+  if (value) void manager.open(rootRouter.currentRoute.value.fullPath, { sync: false })\n+}, { immediate: true })\n+onBeforeUnmount(() => manager.destroy())\n const menuOpen = ref(false)\n const operator = computed(() => accessState.operator || { name: accessState.error ? '权限状态不可用' : '加载中', role: '身份待确认', development_superadmin: false, has_all_permissions: false })\n const nav = [\n@@ -99,8 +111,9 @@ onMounted(() => { loadAccessControl().catch(() => {}) })\n           <div class=\"avatar\" :title=\"operator.name\">{{ operatorInitial }}</div>\n         </div>\n       </header>\n-      <section class=\"content\"><RouterView :key=\"pageIdentityKey(route)\" /></section>\n-    </main>\n-    <AppDialogHost />\n-  </div>\n-</template>\n+      <WorkspaceTabs :manager=\"manager\" />\n+      <section class=\"content\"><WorkspacePane v-for=\"tab in manager.tabs\" :key=\"tab.id\" :tab=\"tab\" :manager=\"manager\" /></section>\n+    </main>\n+    <AppDialogHost />\n+  </div>\n+</template>\ndiff --git a/frontend/src/api.js b/frontend/src/api.js\nindex e29674d7..6f6734f3 100644\n--- a/frontend/src/api.js\n+++ b/frontend/src/api.js\n@@ -1,13 +1,21 @@\n+import { sessionEpoch, notifyWorkspaceWrite } from './workspaceSession'\n import axios from 'axios'\n import { apiErrorMessage } from './utils/apiErrors.js'\n export { apiErrorMessage, formatApiError } from './utils/apiErrors.js'\n \n-export const api = axios.create({ baseURL: '/api', timeout: 15000, xsrfCookieName: 'csrftoken', xsrfHeaderName: 'X-CSRFToken' })\n+export const api = axios.create({ baseURL: '/api', timeout: 15000, xsrfCookieName: 'csrftoken', xsrfHeaderName: 'X-CSRFToken' })\n+\n+api.interceptors.request.use(config => { config._sessionEpoch ??= sessionEpoch(); return config })\n \n api.interceptors.response.use(\n-  (response) => response,\n+  (response) => {\n+    if (response.config._sessionEpoch !== sessionEpoch()) return Promise.reject(new Error('账号已变化，请重新载入。'))\n+    if (!['get', 'head', 'options'].includes((response.config.method || 'get').toLowerCase())) notifyWorkspaceWrite(response.config._workspaceSource)\n+    return response\n+  },\n   async (error) => {\n     const config = error.config || {}\n+    if (config._sessionEpoch !== undefined && config._sessionEpoch !== sessionEpoch()) return Promise.reject(error)\n     const method = String(config.method || 'get').toLowerCase()\n     const status = error.response?.status\n     const retryable = !status || [500, 502, 503, 504].includes(status)\ndiff --git a/frontend/src/composables/useUnsavedChangesGuard.js b/frontend/src/composables/useUnsavedChangesGuard.js\nindex 5e884459..a56557b7 100644\n--- a/frontend/src/composables/useUnsavedChangesGuard.js\n+++ b/frontend/src/composables/useUnsavedChangesGuard.js\n@@ -1,5 +1,6 @@\n import { computed, inject, onBeforeUnmount, provide, ref, watch } from 'vue'\n import { routerKey } from 'vue-router'\n+import { workspaceKey } from './useWorkspaceNavigation'\n import { confirmDialog } from '../dialogs'\n \n const scopeKey = Symbol('unsaved-editor-scope')\n@@ -34,6 +35,7 @@ export function unsavedSnapshot(value) {\n }\n \n export function useUnsavedChangesGuard({ data, enabled = () => true, busy = () => false, confirmOptions = () => ({}), router: suppliedRouter, routeGuard = true, scope: suppliedScope } = {}) {\n+  const workspace = inject(workspaceKey, null)\n   const router = suppliedRouter || inject(routerKey, null)\n   const scope = suppliedScope || inject(scopeKey, null)\n   const baseline = ref(null)\n@@ -74,8 +76,9 @@ export function useUnsavedChangesGuard({ data, enabled = () => true, busy = () =\n     if (typeof window === 'undefined') return\n     window[value ? 'addEventListener' : 'removeEventListener']('beforeunload', beforeUnload)\n   }, { flush: 'sync', immediate: true })\n-  const scopedGuard = { confirmLeave, markClean }\n+  const scopedGuard = { confirmLeave, markClean, dirty }\n+  workspace?.guards.add(scopedGuard)\n   scope?.children.add(scopedGuard)\n-  onBeforeUnmount(() => { scope?.children.delete(scopedGuard); stop(); removeRouteGuard?.(); removeAfterGuard?.(); if (typeof window !== 'undefined') window.removeEventListener('beforeunload', beforeUnload) })\n+  onBeforeUnmount(() => { workspace?.guards.delete(scopedGuard); scope?.children.delete(scopedGuard); stop(); removeRouteGuard?.(); removeAfterGuard?.(); if (typeof window !== 'undefined') window.removeEventListener('beforeunload', beforeUnload) })\n   return { dirty, markClean, setBaseline: markClean, requestClose }\n }\ndiff --git a/frontend/src/router.js b/frontend/src/router.js\nindex e0f4ccf1..31e1e777 100644\n--- a/frontend/src/router.js\n+++ b/frontend/src/router.js\n@@ -1,65 +1,9 @@\n import { createRouter, createWebHistory } from 'vue-router'\n-import Dashboard from './views/Dashboard.vue'\n-import ResourcePage from './views/ResourcePage.vue'\n-import DocumentPage from './views/DocumentPage.vue'\n-import ImportPage from './views/ImportPage.vue'\n-import OrganizationPage from './views/OrganizationPage.vue'\n-import CategoryPage from './views/CategoryPage.vue'\n-import ProductPage from './views/ProductPage.vue'\n-import SKUPage from './views/SKUPage.vue'\n-import InventoryPage from './views/InventoryPage.vue'\n-import PurchaseOrderPage from './views/PurchaseOrderPage.vue'\n-import FinanceDashboardPage from './views/FinanceDashboardPage.vue'\n-import PaymentPlanPage from './views/PaymentPlanPage.vue'\n-import TransactionPage from './views/TransactionPage.vue'\n-import CashEventPage from './views/CashEventPage.vue'\n-import PackagingPage from './views/PackagingPage.vue'\n-import HSCodePage from './views/HSCodePage.vue'\n-import { resourceConfigs } from './resourceConfigs'\n-import { installModalNavigationGuard } from './utils/modalNavigation'\n-import AccessDeniedPage from './views/AccessDeniedPage.vue'\n+import { routes } from './workspaceRoutes'\n+export { routes } from './workspaceRoutes'\n import { can, canAccessHistoricalOrders, canAccessOrganization, loadAccessControl } from './accessControl'\n \n-const resourceModules = {\n-  suppliers: 'suppliers', customers: 'customers', contacts: 'contacts', 'follow-ups': 'followups',\n-  'inventory-movements': 'inventory', 'product-parameters': 'parameters', 'product-certificates': 'certificates',\n-}\n-\n-export const routes = [\n-  { path: '/finance-ledger', component: () => import('./views/FinanceLedgerPage.vue'), meta: { title: '账户资金', eyebrow: 'Account cash', module: 'finance' } },\n-  { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units', module: 'trade_units' } },\n-  { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics', module: 'reports' } },\n-  { path: '/historical-orders', component: () => import('./views/HistoryOrdersPage.vue'), meta: { title: '历史订单分析', eyebrow: 'Historical ledger', module: 'reports' } },\n-  { path: '/', component: Dashboard, meta: { title: '经营概览', eyebrow: '销售与客户', module: 'dashboard' } },\n-  ...Object.entries(resourceConfigs).filter(([path]) => !['categories', 'products', 'skus', 'transactions'].includes(path)).map(([path, config]) => ({\n-    path: `/${path}`,\n-    component: ResourcePage,\n-    props: { config },\n-    meta: { title: config.title, eyebrow: config.eyebrow, module: resourceModules[path] || path },\n-  })),\n-  { path: '/categories', component: CategoryPage, meta: { title: '产品分类', eyebrow: '分类与属性', module: 'categories' } },\n-  { path: '/products', component: ProductPage, meta: { title: '产品管理', eyebrow: '产品资料', module: 'products' } },\n-  { path: '/skus', component: SKUPage, meta: { title: 'SKU 管理', eyebrow: '销售规格', module: 'skus' } },\n-  { path: '/sku-packaging', component: PackagingPage, meta: { title: '包装管理', eyebrow: 'Packaging maintenance', module: 'packaging' } },\n-  { path: '/hs-codes', component: HSCodePage, meta: { title: 'HS 编码维护', eyebrow: 'Customs classification', module: 'hs_codes' } },\n-  { path: '/quotes', component: DocumentPage, props: { type: 'quotes' }, meta: { title: '报价管理', eyebrow: 'Quotation desk', module: 'quotes' } },\n-  { path: '/orders', component: DocumentPage, props: { type: 'orders' }, meta: { title: '订单管理', eyebrow: 'Sales orders', module: 'orders' } },\n-  { path: '/import', component: ImportPage, meta: { title: '数据导入', eyebrow: 'Data onboarding', module: 'imports' } },\n-  { path: '/history-takeover', component: () => import('./views/HistoryTakeoverPage.vue'), meta: { title: '历史资料承接', eyebrow: 'Controlled history intake', module: 'imports' } },\n-  { path: '/organization', component: OrganizationPage, meta: { title: '组织与权限', eyebrow: 'Organization & access', module: 'organization' } },\n-  { path: '/inventory', component: InventoryPage, meta: { title: '库存', eyebrow: 'Current inventory', module: 'inventory' } },\n-  { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: '采购管理', eyebrow: 'Procurement desk', module: 'purchases' } },\n-  { path: '/finance', component: FinanceDashboardPage, meta: { title: '财务概览', eyebrow: 'Operating finance', module: 'finance' } },\n-  { path: '/receivables', component: PaymentPlanPage, props: { direction: 'receivable' }, meta: { title: '应收计划', eyebrow: 'Accounts receivable', module: 'finance' } },\n-  { path: '/payables', component: PaymentPlanPage, props: { direction: 'payable' }, meta: { title: '应付计划', eyebrow: 'Accounts payable', module: 'finance' } },\n-  { path: '/transactions', component: TransactionPage, meta: { title: '财务流水', eyebrow: 'Cash ledger', module: 'transactions' } },\n-  { path: '/rmb-cash-events', component: CashEventPage, meta: { title: '人民币资金', eyebrow: 'Bank cash facts', module: 'transactions' } },\n-  { path: '/access-denied', name: 'access-denied', component: AccessDeniedPage, meta: { accessStatus: true, title: '访问受限', eyebrow: 'Access denied' } },\n-  { path: '/access-status-error', name: 'access-status-error', component: AccessDeniedPage, meta: { accessStatus: true, title: '权限状态', eyebrow: 'Access status' } },\n-]\n-\n const router = createRouter({ history: createWebHistory(), routes })\n-installModalNavigationGuard(router)\n \n router.beforeEach(async to => {\n   if (to.meta.accessStatus) return true\ndiff --git a/frontend/src/utils/routePageState.js b/frontend/src/utils/routePageState.js\nindex cda57300..a78920dd 100644\n--- a/frontend/src/utils/routePageState.js\n+++ b/frontend/src/utils/routePageState.js\n@@ -1,4 +1,4 @@\n-const transientRouteQueryKeys = new Set(['create', 'detail', 'tab', 'edit', 'returnTo'])\n+const transientRouteQueryKeys = new Set(['__workspace', 'create', 'detail', 'tab', 'edit', 'returnTo'])\n const transientModalQueryKeys = new Set(['create', 'edit', 'returnTo'])\n \n export function pageIdentityKey(route) {\n"
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/iss-025-customer-status-labels",
+    "HEAD": "1fac93f09e3b5c578a030df5c0736e5d0552e4cc",
+    "branch": "refs/heads/codex/iss-025-customer-status-labels",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/iss-058-frontend-performance-baseline",
+    "HEAD": "742692a6e4887e4b8352736e69a52b1ebe8d066f",
+    "branch": "refs/heads/codex/measure-iss058-frontend-performance",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/iss002-python-security-bd324-20261031",
+    "HEAD": "fe4245f20ec19ca22db0adeaacf5e8e6d7920061",
+    "branch": "refs/heads/codex/r1-iss002-python-security-bd324-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/iss028-035-category-schema",
+    "HEAD": "901b762fba20ed558f554cfba37175b303f83db9",
+    "branch": "refs/heads/codex/verify-iss028-035-category-schema",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/iss052-csv-import-audit-20261029",
+    "HEAD": "dc2bbbb2b29fbc8ffc26c392659e79319c86d592",
+    "branch": "refs/heads/codex/fix-iss052-csv-import-audit-20261029",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/linux-operations-acceptance-20261104",
+    "HEAD": "4a4f338b09e9a464f1e66c24a905c35c970729bf",
+    "branch": "refs/heads/codex/linux-operations-acceptance-20261104",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/local-operations-closeout-20261105",
+    "HEAD": "250c3b7f55585acccb73b2efc1b0993605be0b0b",
+    "branch": "refs/heads/codex/local-operations-closeout-20261105",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/new-product-reminders-20261105",
+    "HEAD": "10afcf16fbfc1d0c01a175094012b4b696483cfb",
+    "branch": "refs/heads/codex/new-product-reminders-20261105",
+    "status": " M backend/crm/models.py\n M backend/crm/urls.py\n M frontend/src/router.js\n M frontend/src/views/ResourcePage.vue\n",
+    "frontend_diff": "diff --git a/frontend/src/router.js b/frontend/src/router.js\nindex e0f4ccf1..2e1fba3f 100644\n--- a/frontend/src/router.js\n+++ b/frontend/src/router.js\n@@ -26,6 +26,7 @@ const resourceModules = {\n }\n \n export const routes = [\n+  { path: '/new-product-reminders', component: () => import('./components/NewProductReminders.vue'), meta: { title: '新品提醒', module: 'followups' } },\n   { path: '/finance-ledger', component: () => import('./views/FinanceLedgerPage.vue'), meta: { title: '账户资金', eyebrow: 'Account cash', module: 'finance' } },\n   { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units', module: 'trade_units' } },\n   { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics', module: 'reports' } },\n"
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/operations-readiness-batch-20261104",
+    "HEAD": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+    "branch": "refs/heads/codex/operations-readiness-batch-20261104",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/party-version-closeout-20261105",
+    "HEAD": "792edff6b696c4ad1f5bc65f9e91f623b5b964c0",
+    "branch": "refs/heads/codex/party-version-closeout-20261105",
+    "status": " M backend/crm/models.py\n M backend/crm/party_version.py\n M backend/crm/party_version_api.py\n M backend/crm/party_version_models.py\n M backend/crm/postgres_test_cleanup.py\n M backend/crm/quote_party_approval_guard.py\n M backend/crm/serializers.py\n M backend/crm/services/order_lifecycle.py\n M backend/crm/services/purchase_lifecycle.py\n M backend/crm/tests/test_party_version_service.py\n M backend/crm/tests/test_postgres_test_isolation.py\n M backend/crm/tests/test_quote_party_approval_guard.py\n M backend/crm/urls.py\n M frontend/src/components/OrderDetailModal.vue\n M frontend/src/components/PurchaseDetailModal.vue\n M frontend/src/components/QuoteDetailModal.vue\n M frontend/tests/quote-party-change.spec.js\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/pre-uat-iss006-inventory-safety",
+    "HEAD": "dfa36058206fe7021ff6e6192fbbd247fb471947",
+    "branch": "refs/heads/codex/pre-uat-iss006-inventory-safety",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/quote-editor-mobile-actions-20261029",
+    "HEAD": "776d90bcc050bc6ab3ae96a3c8c994e0064e7291",
+    "branch": "refs/heads/codex/fix-quote-editor-mobile-actions-20261029",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r0-d4b2a",
+    "HEAD": "1b593bf3298ab257fafa4a462c96aa58b920e6e8",
+    "status": " M backend/crm/tests/test_sales_data_scope.py\n M docs/PROJECT_ISSUES.md\n M docs/PROJECT_PHASES.md\n M frontend/src/views/FinanceDashboardPage.vue\n M frontend/src/views/PaymentPlanPage.vue\n M frontend/src/views/TransactionPage.vue\n M frontend/tests/finance-contract-navigation.spec.js\n M frontend/tests/payment-plan-filters.spec.js\n M frontend/tests/payment-plan-order-context.spec.js\n M frontend/tests/trade-finance.spec.js\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r0-d4b2a-evidence",
+    "HEAD": "ea49e24b1b78c78b9efe64ded460ccfe7049d754",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-a",
+    "HEAD": "f9a9cfb076f581ecb1e2f758b2284fe4dcf525fd",
+    "status": " M docs/uat-evidence/r1-a/playwright.log\n M docs/uat-evidence/r1-a/server.log\n M docs/uat-evidence/r1-a/vite.log\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-a-fup-01",
+    "HEAD": "f779ed858da3bc4dd468645f5405b0fed2556a8d",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-a-fup-02",
+    "HEAD": "7faafcf142827ee4e94aa1aaa8d04e68e77e3726",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-a-fup-02-analysis",
+    "HEAD": "f9a9cfb076f581ecb1e2f758b2284fe4dcf525fd",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-a-fup-02-fix-01",
+    "HEAD": "da39ea3aa986df9faa12e79b1da3adece03260b7",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-fin-audit-01",
+    "HEAD": "4099c8b081e96899aa927f632c0056bc576c503b",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-fin-p0",
+    "HEAD": "ad3a08ebd47ad4b94ffe8f6ebfed5f083b9ac57e",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-fin-p1",
+    "HEAD": "1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-fin-p2-a",
+    "HEAD": "b79af36dc7140507ef210ea61437dd579ba8de8b",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-hist-01",
+    "HEAD": "b5e46be7863c9756f010df972870bfd0ec154a62",
+    "branch": "refs/heads/codex/r1-hist-01",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss-040-dev",
+    "HEAD": "f308502362fc8bbee1a57d3905b5c12278719a05",
+    "branch": "refs/heads/codex/r1-iss-040-dev",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss002-ledger-refresh-20261101",
+    "HEAD": "486775839413ac2e174378f0e1898b4e8dd67909",
+    "branch": "refs/heads/codex/r1-iss002-ledger-refresh-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss002-python-audit-complete-20261101",
+    "HEAD": "709b8d4c6fa0769173498693586b8dc286b54122",
+    "branch": "refs/heads/codex/r1-iss002-python-audit-complete-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss002-python312-verify-20261031",
+    "HEAD": "04ff4effb17ed1f87ef5feb263a63c060e6b0b72",
+    "branch": "refs/heads/codex/r1-iss002-dependency-audit-retry-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss002-security-audit-final-20261101",
+    "HEAD": "427d2a2c38516a52d460f50e60e0fb635f23a4c2",
+    "branch": "refs/heads/codex/r1-iss002-security-audit-final-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss006-audit-atomicity-20261030",
+    "HEAD": "dfa36058206fe7021ff6e6192fbbd247fb471947",
+    "branch": "refs/heads/codex/r1-iss006-audit-atomicity-20261029",
+    "status": " M backend/crm/views.py\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss006-frontend-storage-chrome-verify",
+    "HEAD": "bf3d4e4fb1d8bf3e5f944071f4336929ff68beae",
+    "branch": "refs/heads/codex/r1-iss006-frontend-storage-chrome-verify",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss006-postgres-concurrency-20261031",
+    "HEAD": "4b43ed561952381bd96dc11abe87392375fb5abd",
+    "branch": "refs/heads/codex/r1-iss006-postgres-concurrency-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss006-postgresql-concurrency-uat-20261101",
+    "HEAD": "10ba6e38a03c955e20be13f303799b30000e6ce3",
+    "branch": "refs/heads/codex/r1-iss006-postgresql-concurrency-uat-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss007-followup-files-uat-20261031",
+    "HEAD": "e3b1eeb6cff69b7b77bc35c83661df052e028b41",
+    "branch": "refs/heads/codex/r1-iss007-followup-files-uat-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss007-ledger-evidence-update-20261101",
+    "HEAD": "8d80fc0c082a3792a27d60677f9c55c86288c2fe",
+    "branch": "refs/heads/codex/r1-iss007-ledger-evidence-update-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss018-postgres-ci-boundary-20261101",
+    "HEAD": "ac0d5a22ebecead70cf479fdee09d2f40335600d",
+    "branch": "refs/heads/codex/r1-iss018-postgres-ci-boundary-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss028-035-category-verify-20261031",
+    "HEAD": "5da8d351129e775563aced753fd05efbfc39d893",
+    "branch": "refs/heads/codex/r1-iss028-035-category-verify-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss028-035-category-verify-bd324-20261031",
+    "HEAD": "ae78826ef9906d56f8211ee983c2a01132551165",
+    "branch": "refs/heads/codex/r1-iss028-035-category-verify-bd324-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss037-print-output-acceptance-20261104",
+    "HEAD": "b3d0d386de70d9efd77bf62cdbd87877fbccbfb8",
+    "branch": "refs/heads/codex/r1-iss037-print-output-acceptance-20261104",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss037-seller-template-freeze-20261103",
+    "HEAD": "b00981200eb01af4bfa8351c4bd636ab1a678b71",
+    "branch": "refs/heads/codex/r1-iss037-seller-template-freeze-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss037-snapshot-audit-20261103",
+    "HEAD": "c88a121298465fcb04e11f9b65ef9ad251eadf3f",
+    "branch": "refs/heads/codex/r1-iss037-snapshot-audit-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss037-unknown-buyer-revision-fix-20261103",
+    "HEAD": "1a9666010c370dda08e2719e2c70caf6ee6c1b11",
+    "branch": "refs/heads/codex/r1-iss037-unknown-buyer-revision-fix-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss039-amount-allocation-fix-20261103",
+    "HEAD": "aadd2ff3a7a15bc2a6601238ac6cea58d921c741",
+    "branch": "refs/heads/codex/r1-iss039-amount-allocation-fix-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss039-reservation-concurrency-20261103",
+    "HEAD": "087f6098c27050a1d7180fe9c85eef6417063c0b",
+    "branch": "refs/heads/codex/r1-iss039-reservation-concurrency-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss039-shared-cost-audit-20261103",
+    "HEAD": "2d5164287672d9a57a6496761c3ea0d026088072",
+    "branch": "refs/heads/codex/r1-iss039-shared-cost-audit-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss045-python312-verify-20261031",
+    "HEAD": "a2aaf7d53e73bba8bb4414f8f9c2f8020c88ffb1",
+    "branch": "refs/heads/codex/r1-iss045-python312-verify-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss045-qa-tools-bd324-20261031",
+    "HEAD": "4ddaa6b7bdd1a9f21443f687e4ff90f46aa02629",
+    "branch": "refs/heads/codex/r1-iss045-qa-tools-bd324-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss052-audit-hardening-20261031",
+    "HEAD": "70fe8ee1d4ffbd7786f1908804ea7142461d5286",
+    "branch": "refs/heads/codex/r1-iss052-audit-hardening-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss052-csv-limit-failure-audit-20261029",
+    "HEAD": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+    "branch": "refs/heads/codex/r1-iss052-csv-limit-failure-audit-20261029",
+    "status": " M backend/config/settings.py\n M backend/crm/tests/test_safe_csv_import.py\n M backend/crm/views.py\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss052-http-413-bd324-20261031",
+    "HEAD": "8cff96af9f1f2e09dcbc0a29f361017ee23ffb75",
+    "branch": "refs/heads/codex/r1-iss052-http-413-bd324-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss052-import-audit-fix-20261031",
+    "HEAD": "60afd938ae10ebced75008dc58b0f11b2c32b6ef",
+    "branch": "refs/heads/codex/r1-iss052-import-audit-fix-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss052-postgresql-uat-20261101",
+    "HEAD": "a34bed75edd4e4b07c7a7780f6821a650b06f68c",
+    "branch": "refs/heads/codex/r1-iss052-postgresql-uat-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss105-actual-cash-audit-20261103",
+    "HEAD": "1cad93d0cb0297c33f764f6cb68d5c610512d9e4",
+    "branch": "refs/heads/codex/r1-iss105-actual-cash-audit-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss105-bank-duplicate-detection-20261103",
+    "HEAD": "8e99dc1abcf1f4f9fbd9d6cac57258990c12d3e8",
+    "branch": "refs/heads/codex/r1-iss105-bank-duplicate-detection-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss105-financial-audit-20261031",
+    "HEAD": "7f00efd8a019d1a273675287f53fa73783d73695",
+    "branch": "refs/heads/codex/r1-iss105-financial-audit-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-iss105-independent-bank-fee-fix-20261103",
+    "HEAD": "321cb77d0179888a4788408d32c77d789504fbdd",
+    "branch": "refs/heads/codex/r1-iss105-independent-bank-fee-fix-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-issue-ledger-update-20261031",
+    "HEAD": "dd3b31445ab9dddb42c7ac8d095692df45efde24",
+    "branch": "refs/heads/codex/r1-issue-ledger-update-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-ledger-review-accept-20261031",
+    "HEAD": "c8eb1efa2399768ef8933ca402120bee21ebe7f6",
+    "branch": "refs/heads/codex/r1-ledger-review-accept-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-ledger-sync-20261101",
+    "HEAD": "bbf98726b550bdb6753d4c72ed7cbd58203e0c20",
+    "branch": "refs/heads/codex/r1-ledger-sync-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-postgres-auth-contract-20261102",
+    "HEAD": "784b9230906eccdd99fb2ba8ea618e78ea4e863a",
+    "branch": "refs/heads/codex/r1-postgres-auth-contract-20261102",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-postgres-integration-validation-20261102",
+    "HEAD": "8d3ca5faa16fb74de95dbc716f5556a5d51bbe79",
+    "branch": "refs/heads/codex/r1-postgres-integration-validation-20261102",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-postgres-supplier-fixtures-20261101",
+    "HEAD": "e2e7e017a5a2675af44b47fc93650b3837971755",
+    "branch": "refs/heads/codex/r1-postgres-supplier-fixtures-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-postgres-test-isolation-20261101",
+    "HEAD": "e280e5d140b5255bd51f5d0be428f36e87336139",
+    "branch": "refs/heads/codex/r1-postgres-test-isolation-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104",
+    "HEAD": "10afcf16fbfc1d0c01a175094012b4b696483cfb",
+    "branch": "refs/heads/codex/r1-prelaunch-consolidation-20261104",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-02140bf",
+    "HEAD": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "status": " M docs/uat-evidence/iss-017-private-files/certificate-desktop.png\n M docs/uat-evidence/iss-017-private-files/certificate-narrow.png\n M docs/uat-evidence/iss-039-integration/authorized-1440px.png\n M docs/uat-evidence/iss-039-integration/authorized-700px.png\n M docs/uat-evidence/iss-039-integration/authorized-refresh-1440px.png\n M docs/uat-evidence/iss-039-integration/no-permission-700px.png\n M docs/uat-evidence/iss-039-integration/readonly-1440px.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1024px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1440px.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-700.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-700.png\n M docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-narrow.png\n M docs/uat-evidence/review-integration-batch-20261104/run-postgres-regression.py\n M docs/uat-evidence/review-integration-batch-20261104/seed_history_backup.py\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/final-integrated-447d",
+    "HEAD": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+    "status": " M docs/uat-evidence/iss-017-private-files/certificate-desktop.png\n M docs/uat-evidence/iss-017-private-files/certificate-narrow.png\n M docs/uat-evidence/iss-039-integration/authorized-1440px.png\n M docs/uat-evidence/iss-039-integration/authorized-700px.png\n M docs/uat-evidence/iss-039-integration/authorized-refresh-1440px.png\n M docs/uat-evidence/iss-039-integration/no-permission-700px.png\n M docs/uat-evidence/iss-039-integration/readonly-1440px.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1024px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1440px.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-700.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-700.png\n M docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-narrow.png\n M docs/uat-evidence/review-integration-batch-20261104/run-postgres-regression.py\n M docs/uat-evidence/review-integration-batch-20261104/seed_history_backup.py\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/lrv-core-76c98873",
+    "HEAD": "76c98873f8ba4e521941f497fbd170c9b2bdb689",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/lrv-core-final-c95601ee",
+    "HEAD": "c95601eebfc83597da044ca60a0ad362c57237d0",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/lrv-final-732d756c",
+    "HEAD": "732d756cec38c139187e7d9c49de771d97df93d4",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/lrv-final-a46c26f",
+    "HEAD": "a46c26f796fe6cc4c4a6a07dc70fe92cfda34114",
+    "status": " M docs/uat-evidence/iss-017-private-files/certificate-desktop.png\n M docs/uat-evidence/iss-017-private-files/certificate-narrow.png\n M docs/uat-evidence/iss-039-integration/authorized-1440px.png\n M docs/uat-evidence/iss-039-integration/authorized-700px.png\n M docs/uat-evidence/iss-039-integration/authorized-refresh-1440px.png\n M docs/uat-evidence/iss-039-integration/no-permission-700px.png\n M docs/uat-evidence/iss-039-integration/readonly-1440px.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1024px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1440px.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-700.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-700.png\n M docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-narrow.png\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/lrv-final-d5a6a233",
+    "HEAD": "d5a6a23394397775d3aab0f237163d4000bce224",
+    "status": " M docs/uat-evidence/iss-017-private-files/certificate-desktop.png\n M docs/uat-evidence/iss-017-private-files/certificate-narrow.png\n M docs/uat-evidence/iss-039-integration/authorized-1440px.png\n M docs/uat-evidence/iss-039-integration/authorized-700px.png\n M docs/uat-evidence/iss-039-integration/authorized-refresh-1440px.png\n M docs/uat-evidence/iss-039-integration/no-permission-700px.png\n M docs/uat-evidence/iss-039-integration/readonly-1440px.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1024px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1440px.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-700.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-700.png\n M docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-narrow.png\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/lrv-final-d7d92765",
+    "HEAD": "d7d927658e26727b6ebef135708d77278b9ee258",
+    "status": " M docs/uat-evidence/iss-017-private-files/certificate-desktop.png\n M docs/uat-evidence/iss-017-private-files/certificate-narrow.png\n M docs/uat-evidence/iss-039-integration/authorized-1440px.png\n M docs/uat-evidence/iss-039-integration/authorized-700px.png\n M docs/uat-evidence/iss-039-integration/authorized-refresh-1440px.png\n M docs/uat-evidence/iss-039-integration/no-permission-700px.png\n M docs/uat-evidence/iss-039-integration/readonly-1440px.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png\n M docs/uat-evidence/iss-042-shared-reports/employee-700px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1024px.png\n M docs/uat-evidence/iss-042-shared-reports/manager-1440px.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-bank-events-700.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-1440.png\n M docs/uat-evidence/iss-048-finance-drill/finance-drill-700.png\n M docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/categories-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/contacts-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/customers-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/follow-ups-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/home-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/products-narrow.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-desktop.png\n M docs/uat-evidence/r1-ux-copy-foundation/screenshots/skus-narrow.png\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/quote-boundary-native-02140bf",
+    "HEAD": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "status": " M docs/uat-evidence/review-integration-batch-20261104/seed_history_backup.py\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/quote-boundary-sandbox-02140bf",
+    "HEAD": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-prelaunch-consolidation-20261104/.tmp/role-pg-clean-9af",
+    "HEAD": "a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f",
+    "status": " M docs/uat-evidence/review-integration-batch-20261104/run-postgres-regression.py\n",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-rule-gap-batch-02-integration-20261103",
+    "HEAD": "d5abc64750d00c89d685bf12c0f8f67d4ba10a97",
+    "branch": "refs/heads/codex/r1-rule-gap-batch-02-integration-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-rule-gap-fix-integration-20261103",
+    "HEAD": "a55469c1b07e4f13037c6644c69d8a35ef0496a0",
+    "branch": "refs/heads/codex/r1-rule-gap-fix-integration-20261103",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-status-reconcile-bd324-20261031",
+    "HEAD": "ae0f7e073d2ef6cb8b98164920697ecd4bac73be",
+    "branch": "refs/heads/codex/r1-status-reconcile-bd324-20261031",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/r1-unified-github-ci-post-oct20-20261101",
+    "HEAD": "3093c22c6e0a623499a98d5a602f7b1cb5758e8e",
+    "branch": "refs/heads/codex/unified-github-ci-post-oct20-20261101",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/review-iss025-status-consistency",
+    "HEAD": "d5d0d15c03d55a718f11a298e08f29a9b9d0c4b0",
+    "branch": "refs/heads/codex/review-iss025-status-consistency",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/review-iss051-business-auth-design-20261029",
+    "HEAD": "be0a0a392b27efbbcf41a8feed82fb493d52d2a7",
+    "branch": "refs/heads/codex/review-iss051-business-auth-design-20261029",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/ux-copy-foundation",
+    "HEAD": "f82554686478f62e3a60ed69bb4144e8c052ac7c",
+    "branch": "refs/heads/codex/ux-copy-foundation",
+    "status": "",
+    "frontend_diff": ""
+  },
+  {
+    "worktree": "D:/Codex项目/森爵照明管理系统/.worktrees/ux-copy-sales-purchase",
+    "HEAD": "58577c809168a36c5b8f0d331b795d4c8d11f9f2",
+    "branch": "refs/heads/codex/ux-copy-sales-purchase",
+    "status": "",
+    "frontend_diff": ""
+  }
+]

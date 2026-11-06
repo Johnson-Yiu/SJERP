@@ -35,7 +35,7 @@ import { addDays, daysBetween } from '../utils/orderDate'
 import { clearModalRoute, modalOrigin } from '../utils/modalNavigation'
 import { orderDetailLocation, quoteDetailLocation, workbenchCloseLocation } from '../utils/detailNavigation'
 import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
-import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
+import { routeDataQuery, routeDataQuerySignature, withoutModalActionQuery } from '../utils/routePageState'
 import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'
 import { useAccessControl } from '../accessControl'
 
@@ -66,6 +66,7 @@ const quoteDetailId = ref(null), orderDetailId = ref(null)
 const returnToOrderDetailId = ref(null)
 const orderWorkbenchRefresh = ref(0)
 const quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)
+let savedQuoteForClose = null
 const orderDraft = ref(null), workbenchRefresh = ref(0)
 const orderLeadTimeDays = ref('')
 const expandedQuoteNodes = ref(new Set())
@@ -200,7 +201,15 @@ function setOrderLeadTimeDays() {
 }
 const closeEditor = () => guard.requestClose(discardEditor)
 function discardEditor() { sourceQuoteRequest += 1; sourceQuoteLoading.value = false; open.value = false; returnToOrderDetailId.value = null; void clearModalRoute(router, route) }
-function closeQuoteEditor() { quoteEditorOpen.value = false; void clearModalRoute(router, route) }
+async function closeQuoteEditor() {
+  quoteEditorOpen.value = false
+  const saved = savedQuoteForClose
+  savedQuoteForClose = null
+  if (!saved || modalOrigin(route)) { await clearModalRoute(router, route); return }
+  const detail = withDocumentDetailQuery(route, saved.id)
+  await workspaceNavigation.adoptObject({ ...detail, query: withoutModalActionQuery(detail.query) })
+  await load()
+}
 async function changeCurrency(event) {
   const currency = event.target.value
   event.target.value = form.currency
@@ -268,9 +277,15 @@ async function save() {
     const detailId = returnToOrderDetailId.value || (isOrder.value ? response.data.id : null)
     open.value = false
     notify('单据已保存')
-    await clearModalRoute(router, route)
-    await load()
-    if (detailId && !origin) { if (workspaceNavigation.workspace) await workspaceNavigation.adoptObject(withDocumentDetailQuery(route, detailId)); else await router.push(withDocumentDetailQuery(route, detailId)) }
+    if (workspaceNavigation.workspace && detailId && !origin) {
+      const detail = withDocumentDetailQuery(route, detailId)
+      await workspaceNavigation.adoptObject({ ...detail, query: withoutModalActionQuery(detail.query) })
+      await load()
+    } else {
+      await clearModalRoute(router, route)
+      await load()
+      if (detailId && !origin) await router.push(withDocumentDetailQuery(route, detailId))
+    }
     if (detailId && returnToOrderDetailId.value) orderWorkbenchRefresh.value += 1
     returnToOrderDetailId.value = null
   } catch (e) { notify(e.message, true) } finally { saving.value = false }
@@ -278,10 +293,11 @@ async function save() {
 async function handleQuoteSaved(row) {
   const origin = modalOrigin(route)
   notify(`报价 ${row.quote_no} 已保存`)
+  if (workspaceNavigation.workspace) { savedQuoteForClose = row; return }
   await clearModalRoute(router, route)
   await load()
   if (quoteDetailId.value) workbenchRefresh.value += 1
-  if (!origin) { if (workspaceNavigation.workspace) await workspaceNavigation.adoptObject(withDocumentDetailQuery(route, row.id)); else await router.push(withDocumentDetailQuery(route, row.id)) }
+  if (!origin) await router.push(withDocumentDetailQuery(route, row.id))
 }
 async function handleQuoteStatusUpdated() { await load() }
 async function exportQuote(row) { if (!can('quotes', 'export')) return; try { await downloadQuoteExport(row.id, row.quote_no) } catch (e) { notify(`导出 ${row.quote_no} 失败：${e.message}`, true) } }

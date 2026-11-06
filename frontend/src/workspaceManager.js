@@ -87,7 +87,8 @@ export function createWorkspaceManager(rootRouter) {
       if (tab.closed) return false
       if (tab.retargeting) return true
       const targetKey = businessIdentity(to)
-      if (!tab.restoringHistory && from.path === to.path && from.query.detail && targetKey === `${to.path}:list`) {
+      const leavingTask = from.query.detail || (from.query.create === '1' && !from.query.returnTo)
+      if (!tab.restoringHistory && leavingTask && from.path === to.path && targetKey === `${to.path}:list`) {
         const list = tabs.find(candidate => candidate !== tab && candidate.key === targetKey)
         if (list) {
           await close([tab.id], { focus: list, replace: tab.navigationMode === 'replace' })

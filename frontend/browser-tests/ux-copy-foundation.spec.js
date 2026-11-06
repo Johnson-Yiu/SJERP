@@ -21,10 +21,12 @@ for (const [name, route, title] of pages) {
     test(`${name} copy renders in Chrome at ${viewport.width}px`, async ({ page }) => {
       await mockApi(page, { empty: true })
       await page.setViewportSize({ width: viewport.width, height: viewport.height })
-      await page.goto(route)
+      await page.goto(route, { waitUntil: 'domcontentloaded' })
       await expect(page.locator('.page-identity h1')).toHaveText(title)
       await expect(page.locator('.content')).toBeVisible()
-      await page.waitForLoadState('networkidle')
+      const workspace = page.getByRole('tabpanel', { name: title, exact: true })
+      await expect(workspace).toBeVisible()
+      await expect(workspace.locator('.spinner, [aria-busy="true"]')).toHaveCount(0)
 
       const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth)
       expect(pageWidth).toBeLessThanOrEqual(viewport.width + 1)

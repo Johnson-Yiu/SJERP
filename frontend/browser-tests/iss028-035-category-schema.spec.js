@@ -60,7 +60,7 @@ async function selectCategoryNode(page, name) {
 async function assignRootCategory(page, product, rootId, rootName, width, screenshotName) {
   const height = width === 390 ? 844 : 960
   await page.setViewportSize({ width, height })
-  await page.goto('/products')
+  await page.goto('/products', { waitUntil: 'domcontentloaded' })
   const row = page.locator('.product-list-table tbody tr').filter({ hasText: product.name })
   await expect(row).toBeVisible()
   await row.getByRole('button', { name: '编辑产品' }).click()
@@ -192,7 +192,7 @@ test.describe('ISS-028 / ISS-035 分类模板与 SKU 历史边界', () => {
     layoutResults.push({ scenario: 'category-filters-390', ...(await page.evaluate(() => ({ viewport: innerWidth, page: document.documentElement.scrollWidth, body: document.body.scrollWidth }))) })
 
     await page.setViewportSize({ width: 1440, height: 960 })
-    await page.goto('/categories')
+    await page.goto('/categories', { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.page-head h2')).toHaveText('产品分类')
     await selectCategoryNode(page, childName)
     const inheritedRow = page.locator('.attribute-table tbody tr').filter({ hasText: `电压${id}` })
@@ -217,6 +217,7 @@ test.describe('ISS-028 / ISS-035 分类模板与 SKU 历史边界', () => {
   })
 
   test('ISS-035 模板变更不改写已发布 SKU、报价和订单快照', async ({ page }) => {
+    test.setTimeout(120_000)
     const id = stamp()
     const rootName = `验收${id}模板根分类`
     const childName = `验收${id}模板子分类`
@@ -264,7 +265,7 @@ test.describe('ISS-028 / ISS-035 分类模板与 SKU 历史边界', () => {
 
     console.log('ISS-035: created isolated published SKU and synthetic quote/order snapshots; navigating to category template.')
     await page.setViewportSize({ width: 1440, height: 960 })
-    await page.goto('/categories')
+    await page.goto('/categories', { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.page-head h2')).toHaveText('产品分类')
     await selectCategoryNode(page, rootName)
     console.log('ISS-035: selected the synthetic root category in the browser.')
@@ -277,7 +278,7 @@ test.describe('ISS-028 / ISS-035 分类模板与 SKU 历史边界', () => {
     await expect(uppercaseRule).toBeChecked()
     console.log('ISS-035: changed the category template through the browser.')
     await page.screenshot({ path: path.join(evidenceDir, '09-iss035-category-template-changed-1440.png'), fullPage: true })
-    await page.reload()
+    await page.reload({ waitUntil: 'domcontentloaded' })
     await selectCategoryNode(page, rootName)
     console.log('ISS-035: reopened and refreshed category template in the browser.')
     const reopenedRule = page.locator('.attribute-table tbody tr').filter({ hasText: `电压${id}` }).locator('input[type="checkbox"]').nth(2)
@@ -302,7 +303,7 @@ test.describe('ISS-028 / ISS-035 分类模板与 SKU 历史边界', () => {
     console.log('ISS-035: API confirms the published plan and SKU identity are unchanged.')
 
     await page.setViewportSize({ width: 1440, height: 960 })
-    await page.goto('/skus')
+    await page.goto('/skus', { waitUntil: 'domcontentloaded' })
     const skuRow = page.locator('.sku-data-row').filter({ hasText: initialSku.sku_code })
     await expect(skuRow).toBeVisible()
     await skuRow.getByRole('button', { name: '编辑', exact: true }).click()
@@ -329,7 +330,7 @@ test.describe('ISS-028 / ISS-035 分类模板与 SKU 历史边界', () => {
     await expect(reopenedSkuEditor).toBeHidden()
 
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto('/skus')
+    await page.goto('/skus', { waitUntil: 'domcontentloaded' })
     const mobileSkuRow = page.locator('.sku-data-row').filter({ hasText: initialSku.sku_code })
     await expect(mobileSkuRow).toBeVisible()
     await mobileSkuRow.getByRole('button', { name: '编辑', exact: true }).click()

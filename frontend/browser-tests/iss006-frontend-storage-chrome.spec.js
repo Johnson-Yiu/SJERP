@@ -17,20 +17,7 @@ function installStorageFault({ mode }) {
   const methodNames = ['getItem', 'setItem', 'removeItem']
   const originalMethods = Object.fromEntries(methodNames.map(name => [name, Object.getOwnPropertyDescriptor(Storage.prototype, name)]))
 
-  window.__iss006GeneratedIds = []
-  try {
-    const originalRandomUUID = window.crypto.randomUUID.bind(window.crypto)
-    Object.defineProperty(window.crypto, 'randomUUID', {
-      configurable: true,
-      value() {
-        const id = originalRandomUUID()
-        window.__iss006GeneratedIds.push(id)
-        return id
-      },
-    })
-  } catch {
-    // The test separately verifies the persisted request ID on retry.
-  }
+  window.__iss006StorageCandidateId = null
 
   window.__iss006RestoreStorage = () => {
     Object.defineProperty(window, 'sessionStorage', originalWindowDescriptor)
@@ -52,6 +39,7 @@ function installStorageFault({ mode }) {
     writable: true,
     value(key, ...args) {
       if (String(key).startsWith(prefix)) {
+        if (method === 'setItem') window.__iss006StorageCandidateId = JSON.parse(args[0]).requestId
         throw new DOMException(`Blocked ${method} for test.`, 'SecurityError')
       }
       return originalMethods[method].value.call(this, key, ...args)
@@ -111,7 +99,7 @@ async function beginCase(page, operation, caseName, faultMode) {
   const route = operation === 'receive'
     ? `/purchase-orders?detail=${fixture.purchase_id}`
     : `/orders?detail=${fixture.order_id}`
-  await page.goto(route)
+  await page.goto(route, { waitUntil: 'domcontentloaded' })
   currentTrace.user_agent = await page.evaluate(() => navigator.userAgent)
   expect(currentTrace.user_agent).toContain('Chrome/')
 
@@ -212,7 +200,7 @@ for (const operation of ['receive', 'ship']) {
     await workflow.submit.click()
     await expectBlockedAndReady(workflow)
     expect(currentTrace.requests).toHaveLength(0)
-    currentTrace.candidate_id = await page.evaluate(() => window.__iss006GeneratedIds[0] || null)
+    currentTrace.candidate_id = await page.evaluate(() => window.__iss006StorageCandidateId)
     expect(currentTrace.candidate_id).toMatch(/^[0-9a-f-]{36}$/i)
     await screenshot(page, `${operation}-set-item-blocked.png`)
     await page.evaluate(() => window.__iss006RestoreStorage())

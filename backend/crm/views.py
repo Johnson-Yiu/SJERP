@@ -2114,6 +2114,8 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         order = self.get_object()
+        if hasattr(order, "sales_import_source"):
+            return Response({"detail": "导入销售草稿需保留来源编号，不能删除；请编辑或通过订单流程取消。"}, status=status.HTTP_400_BAD_REQUEST)
         if hasattr(order, "history_continuation"):
             return Response({"detail": "历史接续订单必须保留，请使用取消或审计更正。"}, status=status.HTTP_400_BAD_REQUEST)
         if order.status != "draft":

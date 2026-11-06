@@ -17,6 +17,12 @@ from .session_views import csrf, sign_in, sign_out
 from .new_product_reminders import ReminderViewSet
 from .party_version_api import (PartyDetailsView, QuotePartyChangeView, QuotePartyChangeDecisionView,
     DocumentPartyChangeView, DocumentPartyChangeDecisionView)
+from .sales_order_import import (
+    SalesOrderImportExecuteView,
+    SalesOrderImportPreviewView,
+    SalesOrderImportResultView,
+    SalesOrderImportTemplateView,
+)
 
 router = DefaultRouter()
 router.register("new-product-reminders", ReminderViewSet, basename="new-product-reminder")
@@ -96,6 +102,10 @@ urlpatterns = [
     path("import/csv/", import_csv),
     path("import/csv/preview/", import_csv_preview),
     path("import/csv/execute/", import_csv_execute),
+    path("import/orders/template/", SalesOrderImportTemplateView.as_view(), name="sales-order-import-template"),
+    path("import/orders/preview/", SalesOrderImportPreviewView.as_view(), name="sales-order-import-preview"),
+    path("import/orders/execute/", SalesOrderImportExecuteView.as_view(), name="sales-order-import-execute"),
+    path("import/orders/results/<int:batch_id>/", SalesOrderImportResultView.as_view(), name="sales-order-import-result"),
     path("import/history-preflight/", HistoryImportPreflightView.as_view(), name="history-import-preflight"),
     path("import/history-takeovers/", HistoryTakeoverListCreateView.as_view(), name="history-takeover-list-create"),
     path("import/history-takeovers/template/", HistoryTakeoverTemplateView.as_view(), name="history-takeover-template"),

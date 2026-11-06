@@ -1,5 +1,9 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## 2026-11-08 SALES-ORDER-IMPORT-01 集成
+
+以 FIRST-RELEASE-CONSOLIDATION-02 的 `f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a` 为基线接入 `2bff4790f67b81b35a449f143b8cddb6b24e1821`。保留原销售订单 XLSX 导入行为，新增重复确认时对当前操作者及订单数据范围的校验，并以 `0119_merge_sales_order_import` 汇合主体版本 `0110` 支线、历史提醒和销售导入 `0110` 支线。相关验收：SQLite 7 项通过、PostgreSQL 17.11 9/9、真实 Chrome codex 超管 1/1，前端定向 9/9。实际 CSV、XLSX 和桌面/窄屏截图保存在 [验收证据](uat-evidence/sales-order-import-01/README.md)。本地全量和 GitHub Actions 为 `NOT_RUN`；等待独立复审，不部署、不导入真实业务数据。
+
 ## 2026-11-05 新授权并行开发（待实施）
 
 用户明确授权 `NEW-PRODUCT-REMINDERS-01` 和 `INTERNAL-WORKSPACE-TABS-01` 并行开发，均从固定起点 `10afcf16fbfc1d0c01a175094012b4b696483cfb` 分别创建独立工作树和分支 `codex/new-product-reminders-20261105`、`codex/internal-workspace-tabs-20261105`。这里登记的是授权和计划，不代表分支已创建、功能已实现或验收通过。此次标签页授权替代旧的“全部 Issue 修复后再开发”排期；历史阶段中的当轮排除仍为当时记录。

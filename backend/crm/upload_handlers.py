@@ -12,6 +12,8 @@ _CSV_IMPORT_PATHS = frozenset({
     "/api/import/csv/preview",
     "/api/import/csv/execute",
     "/api/import/history-preflight",
+    "/api/import/orders/preview",
+    "/api/import/orders/execute",
 })
 
 

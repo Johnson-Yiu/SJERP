@@ -1,5 +1,9 @@
 # SUNJACK-ERP 项目问题台账
 
+## 2026-11-08 SALES-ORDER-IMPORT-01 集成修复
+
+从 `f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a` 接入来源 `2bff4790f67b81b35a449f143b8cddb6b24e1821`。重复确认已有批次前复用结果查询的操作人和当前订单客户范围校验；受限销售账号收窄范围后再次确认被拒绝且无订单信息，原范围下重复确认仍返回同一结果、不重复建单。保留主体版本与销售导入两条 `0110`，新增 `0119` 迁移汇合。定向 SQLite 7/7 通过、隔离 PostgreSQL 17.11 为 9/9、真实 Chrome codex 超管下载 XLSX 模板并导入/下载实际 CSV；证据见 [验收报告](uat-evidence/sales-order-import-01/README.md)。按要求跳过本地全量及 GitHub Actions；不改既有 Issue 状态、不启用正式 RBAC。
+
 ## 2026-11-05 新增授权需求（待开发）
 
 以下为用户当日明确授权的新工作包，状态均为 `AUTHORIZED_NOT_STARTED`；不是已完成成果，也不改变现有 ISS 状态或关闭条件。已检索本台账与阶段计划，未发现同名需求记录；不新建重复 ISS 编号。两包固定起点均为 `10afcf16fbfc1d0c01a175094012b4b696483cfb`，分别使用独立工作树。

@@ -10,6 +10,8 @@ import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 const entity = ref('customers'), file = ref(null), fileInput = ref(null), templates = ref({}), previewing = ref(false), confirming = ref(false), executing = ref(false), result = ref(null), error = ref('')
 const templateLoading = ref(false), templateError = ref(''), phase = ref('idle'), errorPage = ref(1)
+const importMode = ref('csv'), orderFile = ref(null), orderFileInput = ref(null), orderTemplateLoading = ref(false)
+const orderPreviewing = ref(false), orderConfirming = ref(false), orderExecuting = ref(false), orderResult = ref(null), orderError = ref(''), orderPhase = ref('idle')
 let version = 0, alive = true, retryOfBatchId = null
 const { can } = useAccessControl()
 const mayImport = computed(() => can('imports', 'import'))
@@ -19,7 +21,11 @@ const types = { customers: ['客户', '按客户编号匹配'], products: ['产�
 const destinations = { customers: '/customers', products: '/products', skus: '/skus', transactions: '/transactions' }
 const headers = computed(() => Array.isArray(templates.value[entity.value]) ? templates.value[entity.value] : [])
 const canExecute = computed(() => mayImport.value && phase.value === 'ready' && Boolean(result.value?.preview_token) && !result.value?.errors?.length)
+const canExecuteOrders = computed(() => mayImport.value && orderPhase.value === 'ready' && Boolean(orderResult.value?.preview_token) && Number(orderResult.value?.valid_orders) > 0)
+const orderBusy = computed(() => orderPreviewing.value || orderConfirming.value || orderExecuting.value)
+const orderStatusCopy = computed(() => ({ idle: '尚未选择文件', selected: '文件已选择，尚未校验', previewing: '正在上传并校验，未写入业务数据', invalid: '没有可导入的完整订单', ready: '校验完成，可确认创建草稿', confirming: '等待确认创建销售草稿', executing: '正在创建销售草稿，请勿离开', completed: '导入结果已保存', 'preview-error': '预览失败，请检查文件后重试', 'execute-error': '提交结果待核对，请先查看订单管理' }[orderPhase.value]))
 const errors = computed(() => result.value?.errors || [])
+const orderErrors = computed(() => orderResult.value?.errors || [])
 function errorCopy(message) { return message === 'Product matching query does not exist.' ? '找不到所引用的产品，请核对 product_code。' : message }
 const visibleErrors = computed(() => errors.value.slice((errorPage.value - 1) * 20, errorPage.value * 20))
 const statusCopy = computed(() => ({ idle: '尚未选择文件', selected: '文件已选择，尚未校验', previewing: '正在上传并校验，尚未写入', invalid: '校验未通过，尚未写入', ready: '校验通过，尚未写入', confirming: '等待确认正式写入', executing: '正在执行导入，请勿离开', completed: '导入完成，已写入数据库', 'preview-error': '预览失败，请检查后重试', 'execute-error': '未确认导入完成，请先核对记录' }[phase.value]))
@@ -35,14 +41,77 @@ async function loadTemplates() {
 function invalidatePreview() { version++; result.value = null; error.value = ''; errorPage.value = 1; phase.value = file.value ? 'selected' : 'idle' }
 function choose(e) { if (busy.value) return; retryOfBatchId = null; file.value = e.target.files[0] || null; invalidatePreview() }
 watch(entity, () => { retryOfBatchId = null; file.value = null; if (fileInput.value) fileInput.value.value = ''; invalidatePreview() }, { flush: 'sync' })
+function selectOrderFile(event) {
+  if (orderBusy.value) return
+  orderFile.value = event.target.files[0] || null
+  orderResult.value = null; orderError.value = ''; orderPhase.value = orderFile.value ? 'selected' : 'idle'
+}
+function clearOrderPreview() {
+  orderResult.value = null; orderError.value = ''; orderPhase.value = orderFile.value ? 'selected' : 'idle'
+}
 function downloadCsv(text, filename) {
   const url = URL.createObjectURL(new Blob(['\ufeff' + text], { type: 'text/csv;charset=utf-8' }))
   const link = document.createElement('a'); link.href = url; link.download = filename; link.click()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob), link = document.createElement('a')
+  link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
 function downloadTemplate() {
   if (templateLoading.value || !headers.value.length) return
   downloadCsv(headers.value.join(',') + '\r\n', `${entity.value}_template.csv`)
+}
+async function downloadOrderTemplate() {
+  if (orderTemplateLoading.value || !mayImport.value) return
+  orderTemplateLoading.value = true; orderError.value = ''
+  try {
+    const response = await api.get('/import/orders/template/', { responseType: 'blob' })
+    if (alive) downloadBlob(response.data, 'sales-order-import-template.xlsx')
+  } catch (e) { if (alive) orderError.value = e.message }
+  finally { if (alive) orderTemplateLoading.value = false }
+}
+async function previewOrders() {
+  if (orderBusy.value) return
+  if (!mayImport.value) { orderError.value = '当前账号没有销售订单导入权限。'; return }
+  if (!orderFile.value) { orderError.value = '请先选择销售订单 XLSX 文件。'; return }
+  orderPreviewing.value = true; orderError.value = ''; orderResult.value = null; orderPhase.value = 'previewing'
+  const data = new FormData(); data.append('file', orderFile.value)
+  try {
+    const response = (await api.post('/import/orders/preview/', data)).data
+    if (!Array.isArray(response.errors) || !Array.isArray(response.orders) || ![response.total_rows, response.total_orders, response.valid_orders, response.invalid_orders].every(n => Number.isInteger(n) && n >= 0) || response.valid_orders + response.invalid_orders !== response.total_orders || response.orders.length !== response.total_orders || (response.valid_orders > 0 && !response.preview_token)) throw new Error('预览结果不完整，请重新上传并校验。')
+    orderResult.value = response
+    orderPhase.value = response.valid_orders > 0 ? 'ready' : 'invalid'
+  } catch (e) { orderError.value = e.message; orderPhase.value = 'preview-error' }
+  finally { orderPreviewing.value = false }
+}
+function downloadOrderFailures() {
+  if (!orderErrors.value.length) return
+  const cell = value => {
+    const raw = String(value ?? '')
+    const safe = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw
+    return `"${safe.replaceAll('"', '""')}"`
+  }
+  const csv = ['表格行号,来源订单编号,错误原因', ...orderErrors.value.map(item => [item.row, item.key || '', item.message].map(cell).join(','))].join('\r\n')
+  downloadCsv(csv, 'sales-order-import-errors.csv')
+}
+async function executeOrders() {
+  if (orderBusy.value || !canExecuteOrders.value) return
+  const previewResult = orderResult.value, selectedFile = orderFile.value
+  orderConfirming.value = true; orderPhase.value = 'confirming'
+  try {
+    const invalidNote = previewResult.invalid_orders ? `另有 ${previewResult.invalid_orders} 张订单含错误，将整单跳过。` : ''
+    const approved = await confirmDialog({ title: '确认导入销售草稿', message: `将创建 ${previewResult.valid_orders} 张销售订单草稿，共 ${previewResult.total_rows} 条明细。${invalidNote}导入不会确认订单、占库存、生成应收计划或登记发货。`, confirmText: '确认导入' })
+    if (!approved || !mayImport.value) { orderPhase.value = 'ready'; return }
+    orderExecuting.value = true; orderPhase.value = 'executing'; orderError.value = ''
+    const data = new FormData(); data.append('file', selectedFile); data.append('preview_token', previewResult.preview_token)
+    const response = (await api.post('/import/orders/execute/', data)).data
+    if (!response.batch_id || !Array.isArray(response.errors) || !Array.isArray(response.orders) || ![response.total_rows, response.total_orders, response.created_orders, response.failed_orders].every(n => Number.isInteger(n) && n >= 0) || response.created_orders + response.failed_orders !== response.total_orders) throw new Error('返回结果不完整，请核对订单管理后重新预览。')
+    orderResult.value = { ...response, completed: true }; orderPhase.value = 'completed'
+  } catch (e) {
+    orderError.value = `${e.message} 请核对订单管理后重新预览，不要直接重复确认。`; orderPhase.value = 'execute-error'
+  } finally { orderConfirming.value = false; orderExecuting.value = false }
 }
 async function preview() {
   if (busy.value) return
@@ -92,9 +161,36 @@ async function execute() {
 
 <template>
   <div>
-    <div class="page-head"><div><h2>数据导入</h2><p>先校验 CSV，再确认写入；预览不会保存业务数据。</p></div><RouterLink class="history-takeover-link" to="/history-takeover">受控历史资料承接</RouterLink></div>
+    <div class="page-head"><div><h2>数据导入</h2><p>上传文件并预览校验；确认后再写入业务数据。</p></div><RouterLink class="history-takeover-link" to="/history-takeover">历史资料预检与承接</RouterLink></div>
     <div v-if="!mayImport" class="result error-result" role="status"><AlertTriangle :size="18" />当前账号仅可查看导入说明，不能预览或执行导入。</div>
-    <div class="import-layout">
+    <div class="import-mode-tabs" role="tablist" aria-label="导入类型">
+      <button type="button" role="tab" :aria-selected="importMode === 'csv'" :disabled="busy || orderBusy" @click="importMode = 'csv'">客户、产品与财务流水</button>
+      <button type="button" role="tab" :aria-selected="importMode === 'orders'" :disabled="busy || orderBusy" @click="importMode = 'orders'">销售订单</button>
+    </div>
+    <div v-if="importMode === 'orders'" class="import-layout">
+      <div class="panel import-main">
+        <div class="step"><span>01</span><div><h3>下载销售订单模板</h3><p>一行填写一条 SKU 明细。同一来源订单编号的多行会合并为一张销售订单草稿。</p></div></div>
+        <button class="template-btn" :disabled="orderTemplateLoading || !mayImport" @click="downloadOrderTemplate"><Download :size="16" /><span><strong>{{ orderTemplateLoading ? '正在准备模板…' : '下载销售订单 XLSX 模板' }}</strong><small>包含来源订单编号、客户编号、订单日期、币种、SKU、交易单位、数量和单价</small></span></button>
+        <div class="step"><span>02</span><div><h3>上传并检查订单</h3><p>客户编号和 SKU 按系统编号匹配。每张订单的客户、日期、币种和汇率必须一致；预览不会写入业务数据，有明细错误时整单不导入。</p></div></div>
+        <label class="drop-zone" :class="{ disabled: !mayImport || orderBusy }"><input ref="orderFileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :disabled="!mayImport || orderBusy" @change="selectOrderFile" /><UploadCloud :size="34" /><strong>{{ orderFile ? orderFile.name : '点击选择销售订单 XLSX 文件' }}</strong><small>{{ orderFile ? `${(orderFile.size/1024).toFixed(1)} KB` : '最多 5,000 条订单明细' }}</small></label>
+        <button class="btn btn-primary upload-btn" :disabled="!mayImport || orderBusy || !orderFile" @click="previewOrders">{{ orderPreviewing ? '正在校验…' : '预览并校验' }}</button>
+        <p class="stage" role="status" aria-live="polite">{{ orderStatusCopy }}</p>
+        <div v-if="orderError" class="result error-result" role="alert"><AlertTriangle :size="18" />{{ orderError }}</div>
+        <div v-if="orderResult" class="result" :class="orderResult.completed && orderResult.created_orders ? 'success-result' : orderResult.errors.length ? 'error-result' : 'success-result'"><component :is="orderResult.completed && orderResult.created_orders ? CheckCircle2 : orderResult.errors.length ? AlertTriangle : CheckCircle2" :size="20" /><div>
+          <strong v-if="orderResult.completed">已创建 {{ orderResult.created_orders }} 张草稿，{{ orderResult.failed_orders }} 张未创建</strong>
+          <strong v-else>共 {{ orderResult.total_rows }} 条明细、{{ orderResult.total_orders }} 张订单：{{ orderResult.valid_orders }} 张可导入，{{ orderResult.invalid_orders }} 张待修正</strong>
+          <p v-if="orderResult.completed">导入结果已保存。所有创建的订单均为草稿，后续可在订单管理中按原流程确认。</p>
+          <p v-else-if="orderResult.errors.length">仅创建校验通过的整单；含错误的订单会整单跳过。</p>
+          <div v-if="orderResult.orders?.length" class="error-table order-result-table"><table><thead><tr><th>来源订单编号</th><th v-if="orderResult.completed">销售订单编号</th><th>客户编号</th><th>明细数</th><th>金额</th><th>状态</th></tr></thead><tbody><tr v-for="item in orderResult.orders" :key="item.source_order_no"><td>{{ item.source_order_no }}</td><td v-if="orderResult.completed">{{ item.order_no || '—' }}</td><td>{{ item.customer_code }}</td><td>{{ item.line_count }}</td><td>{{ item.currency }} {{ item.total_amount }}</td><td>{{ orderResult.completed ? (item.status === 'draft' ? '草稿' : item.status) : (item.valid ? '待导入' : '待修正') }}</td></tr></tbody></table></div>
+          <div v-if="orderErrors.length" class="error-table"><p>表格行号按 Excel 中的实际行号显示。</p><table><thead><tr><th>表格行号</th><th>来源订单编号</th><th>错误原因</th></tr></thead><tbody><tr v-for="(item,index) in orderErrors" :key="index"><td>{{ item.row }}</td><td>{{ item.key || '—' }}</td><td>{{ item.message }}</td></tr></tbody></table></div>
+          <button v-if="orderErrors.length" class="inline-action" @click="downloadOrderFailures">下载错误清单 CSV</button>
+          <button v-if="!orderResult.completed && orderResult.valid_orders > 0" class="btn btn-primary execute-btn" :disabled="orderBusy || !canExecuteOrders" @click="executeOrders">{{ orderExecuting ? '正在创建草稿…' : orderConfirming ? '等待确认…' : `确认导入 ${orderResult.valid_orders} 张草稿` }}</button>
+          <RouterLink v-if="orderResult.completed && can('orders', 'view')" class="btn" to="/orders">前往订单管理</RouterLink>
+        </div></div>
+      </div>
+      <aside class="panel guide"><h3>销售订单规则</h3><ol><li><span>1</span><div><strong>按编号匹配</strong><small>客户编号、SKU 和交易单位</small></div></li><li><span>2</span><div><strong>整单校验</strong><small>检查表头一致、金额和交易单位</small></div></li><li><span>3</span><div><strong>确认后建草稿</strong><small>使用订单管理中的原有流程确认</small></div></li></ol><div class="tip"><strong>旧订单请走历史流程</strong><p>已结清、已收款、已发货或需要接续的订单，请在历史资料承接页提交；系统会先预检，再进入申请审核。</p><RouterLink class="inline-action history-inline-link" to="/history-takeover">打开历史资料承接</RouterLink></div><div class="tip"><strong>导入范围</strong><p>不会确认订单、占库存、生成应收计划或登记发货。重复来源订单编号会拒绝导入，内容变更也不会覆盖已有订单。</p></div></aside>
+    </div>
+    <div v-else class="import-layout">
       <div class="panel import-main">
         <div class="step"><span>01</span><div><h3>选择数据类型</h3><p>客户、产品和 SKU 按编号匹配；更新会经过当前业务规则校验，不会绕过主数据保护。</p></div></div>
         <div class="type-grid"><label v-for="(copy,key) in types" :key="key" :class="{ selected: entity === key }"><input v-model="entity" type="radio" :value="key" :disabled="busy || !mayImport" /><FileSpreadsheet :size="20" /><strong>{{ copy[0] }}</strong><small>{{ copy[1] }}</small></label></div>
@@ -112,7 +208,7 @@ async function execute() {
           <button v-else-if="!result.completed && mayImport" class="btn btn-primary execute-btn" :disabled="busy || !canExecute" @click="execute">{{ executing ? '正在执行...' : confirming ? '等待确认...' : '确认执行导入' }}</button>
         <RouterLink v-if="result.completed && can(entity, 'view')" class="btn" :to="destinations[entity]">前往{{ types[entity][0] }}</RouterLink></div></div>
       </div>
-      <aside class="panel guide"><h3>导入规则</h3><ol><li v-for="(copy,key,index) in types" :key="key"><span>{{ index+1 }}</span><div><strong>{{ copy[0] }}</strong><small>{{ copy[1] }}</small></div></li></ol><div class="tip"><strong>关联与历史安全</strong><p>客户、产品和 SKU 按编号匹配。更新时空白字段可能清除原有内容，请先备份并核对。财务流水只新增；重复流水号会报错，绝不覆盖原记录。</p><p>正式订单导入暂未开放，请通过订单业务流程创建；避免绕过报价、库存预留和收款计划。</p></div></aside>
+      <aside class="panel guide"><h3>导入规则</h3><ol><li v-for="(copy,key,index) in types" :key="key"><span>{{ index+1 }}</span><div><strong>{{ copy[0] }}</strong><small>{{ copy[1] }}</small></div></li></ol><div class="tip"><strong>关联与历史安全</strong><p>客户、产品和 SKU 按编号匹配。更新时空白字段可能清除原有内容，请先备份并核对。财务流水只新增；重复流水号会报错，绝不覆盖原记录。</p><p>销售订单通过专用 XLSX 模板导入，按整单创建草稿。</p></div></aside>
     </div>
   </div>
 </template>
@@ -121,4 +217,6 @@ async function execute() {
 .import-layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px}.import-main,.guide{min-width:0}.import-main{padding:25px}.step{display:flex;gap:12px;margin-bottom:15px;align-items:start}.step>span{background:#123c36;color:white;border-radius:7px;padding:5px 7px;font-size:var(--text-caption)}.step h3,.step p{margin:0}.step h3{font-size:var(--text-section)}.step p{font-size:var(--text-caption);color:#81908b;margin-top:4px}.type-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:28px}.type-grid label{min-width:0;border:1px solid #e0e6e2;border-radius:9px;padding:12px;cursor:pointer;color:#687771}.type-grid label.selected{border-color:#3c7468;background:#edf6f2;color:#17483e;box-shadow:0 0 0 2px #dbece6}.type-grid input{display:none}.type-grid strong,.type-grid small{display:block}.type-grid strong{font-size:var(--text-body);margin-top:8px}.type-grid small{font-size:var(--text-caption);color:#89948f;margin-top:3px}.template-btn{width:100%;min-width:0;border:1px solid #dce4df;background:#f8faf8;padding:11px;border-radius:9px;display:flex;align-items:center;gap:10px;text-align:left;color:#38574e}.template-btn strong,.template-btn small{display:block}.template-btn strong{font-size:var(--text-body)}.template-btn small{font-size:var(--text-caption);color:#87948f;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:650px}.drop-zone{height:150px;border:1.5px dashed #a9bdb6;background:#fbfcfb;border-radius:11px;margin-top:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#527168;cursor:pointer}.drop-zone input{display:none}.drop-zone strong{font-size:var(--text-body);margin-top:7px}.drop-zone small{font-size:var(--text-caption);color:#929e99;margin-top:4px}.upload-btn{width:100%;margin-top:12px}.upload-btn:disabled{opacity:.5}.guide{padding:22px;height:max-content}.guide h3{margin:0 0 17px;font-size:var(--text-section)}.guide ol{list-style:none;padding:0;margin:0}.guide li{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #edf0ee}.guide li>span{width:23px;height:23px;border-radius:50%;background:#e6efeb;color:#285b4e;display:grid;place-items:center;font-size:var(--text-caption)}.guide li strong,.guide li small{display:block}.guide li strong{font-size:var(--text-caption)}.guide li small{font-size:var(--text-caption);color:#8a9691;margin-top:2px}.tip{margin-top:20px;background:#fff6e9;border:1px solid #f0dfc6;border-radius:9px;padding:13px}.tip strong{font-size:var(--text-caption);color:#8c5a29}.tip p{font-size:var(--text-caption);line-height:1.7;color:#826f5c;margin:5px 0 0}.tip code{background:#f8e7d0;padding:1px 3px}.result{margin-top:12px;border-radius:8px;padding:11px;display:flex;gap:8px;font-size:var(--text-caption)}.error-result{background:#fff0f0;color:#a84a4a}.success-result{background:#eaf6f0;color:#276850}.result strong{font-size:var(--text-body)}.result p{margin:5px 0}.result ul{margin:5px 0 0;padding-left:16px}@media(max-width:1200px){.import-layout{grid-template-columns:minmax(0,1fr)}.type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:550px){.type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.import-main{padding:16px}}
 .history-takeover-link{display:inline-flex;align-items:center;padding:8px 11px;border:1px solid #b9d1c3;border-radius:8px;background:#f3f8f4;color:#245c49;font-weight:700;text-decoration:none;white-space:nowrap}.history-takeover-link:hover{background:#e9f3ec}
 .stage{padding:12px;background:#f0f4f2;border-radius:8px;font-weight:600}.drop-zone{padding:12px;height:auto;min-height:150px;text-align:center;overflow-wrap:anywhere}.result>div{min-width:0;flex:1}.error-table{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;vertical-align:top;padding:8px;border-bottom:1px solid #ddd;overflow-wrap:anywhere}td:last-child{min-width:180px}.error-table th:first-child{min-width:76px;white-space:nowrap}.error-table th:nth-child(2){min-width:90px}.inline-action{border:1px solid currentColor;background:white;color:inherit;padding:6px 10px;border-radius:6px;cursor:pointer;margin-top:8px}.error-pages{display:flex;gap:12px;align-items:center;margin-top:8px}button:disabled{cursor:not-allowed;opacity:.55}.type-grid input{display:inline-block;position:absolute;opacity:0}.type-grid label:focus-within{outline:2px solid #397b69}.template-btn small{white-space:normal;overflow-wrap:anywhere}.template-btn>span{min-width:0;flex:1}
+.import-mode-tabs{display:flex;gap:8px;margin:0 0 14px}.import-mode-tabs button{border:1px solid #d9e2dd;background:#fff;color:#53645d;border-radius:8px;padding:9px 14px;font-weight:650;cursor:pointer}.import-mode-tabs button[aria-selected="true"]{border-color:#3c7468;background:#edf6f2;color:#17483e}.import-mode-tabs button:focus-visible,.history-inline-link:focus-visible{outline:2px solid #397b69;outline-offset:2px}.order-result-table{margin:10px 0}.history-inline-link{display:inline-flex;text-decoration:none;background:#fff}.order-result-table td:nth-child(4){white-space:nowrap}
+@media(max-width:550px){.import-mode-tabs{display:grid;grid-template-columns:1fr 1fr}.import-mode-tabs button{padding:9px 7px;font-size:var(--text-caption)}.order-result-table table{min-width:520px}}
 </style>

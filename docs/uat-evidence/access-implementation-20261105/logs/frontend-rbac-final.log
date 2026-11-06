@@ -1,0 +1,8 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/access-readiness-20261105/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  18:09:53
+   Duration  20.14s (transform 9.95s, setup 2.00s, import 11.05s, tests 597ms, environment 4.92s)

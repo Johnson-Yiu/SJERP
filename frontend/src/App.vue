@@ -5,9 +5,11 @@ import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes
 import AppDialogHost from './components/AppDialogHost.vue'
 import { pageIdentityKey } from './utils/routePageState'
 import { accessState, can, canAccessHistoricalOrders, canAccessOrganization, loadAccessControl } from './accessControl'
+import { api } from './api'
 
 const route = useRoute()
 const menuOpen = ref(false)
+const signOutError = ref('')
 const operator = computed(() => accessState.operator || { name: accessState.error ? '权限状态不可用' : '加载中', role: '身份待确认', development_superadmin: false, has_all_permissions: false })
 const nav = [
   { section: '经营' },
@@ -61,10 +63,19 @@ const visibleNav = computed(() => {
   return result
 })
 onMounted(() => { loadAccessControl().catch(() => {}) })
+async function signOut() {
+  signOutError.value = ''
+  try {
+    await api.get('/session/csrf/')
+    await api.post('/session/logout/')
+    window.location.assign('/login')
+  } catch { signOutError.value = '退出未完成，请检查网络后重试。' }
+}
 </script>
 
 <template>
-  <div class="app-shell">
+  <RouterView v-if="route.name === 'login'" />
+  <div v-else class="app-shell">
     <div v-if="menuOpen" class="scrim" @click="menuOpen = false" />
     <aside class="sidebar" :class="{ open: menuOpen }">
       <div class="brand">
@@ -83,8 +94,10 @@ onMounted(() => { loadAccessControl().catch(() => {}) })
       <div class="sidebar-foot">
         <div class="team-avatars"><span>{{ operatorInitial }}</span></div>
         <div class="sidebar-identity"><strong :title="operator.name">{{ operator.development_superadmin ? '开发身份' : '当前账号' }}：{{ operator.name }}</strong><small>{{ operator.role }} · {{ operator.has_all_permissions ? '全部功能与数据权限' : '按账号授权' }}</small></div>
+        <button v-if="operator.authenticated && !operator.development_superadmin" type="button" @click="signOut">退出登录</button>
       </div>
       <div v-if="accessState.error" class="access-state-error" role="alert">权限状态加载失败：{{ accessState.error }}</div>
+      <div v-if="signOutError" class="access-state-error" role="alert">{{ signOutError }}</div>
     </aside>
 
     <main class="main">

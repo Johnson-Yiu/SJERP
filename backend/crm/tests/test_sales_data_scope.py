@@ -86,6 +86,16 @@ class SalesDataScopeTests(TestCase):
         self.login(profile)
         return {row["id"] for row in self.client.get("/api/customers/").data["results"]}
 
+    def test_customer_format_suffix_retains_self_scope_and_safe_404(self):
+        self.login(self.employee_a)
+        response = self.client.get('/api/customers.json')
+        self.assertEqual(response.status_code, 200)
+        ids = {row['id'] for row in response.data['results']}
+        self.assertIn(self.customer_a.pk, ids)
+        self.assertNotIn(self.customer_b.pk, ids)
+        self.assertNotIn(self.customer_c.pk, ids)
+        self.assertEqual(self.client.get(f'/api/customers/{self.customer_c.pk}.json').status_code, 404)
+
     def make_quote(self, customer, quote_no):
         return Quote.objects.create(quote_no=quote_no, customer=customer, quote_date=date(2026, 10, 1))
 

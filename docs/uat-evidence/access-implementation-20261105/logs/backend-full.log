@@ -1,0 +1,1629 @@
+Creating test database for alias 'default'...
+
+Bad Request: /api/access-roles/1/permission-matrix/
+..Bad Request: /api/categories/reorder/
+Bad Request: /api/categories/1/
+....Bad Request: /api/customers/
+........................C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ProductCategory'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.Product'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.HSCode'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.SKUPackagingProfile'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.ContractChangeRequest'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'crm.models.OrganizationUnit'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+Found 1412 test(s).
+System check identified no issues (0 silenced).
+SUFFIX_ROUTE_MATRIX [{"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/finance-ledger.json", "route": "api/^finance-ledger\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/rmb-cash-events.json", "route": "api/^rmb-cash-events\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/sku-trade-units.json", "route": "api/^sku-trade-units\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/sales-rules.json", "route": "api/^sales-rules\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/supplier-capabilities.json", "route": "api/^supplier-capabilities\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/customers.json", "route": "api/^customers\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/suppliers.json", "route": "api/^suppliers\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/purchase-orders.json", "route": "api/^purchase-orders\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/contacts.json", "route": "api/^contacts\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/follow-ups.json", "route": "api/^follow-ups\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/categories.json", "route": "api/^categories\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/category-attributes.json", "route": "api/^category-attributes\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/products.json", "route": "api/^products\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/hs-codes.json", "route": "api/^hs-codes\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/skus.json", "route": "api/^skus\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/supplier-skus.json", "route": "api/^supplier-skus\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/packaging-templates.json", "route": "api/^packaging-templates\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/sku-packaging-profiles.json", "route": "api/^sku-packaging-profiles\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/shipments.json", "route": "api/^shipments\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/product-parameters.json", "route": "api/^product-parameters\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/product-certificates.json", "route": "api/^product-certificates\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/quotes.json", "route": "api/^quotes\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/orders.json", "route": "api/^orders\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/transactions.json", "route": "api/^transactions\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/payment-plans.json", "route": "api/^payment-plans\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/contract-changes.json", "route": "api/^contract-changes\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/inventory-movements.json", "route": "api/^inventory-movements\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/organization-units.json", "route": "api/^organization-units\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/positions.json", "route": "api/^positions\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/access-roles.json", "route": "api/^access-roles\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/role-permissions.json", "route": "api/^role-permissions\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 200, "ordinary_no_permission": 403, "path": "/api/employees.json", "route": "api/^employees\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 403, "ordinary_no_permission": 403, "path": "/api/operation-logs.json", "route": "api/^operation-logs\\.(?P<format>[a-z0-9]+)/?$", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 403, "ordinary_no_permission": 403, "path": "/api/", "route": "api/", "superuser": 200}, {"anonymous": 403, "ordinary_all_modules": 403, "ordinary_no_permission": 403, "path": "/api/.json", "route": "api/<drf_format_suffix:format>", "superuser": 200}]
+HIGHEST_ROLE_PATCH_STATUS 400
+HIGHEST_ROLE_OBSERVATION {"status": 400, "code": "superadmin", "assigned_user_has_all": true}
+PERMISSION_ADMIN_HIGHEST_ROLE_PATCH_STATUS 400
+.......Forbidden: /api/actual-rmb-cash/
+Forbidden: /api/actual-rmb-cash/
+.....Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/packages/1/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+...Internal Server Error: /api/shipments/1/copy-estimated-packing/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 1561, in copy_estimated_packing
+    copy_estimated_to_actual(shipment, plan, replace=request.data.get("replace") is True)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\services\packaging.py", line 161, in copy_estimated_to_actual
+    serializer.save(shipment=shipment)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\serializers.py", line 2905, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_actual_packing.py", line 464, in fail_after_first_carton
+    raise RuntimeError("copy failed after first carton")
+RuntimeError: copy failed after first carton
+.Bad Request: /api/shipments/1/packages/
+..Internal Server Error: /api/shipments/1/packages/1/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 1542, in update_package
+    record_operation(request=request, instance=shipment, action="custom", action_label="ɾ��װ����ϸ", before={"package": before}, metadata={"package_id": package_id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: audit save failed
+.Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/2/
+.Bad Request: /api/shipments/1/packages/
+...Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+Bad Request: /api/shipments/1/copy-estimated-packing/
+.Bad Request: /api/shipments/2/packages/
+.Internal Server Error: /api/shipments/1/packages/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 1525, in packages
+    package = serializer.save(shipment=shipment)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\serializers.py", line 2905, in create
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=package, **item) for item in items])
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+.Internal Server Error: /api/shipments/1/packages/1/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 1545, in update_package
+    serializer.is_valid(raise_exception=True); serializer.save()
+                                               ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 205, in save
+    self.instance = self.update(self.instance, validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\serializers.py", line 2917, in update
+    ShipmentPackageItem.objects.bulk_create([ShipmentPackageItem(shipment_package=instance, **item) for item in items])
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: save failed
+.Bad Request: /api/shipments/1/packages/1/
+...Bad Request: /api/shipments/2/packages/
+.Bad Request: /api/shipments/2/packages/
+.Bad Request: /api/shipments/1/copy-estimated-packing/
+.....Bad Request: /api/shipments/1/packages/
+.Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+.Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+..Bad Request: /api/shipments/1/copy-estimated-packing/
+.......Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+Bad Request: /api/shipments/1/packages/
+..Method Not Allowed: /api/operation-logs/
+Method Not Allowed: /api/operation-logs/1/
+Method Not Allowed: /api/operation-logs/1/
+......s..Forbidden: /api/finance-ledger/voucher-download/
+..........Conflict: /api/rmb-cash-events/2/confirm/
+.Internal Server Error: /api/rmb-cash-events/2/confirm/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\cash_api.py", line 155, in confirm
+    return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\services\cash_events.py", line 395, in confirm_event
+    event.save(update_fields=["status", "confirmed_at", "confirmed_actor", "updated_at"])
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: event save failed
+.Conflict: /api/rmb-cash-events/2/confirm/
+.Internal Server Error: /api/rmb-cash-events/2/confirm/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\cash_api.py", line 155, in confirm
+    return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\services\cash_events.py", line 386, in confirm_event
+    CashDuplicateReview.objects.create(event=event, candidate_ids=[c["id"] for c in candidates["items"]],
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: audit failed
+.Conflict: /api/rmb-cash-events/2/confirm/
+...Conflict: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/1/confirm/
+..Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+.Conflict: /api/rmb-cash-events/2/confirm/
+Conflict: /api/rmb-cash-events/4/confirm/
+..Bad Request: /api/rmb-cash-events/1/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+Bad Request: /api/rmb-cash-events/2/confirm/
+.Bad Request: /api/rmb-cash-events/1/cancel/
+Bad Request: /api/rmb-cash-events/
+.Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/1/confirm/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+Method Not Allowed: /api/rmb-cash-events/1/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+..Bad Request: /api/rmb-cash-events/1/confirm/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Not Found: /api/rmb-cash-events/not-an-id/
+.Bad Request: /api/rmb-cash-events/preview/
+.........Bad Request: /api/product-certificates/6/
+Bad Request: /api/product-certificates/6/
+.....Bad Request: /api/purchase-orders/1/
+Bad Request: /api/purchase-orders/1/
+.Bad Request: /api/orders/1/cancel/
+..Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/2/confirm/
+.Bad Request: /api/orders/1/
+Bad Request: /api/orders/1/start-production/
+Bad Request: /api/orders/2/
+.Bad Request: /api/purchase-orders/1/cancel/
+.Bad Request: /api/purchase-orders/1/receive/
+Bad Request: /api/purchase-orders/1/place/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/contacts/1/
+.Bad Request: /api/customers/1/
+Bad Request: /api/customers/2/
+Bad Request: /api/customers/3/
+Bad Request: /api/customers/4/
+......Bad Request: /api/follow-ups/
+...Not Found: /api/follow-ups/2/attachments/1/
+.Bad Request: /api/follow-ups/1/
+Bad Request: /api/follow-ups/1/
+.Bad Request: /api/follow-ups/1/attachments/
+....Bad Request: /api/quotes/1/mark-sent/
+Bad Request: /api/quotes/1/reject/
+Bad Request: /api/quotes/1/expire/
+.Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/2/confirm/
+.Bad Request: /api/orders/1/
+Bad Request: /api/orders/1/
+..Bad Request: /api/quotes/1/order-draft/
+Bad Request: /api/orders/
+Bad Request: /api/quotes/2/order-draft/
+Bad Request: /api/orders/
+....................Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+...Internal Server Error: /api/orders/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 2049, in create
+    return super().create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\audit.py", line 70, in perform_create
+    instance = serializer.save()
+               ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\serializers.py", line 2366, in create
+    OrderItem.objects.bulk_create(rows)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: fail
+Internal Server Error: /api/purchase-orders/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 338, in create
+    return super().create(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\audit.py", line 70, in perform_create
+    instance = serializer.save()
+               ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\serializers.py", line 787, in create
+    PurchaseOrderItem.objects.bulk_create([
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: fail
+.....Bad Request: /api/import/csv/
+...............................Bad Request: /api/transactions/1/void/
+Bad Request: /api/transactions/1/void/
+........Bad Request: /api/finance-ledger/transfers/
+...Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/approve/
+Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/approve/
+Not Found: /api/finance-ledger/1/
+Not Found: /api/finance-ledger/1/
+Not Found: /api/finance-ledger/1/
+Bad Request: /api/finance-ledger/cancel/
+.Internal Server Error: /api/finance-ledger/post/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\finance_closeout_api.py", line 113, in handle_exception
+    return super().handle_exception(exc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\finance_closeout_api.py", line 195, in execute
+    obj = ledger.post(request.data.get("id"), request.user, voucher_checked=request.data.get("voucher_checked"))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\services\finance_closeout.py", line 457, in post
+    audit(fact, user, "����ʵ���ʽ���ʵ")
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit outage
+Internal Server Error: /api/finance-ledger/reviews/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\finance_closeout_api.py", line 113, in handle_exception
+    return super().handle_exception(exc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\finance_closeout_api.py", line 211, in reviews
+    obj = ledger.reconcile(request.data, request.user)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\services\finance_closeout.py", line 678, in reconcile
+    audit(obj, user, "�˶��˻����")
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit outage
+Internal Server Error: /api/finance-ledger/transfers/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\finance_closeout_api.py", line 113, in handle_exception
+    return super().handle_exception(exc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\finance_closeout_api.py", line 201, in transfers
+    obj = ledger.match_historical_transfer(request.data, request.user) if historical else ledger.match_transfer(request.data, request.user)
+                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\services\finance_closeout.py", line 495, in match_transfer
+    audit(obj, user, "��ʵ�ڲ�ת�˱���")
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit outage
+.Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/voucher-download/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/voucher-download/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/voucher-download/
+...Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/post/
+..Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/post/
+Bad Request: /api/finance-ledger/post/
+..Bad Request: /api/finance-ledger/post/
+.Bad Request: /api/finance-ledger/fail/
+Bad Request: /api/finance-ledger/post/
+.........Not Found: /api/media/finance-vouchers/2026/11/fc2cabee4a004885898cba337323fb60.pdf
+...Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+Bad Request: /api/finance-ledger/instructions/
+...........Forbidden: /api/finance-ledger/
+Forbidden: /api/finance-ledger/voucher-download/
+Forbidden: /api/finance-ledger/instructions/
+.Request Entity Too Large: /api/finance-ledger/vouchers/
+..........................Bad Request: /api/finance-dashboard/details/
+Bad Request: /api/finance-dashboard/details/
+....Bad Request: /api/finance-ledger/transfers/
+.Bad Request: /api/finance-ledger/transfers/
+..................Bad Request: /api/transactions/
+.Bad Request: /api/transactions/
+........Bad Request: /api/follow-ups/
+.....Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/1/
+.....Bad Request: /api/follow-ups/
+Bad Request: /api/follow-ups/
+......Bad Request: /api/inventory-movements/1/
+.Bad Request: /api/orders/1/ship/
+Bad Request: /api/orders/1/ship/
+...Bad Request: /api/orders/1/ship/
+..Bad Request: /api/orders/1/ship/
+.....Bad Request: /api/purchase-orders/1/receive/
+.Bad Request: /api/orders/1/ship/
+......Bad Request: /api/orders/1/ship/
+..Bad Request: /api/suppliers/
+...........Bad Request: /api/inventory-movements/2/
+......Internal Server Error: /api/purchase-orders/1/receipts/1/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 532, in reverse_receipt
+    record_operation(
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+...Internal Server Error: /api/purchase-orders/1/receive/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 510, in receive
+    record_operation(request=request, instance=purchase, action="custom", action_label="�Ǽǲɹ�����", before=before, after=after, metadata={"receipt_id": receipt.id, "quantity": str(receipt.quantity), "inventory_movement_id": receipt.inventory_movement_id})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+..Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+.Internal Server Error: /api/orders/1/ship/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 2379, in ship
+    record_operation(request=request, instance=order, action="custom", action_label="ȷ�϶�������", before=before, after=after, metadata={"shipment_id": shipment.id, "shipment_no": shipment.shipment_no})
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit write failure
+.Bad Request: /api/orders/1/complete/
+....Bad Request: /api/orders/1/complete/
+............................................Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+..Bad Request: /api/orders/
+Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/1/place/
+Bad Request: /api/purchase-orders/1/pay/
+.Bad Request: /api/orders/1/confirm/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+....Bad Request: /api/import/history-preflight/
+..Bad Request: /api/import/history-preflight/
+Bad Request: /api/import/history-preflight/
+........Request Entity Too Large: /api/import/history-preflight/
+......Request Entity Too Large: /api/import/history-preflight/
+.........sBad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/1/
+.....Bad Request: /api/import/history-takeovers/1/groups/1/finance-post/
+...............Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+..Bad Request: /api/import/history-takeovers/1/groups/1/correction-review/
+..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+.Not Found: /api/import/history-takeovers/2/
+Not Found: /api/import/history-takeovers/2/review-report.csv
+Conflict: /api/import/history-takeovers/
+.Bad Request: /api/import/history-takeovers/1/groups/1/execute/
+Bad Request: /api/import/history-takeovers/2/groups/2/review/
+Bad Request: /api/import/history-takeovers/3/groups/3/review/
+..Bad Request: /api/import/history-takeovers/2/groups/3/review/
+Bad Request: /api/import/history-takeovers/2/groups/3/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/review/
+.Bad Request: /api/hs-codes/1/
+Bad Request: /api/hs-codes/1/assign-products/
+.Bad Request: /api/products/1/
+..Bad Request: /api/hs-codes/
+..Bad Request: /api/hs-codes/1/assign-products/
+..Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/1/confirm/
+.Bad Request: /api/rmb-cash-events/1/confirm/
+.Bad Request: /api/rmb-cash-events/preview/
+Not Found: /api/rmb-cash-events/preview/
+Bad Request: /api/rmb-cash-events/preview/
+Bad Request: /api/rmb-cash-events/preview/
+..Bad Request: /api/inventory-movements/1/reverse/
+Bad Request: /api/inventory-movements/2/reverse/
+.Bad Request: /api/inventory-movements/1/
+Bad Request: /api/inventory-movements/1/reverse/
+..Bad Request: /api/inventory-movements/1/reverse/
+.....Internal Server Error: /api/inventory-movements/1/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 2970, in reverse
+    try:
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_inventory_reversal_audit_atomicity.py", line 194, in record_first_then_fail_second
+    raise DatabaseError("second audit failure")
+django.db.utils.DatabaseError: second audit failure
+.Internal Server Error: /api/inventory-movements/1/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 2963, in reverse
+    @transaction.atomic
+        ^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: first audit failure
+.Bad Request: /api/inventory-movements/1/reverse/
+.Internal Server Error: /api/shipments/1/reverse/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 1493, in reverse
+    @transaction.atomic
+        ^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+django.db.utils.DatabaseError: injected audit failure
+.Bad Request: /api/shipments/1/reverse/
+.......Bad Request: /api/purchase-orders/1/receive/
+.Bad Request: /api/purchase-orders/1/receive/
+..Conflict: /api/purchase-orders/1/receive/
+..Conflict: /api/purchase-orders/1/receive/
+.....Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+.........................Bad Request: /api/customers/
+Bad Request: /api/customers/
+..................Bad Request: /api/orders/1/quantity-adjustments/
+....Internal Server Error: /api/orders/1/quantity-adjustments/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 2253, in quantity_adjustments
+    def quantity_adjustments(self, request, pk=None):
+                                                ^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\services\order_quantity_adjustments.py", line 425, in apply_quantity_adjustment
+    rebalance_sku_reservations(SKU.objects.get(pk=sku_id))
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: reservation failure
+.Bad Request: /api/orders/1/quantity-adjustments/preview/
+Bad Request: /api/orders/1/quantity-adjustments/
+...Bad Request: /api/orders/1/quantity-adjustments/
+Bad Request: /api/orders/1/quantity-adjustments/
+Bad Request: /api/orders/1/quantity-adjustments/
+..Bad Request: /api/orders/1/quantity-adjustments/
+.Bad Request: /api/orders/1/quantity-adjustments/
+.Bad Request: /api/orders/1/quantity-adjustments/
+..Bad Request: /api/orders/1/quantity-adjustments/
+...Conflict: /api/orders/1/quantity-adjustments/
+Bad Request: /api/orders/1/
+.Bad Request: /api/orders/1/quantity-adjustments/
+.........Bad Request: /api/sku-packaging-profiles/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+Bad Request: /api/sku-packaging-profiles/1/
+.Bad Request: /api/packaging-templates/1/
+.........................Bad Request: /api/shipments/1/export-packing-list/
+........Bad Request: /api/shipments/1/export-packing-list/
+...Bad Request: /api/shipments/1/export-packing-list/
+....Bad Request: /api/payment-plans/
+..Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+Bad Request: /api/payment-plans/
+.......Bad Request: /api/orders/1/generate-purchase-drafts/
+....Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+...Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/orders/1/generate-purchase-drafts/
+Bad Request: /api/purchase-orders/1/place/
+....................Bad Request: /api/category-attributes/1/
+Bad Request: /api/category-attributes/1/
+Bad Request: /api/category-attributes/1/
+.Bad Request: /api/categories/3/
+Bad Request: /api/categories/3/
+Bad Request: /api/categories/3/
+...Bad Request: /api/category-attributes/1/
+Bad Request: /api/category-attributes/
+Bad Request: /api/category-attributes/1/
+...Bad Request: /api/products/1/sales-model-prefix-preview/
+.Bad Request: /api/products/1/
+.Bad Request: /api/products/1/
+Bad Request: /api/categories/2/
+..Bad Request: /api/purchase-orders/1/cost-allocation/
+.Bad Request: /api/purchase-orders/1/cost-allocation/
+.Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/
+...Bad Request: /api/purchase-orders/1/cost-allocation-preview/
+..Bad Request: /api/purchase-orders/1/cost-allocation/
+Bad Request: /api/purchase-orders/1/cost-allocation/
+....Bad Request: /api/purchase-orders/1/place/
+................Bad Request: /api/purchase-orders/1/
+.Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/1/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/2/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/3/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/4/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/5/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/6/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/7/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/8/
+Bad Request: /api/suppliers/1/
+Bad Request: /api/purchase-orders/9/
+...Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/purchase-orders/1/
+.......Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+Bad Request: /api/quotes/availability-preview/
+...Unprocessable Entity: /api/quotes/preview-template/
+Unprocessable Entity: /api/quotes/preview-template/
+Not Found: /api/quotes/preview-template/
+..Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/mark-sent/
+Unprocessable Entity: /api/quotes/2/export/
+..Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+.....Internal Server Error: /api/orders/1/confirm/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 2083, in confirm
+    if hasattr(order, "history_continuation"):
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\services\order_lifecycle.py", line 100, in confirm_order
+    final_quote = OrderSerializer()._create_quote_revision_if_needed(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\serializers.py", line 2310, in _create_quote_revision_if_needed
+    create_quote_items(
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: Synthetic order revision failure
+.Internal Server Error: /api/quotes/1/revise/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 1925, in revise
+    item_data = [
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: Synthetic item failure
+.Bad Request: /api/quotes/1/
+......Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/2/pi-data/
+Unprocessable Entity: /api/quotes/2/export/
+..Bad Request: /api/orders/1/complete/
+..Bad Request: /api/orders/1/
+.Bad Request: /api/orders/1/complete/
+.Bad Request: /api/orders/1/complete/
+........Bad Request: /api/quotes/
+.Method Not Allowed: /api/quotes/1/
+.Bad Request: /api/quotes/4/order-draft/
+Bad Request: /api/quotes/5/order-draft/
+.....Bad Request: /api/quotes/1/important-notes/
+..Bad Request: /api/orders/
+.Bad Request: /api/quotes/
+Bad Request: /api/quotes/1/revise/
+......Bad Request: /api/quotes/1/
+Bad Request: /api/quotes/1/
+.Bad Request: /api/quotes/
+..Bad Request: /api/quotes/1/revise/
+....Bad Request: /api/quotes/1/revise/
+.Bad Request: /api/quotes/1/revise/
+.Bad Request: /api/quotes/1/revise/
+....Bad Request: /api/skus/1/image/
+....Unprocessable Entity: /api/quotes/1/export/
+...Unprocessable Entity: /api/quotes/1/export/
+.....................Bad Request: /api/transactions/
+.Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+Bad Request: /api/transactions/
+................Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+..Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+..Bad Request: /api/reports/details/
+.....................Service Unavailable: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+...Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Request Entity Too Large: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+.Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/preview/
+..Forbidden: /api/import/csv/execute/
+Service Unavailable: /api/import/csv/execute/
+..Bad Request: /api/import/csv/execute/
+..Bad Request: /api/import/csv/
+.Request Entity Too Large: /api/import/csv/preview/
+Request Entity Too Large: /api/import/csv/execute/
+Request Entity Too Large: /api/import/csv/
+.Request Entity Too Large: /api/import/csv/execute/
+.Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+.Service Unavailable: /api/import/csv/preview/
+.Bad Request: /api/import/csv/preview/
+.Bad Request: /api/import/csv/execute/
+..Bad Request: /api/import/csv/execute/
+Bad Request: /api/import/csv/preview/
+.Bad Request: /api/import/csv/execute/
+..Bad Request: /api/import/csv/execute/
+.Forbidden: /api/import/csv/execute/
+..Forbidden: /api/import/csv/execute/
+.Request Entity Too Large: /api/import/csv/preview/
+Request Entity Too Large: /api/import/csv/execute/
+Request Entity Too Large: /api/import/csv/
+Forbidden: /api/import/csv/execute/
+Service Unavailable: /api/import/csv/execute/
+...............................Bad Request: /api/skus/
+..Bad Request: /api/skus/
+..Bad Request: /api/quotes/
+Bad Request: /api/quotes/1/revise/
+..Bad Request: /api/quotes/
+..Bad Request: /api/sales-rules/
+.Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+Bad Request: /api/sales-rules/2/
+.....Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+...Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+Bad Request: /api/orders/
+.........Bad Request: /api/products/1/combination-rules/
+Bad Request: /api/products/1/combination-rules/
+Bad Request: /api/products/1/combination-rules/
+Bad Request: /api/products/1/combination-rules/
+.Bad Request: /api/products/1/combination-rules/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/
+.Bad Request: /api/skus/
+...Bad Request: /api/products/1/combination-rules/
+....Bad Request: /api/skus/2/
+....Bad Request: /api/skus/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+..Bad Request: /api/skus/1/
+.....Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+..Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+Bad Request: /api/skus/2/
+...Bad Request: /api/skus/1/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/1/
+......Bad Request: /api/skus/1/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/skus/2/
+....Bad Request: /api/skus/batch-create/
+..Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/products/1/sku-plan/publish/
+..Bad Request: /api/supplier-capabilities/
+...Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/supplier-skus/1/
+.Internal Server Error: /api/skus/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\mixins.py", line 19, in create
+    self.perform_create(serializer)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\views.py", line 1171, in perform_create
+    if existing_ids != normalized_ids:
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\audit.py", line 71, in perform_create
+    record_operation(request=self.request, instance=instance, action="create")
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: audit failed
+.Bad Request: /api/skus/batch-create/
+.Bad Request: /api/skus/
+.Bad Request: /api/skus/
+Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+Bad Request: /api/skus/1/
+....Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+.Bad Request: /api/orders/1/items/1/supplier-allocation/
+Bad Request: /api/orders/1/items/1/supplier-allocation/
+.........Bad Request: /api/products/1/supplier-candidate-pool/
+Bad Request: /api/products/1/supplier-candidate-pool/
+.Bad Request: /api/products/1/supplier-candidate-pool/
+.Bad Request: /api/products/1/supplier-candidate-pool/
+..Bad Request: /api/suppliers/
+.................Bad Request: /api/purchase-orders/1/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/purchase-orders/
+..Bad Request: /api/purchase-orders/
+...Bad Request: /api/purchase-orders/
+.Bad Request: /api/supplier-skus/1/
+Bad Request: /api/supplier-skus/2/
+.Bad Request: /api/supplier-skus/
+.............Bad Request: /api/inventory-movements/1/
+...........Bad Request: /api/orders/1/ship/
+Bad Request: /api/orders/1/ship/
+.Bad Request: /api/inventory-movements/batch/
+Bad Request: /api/inventory-movements/batch/
+........Bad Request: /api/payment-plans/1/
+.Bad Request: /api/purchase-orders/1/
+...Bad Request: /api/purchase-orders/1/receipts/1/reverse/
+.....Bad Request: /api/finance-dashboard/
+...Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+Bad Request: /api/payment-plans/1/settle/
+...Bad Request: /api/shipments/1/reverse/
+............Bad Request: /api/transactions/1/
+Bad Request: /api/transactions/1/
+...Bad Request: /api/orders/1/ship/
+..Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/sku-trade-units/1/
+Bad Request: /api/purchase-orders/
+Bad Request: /api/skus/1/
+.Bad Request: /api/sku-trade-units/
+Bad Request: /api/sku-trade-units/
+.....Bad Request: /api/quotes/
+.Bad Request: /api/quotes/
+..Bad Request: /api/inventory-movements/
+..Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+..ssss.sss....ssRequest Entity Too Large: /api/import/csv/preview/
+Request Entity Too Large: /api/import/csv/execute/
+Request Entity Too Large: /api/import/csv/
+...................sssssss..Bad Request: /api/finance-ledger/approve/
+.ssssssss.........sssssss.ss.....s......s...s....C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\test\utils.py:455: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with self as context:
+.ssssssss...s..D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_legacy_qa_tools.py:139: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+.D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_legacy_qa_tools.py:68: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+.D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_legacy_qa_tools.py:92: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+...D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_legacy_qa_tools.py:107: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+..D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_legacy_qa_tools.py:82: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+..sssssssssssssssssssss.........................sssssss.......Attachment deletion committed despite a database exception; confirmed by a new connection. attachment_id=2
+.Attachment recovery copy retained: backup=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-ov642m6o\.private-attachment-recovery\a8603cdbf1334057b2a6432ec41927a9.bin manifest=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-ov642m6o\.private-attachment-recovery\a8603cdbf1334057b2a6432ec41927a9.json
+......ssss.......Attachment recovery copy retained: backup=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-o13g8twr\.private-attachment-recovery\db0b21beced344e8b438343074b742db.bin manifest=C:\Users\Johnson\AppData\Local\Temp\iss007-attachment-atomicity-o13g8twr\.private-attachment-recovery\db0b21beced344e8b438343074b742db.json
+...Forbidden: /api/quotes/
+Forbidden: /api/quotes/
+Forbidden: /api/quotes/
+Forbidden: /api/quotes/
+P2A-DATABASE_VERIFICATION {"before": "2b8b7fb12ba46278eeeecedcf008c440a8c566e83e3b56c2f68a1e0a2d4eda12", "after": "2b8b7fb12ba46278eeeecedcf008c440a8c566e83e3b56c2f68a1e0a2d4eda12", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_MIGRATION_VERIFICATION {"vendor": "sqlite", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "������֤��Ϣδ�ṩ��", "error_response_raw_hex": "7b2264657461696c223a22e8baabe4bbbde8aea4e8af81e4bfa1e681afe69caae68f90e4be9be38082227d", "method": "POST", "path": "/api/quotes/", "response_bytes": 43, "response_charset": "utf-8", "response_sha256": "323035c1907e918ffa978a9bdec9f41f159f8625dde60f9585819811a73f258d", "status": 403}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "CSRF Failed: CSRF token missing.", "error_response_raw_hex": "7b2264657461696c223a2243535246204661696c65643a204353524620746f6b656e206d697373696e672e227d", "method": "POST", "path": "/api/quotes/", "response_bytes": 45, "response_charset": "utf-8", "response_sha256": "42b5ba2c392851d1351b17d5cbc856da4495a1564d8b7a4be06cbf7411128efd", "status": 403}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "CSRF Failed: CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.", "error_response_raw_hex": "7b2264657461696c223a2243535246204661696c65643a204353524620746f6b656e2066726f6d207468652027582d43737266746f6b656e272048545450206865616465722068617320696e636f7272656374206c656e6774682e227d", "method": "POST", "path": "/api/quotes/", "response_bytes": 93, "response_charset": "utf-8", "response_sha256": "71ac82b11a2670862d303ce8b773f62938d023c6f95a056894ce6648ced47b0d", "status": 403}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "��û��Ȩ��ִ�д˲�����", "error_response_raw_hex": "7b2264657461696c223a22e4bda0e6b2a1e69c89e69d83e99990e689a7e8a18ce6ada4e6938de4bd9ce38082227d", "method": "POST", "path": "/api/quotes/", "response_bytes": 46, "response_charset": "utf-8", "response_sha256": "ea74f83522e11136cc232d8cf171c7fd703dca0c2bb616e942b8d002fdc1235a", "status": 403}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/", "response_bytes": 1401, "response_charset": "utf-8", "response_sha256": "83c826ce70db02a6d8afc25c4053eab8c1bd34a087dc42622f88c018cb0e1f44", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/2/mark-sent/", "response_bytes": 1403, "response_charset": "utf-8", "response_sha256": "14bbc4d3f9f2dbe8364ee6866eec1bab1ded799f5b8f1a625853715ea6887e4f", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/2/accept/", "response_bytes": 1407, "response_charset": "utf-8", "response_sha256": "4c5fa1cbb7538707ce4f5f03f93bfe733d60b175db0f0a8beee9e34735f91867", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/quotes/2/order-draft/", "response_bytes": 630, "response_charset": "utf-8", "response_sha256": "6b1b1a07aedfd2b4b21f1c69cf80fda9bdb50570e8b3ede913aee0327e40853a", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/", "response_bytes": 1548, "response_charset": "utf-8", "response_sha256": "693afa6d64f2650680e17dc87582dc5e29a2f63f9e2e75b9d8e7b6faf725d57a", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/items/1/supplier-allocation/", "response_bytes": 503, "response_charset": "utf-8", "response_sha256": "4340f6f07cc1ddf8d37eeea623ba6d53fa217548c409f800e815d42edb1db591", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/confirm/", "response_bytes": 2241, "response_charset": "utf-8", "response_sha256": "0c302135134d5ef2d577ea4eea54bb1497984cd9ac7727a14ade0687f24f1295", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/start-production/", "response_bytes": 2242, "response_charset": "utf-8", "response_sha256": "7ccfcf2dce00a378c22cbcb4b99248484884cdb540d8febdf53264b8e97ffb13", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/orders/2/procurement-plan/", "response_bytes": 836, "response_charset": "utf-8", "response_sha256": "31fb5cc959a20b599211335fb6e17313fdc255416128fb99bcc2d0bcf6a95a8f", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/generate-purchase-drafts/", "response_bytes": 1717, "response_charset": "utf-8", "response_sha256": "869105f933fc353818a85c56d8b40d240b51a680df18d5f5948573ea3ee62fde", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/1/cancel/", "response_bytes": 1742, "response_charset": "utf-8", "response_sha256": "cfc1e1e052118c84e8f6a1eedb35ceb17e0701ffe1a51775b19f28f8b9acb7bb", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/orders/2/procurement-plan/", "response_bytes": 836, "response_charset": "utf-8", "response_sha256": "31fb5cc959a20b599211335fb6e17313fdc255416128fb99bcc2d0bcf6a95a8f", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/generate-purchase-drafts/", "response_bytes": 1717, "response_charset": "utf-8", "response_sha256": "0af8b000a8579e89d81d75257051688cb2c381a2661c5147865e32976cd83876", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "PATCH", "path": "/api/purchase-orders/2/", "response_bytes": 1826, "response_charset": "utf-8", "response_sha256": "d3f5e19c62b27fc38d4c9ac5e20cfd5b213fc5aca97ec35501e13c39465ac08f", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/2/place/", "response_bytes": 2881, "response_charset": "utf-8", "response_sha256": "8b96d55b3cfd41c26ed3892fcc69cd5c4e2246d96c5c38236e66ea4b4309917f", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/payment-plans/?direction=payable&purchase_order=2", "response_bytes": 1058, "response_charset": "utf-8", "response_sha256": "393f5d977de0335344e4d33445f4dbfec3df1a1cf543d2a69355d5f452fd1929", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/payment-plans/3/settle/", "response_bytes": 766, "response_charset": "utf-8", "response_sha256": "593301d799e164cc7faf05e262384c3fd498d05940b6c68abaa86d4dffaf33d0", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/transactions/1/void/", "response_bytes": 822, "response_charset": "utf-8", "response_sha256": "9072fc69aa473daad4d2a746a7f4077cf84641407907d3b1182dd26bccb110bd", "status": 200}
+.Bad Request: /api/purchase-orders/2/receive/
+Bad Request: /api/purchase-orders/2/cancel/
+Bad Request: /api/orders/2/cancel/
+Bad Request: /api/purchase-orders/2/receipts/1/reverse/
+.Bad Request: /api/quotes/3/reject/
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/2/receive/", "response_bytes": 223, "response_charset": "utf-8", "response_sha256": "eca726f30d020c04bce8417b21fcf96d88d407827b52ae9f040aff72e08dd1c1", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "��������ѡ��ԭ��", "error_response_raw_hex": "7b2264657461696c223a22e8b685e588b0e5bf85e9a1bbe98089e68ba9e58e9fe59ba0e38082227d", "method": "POST", "path": "/api/purchase-orders/2/receive/", "response_bytes": 40, "response_charset": "utf-8", "response_sha256": "81ccf474aedf60bfb7e2998b8acae5634e51ff1c7dedabe55950c8ef542ad250", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "��ǰ�ɹ���״̬����ȡ����", "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898de98787e8b4ade58d95e78ab6e68081e4b88de883bde58f96e6b688e38082227d", "method": "POST", "path": "/api/purchase-orders/2/cancel/", "response_bytes": 49, "response_charset": "utf-8", "response_sha256": "545b9080e5c83916647585703afc4857218556f1e0a51eca4b2bb0c16bb1d3d1", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/ship/", "response_bytes": 65, "response_charset": "utf-8", "response_sha256": "29e065b9f53216aa13f22943af8056aaf27954e291f9ab2ca4fb7313a8e6cdae", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "����������Ч������¼������ֱ��ȡ����", "error_response_raw_hex": "7b2264657461696c223a22e8aea2e58d95e5b7b2e69c89e69c89e69588e58f91e8b4a7e8aeb0e5bd95efbc8ce4b88de883bde79bb4e68ea5e58f96e6b688e38082227d", "method": "POST", "path": "/api/orders/2/cancel/", "response_bytes": 67, "response_charset": "utf-8", "response_sha256": "518c00e633070c8bb16b0b4ea8e332883ccd17af228371b83a518e99e5e8ddad", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "��ǰ SKU ʵ�ʿ�治���Գ��������ȴ����������⡣", "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898d20534b5520e5ae9ee99985e5ba93e5ad98e4b88de8b6b3e4bba5e586b2e99480efbc8ce8afb7e58588e5a484e79086e5908ee7bbade587bae5ba93e38082227d", "method": "POST", "path": "/api/purchase-orders/2/receipts/1/reverse/", "response_bytes": 81, "response_charset": "utf-8", "response_sha256": "e77ac07f6e6ebbeee86d9d66ac4b57c720263f85d4e9f38b63285b3f8c00680f", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/shipments/1/reverse/", "response_bytes": 203, "response_charset": "utf-8", "response_sha256": "179a0736f78bfc2e0338c8ccd7ce4320e435298ed425b1ad4683234ff711c2cc", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/2/receipts/1/reverse/", "response_bytes": 383, "response_charset": "utf-8", "response_sha256": "b2bfe5f2f7f040f433504c2365ae10c1bc7db405839f2caa50c4ec354e52c3ed", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/purchase-orders/2/cancel/", "response_bytes": 3352, "response_charset": "utf-8", "response_sha256": "b3afd2f9f5bcc0b7345e4ae74c8ef31d2cefaa7d1718bb0a1cf82ea8aeb09ba3", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/2/cancel/", "response_bytes": 2315, "response_charset": "utf-8", "response_sha256": "5676a50c2063b67895aaf2cad3d7fabbeab951d82f04d5e47b8e89ba756426a6", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/", "response_bytes": 1401, "response_charset": "utf-8", "response_sha256": "559ceaa6ed079bb19f5a4eefa51f93e92438215ed8257b174c8de7aad55841d5", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/3/mark-sent/", "response_bytes": 1403, "response_charset": "utf-8", "response_sha256": "5724ab543f4122e6878fba21b4f4401a8049d31a7f4b28ac508e13a1aeafc540", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/quotes/3/accept/", "response_bytes": 1407, "response_charset": "utf-8", "response_sha256": "80efcd19c978860548863411c89d4ccec8ca47a2ba4aac9a52d2c43d0c83feb8", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/quotes/3/order-draft/", "response_bytes": 630, "response_charset": "utf-8", "response_sha256": "be12e20fa5e469b3e6843645fc99312cd91c8d815f32b3e70b202c757edae67d", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/", "response_bytes": 1548, "response_charset": "utf-8", "response_sha256": "a04f6bec08256a3907fe3c127979afd5fe7b93d11bde2754acab4d6aaeb615cf", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/quotes/3/", "response_bytes": 1407, "response_charset": "utf-8", "response_sha256": "80efcd19c978860548863411c89d4ccec8ca47a2ba4aac9a52d2c43d0c83feb8", "status": 200}
+CORE_HTTP {"charset_source": "not applicable", "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "detail": null, "method": "GET", "path": "/api/quotes/3/export/", "response_bytes": 10187, "response_charset": null, "response_sha256": "6c9a303c544749b80076e2aaf1ba1ec648394df1757bb7db9420303a9cf07eb1", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": "��ǰ����״̬����ִ�д˲������봴���޶������±��ۡ�", "error_response_raw_hex": "7b2264657461696c223a22e5bd93e5898de68aa5e4bbb7e78ab6e68081e4b88de883bde689a7e8a18ce6ada4e6938de4bd9cefbc8ce8afb7e5889be5bbbae4bfaee8aea2e78988e9878de696b0e68aa5e4bbb7e38082227d", "method": "POST", "path": "/api/quotes/3/reject/", "response_bytes": 88, "response_charset": "utf-8", "response_sha256": "56efb09aa08b342146572408b42abecec587d70666dc4f6ddf02bffcc9a9c7ec", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/quotes/3/", "response_bytes": 1407, "response_charset": "utf-8", "response_sha256": "80efcd19c978860548863411c89d4ccec8ca47a2ba4aac9a52d2c43d0c83feb8", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/orders/3/confirm/", "response_bytes": 1663, "response_charset": "utf-8", "response_sha256": "361ccac79f858a806058383015b686832be0db53551026fc24e1f6b6d59bf5b0", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/reports/data/?source=sales&group_by=customer&date_from=2026-11-01&date_to=2026-11-30", "response_bytes": 836, "response_charset": "utf-8", "response_sha256": "7ff1baa283bb39422b3fb94ac41070e07a4eb5bdcfdf974ed72637b10c03dcf0", "status": 200}
+CORE_HTTP {"charset_source": "Content-Type header", "content_type": "text/csv; charset=utf-8", "detail": null, "method": "GET", "path": "/api/reports/data/?source=sales&group_by=customer&date_from=2026-11-01&date_to=2026-11-30&export=csv", "response_bytes": 529, "response_charset": "utf-8", "response_sha256": "e465c2d7ab64f610cec1ec3bb481e70a3234c21d21281b73c8dd4f001f11bfd4", "status": 200}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "GET", "path": "/api/payment-plans/?direction=receivable&search=SO-2026-00001", "response_bytes": 1086, "response_charset": "utf-8", "response_sha256": "08583b0d16ecd303f00924f1e00fb6a7c48286acad75c02e2270db3fb594a9d1", "status": 200}
+Bad Request: /api/payment-plans/5/settle/
+.......................................Es.s...E....
+======================================================================
+ERROR: setUpClass (crm.tests.test_operations_receipt.ReceiptIssuanceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_operations_receipt.py", line 23, in setUpClass
+    raise RuntimeError("OpenSSL is required for signed receipt tests")
+RuntimeError: OpenSSL is required for signed receipt tests
+
+======================================================================
+ERROR: setUpClass (crm.tests.test_operations_retention.RetentionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\access-readiness-20261105\backend\crm\tests\test_operations_retention.py", line 25, in setUpClass
+    raise RuntimeError("OpenSSL is required for signed receipt tests")
+RuntimeError: OpenSSL is required for signed receipt tests
+
+----------------------------------------------------------------------
+Ran 1397 tests in 1461.737s
+
+FAILED (errors=2, skipped=81)
+Destroying test database for alias 'default'...
+
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/payment-plans/5/settle/", "response_bytes": 762, "response_charset": "utf-8", "response_sha256": "4ff173b6106e7c2e12294fca23df588390414608e46abf9353316a228b8744ee", "status": 201}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "error_response_raw_hex": "7b22616d6f756e74223a5b22e5bf85e9a1bbe5a4a7e4ba8ee99bb6e38082225d7d", "method": "POST", "path": "/api/payment-plans/5/settle/", "response_bytes": 33, "response_charset": "utf-8", "response_sha256": "aedfdb91ae72b7cb60dadee35a7a64d1e7c08fe3e80606793127776832e51a17", "status": 400}
+CORE_HTTP {"charset_source": "JSON default UTF-8", "content_type": "application/json", "detail": null, "method": "POST", "path": "/api/transactions/2/void/", "response_bytes": 827, "response_charset": "utf-8", "response_sha256": "560bf8d23d9c1c9f35e954939058be0c51aede2646e302ab48900ab65a30ca53", "status": 200}

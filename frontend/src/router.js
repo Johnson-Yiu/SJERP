@@ -26,6 +26,7 @@ const resourceModules = {
 }
 
 export const routes = [
+  { path: '/login', name: 'login', component: () => import('./views/LoginPage.vue'), meta: { title: '登录' } },
   { path: '/finance-ledger', component: () => import('./views/FinanceLedgerPage.vue'), meta: { title: '账户资金', eyebrow: 'Account cash', module: 'finance' } },
   { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units', module: 'trade_units' } },
   { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics', module: 'reports' } },
@@ -62,9 +63,12 @@ const router = createRouter({ history: createWebHistory(), routes })
 installModalNavigationGuard(router)
 
 router.beforeEach(async to => {
+  if (to.name === 'login') return true
   if (to.meta.accessStatus) return true
-  try { await loadAccessControl() }
+  let operator
+  try { operator = await loadAccessControl() }
   catch { return { name: 'access-status-error', replace: true } }
+  if (!operator?.authenticated && !operator?.development_superadmin) return { name: 'login', query: { next: to.fullPath }, replace: true }
   const module = to.meta.module
   const permitted = to.path === '/organization'
     ? canAccessOrganization()

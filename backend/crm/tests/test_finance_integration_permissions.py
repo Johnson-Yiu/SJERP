@@ -92,6 +92,22 @@ class FinanceLedgerOrdinaryRoleTests(CloseoutFixture, TestCase):
         self.assertEqual(denied.status_code, 403)
         self.assertNotIn(b'100.00', denied.content)
 
+    def test_format_suffix_preserves_csv_export_permission_and_contents(self):
+        self.fact()
+        path = '/api/finance-ledger/facts.json'
+        self.assertEqual(self.client.get(path, {'export': 'csv'}).status_code, 403)
+        self.grant(can_export=True)
+        finance = self.client.get(path, {'export': 'csv'})
+        self.assertEqual(finance.status_code, 200)
+        self.assertIn(b'100.00', finance.content)
+        self.grant(can_export=False)
+        RolePermission.objects.create(role=self.role, module='reports', can_export=True)
+        reports = self.client.get(path, {'export': 'csv'})
+        self.assertEqual(reports.status_code, 200)
+        self.assertEqual(reports.content, finance.content)
+        self.grant(can_view=False)
+        self.assertEqual(self.client.get(path, {'export': 'csv'}).status_code, 403)
+
     def test_missing_view_transactions_scope_or_active_profile_remains_denied(self):
         self.grant(can_create=True, can_update=True, can_export=True)
         before = (FinanceInstruction.objects.count(), FinanceFact.objects.count(), OperationLog.objects.count())

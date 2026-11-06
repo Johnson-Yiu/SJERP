@@ -17,6 +17,11 @@ import {
   isolatedCashAccountEnvironment,
   isolatedFixtureSeed,
   isolatedFixtureSeeds,
+  isolatedProfiles,
+  isolatedRbacMode,
+  isolatedExcludedTests,
+  isolatedAuthenticationEnvironment,
+  executeProfiles,
   reservePort,
   resolvePlaywrightSelection,
   sqliteDatabaseUrl,
@@ -27,6 +32,37 @@ import {
 
 const frontendRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const repositoryRoot = path.resolve(frontendRoot, '..')
+
+test('full suite runs access session in a separate restricted profile', async () => {
+  const selection = await resolvePlaywrightSelection(['--all-business-tests'])
+  const [business, accessProfile] = isolatedProfiles(selection)
+  assert.equal(isolatedRbacMode(business), false)
+  assert.ok(isolatedExcludedTests(business).includes('access-session-real.spec.js'))
+  assert.equal(isolatedRbacMode(accessProfile), true)
+  const restricted = isolatedAuthenticationEnvironment(accessProfile, '12345678-run')
+  const ordinary = isolatedAuthenticationEnvironment(business, '87654321-run')
+  assert.equal(restricted.RBAC_ENFORCEMENT, '1')
+  assert.equal(restricted.DEVELOPMENT_SUPERADMIN, '0')
+  assert.equal(restricted.ISS055_UI_USERNAME, 'iss055-12345678')
+  assert.ok(restricted.ISS055_UI_PASSWORD.length >= 24)
+  assert.equal(ordinary.RBAC_ENFORCEMENT, '0')
+  assert.equal(ordinary.DEVELOPMENT_SUPERADMIN, '1')
+  assert.equal(ordinary.ISS055_UI_PASSWORD, '')
+  assert.equal(accessProfile.businessTest, 'access-session-real.spec.js')
+  assert.equal(path.basename(isolatedFixtureSeeds(accessProfile)[0].scriptPath), 'seed_browser.py')
+  assert.deepEqual(isolatedProfiles(await resolvePlaywrightSelection(['--business-test', 'access-session-real.spec.js'])), [accessProfile])
+  await assert.rejects(resolvePlaywrightSelection(['--all-business-tests', '--exclude-business-test', 'access-session-real.spec.js']))
+})
+
+test('full suite executes both profiles even when the first fails', async () => {
+  const seen = []
+  const selection = await resolvePlaywrightSelection(['--all-business-tests'])
+  await assert.rejects(executeProfiles(selection, async profile => {
+    seen.push(profile.businessTest)
+    if (profile.businessSuite) throw new Error('synthetic profile failure')
+  }), AggregateError)
+  assert.deepEqual(seen, ['*', 'access-session-real.spec.js'])
+})
 
 test('bank-fee selection receives fixed synthetic accounts without external configuration', async () => {
   const selection = await resolvePlaywrightSelection(['--business-test', 'independent-bank-fee-real.spec.js'])

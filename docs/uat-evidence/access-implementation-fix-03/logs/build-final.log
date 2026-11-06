@@ -1,0 +1,34 @@
+
+> senju-crm-erp@1.0.0 build
+> vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2027 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                        0.56 kB │ gzip:   0.36 kB
+dist/assets/LoginPage-DsnD99ZU.css                     0.70 kB │ gzip:   0.33 kB
+dist/assets/FinanceLedgerPage-DozkUC26.css             2.50 kB │ gzip:   0.81 kB
+dist/assets/TradeUnitsPage-BagMfA07.css                2.89 kB │ gzip:   0.89 kB
+dist/assets/HistoryOrdersPage-DznBeah8.css             6.55 kB │ gzip:   1.53 kB
+dist/assets/HistoryTakeoverPage-Ch5hMMAb.css           8.68 kB │ gzip:   1.94 kB
+dist/assets/ReportsPage-DvohdynP.css                  18.04 kB │ gzip:   3.42 kB
+dist/assets/index-B7jShZjP.css                       389.26 kB │ gzip:  63.93 kB
+dist/assets/LoginPage-D5YtXMPL.js                      1.74 kB │ gzip:   1.07 kB
+dist/assets/TradeUnitsPage-BQLG21c8.js                10.63 kB │ gzip:   4.32 kB
+dist/assets/HistoryOrdersPage-DfH8W7yR.js             12.73 kB │ gzip:   4.45 kB
+dist/assets/FinanceLedgerPage-B3ztJ455.js             27.03 kB │ gzip:   8.31 kB
+dist/assets/HistoryTakeoverPage-COPvIBSP.js           41.23 kB │ gzip:  11.89 kB
+dist/assets/ReportsPage-XWlmkOWz.js                   51.56 kB │ gzip:  16.61 kB
+dist/assets/_plugin-vue_export-helper-9ZAvA4zq.js    141.25 kB │ gzip:  53.60 kB
+dist/assets/index-BQr3DMn9.js                      1,146.93 kB │ gzip: 400.12 kB
+
+✓ built in 3.14s
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+EXIT_CODE=0

@@ -1,0 +1,571 @@
+
+> senju-crm-erp@1.0.0 test:unit
+> node --test
+
+✔ CRM JSON snapshots larger than one MiB retain all Unicode field values (2488.3257ms)
+✔ fixture launch failure includes the real error code instead of a null status assertion (1.9186ms)
+✔ full suite runs access session in a separate restricted profile (61.3047ms)
+✔ bank-fee selection receives fixed synthetic accounts without external configuration (1.3978ms)
+✔ full business suite receives bank-fee synthetic accounts at the standard CI entry (0.2181ms)
+✔ other business selections and infrastructure smoke preserve existing account configuration (1.5239ms)
+✔ port allocator returns a free explicit loopback port (61.0093ms)
+✔ port preflight rejects an occupied port instead of reusing another server (3.172ms)
+✔ actual runner fails before creating isolated resources when its API port is occupied (4657.0016ms)
+✔ port preflight rejects duplicate API and Vite assignments (2.7148ms)
+✔ API identity mismatch is rejected before browser tests can proceed (44.5173ms)
+✔ only an existing browser test file can be selected; Playwright service and config overrides are rejected (491.0041ms)
+✔ only allowlisted real API suites receive fixed synthetic fixture seeds (4.4333ms)
+✔ API identity comparison checks run ID, token, SQLite path, and MEDIA_ROOT (1.1039ms)
+✔ a real Vite /api proxy to the wrong database and MEDIA_ROOT is rejected before Playwright (10072.625ms)
+✔ browser CI invokes the isolated suite and keeps run evidence under an isolated root (7.5373ms)
+✔ SQLite URL preserves an absolute platform path for Django parsing (1.4873ms)
+✔ cleanup removes only a marked run directory under system temp (629.5822ms)
+✔ cleanup refuses an ownership marker belonging to another run (404.4181ms)
+[parallel setup +251ms] created C:\Users\Johnson\AppData\Local\Temp\sunjack-parallel-worktrees-uEVcWu
+[parallel setup +7172ms] both shadow worktrees ready
+[worktree-a +5ms] spawned owned runner pid=28192
+[worktree-b +227ms] spawned owned runner pid=31972
+[worktree-a +3178ms] Isolation run f57fdd93-8aa7-412c-8eb3-c59b0b98bee6; API 127.0.0.1:11275; Vite 127.0.0.1:11276
+[worktree-a +3180ms] Isolated SQLite: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-XJXeHx\db.sqlite3
+[worktree-a +3181ms] Isolated MEDIA_ROOT: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-XJXeHx\media
+[worktree-a +3182ms] Playwright selection: infrastructure smoke tests
+[worktree-a +3182ms] Isolated RBAC mode: development superadmin
+[worktree-a +3182ms] [isolation] Pre-migration isolation verification
+[worktree-b +3300ms] Isolation run 8180f69f-1a3b-45db-a4e8-95cffbf9f1ca; API 127.0.0.1:11278; Vite 127.0.0.1:11279
+[worktree-b +3300ms] Isolated SQLite: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-btQY7i\db.sqlite3
+[worktree-b +3300ms] Isolated MEDIA_ROOT: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-btQY7i\media
+Playwright selection: infrastructure smoke tests
+Isolated RBAC mode: development superadmin
+[worktree-b +3301ms] [isolation] Pre-migration isolation verification
+[worktree-b +12193ms] {'runId': '8180f69f-1a3b-45db-a4e8-95cffbf9f1ca', 'token': '[REDACTED-EPHEMERAL-TOKEN]', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-btQY7i\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-btQY7i\\media', 'rbacEnforcement': False}
+[worktree-b +13314ms] [isolation] Pre-migration isolation verification: passed
+[worktree-b +13314ms] [isolation] Django system check
+[worktree-a +21420ms] {'runId': 'f57fdd93-8aa7-412c-8eb3-c59b0b98bee6', 'token': '[REDACTED-EPHEMERAL-TOKEN]', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-XJXeHx\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-XJXeHx\\media', 'rbacEnforcement': False}
+[worktree-a +21963ms] [isolation] Pre-migration isolation verification: passed
+[worktree-a +21963ms] [isolation] Django system check
+[worktree-b +34199ms] System check identified no issues (0 silenced).
+[worktree-b +35678ms] [isolation] Django system check: passed
+[worktree-b +35679ms] [isolation] Isolated database migrations
+[worktree-a +51007ms] System check identified no issues (0 silenced).
+[worktree-a +52231ms] [isolation] Django system check: passed
+[worktree-a +52231ms] [isolation] Isolated database migrations
+[worktree-b +77605ms] Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+[worktree-b +77606ms] Running migrations:
+[worktree-b +77613ms]   Applying contenttypes.0001_initial...
+[worktree-b +77623ms]  OK
+  Applying auth.0001_initial...
+[worktree-b +77647ms]  OK
+  Applying admin.0001_initial...
+[worktree-b +77696ms]  OK
+  Applying admin.0002_logentry_remove_auto_add...
+[worktree-b +77713ms]  OK
+  Applying admin.0003_logentry_add_action_flag_choices...
+[worktree-b +77721ms]  OK
+  Applying contenttypes.0002_remove_content_type_name...
+[worktree-b +77747ms]  OK
+[worktree-b +77747ms]   Applying auth.0002_alter_permission_name_max_length...
+[worktree-b +77791ms]  OK
+[worktree-b +77791ms]   Applying auth.0003_alter_user_email_max_length...
+[worktree-b +77808ms]  OK
+  Applying auth.0004_alter_user_username_opts...
+[worktree-b +77976ms]  OK
+  Applying auth.0005_alter_user_last_login_null...
+[worktree-b +78003ms]  OK
+  Applying auth.0006_require_contenttypes_0002...
+[worktree-b +78090ms]  OK
+  Applying auth.0007_alter_validators_add_error_messages...
+[worktree-b +78103ms]  OK
+  Applying auth.0008_alter_user_username_max_length...
+[worktree-b +78119ms]  OK
+  Applying auth.0009_alter_user_last_name_max_length...
+[worktree-b +78131ms]  OK
+  Applying auth.0010_alter_group_name_max_length...
+[worktree-b +78143ms]  OK
+[worktree-b +78144ms]   Applying auth.0011_update_proxy_permissions...
+[worktree-b +78157ms]  OK
+  Applying auth.0012_alter_user_first_name_max_length...
+[worktree-b +78220ms]  OK
+  Applying crm.0001_initial...
+[worktree-b +78337ms]  OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more...
+[worktree-b +78429ms]  OK
+[worktree-b +78429ms]   Applying crm.0003_customer_sales_stages...
+[worktree-b +78539ms]  OK
+[worktree-b +78539ms]   Applying crm.0004_organization_and_permissions...
+[worktree-a +78790ms] Operations to perform:
+[worktree-a +78790ms]   Apply all migrations: admin, auth, contenttypes, crm, sessions
+[worktree-a +78791ms] Running migrations:
+[worktree-a +78796ms]   Applying contenttypes.0001_initial...
+[worktree-a +78806ms]  OK
+  Applying auth.0001_initial...
+[worktree-a +78827ms]  OK
+  Applying admin.0001_initial...
+[worktree-a +78845ms]  OK
+  Applying admin.0002_logentry_remove_auto_add...
+[worktree-a +79207ms]  OK
+[worktree-b +79202ms]  OK
+  Applying crm.0005_alter_followup_subject...
+[worktree-a +79211ms]   Applying admin.0003_logentry_add_action_flag_choices...
+[worktree-b +79218ms]  OK
+  Applying crm.0006_customercodesequence...
+[worktree-b +79223ms]  OK
+[worktree-b +79223ms]   Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more...
+[worktree-a +79282ms]  OK
+  Applying contenttypes.0002_remove_content_type_name...
+[worktree-a +79301ms]  OK
+[worktree-a +79302ms]   Applying auth.0002_alter_permission_name_max_length...
+[worktree-a +79315ms]  OK
+  Applying auth.0003_alter_user_email_max_length...
+[worktree-b +79319ms]  OK
+  Applying crm.0008_productcodesequence_product_additional_categories...
+[worktree-a +79331ms]  OK
+  Applying auth.0004_alter_user_username_opts...
+[worktree-a +79346ms]  OK
+  Applying auth.0005_alter_user_last_login_null...
+[worktree-b +79347ms]  OK
+[worktree-b +79347ms]   Applying crm.0009_product_hs_code_product_name_en...
+[worktree-a +79360ms]  OK
+  Applying auth.0006_require_contenttypes_0002...
+[worktree-a +79363ms]  OK
+  Applying auth.0007_alter_validators_add_error_messages...
+[worktree-a +79374ms]  OK
+  Applying auth.0008_alter_user_username_max_length...
+[worktree-b +79403ms]  OK
+  Applying crm.0010_sku_parameter_values_product_details...
+[worktree-a +79417ms]  OK
+  Applying auth.0009_alter_user_last_name_max_length...
+[worktree-a +79430ms]  OK
+  Applying auth.0010_alter_group_name_max_length...
+[worktree-a +79443ms]  OK
+  Applying auth.0011_update_proxy_permissions...
+[worktree-b +79466ms]  OK
+  Applying crm.0011_quote_pi_fields_and_sku_image...
+[worktree-a +79517ms]  OK
+[worktree-a +79517ms]   Applying auth.0012_alter_user_first_name_max_length...
+[worktree-a +79529ms]  OK
+  Applying crm.0001_initial...
+[worktree-a +79712ms]  OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more...
+[worktree-a +79846ms]  OK
+  Applying crm.0003_customer_sales_stages...
+[worktree-a +79941ms]  OK
+  Applying crm.0004_organization_and_permissions...
+[worktree-b +80044ms]  OK
+  Applying crm.0012_quote_saved_pi_snapshots...
+[worktree-a +80162ms]  OK
+  Applying crm.0005_alter_followup_subject...
+[worktree-a +80178ms]  OK
+  Applying crm.0006_customercodesequence...
+[worktree-a +80183ms]  OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more...
+[worktree-a +80270ms]  OK
+  Applying crm.0008_productcodesequence_product_additional_categories...
+[worktree-a +80294ms]  OK
+  Applying crm.0009_product_hs_code_product_name_en...
+[worktree-b +80303ms]  OK
+  Applying crm.0013_quoteimportantnote...
+[worktree-a +80321ms]  OK
+  Applying crm.0010_sku_parameter_values_product_details...
+[worktree-a +80352ms]  OK
+  Applying crm.0011_quote_pi_fields_and_sku_image...
+[worktree-b +80415ms]  OK
+  Applying crm.0014_quote_parent_and_revision_summary...
+[worktree-b +80605ms]  OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit...
+[worktree-b +80743ms]  OK
+  Applying crm.0016_trade_fulfillment...
+[worktree-a +81160ms]  OK
+[worktree-a +81160ms]   Applying crm.0012_quote_saved_pi_snapshots...
+[worktree-a +81440ms]  OK
+  Applying crm.0013_quoteimportantnote...
+[worktree-a +81562ms]  OK
+  Applying crm.0014_quote_parent_and_revision_summary...
+[worktree-a +81721ms]  OK
+[worktree-a +81721ms]   Applying crm.0015_quoteimportantnote_deactivation_audit...
+[worktree-a +81982ms]  OK
+  Applying crm.0016_trade_fulfillment...
+[worktree-b +82144ms]  OK
+  Applying crm.0017_product_suppliers...
+[worktree-b +82270ms]  OK
+  Applying crm.0018_finance_operating_ledger...
+[worktree-b +83275ms]  OK
+[worktree-b +83275ms]   Applying crm.0019_transaction_allocated_amount...
+[worktree-b +83305ms]  OK
+  Applying crm.0020_contract_change_request...
+[worktree-a +83336ms]  OK
+  Applying crm.0017_product_suppliers...
+[worktree-a +83633ms]  OK
+  Applying crm.0018_finance_operating_ledger...
+[worktree-b +83628ms]  OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more...
+[worktree-a +84427ms]  OK
+  Applying crm.0019_transaction_allocated_amount...
+[worktree-a +84528ms]  OK
+[worktree-a +84528ms]   Applying crm.0020_contract_change_request...
+[worktree-b +84614ms]  OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more...
+[worktree-a +84758ms]  OK
+[worktree-a +84758ms]   Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more...
+[worktree-a +85543ms]  OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more...
+[worktree-b +86077ms]  OK
+  Applying crm.0022_merge_20260823_2351...
+[worktree-b +86081ms]  OK
+  Applying crm.0023_categoryattribute_include_in_sales_model...
+[worktree-b +86097ms]  OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations...
+[worktree-b +86207ms]  OK
+  Applying crm.0025_packagingtemplate_supplier...
+[worktree-b +86929ms]  OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty...
+[worktree-a +86982ms]  OK
+  Applying crm.0022_merge_20260823_2351...
+[worktree-a +86986ms]  OK
+[worktree-a +86986ms]   Applying crm.0023_categoryattribute_include_in_sales_model...
+[worktree-a +87002ms]  OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations...
+[worktree-b +87013ms]  OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details...
+[worktree-a +87131ms]  OK
+  Applying crm.0025_packagingtemplate_supplier...
+[worktree-b +87174ms]  OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details...
+[worktree-b +87391ms]  OK
+  Applying crm.0029_quote_child_revision_counter...
+[worktree-b +87697ms]  OK
+  Applying crm.0029_backfill_sku_internal_identity...
+[worktree-a +87746ms]  OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty...
+[worktree-b +87782ms]  OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter...
+[worktree-b +87785ms]  OK
+  Applying crm.0031_correct_sku_identity_from_specification...
+[worktree-b +87975ms]  OK
+[worktree-b +87975ms]   Applying crm.0032_currency_amount_precision...
+[worktree-a +88004ms]  OK
+[worktree-a +88005ms]   Applying crm.0027_remove_legacy_model_from_sku_product_details...
+[worktree-a +88090ms]  OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details...
+[worktree-a +88217ms]  OK
+  Applying crm.0029_quote_child_revision_counter...
+[worktree-a +88774ms]  OK
+  Applying crm.0029_backfill_sku_internal_identity...
+[worktree-a +88977ms]  OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter...
+[worktree-a +88982ms]  OK
+  Applying crm.0031_correct_sku_identity_from_specification...
+[worktree-b +88982ms]  OK
+  Applying crm.0033_sku_safety_history...
+[worktree-a +89517ms]  OK
+[worktree-a +89517ms]   Applying crm.0032_currency_amount_precision...
+[worktree-b +90342ms]  OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more...
+[worktree-a +90465ms]  OK
+  Applying crm.0033_sku_safety_history...
+[worktree-b +91528ms]  OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique...
+[worktree-a +91896ms]  OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more...
+[worktree-b +92271ms]  OK
+  Applying crm.0036_followupattachment...
+[worktree-b +92481ms]  OK
+  Applying crm.0037_sku_identity_safety...
+[worktree-b +93327ms]  OK
+[worktree-b +93327ms]   Applying crm.0038_supplier_code_remove_default_currency...
+[worktree-a +93607ms]  OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique...
+[worktree-b +93798ms]  OK
+[worktree-b +93798ms]   Applying crm.0039_categoryattribute_required...
+[worktree-b +93933ms]  OK
+[worktree-b +93934ms]   Applying crm.0040_purchaseorder_order_optional...
+[worktree-a +94030ms]  OK
+  Applying crm.0036_followupattachment...
+[worktree-b +94064ms]  OK
+[worktree-b +94064ms]   Applying crm.0041_inventorymovement_related_orders...
+[worktree-a +94143ms]  OK
+  Applying crm.0037_sku_identity_safety...
+[worktree-b +94672ms]  OK
+  Applying crm.0042_alter_inventorymovement_type...
+[worktree-a +94778ms]  OK
+  Applying crm.0038_supplier_code_remove_default_currency...
+[worktree-b +94891ms]  OK
+[worktree-b +94891ms]   Applying crm.0043_alter_transaction_kind...
+[worktree-b +94957ms]  OK
+  Applying crm.0044_operationlog...
+[worktree-b +95187ms]  OK
+[worktree-b +95187ms]   Applying crm.0045_trade_finance_safety...
+[worktree-a +95439ms]  OK
+  Applying crm.0039_categoryattribute_required...
+[worktree-a +95458ms]  OK
+[worktree-a +95458ms]   Applying crm.0040_purchaseorder_order_optional...
+[worktree-b +95666ms]  OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more...
+[worktree-a +95828ms]  OK
+  Applying crm.0041_inventorymovement_related_orders...
+[worktree-b +96071ms]  OK
+[worktree-b +96072ms]   Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more...
+[worktree-b +96424ms]  OK
+  Applying crm.0048_reporting_geography...
+[worktree-b +96537ms]  OK
+[worktree-b +96537ms]   Applying crm.0049_supplier_main_products...
+[worktree-a +96658ms]  OK
+  Applying crm.0042_alter_inventorymovement_type...
+[worktree-a +96767ms]  OK
+  Applying crm.0043_alter_transaction_kind...
+[worktree-a +96798ms]  OK
+  Applying crm.0044_operationlog...
+[worktree-a +96940ms]  OK
+  Applying crm.0045_trade_finance_safety...
+[worktree-a +97339ms]  OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more...
+[worktree-b +97722ms]  OK
+[worktree-b +97722ms]   Applying crm.0050_supplier_store_url...
+[worktree-b +97763ms]  OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more...
+[worktree-a +97781ms]  OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more...
+[worktree-b +98011ms]  OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot...
+[worktree-b +98026ms]  OK
+  Applying crm.0053_hs_code_catalog...
+[worktree-a +98226ms]  OK
+  Applying crm.0048_reporting_geography...
+[worktree-a +98473ms]  OK
+  Applying crm.0049_supplier_main_products...
+[worktree-b +98988ms]  OK
+  Applying crm.0054_sku_plans_supplier_capabilities...
+[worktree-a +99619ms]  OK
+  Applying crm.0050_supplier_store_url...
+[worktree-a +99642ms]  OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more...
+[worktree-a +99935ms]  OK
+[worktree-a +99935ms]   Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot...
+[worktree-a +99962ms]  OK
+  Applying crm.0053_hs_code_catalog...
+[worktree-a +100656ms]  OK
+[worktree-a +100656ms]   Applying crm.0054_sku_plans_supplier_capabilities...
+[worktree-b +100792ms]  OK
+  Applying crm.0055_freeze_existing_sku_parameters...
+[worktree-b +100952ms]  OK
+  Applying crm.0056_purchase_source_characteristics_snapshot...
+[worktree-b +101073ms]  OK
+  Applying crm.0057_sku_name_separator...
+[worktree-b +101197ms]  OK
+  Applying crm.0058_order_item_supplier_allocation...
+[worktree-a +102187ms]  OK
+  Applying crm.0055_freeze_existing_sku_parameters...
+[worktree-a +102437ms]  OK
+  Applying crm.0056_purchase_source_characteristics_snapshot...
+[worktree-a +102629ms]  OK
+  Applying crm.0057_sku_name_separator...
+[worktree-a +102948ms]  OK
+  Applying crm.0058_order_item_supplier_allocation...
+[worktree-b +104735ms]  OK
+  Applying crm.0059_supplier_supply_categories...
+[worktree-b +105251ms]  OK
+  Applying crm.0060_product_combination_rules...
+[worktree-b +105291ms]  OK
+  Applying crm.0061_sales_rules...
+[worktree-b +105882ms]  OK
+  Applying crm.0062_sku_trade_units...
+[worktree-a +106536ms]  OK
+  Applying crm.0059_supplier_supply_categories...
+[worktree-a +106905ms]  OK
+  Applying crm.0060_product_combination_rules...
+[worktree-a +106960ms]  OK
+  Applying crm.0061_sales_rules...
+[worktree-a +107691ms]  OK
+  Applying crm.0062_sku_trade_units...
+[worktree-a +112832ms] test cancelled; stopping owned runner pid=28192
+[worktree-b +112836ms] test cancelled; stopping owned runner pid=31972
+✖ two independent worktree runtimes can start concurrently without sharing ports or data (120020.67ms)
+[worktree-b +114198ms]  OK
+[worktree-b +114199ms]   Applying crm.0063_trade_unit_base_snapshots...
+[worktree-b +114506ms]  OK
+  Applying crm.0064_goods_receipt_reversal...
+[worktree-b +115206ms]  OK
+  Applying crm.0065_shipment_reversal...
+[worktree-b +116200ms]  OK
+[worktree-b +116201ms]   Applying crm.0066_transaction_void_metadata...
+[worktree-a +116332ms] closed code=null signal=SIGTERM
+[worktree-a +116332ms] owned runner cleanup finished
+[worktree-b +116850ms] closed code=null signal=SIGTERM
+[worktree-b +116852ms] owned runner cleanup finished
+✔ formatApiError preserves field and nested item context (1.5283ms)
+✔ apiErrorMessage uses understandable network and server fallbacks (0.213ms)
+✔ API errors retain status, parsed data and the original response (3.2981ms)
+✔ API parses Blob JSON errors before formatting (2.7623ms)
+✔ aggregated lists include subsequent pages and keep filters (0.6004ms)
+✔ listAll handles non-paginated array actions in one request (0.2347ms)
+✔ failed later pages never return a misleading partial total (0.2371ms)
+✔ category multiselect supports independent leaves, parent coverage and removal (467.3575ms)
+✔ contract adjustment history renders the backend status display (393.1261ms)
+✔ order workbench exposes retained contract amount adjustments (629.1674ms)
+✔ order workbench exposes shipment history and reversal flow (2.0008ms)
+✔ batch over-shipment requires a line-specific reason and one explicit batch warning before submitting (1.7743ms)
+✔ order workbench exposes explicit packing plan generation and snapshot display (4.8062ms)
+✔ packing plan loading never generates a plan implicitly (1.9961ms)
+✔ order workbench exposes procurement shortage, draft coverage, generation and linked purchases (2.1246ms)
+✔ lead-time input reserves room for ten digits (850.8193ms)
+✔ order draft contains one order-level tail-goods policy selector (1.3403ms)
+✔ order draft is always a draft and explains that confirmation performs formal actions (1.6129ms)
+✔ order draft does not ask for or submit a backend-generated order number (4.7734ms)
+✔ procurement preview groups by supplier and currency and validates user inputs (458.1117ms)
+✔ SKU candidate filters combine values with OR and attributes with AND, including legacy keys (634.7764ms)
+✔ quote detail exposes only valid status actions for draft and sent quotes (749.7481ms)
+✔ status actions call the API, reload quote workbench, and refresh the quote list (4.1982ms)
+✔ terminal quote states render no status transition controls (1.4952ms)
+✔ only non-terminal quotes expose the conversion-to-order actions (1.2384ms)
+✔ saved and revised PI previews use the currency in the official totals DTO (5.9712ms)
+✔ SKU picker synchronizes multi-selection into quote line items (199.233ms)
+✔ SKU picker keeps a fixed height while search results scroll (2.29ms)
+✔ quote editor lets users save without exporting the Excel file (1.3509ms)
+✔ quote editor keeps every footer action and gives save actions full rows on narrow screens (1.9734ms)
+✔ quote editor blocks a validity date earlier than the quote date (1.9038ms)
+✔ quote status is read-only and cannot be selected while creating or revising (1.8151ms)
+✔ related create modal supports inherited relationships (455.082ms)
+✔ related quote creation seeds the customer and keeps it locked in create mode (4.6621ms)
+✔ detail relation context carries parent customer and contact (5.1559ms)
+✔ follow-up rows open the shared detailed follow-up view (2.2489ms)
+✔ follow-up creation links days-after input to the next follow-up date (1.5143ms)
+✔ related create payload serializes empty optional dates as null (1.3359ms)
+✔ quote save stops on MOQ violation or unavailable validation service (131.4664ms)
+✔ valid MOQ check allows quote creation and ignores stale check responses (2.9569ms)
+✔ sales-rule editor explains that MOQ uses the SKU base quantity (2.0185ms)
+✔ calendar picker is opened only from its calendar button (776.1992ms)
+✔ date parts remain compact without individual outlines (1.2616ms)
+✔ time parts are grouped into a compact hour-minute control (1.3825ms)
+✔ summary cards provide a reusable, compact metric layout (152.1052ms)
+✔ supplier allocation metrics follow the selected SupplierSKU rather than the first source (88.6733ms)
+✔ supplier filtering and select-all retain selections outside current results (1110.2933ms)
+✔ business pages use the shared dialog infrastructure instead of browser dialogs (258.0199ms)
+✔ the shared host exposes DOM-accessible controls for automation (1.9328ms)
+✔ date shortcuts handle year and leap-month boundaries in local time (2.6362ms)
+✔ embedded block overrides do not mutate reusable defaults (0.2218ms)
+✔ bank cash facts use an independent report source and date basis (0.1367ms)
+✔ no settlement selection is JSON null, never zero or NaN (1.2973ms)
+✔ selected settlement keeps its positive integer identity (0.2027ms)
+✔ category cascade merges ancestors and retains same-name leaves under different parents (1.6414ms)
+✔ parent filtering includes descendants without matching similar names or other branches (0.3333ms)
+✔ customer lifecycle keys use the canonical Chinese labels (1.5915ms)
+✔ unknown customer lifecycle keys keep their safe fallback (0.2301ms)
+✔ legacy cash block IDs and custom configurations retain their query contract (1.4684ms)
+✔ addDays calculates an expected ship date from the order date (1.9963ms)
+✔ daysBetween derives the lead time from an expected ship date (0.2654ms)
+✔ date helpers leave incomplete dates empty (0.1434ms)
+✔ order tasks draft debt matrix (3.632ms)
+✔ order tasks cancelled debt matrix (0.2201ms)
+✔ order tasks confirmed debt matrix (0.3063ms)
+✔ order tasks production debt matrix (0.2075ms)
+✔ order tasks shipped debt matrix (0.2144ms)
+✔ order tasks completed debt matrix (0.1257ms)
+✔ completed settled has no tasks, refund dynamically restores only receipt (0.5299ms)
+✔ masked, absent and denied financial amounts never fall back to protected order balance (0.2963ms)
+✔ unknown no_plans is review, never confirmed zero (0.3116ms)
+✔ unknown review is review, never confirmed zero (0.2426ms)
+✔ page identity stays on the same path across transient query changes (1.9801ms)
+✔ list query data excludes modal and detail actions while retaining business context (13.5354ms)
+✔ closing a route modal removes action keys and preserves all context query values (0.454ms)
+✔ SKU labels come from records with a matching numeric foreign key and clearing preserves unrelated route state (0.4997ms)
+✔ return path remains on the ERP origin (2.3058ms)
+✔ preview filters cartesian combinations by all rules and normalizes units (2.1641ms)
+✔ multi-trigger, allowed values, prohibition and empty rules (0.2728ms)
+✔ saved base quantity loads as transaction quantity and sends edited trade quantity (1.0002ms)
+✔ switching to base unit clears stale transaction values (0.2029ms)
+✔ receipt cost is interpreted per selected package (0.1441ms)
+✔ SKU selection preserves multiple packaging lines for the same SKU (1.6747ms)
+✔ cash event page keeps the backend two-step and stable-key flow (189.801ms)
+✔ cash event page keeps bank facts separate from legacy receipt and settlement data (1.4969ms)
+✔ independent fees offer an optional settlement and serialize no selection as null (3.5664ms)
+✔ creating a category attribute updates the local category state without reloading the page (433.9511ms)
+✔ category template explains that published SKU plans do not auto-mutate (2.3364ms)
+✔ quote list renders a recursive parent-child tree with classified document icons (487.0259ms)
+✔ quote tree actions preserve detail, edit, and Excel export entry points (4.7318ms)
+✔ quote list provides summary metrics, filters, and newest-first sorting (2.0266ms)
+✔ every quote row opens detail and dedicated expansion stops propagation (5.2965ms)
+✔ orders reuse the compact summary cards used by the quotation desk (2.9476ms)
+✔ order editor does not expose manual lifecycle status changes (1.5823ms)
+✔ order creation leaves number generation to the backend and keeps saved numbers read-only (1.6516ms)
+✔ order draft edits use PUT, close and refresh on success, and surface failed saves (1.4472ms)
+✔ order editor reports an invalid non-positive line quantity before sending a request (1.9998ms)
+✔ order list limits edit and delete operations to drafts (1.3947ms)
+✔ formal order history prefers the saved party snapshot and labels the live master reference (5.0114ms)
+✔ quote history prefers the saved buyer snapshot and never falls back to the live customer name (3.2905ms)
+✔ editing from the order workbench reloads the current order before opening the editor (1.7426ms)
+✔ document deep links initialize and dynamically synchronize quote and order details (2.4195ms)
+✔ closing a document detail removes only detail and preserves remaining route state (1.63ms)
+✔ opening list rows pushes their detail id into the current route for refresh and history (4.4974ms)
+✔ invalid document ids cannot break the list route and large not-found ids remain loadable as details (0.5986ms)
+✔ finance dashboard keeps book reference and adds confirmed bank cash facts separately (202.9847ms)
+✔ payable drill keeps the dashboard purchase-only permission boundary (1.6211ms)
+✔ history order entry uses isolated endpoints and keeps the analysis-only label visible (142.2417ms)
+✔ history order entry preserves the supplied historical date and does not expose formal actions (1.5228ms)
+✔ history page keeps unauthorized optional requests from blanking authorized data (1.982ms)
+✔ history page does not offer an entry form without its master-data permissions (1.2845ms)
+✔ history navigation accepts either sales or purchasing view permission (2.734ms)
+✔ history analysis renders permission-filtered detail tables with local narrow-screen scrolling (1.586ms)
+✔ inventory page opens a SKU detail panel with linked business records (123.9856ms)
+✔ inventory headers toggle sortable columns (1.8227ms)
+✔ packaging list labels physical dimensions and tare weight with their units (108.2104ms)
+✔ packaging page presents tail-goods policies and no mixed-pack setting (2.2598ms)
+✔ packaging form keeps dimensions in one row and shows policy help as a floating panel (2.2783ms)
+✔ editing linked template physical data requires verification invalidation confirmation (1.3654ms)
+✔ SKU-bearing product prefix changes use preview and explicit apply endpoints (360.2613ms)
+✔ ordinary product data retains the normal save path (1.2646ms)
+✔ purchase desk exposes retained contract amount adjustment history (283.0054ms)
+✔ purchase desk connects creation, receipt and supplier payment actions (2.9228ms)
+✔ purchase desk exposes receipt history and the reversal flow (2.8184ms)
+✔ purchase desk labels ordered, received, remaining and overage quantities separately (1.165ms)
+✔ purchase desk keeps drafts editable and separates placement from draft save (2.5422ms)
+✔ formal purchase history prefers the saved supplier snapshot and exposes its party details (4.3658ms)
+✔ order fulfillment purchase history prefers formal supplier snapshots (2.2869ms)
+✔ purchase creation leaves number generation to the backend and never submits a number (2.163ms)
+✔ missing supplier source is described as optional without implying automatic creation (3.1348ms)
+✔ purchase price reference only carries across matching currencies and resets stale prices (1.6772ms)
+✔ cost allocation loads minimal cross-order candidates through procurement permission (3.8938ms)
+✔ purchase editor aggregates maintained MOQ in base units without blocking draft save (2.1868ms)
+✔ purchase placement keeps low MOQ as a reasoned soft exception and displays retained evidence (2.7926ms)
+✔ resource payload serializes empty optional dates as null (425.1715ms)
+✔ transaction resource distinguishes book reference from confirmed bank RMB cash (0.2799ms)
+✔ customer projections are visible but not editable customer fields (4.6497ms)
+✔ customer detail shortcuts require the target module action permission (1.8537ms)
+✔ customer, product and SKU details expose a permission-gated report-center shortcut with a safe return path (2.4528ms)
+✔ automatic inventory movements are read-only while manual movements are reversed, not deleted (7.7773ms)
+✔ follow-up history summary is distinguished from the current dashboard obligation (1.4627ms)
+✔ customer ownership uses scoped employee options and sends an explicit clear as null (3.3911ms)
+✔ ISS-049 reuses URL-backed quick filters for customer and follow-up lists (10.0498ms)
+✔ SKU editor exposes supplier source maintenance through the API (801.9551ms)
+✔ SKU editor canonicalizes abbreviation keys and mirrors backend value formatting (1.816ms)
+✔ SKU creation relies on generated Sales Model and editing preserves the saved model (2.8281ms)
+✔ editing one SKU keeps its packaging detail when the computed preview key changes (0.4186ms)
+✔ saved parameter suggestions include inherited categories and legacy keys independent of search rows (6.2704ms)
+✔ create and edit include packaging in their single SKU database request (5.7856ms)
+✔ parameter edits submit the explicitly saved Sales Model instead of the generated preview (2.4043ms)
+✔ image failure retains saved SKU IDs for independent retry and reports database success (6.8354ms)
+✔ nested packaging validation messages remain readable (2.4866ms)
+✔ main list pages reuse the shared summary cards (718.6764ms)
+✔ dashboard due follow-ups preserve current-due context when opening the list or a record (703.6903ms)
+✔ finance due contracts navigate by their returned record IDs (5.8052ms)
+✔ import page exposes only supported types and explains insert-only finance imports (3.6017ms)
+✔ import page uses preview and explicit confirmation before a write (3.2132ms)
+✔ top bar has no fake search or notification controls and uses current operator initials (2.2465ms)
+✔ core management lists and selectors use the tested all-pages loader (572.7335ms)
+✔ trade-unit page preserves deactivate and default-source actions (490.6576ms)
+✔ transaction form distinguishes refunds from order expenses (417.8712ms)
+ℹ tests 181
+ℹ suites 0
+ℹ pass 180
+ℹ fail 0
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 147321.6886
+
+✖ failing tests:
+
+test at infrastructure-tests\runner-validation.test.mjs:463:1
+✖ two independent worktree runtimes can start concurrently without sharing ports or data (120020.67ms)
+  'test timed out after 120000ms'
+
+EXIT_CODE=1

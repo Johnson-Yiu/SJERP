@@ -44,7 +44,7 @@ Call log:
   1  | import { test, expect } from '@playwright/test'
   2  | import fs from 'node:fs/promises'
   3  | import path from 'node:path'
-  4  | 
+  4  |
   5  | for (const [name, viewport] of [['desktop', { width: 1440, height: 900 }], ['narrow', { width: 390, height: 844 }]]) {
   6  |   test(`ERP login and logout use the isolated real session (${name})`, async ({ page }) => {
   7  |     await page.setViewportSize(viewport)
@@ -82,7 +82,7 @@ Call log:
   39 |     expect((await (await page.request.get('/api/session/current-operator/')).json()).authenticated).toBe(false)
   40 |   })
   41 | }
-  42 | 
+  42 |
   43 | test('lost session shows expiry and preserves a same-origin return', async ({ page }) => {
   44 |   await page.goto('/login?next=%2Fcustomers')
   45 |   await page.getByLabel('账号').fill(process.env.ISS055_UI_USERNAME)
@@ -95,7 +95,7 @@ Call log:
   52 |   await expect(page).toHaveURL(/\/login\?reason=expired/)
   53 |   await expect(page.getByText('登录已过期，请重新登录。')).toBeVisible()
   54 | })
-  55 | 
+  55 |
   56 | test('external return target is never navigated', async ({ page }) => {
 > 57 |   await page.goto('/login?next=%2F%2Foutside.example.invalid')
      |              ^ Error: page.goto: Test timeout of 30000ms exceeded.
@@ -106,5 +106,5 @@ Call log:
   62 |   await expect(page).not.toHaveURL(/\/login/)
   63 |   expect(new URL(page.url()).origin).toBe(originalOrigin)
   64 | })
-  65 | 
+  65 |
 ```

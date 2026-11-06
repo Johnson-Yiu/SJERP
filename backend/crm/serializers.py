@@ -307,7 +307,7 @@ class OperationLogSerializer(serializers.ModelSerializer):
         elif instance.entity in {"crm.order", "crm.quote"}:
             hidden_fields = set()
             if not user_can(user, "customers", "view"):
-                hidden_fields.update({"customer", "customer_id", "customer_name", "buyer_company_name", "recipient_name", "buyer_address", "buyer_email", "buyer_phone"})
+                hidden_fields.update({"customer", "customer_id", "customer_name", "buyer_company_name", "buyer_country_snapshot", "buyer_tax_id", "tax_id", "recipient_name", "buyer_address", "buyer_email", "buyer_phone"})
             if not user_can(user, "skus", "view"):
                 hidden_fields.update({"sku", "sku_id", "sku_code", "sku_code_snapshot", "sales_model", "sales_model_snapshot", "product_name", "display_name", "description"})
             if not user_can(user, "suppliers", "view"):
@@ -617,6 +617,13 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         user = serializer_user(self.context)
         from .sales_scope import scope_customer_related_queryset
+        data['effective_party'] = None
+        if user_can(user, 'suppliers', 'view') and instance.status not in {'draft', 'cancelled'}:
+            from .party_document_version import effective_snapshot
+            try:
+                data['effective_party'] = effective_snapshot(instance)
+            except DjangoValidationError as exc:
+                raise serializers.ValidationError({'effective_party': exc.messages}) from exc
         associated_ids = {row["id"] for row in data["related_orders"]}
         if instance.order_id:
             associated_ids.add(instance.order_id)
@@ -1943,6 +1950,7 @@ def validate_sales_exchange_rate(attrs, source=None):
 
 class QuoteSerializer(serializers.ModelSerializer):
     items = QuoteItemSerializer(many=True)
+    buyer_tax_id = serializers.CharField(max_length=200, allow_blank=True, allow_null=True, required=False, trim_whitespace=False)
     # Lists and relationship filters must follow the live customer master record.
     # The immutable buyer_company_name remains available for PI/export snapshots.
     customer_name = serializers.CharField(source="customer.name", read_only=True)
@@ -1951,11 +1959,19 @@ class QuoteSerializer(serializers.ModelSerializer):
     root_quote_no = serializers.SerializerMethodField()
     revision_label = serializers.SerializerMethodField()
     parent_quote_no = serializers.SerializerMethodField()
+    can_revise_buyer_tax_id = serializers.SerializerMethodField()
+
+    def get_can_revise_buyer_tax_id(self, obj):
+        user = serializer_user(self.context)
+        if not user_can(user, "customers", "view") or not user_can(user, "quotes", "update"):
+            return False
+        from .quote_draft_tax import can_revise_draft_tax
+        return can_revise_draft_tax(obj.pk)
 
     class Meta:
         model = Quote
         fields = "__all__"
-        read_only_fields = ["quote_no", "root_quote", "parent_quote", "revision_no", "revision_summary", "buyer_company_name"]
+        read_only_fields = ["quote_no", "root_quote", "parent_quote", "revision_no", "revision_summary", "buyer_company_name", "buyer_country_snapshot"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -1964,7 +1980,7 @@ class QuoteSerializer(serializers.ModelSerializer):
         if not user_can(serializer_user(self.context), "customers", "view"):
             data.update(
                 customer=None, customer_name="", buyer_company_name="", recipient_name="",
-                buyer_address="", buyer_email="", buyer_phone="",
+                buyer_address="", buyer_email="", buyer_phone="", buyer_country_snapshot=None, buyer_tax_id=None,
             )
         return data
 
@@ -1973,6 +1989,15 @@ class QuoteSerializer(serializers.ModelSerializer):
         view = self.context.get('view')
         if source is None and view and getattr(view, 'action', '') == 'revise':
             source = view.get_object()
+        if "buyer_tax_id" in attrs:
+            tax_id = attrs["buyer_tax_id"]
+            raw_tax_id = self.initial_data.get("buyer_tax_id")
+            if raw_tax_id is not None and not isinstance(raw_tax_id, str):
+                raise serializers.ValidationError({"buyer_tax_id": "税号必须为文本。"})
+            if source is None and tax_id is None:
+                raise serializers.ValidationError({"buyer_tax_id": "新报价未填写税号时请留空。"})
+            if tax_id and tax_id.startswith("="):
+                raise serializers.ValidationError({"buyer_tax_id": "税号不能以等号开头。"})
         from .sales_scope import customer_in_scope
         request = self.context.get("request")
         customer = attrs.get("customer", source.customer if source else None)
@@ -2100,6 +2125,14 @@ class OrderSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data.pop("amount_calculation_version", None)
         user = serializer_user(self.context)
+        data['effective_party'] = None
+        from .sales_scope import customer_in_scope
+        if user_can(user, 'customers', 'view') and customer_in_scope(instance.customer_id, user) and instance.status != 'draft':
+            from .party_document_version import effective_snapshot
+            try:
+                data['effective_party'] = effective_snapshot(instance)
+            except DjangoValidationError as exc:
+                raise serializers.ValidationError({'effective_party': exc.messages}) from exc
         if not user_can(user, "customers", "view"):
             data.update(
                 customer=None,
@@ -2289,7 +2322,7 @@ class OrderSerializer(serializers.ModelSerializer):
         copied_fields = [
             "customer", "quote_date", "valid_until", "currency", "exchange_rate", "shipping_fee", "discount",
             "notes", "recipient_name", "buyer_address", "buyer_email", "buyer_phone", "lead_time_days",
-            "deposit_ratio", "trading_terms", "shipping_details", "buyer_company_name",
+            "deposit_ratio", "trading_terms", "shipping_details", "buyer_company_name", "buyer_country_snapshot", "buyer_tax_id",
         ]
         revision_values = {field: getattr(source_quote, field) for field in copied_fields}
         revision_values.update({
@@ -2303,10 +2336,12 @@ class OrderSerializer(serializers.ModelSerializer):
             parent_quote=source_quote,
             revision_no=revision_no,
             revision_summary=f"订单确认时调整：{'、'.join(changed_parts)}",
-            status="accepted",
+            status="draft",
             pi_template_snapshots=source_quote.pi_template_snapshots,
             **revision_values,
         )
+        from .quote_party_approval_guard import inherit_quote_details
+        inherit_quote_details(source_quote, revision)
         create_quote_items(
             revision,
             [
@@ -2322,6 +2357,8 @@ class OrderSerializer(serializers.ModelSerializer):
             ],
             source_items=source_items,
         )
+        revision.status = 'accepted'
+        revision.save(update_fields=['status'])
         return revision
 
     @staticmethod

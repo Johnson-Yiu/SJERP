@@ -1,0 +1,37 @@
+Creating test database for alias 'default'...
+
+......Bad Request: /api/quotes/1/party-change/1/withdraw/
+Bad Request: /api/quotes/1/party-change/1/invalidate/
+Bad Request: /api/quotes/1/party-change/1/create-replacement/
+....Bad Request: /api/quotes/1/party-change/1/create-replacement/
+..Bad Request: /api/quotes/2/revise/
+.Bad Request: /api/quotes/1/party-change/1/create-replacement/
+.Bad Request: /api/quotes/1/party-change/1/create-replacement/
+Bad Request: /api/quotes/1/party-change/1/approve/
+Bad Request: /api/quotes/1/party-change/1/create-replacement/
+.....Bad Request: /api/quotes/2/mark-sent/
+.Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+..Bad Request: /api/orders/2/confirm/
+Bad Request: /api/purchase-orders/2/place/
+...Bad Request: /api/quotes/1/revise/
+...Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+..Bad Request: /api/quotes/1/party-change/1/apply/
+.Bad Request: /api/quotes/1/party-change/1/reject/
+Bad Request: /api/quotes/1/party-change/1/reject/
+.Unauthorized: /api/quotes/1/party-change/1/withdraw/
+Forbidden: /api/quotes/1/party-change/1/withdraw/
+..Unauthorized: /api/orders/1/party-change/
+Unauthorized: /api/purchase-orders/1/party-change/
+.......
+----------------------------------------------------------------------
+Ran 41 tests in 107.070s
+
+OK
+Destroying test database for alias 'default'...
+
+Found 41 test(s).
+System check identified no issues (0 silenced).

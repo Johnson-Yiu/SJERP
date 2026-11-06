@@ -909,6 +909,8 @@ class Quote(TimestampedModel):
     revision_summary = models.CharField("修订说明", max_length=500, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="quotes")
     buyer_company_name = models.CharField("买方公司快照", max_length=200, blank=True)
+    buyer_country_snapshot = models.CharField("买方国家/地区快照", max_length=100, null=True, blank=True, editable=False)
+    buyer_tax_id = models.CharField("买方税号快照", max_length=200, null=True, blank=True, default="")
     pi_template_snapshots = models.JSONField(default=dict, editable=False)
     quote_date = models.DateField("报价日期")
     valid_until = models.DateField("有效期至", null=True, blank=True)
@@ -941,6 +943,13 @@ class Quote(TimestampedModel):
         self._buyer_company_name_supplied = (
             "buyer_company_name" in kwargs or len(args) > buyer_index
         )
+        country_index = next(
+            index for index, field in enumerate(self._meta.concrete_fields)
+            if field.attname == "buyer_country_snapshot"
+        )
+        self._buyer_country_snapshot_supplied = (
+            "buyer_country_snapshot" in kwargs or len(args) > country_index
+        )
         template_index = next(
             index for index, field in enumerate(self._meta.concrete_fields)
             if field.attname == "pi_template_snapshots"
@@ -950,6 +959,9 @@ class Quote(TimestampedModel):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        from .party_snapshot_guard import guard_formal_party_snapshot
+        guard_formal_party_snapshot(self, ('customer_id', 'buyer_company_name', 'recipient_name',
+            'buyer_address', 'buyer_email', 'buyer_phone'), kwargs.get('update_fields'))
         if self._state.adding and not self._pi_template_supplied:
             if self.parent_quote_id:
                 self.pi_template_snapshots = self.parent_quote.pi_template_snapshots
@@ -967,6 +979,14 @@ class Quote(TimestampedModel):
                     self.pi_template_snapshots[key] = digest
         elif not self._state.adding:
             update_fields = kwargs.get("update_fields")
+            if update_fields is None or "buyer_tax_id" in update_fields:
+                saved_tax_id = type(self).objects.filter(pk=self.pk).values_list("buyer_tax_id", flat=True).first()
+                if saved_tax_id != self.buyer_tax_id:
+                    raise ValidationError({"buyer_tax_id": "保存的买方税号快照不能修改。"})
+            if update_fields is None or "buyer_country_snapshot" in update_fields:
+                saved_country = type(self).objects.filter(pk=self.pk).values_list("buyer_country_snapshot", flat=True).first()
+                if saved_country != self.buyer_country_snapshot:
+                    raise ValidationError({"buyer_country_snapshot": "保存的买方国家/地区快照不能修改。"})
             if update_fields is None or "pi_template_snapshots" in update_fields:
                 saved = type(self).objects.filter(pk=self.pk).values_list("pi_template_snapshots", flat=True).first()
                 if saved != self.pi_template_snapshots:
@@ -980,6 +1000,13 @@ class Quote(TimestampedModel):
             and self.customer_id
         ):
             self.buyer_company_name = self.customer.name
+        if self._state.adding and not self._buyer_country_snapshot_supplied:
+            if self.parent_quote_id:
+                self.buyer_country_snapshot = self.parent_quote.buyer_country_snapshot
+            elif not self.root_quote_id and self.customer_id:
+                self.buyer_country_snapshot = self.customer.country
+        from .quote_party_approval_guard import guard_quote_party_approval
+        guard_quote_party_approval(self, update_fields=kwargs.get('update_fields'))
         super().save(*args, **kwargs)
 
     def clean(self):
@@ -1136,6 +1163,14 @@ class Order(TimestampedModel):
 
     class Meta:
         ordering = ["-order_date", "-id"]
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        from .party_snapshot_guard import guard_formal_party_snapshot
+        guard_formal_party_snapshot(self, ('customer_id', 'customer_name_snapshot', 'customer_country_snapshot',
+            'customer_address_snapshot', 'customer_contact_name_snapshot', 'customer_phone_snapshot',
+            'customer_email_snapshot'), kwargs.get('update_fields'))
+        return super().save(*args, **kwargs)
 
     @property
     def base_amount(self):
@@ -1441,6 +1476,14 @@ class PurchaseOrder(TimestampedModel):
 
     class Meta:
         ordering = ["-order_date", "-id"]
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        from .party_snapshot_guard import guard_formal_party_snapshot
+        guard_formal_party_snapshot(self, ('supplier_id', 'supplier_name_snapshot', 'supplier_address_snapshot',
+            'supplier_contact_name_snapshot', 'supplier_phone_snapshot', 'supplier_email_snapshot'),
+            kwargs.get('update_fields'))
+        return super().save(*args, **kwargs)
 
     @property
     def base_amount(self):
@@ -2316,3 +2359,7 @@ class NewProductReminder(TimestampedModel):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("新品提醒不可删除，请使用作废。")
+from .party_version_models import PartyVersionRequest, PartyVersionApproval, PartyQuoteApplication, PartyVersionTerminalEvent  # noqa: E402,F401
+from .party_document_models import PartyDocumentVersion  # noqa: E402,F401
+from .party_replacement_models import PartyReplacementTarget, PartyReplacementLink  # noqa: E402,F401
+from .party_document_details_models import PartyDocumentDetailsStorage  # noqa: E402,F401

@@ -1,0 +1,14 @@
+Creating test database for alias 'default'...
+
+Bad Request: /api/quotes/2/mark-sent/
+..........Unauthorized: /api/quotes/1/party-change/
+Bad Request: /api/quotes/1/party-change/1/approve/
+..s
+----------------------------------------------------------------------
+Ran 13 tests in 71.670s
+
+OK (skipped=1)
+Destroying test database for alias 'default'...
+
+Found 13 test(s).
+System check identified no issues (0 silenced).

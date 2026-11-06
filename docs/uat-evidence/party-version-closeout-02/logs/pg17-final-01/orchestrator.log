@@ -1,0 +1,6 @@
+initdb 0
+pg_ctl-start 0
+migrate-0108 0
+migrate-new 0
+migration-check 0
+models-check 0

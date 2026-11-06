@@ -1,0 +1,27 @@
+{
+  "markSent": 200,
+  "before": 200,
+  "customerPatch": 200,
+  "after": 200,
+  "revision": 201,
+  "xlsx": 200,
+  "savedCountry": "Germany",
+  "pi390": {
+    "status": 200,
+    "buyer": {
+      "company_name": "Synthetic Buyer 1AC11C0B",
+      "tax_id": "00123-SYNTHETIC",
+      "name": "",
+      "address": "",
+      "email": "",
+      "phone": ""
+    },
+    "seller": {
+      "name": "Synthetic Seller",
+      "saler": "Synthetic Contact",
+      "address": "Synthetic Address",
+      "email": "synthetic@example.invalid",
+      "phone": "+00 000000"
+    }
+  }
+}

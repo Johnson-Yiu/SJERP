@@ -1,0 +1,42 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "37E41484E81F78BD022A884CD52420A4B8A6BA434B01E5BD3551868774EEFF11",
+    "Path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\party-version-closeout-20261105\\backend\\crm\\models.py"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "618152C58FE9D228BFBDC29E9E77057C92CFBBC25B49563C69B196293743EBAC",
+    "Path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\party-version-closeout-20261105\\backend\\crm\\quote_party_approval_guard.py"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "8F14A7584B87D322A3AEB76A7DC60118E2F77DE5C129F445937A48B3E0072ECF",
+    "Path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\party-version-closeout-20261105\\backend\\crm\\services\\order_lifecycle.py"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "E0E00D6A997087956DDAA4B6BDF5434C84E23B68C57A76CD2D5F967E33D159E2",
+    "Path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\party-version-closeout-20261105\\backend\\crm\\party_version.py"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "77048BC4698827A1CEBEAE89906EACE938E2A6565C21E01B1122F0B51719229B",
+    "Path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\party-version-closeout-20261105\\backend\\crm\\party_version_models.py"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "D2A0946E2FF00DDAC7840FDA47E54CDE5AE0DA92947412135E555CB0B0FF3047",
+    "Path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\party-version-closeout-20261105\\backend\\crm\\migrations\\0112_party_quote_application.py"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "78B73F3AE579B646CD1DC761CAE53E65A59D967DAC99F92C06A03BD74C417808",
+    "Path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\party-version-closeout-20261105\\backend\\crm\\tests\\test_quote_party_approval_guard.py"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "C66222EA29FAEBBF4D54544BFAA6FCC47DAF9821CB5190801D06F448D3B9CD48",
+    "Path": "D:\\Codex项目\\森爵照明管理系统\\.worktrees\\party-version-closeout-20261105\\backend\\crm\\tests\\test_party_quote_application.py"
+  }
+]

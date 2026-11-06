@@ -95,6 +95,8 @@ def _purchase_moq_exceptions(items):
 
 @transaction.atomic
 def place_purchase_order(purchase, *, moq_exception_reason="", operator=None):
+    from crm.party_replacement import prepare_formalization
+    replacement_context = prepare_formalization('purchase_order', purchase.pk)
     purchase = PurchaseOrder.objects.select_for_update(of=("self",)).select_related("supplier", "order").get(pk=purchase.pk)
     reject_historical(purchase, "确认下单或生成应付计划")
     if purchase.status != "draft":
@@ -107,12 +109,18 @@ def place_purchase_order(purchase, *, moq_exception_reason="", operator=None):
         raise ValidationError("MOQ 例外原因不能超过500字。")
     if moq_exceptions and not reason:
         raise PurchaseMOQExceptionRequired(moq_exceptions)
-    supplier = Supplier.objects.select_for_update().get(pk=purchase.supplier_id)
-    purchase.supplier_name_snapshot = supplier.name
-    purchase.supplier_address_snapshot = supplier.address or ""
-    purchase.supplier_contact_name_snapshot = supplier.contact_name or ""
-    purchase.supplier_phone_snapshot = supplier.phone or ""
-    purchase.supplier_email_snapshot = supplier.email or ""
+    from crm.party_replacement import snapshot_for_confirmation
+    replacement = snapshot_for_confirmation(purchase, 'purchase_order', context=replacement_context)
+    if replacement is not None:
+        for field, value in replacement.items():
+            setattr(purchase, field, value)
+    else:
+        supplier = Supplier.objects.select_for_update().get(pk=purchase.supplier_id)
+        purchase.supplier_name_snapshot = supplier.name
+        purchase.supplier_address_snapshot = supplier.address or ""
+        purchase.supplier_contact_name_snapshot = supplier.contact_name or ""
+        purchase.supplier_phone_snapshot = supplier.phone or ""
+        purchase.supplier_email_snapshot = supplier.email or ""
     purchase.status = "ordered"
     purchase.save(update_fields=[
         "status",

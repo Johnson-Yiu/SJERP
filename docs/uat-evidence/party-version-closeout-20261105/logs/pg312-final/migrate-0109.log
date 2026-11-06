@@ -1,0 +1,14 @@
+Operations to perform:
+  Target specific migration: 0109_quote_buyer_country_snapshot, from crm
+Running pre-migrate handlers for application admin
+Running pre-migrate handlers for application auth
+Running pre-migrate handlers for application contenttypes
+Running pre-migrate handlers for application sessions
+Running pre-migrate handlers for application crm
+Running migrations:
+  Applying crm.0109_quote_buyer_country_snapshot... OK (0.172s)
+Running post-migrate handlers for application admin
+Running post-migrate handlers for application auth
+Running post-migrate handlers for application contenttypes
+Running post-migrate handlers for application sessions
+Running post-migrate handlers for application crm

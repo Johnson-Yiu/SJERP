@@ -1,0 +1,31 @@
+{
+  "head": "bcdcb57545f121b8a4102f352c74008b47372035",
+  "root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-party-version-pg17-oyhp95xs",
+  "stages": {
+    "initdb": 0,
+    "pg_ctl-start": 0,
+    "fresh-migrate-all": 0,
+    "fresh-migration-check": 0,
+    "migrate-0108": 0,
+    "migrate-0109": 0,
+    "migration-plan": 0,
+    "migrate-new": 0,
+    "migration-check": 0,
+    "models-check": 0,
+    "party-tests": 1,
+    "0110-only-migrate": 0,
+    "0110-request-seed": 1,
+    "0110-request-rejection": 0,
+    "0110-request-verify": 1,
+    "rollback-seed": 0,
+    "rollback-rejection": 1,
+    "rollback-verify": 0,
+    "pg_ctl-stop": 0
+  },
+  "cleanup": "complete",
+  "port": 3612,
+  "server_version": "17.10",
+  "identity_verified": true,
+  "failed": true,
+  "remaining_test_databases": []
+}

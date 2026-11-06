@@ -323,7 +323,7 @@ class QuoteApiTests(TestCase):
                 self.assertEqual(detail.data[field], value)
             self.assertEqual(pi.data["buyer"], {"company_name": quote.buyer_company_name,
                 "name": expected["recipient_name"], "address": expected["buyer_address"],
-                "email": expected["buyer_email"], "phone": expected["buyer_phone"]})
+                "email": expected["buyer_email"], "phone": expected["buyer_phone"], "tax_id": ""})
             sheet = load_workbook(io.BytesIO(exported.content)).active
             text = "\n".join(str(cell.value or "") for row in sheet for cell in row)
             self.assertIn(expected["recipient_name"], text)
@@ -880,6 +880,30 @@ class QuoteApiTests(TestCase):
         self.assertEqual(Decimal(quote.items.get().quantity), Decimal("3.00"))
         self.assertEqual(quote.status, "accepted")
 
+    def test_order_confirmation_revision_inherits_complete_party_details(self):
+        from crm.party_document_details import unknown_details
+        from crm.party_document_details_models import PartyDocumentDetailsStorage
+        quote = self.create_quote(items=[{'sku': self.sku.id, 'quantity': '3.00', 'unit_price': '11.25'}])
+        details = unknown_details()
+        details['buyer']['billing_address'] = 'Buyer billing address'
+        details['seller']['tax_id'] = 'Seller tax id'
+        PartyDocumentDetailsStorage.objects.create(quote=quote, details=details)
+        quote.status = 'sent'
+        quote.save(update_fields=['status'])
+        draft = self.client.get(f'/api/quotes/{quote.pk}/order-draft/').data
+        draft['shipping_fee'] = '18.50'
+        saved = self.client.post('/api/orders/', draft, format='json')
+        self.assertEqual(saved.status_code, status.HTTP_201_CREATED, saved.data)
+        response = self.client.post(f"/api/orders/{saved.data['id']}/confirm/", {}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        order = Order.objects.get(pk=saved.data['id'])
+        self.assertEqual(order.quote.status, 'accepted')
+        self.assertEqual(order.quote.parent_quote_id, quote.pk)
+        self.assertEqual(PartyDocumentDetailsStorage.objects.get(quote=order.quote).details, details)
+        result = self.client.get(f'/api/quotes/{order.quote_id}/party-details/')
+        self.assertEqual(result.status_code, status.HTTP_200_OK, result.data)
+        self.assertEqual(result.data['details'], details)
+
     def test_editing_order_draft_defers_quote_revision_until_confirmation(self):
         quote = self.create_quote(items=[{"sku": self.sku.id, "quantity": "2.00", "unit_price": "10.00"}])
         draft = self.client.get(f"/api/quotes/{quote.id}/order-draft/").data
@@ -1354,6 +1378,7 @@ class QuoteExportTests(TestCase):
             "address": "Berlin, Germany",
             "email": "anna@example.com",
             "phone": "+49 30 123456",
+            "tax_id": "",
         })
         self.assertEqual(xlsx_cell_text(response.content, "B3"), "Export Buyer GmbH")
         self.assertEqual(xlsx_cell_text(response.content, "C11"), "MODEL-001")

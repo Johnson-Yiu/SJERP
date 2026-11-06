@@ -1,0 +1,14 @@
+initdb 0
+pg_ctl-start 0
+migrate-0108 0
+migrate-0109 0
+migration-plan 0
+migrate-new 0
+migration-check 0
+models-check 0
+party-tests 0
+rollback-seed 0
+rollback-rejection 1
+rollback-verify 0
+pg_ctl-stop 0
+{"head": "bcdcb57545f121b8a4102f352c74008b47372035", "root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-party-version-pg17-5_1wv_ko", "stages": {"initdb": 0, "pg_ctl-start": 0, "migrate-0108": 0, "migrate-0109": 0, "migration-plan": 0, "migrate-new": 0, "migration-check": 0, "models-check": 0, "party-tests": 0, "rollback-seed": 0, "rollback-rejection": 1, "rollback-verify": 0, "pg_ctl-stop": 0}, "cleanup": "complete", "port": 5878, "server_version": "17.10", "identity_verified": true, "remaining_test_databases": [], "source_hashes_match": false, "failed": true}

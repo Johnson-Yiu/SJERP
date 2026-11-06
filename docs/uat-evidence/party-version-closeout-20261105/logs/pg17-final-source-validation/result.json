@@ -1,0 +1,12 @@
+{
+  "head": "bcdcb57545f121b8a4102f352c74008b47372035",
+  "root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-party-version-pg17-4yan4yu2",
+  "stages": {
+    "initdb": 1
+  },
+  "cleanup": "complete",
+  "port": 3381,
+  "error": "initdb failed",
+  "failed": true,
+  "source_hashes_match": true
+}

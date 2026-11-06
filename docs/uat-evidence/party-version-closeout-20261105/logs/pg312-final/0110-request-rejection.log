@@ -1,0 +1,5 @@
+Operations to perform:
+  Target specific migration: 0109_quote_buyer_country_snapshot, from crm
+Running migrations:
+  Rendering model states... DONE
+  Unapplying crm.0110_party_version... OK

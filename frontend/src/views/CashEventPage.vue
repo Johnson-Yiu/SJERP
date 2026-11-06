@@ -1,7 +1,11 @@
 <script setup>
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const { workspace, storageKey } = useWorkspaceNavigation()
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { api } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { optionalSettlementId } from '../utils/cashEventPayload.js'
 import PageLoadState from '../components/PageLoadState.vue'
@@ -50,15 +54,11 @@ const allocations = ref([])
 const reviewConfirmed = ref(false)
 const duplicateCandidates = ref(null)
 const duplicateReason = ref('')
-const draftRestored = ref(false)
 const draftRestoredRequiresEvidence = ref(false)
 const voucherFile = ref(null)
 const voucherUploading = ref(false)
 const draftStorageKey = 'sunjack:r1-fin-p2-b:cash-event-draft:v1'
-const draftFormFields = [
-  'event_no', 'request_key', 'kind', 'currency', 'direction', 'bank_date', 'bank_net_amount',
-  'fee_mode', 'fee_amount', 'source_account', 'rmb_account', 'bank_reference', 'quoted_rate', 'fee_for',
-]
+const identityStorageKey = storageKey('sunjack:cash-event:request-identity:v1')
 const allocationAmountBaseline = new Map()
 let sourceRequestId = 0
 let sourceAbortController = null
@@ -94,58 +94,34 @@ function resetForm() {
 }
 function clearDraftSnapshot() {
   if (typeof window === 'undefined') return
-  try { window.localStorage.removeItem(draftStorageKey) } catch { /* Storage may be disabled. */ }
-}
-function persistedDraftForm() {
-  return Object.fromEntries(draftFormFields.map(field => [field, form[field]]))
-}
-function draftSnapshot() {
-  return {
-    version: 2,
-    saved_at: Date.now(),
-    form: persistedDraftForm(),
-    allocations: allocations.value.map(item => ({ id: item.id, amount: item.amount, verified: item.verified === true })),
-  }
+  try { window.localStorage.removeItem(draftStorageKey); if (workspace) window.sessionStorage.removeItem(identityStorageKey) } catch { /* Storage may be disabled. */ }
 }
 function persistDraftSnapshot() {
-  if (typeof window === 'undefined' || !showForm.value || formStep.value !== 'form') return
-  try { window.localStorage.setItem(draftStorageKey, JSON.stringify(draftSnapshot())) } catch { /* Keep the form usable when storage is unavailable. */ }
+  if (!workspace || !showForm.value || formStep.value !== 'form') return
+  const attempted = ['submitting', 'unknown'].includes(saveOutcome.value)
+  try { window.sessionStorage.setItem(identityStorageKey, JSON.stringify({ event_no: form.event_no, request_key: form.request_key, saved_at: Date.now(), attempted })) } catch { /* Storage may be disabled. */ }
 }
-function clearExpiredDraftSnapshot() {
-  if (typeof window === 'undefined') return
+function clearLegacyDraftSnapshot() {
   try {
-    const raw = window.localStorage.getItem(draftStorageKey)
-    if (!raw) return
-    const saved = JSON.parse(raw)
-    if (!saved?.saved_at || Date.now() - saved.saved_at > 24 * 60 * 60 * 1000 || !saved.form?.request_key) clearDraftSnapshot()
-  } catch {
-    clearDraftSnapshot()
-  }
+    if (!window.localStorage.getItem(draftStorageKey)) return
+    window.localStorage.removeItem(draftStorageKey)
+    notice.value = '旧版浏览器草稿已清理。已提交的操作请核对资金记录。'
+  } catch { /* Storage may be disabled. */ }
 }
 function restoreDraftSnapshot() {
-  if (typeof window === 'undefined') return false
+  if (!workspace) return false
   try {
-    const raw = window.localStorage.getItem(draftStorageKey)
-    if (!raw) return false
-    const saved = JSON.parse(raw)
-    if (!saved?.saved_at || Date.now() - saved.saved_at > 24 * 60 * 60 * 1000 || !saved.form?.request_key) {
-      clearDraftSnapshot(); return false
+    const saved = JSON.parse(window.sessionStorage.getItem(identityStorageKey) || 'null')
+    if (!saved?.request_key || !saved.event_no || Date.now() - saved.saved_at > 24 * 60 * 60 * 1000) {
+      window.sessionStorage.removeItem(identityStorageKey)
+      return false
     }
-    const safeForm = Object.fromEntries(draftFormFields.map(field => [field, saved.form[field] ?? form[field]]))
-    Object.assign(form, safeForm)
-    allocations.value = Array.isArray(saved.allocations)
-      ? saved.allocations.map(item => ({ id: item.id, amount: item.amount ?? '', verified: item.verified === true }))
-      : []
-    draftRestored.value = true
+    form.request_key = saved.request_key
+    form.event_no = saved.event_no
     draftRestoredRequiresEvidence.value = true
-    // Legacy v1 snapshots could contain evidence fields. Overwrite the raw
-    // record immediately so sensitive values are not retained in localStorage
-    // while the restored form remains open.
-    persistDraftSnapshot()
+    if (saved.attempted) saveOutcome.value = 'unknown'
     return true
-  } catch {
-    clearDraftSnapshot(); return false
-  }
+  } catch { return false }
 }
 function money(value, currency = 'CNY') {
   if (value === null || value === undefined || value === '') return '待核对'
@@ -238,10 +214,10 @@ async function loadSources() {
 }
 function openCreate() {
   if (!can('transactions', 'create')) return
-  resetForm(); draftRestored.value = false; showForm.value = true; selected.value = null
+  resetForm(); showForm.value = true; selected.value = null
   formGuard.markClean()
   const restored = restoreDraftSnapshot()
-  if (restored) notice.value = '已恢复未完成草稿；凭证资料未保存在本地，请重新填写后再预览。'
+  if (restored) notice.value = '已恢复请求标识。请重新填写财务内容并核对凭证。'
   void loadSources()
 }
 function closeForm() { return formGuard.requestClose(() => { clearDraftSnapshot(); showForm.value = false; selected.value = null; preview.value = null; previewFingerprint.value = '' }) }
@@ -279,7 +255,7 @@ async function registerDraft() {
   error.value = ''; notice.value = ''
   const localError = clientError(); if (localError) { error.value = localError; return }
   if (!preview.value || !previewFingerprint.value || payloadFingerprint(eventPayload()) !== previewFingerprint.value) { preview.value = null; previewFingerprint.value = ''; saveOutcome.value = 'not-submitted'; error.value = '预览已失效，请重新预览后再登记。'; return }
-  saving.value = true; saveOutcome.value = 'submitting'
+  saving.value = true; saveOutcome.value = 'submitting'; persistDraftSnapshot()
   try {
     const response = await api.post('/rmb-cash-events/', eventPayload())
     selected.value = response.data; formStep.value = 'review'; showCancelReason.value = false; preview.value = null; previewFingerprint.value = ''; reviewConfirmed.value = false; clearDraftSnapshot(); formGuard.markClean(); saveOutcome.value = 'saved'; notice.value = response.status === 200 ? '已按稳定请求键回查原资金事件。' : '已登记待确认资金事件。'
@@ -351,7 +327,7 @@ watch([form, allocations], () => {
     }
   }
 }, { deep: true })
-onMounted(() => { clearExpiredDraftSnapshot(); loadEvents() })
+onMounted(() => { clearLegacyDraftSnapshot(); loadEvents() })
 </script>
 
 <template>

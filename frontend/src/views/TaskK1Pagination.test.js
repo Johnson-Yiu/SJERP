@@ -14,7 +14,10 @@ test('core management lists and selectors use the tested all-pages loader', asyn
     source('../components/QuoteEditorModal.vue'),
   ])
 
-  assert.match(resource, /import \{ api, listAll \} from '\.\.\/api'/)
+  assert.match(resource, /const \{ api, listAll \} = useWorkspaceApi\(\)/)
+  const scopedApi = await source('../composables/useWorkspaceApi.js')
+  assert.match(scopedApi, /listAll as sharedListAll/)
+  assert.match(scopedApi, /sharedListAll\(url, \{ \.\.\.config, signal: workspace\.controller\.signal/)
   assert.match(resource, /const nextRows = await listAll\(/)
   assert.match(resource, /options\[key\] = await listAll\(/)
 

@@ -1,7 +1,10 @@
 <script setup>
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api, listAll } from '../api'
+
 import SummaryCards from '../components/SummaryCards.vue'
 import PageLoadState from '../components/PageLoadState.vue'
 import ListEmptyState from '../components/ListEmptyState.vue'
@@ -24,6 +27,7 @@ function openEdit(row) {
   if (!can('finance', 'update')) return
   editing.value = row; error.value = ''; notice.value = ''
   Object.assign(editForm, { due_date: row.due_date || '', planned_amount: row.planned_amount, notes: row.notes || '' })
+  planGuard.markClean()
 }
 async function savePlan() {
   if (saving.value || !can('finance', 'update')) return
@@ -38,6 +42,8 @@ async function savePlan() {
 const filters = reactive({ status: 'open', overdue: false, dueFrom: '', dueTo: '' })
 const searchInput = ref(''), searchTerm = ref('')
 const form = reactive({ amount: '', transaction_date: new Date().toISOString().slice(0, 10), exchange_rate: '1', payment_method: '', reference: '', notes: '' })
+const planGuard = useUnsavedChangesGuard({ data: () => editForm, enabled: () => Boolean(editing.value), busy: () => saving.value })
+const settleGuard = useUnsavedChangesGuard({ data: () => form, enabled: () => Boolean(selected.value), busy: () => saving.value })
 const title = computed(() => props.direction === 'receivable' ? '应收计划' : '应付计划')
 const searchPlaceholder = computed(() => props.direction === 'receivable' ? '搜索客户或销售订单号…' : '搜索供应商或采购单号…')
 const rangeError = computed(() => filters.dueFrom && filters.dueTo && filters.dueFrom > filters.dueTo ? '到期日开始日期不能晚于结束日期。' : '')
@@ -176,6 +182,7 @@ function openSettle(row) {
   form.payment_method = ''
   form.reference = row.contract_no
   form.notes = ''
+  settleGuard.markClean()
 }
 async function settle() {
   if (saving.value || !can('finance', 'update')) return

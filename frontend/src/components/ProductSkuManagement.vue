@@ -1,6 +1,8 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { computed, ref, watch } from 'vue'
-import { api, listAll } from '../api'
+
 import { confirmDialog } from '../dialogs'
 import SupplierBatchBindingDrawer from './SupplierBatchBindingDrawer.vue'
 const props = defineProps({ productId: [Number, String], initialTab: { type: String, default: 'suppliers' }, refreshKey: Number })

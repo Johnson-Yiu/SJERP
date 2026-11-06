@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onMounted, ref, watch } from 'vue'
 import { AlertTriangle, Check, CircleHelp, FileUp, History, RotateCcw, ShieldCheck } from 'lucide-vue-next'
-import { api } from '../api'
+
 import { accessState, useAccessControl } from '../accessControl'
 
 const { can } = useAccessControl()

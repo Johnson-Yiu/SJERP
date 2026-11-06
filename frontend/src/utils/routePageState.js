@@ -1,4 +1,4 @@
-const transientRouteQueryKeys = new Set(['create', 'detail', 'tab', 'edit', 'returnTo'])
+const transientRouteQueryKeys = new Set(['__workspace', 'create', 'detail', 'tab', 'edit', 'returnTo'])
 const transientModalQueryKeys = new Set(['create', 'edit', 'returnTo'])
 
 export function pageIdentityKey(route) {

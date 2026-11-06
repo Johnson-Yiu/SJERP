@@ -1,5 +1,7 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const { workspace } = useWorkspaceNavigation()
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { X } from 'lucide-vue-next'
 import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
@@ -43,6 +45,7 @@ function dateTime(value) {
 }
 const product = item => item.display_name || props.skus.find(sku => Number(sku.id) === Number(item.sku))?.display_name_cn || item.sku_code
 function taskAction(task) { if (task.target === 'confirm') { if (can('purchases', 'update')) emit('confirm', row.value) } else activeTab.value = task.target }
+watch(() => row.value?.purchase_no, title => { if (workspace && title) { workspace.objectTitle = String(title); workspace.title = String(title) } }, { immediate: true })
 </script>
 <template>
   <div class="purchase-workbench-mask" @mousedown.self="emit('close')" @keydown.esc="emit('close')">

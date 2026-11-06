@@ -1,13 +1,39 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onMounted, onBeforeUnmount, ref, provide, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { LayoutDashboard, Users, ContactRound, MessageSquareText, Package, Boxes, FileText, ShoppingCart, WalletCards, Upload, Tags, Menu, Warehouse, SlidersHorizontal, BadgeCheck, ShieldCheck, Truck, Barcode, History } from 'lucide-vue-next'
 import AppDialogHost from './components/AppDialogHost.vue'
-import { pageIdentityKey } from './utils/routePageState'
-import { accessState, can, canAccessHistoricalOrders, canAccessOrganization, loadAccessControl } from './accessControl'
+import { withoutModalActionQuery } from './utils/routePageState'
+import { onSessionBoundary } from './workspaceSession'
+import WorkspaceTabs from './components/WorkspaceTabs.vue'
+import WorkspacePane from './components/WorkspacePane.vue'
+import { createWorkspaceManager } from './workspaceManager'
+import { workspaceManagerKey } from './composables/useWorkspaceNavigation'
+import { accessState, can, canAccessHistoricalOrders, canAccessOrganization, loadAccessControl, setAccessOperator } from './accessControl'
 import { api } from './api'
 
 const route = useRoute()
+const rootRouter = useRouter()
+const manager = createWorkspaceManager(rootRouter)
+provide(workspaceManagerKey, manager)
+watch(() => accessState.operator, async value => {
+  const identity = value ? String(value.user_id ?? value.id ?? value.employee_profile_id ?? (value.development_superadmin && !value.authenticated ? 'development' : 'unidentified-session')) : 'anonymous'
+  manager.reset(identity)
+  if (value?.authenticated || value?.development_superadmin) {
+    await rootRouter.isReady()
+    const current = rootRouter.currentRoute.value
+    if (current.name !== 'login' && accessState.operator === value && !manager.tabs.length && !manager.isOpening()) await manager.open(current.fullPath)
+  }
+}, { immediate: true, flush: 'sync' })
+const removeBoundary = onSessionBoundary(() => {
+  const current = rootRouter.currentRoute.value
+  const next = rootRouter.resolve({ path: current.path, query: withoutModalActionQuery(current.query), hash: current.hash }).fullPath
+  setAccessOperator(null)
+  manager.reset('expired')
+  menuOpen.value = false
+  void rootRouter.replace({ name: 'login', query: { reason: 'expired', next }, state: { __workspace: null } })
+})
+onBeforeUnmount(() => { removeBoundary(); manager.destroy() })
 const menuOpen = ref(false)
 const signOutError = ref('')
 const operator = computed(() => accessState.operator || { name: accessState.error ? '权限状态不可用' : '加载中', role: '身份待确认', development_superadmin: false, has_all_permissions: false })
@@ -63,13 +89,20 @@ const visibleNav = computed(() => {
   return result
 })
 onMounted(() => { loadAccessControl().catch(() => {}) })
+const signingOut = ref(false)
 async function signOut() {
+  if (signingOut.value) return
+  signingOut.value = true
   signOutError.value = ''
   try {
+    if (!await manager.confirmExit() || accessState.operator?.authenticated !== true) return
     await api.get('/session/csrf/')
     await api.post('/session/logout/')
-    window.location.assign('/login')
+    setAccessOperator(null)
+    menuOpen.value = false
+    await rootRouter.replace({ name: 'login', state: { __workspace: null } })
   } catch { signOutError.value = '退出未完成，请检查网络后重试。' }
+  finally { signingOut.value = false }
 }
 </script>
 
@@ -94,7 +127,7 @@ async function signOut() {
       <div class="sidebar-foot">
         <div class="team-avatars"><span>{{ operatorInitial }}</span></div>
         <div class="sidebar-identity"><strong :title="operator.name">{{ operator.development_superadmin ? '开发身份' : '当前账号' }}：{{ operator.name }}</strong><small>{{ operator.role }} · {{ operator.has_all_permissions ? '全部功能与数据权限' : '按账号授权' }}</small></div>
-        <button v-if="operator.authenticated && !operator.development_superadmin" type="button" @click="signOut">退出登录</button>
+        <button v-if="operator.authenticated && !operator.development_superadmin" type="button" :disabled="signingOut" @click="signOut">退出登录</button>
       </div>
       <div v-if="accessState.error" class="access-state-error" role="alert">权限状态加载失败：{{ accessState.error }}</div>
       <div v-if="signOutError" class="access-state-error" role="alert">{{ signOutError }}</div>
@@ -112,7 +145,8 @@ async function signOut() {
           <div class="avatar" :title="operator.name">{{ operatorInitial }}</div>
         </div>
       </header>
-      <section class="content"><RouterView :key="pageIdentityKey(route)" /></section>
+      <WorkspaceTabs :manager="manager" />
+      <section class="content"><WorkspacePane v-for="tab in manager.tabs" :key="tab.id" :tab="tab" :manager="manager" /></section>
     </main>
     <AppDialogHost />
   </div>

@@ -1,4 +1,13 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, downloadQuoteExport, listAll } = useWorkspaceApi()
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const workspaceNavigation = useWorkspaceNavigation()
+function newWorkspaceDraft() {
+  if (workspaceNavigation.workspace) return workspaceNavigation.newDraft({ path: route.path, query: { ...route.query, detail: undefined, edit: undefined, create: '1', returnTo: undefined } })
+  return create()
+}
+
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'
@@ -8,7 +17,7 @@ import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } 
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Plus, Search, Pencil, Trash2, FileX2, X, MinusCircle, Download, ChevronDown, ChevronRight, FolderOpen, FileText, FilePenLine, Eye, Clock3, CircleCheck, CircleDollarSign, RotateCcw } from 'lucide-vue-next'
-import { api, downloadQuoteExport, listAll } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog } from '../dialogs'
 import QuoteDetailModal from '../components/QuoteDetailModal.vue'
@@ -26,7 +35,7 @@ import { addDays, daysBetween } from '../utils/orderDate'
 import { clearModalRoute, modalOrigin } from '../utils/modalNavigation'
 import { orderDetailLocation, quoteDetailLocation, workbenchCloseLocation } from '../utils/detailNavigation'
 import { documentDetailState, withDocumentDetailQuery, withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
-import { routeDataQuery, routeDataQuerySignature } from '../utils/routePageState'
+import { routeDataQuery, routeDataQuerySignature, withoutModalActionQuery } from '../utils/routePageState'
 import { skuContextLabel, skuContextId, withoutSkuContext } from '../utils/skuContext'
 import { useAccessControl } from '../accessControl'
 
@@ -57,6 +66,7 @@ const quoteDetailId = ref(null), orderDetailId = ref(null)
 const returnToOrderDetailId = ref(null)
 const orderWorkbenchRefresh = ref(0)
 const quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)
+let savedQuoteForClose = null
 const orderDraft = ref(null), workbenchRefresh = ref(0)
 const orderLeadTimeDays = ref('')
 const expandedQuoteNodes = ref(new Set())
@@ -191,7 +201,15 @@ function setOrderLeadTimeDays() {
 }
 const closeEditor = () => guard.requestClose(discardEditor)
 function discardEditor() { sourceQuoteRequest += 1; sourceQuoteLoading.value = false; open.value = false; returnToOrderDetailId.value = null; void clearModalRoute(router, route) }
-function closeQuoteEditor() { quoteEditorOpen.value = false; void clearModalRoute(router, route) }
+async function closeQuoteEditor() {
+  quoteEditorOpen.value = false
+  const saved = savedQuoteForClose
+  savedQuoteForClose = null
+  if (!saved || modalOrigin(route)) { await clearModalRoute(router, route); return }
+  const detail = withDocumentDetailQuery(route, saved.id)
+  await workspaceNavigation.adoptObject({ ...detail, query: withoutModalActionQuery(detail.query) })
+  await load()
+}
 async function changeCurrency(event) {
   const currency = event.target.value
   event.target.value = form.currency
@@ -259,9 +277,15 @@ async function save() {
     const detailId = returnToOrderDetailId.value || (isOrder.value ? response.data.id : null)
     open.value = false
     notify('单据已保存')
-    await clearModalRoute(router, route)
-    await load()
-    if (detailId && !origin) await router.push(withDocumentDetailQuery(route, detailId))
+    if (workspaceNavigation.workspace && detailId && !origin) {
+      const detail = withDocumentDetailQuery(route, detailId)
+      await workspaceNavigation.adoptObject({ ...detail, query: withoutModalActionQuery(detail.query) })
+      await load()
+    } else {
+      await clearModalRoute(router, route)
+      await load()
+      if (detailId && !origin) await router.push(withDocumentDetailQuery(route, detailId))
+    }
     if (detailId && returnToOrderDetailId.value) orderWorkbenchRefresh.value += 1
     returnToOrderDetailId.value = null
   } catch (e) { notify(e.message, true) } finally { saving.value = false }
@@ -269,6 +293,7 @@ async function save() {
 async function handleQuoteSaved(row) {
   const origin = modalOrigin(route)
   notify(`报价 ${row.quote_no} 已保存`)
+  if (workspaceNavigation.workspace) { savedQuoteForClose = row; return }
   await clearModalRoute(router, route)
   await load()
   if (quoteDetailId.value) workbenchRefresh.value += 1
@@ -490,7 +515,7 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
 
 <template>
   <div class="core-list-page">
-    <div class="page-head list-intro"><p>{{ copy.description }}</p><button v-if="can(accessModule, 'create')" class="btn btn-primary" :disabled="optionLoading" @click="create"><Plus :size="16" /> 新建{{ isOrder ? '订单' : '报价' }}</button></div>
+    <div class="page-head list-intro"><p>{{ copy.description }}</p><button v-if="can(accessModule, 'create')" class="btn btn-primary" :disabled="optionLoading" @click="newWorkspaceDraft"><Plus :size="16" /> 新建{{ isOrder ? '订单' : '报价' }}</button></div>
     <SummaryCards v-if="isOrder && hasLoaded" :items="orderMetrics" />
     <SkuContextBanner v-if="hasSkuContext" :label="activeSkuContextLabel" @clear="clearSkuFilter" />
     <section v-if="!isOrder && hasLoaded" class="quote-metrics" aria-label="报价汇总"><article><span>报价主单</span><strong>{{ quoteMetrics.projects }}</strong><i class="metric-icon mint"><FolderOpen :size="19" /></i><small>主单数量</small></article><article><span>报价修订版</span><strong>{{ quoteMetrics.versions }}</strong><i class="metric-icon blue"><FileText :size="19" /></i><small>含全部版本</small></article><article><span>跟进中</span><strong>{{ quoteMetrics.pending }}</strong><i class="metric-icon amber"><Clock3 :size="19" /></i><small>草稿或已发送</small></article><article><span>客户已接受</span><strong>{{ quoteMetrics.accepted }}</strong><i class="metric-icon green"><CircleCheck :size="19" /></i><small>已接受报价</small></article></section>

@@ -61,3 +61,10 @@ export function dismissToast(id) {
   const index = dialogState.toasts.findIndex(toast => toast.id === id)
   if (index >= 0) dialogState.toasts.splice(index, 1)
 }
+
+// Identity boundaries must not show another account's pending prompts or notices.
+export function clearDialogs() {
+  const pending = [dialogState.current, ...queue.splice(0)].filter(Boolean)
+  dialogState.current = null; dialogState.toasts.splice(0)
+  for (const dialog of pending) dialog.resolve(dialog.kind === 'input' ? null : false)
+}

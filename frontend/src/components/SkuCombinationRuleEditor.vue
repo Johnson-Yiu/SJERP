@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import ComboInput from './ComboInput.vue'
-import { api } from '../api'
+
 const props = defineProps({ productId: [Number, String], definitions: Array, savedRules: { type: Array, default: () => [] }, validCount: Number, totalCount: Number })
 const emit = defineEmits(['preview', 'saved', 'dirty'])
 let active = true

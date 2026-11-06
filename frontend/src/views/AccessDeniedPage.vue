@@ -31,7 +31,7 @@ async function retry() {
     <h2 id="access-state-title">{{ failed ? '权限状态获取失败' : '没有此页面的访问权限' }}</h2>
     <p>{{ failed ? '暂时无法确认当前身份的权限。请重新加载权限状态，再继续操作。' : '当前身份没有查看此页面的权限。可返回其他页面，或请权限管理员核对角色配置。' }}</p>
     <div v-if="reason" class="access-error" role="alert"><strong>错误信息</strong><p>{{ reason }}</p></div>
-    <p v-if="checked && !returnPath" class="access-empty" role="status">权限状态已读取，但当前没有可访问的业务页面。请联系权限管理员。</p>
+    <p v-if="(checked || (accessState.loaded && !accessState.error)) && !returnPath" class="access-empty" role="status">权限状态已读取，但当前没有可访问的业务页面。请联系权限管理员。</p>
     <p v-else-if="!returnPath && !failed" class="access-empty">当前没有可返回的业务页面，可重新加载权限状态。</p>
     <p v-if="retrying" role="status">正在重新加载权限状态…</p>
     <div class="access-denied-actions"><button class="btn btn-secondary" type="button" :disabled="retrying || accessState.loading" @click="retry">{{ retrying ? '正在检查…' : '重新加载权限状态' }}</button><RouterLink v-if="returnPath && !retrying" class="btn btn-primary" :to="returnPath">返回可访问页面</RouterLink></div>

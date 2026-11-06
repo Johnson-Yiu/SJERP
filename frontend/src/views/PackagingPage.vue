@@ -1,4 +1,6 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { ArrowDownUp, Box, ChevronDown, ChevronUp, Copy, Eye, Link2, Pencil, Plus, Search, X } from 'lucide-vue-next'
 import { useRoute, useRouter } from 'vue-router'
@@ -6,7 +8,7 @@ import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { apiErrorMessage } from '../utils/apiErrors'
 import { packagingError } from '../utils/packagingPresentation'
 import PageLoadState from '../components/PageLoadState.vue'
-import { api, listAll } from '../api'
+
 import { confirmDialog } from '../dialogs'
 import SummaryCards from '../components/SummaryCards.vue'
 import { useAccessControl } from '../accessControl'

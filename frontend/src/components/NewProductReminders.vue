@@ -1,10 +1,11 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api } from '../api'
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 import { can } from '../accessControl'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 const route = useRoute(), router = useRouter()
+const { api } = useWorkspaceApi()
 const rows = ref([]), count = ref(0), loading = ref(false), busy = ref(false), error = ref(''), feedback = ref('')
 const selected = ref(null), editing = ref(false), history = ref([]), voiding = ref(false), reason = ref('')
 const customers = ref([]), customerSearch = ref(''), contacts = ref([]), products = ref([]), productSearch = ref('')

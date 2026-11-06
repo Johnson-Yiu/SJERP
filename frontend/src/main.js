@@ -3,22 +3,28 @@ import App from './App.vue'
 import router from './router'
 import './styles.css'
 import { normalizeMoneyInput } from './utils/money'
+import { workspaceAccountScope } from './workspaceSession'
 
-const scrollStoragePrefix = 'senju:page-scroll:'
-const scrollStorageKey = path => `${scrollStoragePrefix}${path}`
+function scrollStorageKey() {
+  const workspace = window.history.state?.__workspace
+  const account = workspaceAccountScope()
+  return workspace && account !== 'standalone' ? `senju:workspace-scroll:${account}:${workspace}` : null
+}
 let scrollSaveTimer = null
 let restoringScroll = false
 
-const savePageScroll = (path = router.currentRoute.value.fullPath) => {
-  if (restoringScroll || !path) return
+const savePageScroll = (key = scrollStorageKey()) => {
+  if (restoringScroll || !key || key !== scrollStorageKey()) return
   try {
-    sessionStorage.setItem(scrollStorageKey(path), JSON.stringify({ left: window.scrollX, top: window.scrollY }))
+    sessionStorage.setItem(key, JSON.stringify({ left: window.scrollX, top: window.scrollY }))
   } catch { /* 存储不可用时保留浏览器默认行为 */ }
 }
 
-const restorePageScroll = (path = router.currentRoute.value.fullPath) => {
+const restorePageScroll = () => {
+  const key = scrollStorageKey()
+  if (!key) return
   let position
-  try { position = JSON.parse(sessionStorage.getItem(scrollStorageKey(path)) || 'null') } catch { position = null }
+  try { position = JSON.parse(sessionStorage.getItem(key) || 'null') } catch { position = null }
   if (!position || (!Number(position.top) && !Number(position.left))) return
 
   const targetTop = Math.max(0, Number(position.top) || 0)
@@ -26,6 +32,7 @@ const restorePageScroll = (path = router.currentRoute.value.fullPath) => {
   let attempts = 0
   restoringScroll = true
   const restore = () => {
+    if (key !== scrollStorageKey()) { restoringScroll = false; return }
     window.scrollTo(targetLeft, targetTop)
     attempts += 1
     const maximumTop = Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
@@ -36,12 +43,10 @@ const restorePageScroll = (path = router.currentRoute.value.fullPath) => {
 }
 
 if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual'
-router.beforeEach((to, from) => {
-  if (from?.fullPath) savePageScroll(from.fullPath)
-})
 window.addEventListener('scroll', () => {
   window.clearTimeout(scrollSaveTimer)
-  scrollSaveTimer = window.setTimeout(() => savePageScroll(), 120)
+  const key = scrollStorageKey()
+  scrollSaveTimer = window.setTimeout(() => savePageScroll(key), 120)
 }, { passive: true })
 window.addEventListener('pagehide', () => savePageScroll())
 window.addEventListener('beforeunload', () => savePageScroll())

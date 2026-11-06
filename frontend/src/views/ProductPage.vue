@@ -1,8 +1,10 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronDown, ChevronRight, Database, ListFilter, Pencil, Plus, Search, Trash2, X } from 'lucide-vue-next'
-import { api, listAll, listData } from '../api'
+import { listData } from '../api'
 import { useAccessControl } from '../accessControl'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog } from '../dialogs'

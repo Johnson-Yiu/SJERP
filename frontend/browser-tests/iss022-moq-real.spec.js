@@ -31,28 +31,25 @@ async function openCreate(page) {
   return editor
 }
 
+const activeWorkspace = page => page.locator('.workspace-pane[aria-hidden="false"]')
 async function saveDraft(editor) {
+  const page = editor.page()
+  const saved = page.waitForResponse(response => response.url().endsWith('/api/purchase-orders/') && response.request().method() === 'POST')
   await editor.getByRole('button', { name: /创建采购单|保存采购草稿/ }).click()
+  const response = await saved
+  expect(response.status()).toBe(201)
+  const { purchase_no: number } = await response.json()
   await expect(editor).toBeHidden()
-  await expect(editor.page().getByText(/采购草稿 .* 已保存|采购草稿已更新/)).toBeVisible()
+  await expect(page.getByText(/采购草稿 .* 已保存/)).toBeVisible()
+  await expect(activeWorkspace(page).getByRole('dialog', { name: '采购工作台' })).toContainText(number)
+  return number
 }
-
-async function firstRow(page) {
-  const row = page.locator('.purchase-list-row').first()
-  await expect(row).toBeVisible()
-  return row
+function rowByPurchaseNo(page, purchaseNo) {
+  return activeWorkspace(page).locator('.purchase-list-row').filter({ hasText: purchaseNo })
 }
-
-async function draftRow(page) {
-  const row = page.locator('.purchase-list-row').filter({ hasText: '草稿' }).first()
-  await expect(row).toBeVisible()
-  return row
-}
-
-async function rowByPurchaseNo(page, purchaseNo) {
-  const row = page.locator('.purchase-list-row').filter({ hasText: purchaseNo }).first()
-  await expect(row).toBeVisible()
-  return row
+async function reopenPurchase(page, purchaseNo) {
+  await page.getByRole('button', { name: '重新载入', exact: true }).click()
+  await rowByPurchaseNo(page, purchaseNo).getByRole('button', { name: /查看采购单/ }).click()
 }
 
 test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
@@ -72,11 +69,8 @@ test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
     const equalEditor = await openCreate(page)
     await equalEditor.getByPlaceholder('采购数量').fill('10')
     await page.screenshot({ path: path.join(evidenceDir, '01-equal-moq-draft.png'), fullPage: true })
-    await saveDraft(equalEditor)
-    const equalRow = await draftRow(page)
-    const equalPurchaseNo = await equalRow.locator('td').first().innerText()
-    await expect(equalRow).toContainText('草稿')
-    await equalRow.getByRole('button', { name: /查看采购单/ }).click()
+    const equalPurchaseNo = await saveDraft(equalEditor)
+    await expect(rowByPurchaseNo(page, equalPurchaseNo)).toContainText('草稿')
     const equalDetail = page.getByRole('dialog', { name: '采购工作台' })
     await expect(equalDetail).toBeVisible()
     await expect(equalDetail).toContainText('草稿')
@@ -84,7 +78,7 @@ test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
     await equalDetail.getByRole('button', { name: '确认采购下单' }).click()
     await page.getByTestId('dialog-confirm').click()
     await expect(page.getByText('采购单已确认下单。')).toBeVisible()
-    await expect(await rowByPurchaseNo(page, equalPurchaseNo)).toContainText('已下单')
+    await expect(rowByPurchaseNo(page, equalPurchaseNo)).toContainText('已下单')
     await page.screenshot({ path: path.join(evidenceDir, '03-equal-moq-ordered.png'), fullPage: true })
     await equalDetail.getByRole('button', { name: '关闭采购详情' }).click()
 
@@ -94,10 +88,7 @@ test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
     await expect(lowEditor.getByTestId('draft-moq-warning')).toContainText('实际 9.00 pcs')
     await expect(lowEditor.getByTestId('draft-moq-warning')).toContainText('MOQ 10.00 pcs')
     await page.screenshot({ path: path.join(evidenceDir, '04-low-moq-conversion-warning.png'), fullPage: true })
-    await saveDraft(lowEditor)
-    const lowRow = await draftRow(page)
-    const lowPurchaseNo = await lowRow.locator('td').first().innerText()
-    await lowRow.getByRole('button', { name: /查看采购单/ }).click()
+    const lowPurchaseNo = await saveDraft(lowEditor)
     const lowDetail = page.getByRole('dialog', { name: '采购工作台' })
     await lowDetail.getByRole('button', { name: '确认采购下单' }).click()
     await page.getByTestId('dialog-confirm').click()
@@ -106,20 +97,20 @@ test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
     await expect(exceptionDialog).toContainText('实际 9.00 pcs')
     await page.screenshot({ path: path.join(evidenceDir, '05-low-moq-exception-dialog.png'), fullPage: true })
     await page.getByTestId('dialog-cancel').click()
-    await expect(await rowByPurchaseNo(page, lowPurchaseNo)).toContainText('草稿')
+    await expect(rowByPurchaseNo(page, lowPurchaseNo)).toContainText('草稿')
     await page.screenshot({ path: path.join(evidenceDir, '06-cancel-keeps-draft.png'), fullPage: true })
     await lowDetail.getByRole('button', { name: '关闭采购详情' }).click()
 
-    await (await rowByPurchaseNo(page, lowPurchaseNo)).getByRole('button', { name: /查看采购单/ }).click()
+    await reopenPurchase(page, lowPurchaseNo)
     await page.getByRole('dialog', { name: '采购工作台' }).getByRole('button', { name: '确认采购下单' }).click()
     await page.getByTestId('dialog-confirm').click()
     await expect(page.getByRole('dialog', { name: '采购 MOQ 例外确认' })).toBeVisible()
     await page.getByTestId('dialog-input').fill('客户指定小批量试单，已确认本次需求量。')
     await page.getByTestId('dialog-confirm').click()
     await expect(page.getByText('采购单已确认下单。')).toBeVisible()
-    await expect(await rowByPurchaseNo(page, lowPurchaseNo)).toContainText('已下单')
+    await expect(rowByPurchaseNo(page, lowPurchaseNo)).toContainText('已下单')
     await lowDetail.getByRole('button', { name: '关闭采购详情' }).click()
-    await (await rowByPurchaseNo(page, lowPurchaseNo)).getByRole('button', { name: /查看采购单/ }).click()
+    await reopenPurchase(page, lowPurchaseNo)
     const exceptionDetail = page.getByRole('dialog', { name: '采购工作台' })
     await expect(exceptionDetail.getByTestId('purchase-moq-exception')).toContainText('客户指定小批量试单')
     await expect(exceptionDetail.getByTestId('purchase-moq-exception')).toContainText('差额 1.00 pcs')
@@ -127,7 +118,7 @@ test.describe('ISS-022 采购 MOQ 真实浏览器回归', () => {
 
     await exceptionDetail.getByRole('button', { name: '关闭采购详情' }).click()
     await page.getByRole('combobox', { name: '按状态筛选' }).selectOption('ordered')
-    await expect(page.locator('.purchase-list-row')).toHaveCount(2)
+    await expect(activeWorkspace(page).locator('.purchase-list-row')).toHaveCount(2)
     await page.screenshot({ path: path.join(evidenceDir, '08-ordered-filter.png'), fullPage: true })
 
     await page.setViewportSize({ width: 700, height: 900 })

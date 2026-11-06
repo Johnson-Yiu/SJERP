@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { Building2, Check, ChevronRight, Crown, KeyRound, UsersRound } from 'lucide-vue-next'
-import { api } from '../api'
+
 import { accessState, loadAccessControl } from '../accessControl'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import PageLoadState from '../components/PageLoadState.vue'

@@ -1,4 +1,13 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const workspaceNavigation = useWorkspaceNavigation()
+function newWorkspaceDraft() {
+  if (workspaceNavigation.workspace) return workspaceNavigation.newDraft({ path: route.path, query: { ...route.query, detail: undefined, edit: undefined, create: '1', returnTo: undefined } })
+  return openCreate()
+}
+
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import { followUpError } from '../utils/followUpSafety'
@@ -14,7 +23,7 @@ import { certificateFilters, certificateFilterLabels, certificateFilterQuery } f
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronRight, Database, Paperclip, Pencil, Plus, RotateCcw, Search, Trash2, UserRoundPlus, X } from 'lucide-vue-next'
-import { api, listAll } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog, inputDialog } from '../dialogs'
 import EntityDetailModal from '../components/EntityDetailModal.vue'
@@ -644,6 +653,7 @@ function discardModal() {
   void clearModalRoute(router, route)
 }
 function openDetail(id) {
+  if (workspaceNavigation.workspace) return workspaceNavigation.openTask({ path: route.path, query: { ...route.query, detail: String(id), tab: isCustomerPage.value ? 'followups' : undefined } })
   detailId.value = id
   if (isMovementPage.value) { void updateLedgerQuery({ detail:String(id) }); return }
   if (isSupplierPage.value) { void updateLedgerQuery({ detail:String(id),tab:undefined }); return }
@@ -748,7 +758,10 @@ async function save() {
     const refreshDetail = keepDetailOpen.value
     modalOpen.value = false
     const successMessage = isCertificatePage.value ? (wasEditing?'证书已更新':'证书已创建') : isContactPage.value ? (wasEditing ? '联系人已更新' : '联系人已创建') : isFollowUpPage.value ? (wasEditing ? '跟进记录已更新' : '跟进记录已保存') : isSupplierPage.value ? (wasEditing ? '供应商修改已保存。' : '供应商创建成功。') : (wasEditing ? '更新成功' : '创建成功')
-    notify(attachmentError ? `记录已保存，但${attachmentError}` : successMessage, Boolean(attachmentError)); await clearModalRoute(router, route); await load()
+    notify(attachmentError ? `记录已保存，但${attachmentError}` : successMessage, Boolean(attachmentError))
+    if (workspaceNavigation.workspace && !wasEditing && savedId && !route.query.returnTo) await workspaceNavigation.adoptObject({ path: route.path, query: { ...route.query, detail: String(savedId), create: undefined, edit: undefined, returnTo: undefined } })
+    else await clearModalRoute(router, route)
+    await load()
     if (refreshDetail) detailRefresh.value += 1
     keepDetailOpen.value = false
   } catch (e) {
@@ -884,7 +897,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 <template>
   <div class="resource-page" :class="{ 'finance-resource-page': isTransactionPage, 'inventory-ledger-page': isMovementPage, 'core-list-page': isCoreListPage, 'supplier-page': isSupplierPage }">
-    <div class="page-head" :class="{ 'list-intro': isCoreListPage }"><div><h2 v-if="!isCoreListPage">{{ config.title }}</h2><p>{{ config.description }}</p></div><button v-if="can(accessModule, 'create')" class="btn btn-primary" @click="openCreate"><Plus :size="16" /> {{ primaryAction }}</button></div>
+    <div class="page-head" :class="{ 'list-intro': isCoreListPage }"><div><h2 v-if="!isCoreListPage">{{ config.title }}</h2><p>{{ config.description }}</p></div><button v-if="can(accessModule, 'create')" class="btn btn-primary" @click="newWorkspaceDraft"><Plus :size="16" /> {{ primaryAction }}</button></div>
     <div v-if="isMovementPage && optionErrors.skus" class="option-load-error" role="alert">{{ optionErrors.skus }} <button type="button" @click="loadMovementSkus">重新加载 SKU 资料</button></div>
     <SummaryCards v-if="hasLoaded" :items="resourceMetrics" />
     <div v-if="isCertificatePage" class="certificate-filters" aria-label="证书有效期筛选"><button v-for="[value, label] in certificateFilters" :key="value" type="button" class="btn" :class="{ 'btn-primary': (route.query.expiry || '') === value }" :aria-pressed="(route.query.expiry || '') === value" @click="setCertificateFilter(value)">{{ label }}</button></div>

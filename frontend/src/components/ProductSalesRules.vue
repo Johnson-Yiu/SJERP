@@ -1,6 +1,8 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { ref, watch } from 'vue'
-import { api, listAll } from '../api'
+
 import ComboInput from './ComboInput.vue'
 const props = defineProps({ productId: [Number, String] })
 const rules = ref([]), skus = ref([]), definitions = ref([]), draft = ref(null), filters = ref({}), error = ref(''), busy = ref(false)

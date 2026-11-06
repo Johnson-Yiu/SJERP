@@ -1,6 +1,8 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { computed, onMounted, reactive, ref } from 'vue'
-import { api, listAll } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { useAccessControl } from '../accessControl'
 

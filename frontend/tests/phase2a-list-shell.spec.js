@@ -1,3 +1,4 @@
+import { localLocation } from '../src/workspaceManager'
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
@@ -75,14 +76,17 @@ it('Order filters keep status/todo and other query context', async () => {
   const router = await setup('/orders?search=SO&customer=1')
   await wrapper.get('[aria-label="按订单状态筛选"]').setValue('cancelled'); await flushPromises()
   await wrapper.get('[aria-label="按订单待办筛选"]').setValue('due'); await flushPromises()
-  expect(router.currentRoute.value.query).toMatchObject({ search: 'SO', customer: '1', status: 'cancelled', todo: 'due' })
+  expect(localLocation(router.currentRoute.value).query).toMatchObject({ search: 'SO', customer: '1', status: 'cancelled', todo: 'due' })
 })
 it('Purchase filters keep their values and API parameters', async () => {
   const router = await setup('/purchase-orders?sku=2')
   await wrapper.get('[aria-label="按状态筛选"]').setValue('ordered'); await flushPromises()
   await wrapper.get('.purchase-pending-filter input').setValue(true); await flushPromises()
-  expect(router.currentRoute.value.query).toMatchObject({ sku: '2', status: 'ordered', pending_receipt: '1' })
-  expect(mocks.listAll).toHaveBeenCalledWith('/purchase-orders/', { params: { sku: '2', status: 'ordered', pending_receipt: '1' } })
+  expect(localLocation(router.currentRoute.value).query).toMatchObject({ sku: '2', status: 'ordered', pending_receipt: '1' })
+  const purchaseCalls = mocks.listAll.mock.calls.filter(([url]) => url === '/purchase-orders/')
+  expect(purchaseCalls.map(([, config]) => config.params)).toContainEqual({ sku: '2', status: 'ordered', pending_receipt: '1' })
+  expect(purchaseCalls.at(-1)[1].signal).toBeInstanceOf(AbortSignal)
+  expect(purchaseCalls.at(-1)[1]._workspaceSource).toEqual(expect.any(String))
 })
 it('Inventory keeps per-unit calculations with one accessible attention toggle', async () => {
   const router = await setup('/inventory?search=SKU&sort=available_quantity')
@@ -92,18 +96,18 @@ it('Inventory keeps per-unit calculations with one accessible attention toggle',
   expect(wrapper.findAll('.attention-card')).toHaveLength(1)
   expect(wrapper.find('.attention-toggle').exists()).toBe(false)
   await wrapper.get('.attention-card').trigger('click'); await flushPromises()
-  expect(router.currentRoute.value.query).toMatchObject({ attention: '1', search: 'SKU', sort: 'available_quantity' })
+  expect(localLocation(router.currentRoute.value).query).toMatchObject({ attention: '1', search: 'SKU', sort: 'available_quantity' })
   expect(wrapper.get('.attention-card').attributes('aria-pressed')).toBe('true')
   expect(wrapper.findAll('.inventory-row')).toHaveLength(1)
   await wrapper.get('.attention-card').trigger('click'); await flushPromises()
-  expect(router.currentRoute.value.query.attention).toBeUndefined()
+  expect(localLocation(router.currentRoute.value).query.attention).toBeUndefined()
 })
 it('Movement type/direction/source filters preserve their original query keys', async () => {
   const router = await setup('/inventory-movements?sku=2')
   for (const [label, value] of [['按流水类型筛选', 'adjust_in'], ['按库存方向筛选', 'in'], ['按流水来源筛选', 'manual']]) {
     await wrapper.get(`[aria-label="${label}"]`).setValue(value); await flushPromises()
   }
-  expect(router.currentRoute.value.query).toEqual({ sku: '2', type: 'adjust_in', direction: 'in', source: 'manual' })
+  expect(localLocation(router.currentRoute.value).query).toEqual({ sku: '2', type: 'adjust_in', direction: 'in', source: 'manual' })
 })
 it('Sidebar preserves every route, module and Finance order in the requested groups', async () => {
   await setup('/customers')
@@ -152,7 +156,7 @@ it('Focused repair styles only sidebar navigation scrollbars and preserves visib
   expect(css).toMatch(/\.sidebar nav::-webkit-scrollbar-thumb:hover \{ background: rgba\(198, 222, 213, \.58\)/)
   const scrollbarRules = [...css.matchAll(/([^{}]+)\{[^{}]*(?:scrollbar-|::-webkit-scrollbar)[^{}]*\}/g)]
   expect(scrollbarRules.length).toBeGreaterThan(0)
-  expect(scrollbarRules.every(rule => rule[1].trim().startsWith('.sidebar nav'))).toBe(true)
+  expect(scrollbarRules.every(rule => rule[1].trim().startsWith('.sidebar nav') || rule[1].trim() === '.workspace-tabs')).toBe(true)
   expect(css.replace(/\/\*[\s\S]*?\*\//g, '')).not.toMatch(/(?:^|})\s*(?:body|html|\*)[^{}]*::-webkit-scrollbar/)
 })
 it('Focused repair keeps movement labels/counts and uses exactly four distinct hints', () => {

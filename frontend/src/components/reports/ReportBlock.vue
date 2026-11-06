@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { BOOK_RMB_NOTE } from '../../utils/financeBasis.js'
 import { computed, ref, watch, onBeforeUnmount } from 'vue'
-import { api } from '../../api'
+
 import { resolveBlock, canViewReportConfig, reportDimensionLabels } from '../../reports/registry'
 import { apiErrorMessage } from '../../utils/apiErrors'
 import { useAccessControl } from '../../accessControl'

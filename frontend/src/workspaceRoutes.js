@@ -1,0 +1,58 @@
+import Dashboard from './views/Dashboard.vue'
+import ResourcePage from './views/ResourcePage.vue'
+import DocumentPage from './views/DocumentPage.vue'
+import ImportPage from './views/ImportPage.vue'
+import OrganizationPage from './views/OrganizationPage.vue'
+import CategoryPage from './views/CategoryPage.vue'
+import ProductPage from './views/ProductPage.vue'
+import SKUPage from './views/SKUPage.vue'
+import InventoryPage from './views/InventoryPage.vue'
+import PurchaseOrderPage from './views/PurchaseOrderPage.vue'
+import FinanceDashboardPage from './views/FinanceDashboardPage.vue'
+import PaymentPlanPage from './views/PaymentPlanPage.vue'
+import TransactionPage from './views/TransactionPage.vue'
+import CashEventPage from './views/CashEventPage.vue'
+import PackagingPage from './views/PackagingPage.vue'
+import HSCodePage from './views/HSCodePage.vue'
+import { resourceConfigs } from './resourceConfigs'
+import AccessDeniedPage from './views/AccessDeniedPage.vue'
+
+const resourceModules = {
+  suppliers: 'suppliers', customers: 'customers', contacts: 'contacts', 'follow-ups': 'followups',
+  'inventory-movements': 'inventory', 'product-parameters': 'parameters', 'product-certificates': 'certificates',
+}
+
+export const routes = [
+  { path: '/login', name: 'login', component: () => import('./views/LoginPage.vue'), meta: { title: '登录' } },
+  { path: '/new-product-reminders', component: () => import('./components/NewProductReminders.vue'), meta: { title: '新品提醒', module: 'followups' } },
+  { path: '/finance-ledger', component: () => import('./views/FinanceLedgerPage.vue'), meta: { title: '账户资金', eyebrow: 'Account cash', module: 'finance' } },
+  { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units', module: 'trade_units' } },
+  { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics', module: 'reports' } },
+  { path: '/historical-orders', component: () => import('./views/HistoryOrdersPage.vue'), meta: { title: '历史订单分析', eyebrow: 'Historical ledger', module: 'reports' } },
+  { path: '/', component: Dashboard, meta: { title: '经营概览', eyebrow: '销售与客户', module: 'dashboard' } },
+  ...Object.entries(resourceConfigs).filter(([path]) => !['categories', 'products', 'skus', 'transactions'].includes(path)).map(([path, config]) => ({
+    path: `/${path}`,
+    component: ResourcePage,
+    props: { config },
+    meta: { title: config.title, eyebrow: config.eyebrow, module: resourceModules[path] || path },
+  })),
+  { path: '/categories', component: CategoryPage, meta: { title: '产品分类', eyebrow: '分类与属性', module: 'categories' } },
+  { path: '/products', component: ProductPage, meta: { title: '产品管理', eyebrow: '产品资料', module: 'products' } },
+  { path: '/skus', component: SKUPage, meta: { title: 'SKU 管理', eyebrow: '销售规格', module: 'skus' } },
+  { path: '/sku-packaging', component: PackagingPage, meta: { title: '包装管理', eyebrow: 'Packaging maintenance', module: 'packaging' } },
+  { path: '/hs-codes', component: HSCodePage, meta: { title: 'HS 编码维护', eyebrow: 'Customs classification', module: 'hs_codes' } },
+  { path: '/quotes', component: DocumentPage, props: { type: 'quotes' }, meta: { title: '报价管理', eyebrow: 'Quotation desk', module: 'quotes' } },
+  { path: '/orders', component: DocumentPage, props: { type: 'orders' }, meta: { title: '订单管理', eyebrow: 'Sales orders', module: 'orders' } },
+  { path: '/import', component: ImportPage, meta: { title: '数据导入', eyebrow: 'Data onboarding', module: 'imports' } },
+  { path: '/history-takeover', component: () => import('./views/HistoryTakeoverPage.vue'), meta: { title: '历史资料承接', eyebrow: 'Controlled history intake', module: 'imports' } },
+  { path: '/organization', component: OrganizationPage, meta: { title: '组织与权限', eyebrow: 'Organization & access', module: 'organization' } },
+  { path: '/inventory', component: InventoryPage, meta: { title: '库存', eyebrow: 'Current inventory', module: 'inventory' } },
+  { path: '/purchase-orders', component: PurchaseOrderPage, meta: { title: '采购管理', eyebrow: 'Procurement desk', module: 'purchases' } },
+  { path: '/finance', component: FinanceDashboardPage, meta: { title: '财务概览', eyebrow: 'Operating finance', module: 'finance' } },
+  { path: '/receivables', component: PaymentPlanPage, props: { direction: 'receivable' }, meta: { title: '应收计划', eyebrow: 'Accounts receivable', module: 'finance' } },
+  { path: '/payables', component: PaymentPlanPage, props: { direction: 'payable' }, meta: { title: '应付计划', eyebrow: 'Accounts payable', module: 'finance' } },
+  { path: '/transactions', component: TransactionPage, meta: { title: '财务流水', eyebrow: 'Cash ledger', module: 'transactions' } },
+  { path: '/rmb-cash-events', component: CashEventPage, meta: { title: '人民币资金', eyebrow: 'Bank cash facts', module: 'transactions' } },
+  { path: '/access-denied', name: 'access-denied', component: AccessDeniedPage, meta: { accessStatus: true, title: '访问受限', eyebrow: 'Access denied' } },
+  { path: '/access-status-error', name: 'access-status-error', component: AccessDeniedPage, meta: { accessStatus: true, title: '权限状态', eyebrow: 'Access status' } },
+]

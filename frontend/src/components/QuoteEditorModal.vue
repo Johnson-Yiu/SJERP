@@ -1,4 +1,6 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, downloadQuoteExport, listAll } = useWorkspaceApi()
 import { provideUnsavedChangesScope, useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, changeDocumentCurrency } from '../utils/documentCurrency'
@@ -9,7 +11,7 @@ import TradeUnitPicker from './TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { AlertTriangle, Box, Eye, MinusCircle, PackageCheck, RotateCw, Save, Settings2, X } from 'lucide-vue-next'
-import { api, downloadQuoteExport, listAll } from '../api'
+
 import QuotePreviewModal from './QuotePreviewModal.vue'
 import SkuPickerPanel from './SkuPickerPanel.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'

@@ -1,13 +1,21 @@
+import { sessionEpoch, notifyWorkspaceWrite, notifySessionBoundary } from './workspaceSession.js'
 import axios from 'axios'
 import { apiErrorMessage } from './utils/apiErrors.js'
 export { apiErrorMessage, formatApiError } from './utils/apiErrors.js'
 
 export const api = axios.create({ baseURL: '/api', timeout: 15000, xsrfCookieName: 'csrftoken', xsrfHeaderName: 'X-CSRFToken' })
 
+api.interceptors.request.use(config => { config._sessionEpoch ??= sessionEpoch(); return config })
+
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.config._sessionEpoch !== sessionEpoch()) return Promise.reject(new Error('账号已变化，请重新载入。'))
+    if (!['get', 'head', 'options'].includes((response.config.method || 'get').toLowerCase())) notifyWorkspaceWrite(response.config._workspaceSource)
+    return response
+  },
   async (error) => {
     const config = error.config || {}
+    if (config._sessionEpoch !== undefined && config._sessionEpoch !== sessionEpoch()) return Promise.reject(error)
     const method = String(config.method || 'get').toLowerCase()
     const status = error.response?.status
     if ([401, 403].includes(status) && typeof window !== 'undefined' && !String(config.url || '').startsWith('/session/') && window.location.pathname !== '/login') {
@@ -18,7 +26,7 @@ api.interceptors.response.use(
           expired = !session.data?.authenticated && !session.data?.development_superadmin
         } catch { /* A failed identity check must not be mistaken for expiry. */ }
       }
-      if (expired) window.location.assign(`/login?reason=expired&next=${encodeURIComponent(window.location.pathname + window.location.search)}`)
+      if (expired && config._sessionEpoch === sessionEpoch()) notifySessionBoundary()
     }
     const retryable = !status || [500, 502, 503, 504].includes(status)
     const canRetry = ['get', 'head', 'options'].includes(method) && retryable && !config.signal?.aborted
@@ -28,6 +36,7 @@ api.interceptors.response.use(
       // Django briefly stops accepting requests while its development reloader
       // applies backend changes.  Keep read-only requests alive through that window.
       await new Promise(resolve => setTimeout(resolve, [250, 500, 1000, 2000, 3000][retries]))
+      if (config.signal?.aborted || config._sessionEpoch !== sessionEpoch()) throw error
       return api.request(config)
     }
     let data = error.response?.data
@@ -54,8 +63,8 @@ export async function listAll(url, config = {}) {
   }
 }
 
-export async function downloadQuoteExport(id, quoteNo) {
-  const response = await api.get(`/quotes/${id}/export/`, { responseType: 'blob', timeout: 120000 })
+export async function downloadQuoteExport(id, quoteNo, config = {}) {
+  const response = await api.get(`/quotes/${id}/export/`, { ...config, responseType: 'blob', timeout: 120000 })
   const url = URL.createObjectURL(response.data)
   const anchor = document.createElement('a')
   anchor.href = url
@@ -68,8 +77,8 @@ export async function downloadQuoteExport(id, quoteNo) {
   }, 1000)
 }
 
-export async function downloadPackingListExport(id, shipmentNo) {
-  const response = await api.get(`/shipments/${id}/export-packing-list/`, { responseType: 'blob', timeout: 120000 })
+export async function downloadPackingListExport(id, shipmentNo, config = {}) {
+  const response = await api.get(`/shipments/${id}/export-packing-list/`, { ...config, responseType: 'blob', timeout: 120000 })
   const url = URL.createObjectURL(response.data)
   const anchor = document.createElement('a')
   anchor.href = url

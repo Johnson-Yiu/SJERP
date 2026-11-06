@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { UploadCloud, Download, FileSpreadsheet, CheckCircle2, AlertTriangle } from 'lucide-vue-next'
-import { api } from '../api'
+
 import { confirmDialog } from '../dialogs'
 import { useAccessControl } from '../accessControl'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'

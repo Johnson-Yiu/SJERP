@@ -1,8 +1,10 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { computed, onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { ArrowDownUp, Database, PackageSearch, RefreshCw, Search, X } from 'lucide-vue-next'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
-import { api, listAll } from '../api'
+
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import InventoryPagination from '../components/InventoryPagination.vue'
 import { inventoryPage } from '../utils/inventoryPagination'

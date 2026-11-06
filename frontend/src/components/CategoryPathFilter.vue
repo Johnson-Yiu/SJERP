@@ -1,5 +1,7 @@
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const { workspace } = useWorkspaceNavigation()
+import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { ChevronDown, ChevronRight } from 'lucide-vue-next'
 import { categoryParts, categoryTree } from '../utils/categoryPaths'
 const props = defineProps({ modelValue: { type: String, default: '' }, paths: { type: Array, default: () => [] } })
@@ -52,8 +54,11 @@ function all() { emit('update:modelValue', ''); close(); trigger.value?.focus() 
 function outside(event) { if (!trigger.value?.contains(event.target) && !panel.value?.contains(event.target)) close() }
 function keydown(event) { if (event.key === 'Escape' && open.value) { event.stopPropagation(); close(); trigger.value?.focus() } }
 function scroll(event) { if (!panel.value?.contains(event.target)) close() }
-onMounted(() => { document.addEventListener('pointerdown', outside); document.addEventListener('keydown', keydown, true); document.addEventListener('scroll', scroll, true); window.addEventListener('resize', close) })
-onBeforeUnmount(() => { document.removeEventListener('pointerdown', outside); document.removeEventListener('keydown', keydown, true); document.removeEventListener('scroll', scroll, true); window.removeEventListener('resize', close) })
+function attach() { document.addEventListener('pointerdown', outside); document.addEventListener('keydown', keydown, true); document.addEventListener('scroll', scroll, true); window.addEventListener('resize', close) }
+function detach() { document.removeEventListener('pointerdown', outside); document.removeEventListener('keydown', keydown, true); document.removeEventListener('scroll', scroll, true); window.removeEventListener('resize', close) }
+onMounted(() => { if (!workspace || workspace.active) attach() })
+watch(() => workspace?.active, active => { detach(); close(); if (active) attach() })
+onBeforeUnmount(detach)
 </script>
 <template>
   <button ref="trigger" type="button" class="category-select" aria-label="按产品分类筛选" aria-haspopup="dialog" :aria-expanded="open" :title="modelValue || '全部分类'" @click="toggle"><span>{{ label }}</span><ChevronDown :size="16" /></button>

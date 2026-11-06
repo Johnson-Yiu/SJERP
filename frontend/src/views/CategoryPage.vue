@@ -1,7 +1,9 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { Check, ChevronRight, FolderPlus, GripVertical, Layers3, Pencil, Plus, Settings2, Tags, Trash2, X } from 'lucide-vue-next'
-import { api, listData } from '../api'
+import { listData } from '../api'
 import { confirmDialog } from '../dialogs'
 import PageLoadState from '../components/PageLoadState.vue'
 import { apiErrorMessage as baseApiErrorMessage } from '../utils/apiErrors.js'

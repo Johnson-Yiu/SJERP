@@ -4,22 +4,27 @@ import { api } from './api.js'
 export const accessState = reactive({ operator: null, loading: true, loaded: false, error: '' })
 
 let requestPromise = null
+let requestGeneration = 0
 
 export async function loadAccessControl({ force = false } = {}) {
   if (accessState.loaded && !force) return accessState.operator
   if (requestPromise && !force) return requestPromise
+  const generation = ++requestGeneration
   accessState.loading = true
   accessState.error = ''
   requestPromise = api.get('/session/current-operator/').then(response => {
+    if (generation !== requestGeneration) return accessState.operator
     accessState.operator = response.data || null
     accessState.loaded = true
     return accessState.operator
   }).catch(error => {
+    if (generation !== requestGeneration) return accessState.operator
     accessState.operator = null
     accessState.loaded = false
     accessState.error = error?.response?.data?.detail || error?.message || '无法读取当前账号的权限状态。'
     throw error
   }).finally(() => {
+    if (generation !== requestGeneration) return
     accessState.loading = false
     requestPromise = null
   })
@@ -27,6 +32,7 @@ export async function loadAccessControl({ force = false } = {}) {
 }
 
 export function setAccessOperator(operator) {
+  requestGeneration++; requestPromise = null
   accessState.operator = operator || null
   accessState.loaded = true
   accessState.loading = false

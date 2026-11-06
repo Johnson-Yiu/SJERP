@@ -1,0 +1,88 @@
+{
+  "requests": [
+    {
+      "method": "GET",
+      "url": "/api/session/current-operator/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/owner-options/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/country-options/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/country-catalog/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/sources/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/owner-options/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/owner-options/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/country-options/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/next-code/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/session/current-operator/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/country-catalog/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/sources/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/owner-options/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/owner-options/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/country-options/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/customers/next-code/"
+    },
+    {
+      "method": "GET",
+      "url": "/api/session/current-operator/"
+    }
+  ],
+  "panes": 1,
+  "draftA": "be5ade4d-fcb8-4669-80f2-0f981f90108c",
+  "draftB": "042143b3-e98a-4f97-928b-4954670e4e71",
+  "pageErrors": []
+}

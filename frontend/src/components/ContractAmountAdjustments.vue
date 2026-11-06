@@ -1,6 +1,8 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
 import { computed, onMounted, ref, watch } from 'vue'
-import { api, listAll } from '../api'
+
 
 const props = defineProps({ contractType: { type: String, required: true }, contract: { type: Object, required: true } })
 const emit = defineEmits(['changed'])

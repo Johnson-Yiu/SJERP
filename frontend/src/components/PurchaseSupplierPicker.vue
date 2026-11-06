@@ -1,6 +1,8 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 import { onMounted, ref, computed } from 'vue'
-import { api } from '../api'
+
 const props = defineProps({ sku: Object, fixedSupplier: [Number, String], orderId: [Number, String] })
 const emit = defineEmits(['close', 'selected'])
 const candidates = ref([]), loading = ref(true), error = ref(''), selected = ref(''), sourceId = ref('')

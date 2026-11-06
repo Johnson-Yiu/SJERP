@@ -1,4 +1,13 @@
 <script setup>
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api, listAll } = useWorkspaceApi()
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
+const workspaceNavigation = useWorkspaceNavigation()
+function newWorkspaceDraft() {
+  if (workspaceNavigation.workspace) return workspaceNavigation.newDraft({ path: route.path, query: { ...route.query, detail: undefined, edit: undefined, create: '1', returnTo: undefined } })
+  return startCreate()
+}
+
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import PaymentTermsEditor from '../components/PaymentTermsEditor.vue'
@@ -10,7 +19,7 @@ import PurchaseSupplierPicker from '../components/PurchaseSupplierPicker.vue'
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Eye, PackagePlus, Plus, RefreshCw, Save, X } from 'lucide-vue-next'
-import { api, listData, listAll } from '../api'
+import { listData } from '../api'
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { confirmDialog, inputDialog } from '../dialogs'
 import PurchasePaymentModal from '../components/PurchasePaymentModal.vue'
@@ -293,7 +302,7 @@ async function editDraft(row) {
   guard.markClean()
 }
 const closeCreate = () => guard.requestClose(discardCreate)
-function discardCreate() { openCreate.value = false; routeCreateOpen.value = false; routeCreateSignature = ''; void clearModalRoute(router, route) }
+function discardCreate({ keepRoute = false } = {}) { openCreate.value = false; routeCreateOpen.value = false; routeCreateSignature = ''; if (!keepRoute) void clearModalRoute(router, route) }
 const matchingItem = ref(null)
 async function matchedSupplier(selection) {
   const item = matchingItem.value
@@ -410,7 +419,12 @@ function syncSelectedSkus(ids) {
   })
   if (!selected.includes(String(activeSkuId.value))) activeSkuId.value = selected[0] || ''
 }
-async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true })) { error.value = paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true }); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean(); await closeCreate(); notice.value = editingPurchaseId.value ? '采购草稿已更新。确认采购下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认采购下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
+async function createPurchase() { if (saving.value || draftChanging.value || !can('purchases', editingPurchaseId.value ? 'update' : 'create')) return; if (!referenceReady.value) { error.value = '供应商、订单或 SKU 资料尚未加载完成，请重试后再保存。'; return } if (!supplierSourcesReady.value) { error.value = '供应商供货档案仍在加载或加载失败，请重试后再保存。'; return } if (paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true })) { error.value = paymentTermsError(draft.value.payment_terms_snapshot, { allowEmpty: true }); return } if (!draft.value.items.length || draft.value.items.some(item => !item.sku || !Number(item.quantity) || Number(item.quantity) <= 0 || item.unit_price === '')) { error.value = '请至少选择一个 SKU，并填写每个 SKU 的采购数量和单价。'; return } saving.value = true; notice.value = ''; error.value = ''; try { const { status, purchase_no, ...draftPayload } = draft.value; const payload = { ...draftPayload, order: draft.value.order ? Number(draft.value.order) : null, expected_arrival_date: draft.value.expected_arrival_date || null, items: draft.value.items.map(row => tradePayload({ ...row, sku: Number(row.sku), supplier_sku: row.supplier_sku ? Number(row.supplier_sku) : null })) }; if (payload.sales_link_restricted) delete payload.order; delete payload.sales_link_restricted; const response = editingPurchaseId.value ? await api.put(`/purchase-orders/${editingPurchaseId.value}/`, payload) : await api.post('/purchase-orders/', payload); guard.markClean();
+  if (workspaceNavigation.workspace && response.data.id && !route.query.returnTo) {
+    discardCreate({ keepRoute: true })
+    await workspaceNavigation.adoptObject({ path: route.path, query: { ...route.query, detail: String(response.data.id), create: undefined, edit: undefined, returnTo: undefined } })
+  } else await closeCreate()
+  notice.value = editingPurchaseId.value ? '采购草稿已更新。确认采购下单后才会生成应付计划，并开放收货和付款。' : `采购草稿 ${response.data.purchase_no} 已保存。确认采购下单后才会生成应付计划，并开放收货和付款。`; await load() } catch (err) { error.value = message(err, '采购草稿保存失败。') } finally { saving.value = false } }
 function moqExceptionMessage(data) {
   const details = (data?.exceptions || []).map(item => `${item.sku_code || '未命名 SKU'}：实际 ${item.actual_quantity} ${item.base_unit || ''}，MOQ ${item.moq} ${item.base_unit || ''}，差额 ${item.shortage} ${item.base_unit || ''}`.replaceAll('  ', ' ').trim())
   return `本次采购有明细低于供应商 MOQ。\n${details.join('\n')}\n填写例外原因后仍可下单；取消则保留当前采购草稿。`
@@ -489,7 +503,7 @@ watch(() => route.query.detail, id => {
   <div class="core-list-page">
     <PurchasePaymentModal v-if="paymentTarget" :purchase="paymentTarget" @close="paymentTarget = null" @saved="paymentSaved" />
     <PurchaseCostAllocationModal v-if="costTarget" :purchase="costTarget" :orders="costOrders" @close="costTarget = null" @saved="notice = '成本分配已保存，订单预估毛利已更新。'" />
-    <div class="page-head list-intro"><p>管理采购下单、到货与供应商应付。</p><div class="page-actions"><button class="btn btn-secondary" :disabled="loading" @click="load({ includeReferenceData: true })"><RefreshCw :size="16" /> 刷新</button><button v-if="can('purchases', 'create')" class="btn btn-primary" :disabled="referenceLoading || !referenceReady" @click="startCreate"><Plus :size="16" /> 新建采购单</button></div></div>
+    <div class="page-head list-intro"><p>管理采购下单、到货与供应商应付。</p><div class="page-actions"><button class="btn btn-secondary" :disabled="loading" @click="load({ includeReferenceData: true })"><RefreshCw :size="16" /> 刷新</button><button v-if="can('purchases', 'create')" class="btn btn-primary" :disabled="referenceLoading || !referenceReady" @click="newWorkspaceDraft"><Plus :size="16" /> 新建采购单</button></div></div>
     <div v-if="referenceErrorEntries.length" class="option-load-error" role="alert"><span>创建采购单所需的关联资料未能全部加载，暂不能保存。{{ referenceErrorEntries.map(([, value]) => value).join(' ') }}</span><button type="button" :disabled="loading" @click="load({ includeReferenceData: true })">重试加载</button></div>
     <p v-else-if="referenceLoading" class="option-loading-note" role="status">正在加载采购单所需的供应商、订单和 SKU 资料…</p>
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load({ includeReferenceData: true })" />

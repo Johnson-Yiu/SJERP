@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+const active = page => page.locator('.workspace-pane[aria-hidden="false"]')
 
 function gate() {
   let resolve
@@ -30,13 +31,14 @@ async function setup(page, entity) {
     }
     return route.fulfill({ json: [] })
   })
-  await page.goto('/customers')
+  await page.goto('/customers', { waitUntil: 'domcontentloaded' })
   await page.getByRole('link', { name: entity === 'contacts' ? '联系人' : '跟进记录', exact: true }).click()
-  await expect(page.locator('.page-head .btn-primary')).toBeVisible()
+  await expect(active(page).locator('.page-head .btn-primary')).toBeVisible()
   return state
 }
 async function editFields(page, entity) {
-  const dialog = page.locator('form.crm-editor')
+  const id = await active(page).getAttribute('data-workspace')
+  const dialog = page.locator(`[data-workspace="${id}"] form.crm-editor`)
   await dialog.getByLabel(entity === 'contacts' ? '所属客户' : '客户', { exact: true }).selectOption('1')
   if (entity === 'contacts') await dialog.getByLabel('姓名', { exact: true }).fill('Pending browser contact')
   else {
@@ -56,9 +58,11 @@ async function tryLeave(page, entity, dialog) {
   await close.click({ force: true })
   await page.locator('.modal-backdrop').click({ position: { x: 2, y: 2 } })
   await expect(dialog).toBeVisible()
-  // Dispatch the actual RouterLink click despite the modal overlay, then exercise browser Back.
+  // A sidebar task switch retains the pending editor; browser Back returns to it.
   await page.getByRole('link', { name: '客户管理', exact: true }).dispatchEvent('click')
-  await expect(page).toHaveURL(url)
+  await expect(page).toHaveURL(/\/customers$/)
+  await expect(dialog).toHaveCount(1)
+  await expect(dialog).toBeHidden()
   await page.goBack()
   await expect(page).toHaveURL(url)
   await expect(dialog).toBeVisible()
@@ -79,7 +83,7 @@ for (const entity of ['contacts', 'follow-ups']) {
     state.gate.resolve('success')
     await expect(dialog).toHaveCount(0)
     await expect.poll(() => state.reads).toBe(reads + 1)
-    await expect(page.locator('.data-table tbody')).toContainText(entity === 'contacts' ? 'Pending browser contact' : 'Pending browser follow-up')
+    await expect(active(page).locator('.data-table tbody')).toContainText(entity === 'contacts' ? 'Pending browser contact' : 'Pending browser follow-up')
     await page.getByRole('link', { name: '客户管理', exact: true }).click()
     await expect(page).toHaveURL(/\/customers$/)
   })

@@ -1,0 +1,185 @@
+Creating test database for alias 'default'...
+
+Unprocessable Entity: /api/quotes/2/pi-data/
+Unprocessable Entity: /api/quotes/2/export/
+.Unprocessable Entity: /api/quotes/2/pi-data/
+Unprocessable Entity: /api/quotes/2/export/
+.Unprocessable Entity: /api/quotes/2/pi-data/
+Unprocessable Entity: /api/quotes/2/export/
+...Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+.....Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+...Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+..Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+...Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+...Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+..Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+.Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/pi-data/
+.Unprocessable Entity: /api/quotes/preview-template/
+Unprocessable Entity: /api/quotes/preview-template/
+Not Found: /api/quotes/preview-template/
+..Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/1/mark-sent/
+Unprocessable Entity: /api/quotes/2/export/
+..Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+.....Bad Request: /api/quotes/1/revise/
+...Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+...Internal Server Error: /api/orders/1/confirm/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\views.py", line 2059, in confirm
+    order = confirm_order(self.get_object())
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\services\order_lifecycle.py", line 116, in confirm_order
+    final_quote = OrderSerializer()._create_quote_revision_if_needed(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\serializers.py", line 2345, in _create_quote_revision_if_needed
+    create_quote_items(
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: Synthetic order revision failure
+.Internal Server Error: /api/quotes/1/revise/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\shared-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 81, in inner
+    return func(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\views.py", line 1900, in revise
+    create_quote_items(revision, item_data, source_items=source_items)
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: Synthetic item failure
+.Bad Request: /api/quotes/1/
+......Unprocessable Entity: /api/quotes/1/pi-data/
+Unprocessable Entity: /api/quotes/1/export/
+Unprocessable Entity: /api/quotes/2/pi-data/
+Unprocessable Entity: /api/quotes/2/export/
+.Bad Request: /api/quotes/1/party-change/1/withdraw/
+Bad Request: /api/quotes/1/party-change/1/invalidate/
+Bad Request: /api/quotes/1/party-change/1/create-replacement/
+....Bad Request: /api/quotes/1/party-change/1/create-replacement/
+..Bad Request: /api/quotes/2/revise/
+.Bad Request: /api/quotes/1/party-change/1/create-replacement/
+.Bad Request: /api/quotes/1/party-change/1/create-replacement/
+Bad Request: /api/quotes/1/party-change/1/approve/
+Bad Request: /api/quotes/1/party-change/1/create-replacement/
+.....Bad Request: /api/quotes/2/mark-sent/
+.Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+..Bad Request: /api/orders/1/party-change/1/create-replacement/
+Bad Request: /api/orders/2/confirm/
+Bad Request: /api/purchase-orders/1/party-change/2/create-replacement/
+Bad Request: /api/purchase-orders/2/place/
+...Unauthorized: /api/orders/1/party-change/
+Unauthorized: /api/purchase-orders/1/party-change/
+......
+----------------------------------------------------------------------
+Ran 74 tests in 132.275s
+
+OK
+Destroying test database for alias 'default'...
+
+Found 74 test(s).
+System check identified no issues (0 silenced).

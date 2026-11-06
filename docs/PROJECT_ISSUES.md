@@ -55,6 +55,14 @@ ISS-121 保持 `FIXED_PENDING_REVIEW`，不得自行关闭。此前候选预审�
 
 [当前报告](uat-evidence/integration-closeout-02/README.md)、[原86复审包](uat-evidence/integration-closeout-02/REVIEW-BACKLOG.md)、[ISS121补充](uat-evidence/integration-closeout-02/ISS121-REVIEW-SUPPLEMENT.md)、[实际日志](uat-evidence/integration-closeout-02/TEST-RESULTS.md)。
 
+## 2026-11-06 SUNJACK-ERP FIRST-RELEASE-INTEGRATION-01
+
+主体版本在 `aa15c9ba7584599e918c1dd14723d31e31158b3d` 基线上完成独立接入；保留工作区标签、实名会话和新品提醒接线。最终 PostgreSQL 17.10 升级、旧 `buyer_tax_id=NULL` 保留、提醒记录保留及 0115 回退拒绝均通过；主体、报价与 Dashboard 的首轮 243 项 PostgreSQL 定向集中，仅 1 个回退保护测试失败，其迁移顺序已修复，最终复跑回退保护和 ISS-062 3/3 通过。详细证据及初次失败见 [验收报告](uat-evidence/first-release-integration-01/README.md)。
+
+ISS-062 维持 `P2 / FIXED_PENDING_REVIEW`：追加部分取消、跨期合同修订和订单日期更正后 Dashboard 重算场景，SQLite 5/5、最终 PostgreSQL 场景 1/1。此专项不确认新的业务日期口径，不关闭 Issue。
+
+常用两种 PI/XLSX 模板字段齐全路径通过；未知税号及当前模板不能表达的非空主体扩展字段会阻断受影响旧报价的 PI/XLSX 输出，但测试中的销售订单仍可保存、确认，历史未知值未被补造。实际历史库数量未核实，因此保留条件性首发阻断。旧完整浏览器套件报价 `saveAs canceled` 的既有根因仍未知；本次 Chrome 定向成功不替代全套验收。全量及 GitHub Actions 按用户要求 `NOT_RUN`，其他 Issue 状态不变。
+
 ## 历史章节：此前阶段摘要（非当前状态）
 
 ### 本轮首页此前阶段说明（原文保留，非当前状态）
@@ -671,3 +679,7 @@ R1-POSTGRES-TEST-ISOLATION-01 从 `2e25b743884123d7ae5599c89586988a12791bf4` 新
 ### 2026-11-06 INTEGRATION-VALIDATION-04
 
 权限来源 `bbfe475ef546b5d0fc3db8dbda0f456f0b042e9d`、新品提醒来源 `f63e984f33b86fb00c0de1daeb6a66fd4d42fc78` 已整合，核心修复保留；定向证据及限制见 [验收报告](uat-evidence/int04/README.md)。用户要求停止本地全量后仅运行定向；完整默认浏览器业务套件及 GitHub Actions 为 NOT_RUN，旧下载取消根因仍 UNKNOWN，原生打印和真实 Linux 恢复继续待验。既有 Issue 状态不变，不能据此关闭或宣称上线就绪。
+
+### 2026-11-06 PARTY-VERSION-INTEGRATION-01
+
+主体来源 `7cc8c4bf0249a3de53809836b7b3f233476a1648` 与新品提醒已集成并新增迁移合流；隔离 PG 升级、旧快照保值、主体替换及 PI/XLSX 定向结果见 [验收报告](uat-evidence/party-int01/README.md)。旧报价未知税号及模板无法表达的主体字段导致输出 422，首发使用该类报价为条件性阻断，真实数量和业务范围待核实；不改变现有 Issue 状态。`aa15c9ba7584599e918c1dd14723d31e31158b3d` 为后续多标签及身份接线对照，尚未合入。全量和 CI 按用户要求 NOT_RUN。

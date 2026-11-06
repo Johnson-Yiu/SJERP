@@ -1,0 +1,24 @@
+{
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "browser_version": "156.0.8078.80",
+  "file": "downloaded-quote.xlsx",
+  "bytes": 10199,
+  "sha256": "433939523f92ef6b53f9330a8540dc039f9c94cfd50678a7848fa5abe13226ff",
+  "sheets": [
+    "PI"
+  ],
+  "sheet_dimensions": {
+    "PI": "A1:M35"
+  },
+  "quote_number": "SJ20261106DE002",
+  "buyer_name": "\u62a5\u4ef7\u64cd\u4f5c\u9a8c\u6536\u5ba2\u6237",
+  "recipient": "\u62a5\u4ef7\u64cd\u4f5c\u9a8c\u6536\u5ba2\u6237",
+  "address": "Synthetic Test Address",
+  "model": "R1-QA-MODEL",
+  "description": "\u62a5\u4ef7\u64cd\u4f5c\u9a8c\u6536\u706f\u5177",
+  "quantity": 1,
+  "unit": "pcs",
+  "unit_price": 12.5,
+  "line_total": 12.5,
+  "has_replacement_characters": false
+}

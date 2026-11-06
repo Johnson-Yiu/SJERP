@@ -43,20 +43,25 @@ def _order_item_payload(items):
     ]
 
 
-def _capture_order_party_snapshot(order, quote=None):
+def _capture_order_party_snapshot(order, quote=None, replacement_context=None):
     """Freeze the party data used by this order at formal confirmation.
 
     A quote is the authoritative source for buyer/contact fields when one is
     attached to the order.  Empty legacy quote fields stay empty rather than
-    being silently replaced with the current customer master.  Country is not
-    part of the existing quote snapshot schema, so it is captured from the
-    customer selected on this order at confirmation time.
+    being silently replaced with the current customer master.  Quote country
+    follows the same snapshot rule; an unknown country remains unknown.
     """
+    from crm.party_replacement import snapshot_for_confirmation
+    replacement = snapshot_for_confirmation(order, 'order', context=replacement_context)
+    if replacement is not None:
+        for field, value in replacement.items():
+            setattr(order, field, value)
+        return replacement
     customer = Customer.objects.select_for_update().get(pk=order.customer_id)
     if quote is not None:
         values = {
             "customer_name_snapshot": quote.buyer_company_name,
-            "customer_country_snapshot": customer.country,
+            "customer_country_snapshot": quote.buyer_country_snapshot,
             "customer_address_snapshot": quote.buyer_address,
             "customer_contact_name_snapshot": quote.recipient_name,
             "customer_phone_snapshot": quote.buyer_phone,
@@ -80,9 +85,17 @@ def _capture_order_party_snapshot(order, quote=None):
 @transaction.atomic
 def confirm_order(order):
     """Confirm one draft, creating all formal side effects together."""
+    from crm.party_replacement import prepare_formalization
+    # Read the quote reference before locking either document.  Replacement
+    # quote sources must be locked before the order/result rows.
+    quote_id = Order.objects.filter(pk=order.pk).values_list('quote_id', flat=True).first()
+    quote_context = prepare_formalization('quote', quote_id) if quote_id else None
+    replacement_context = prepare_formalization('order', order.pk)
     # Lock only the Order row first.  ``quote`` is nullable, so joining it here
     # would create a nullable outer join that PostgreSQL cannot lock.
     order = Order.objects.select_for_update().get(pk=order.pk)
+    if order.quote_id != quote_id:
+        raise ValidationError('订单来源报价已变更，请重试。')
     reject_historical(order, "确认、预留或生成应收计划")
     if order.status != "draft":
         raise ValidationError("只有草稿订单可以确认。")
@@ -93,6 +106,9 @@ def confirm_order(order):
         # The revision allocator and copied quote rows are deliberately invoked only
         # here: editing a draft must not create a legal/commercial quote revision.
         source_quote = Quote.objects.select_for_update().get(pk=order.quote_id)
+        if source_quote.status == "draft":
+            from crm.quote_party_approval_guard import guard_quote_party_approval
+            guard_quote_party_approval(source_quote, status="accepted", replacement_context=quote_context)
         if source_quote.status in {"rejected", "expired"}:
             raise ValidationError("来源报价已拒绝或过期，请先基于新的报价修订版更新订单来源。")
         from crm.serializers import OrderSerializer
@@ -109,7 +125,7 @@ def confirm_order(order):
             _order_item_payload(items),
         )
 
-    _capture_order_party_snapshot(order, final_quote)
+    _capture_order_party_snapshot(order, final_quote, replacement_context)
     order.quote = final_quote
     order.status = "confirmed"
     # Existing formal orders are migrated as legacy records. A pre-existing

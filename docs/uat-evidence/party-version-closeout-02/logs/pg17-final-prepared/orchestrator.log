@@ -1,0 +1,2 @@
+initdb 1
+{"head": "792edff6b696c4ad1f5bc65f9e91f623b5b964c0", "root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-party-version-pg17-9whtesbq", "stages": {"initdb": 1}, "cleanup": "complete", "port": 7341, "error": "initdb failed", "failed": true, "source_hashes_match": true, "backend_hashes_match": true, "changed_source_paths": []}

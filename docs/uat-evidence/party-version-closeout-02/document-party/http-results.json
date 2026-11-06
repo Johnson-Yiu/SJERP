@@ -1,0 +1,22 @@
+[
+  {
+    "kind": "order",
+    "id": 1,
+    "get": 200,
+    "proposal": 201,
+    "approval": 200,
+    "apply": 200,
+    "originalAddress": "Synthetic buyer address",
+    "total": "20.00"
+  },
+  {
+    "kind": "purchase",
+    "id": 1,
+    "get": 200,
+    "proposal": 201,
+    "approval": 200,
+    "apply": 200,
+    "originalAddress": "Synthetic supplier address",
+    "total": "8.00"
+  }
+]

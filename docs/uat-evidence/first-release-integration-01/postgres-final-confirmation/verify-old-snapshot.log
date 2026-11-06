@@ -1,0 +1,3 @@
+108 objects imported automatically (use -v 2 for details).
+
+PASS saved buyer snapshots unchanged; buyer_tax_id remains NULL; reminder retained; merge migration applied

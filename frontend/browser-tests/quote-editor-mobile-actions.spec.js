@@ -72,6 +72,14 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
   const layouts = []
   for (const width of [1440, 1024, 390, 320]) {
     await page.setViewportSize({ width, height: 900 })
+    if (width <= 980) {
+      await expect.poll(() => page.locator('.sidebar').evaluate(node => node.getBoundingClientRect().right), { timeout: 2_000 })
+        .toBeLessThanOrEqual(0)
+    }
+    await page.evaluate(async () => {
+      await document.fonts.ready
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+    })
     const footer = editor.locator('.quote-editor-actions')
     await footer.scrollIntoViewIfNeeded()
     const measurements = await footer.evaluate(node => {
@@ -92,6 +100,19 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
       })
       return {
         viewport: innerWidth,
+        sidebar: (() => {
+          const node = document.querySelector('.sidebar')
+          const rect = node?.getBoundingClientRect()
+          const menu = document.querySelector('.mobile-menu')
+          return {
+            open: node?.classList.contains('open') || false,
+            x: rect?.x ?? null,
+            right: rect?.right ?? null,
+            transform: node ? getComputedStyle(node).transform : null,
+            mobileMenuVisible: Boolean(menu && getComputedStyle(menu).display !== 'none'),
+            scrimVisible: Boolean(document.querySelector('.scrim')),
+          }
+        })(),
         footer: { x: footerRect.x, right: footerRect.right, width: footerRect.width, scrollWidth: node.scrollWidth, clientWidth: node.clientWidth },
         actions,
       }
@@ -104,6 +125,7 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
       expect(action.textFits, `${width}px ${action.className} text fits`).toBe(true)
       expect(action.right).toBeLessThanOrEqual(measurements.footer.right + 1)
     }
+    if (width <= 980) expect(measurements.sidebar.right).toBeLessThanOrEqual(0)
     expect(measurements.footer.scrollWidth).toBeLessThanOrEqual(measurements.footer.clientWidth + 1)
     if (width <= 390) {
       expect(measurements.actions.find(action => action.className === 'quote-action-save').width).toBeGreaterThan(measurements.footer.width * 0.75)
@@ -155,6 +177,7 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
 
   await fs.writeFile(path.join(evidenceDir, 'browser-results.json'), JSON.stringify({
     browser: await page.evaluate(() => navigator.userAgent),
+    browserVersion: context.browser()?.version() || null,
     layouts,
     preview: 'opened and closed; draft line remained',
     save: { status: saveResponse.status(), id: savedQuote.id, quote_no: savedQuote.quote_no },

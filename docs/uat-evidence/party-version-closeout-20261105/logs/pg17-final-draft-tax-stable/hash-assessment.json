@@ -1,0 +1,13 @@
+{
+  "overall_before_after_equal": false,
+  "changed_files": {
+    "frontend/browser-tests/quote-buyer-tax-id.spec.js": {
+      "before": "b7f4183b4769f716c27f7166945d87c7f11b348c19bf5b4d3d8a97cd8b5bc544",
+      "after": "cf4fbe492c66a6ea07512f4ef2c3ecb8923fd5f22537775e3ee923f650b2ce23"
+    }
+  },
+  "backend_before_after_equal": true,
+  "backend_files_checked": 409,
+  "backend_after_current_differences": {},
+  "backend_new_files_since_after": []
+}

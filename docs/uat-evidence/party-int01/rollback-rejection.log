@@ -1,0 +1,43 @@
+Operations to perform:
+  Target specific migration: 0108_history_append_only_truncate, from crm
+Running migrations:
+  Rendering model states... DONE
+  Unapplying crm.0118_merge_party_reminders... OK
+  Unapplying crm.0109_new_product_reminders... OK
+  Unapplying crm.0117_party_details_draft_guard... OK
+  Unapplying crm.0116_party_document_details_storage... OK
+  Unapplying crm.0115_party_replacement...Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\party-int-01\backend\manage.py", line 13, in <module>
+    main()
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\party-int-01\backend\manage.py", line 9, in main
+    execute_from_command_line(sys.argv)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\__init__.py", line 443, in execute_from_command_line
+    utility.execute()
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\__init__.py", line 437, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\base.py", line 420, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\base.py", line 464, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\base.py", line 111, in wrapper
+    res = handle_func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\core\management\commands\migrate.py", line 354, in handle
+    post_migrate_state = executor.migrate(
+                         ^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\db\migrations\executor.py", line 143, in migrate
+    state = self._migrate_all_backwards(plan, full_plan, fake=fake)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\db\migrations\executor.py", line 221, in _migrate_all_backwards
+    self.unapply_migration(states[migration], migration, fake=fake)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\db\migrations\executor.py", line 287, in unapply_migration
+    state = migration.unapply(state, schema_editor)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\db\migrations\migration.py", line 193, in unapply
+    operation.database_backwards(
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\closeout-python312\Lib\site-packages\django\db\migrations\operations\special.py", line 207, in database_backwards
+    self.reverse_code(from_state.apps, schema_editor)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\r1-prelaunch-consolidation-20261104\.tmp\party-int-01\backend\crm\migrations\0115_party_replacement.py", line 24, in remove_guard
+    raise RuntimeError('报价主体快照已存在，拒绝回退。')
+RuntimeError: 报价主体快照已存在，拒绝回退。

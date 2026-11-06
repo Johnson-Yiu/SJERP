@@ -1,0 +1,106 @@
+{
+  "invoice_no": "SYN-PI-no-discount-1",
+  "seller": {
+    "name": "SYNTHETIC SELLER",
+    "saler": "SYNTHETIC SALES CONTACT",
+    "address": "SYNTHETIC SELLER ADDRESS",
+    "email": "seller@example.invalid",
+    "phone": "+00 000 111"
+  },
+  "bank": [
+    [
+      "SYNTHETIC BANK FIELD 1",
+      "SYNTHETIC BANK VALUE 1"
+    ],
+    [
+      "SYNTHETIC BANK FIELD 2",
+      "SYNTHETIC BANK VALUE 2"
+    ],
+    [
+      "SYNTHETIC BANK FIELD 3",
+      "SYNTHETIC BANK VALUE 3"
+    ],
+    [
+      "SYNTHETIC BANK FIELD 4",
+      "SYNTHETIC BANK VALUE 4"
+    ],
+    [
+      "SYNTHETIC BANK FIELD 5",
+      "SYNTHETIC BANK VALUE 5"
+    ],
+    [
+      "SYNTHETIC BANK FIELD 6",
+      "SYNTHETIC BANK VALUE 6"
+    ],
+    [
+      "SYNTHETIC BANK FIELD 7",
+      "SYNTHETIC BANK VALUE 7"
+    ],
+    [
+      "SYNTHETIC BANK FIELD 8",
+      "SYNTHETIC BANK VALUE 8"
+    ],
+    [
+      "SYNTHETIC BANK FIELD 9",
+      "SYNTHETIC BANK VALUE 9"
+    ]
+  ],
+  "bank_notice": "SYNTHETIC BANK NOTICE",
+  "template_sha256": "430ea94ce29c124f6257098fbdfb0159f7f8c3ba0c5d7a847c969978c0c18b35",
+  "buyer": {
+    "company_name": "SYNTHETIC APPROVED BUYER",
+    "tax_id": "",
+    "name": "SYNTHETIC APPROVED RECIPIENT",
+    "address": "SYNTHETIC APPROVED ADDRESS",
+    "email": "buyer@example.invalid",
+    "phone": "+00 000 222"
+  },
+  "terms": {
+    "quote_date": "2026-11-06",
+    "valid_until": null,
+    "validity_days": 30,
+    "lead_time_days": null,
+    "trading_terms": "",
+    "shipping_details": "",
+    "notes": ""
+  },
+  "totals": {
+    "currency": "USD",
+    "subtotal": "40.00",
+    "shipping_fee": "0.00",
+    "discount": "0.00",
+    "total_amount": "40.00"
+  },
+  "payment_splits": {
+    "deposit_ratio": "0.0000",
+    "deposit_amount": "0.00",
+    "balance_ratio": "1.0000",
+    "balance_amount": "40.00"
+  },
+  "products": [
+    {
+      "sku": "SYN-SKU-no-discount",
+      "sku_code": "SYN-SKU-no-discount",
+      "model": "SYNTHETIC MODEL no-discount",
+      "sales_model": "SYNTHETIC MODEL no-discount",
+      "product_name": "SYNTHETIC PRODUCT",
+      "display_name": "SYNTHETIC PRODUCT",
+      "description": "SYNTHETIC ITEM",
+      "quantity": 2.0,
+      "base_quantity": 2.0,
+      "trade_snapshot": {
+        "unit": "pcs",
+        "base_unit": "pcs",
+        "factor": "1",
+        "name": ""
+      },
+      "unit_price": "20.000000000000",
+      "amount": 40.0,
+      "unit": "pcs",
+      "image_url": ""
+    }
+  ],
+  "amount_words": "SAY TOTAL US DOLLARS FORTY ONLY",
+  "print_sha256": "ef97cf3e18fcffd80c1d352543092026c873fa6e9bdd8729ac71298e9054c357",
+  "print_html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><title>SYN-PI-no-discount-1</title>\n<style>\nbody{font:14px Arial,sans-serif;color:#111;margin:24px}h1{text-align:center;font-size:24px}h2{font-size:16px;border-bottom:1px solid #333}.parties{display:grid;grid-template-columns:1fr 1fr;gap:24px}dl{display:grid;grid-template-columns:110px 1fr;gap:4px}dt{font-weight:bold}dd{margin:0;white-space:pre-line}table{border-collapse:collapse;width:100%;margin-top:18px}th,td{border:1px solid #555;padding:5px;text-align:left}td img{max-width:60px;max-height:60px}.totals{text-align:right}.notice{white-space:pre-line}@media print{body{margin:8mm}}@media screen and (max-width:500px){.parties{grid-template-columns:1fr}table,tbody,tr,td{display:block}thead{display:none}tr{border:1px solid #555;margin-bottom:10px}td{border:0;border-bottom:1px solid #ddd;display:grid;grid-template-columns:110px 1fr;overflow-wrap:anywhere}td::before{content:attr(data-label);font-weight:bold}td:last-child{border-bottom:0}}\n</style></head><body>\n<h1>Proforma Invoice</h1><div class=\"parties\"><section><h2>Buyer Information</h2><dl>\n<dt>Name</dt><dd>SYNTHETIC APPROVED BUYER</dd><dt>Recipient</dt><dd>SYNTHETIC APPROVED RECIPIENT</dd><dt>Address</dt><dd>SYNTHETIC APPROVED ADDRESS</dd><dt>Tax ID</dt><dd></dd><dt>Email</dt><dd>buyer@example.invalid</dd><dt>Tel</dt><dd>+00 000 222</dd></dl></section>\n<section><h2>Seller Information</h2><dl><dt>Name</dt><dd>SYNTHETIC SELLER</dd><dt>Saler</dt><dd>SYNTHETIC SALES CONTACT</dd><dt>Address</dt><dd>SYNTHETIC SELLER ADDRESS</dd><dt>Email</dt><dd>seller@example.invalid</dd><dt>Tel</dt><dd>+00 000 111</dd><dt>Date</dt><dd>2026年11月6日</dd></dl></section></div>\n<p>Invoice No. <strong>SYN-PI-no-discount-1</strong></p><table><thead><tr><th>No.</th><th>Image</th><th>Model</th><th>Description</th><th>Quantity</th><th>Unit</th><th>Unit Price USD</th><th>Total USD</th></tr></thead><tbody>\n<tr><td data-label=\"No.\">1</td><td data-label=\"Image\"></td><td data-label=\"Model\">SYNTHETIC MODEL no-discount</td><td data-label=\"Description\">SYNTHETIC ITEM</td><td data-label=\"Quantity\">2.00</td><td data-label=\"Unit\">pcs</td><td data-label=\"Unit Price\">20.00 USD</td><td data-label=\"Total\">40.00 USD</td></tr></tbody></table>\n<div class=\"totals\"><p>Sub Total: 40.00</p><p>Shipping Cost: 0.00</p><p>Discount: 0.00</p><p><strong>Grand Total: 40.00</strong></p></div>\n<p>SAY TOTAL US DOLLARS FORTY ONLY</p><section><h2>NOTES</h2><p>Lead time: 10 Days<br>Price Valid Date: 30 Days<br>Deposit: 0% (USD 0.00)<br>Balance: 100% (USD 40.00)<br>Trading terms: <br>Shipping details: <br>The price is EXCLUDE customs duties and VAT. If the goods generate the customs taxes and VAT taxes in buyer's local, the buyer should pay by themselves.</p><p class=\"notice\"></p></section>\n<section><h2>BANK INFORMATION</h2><dl><dt>SYNTHETIC BANK FIELD 1</dt><dd>SYNTHETIC BANK VALUE 1</dd><dt>SYNTHETIC BANK FIELD 2</dt><dd>SYNTHETIC BANK VALUE 2</dd><dt>SYNTHETIC BANK FIELD 3</dt><dd>SYNTHETIC BANK VALUE 3</dd><dt>SYNTHETIC BANK FIELD 4</dt><dd>SYNTHETIC BANK VALUE 4</dd><dt>SYNTHETIC BANK FIELD 5</dt><dd>SYNTHETIC BANK VALUE 5</dd><dt>SYNTHETIC BANK FIELD 6</dt><dd>SYNTHETIC BANK VALUE 6</dd><dt>SYNTHETIC BANK FIELD 7</dt><dd>SYNTHETIC BANK VALUE 7</dd><dt>SYNTHETIC BANK FIELD 8</dt><dd>SYNTHETIC BANK VALUE 8</dd><dt>SYNTHETIC BANK FIELD 9</dt><dd>SYNTHETIC BANK VALUE 9</dd></dl><p class=\"notice\">SYNTHETIC BANK NOTICE</p></section></body></html>\n"
+}

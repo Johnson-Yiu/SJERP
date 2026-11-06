@@ -1,0 +1,85 @@
+[
+  {
+    "kind": "order",
+    "proposal": 201,
+    "approval": 200,
+    "created": 200,
+    "resultId": 2,
+    "proposalSnapshot": {
+      "name": "Synthetic Target Buyer DB0C9442",
+      "country": "",
+      "address": "",
+      "contact": "",
+      "phone": "",
+      "email": "",
+      "party_details": {
+        "schema": "party-document-details-v1",
+        "buyer": {
+          "name": "Synthetic Target Buyer DB0C9442",
+          "country": null,
+          "address": null,
+          "tax_id": "",
+          "contact": null,
+          "phone": null,
+          "email": null,
+          "billing_address": "Synthetic new order billing",
+          "shipping_address": null,
+          "recipient": null
+        },
+        "seller": {
+          "name": null,
+          "country": null,
+          "address": null,
+          "tax_id": null,
+          "contact": null,
+          "phone": null,
+          "email": null,
+          "billing_address": null,
+          "shipping_address": null,
+          "recipient": null
+        }
+      }
+    }
+  },
+  {
+    "kind": "purchase",
+    "proposal": 201,
+    "approval": 200,
+    "created": 200,
+    "resultId": 2,
+    "proposalSnapshot": {
+      "name": "Synthetic Target Seller DB0C9442",
+      "address": "",
+      "contact": "",
+      "phone": "",
+      "email": "",
+      "party_details": {
+        "schema": "party-document-details-v1",
+        "buyer": {
+          "name": null,
+          "country": null,
+          "address": null,
+          "tax_id": null,
+          "contact": null,
+          "phone": null,
+          "email": null,
+          "billing_address": null,
+          "shipping_address": null,
+          "recipient": null
+        },
+        "seller": {
+          "name": "Synthetic Target Seller DB0C9442",
+          "country": null,
+          "address": null,
+          "tax_id": "",
+          "contact": null,
+          "phone": null,
+          "email": null,
+          "billing_address": "Synthetic new purchase billing",
+          "shipping_address": null,
+          "recipient": null
+        }
+      }
+    }
+  }
+]

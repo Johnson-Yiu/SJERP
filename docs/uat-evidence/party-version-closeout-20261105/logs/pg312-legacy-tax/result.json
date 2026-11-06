@@ -1,0 +1,15 @@
+{
+  "head": "bcdcb57545f121b8a4102f352c74008b47372035",
+  "root": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-party-version-pg17-x4xgnobd",
+  "stages": {
+    "initdb": 0,
+    "pg_ctl-start": 0,
+    "party-service-concurrency": 0,
+    "pg_ctl-stop": 0
+  },
+  "cleanup": "complete",
+  "port": 9214,
+  "server_version": "17.10",
+  "identity_verified": true,
+  "remaining_test_databases": []
+}

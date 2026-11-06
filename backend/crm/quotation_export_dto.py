@@ -7,6 +7,8 @@ data when an old quotation is re-exported.
 
 from dataclasses import asdict, dataclass
 from decimal import Decimal, ROUND_HALF_UP
+from django.core.exceptions import ValidationError
+from django.db import connections, transaction
 
 from .money import LEGACY_AMOUNT_CALCULATION_VERSION, money
 from .quote_template_snapshot import QuoteTemplateSnapshotError, resolve_quote_template
@@ -20,9 +22,9 @@ WITH_DISCOUNT_TEMPLATE_ID = "standard_en_with_discount"
 class QuotationExportValidationError(Exception):
     """Raised when a saved quotation cannot safely become a formal document."""
 
-    def __init__(self, fields):
+    def __init__(self, fields, *, message="正式报价缺少关键保存字段，未生成文件。"):
         self.fields = fields
-        super().__init__("正式报价缺少关键保存字段，未生成文件。")
+        super().__init__(message)
 
 
 @dataclass(frozen=True)
@@ -58,12 +60,12 @@ def _money(value):
     return str(money(value))
 
 
-def validate_quotation_export_source(quote):
+def validate_quotation_export_source(quote, *, buyer_name=None):
     """Validate only fields required to produce a truthful saved-version file."""
     fields = {}
     if not str(quote.quote_no or "").strip():
         fields["quote_no"] = "缺少已保存报价单号。"
-    if not str(quote.buyer_company_name or "").strip():
+    if not str((quote.buyer_company_name if buyer_name is None else buyer_name) or "").strip():
         fields["buyer_company_name"] = "缺少已保存买方公司名称。"
     currency = str(quote.currency or "").strip().upper()
     if not currency or currency in {"UNDEFINED", "NULL", "NAN"}:
@@ -85,9 +87,48 @@ def validate_quotation_export_source(quote):
         raise QuotationExportValidationError(fields)
 
 
+@transaction.atomic
 def build_quotation_export_dto(quote, *, template_id=None):
     """Build a stable export view from the quotation and its saved snapshots."""
-    validate_quotation_export_source(quote)
+    from .models import Quote
+    from .party_document_details_models import PartyDocumentDetailsStorage
+    from .quote_party_approval_guard import validate_inherited_quote_details
+    quote = Quote.objects.select_for_update().get(pk=quote.pk)
+    try:
+        details = validate_inherited_quote_details(quote)
+    except ValidationError as exc:
+        raise QuotationExportValidationError({"party_details": "报价主体资料或审批记录无效。"}) from exc
+    alias = quote._state.db or 'default'
+    if (details is None and PartyDocumentDetailsStorage._meta.db_table in connections[alias].introspection.table_names()
+            and PartyDocumentDetailsStorage.objects.using(alias).filter(quote=quote, details__isnull=True).exists()):
+        raise QuotationExportValidationError({"party_details": "报价主体资料记录为空，无法安全生成文件。"})
+    if details is None:
+        buyer = {"company_name": quote.buyer_company_name, "recipient": quote.recipient_name,
+                 "address": quote.buyer_address, "tax_id": quote.buyer_tax_id,
+                 "email": quote.buyer_email, "phone": quote.buyer_phone}
+    else:
+        source = details["buyer"]
+        unmapped = [field for field in ("country", "contact", "billing_address", "shipping_address")
+                    if source[field] not in (None, "")]
+        if unmapped:
+            raise QuotationExportValidationError(
+                {"buyer_unmapped": "已保存的买方资料在现有模板中没有独立位置：" + ", ".join(unmapped)},
+                message="现有报价模板无法完整表示已保存的买方资料，暂不能生成。",
+            )
+        buyer = {"company_name": source["name"], "recipient": source["recipient"],
+                 "address": source["address"], "tax_id": source["tax_id"],
+                 "email": source["email"], "phone": source["phone"]}
+        if any(isinstance(v, str) and v.lstrip().startswith('=') for v in buyer.values()):
+            raise QuotationExportValidationError({"party_details": "主体资料包含不能安全导出的公式。"})
+        if not str(buyer["company_name"] or "").strip():
+            raise QuotationExportValidationError({"buyer_company_name": "当前主体资料缺少买方公司名称。"})
+    unknown = [key for key, value in buyer.items() if value is None]
+    if unknown:
+        raise QuotationExportValidationError(
+            {"buyer": "买方资料存在未知字段，无法在现有模板中安全表示：" + ", ".join(unknown)},
+            message="报价含未知买方资料，现有模板不能区分未知与留空，暂不能生成。",
+        )
+    validate_quotation_export_source(quote, buyer_name=buyer["company_name"])
     products = []
     legacy_calculation = quote.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION
     subtotal = Decimal("0")
@@ -123,6 +164,14 @@ def build_quotation_export_dto(quote, *, template_id=None):
         snapshot = resolve_quote_template(quote, resolved_template_id)
     except QuoteTemplateSnapshotError as exc:
         raise QuotationExportValidationError({"template": str(exc)}) from exc
+    if details is not None:
+        seller = details["seller"]
+        mapping = {"name": "name", "address": "address", "contact": "saler", "email": "email", "phone": "phone"}
+        if any(seller[field] is None or seller[field] != snapshot["seller"][key]
+               for field, key in mapping.items()):
+            raise QuotationExportValidationError({"party_details": "卖方资料与已保存报价模板不一致或未知，无法安全生成文件。"})
+        if any(seller[field] not in (None, "") for field in ("country", "tax_id", "billing_address", "shipping_address", "recipient")):
+            raise QuotationExportValidationError({"party_details": "卖方扩展资料在已保存报价模板中没有明确位置。"})
     total_amount = quote.total_amount if legacy_calculation else money(subtotal + shipping_fee - discount)
     deposit_amount = (total_amount * quote.deposit_ratio).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
     validity_days = (quote.valid_until - quote.quote_date).days if quote.valid_until else 30
@@ -130,14 +179,7 @@ def build_quotation_export_dto(quote, *, template_id=None):
         template_id=resolved_template_id,
         template_snapshot=snapshot,
         invoice_no=quote.quote_no,
-        buyer={
-            "company_name": quote.buyer_company_name,
-            "recipient": quote.recipient_name,
-            "address": quote.buyer_address,
-            "tax_id": "",
-            "email": quote.buyer_email,
-            "phone": quote.buyer_phone,
-        },
+        buyer=buyer,
         terms={
             "quote_date": quote.quote_date.isoformat(),
             "validity_days": max(validity_days, 0),

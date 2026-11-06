@@ -1,0 +1,25 @@
+{
+  "head_before_commit": "aa15c9ba7584599e918c1dd14723d31e31158b3d",
+  "tree_source_hash_count": 822,
+  "pg_bin": "C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-history-pg17-isolated-20261105\\binaries\\pgsql\\bin",
+  "stages": {
+    "initdb": 0,
+    "pg_ctl-start": 0,
+    "migrate-reminder-baseline": 0,
+    "seed-old-snapshot-and-reminder": 0,
+    "migrate-current": 0,
+    "migration-check": 0,
+    "models-check": 0,
+    "verify-old-snapshot": 0,
+    "party-and-quote-postgres-tests": 0,
+    "pg_ctl-stop": 0
+  },
+  "cleanup": "complete",
+  "server_binary": "pg_ctl (PostgreSQL) 17.10",
+  "port": 13336,
+  "server_version": "17.10",
+  "cluster_identity_verified": true,
+  "remaining_test_databases": [],
+  "source_hashes_match": true,
+  "source_paths_changed": []
+}

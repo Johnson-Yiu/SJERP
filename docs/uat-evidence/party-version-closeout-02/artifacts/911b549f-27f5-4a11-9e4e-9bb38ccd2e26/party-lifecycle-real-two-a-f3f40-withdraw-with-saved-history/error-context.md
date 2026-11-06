@@ -1,0 +1,207 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: party-lifecycle-real.spec.js >> two authenticated staff reject, reapply and withdraw with saved history
+- Location: browser-tests\party-lifecycle-real.spec.js:8:1
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=f1e3]:
+  - complementary [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - generic [ref=f1e6]: S
+      - generic [ref=f1e7]:
+        - strong [ref=f1e8]: 森爵照明管理系统
+        - text: 客户 · 销售 · 产品
+    - navigation [ref=f1e9]:
+      - generic [ref=f1e10]: 经营
+      - link "经营概览" [ref=f1e11] [cursor=pointer]:
+        - /url: /
+      - link "报表中心" [ref=f1e18] [cursor=pointer]:
+        - /url: /reports
+      - link "历史订单分析" [ref=f1e25] [cursor=pointer]:
+        - /url: /historical-orders
+      - generic [ref=f1e31]: 客户
+      - link "客户管理" [ref=f1e32] [cursor=pointer]:
+        - /url: /customers
+      - link "联系人" [ref=f1e39] [cursor=pointer]:
+        - /url: /contacts
+      - link "跟进记录" [ref=f1e45] [cursor=pointer]:
+        - /url: /follow-ups
+      - generic [ref=f1e49]: 销售
+      - link "报价管理" [ref=f1e50] [cursor=pointer]:
+        - /url: /quotes
+      - link "订单管理" [ref=f1e55] [cursor=pointer]:
+        - /url: /orders
+      - generic [ref=f1e61]: 采购与库存
+      - link "供应商管理" [ref=f1e62] [cursor=pointer]:
+        - /url: /suppliers
+      - link "采购管理" [ref=f1e69] [cursor=pointer]:
+        - /url: /purchase-orders
+      - link "库存" [ref=f1e75] [cursor=pointer]:
+        - /url: /inventory
+      - link "库存流水" [ref=f1e80] [cursor=pointer]:
+        - /url: /inventory-movements
+      - generic [ref=f1e85]: 产品资料
+      - link "产品管理" [ref=f1e86] [cursor=pointer]:
+        - /url: /products
+      - link "SKU 管理" [ref=f1e92] [cursor=pointer]:
+        - /url: /skus
+      - link "产品分类" [ref=f1e104] [cursor=pointer]:
+        - /url: /categories
+      - link "产品参数" [ref=f1e110] [cursor=pointer]:
+        - /url: /product-parameters
+      - link "包装管理" [ref=f1e113] [cursor=pointer]:
+        - /url: /sku-packaging
+      - link "交易单位" [ref=f1e119] [cursor=pointer]:
+        - /url: /sku-trade-units
+      - link "产品证书" [ref=f1e131] [cursor=pointer]:
+        - /url: /product-certificates
+      - link "HS 编码维护" [ref=f1e136] [cursor=pointer]:
+        - /url: /hs-codes
+      - generic [ref=f1e139]: 财务与工具
+      - link "财务概览" [ref=f1e140] [cursor=pointer]:
+        - /url: /finance
+      - link "应收计划" [ref=f1e146] [cursor=pointer]:
+        - /url: /receivables
+      - link "应付计划" [ref=f1e152] [cursor=pointer]:
+        - /url: /payables
+      - link "财务流水" [ref=f1e158] [cursor=pointer]:
+        - /url: /transactions
+      - link "人民币资金" [ref=f1e164] [cursor=pointer]:
+        - /url: /rmb-cash-events
+      - link "账户资金" [ref=f1e170] [cursor=pointer]:
+        - /url: /finance-ledger
+      - link "数据导入" [ref=f1e176] [cursor=pointer]:
+        - /url: /import
+      - link "历史资料承接" [ref=f1e181] [cursor=pointer]:
+        - /url: /history-takeover
+      - generic [ref=f1e187]: 组织与系统
+      - link "组织与权限" [ref=f1e188] [cursor=pointer]:
+        - /url: /organization
+    - generic [ref=f1e193]:
+      - generic [ref=f1e194]: P
+      - generic [ref=f1e196]:
+        - strong [ref=f1e197]: 开发身份：party-a-7d4446b81b
+        - generic [ref=f1e198]: 超级管理员 · 全部功能与数据权限
+  - main [ref=f1e199]:
+    - generic [ref=f1e200]:
+      - generic [ref=f1e201]:
+        - text: Quotation desk
+        - heading "报价管理" [level=1] [ref=f1e202]
+      - generic [ref=f1e203]:
+        - generic [ref=f1e204]: 11月5日周四
+        - generic "party-a-7d4446b81b" [ref=f1e205]: P
+    - generic [ref=f1e207]:
+      - generic [ref=f1e208]:
+        - paragraph [ref=f1e209]: 管理报价、修订版及转单进度。
+        - button "新建报价" [ref=f1e210] [cursor=pointer]
+      - region "报价汇总" [ref=f1e212]:
+        - article [ref=f1e213]:
+          - generic [ref=f1e214]: 报价主单
+          - strong [ref=f1e215]: "1"
+          - generic [ref=f1e219]: 主单数量
+        - article [ref=f1e220]:
+          - generic [ref=f1e221]: 报价修订版
+          - strong [ref=f1e222]: "1"
+          - generic [ref=f1e227]: 含全部版本
+        - article [ref=f1e228]:
+          - generic [ref=f1e229]: 跟进中
+          - strong [ref=f1e230]: "1"
+          - generic [ref=f1e235]: 草稿或已发送
+        - article [ref=f1e236]:
+          - generic [ref=f1e237]: 客户已接受
+          - strong [ref=f1e238]: "0"
+          - generic [ref=f1e243]: 已接受报价
+      - generic [ref=f1e244]:
+        - textbox "搜索报价单号或客户" [ref=f1e249]
+        - combobox "按报价状态筛选" [ref=f1e250]:
+          - option "全部状态" [selected]
+          - option "草稿"
+          - option "已发送"
+          - option "已接受"
+          - option "已拒绝"
+          - option "已过期"
+        - combobox "按客户筛选" [ref=f1e251]:
+          - option "全部客户" [selected]
+        - combobox "报价排序" [ref=f1e252]:
+          - option "最近更新时间" [selected]
+          - option "最早更新时间"
+          - option "报价日期（新到旧）"
+          - option "报价日期（旧到新）"
+        - button "重置" [ref=f1e253] [cursor=pointer]
+      - table [ref=f1e259]:
+        - rowgroup [ref=f1e260]:
+          - row [ref=f1e261]:
+            - columnheader "报价单 / 层级" [ref=f1e262]
+            - columnheader "客户" [ref=f1e263]
+            - columnheader "更新时间" [ref=f1e264]
+            - columnheader "状态" [ref=f1e265]
+            - columnheader "明细" [ref=f1e266]
+            - columnheader "金额" [ref=f1e267]
+            - columnheader "操作" [ref=f1e268]
+        - rowgroup [ref=f1e269]:
+          - row [ref=f1e270] [cursor=pointer]:
+            - cell "PVS-D5783846 原始报价" [ref=f1e271]:
+              - generic [ref=f1e277]:
+                - strong [ref=f1e278]: PVS-D5783846
+                - generic [ref=f1e279]: 原始报价
+            - cell "Synthetic Buyer D5783846" [ref=f1e280]
+            - cell "2026/11/05 18:02" [ref=f1e281]
+            - cell "已发送" [ref=f1e282]
+            - cell "1 项" [ref=f1e284]
+            - cell "USD 10.00" [ref=f1e285]
+            - cell [ref=f1e286]:
+              - generic [ref=f1e287]:
+                - button "查看 PVS-D5783846" [ref=f1e288]
+                - button "创建修订版 PVS-D5783846" [ref=f1e292]
+                - button "导出 PVS-D5783846" [ref=f1e296]
+      - dialog "报价工作台" [ref=f1e301]:
+        - generic [ref=f1e302]:
+          - generic [ref=f1e304]:
+            - button "关闭报价详情" [ref=f1e305] [cursor=pointer]:
+              - generic [ref=f1e309]: 关闭
+            - generic [ref=f1e310]: 报价工作台 · PVS-D5783846
+          - generic [ref=f1e311]:
+            - generic [ref=f1e312]:
+              - paragraph [ref=f1e313]: Synthetic Buyer D5783846 · 原始报价
+              - heading "PVS-D5783846" [level=2] [ref=f1e314]
+              - text: 原始报价：PVS-D5783846
+            - generic [ref=f1e315]: 已发送
+          - generic "报价状态操作" [ref=f1e316]:
+            - button "标记为客户已接受" [ref=f1e317] [cursor=pointer]
+            - button "标记为客户已拒绝" [ref=f1e318] [cursor=pointer]
+            - button "标记为已过期" [ref=f1e319] [cursor=pointer]
+          - generic [ref=f1e320]:
+            - button "创建修订版" [ref=f1e321] [cursor=pointer]
+            - button "预览 PI" [ref=f1e325] [cursor=pointer]
+            - button "导出 Excel" [ref=f1e329] [cursor=pointer]
+            - button "创建销售订单" [ref=f1e333] [cursor=pointer]
+        - main [ref=f1e338]:
+          - navigation "报价详情分页" [ref=f1e339]:
+            - button "概览" [ref=f1e340] [cursor=pointer]
+            - button "报价明细 (1)" [ref=f1e341] [cursor=pointer]
+            - button "版本谱系 (1)" [ref=f1e342] [cursor=pointer]
+            - button "订单 (0)" [ref=f1e343] [cursor=pointer]
+            - button "主体更正" [ref=f1e344] [cursor=pointer]
+            - button "重要备注 (0)" [ref=f1e345] [cursor=pointer]
+            - button "操作日志 (0)" [ref=f1e346] [cursor=pointer]
+          - generic [ref=f1e347]:
+            - heading "主体变更申请" [level=3] [ref=f1e348]
+            - paragraph [ref=f1e349]: 同一法律主体资料更正需由另一位已认证账号审批后生成报价草稿。系统不会自动核实法律主体是否变更，请由员工核对并提供依据。
+            - paragraph [ref=f1e350]: 拟更换法律主体目前只能记录，暂不能生效。后续方案为新建关联原单的单据，原有事实保留在原单；新单据能力尚未完成。
+            - paragraph [ref=f1e351]: 匿名开发身份不能操作；需要两个不同的已认证账号。
+            - status [ref=f1e352]: 正在加载主体资料…
+```

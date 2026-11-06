@@ -5,6 +5,8 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { X } from 'lucide-vue-next'
 import ContractAmountAdjustments from './ContractAmountAdjustments.vue'
+import DocumentPartyVersions from './DocumentPartyVersions.vue'
+import PartyDetailsPanel from './PartyDetailsPanel.vue'
 import { tradeLabel } from '../utils/tradeUnits'
 import { orderDetailLocation } from '../utils/detailNavigation'
 import { purchaseTasks, receiptProgress, purchaseArrival } from '../utils/purchaseOverview.js'
@@ -15,6 +17,8 @@ const emit = defineEmits(['close', 'retry', 'confirm', 'edit', 'delete', 'cancel
 const activeTab = useDetailTab('/purchase-orders', ['overview', 'items', 'receipt', 'payment', 'orders'], 'overview', () => props.purchase?.id)
 const tabs = computed(() => [['overview', '概览'], ['items', '采购明细'], ['receipt', '收货'], ['payment', '供应商应付'], ['orders', '关联销售订单']].filter(([key]) => key !== 'payment' || hasPaymentSummary.value))
 const row = computed(() => props.purchase)
+const effectiveParty = ref(null)
+watch(() => props.purchase?.id, () => { effectiveParty.value = null })
 const route = useRoute()
 const { can } = useAccessControl()
 const items = computed(() => row.value?.items || [])
@@ -23,7 +27,7 @@ const progress = computed(() => receiptProgress(items.value))
 const formal = computed(() => row.value && !['draft', 'cancelled'].includes(row.value.status))
 const partyName = computed(() => {
   if (!row.value) return '—'
-  return formal.value ? (row.value.supplier_name_snapshot || '历史主体未记录') : (row.value.supplier_name || '—')
+  return formal.value ? (effectiveParty.value?.name || row.value.effective_party?.name || row.value.supplier_name_snapshot || '历史主体未记录') : (row.value.supplier_name || '—')
 })
 const partyMasterReference = computed(() => {
   if (!formal.value || !row.value?.supplier_name || !row.value.supplier_name_snapshot) return ''
@@ -71,7 +75,9 @@ watch(() => row.value?.purchase_no, title => { if (workspace && title) { workspa
         <main class="workbench-body">
           <slot name="feedback" />
           <template v-if="activeTab === 'overview'">
-            <article v-if="formal" class="card party-snapshot-card"><h3>交易主体快照</h3><p v-if="partySnapshotRows.some(([, value]) => value)">正式下单时保存的供应商资料；后续供应商主档修改不会覆盖。</p><p v-else class="muted">历史主体未记录，以下不使用当前主档补造历史事实。</p><dl v-if="partySnapshotRows.some(([, value]) => value)"><template v-for="[label, value] in partySnapshotRows" :key="label"><dt>{{ label }}</dt><dd>{{ value || '未记录' }}</dd></template></dl><p v-if="!partySnapshotRows.some(([, value]) => value) && row.supplier_name" class="party-reference">当前主档参考：{{ row.supplier_name }}</p></article>
+            <PartyDetailsPanel v-if="can('suppliers', 'view')" kind="purchase_order" :id="row.id" :status="row.status" :can-edit="can('purchases', 'update') && !row.historical_only" />
+            <article v-if="formal" class="card party-snapshot-card"><h3>原始交易主体快照</h3><p v-if="partySnapshotRows.some(([, value]) => value)">正式下单时保存的供应商资料；后续供应商主档修改不会覆盖。更正后的有效版本请查看主体版本。</p><p v-else class="muted">历史主体未记录，以下不使用当前主档补造历史事实。</p><dl v-if="partySnapshotRows.some(([, value]) => value)"><template v-for="[label, value] in partySnapshotRows" :key="label"><dt>{{ label }}</dt><dd>{{ value || '未记录' }}</dd></template></dl><p v-if="!partySnapshotRows.some(([, value]) => value) && row.supplier_name" class="party-reference">当前主档参考：{{ row.supplier_name }}</p></article>
+            <DocumentPartyVersions v-if="formal && can('suppliers', 'view')" kind="purchase_order" :id="row.id" :source-party-id="row.supplier" @updated="effectiveParty = $event" />
             <article class="card"><h3>采购摘要</h3><div class="summary-grid"><div><small>采购金额</small><strong>{{ row.currency }} {{ money(row.total_amount) }}</strong></div><div><small>商品项数</small><strong>{{ items.length }}</strong></div><div v-if="hasPaymentSummary"><small>已付金额</small><strong>{{ row.currency }} {{ money(row.paid_amount) }}</strong></div><div v-if="hasPaymentSummary"><small>未付金额</small><strong>{{ row.currency }} {{ money(row.unpaid_amount) }}</strong></div></div></article>
             <article v-if="row.moq_exception" class="card moq-exception-card" data-testid="purchase-moq-exception"><h3>MOQ 例外确认</h3><p>本采购单下单时存在低于供应商 MOQ 的明细，已记录例外原因。</p><dl><dt>例外原因</dt><dd>{{ row.moq_exception.reason }}</dd><dt>确认时间</dt><dd>{{ dateTime(row.moq_exception.created_at) }}</dd><template v-if="row.moq_exception.operator_name"><dt>确认人员</dt><dd>{{ row.moq_exception.operator_name }}</dd></template></dl><ul><li v-for="item in row.moq_exception.details" :key="item.purchase_item_ids.join('-')">{{ item.sku_code || 'SKU' }}：实际 {{ item.actual_quantity }} {{ item.base_unit || '' }} · MOQ {{ item.moq }} {{ item.base_unit || '' }} · 差额 {{ item.shortage }} {{ item.base_unit || '' }}</li></ul></article>
             <article class="card current-todo"><h3>当前待办</h3><div v-for="task in tasks" :key="task.title" class="task-row"><div><b>{{ task.title }}</b><p>{{ task.description }}</p></div><button v-if="can('purchases', 'update') && task.action && task.target !== 'confirm'" @click="taskAction(task)">{{ task.action }}</button></div><p v-if="!tasks.length">当前没有待处理事项。</p></article>

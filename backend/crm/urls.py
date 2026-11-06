@@ -15,6 +15,8 @@ from .history_takeover_api import HistoryTakeoverDetailView, HistoryTakeoverGrou
 from .session_views import csrf, sign_in, sign_out
 
 from .new_product_reminders import ReminderViewSet
+from .party_version_api import (PartyDetailsView, QuotePartyChangeView, QuotePartyChangeDecisionView,
+    DocumentPartyChangeView, DocumentPartyChangeDecisionView)
 
 router = DefaultRouter()
 router.register("new-product-reminders", ReminderViewSet, basename="new-product-reminder")
@@ -62,6 +64,15 @@ urlpatterns = [
     path("session/csrf/", csrf),
     path("session/login/", sign_in),
     path("session/logout/", sign_out),
+    path('quotes/<int:document_id>/party-details/', PartyDetailsView.as_view(), {'target_type': 'quote'}),
+    path('orders/<int:document_id>/party-details/', PartyDetailsView.as_view(), {'target_type': 'order'}),
+    path('purchase-orders/<int:document_id>/party-details/', PartyDetailsView.as_view(), {'target_type': 'purchase_order'}),
+    path('quotes/<int:quote_id>/party-change/', QuotePartyChangeView.as_view()),
+    path('quotes/<int:quote_id>/party-change/<int:request_id>/<str:operation>/', QuotePartyChangeDecisionView.as_view()),
+    path('orders/<int:document_id>/party-change/', DocumentPartyChangeView.as_view(), {'target_type': 'order'}),
+    path('orders/<int:document_id>/party-change/<int:request_id>/<str:operation>/', DocumentPartyChangeDecisionView.as_view(), {'target_type': 'order'}),
+    path('purchase-orders/<int:document_id>/party-change/', DocumentPartyChangeView.as_view(), {'target_type': 'purchase_order'}),
+    path('purchase-orders/<int:document_id>/party-change/<int:request_id>/<str:operation>/', DocumentPartyChangeDecisionView.as_view(), {'target_type': 'purchase_order'}),
     path("media/<path:relative_path>", protected_media, name="crm-protected-media"),
     path("products/<int:pk>/combination-rules/", ProductCombinationRulesView.as_view()),
     path("products/<int:pk>/sku-plan/", ProductSKUPlanView.as_view()),

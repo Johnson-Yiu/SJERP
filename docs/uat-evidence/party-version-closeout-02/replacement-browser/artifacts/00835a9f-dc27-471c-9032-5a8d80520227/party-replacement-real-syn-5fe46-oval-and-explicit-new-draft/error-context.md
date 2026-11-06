@@ -1,0 +1,394 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: party-replacement-real.spec.js >> synthetic order replacement uses independent approval and explicit new draft
+- Location: browser-tests\party-replacement-real.spec.js:7:1
+
+# Error details
+
+```
+Test timeout of 120000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: S
+      - generic [ref=e7]:
+        - strong [ref=e8]: 森爵照明管理系统
+        - text: 客户 · 销售 · 产品
+    - navigation [ref=e9]:
+      - generic [ref=e10]: 经营
+      - link "经营概览" [ref=e11] [cursor=pointer]:
+        - /url: /
+      - link "报表中心" [ref=e18] [cursor=pointer]:
+        - /url: /reports
+      - link "历史订单分析" [ref=e25] [cursor=pointer]:
+        - /url: /historical-orders
+      - generic [ref=e31]: 客户
+      - link "客户管理" [ref=e32] [cursor=pointer]:
+        - /url: /customers
+      - link "联系人" [ref=e39] [cursor=pointer]:
+        - /url: /contacts
+      - link "跟进记录" [ref=e45] [cursor=pointer]:
+        - /url: /follow-ups
+      - generic [ref=e49]: 销售
+      - link "报价管理" [ref=e50] [cursor=pointer]:
+        - /url: /quotes
+      - link "订单管理" [ref=e55] [cursor=pointer]:
+        - /url: /orders
+      - generic [ref=e61]: 采购与库存
+      - link "供应商管理" [ref=e62] [cursor=pointer]:
+        - /url: /suppliers
+      - link "采购管理" [ref=e69] [cursor=pointer]:
+        - /url: /purchase-orders
+      - link "库存" [ref=e75] [cursor=pointer]:
+        - /url: /inventory
+      - link "库存流水" [ref=e80] [cursor=pointer]:
+        - /url: /inventory-movements
+      - generic [ref=e85]: 产品资料
+      - link "产品管理" [ref=e86] [cursor=pointer]:
+        - /url: /products
+      - link "SKU 管理" [ref=e92] [cursor=pointer]:
+        - /url: /skus
+      - link "产品分类" [ref=e104] [cursor=pointer]:
+        - /url: /categories
+      - link "产品参数" [ref=e110] [cursor=pointer]:
+        - /url: /product-parameters
+      - link "包装管理" [ref=e113] [cursor=pointer]:
+        - /url: /sku-packaging
+      - link "交易单位" [ref=e119] [cursor=pointer]:
+        - /url: /sku-trade-units
+      - link "产品证书" [ref=e131] [cursor=pointer]:
+        - /url: /product-certificates
+      - link "HS 编码维护" [ref=e136] [cursor=pointer]:
+        - /url: /hs-codes
+      - generic [ref=e139]: 财务与工具
+      - link "财务概览" [ref=e140] [cursor=pointer]:
+        - /url: /finance
+      - link "应收计划" [ref=e146] [cursor=pointer]:
+        - /url: /receivables
+      - link "应付计划" [ref=e152] [cursor=pointer]:
+        - /url: /payables
+      - link "财务流水" [ref=e158] [cursor=pointer]:
+        - /url: /transactions
+      - link "人民币资金" [ref=e164] [cursor=pointer]:
+        - /url: /rmb-cash-events
+      - link "账户资金" [ref=e170] [cursor=pointer]:
+        - /url: /finance-ledger
+      - link "数据导入" [ref=e176] [cursor=pointer]:
+        - /url: /import
+      - link "历史资料承接" [ref=e181] [cursor=pointer]:
+        - /url: /history-takeover
+      - generic [ref=e187]: 组织与系统
+      - link "组织与权限" [ref=e188] [cursor=pointer]:
+        - /url: /organization
+    - generic [ref=e193]:
+      - generic [ref=e194]: D
+      - generic [ref=e196]:
+        - strong [ref=e197]: 开发身份：doc-a-F4D9A436
+        - generic [ref=e198]: 超级管理员 · 全部功能与数据权限
+  - main [ref=e199]:
+    - generic [ref=e200]:
+      - button [ref=e201] [cursor=pointer]
+      - generic [ref=e203]:
+        - text: Sales orders
+        - heading "订单管理" [level=1] [ref=e204]
+      - generic "doc-a-F4D9A436" [ref=e206]: D
+    - generic [ref=e208]:
+      - generic [ref=e209]:
+        - paragraph [ref=e210]: 管理销售订单、履约与回款。
+        - button "新建订单" [ref=e211] [cursor=pointer]
+      - region "页面小计" [ref=e214]:
+        - article [ref=e215]:
+          - generic [ref=e216]: 执行中
+          - strong [ref=e217]: "1"
+          - generic [ref=e218]: 已确认 / 生产中 / 已发货
+        - article [ref=e222]:
+          - generic [ref=e223]: 待出库
+          - strong [ref=e224]: "1"
+          - generic [ref=e225]: 尚未完成发货
+        - article [ref=e229]:
+          - generic [ref=e230]: 待收款
+          - strong [ref=e231]: "1"
+          - generic [ref=e232]: 仍有应收余额
+        - article [ref=e236]:
+          - generic [ref=e237]: 已完成
+          - strong [ref=e238]: "0"
+          - generic [ref=e239]: 已完成交付
+      - generic [ref=e243]:
+        - textbox "搜索订单号或客户" [ref=e248]
+        - combobox "按订单状态筛选" [ref=e249]:
+          - option "全部状态" [selected]
+          - option "草稿"
+          - option "已确认"
+          - option "生产中"
+          - option "已发货"
+          - option "已完成"
+          - option "已取消"
+        - combobox "按订单待办筛选" [ref=e250]:
+          - option "全部待办" [selected]
+          - option "待出库"
+          - option "交期已到"
+        - button "重置" [ref=e251] [cursor=pointer]
+      - table [ref=e257]:
+        - rowgroup [ref=e258]:
+          - row [ref=e259]:
+            - columnheader "订单号" [ref=e260]
+            - columnheader "客户" [ref=e261]
+            - columnheader "订单日期" [ref=e262]
+            - columnheader "预计出货日期" [ref=e263]
+            - columnheader "履约状态" [ref=e264]
+            - columnheader "明细" [ref=e265]
+            - columnheader "订单总额" [ref=e266]
+            - columnheader "已收 / 待收" [ref=e267]
+            - columnheader "操作" [ref=e268]
+        - rowgroup [ref=e269]:
+          - row [ref=e270] [cursor=pointer]:
+            - cell "DPSOF4D9A436" [ref=e271]
+            - cell "Synthetic Buyer F4D9A436" [ref=e272]
+            - cell "2026-11-05" [ref=e273]
+            - cell "未设置" [ref=e274]
+            - cell "已确认" [ref=e275]
+            - cell "1 项" [ref=e277]
+            - cell "USD 20.00" [ref=e278]
+            - cell "0.00 / 20.00" [ref=e279]
+            - cell [ref=e280]
+      - dialog "订单工作台" [ref=e282]:
+        - generic [ref=e283]:
+          - generic [ref=e284]:
+            - generic [ref=e285]:
+              - button "关闭订单详情" [ref=e286] [cursor=pointer]
+              - generic [ref=e290]: 订单工作台 · 履约与回款
+            - generic [ref=e291]:
+              - button "开始生产" [ref=e292] [cursor=pointer]
+              - button "取消订单" [ref=e293] [cursor=pointer]
+          - generic [ref=e294]:
+            - generic [ref=e295]:
+              - paragraph [ref=e296]: Synthetic Buyer F4D9A436 · 下单于 2026-11-05
+              - heading "DPSOF4D9A436" [level=2] [ref=e297]
+              - text: 预计交期：未设置
+            - generic [ref=e298]: 履约：已确认
+        - main [ref=e299]:
+          - navigation "订单工作台分页" [ref=e300]:
+            - button "概览" [ref=e301] [cursor=pointer]
+            - button "订单明细 (1)" [ref=e302] [cursor=pointer]
+            - button "采购与发货" [ref=e303] [cursor=pointer]
+            - button "回款 (0)" [ref=e304] [cursor=pointer]
+            - button "装箱" [ref=e305] [cursor=pointer]
+            - button "库存流水 (0)" [ref=e306] [cursor=pointer]
+            - button "操作日志 (0)" [ref=e307] [cursor=pointer]
+          - generic [ref=e308]:
+            - article [ref=e309]:
+              - heading "交易主体快照" [level=3] [ref=e310]
+              - paragraph [ref=e311]: 正式确认时保存的主体资料；后续客户主档修改不会覆盖。
+              - generic [ref=e312]:
+                - term [ref=e313]: 客户名称
+                - definition [ref=e314]: Synthetic Buyer F4D9A436
+                - term [ref=e315]: 国家/地区
+                - definition [ref=e316]: Germany
+                - term [ref=e317]: 地址
+                - definition [ref=e318]: Synthetic buyer address
+                - term [ref=e319]: 联系人
+                - definition [ref=e320]: Synthetic Contact
+                - term [ref=e321]: 电话
+                - definition [ref=e322]: "12345"
+                - term [ref=e323]: 邮箱
+                - definition [ref=e324]: contact@example.invalid
+            - generic [ref=e325]:
+              - button "收起主体版本" [ref=e326] [cursor=pointer]
+              - paragraph [ref=e327]: 原始快照保留；主体更正和替换均须经另一认证账号批准。更换法律主体将新建关联单据。
+              - heading "当前有效主体资料" [level=4] [ref=e328]
+              - generic [ref=e329]:
+                - term [ref=e330]: 名称
+                - definition [ref=e331]: Synthetic Buyer F4D9A436
+                - term [ref=e332]: 国家 / 地区
+                - definition [ref=e333]: Germany
+                - term [ref=e334]: 地址
+                - definition [ref=e335]: Synthetic buyer address
+                - term [ref=e336]: 联系人
+                - definition [ref=e337]: Synthetic Contact
+                - term [ref=e338]: 电话
+                - definition [ref=e339]: "12345"
+                - term [ref=e340]: 邮箱
+                - definition [ref=e341]: contact@example.invalid
+              - paragraph [ref=e342]: 历史未记录的字段不能自动补填；来源未核验不等于已核实。
+              - heading "申请同主体更正" [level=4] [ref=e343]
+              - generic [ref=e344]:
+                - text: 名称
+                - textbox "名称" [ref=e345]: Synthetic Buyer F4D9A436
+              - generic [ref=e346]:
+                - text: 国家 / 地区
+                - textbox "国家 / 地区" [ref=e347]: Germany
+              - generic [ref=e348]:
+                - text: 地址
+                - textbox "地址" [ref=e349]: Synthetic buyer address
+              - generic [ref=e350]:
+                - text: 联系人
+                - textbox "联系人" [ref=e351]: Synthetic Contact
+              - generic [ref=e352]:
+                - text: 电话
+                - textbox "电话" [ref=e353]: "12345"
+              - generic [ref=e354]:
+                - text: 邮箱
+                - textbox "邮箱" [ref=e355]: contact@example.invalid
+              - generic [ref=e356]:
+                - text: 原因
+                - textbox "原因" [ref=e357]
+              - generic [ref=e358]:
+                - text: 依据
+                - textbox "依据" [ref=e359]
+              - generic [ref=e360]:
+                - checkbox "已核对依据，确认法律主体未变" [ref=e361]
+                - text: 已核对依据，确认法律主体未变
+              - button "提交更正申请" [ref=e362] [cursor=pointer]
+              - button "收起替换申请" [ref=e363] [cursor=pointer]
+              - generic [ref=e364]:
+                - paragraph [ref=e365]: 请选择新的法律主体并人工填写资料；提交后须由另一认证账号审批。原单及其历史事实保持不变。
+                - generic [ref=e366]:
+                  - text: 目标客户
+                  - combobox "目标客户" [ref=e367]:
+                    - option "请选择"
+                    - option "Synthetic Replacement 3CCCDCCD · RP3CCCDCCD" [selected]
+                - generic [ref=e368]:
+                  - text: 拟议名称
+                  - textbox "拟议名称" [disabled] [ref=e369]:
+                    - /placeholder: ""
+                    - text: Synthetic Replacement 3CCCDCCD
+                - generic [ref=e370]:
+                  - text: 拟议国家 / 地区
+                  - textbox "拟议国家 / 地区" [ref=e371]:
+                    - /placeholder: ""
+                - generic [ref=e372]:
+                  - text: 拟议地址
+                  - textbox "拟议地址 确认留空" [ref=e373]:
+                    - /placeholder: 请填写或确认留空
+                  - button "确认留空" [ref=e374] [cursor=pointer]
+                - generic [ref=e375]:
+                  - text: 拟议联系人
+                  - textbox "拟议联系人" [ref=e376]:
+                    - /placeholder: ""
+                - generic [ref=e377]:
+                  - text: 拟议电话
+                  - textbox "拟议电话 确认留空" [ref=e378]:
+                    - /placeholder: 请填写或确认留空
+                  - button "确认留空" [ref=e379] [cursor=pointer]
+                - generic [ref=e380]:
+                  - text: 拟议邮箱
+                  - textbox "拟议邮箱" [ref=e381]:
+                    - /placeholder: ""
+                - generic [ref=e382]:
+                  - text: 原因
+                  - textbox "原因" [ref=e383]
+                - generic [ref=e384]:
+                  - text: 依据
+                  - textbox "依据" [ref=e385]
+                - button "提交替换申请" [ref=e386] [cursor=pointer]
+              - heading "申请与版本记录" [level=4] [ref=e387]
+              - paragraph [ref=e388]: 暂无主体更正申请。
+            - article [ref=e389]:
+              - heading "订单摘要" [level=3] [ref=e390]
+              - generic [ref=e396]:
+                - generic [ref=e397]:
+                  - generic [ref=e398]: 订单金额
+                  - strong [ref=e399]: USD 20.00
+                  - generic [ref=e400]: 订单总额
+                - generic [ref=e401]:
+                  - generic [ref=e402]: 商品项数
+                  - strong [ref=e403]: "1"
+                - generic [ref=e404]:
+                  - generic [ref=e405]: 订单数量
+                  - strong [ref=e406]: "2"
+                - generic [ref=e407]:
+                  - generic [ref=e408]: 预计交期
+                  - strong [ref=e409]: 未设置
+            - article [ref=e410]:
+              - heading "当前待办" [level=3] [ref=e411]
+              - generic [ref=e412]:
+                - generic [ref=e413]:
+                  - generic [ref=e414]:
+                    - strong [ref=e415]: 待发货
+                    - paragraph [ref=e416]: 还有 1 个 SKU 未完成发货。
+                  - button "查看采购与发货" [ref=e417] [cursor=pointer]
+                - generic [ref=e418]:
+                  - generic [ref=e419]:
+                    - strong [ref=e420]: 待收款
+                    - paragraph [ref=e421]: 待收 USD 20.00
+                  - link "查看 / 登记本单应收" [ref=e422] [cursor=pointer]:
+                    - /url: /receivables?order=1
+            - article [ref=e423]:
+              - generic [ref=e424]:
+                - generic [ref=e425]:
+                  - heading "履约进度" [level=3] [ref=e426]
+                  - paragraph [ref=e432]: 按销售出库流水统计。
+                - generic [ref=e433]: 0%
+              - generic [ref=e435]:
+                - term [ref=e436]: 订单数量
+                - definition [ref=e437]: "2"
+                - term [ref=e438]: 已出库
+                - definition [ref=e439]: "0"
+                - term [ref=e440]: 待出库
+                - definition [ref=e441]: "2"
+              - button "查看采购与发货" [ref=e442] [cursor=pointer]
+            - article [ref=e443]:
+              - generic [ref=e444]:
+                - generic [ref=e445]:
+                  - heading "回款状态：待收款" [level=3] [ref=e446]
+                  - paragraph [ref=e451]: 已收含预收核销，并扣除退款。
+                - generic [ref=e452]: 0%
+              - generic [ref=e454]:
+                - term [ref=e455]: 应收计划
+                - definition [ref=e456]: USD 20.00
+                - term [ref=e457]: 已收金额
+                - definition [ref=e458]: USD 0.00
+                - term [ref=e459]: 当前待收
+                - definition [ref=e460]: USD 20.00
+              - link "查看 / 登记本单应收" [ref=e461] [cursor=pointer]:
+                - /url: /receivables?order=1
+            - article [ref=e462]:
+              - heading "成本与毛利" [level=3] [ref=e463]
+              - generic [ref=e464]:
+                - term [ref=e465]: 分配商品成本
+                - definition [ref=e466]: ¥ 57.60
+                - term [ref=e467]: 分摊附加费用
+                - definition [ref=e468]: ¥ 0.00
+                - term [ref=e469]: 预估总成本
+                - definition [ref=e470]: ¥ 57.60
+                - term [ref=e471]: 预估毛利
+                - definition [ref=e472]: ¥ 86.40
+            - article [ref=e473]:
+              - generic [ref=e474]:
+                - generic [ref=e475]:
+                  - heading "调整订单数量" [level=3] [ref=e476]
+                  - paragraph [ref=e477]: 保留订单号和订单行；已发货数量、采购单和收款事实不会被覆盖。
+                - button "调整数量" [ref=e478] [cursor=pointer]
+              - generic [ref=e479]: 暂无数量变更记录。
+            - article [ref=e480]:
+              - generic [ref=e482]:
+                - heading "来源报价" [level=3] [ref=e483]
+                - paragraph [ref=e487]: 成交时采用的报价版本。
+              - paragraph [ref=e488]: 该订单未关联来源报价。
+          - generic [ref=e489]:
+            - generic [ref=e490]:
+              - generic [ref=e491]:
+                - heading "合同金额调整" [level=4] [ref=e492]
+                - paragraph [ref=e493]: 已确认调整会改变当前合同总额；调减只会减少未结清计划，不会自动退款。
+              - strong [ref=e494]: USD 20.00
+            - generic [ref=e495]:
+              - generic [ref=e496]: 基础金额 USD 20.00
+              - generic [ref=e497]: 已确认调整 USD 0.00
+            - generic [ref=e498]:
+              - spinbutton "调整金额（正/负）" [ref=e499]
+              - textbox [ref=e500]
+              - textbox "调整说明" [ref=e501]
+              - button "新增调整" [ref=e502] [cursor=pointer]
+            - paragraph [ref=e503]: 暂无金额调整记录。
+```

@@ -1,0 +1,16 @@
+{
+  "markSent": 200,
+  "proposal": 201,
+  "approval": 200,
+  "apply": 200,
+  "source": 200,
+  "child": 200,
+  "firstUserId": 1,
+  "reviewerUserId": 2,
+  "sourceId": 1,
+  "childId": 2,
+  "sourceAddress": "",
+  "childAddress": "Synthetic corrected address 123",
+  "sourceTotal": "10.00",
+  "childTotal": "10.00"
+}

@@ -1,0 +1,70 @@
+Creating test database for alias 'default'...
+
+.Bad Request: /api/quotes/1/revise/
+.Bad Request: /api/quotes/2/revise/
+..Bad Request: /api/quotes/1/revise/
+..Bad Request: /api/quotes/1/revise/
+...Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+Bad Request: /api/quotes/
+..Bad Request: /api/quotes/2/mark-sent/
+..........FFF.s
+======================================================================
+FAIL: test_cross_migration_rollback_is_rejected_before_schema_changes (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxMigrationTests.test_cross_migration_rollback_is_rejected_before_schema_changes) (tax='000123')
+----------------------------------------------------------------------
+RuntimeError: 报价买方税号快照已存在，拒绝回退以避免丢失历史。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\tests\test_quote_buyer_tax_id.py", line 180, in test_cross_migration_rollback_is_rejected_before_schema_changes
+    assert_rejected("已有买方税号快照")
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\tests\test_quote_buyer_tax_id.py", line 173, in assert_rejected
+    with self.assertRaisesMessage(RuntimeError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+AssertionError: '已有买方税号快照' not found in '报价买方税号快照已存在，拒绝回退以避免丢失历史。'
+
+======================================================================
+FAIL: test_cross_migration_rollback_is_rejected_before_schema_changes (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxMigrationTests.test_cross_migration_rollback_is_rejected_before_schema_changes) (tax='')
+----------------------------------------------------------------------
+RuntimeError: 报价买方税号快照已存在，拒绝回退以避免丢失历史。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\tests\test_quote_buyer_tax_id.py", line 180, in test_cross_migration_rollback_is_rejected_before_schema_changes
+    assert_rejected("已有买方税号快照")
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\tests\test_quote_buyer_tax_id.py", line 173, in assert_rejected
+    with self.assertRaisesMessage(RuntimeError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+AssertionError: '已有买方税号快照' not found in '报价买方税号快照已存在，拒绝回退以避免丢失历史。'
+
+======================================================================
+FAIL: test_cross_migration_rollback_is_rejected_before_schema_changes (crm.tests.test_quote_buyer_tax_id.QuoteBuyerTaxMigrationTests.test_cross_migration_rollback_is_rejected_before_schema_changes)
+----------------------------------------------------------------------
+RuntimeError: 主体申请记录已存在，拒绝回退以避免丢失历史。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\tests\test_quote_buyer_tax_id.py", line 194, in test_cross_migration_rollback_is_rejected_before_schema_changes
+    assert_rejected("主体更正申请或审批记录已存在")
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\party-version-closeout-20261105\backend\crm\tests\test_quote_buyer_tax_id.py", line 173, in assert_rejected
+    with self.assertRaisesMessage(RuntimeError, message):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\sunjack-cpython312-verify-20261031-a37d\python\cpython-3.12-windows-x86_64-none\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+AssertionError: '主体更正申请或审批记录已存在' not found in '主体申请记录已存在，拒绝回退以避免丢失历史。'
+
+----------------------------------------------------------------------
+Ran 24 tests in 82.111s
+
+FAILED (failures=3, skipped=1)
+Destroying test database for alias 'default'...
+
+Found 24 test(s).
+System check identified no issues (0 silenced).

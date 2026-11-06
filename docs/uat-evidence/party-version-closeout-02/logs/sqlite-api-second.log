@@ -1,0 +1,18 @@
+Creating test database for alias 'default'...
+
+Bad Request: /api/quotes/1/party-change/1/apply/
+.Bad Request: /api/quotes/1/party-change/1/reject/
+Bad Request: /api/quotes/1/party-change/1/reject/
+.Unauthorized: /api/quotes/1/party-change/1/withdraw/
+Forbidden: /api/quotes/1/party-change/1/withdraw/
+.Unauthorized: /api/orders/1/party-change/
+Unauthorized: /api/purchase-orders/1/party-change/
+..............sssss
+----------------------------------------------------------------------
+Ran 22 tests in 14.641s
+
+OK (skipped=5)
+Destroying test database for alias 'default'...
+
+Found 22 test(s).
+System check identified no issues (0 silenced).

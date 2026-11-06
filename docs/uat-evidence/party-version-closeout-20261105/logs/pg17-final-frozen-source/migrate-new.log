@@ -1,0 +1,56 @@
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Running pre-migrate handlers for application admin
+Running pre-migrate handlers for application auth
+Running pre-migrate handlers for application contenttypes
+Running pre-migrate handlers for application sessions
+Running pre-migrate handlers for application crm
+Running migrations:
+  Applying admin.0001_initial... OK (0.126s)
+  Applying admin.0002_logentry_remove_auto_add... OK (0.026s)
+  Applying admin.0003_logentry_add_action_flag_choices... OK (0.025s)
+  Applying auth.0002_alter_permission_name_max_length... OK (0.099s)
+  Applying auth.0003_alter_user_email_max_length... OK (0.025s)
+  Applying auth.0004_alter_user_username_opts... OK (0.026s)
+  Applying auth.0005_alter_user_last_login_null... OK (0.082s)
+  Applying auth.0006_require_contenttypes_0002... OK (0.001s)
+  Applying auth.0007_alter_validators_add_error_messages... OK (0.025s)
+  Applying auth.0008_alter_user_username_max_length... OK (0.028s)
+  Applying auth.0009_alter_user_last_name_max_length... OK (0.025s)
+  Applying auth.0010_alter_group_name_max_length... OK (0.100s)
+  Applying auth.0011_update_proxy_permissions... OK (0.091s)
+  Applying auth.0012_alter_user_first_name_max_length... OK (0.030s)
+  Applying crm.0110_party_version... OK (0.535s)
+  Applying crm.0111_quote_buyer_tax_id... OK (0.136s)
+  Applying crm.0112_party_quote_application... OK (0.524s)
+  Applying sessions.0001_initial... OK (0.009s)
+Running post-migrate handlers for application admin
+Adding content type 'admin | logentry'
+Adding permission 'Permission object (365)'
+Adding permission 'Permission object (366)'
+Adding permission 'Permission object (367)'
+Adding permission 'Permission object (368)'
+Running post-migrate handlers for application auth
+Running post-migrate handlers for application contenttypes
+Running post-migrate handlers for application sessions
+Adding content type 'sessions | session'
+Adding permission 'Permission object (369)'
+Adding permission 'Permission object (370)'
+Adding permission 'Permission object (371)'
+Adding permission 'Permission object (372)'
+Running post-migrate handlers for application crm
+Adding content type 'crm | partyquoteapplication'
+Adding content type 'crm | partyversionapproval'
+Adding content type 'crm | partyversionrequest'
+Adding permission 'Permission object (373)'
+Adding permission 'Permission object (374)'
+Adding permission 'Permission object (375)'
+Adding permission 'Permission object (376)'
+Adding permission 'Permission object (377)'
+Adding permission 'Permission object (378)'
+Adding permission 'Permission object (379)'
+Adding permission 'Permission object (380)'
+Adding permission 'Permission object (381)'
+Adding permission 'Permission object (382)'
+Adding permission 'Permission object (383)'
+Adding permission 'Permission object (384)'

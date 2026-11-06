@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/party-version-closeout-20261105/frontend
+
+
+ Test Files  81 passed (81)
+      Tests  766 passed (766)
+   Start at  01:51:15
+   Duration  246.21s (transform 4.83s, setup 22.61s, import 19.91s, tests 30.63s, environment 151.13s)
+

@@ -48,7 +48,9 @@ class CleanupControlFlowTests(SimpleTestCase):
     def set_guard_state(self, exists, applied):
         def result():
             statement = self.cursor.execute.call_args.args[0]
-            return (exists, applied, False) if "to_regclass" in statement else (self.name, "public")
+            if "public.crm_partyreplacementtarget" in statement:
+                return (False, False, False)
+            return (exists, applied, False, False, False, False, False) if "to_regclass" in statement else (self.name, "public")
         self.cursor.fetchone.side_effect = result
         guards = dict(TRUNCATE_GUARDS)
         if exists and applied:

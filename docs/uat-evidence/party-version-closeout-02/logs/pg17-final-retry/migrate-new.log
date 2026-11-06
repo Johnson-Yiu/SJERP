@@ -1,0 +1,87 @@
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Running pre-migrate handlers for application admin
+Running pre-migrate handlers for application auth
+Running pre-migrate handlers for application contenttypes
+Running pre-migrate handlers for application sessions
+Running pre-migrate handlers for application crm
+Running migrations:
+  Applying admin.0001_initial... OK (0.172s)
+  Applying admin.0002_logentry_remove_auto_add... OK (0.015s)
+  Applying admin.0003_logentry_add_action_flag_choices... OK (0.031s)
+  Applying auth.0002_alter_permission_name_max_length... OK (0.141s)
+  Applying auth.0003_alter_user_email_max_length... OK (0.016s)
+  Applying auth.0004_alter_user_username_opts... OK (0.031s)
+  Applying auth.0005_alter_user_last_login_null... OK (0.031s)
+  Applying auth.0006_require_contenttypes_0002... OK (0.000s)
+  Applying auth.0007_alter_validators_add_error_messages... OK (0.016s)
+  Applying auth.0008_alter_user_username_max_length... OK (0.031s)
+  Applying auth.0009_alter_user_last_name_max_length... OK (0.031s)
+  Applying auth.0010_alter_group_name_max_length... OK (0.188s)
+  Applying auth.0011_update_proxy_permissions... OK (0.094s)
+  Applying auth.0012_alter_user_first_name_max_length... OK (0.015s)
+  Applying crm.0109_quote_buyer_country_snapshot... OK (0.156s)
+  Applying crm.0110_party_version... OK (0.688s)
+  Applying crm.0111_quote_buyer_tax_id... OK (0.172s)
+  Applying crm.0112_party_quote_application... OK (0.625s)
+  Applying crm.0113_party_request_lifecycle... OK (1.344s)
+  Applying crm.0114_party_document_version... OK (0.421s)
+  Applying crm.0115_party_replacement... OK (0.594s)
+  Applying crm.0116_party_document_details_storage... OK (0.375s)
+  Applying crm.0117_party_details_draft_guard... OK (0.141s)
+  Applying sessions.0001_initial... OK (0.015s)
+Running post-migrate handlers for application admin
+Adding content type 'admin | logentry'
+Adding permission 'Permission object (365)'
+Adding permission 'Permission object (366)'
+Adding permission 'Permission object (367)'
+Adding permission 'Permission object (368)'
+Running post-migrate handlers for application auth
+Running post-migrate handlers for application contenttypes
+Running post-migrate handlers for application sessions
+Adding content type 'sessions | session'
+Adding permission 'Permission object (369)'
+Adding permission 'Permission object (370)'
+Adding permission 'Permission object (371)'
+Adding permission 'Permission object (372)'
+Running post-migrate handlers for application crm
+Adding content type 'crm | partydocumentdetailsstorage'
+Adding content type 'crm | partydocumentversion'
+Adding content type 'crm | partyquoteapplication'
+Adding content type 'crm | partyreplacementlink'
+Adding content type 'crm | partyreplacementtarget'
+Adding content type 'crm | partyversionapproval'
+Adding content type 'crm | partyversionrequest'
+Adding content type 'crm | partyversionterminalevent'
+Adding permission 'Permission object (373)'
+Adding permission 'Permission object (374)'
+Adding permission 'Permission object (375)'
+Adding permission 'Permission object (376)'
+Adding permission 'Permission object (377)'
+Adding permission 'Permission object (378)'
+Adding permission 'Permission object (379)'
+Adding permission 'Permission object (380)'
+Adding permission 'Permission object (381)'
+Adding permission 'Permission object (382)'
+Adding permission 'Permission object (383)'
+Adding permission 'Permission object (384)'
+Adding permission 'Permission object (385)'
+Adding permission 'Permission object (386)'
+Adding permission 'Permission object (387)'
+Adding permission 'Permission object (388)'
+Adding permission 'Permission object (389)'
+Adding permission 'Permission object (390)'
+Adding permission 'Permission object (391)'
+Adding permission 'Permission object (392)'
+Adding permission 'Permission object (393)'
+Adding permission 'Permission object (394)'
+Adding permission 'Permission object (395)'
+Adding permission 'Permission object (396)'
+Adding permission 'Permission object (397)'
+Adding permission 'Permission object (398)'
+Adding permission 'Permission object (399)'
+Adding permission 'Permission object (400)'
+Adding permission 'Permission object (401)'
+Adding permission 'Permission object (402)'
+Adding permission 'Permission object (403)'
+Adding permission 'Permission object (404)'

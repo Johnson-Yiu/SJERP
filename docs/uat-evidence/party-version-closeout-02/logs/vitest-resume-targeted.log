@@ -1,0 +1,26 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/party-version-closeout-20261105/frontend
+
+ ❯ tests/party-replacement-form.spec.js (3 tests | 1 failed) 442ms
+   × starts replacement structured facts as unknown rather than copying the source 80ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/party-replacement-form.spec.js > starts replacement structured facts as unknown rather than copying the source
+TypeError: Cannot read properties of undefined (reading '1')
+ ❯ tests/party-replacement-form.spec.js:59:33
+     57|   await wrapper.get('input[type="checkbox"]').setValue(true)
+     58|   await button(wrapper, '提交替换申请').trigger('click'); await flushPromise…
+     59|   expect(mock.post.mock.calls[0][1].proposed_snapshot.party_details.bu…
+       |                                 ^
+     60|   expect(JSON.stringify(mock.post.mock.calls[0][1])).not.toContain('不能…
+     61| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 40 passed (41)
+   Start at  01:00:15
+   Duration  119.44s (transform 2.85s, setup 7.70s, import 3.68s, tests 2.67s, environment 92.77s)
+

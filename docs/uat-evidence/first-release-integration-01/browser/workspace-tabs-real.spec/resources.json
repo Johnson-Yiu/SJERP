@@ -1,0 +1,122 @@
+{
+  "snapshots": [
+    {
+      "stage": "one-list",
+      "requests": 4,
+      "writes": 0,
+      "vueMountedInstances": 132,
+      "documentWindowRegistrations": 12,
+      "nonOnceRegistrations": 12,
+      "intervals": 1,
+      "timeouts": 2,
+      "panels": 1,
+      "domNodes": 558,
+      "jsHeap": 44309243
+    },
+    {
+      "stage": "twelve-mounted",
+      "requests": 92,
+      "writes": 0,
+      "vueMountedInstances": 682,
+      "documentWindowRegistrations": 13,
+      "nonOnceRegistrations": 13,
+      "intervals": 1,
+      "timeouts": 0,
+      "panels": 12,
+      "domNodes": 3905,
+      "jsHeap": 58069171
+    },
+    {
+      "stage": "ten-switches",
+      "requests": 92,
+      "writes": 0,
+      "vueMountedInstances": 682,
+      "documentWindowRegistrations": 13,
+      "nonOnceRegistrations": 13,
+      "intervals": 1,
+      "timeouts": 0,
+      "panels": 12,
+      "domNodes": 3905,
+      "jsHeap": 57269839
+    },
+    {
+      "stage": "closed-eleven",
+      "requests": 92,
+      "writes": 0,
+      "vueMountedInstances": 132,
+      "documentWindowRegistrations": 12,
+      "nonOnceRegistrations": 12,
+      "intervals": 1,
+      "timeouts": 0,
+      "panels": 1,
+      "domNodes": 560,
+      "jsHeap": 64242002
+    }
+  ],
+  "durations": [
+    {
+      "action": "open-draft",
+      "number": 1,
+      "ms": 297
+    },
+    {
+      "action": "open-draft",
+      "number": 2,
+      "ms": 233
+    },
+    {
+      "action": "open-draft",
+      "number": 3,
+      "ms": 363
+    },
+    {
+      "action": "open-draft",
+      "number": 4,
+      "ms": 216
+    },
+    {
+      "action": "open-draft",
+      "number": 5,
+      "ms": 224
+    },
+    {
+      "action": "open-draft",
+      "number": 6,
+      "ms": 231
+    },
+    {
+      "action": "open-draft",
+      "number": 7,
+      "ms": 221
+    },
+    {
+      "action": "open-draft",
+      "number": 8,
+      "ms": 248
+    },
+    {
+      "action": "open-draft",
+      "number": 9,
+      "ms": 250
+    },
+    {
+      "action": "open-draft",
+      "number": 10,
+      "ms": 250
+    },
+    {
+      "action": "open-draft",
+      "number": 11,
+      "ms": 319
+    },
+    {
+      "action": "ten-switches",
+      "ms": 542
+    },
+    {
+      "action": "close-eleven",
+      "ms": 166
+    }
+  ],
+  "notes": "Document/window listener registrations and application timer wrappers are measured; once-listener records may overcount. JS heap is opportunistic and not proof of GC. No browser process memory claim."
+}

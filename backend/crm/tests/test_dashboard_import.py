@@ -11,12 +11,14 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 
 from crm.models import (
+    ContractChangeRequest,
     Customer,
     FollowUp,
     Order,
     OrderItem,
     Product,
     ProductCategory,
+    PaymentPlan,
     SKU,
     Transaction,
 )
@@ -161,6 +163,74 @@ class DashboardImportTests(TestCase):
         self.assertEqual(month_by_key["2025-12"]["orders"], 0)
         self.assertNotIn("2026-11", month_by_key)
         self.assertNotIn("2025-10", month_by_key)
+
+    @patch("crm.views.timezone.localdate", return_value=date(2026, 11, 6))
+    def test_dashboard_recalculates_after_partial_quantity_cancel_cross_period_change_and_date_correction(self, _today):
+        order = self.create_order("J1-ISS062-RECALC", "confirmed", "100", date(2026, 11, 5))
+        order.exchange_rate = Decimal("7.2")
+        order.save(update_fields=["exchange_rate"])
+        item = order.items.get()
+        item.quantity = Decimal("10")
+        item.save(update_fields=["quantity"])
+        PaymentPlan.objects.create(
+            order=order, direction="receivable", currency="USD", planned_amount=Decimal("1000"),
+        )
+
+        partial_cancel = self.client.post(
+            f"/api/orders/{order.pk}/quantity-adjustments/",
+            {
+                "version": 0,
+                "request_key": "iss062-partial-cancel-recalc",
+                "reason": "ISS-062 synthetic partial cancellation",
+                "items": [{"order_item": item.pk, "new_quantity": "6"}],
+            },
+            format="json",
+        )
+        self.assertEqual(partial_cancel.status_code, 201, partial_cancel.data)
+        order.refresh_from_db()
+        self.assertEqual(order.total_amount, Decimal("600.00"))
+
+        change = self.client.post("/api/contract-changes/", {
+            "order": order.pk,
+            "amount_delta": "200.00",
+            "due_date": "2027-01-15",
+            "notes": "ISS-062 cross-period synthetic revision",
+        }, format="json")
+        self.assertEqual(change.status_code, 201, change.data)
+        approved = self.client.post(f"/api/contract-changes/{change.data['id']}/approve/", {}, format="json")
+        self.assertEqual(approved.status_code, 201, approved.data)
+
+        current = self.client.get("/api/dashboard/")
+        self.assertEqual(current.status_code, 200, current.data)
+        self.assertEqual(Decimal(str(current.data["summary"]["sales_ytd"])), Decimal("5760"))
+        self.assertEqual(current.data["summary"]["orders_ytd"], 1)
+        self.assertEqual(Decimal(str(current.data["monthly_sales"][-1]["sales"])), Decimal("5760"))
+        self.assertEqual(current.data["monthly_sales"][-1]["month"], "2026-11")
+        self.assertEqual(Decimal(str(current.data["top_customers"][0]["sales"])), Decimal("5760"))
+        self.assertEqual(sum((Decimal(str(row["sales"])) for row in current.data["category_sales"]), Decimal("0")), Decimal("4320"))
+
+        moved_to_prior_period = self.client.patch(
+            f"/api/orders/{order.pk}/", {"order_date": "2025-11-05"}, format="json",
+        )
+        self.assertEqual(moved_to_prior_period.status_code, 200, moved_to_prior_period.data)
+        prior = self.client.get("/api/dashboard/")
+        self.assertEqual(prior.status_code, 200, prior.data)
+        self.assertEqual(Decimal(str(prior.data["summary"]["sales_ytd"])), Decimal("0"))
+        self.assertEqual(prior.data["summary"]["orders_ytd"], 0)
+        self.assertEqual(Decimal(str(prior.data["summary"]["sales_last_ytd"])), Decimal("5760"))
+        self.assertEqual(prior.data["monthly_sales"], [])
+
+        corrected = self.client.patch(
+            f"/api/orders/{order.pk}/", {"order_date": "2026-10-31"}, format="json",
+        )
+        self.assertEqual(corrected.status_code, 200, corrected.data)
+        corrected_dashboard = self.client.get("/api/dashboard/")
+        self.assertEqual(corrected_dashboard.status_code, 200, corrected_dashboard.data)
+        self.assertEqual(Decimal(str(corrected_dashboard.data["summary"]["sales_ytd"])), Decimal("5760"))
+        self.assertEqual(corrected_dashboard.data["summary"]["orders_ytd"], 1)
+        months = {row["month"]: row for row in corrected_dashboard.data["monthly_sales"]}
+        self.assertEqual(Decimal(str(months["2026-10"]["sales"])), Decimal("5760"))
+        self.assertEqual(months["2026-11"]["sales"], Decimal("0"))
 
     @patch("crm.views.timezone.localdate", return_value=date(2026, 10, 22))
     def test_dashboard_keeps_empty_trend_empty_when_no_orders_in_window(self, _today):

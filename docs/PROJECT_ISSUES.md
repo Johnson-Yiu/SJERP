@@ -671,3 +671,7 @@ R1-POSTGRES-TEST-ISOLATION-01 从 `2e25b743884123d7ae5599c89586988a12791bf4` 新
 ### 2026-11-06 INTEGRATION-VALIDATION-04
 
 权限来源 `bbfe475ef546b5d0fc3db8dbda0f456f0b042e9d`、新品提醒来源 `f63e984f33b86fb00c0de1daeb6a66fd4d42fc78` 已整合，核心修复保留；定向证据及限制见 [验收报告](uat-evidence/int04/README.md)。用户要求停止本地全量后仅运行定向；完整默认浏览器业务套件及 GitHub Actions 为 NOT_RUN，旧下载取消根因仍 UNKNOWN，原生打印和真实 Linux 恢复继续待验。既有 Issue 状态不变，不能据此关闭或宣称上线就绪。
+
+### 2026-11-06 PARTY-VERSION-INTEGRATION-01
+
+主体来源 `7cc8c4bf0249a3de53809836b7b3f233476a1648` 与新品提醒已集成并新增迁移合流；隔离 PG 升级、旧快照保值、主体替换及 PI/XLSX 定向结果见 [验收报告](uat-evidence/party-int01/README.md)。旧报价未知税号及模板无法表达的主体字段导致输出 422，首发使用该类报价为条件性阻断，真实数量和业务范围待核实；不改变现有 Issue 状态。`aa15c9ba7584599e918c1dd14723d31e31158b3d` 为后续多标签及身份接线对照，尚未合入。全量和 CI 按用户要求 NOT_RUN。

@@ -89,7 +89,8 @@ test('saved object tasks deduplicate, history and refresh retain links, and bulk
  await expect(page.getByRole('tab',{name:'WS-SO001',exact:true})).toBeVisible()
  await expect(page.getByRole('tab')).toHaveCount(1)
  await page.setViewportSize({width:390,height:844})
- await page.screenshot({path:path.join(evidence,'mobile-order-link.png'),fullPage:true})
+ await expect.poll(()=>page.locator('.sidebar').evaluate(el=>el.getBoundingClientRect().right)).toBeLessThanOrEqual(0)
+ await page.screenshot({path:path.join(evidence,'mobile-order-link.png'),animations:'disabled'})
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
 })
 
@@ -140,6 +141,7 @@ test('bounded synthetic workspaces measure requests, mounted panels, document li
  let requests=0,writes=0;page.on('request',r=>{if(r.url().includes('/api/')){requests++;if(!['GET','HEAD','OPTIONS'].includes(r.method()))writes++}})
  await page.goto('/customers?search=Workspace',{waitUntil:'domcontentloaded'})
  await expect(active(page).getByRole('button',{name:/新建客户/})).toBeVisible()
+ await expect(active(page).getByRole('row').filter({hasText:'Workspace Alpha'})).toBeVisible()
  const snapshots=[],durations=[]
  async function sample(stage){snapshots.push({stage,requests,writes,...await page.evaluate(()=>window.__workspaceResources())})}
  await sample('one-list')
@@ -170,6 +172,9 @@ test('bounded synthetic workspaces measure requests, mounted panels, document li
  await expect(page.getByRole('tab')).toHaveCount(1)
  durations.push({action:'close-eleven',ms:Date.now()-closeStarted})
  await sample('closed-eleven')
+ expect(snapshots.at(-1).panels).toBe(snapshots[0].panels)
+ expect(snapshots.at(-1).vueMountedInstances).toBe(snapshots[0].vueMountedInstances)
+ expect(snapshots.at(-1).documentWindowRegistrations).toBe(snapshots[0].documentWindowRegistrations)
  expect(writes).toBe(0)
  await writeFile(path.join(evidence,'resources.json'),JSON.stringify({snapshots,durations,notes:'Document/window listener registrations and application timer wrappers are measured; once-listener records may overcount. JS heap is opportunistic and not proof of GC. No browser process memory claim.'},null,2))
 })

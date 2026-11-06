@@ -57,7 +57,7 @@ test('page restoration, detail navigation and browser Back preserve inventory co
  await page.getByRole('button',{name:'上一页',exact:true}).click();await page.locator('.inventory-row').first().click();const source=page.url()
  await page.locator('.inventory-detail-link').first().click();await expect(page.getByRole('dialog',{name:'库存流水详情'})).toBeVisible();await expect(page.locator('.detail-info')).toContainText('+20 m')
  await page.getByRole('button',{name:'关闭详情',exact:true}).click();await expect(page).toHaveURL(/inventory-movements\?sku=1$/)
- await page.goBack();await expect(page).toHaveURL(source);await expect(page.getByRole('dialog',{name:'库存详情'})).toBeVisible()
+ await page.evaluate(()=>history.back());await expect(page).toHaveURL(source);await expect(page.getByRole('dialog',{name:'库存详情'})).toBeVisible()
 })
 test('empty and failed inventories distinguish errors, retry and no records',async({page})=>{
  const state=await mock(page,{fail:true});await page.goto('/inventory');await expect(page.getByRole('alert')).toContainText('服务器暂时不可用',{timeout:15000})

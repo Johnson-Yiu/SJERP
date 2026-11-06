@@ -25,7 +25,7 @@ const resourceModules = {
 export const routes = [
   { path: '/login', name: 'login', component: () => import('./views/LoginPage.vue'), meta: { title: '登录' } },
   { path: '/new-product-reminders', component: () => import('./components/NewProductReminders.vue'), meta: { title: '新品提醒', module: 'followups' } },
-  { path: '/finance-ledger', component: () => import('./views/FinanceLedgerPage.vue'), meta: { title: '账户资金', eyebrow: 'Account cash', module: 'finance' } },
+  { path: '/finance-ledger', component: () => import('./views/FinanceLedgerPage.vue'), meta: { title: '账户余额与对账', eyebrow: 'Account cash', module: 'finance' } },
   { path: '/sku-trade-units', component: () => import('./views/TradeUnitsPage.vue'), meta: { title: 'SKU 交易单位', eyebrow: 'Transaction units', module: 'trade_units' } },
   { path: '/reports', component: () => import('./views/ReportsPage.vue'), meta: { title: '报表中心', eyebrow: 'Reports & analytics', module: 'reports' } },
   { path: '/historical-orders', component: () => import('./views/HistoryOrdersPage.vue'), meta: { title: '历史订单分析', eyebrow: 'Historical ledger', module: 'reports' } },
@@ -52,7 +52,7 @@ export const routes = [
   { path: '/receivables', component: PaymentPlanPage, props: { direction: 'receivable' }, meta: { title: '应收计划', eyebrow: 'Accounts receivable', module: 'finance' } },
   { path: '/payables', component: PaymentPlanPage, props: { direction: 'payable' }, meta: { title: '应付计划', eyebrow: 'Accounts payable', module: 'finance' } },
   { path: '/transactions', component: TransactionPage, meta: { title: '财务流水', eyebrow: 'Cash ledger', module: 'transactions' } },
-  { path: '/rmb-cash-events', component: CashEventPage, meta: { title: '人民币资金', eyebrow: 'Bank cash facts', module: 'transactions' } },
+  { path: '/rmb-cash-events', component: CashEventPage, meta: { title: '银行结汇与凭证', eyebrow: 'Bank cash facts', module: 'transactions' } },
   { path: '/access-denied', name: 'access-denied', component: AccessDeniedPage, meta: { accessStatus: true, title: '访问受限', eyebrow: 'Access denied' } },
   { path: '/access-status-error', name: 'access-status-error', component: AccessDeniedPage, meta: { accessStatus: true, title: '权限状态', eyebrow: 'Access status' } },
 ]

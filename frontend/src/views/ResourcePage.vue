@@ -758,8 +758,10 @@ async function save() {
     const refreshDetail = keepDetailOpen.value
     modalOpen.value = false
     const successMessage = isCertificatePage.value ? (wasEditing?'证书已更新':'证书已创建') : isContactPage.value ? (wasEditing ? '联系人已更新' : '联系人已创建') : isFollowUpPage.value ? (wasEditing ? '跟进记录已更新' : '跟进记录已保存') : isSupplierPage.value ? (wasEditing ? '供应商修改已保存。' : '供应商创建成功。') : (wasEditing ? '更新成功' : '创建成功')
-    notify(attachmentError ? `记录已保存，但${attachmentError}` : successMessage, Boolean(attachmentError)); await clearModalRoute(router, route); await load()
-    if (workspaceNavigation.workspace && !wasEditing && savedId) await workspaceNavigation.adoptObject({ path: route.path, query: { ...route.query, detail: String(savedId), create: undefined, edit: undefined, returnTo: undefined } })
+    notify(attachmentError ? `记录已保存，但${attachmentError}` : successMessage, Boolean(attachmentError))
+    if (workspaceNavigation.workspace && !wasEditing && savedId && !route.query.returnTo) await workspaceNavigation.adoptObject({ path: route.path, query: { ...route.query, detail: String(savedId), create: undefined, edit: undefined, returnTo: undefined } })
+    else await clearModalRoute(router, route)
+    await load()
     if (refreshDetail) detailRefresh.value += 1
     keepDetailOpen.value = false
   } catch (e) {

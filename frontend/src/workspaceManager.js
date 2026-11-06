@@ -39,12 +39,12 @@ export function createWorkspaceManager(rootRouter) {
     if (rootRouter.currentRoute.value.fullPath === rootRouter.resolve(location).fullPath && historyIdentity() === tab.id) return
     return rootRouter[replace ? 'replace' : 'push'](location)
   }
-  async function activate(tab, { sync = true } = {}) {
+  async function activate(tab, { sync = true, replace = false } = {}) {
     if (!tabs.includes(tab)) return false
     const switched = activeId.value !== tab.id
     if (switched) rememberScroll()
     activeId.value = tab.id
-    if (sync) await syncRoot(tab)
+    if (sync) await syncRoot(tab, replace)
     if (switched) requestAnimationFrame(() => { if (activeId.value === tab.id) window.scrollTo(tab.scroll || { left: 0, top: 0 }) })
     return true
   }
@@ -83,10 +83,17 @@ export function createWorkspaceManager(rootRouter) {
       }
     }
     // Each pane owns its route guards and route refs. Hidden panes never see another pane's URL.
-    router.beforeEach((to, from) => {
+    router.beforeEach(async (to, from) => {
       if (tab.closed) return false
       if (tab.retargeting) return true
       const targetKey = businessIdentity(to)
+      if (!tab.restoringHistory && from.path === to.path && from.query.detail && targetKey === `${to.path}:list`) {
+        const list = tabs.find(candidate => candidate !== tab && candidate.key === targetKey)
+        if (list) {
+          await close([tab.id], { focus: list, replace: tab.navigationMode === 'replace' })
+          return false
+        }
+      }
       const opensTask = to.path !== from.path || (targetKey && to.query.detail && targetKey !== businessIdentity(from)) || (to.query.create === '1' && from.query.create !== '1')
       if (opensTask) {
         const location = (to.query.create === '1' || to.query.edit) && to.path !== from.path && !to.query.returnTo ? { path: to.path, query: { ...to.query, returnTo: from.fullPath }, hash: to.hash } : to.fullPath
@@ -120,7 +127,7 @@ export function createWorkspaceManager(rootRouter) {
     }
     return true
   }
-  async function close(ids) {
+  async function close(ids, { focus = null, replace = false } = {}) {
     if (closing) return false
     closing = true
     const closingGeneration = generation
@@ -135,7 +142,10 @@ export function createWorkspaceManager(rootRouter) {
       const oldIndex = tabs.indexOf(active.value), wasActive = targets.includes(active.value)
       for (const tab of targets) { tab.closed = true; tab.controller.abort(); tabs.splice(tabs.indexOf(tab), 1) }
       if (targets.length) notice.value = ''
-      if (wasActive) { if (tabs.length) await activate(tabs[Math.min(oldIndex, tabs.length - 1)]); else { activeId.value = ''; await open('/') } }
+      if (wasActive) {
+        if (tabs.length) await activate(tabs.includes(focus) ? focus : tabs[Math.min(oldIndex, tabs.length - 1)], { replace })
+        else { activeId.value = ''; await open('/') }
+      }
       return true
     } finally { closing = false }
   }
@@ -164,8 +174,11 @@ export function createWorkspaceManager(rootRouter) {
       await activate(tab, { sync: false })
       const clean = localLocation(to)
       if (tab.router.resolve(clean).fullPath !== tab.router.currentRoute.value.fullPath) {
-        const failure = await tab.router.push(clean)
-        if (failure) await syncRoot(tab, true)
+        tab.restoringHistory = true
+        try {
+          const failure = await tab.router.push(clean)
+          if (failure) await syncRoot(tab, true)
+        } finally { tab.restoringHistory = false }
       }
     } else {
       const opened = await open(to.fullPath, { fresh: to.query.create === '1', sync: false, requestedId })

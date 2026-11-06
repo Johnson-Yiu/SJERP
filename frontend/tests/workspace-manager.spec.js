@@ -82,3 +82,13 @@ it('workspace identity remains available on development HTTP origins without ran
  try { const first = newWorkspaceId(), second = newWorkspaceId(); expect(first).toMatch(/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/); expect(first).not.toBe(second) }
  finally { vi.stubGlobal('crypto', original) }
 })
+
+it('returning from an object closes that task and restores the existing list workspace', async () => {
+ const list = await manager.open('/customers?search=Alpha&page=3')
+ const object = await manager.open('/customers?detail=8')
+ await object.router.replace('/customers?search=Alpha')
+ expect(manager.activeId.value).toBe(list.id)
+ expect(manager.tabs.map(tab => tab.id)).toEqual([list.id])
+ expect(root.currentRoute.value.fullPath).toBe('/customers?search=Alpha&page=3')
+ expect(object.controller.signal.aborted).toBe(true)
+})

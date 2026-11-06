@@ -162,8 +162,8 @@ nav { flex: 1; overflow: auto; padding-top: 15px; }
 /* Task sheets stay below the workspace controls, so drafts can be switched without dismissing them. */
 .topbar{z-index:80}.workspace-bar{top:82px;z-index:80}.sidebar{z-index:85}.scrim{z-index:84}
 .workspace-pane :is(.modal-backdrop,.detail-backdrop,.purchase-workbench-mask,.receipt-mask,.mask,.drawer-backdrop){top:var(--workspace-top,140px)!important;left:248px!important;bottom:0!important;right:0!important}
-.workspace-pane :is(.modal-backdrop,.mask){grid-template-columns:minmax(0,1fr)}
-.workspace-pane :is(.detail-modal,.purchase-workbench){height:100%!important;max-height:100%!important}
+.workspace-pane :is(.modal-backdrop,.detail-backdrop,.mask){grid-template-columns:minmax(0,1fr)}
+.workspace-pane :is(.detail-modal,.purchase-workbench,.sku-detail){height:100%!important;max-height:100%!important}
 .workspace-pane .modal{max-width:100%;max-height:calc(100dvh - var(--workspace-top,140px) - 24px)}
 .workspace-pane .mask > :is(.dialog,.cash-dialog){max-width:100%;max-height:calc(100dvh - var(--workspace-top,140px) - 32px)}
 .workspace-pane .workspace-update{position:relative;z-index:79}

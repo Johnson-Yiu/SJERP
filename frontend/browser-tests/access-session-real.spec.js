@@ -54,7 +54,7 @@ test('lost session shows expiry and preserves a same-origin return', async ({ pa
 })
 
 test('external return target is never navigated', async ({ page }) => {
-  await page.goto('/login?next=%2F%2Foutside.example.invalid')
+  await page.goto('/login?next=%2F%2Foutside.example.invalid', { waitUntil: 'domcontentloaded' })
   const originalOrigin = new URL(page.url()).origin
   await page.getByLabel('账号').fill(process.env.ISS055_UI_USERNAME)
   await page.getByLabel('密码').fill(process.env.ISS055_UI_PASSWORD)

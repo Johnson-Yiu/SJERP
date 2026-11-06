@@ -1,5 +1,9 @@
 # SUNJACK-ERP 项目问题台账
 
+## 2026-11-06 首发核心链路定向 UAT
+
+在固定基线 `aa15c9ba7584599e918c1dd14723d31e31158b3d` 的隔离分支上，以合成数据走报价/XLSX、销售订单、采购/收货、库存/发货、收付款/余额核对，并复测新品提醒入口和多工作区自然会话过期。核心操作与数据核对通过；本轮未新增 Issue、未改变既有 Issue 状态。ISS-020 的完整 Playwright 报价下载取消记录仍是首发 XLSX 验收门槛；ISS-037 主体版本/审批和 ISS-121 历史实际导入仅按条件性共享门槛交各自工作包，本轮未运行相关流程、未产生新复现。详细结果见 [FIRST-RELEASE-CORE-UAT-01](uat-evidence/first-release-core-uat-01/README.md)。当前 124 个唯一 ID：FIXED_PENDING_REVIEW=87、NEEDS_VERIFICATION=14、BLOCKED=13、OPEN=0、CLOSED=10。
+
 ## 2026-11-05 新增授权需求（待开发）
 
 以下为用户当日明确授权的新工作包，状态均为 `AUTHORIZED_NOT_STARTED`；不是已完成成果，也不改变现有 ISS 状态或关闭条件。已检索本台账与阶段计划，未发现同名需求记录；不新建重复 ISS 编号。两包固定起点均为 `10afcf16fbfc1d0c01a175094012b4b696483cfb`，分别使用独立工作树。

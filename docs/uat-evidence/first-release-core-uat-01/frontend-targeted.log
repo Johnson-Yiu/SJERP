@@ -1,0 +1,8 @@
+
+ RUN  v4.1.11 D:/Codex项目/森爵照明管理系统/.worktrees/first-release-core-uat-01/frontend
+
+
+ Test Files  5 passed (5)
+      Tests  64 passed (64)
+   Start at  13:26:52
+   Duration  7.30s (transform 2.16s, setup 1.75s, import 2.75s, tests 2.01s, environment 10.87s)

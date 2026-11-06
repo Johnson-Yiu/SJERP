@@ -1,0 +1,90 @@
+{
+  "candidate_base": "aa15c9ba7584599e918c1dd14723d31e31158b3d",
+  "uat_date": "2026-11-06",
+  "database": "isolated branch SQLite",
+  "synthetic_only": true,
+  "quote": {
+    "quote_no": "SJ20261106DE001",
+    "status": "accepted",
+    "currency": "USD",
+    "buyer_snapshot": "FRUAT-20261106 合成客户 GmbH",
+    "total_usd": "250.00",
+    "xlsx": {
+      "http_status": 200,
+      "bytes": 10216,
+      "sha256": "f9d94ebf3c3adabf4060883da81e0d0e10f551bbd3dbced455fcb30ece364651",
+      "sheet": "PI",
+      "rows": 35,
+      "columns": 13,
+      "cell_checks": {
+        "quote_number": true,
+        "buyer_snapshot": true,
+        "contact": true,
+        "sales_model": true,
+        "quantity": true,
+        "unit": true,
+        "unit_price_usd": true,
+        "total_usd": true
+      }
+    }
+  },
+  "order": {
+    "order_no": "SO-2026-00001",
+    "status": "completed",
+    "currency": "USD",
+    "total_usd": "250.00",
+    "receivable_plan_count": 2,
+    "receivable_planned_usd": "250.0000",
+    "receivable_settled_usd": "250.0000",
+    "receivable_open_usd": "0.0000",
+    "customer_receipts_usd": "250.0000",
+    "shipment_no": "SH-CD6C8877B8B24358",
+    "shipment_status": "confirmed",
+    "shipped_quantity_pcs": "10.00"
+  },
+  "purchase": {
+    "purchase_no": "PO-2026-00001",
+    "status": "completed",
+    "currency": "USD",
+    "supplier_snapshot": "FRUAT-20261106 合成供应商",
+    "total_usd": "120.00",
+    "receipt_count": 1,
+    "received_quantity_pcs": "10.00",
+    "payable_plan_count": 2,
+    "payable_planned_usd": "120.0000",
+    "payable_settled_usd": "120.0000",
+    "payable_open_usd": "0.0000",
+    "supplier_payments_usd": "120.0000"
+  },
+  "inventory": {
+    "sku": "FRUAT-20261106-SKU01",
+    "quantity_in_pcs": "10.00",
+    "quantity_out_pcs": "10.00",
+    "ending_quantity_pcs": "0.00",
+    "warehouse": "FRUAT-UAT仓",
+    "lot": "FRUAT-BATCH-01"
+  },
+  "finance_reference_only": {
+    "exchange_rate_cny_per_usd": "7.2",
+    "customer_receipts_cny_reference": "1800.00",
+    "supplier_payments_cny_reference": "864.00",
+    "net_cny_reference": "936.00",
+    "actual_bank_transfers": false
+  },
+  "new_product_reminder": {
+    "id": 1,
+    "follow_up_id": 1,
+    "follow_up_subject": "FRUAT-20261106 新品提醒入口复测",
+    "customer_id": 1,
+    "active": true,
+    "requirement": "FRUAT-20261106 合成新品提醒测试灯",
+    "specification": "10W / 3000K / IP65"
+  },
+  "natural_session_expiry": {
+    "temporary_cookie_age_seconds": 8,
+    "cookies_cleared": false,
+    "workspaces_before_expiry": 2,
+    "result": "login?reason=expired; private workspaces cleared"
+  },
+  "operator_note": "Development identity remained unmodified; temporary synthetic session user was removed after the test."
+}

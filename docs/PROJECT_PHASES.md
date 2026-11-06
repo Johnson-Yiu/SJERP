@@ -1,5 +1,11 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## 2026-11-06 FIRST-RELEASE-CORE-UAT-01
+
+从固定基线 `aa15c9ba7584599e918c1dd14723d31e31158b3d` 建立独立分支，以隔离 SQLite 合成数据完成报价/XLSX → 销售订单 → 采购/收货 → 库存/发货 → 收付款/余额核对；客户跟进新品提醒入口及多工作区自然会话过期也在真实 Chrome 操作复测。关键结果：报价 USD 250、采购 USD 120，10 件采购入库后发货 10 件，期末库存 0；应收 USD 250 和应付 USD 120 均结清、余额为 0。新品提醒保留客户/跟进关联；8 秒自然会话过期后重定向登录并清空两个私有工作区。仅使用合成数据，没有真实银行交易或历史导入。
+
+定向后端 142 项通过、2 项 PostgreSQL 专项跳过；前端 64 项通过；Django system check 及真实 Chrome 可见操作检查通过。完整自动化仍未执行，GitHub Actions 因额度暂停未运行。ISS-020 的既有完整 Playwright `saveAs canceled` 记录仍作为首发 XLSX 验收门槛；ISS-037 主体版本/审批、ISS-121 历史导入/启用按条件性共享门槛交回各自工作包，本轮未运行这些共享流程，也未修改业务代码。没有新增 Issue 或状态变化。详见 [UAT 报告和日志](uat-evidence/first-release-core-uat-01/README.md)。当前计数仍为 124 项：FPR87、NEEDS14、BLOCKED13、OPEN0、CLOSED10。未合并 master、未部署、未启用正式 RBAC。
+
 ## 2026-11-05 新授权并行开发（待实施）
 
 用户明确授权 `NEW-PRODUCT-REMINDERS-01` 和 `INTERNAL-WORKSPACE-TABS-01` 并行开发，均从固定起点 `10afcf16fbfc1d0c01a175094012b4b696483cfb` 分别创建独立工作树和分支 `codex/new-product-reminders-20261105`、`codex/internal-workspace-tabs-20261105`。这里登记的是授权和计划，不代表分支已创建、功能已实现或验收通过。此次标签页授权替代旧的“全部 Issue 修复后再开发”排期；历史阶段中的当轮排除仍为当时记录。

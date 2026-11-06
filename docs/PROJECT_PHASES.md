@@ -1,5 +1,13 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## HISTORY-PREFLIGHT-WEB-01（2026-11-06，已实现，待独立复审）
+
+从固定 SHA `b7ce265833320cc62a7b9aa57e08880f6013203f` 创建独立工作树 `.worktrees/history-preflight-web-01` 和分支 `codex/history-preflight-web-01`。新增只读「历史资料预检」页面，复用 `POST /api/import/history-preflight/` 与 `?report=csv`，提供文件选择、汇总、行级问题和 CSV 报告；入口与「历史资料承接」明确分开。没有数据库迁移、真实资料导入或权限架构变更。
+
+定向验收：后端预检 23/23、前端页面及历史承接回归 8/8、前端生产构建通过；真实 Chrome 观察成功、重复来源、错误文件、页面内容及两个入口之间的导航。既有后端未授权用户得到 403。Chrome UI 点击 CSV 后真实请求返回 200；浏览器自动化桥接未暴露本地保存的下载事件，所以额外将同一端点响应保存成 CSV 并检查附件响应头、BOM、列头和 3 行内容，不声称已从 Chrome 下载栏取回文件。前后状态快照严格一致：19 张模型表、库存流水、应收/应付、销售/采购订单及私有媒体均无变化；基线包含合成用的客户/商品/SKU主数据。完整操作、命令与证据文件见[专属验收记录](uat-evidence/history-preflight-web-01/README.md)。
+
+按用户“只跑定向测试”约束，不运行全量套件；依据项目额度约定提交 `[skip ci]`，GitHub Actions `NOT_RUN`。新包待独立复审，不创建或关闭 Issue；当前总数仍 124 项，FIXED_PENDING_REVIEW 87、NEEDS_VERIFICATION 14、BLOCKED 13、OPEN 0、CLOSED 10。浏览器中现有「历史资料承接」页的列表 API 在当前匿名开发会话返回“身份认证信息未提供”，本包未修改该既有认证路径，故只确认入口清晰分开，不宣称提交页通过端到端验收。未合并 master、未部署、未启用正式 RBAC。
+
 ## 2026-11-05 新授权并行开发（待实施）
 
 用户明确授权 `NEW-PRODUCT-REMINDERS-01` 和 `INTERNAL-WORKSPACE-TABS-01` 并行开发，均从固定起点 `10afcf16fbfc1d0c01a175094012b4b696483cfb` 分别创建独立工作树和分支 `codex/new-product-reminders-20261105`、`codex/internal-workspace-tabs-20261105`。这里登记的是授权和计划，不代表分支已创建、功能已实现或验收通过。此次标签页授权替代旧的“全部 Issue 修复后再开发”排期；历史阶段中的当轮排除仍为当时记录。

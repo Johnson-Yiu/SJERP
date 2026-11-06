@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Date: Fri, 06 Nov 2026 07:17:51 GMT
+Server: WSGIServer/0.2 CPython/3.14.5
+Content-Type: text/csv; charset=utf-8
+Content-Disposition: attachment; filename="history-preflight.csv"
+Allow: POST, OPTIONS
+X-Frame-Options: DENY
+Content-Length: 550
+Vary: Cookie, origin
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin

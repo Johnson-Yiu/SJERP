@@ -1,0 +1,8 @@
+[isolation] Migration completeness check
+[isolation] Migration completeness check: passed
+[isolation] Playwright suite
+  ok 1 browser-tests\party-replacement-extended-20261106.spec.js:7:1 › extended replacement: two accounts, facts, unknown and explicit empty (1.3m)
+  1 passed (1.4m)
+[isolation] Playwright suite: passed
+[isolation] Owned API and Vite process trees stopped; both ports are released.
+Removed only this run's marked temporary database and MEDIA_ROOT.

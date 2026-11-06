@@ -1,0 +1,8 @@
+[isolation] Migration completeness check
+[isolation] Migration completeness check: passed
+[isolation] Playwright suite
+  ok 1 browser-tests\party-replacement-quote-real.spec.js:7:1 › synthetic quote replacement uses independent approval and synthetic saved template (24.4s)
+  1 passed (30.5s)
+[isolation] Playwright suite: passed
+[isolation] Owned API and Vite process trees stopped; both ports are released.
+Removed only this run's marked temporary database and MEDIA_ROOT.

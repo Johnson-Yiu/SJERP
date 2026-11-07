@@ -21,6 +21,8 @@ class CashEventPermission(BasePermission):
 def event_data(event):
     allocations = list(event.sources.order_by("source_id"))
     reference = sum((a.amount * Decimal(a.source_snapshot["exchange_rate"]) for a in allocations), Decimal("0")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    gross = event.gross_rmb_amount or event.bank_net_amount + event.fee_amount
+    quoted_reference = (event.amount * event.quoted_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if event.quoted_rate is not None else None
     binding = FinanceBankVoucherBinding.objects.filter(event=event).select_related("voucher").first()
     return {
         "private_voucher": binding.voucher_id if binding else None,
@@ -29,6 +31,7 @@ def event_data(event):
         "id": event.pk, "event_no": event.event_no, "request_key": event.request_key,
         "kind": event.kind, "currency": event.currency, "amount": str(event.amount),
         "direction": event.direction, "bank_date": event.bank_date,
+        "gross_rmb_amount": str(gross), "actual_rate": str(event.actual_rate),
         "bank_net_amount": str(event.bank_net_amount), "fee_mode": event.fee_mode,
         "bank_currency": "CNY", "fee_currency": "CNY",
         "fee_amount": str(event.fee_amount), "source_account": event.source_account,
@@ -45,6 +48,9 @@ def event_data(event):
         "sources": [{"transaction_id": a.source_id, "amount": str(a.amount), "currency": a.currency, "snapshot": a.source_snapshot} for a in allocations],
         "reference_amount": str(reference),
         "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+        "pre_fee_reference_delta": str((gross - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+        "quoted_reference_amount": str(quoted_reference) if quoted_reference is not None else None,
+        "quoted_reference_delta": str((gross - quoted_reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if quoted_reference is not None else None,
         "basis": "bank_voucher_manual_v1", "coverage_since": None,
         "note": "仅人工凭证确认事实；含扣费不再次扣减净额，参考差异不计汇兑损益，未启用全量实际资金统计或账户余额。",
     }
@@ -115,7 +121,10 @@ class RmbCashEventViewSet(viewsets.ViewSet):
         cash.access(request.user)
         p = cash.normalize(request.data)
         rows = cash.validate_sources(p, request.user)
+        gross = p.get("gross_rmb_amount") or str(Decimal(p["bank_net_amount"]) + (Decimal(p["fee_amount"]) if p["fee_mode"] == "included" else Decimal("0")))
+        actual_rate = p.get("actual_rate") or str((Decimal(gross) / sum((Decimal(s["amount"]) for s in p["sources"]), Decimal("0"))).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP))
         return Response({"payload": p, "source_total": str(sum((Decimal(s["amount"]) for s in p["sources"]), Decimal("0"))),
+                         "gross_rmb_amount": gross, "actual_rate": actual_rate,
                          "bank_net_amount": p["bank_net_amount"], "confirmed": False,
                          "duplicate_candidates": cash.duplicate_candidates(p, request.user),
                          "sources": [{"id": r.pk, "remaining_candidate_amount": str(cash.available(r)), "manual_verification_required": True} for r in rows],

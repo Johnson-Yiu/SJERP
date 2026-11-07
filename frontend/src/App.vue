@@ -40,8 +40,6 @@ const nav = [
   { label: '应收计划', path: '/receivables', module: 'finance', icon: WalletCards },
   { label: '应付计划', path: '/payables', module: 'finance', icon: WalletCards },
   { label: '财务流水', path: '/transactions', module: 'transactions', icon: WalletCards },
-  { label: '人民币资金', path: '/rmb-cash-events', module: 'transactions', icon: WalletCards },
-  { label: '账户资金', path: '/finance-ledger', module: 'finance', icon: WalletCards },
   { label: '数据导入', path: '/import', module: 'imports', icon: Upload },
   { label: '历史资料承接', path: '/history-takeover', module: 'imports', icon: History },
   { section: '组织与系统' },

@@ -119,7 +119,11 @@ def voucher(value, scope="account"):
     return obj
 
 
-def upload(file, user, bank_sources=None):
+def upload(file, user, bank_sources=None, scope=None):
+    if scope is None:
+        scope = "bank" if bank_sources is not None else "account"
+    if scope not in {"account", "bank", "transaction"} or (bank_sources is not None and scope != "bank"):
+        raise ValidationError("凭证用途无效。")
     if bank_sources is None:
         access(user, "create")
     else:
@@ -145,7 +149,7 @@ def upload(file, user, bank_sources=None):
         raise ValidationError("凭证仅支持PDF、PNG或JPEG。")
     obj = FinanceVoucher(original_name=str(file.name).replace("\\", "/").rsplit("/", 1)[-1][:200],
         sha256=hashlib.sha256(data).hexdigest(), size=len(data), actor=identity(user, "upload_voucher"),
-        scope="bank" if bank_sources is not None else "account", bank_sources=bank_sources or [])
+        scope=scope, bank_sources=bank_sources or [])
     saved = False
     try:
         with transaction.atomic():

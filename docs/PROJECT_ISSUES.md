@@ -8,13 +8,19 @@
 
 同一02140历史Chrome5/5脚本、98个本地HTTP请求、live及脱敏副本只读核验通过，8图、实际XLSX、数据库/媒体及日志已封存，进程/端口/私有任务目录清理完成。SQLite发布副本102表1091条业务/审计行，删除2个session行但业务表未改；不与PG1218行混为同一数据集。不把开发身份、合成双session或Django admin当作真实员工ERP登录。
 
-当前124唯一ID：FIXED_PENDING_REVIEW87、NEEDS_VERIFICATION14、BLOCKED13、OPEN0、CLOSED10。原86项仍待独立复审，ISS-121完整实现及集成验收证据已补，校准为FIXED_PENDING_REVIEW；新增待复审1项，与原86项队列分开记录；没有关闭Issue。报价浏览器交付子项归ISS-020，财务CSV归ISS-105，附件重开归ISS-007、回执跨UID归ISS-018，不创建重复ID。原86入口365条与当前代码存在性核对不等于业务接受。
+按台账逐 ID 最新行重算：123 个唯一 ID，FIXED_PENDING_REVIEW 86、NEEDS_VERIFICATION 14、BLOCKED 13、OPEN 0、CLOSED 10。ISS-121 计入 FPR 一次；未关闭 Issue。此前首页摘要的 124 / FPR 87 与逐 ID 最新行不符，差额原因 UNKNOWN，本轮以台账最新行计数为准。报价浏览器交付子项归 ISS-020，财务 CSV 归 ISS-105，附件重开归 ISS-007、回执跨 UID 归 ISS-018，不创建重复 ID。原 86 入口 365 条与当前代码存在性核对不等于业务接受。
 
 用户明确GitHub额度不足：后续提交[skip ci]，不触发、等待或重跑Actions，不改workflow规避；CI暂停不记PASS。历史906/41855319673成功只对应旧源码。旧运行中/未交付描述位于后面的明确历史章节，不覆盖当前事实。
 
 真实Linux补修后跨UID尚未执行：只读检查未找到docker命令，沙箱外wsl列表退出1只返回安装帮助，没有已验证Linux环境。正式认证/RBAC、真实启用资料、生产配置及真实迁移执行分别需目标环境或单独授权；历史代码未完成不能归为缺凭证，退款/已记账反向映射只按已支持范围，不宣称全部支持。打印完整成品与分页继续用户延期，不合master、不部署、不导入真实资料、不宣布上线就绪。
 
 [当前报告](uat-evidence/integration-closeout-02/README.md)、[原86复审包](uat-evidence/integration-closeout-02/REVIEW-BACKLOG.md)、[ISS121补充](uat-evidence/integration-closeout-02/ISS121-REVIEW-SUPPLEMENT.md)、[实际日志](uat-evidence/integration-closeout-02/TEST-RESULTS.md)。
+
+## FINANCE-TRANSACTIONS-UNIFIED-ENTRY-01 补充（2026-11-07）
+
+基线 `78bcedb217d3d6ca0a05c9348e72d37c35801312`；独立工作树/分支 `codex/finance-transactions-unified-entry-01`。在财务流水增加客户汇款与实际到账/扣费责任/凭证、订单核销与未结展示、从原收款登记部分或合并结汇、非现金授权抹零、订单费用分类入口。公司承担扣费凭证路径按汇款额核销，客户承担/待查保留应收差额；结汇现金只按净人民币到账一次。SQLite 后端定向 95 项通过/3 项 PostgreSQL 专项跳过，Node 6/6、Vitest 7/7、构建通过；codex 测试超级管理员真实 Chrome 目视检查页面。详细矩阵和限制见[验收记录](uat-evidence/finance-transactions-unified-entry-20261107/README.md)。
+
+ISS-105 与 ISS-108 当前仍为 `FIXED_PENDING_REVIEW`，不自行关闭、不改 124 个唯一 ID 计数。真实 PostgreSQL 并发/失败回滚未验证；垫付/报销与押金关联、流水详情中的源退款/银行退回/更正入口、授权抹零反向更正仍有实现缺口。财务流水操作、余额核对、双人审批及其他资金登记继续复用 ISS-105/108 既有服务和权限；后续应先补可追溯来源关系与定向 PostgreSQL 并发验收，再由独立复审更新状态。
 
 ## 历史章节：此前阶段摘要（非当前状态）
 

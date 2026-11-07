@@ -86,6 +86,28 @@ def _require_order_permissions(user):
         raise PermissionDenied("销售订单导入还需要订单新建、客户查看和 SKU 查看权限。")
 
 
+def _require_batch_result_access(batch, user):
+    same_operator = bool(
+        user
+        and getattr(user, "is_authenticated", False)
+        and batch.operator_id == getattr(user, "pk", None)
+    )
+    if not same_operator and not is_permission_admin(user):
+        raise PermissionDenied("只能查看本人提交的销售订单导入结果。")
+    order_ids = [
+        item.get("order_id")
+        for item in (batch.result or {}).get("orders", [])
+        if item.get("order_id")
+    ]
+    visible_ids = set(
+        scope_customer_related_queryset(
+            Order.objects.filter(pk__in=order_ids), user
+        ).values_list("pk", flat=True)
+    )
+    if len(visible_ids) != len(order_ids):
+        raise PermissionDenied("导入结果包含当前账号数据范围外的订单，不能查看完整结果。")
+
+
 def _template_response():
     workbook = Workbook()
     instructions = workbook.active
@@ -671,6 +693,7 @@ class SalesOrderImportExecuteView(APIView):
         except IntegrityError:
             batch = SalesOrderImportBatch.objects.filter(preview_id=preview_id).first()
             if batch is not None:
+                _require_batch_result_access(batch, request.user)
                 return Response(batch.result)
             return Response({"detail": "导入提交冲突，请重新查看订单列表后再操作。"}, status=status.HTTP_409_CONFLICT)
 
@@ -680,11 +703,5 @@ class SalesOrderImportResultView(APIView):
 
     def get(self, request, batch_id):
         batch = get_object_or_404(SalesOrderImportBatch, pk=batch_id)
-        same_operator = batch.operator_id == getattr(request.user, "pk", None)
-        if not same_operator and not is_permission_admin(request.user):
-            raise PermissionDenied("只能查看本人提交的销售订单导入结果。")
-        order_ids = [item.get("order_id") for item in (batch.result or {}).get("orders", []) if item.get("order_id")]
-        visible_ids = set(scope_customer_related_queryset(Order.objects.filter(pk__in=order_ids), request.user).values_list("pk", flat=True))
-        if len(visible_ids) != len(order_ids):
-            raise PermissionDenied("导入结果包含当前账号数据范围外的订单，不能查看完整结果。")
+        _require_batch_result_access(batch, request.user)
         return Response(batch.result)

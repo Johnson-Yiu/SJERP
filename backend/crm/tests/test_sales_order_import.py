@@ -152,6 +152,58 @@ class SalesOrderImportApiTests(TestCase):
         self.assertEqual(first.items.get(sku=self.sku).trade_unit_price, Decimal("25"))
         self.assertEqual(self.client.delete(f"/api/orders/{first.pk}/").status_code, 400)
 
+    @override_settings(**RBAC_SETTINGS)
+    def test_repeat_confirmation_rejects_result_after_customer_scope_is_narrowed(self):
+        unit = OrganizationUnit.objects.create(name="重复确认销售组", code="IMP-REPEAT-UNIT")
+        position = Position.objects.create(unit=unit, name="销售", code="IMP-REPEAT-POS")
+        role = AccessRole.objects.create(name="重复确认导入", code="IMP-REPEAT-ROLE", default_data_scope="self")
+        for module, values in {
+            "imports": {"can_view": True, "can_import": True},
+            "orders": {"can_view": True, "can_create": True},
+            "customers": {"can_view": True},
+            "skus": {"can_view": True},
+        }.items():
+            RolePermission.objects.create(role=role, module=module, **values)
+        user = get_user_model().objects.create_user(username="sales-import-repeat-scope", password="test-only")
+        profile = EmployeeProfile.objects.create(
+            user=user, display_name="Repeat Scope", unit=unit, position=position,
+        )
+        profile.roles.add(role)
+        self.customer.owner_profile = profile
+        self.customer.save(update_fields=["owner_profile"])
+        self.client.force_authenticate(user=user)
+
+        source = workbook_bytes([
+            ["EXT-REPEAT-SCOPE", self.customer.code, self.day, "CNY", self.sku.sku, "pcs", 1, "15", "1"],
+        ])
+        preview = self.preview(source)
+        self.assertEqual(preview.status_code, 200, preview.data)
+        first = self.execute(source, preview.data["preview_token"])
+        self.assertEqual(first.status_code, 200, first.data)
+        self.assertEqual((first.data["created_orders"], Order.objects.count()), (1, 1))
+
+        outside_owner = EmployeeProfile.objects.create(
+            user=get_user_model().objects.create_user(
+                username="sales-import-repeat-other-owner", password="test-only",
+            ),
+            display_name="Other Owner",
+            unit=unit,
+            position=position,
+        )
+        self.customer.owner_profile = outside_owner
+        self.customer.save(update_fields=["owner_profile"])
+
+        repeated = self.execute(source, preview.data["preview_token"])
+        self.assertEqual(repeated.status_code, 403, repeated.data)
+        self.assertNotIn("orders", repeated.data)
+        self.assertNotIn("order_id", str(repeated.data))
+        self.assertNotIn(first.data["orders"][0]["order_no"], str(repeated.data))
+        result_lookup = self.client.get(f"/api/import/orders/results/{first.data['batch_id']}/")
+        self.assertEqual(result_lookup.status_code, 403, result_lookup.data)
+        self.assertNotIn("orders", result_lookup.data)
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(SalesOrderImportBatch.objects.count(), 1)
+
     def test_bad_line_rejects_its_whole_order_but_keeps_other_valid_order(self):
         rows = [
             ["EXT-BAD", self.customer.code, self.day, "USD", self.sku.sku, "箱", 1, "10", None],

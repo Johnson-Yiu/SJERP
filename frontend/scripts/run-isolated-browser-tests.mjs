@@ -442,6 +442,10 @@ export function isolatedFixtureSeed(businessTest) {
       seedFile: path.join('test_support', 'seed_first_release_consolidation_02_browser.py'),
       evidenceEnv: 'FIRST_RELEASE_CONSOLIDATION_EVIDENCE_DIR',
     },
+    'sales-order-import-real.spec.js': {
+      seedFile: path.join('test_support', 'seed_sales_order_import_browser.py'),
+      evidenceEnv: 'SALES_ORDER_IMPORT_EVIDENCE_DIR',
+    },
     'iss055-customer-404-real.spec.js': {
       seedFile: path.join('browser-run', 'iss055', 'seed.py'),
       evidenceEnv: 'ISS055_EVIDENCE_DIR',
@@ -576,7 +580,7 @@ async function runProfile(selection) {
       ISOLATED_PLAYWRIGHT_API_BASE_URL: `http://127.0.0.1:${apiPort}`,
       ISS007_BASE_URL: baseURL,
       ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',
-      PLAYWRIGHT_CHANNEL: ['iss028-035-category-schema.spec.js', 'access-session-real.spec.js', 'workspace-tabs-real.spec.js', 'workspace-integration-real.spec.js', 'quote-editor-mobile-actions.spec.js', 'first-release-consolidation-02.spec.js'].includes(selection.businessTest) ? 'chrome' : '',
+      PLAYWRIGHT_CHANNEL: ['iss028-035-category-schema.spec.js', 'access-session-real.spec.js', 'workspace-tabs-real.spec.js', 'workspace-integration-real.spec.js', 'quote-editor-mobile-actions.spec.js', 'first-release-consolidation-02.spec.js', 'sales-order-import-real.spec.js'].includes(selection.businessTest) ? 'chrome' : '',
       ISOLATED_PLAYWRIGHT_TEST_EXCLUDE: selection.businessSuite
         ? JSON.stringify(isolatedExcludedTests(selection))
         : '',
@@ -605,6 +609,7 @@ async function runProfile(selection) {
       'R1_UX_FINANCE_SUMMARY_EVIDENCE_DIR',
       'R1_UX_QUOTE_ACTIONS_EVIDENCE_DIR',
       'FIRST_RELEASE_CONSOLIDATION_EVIDENCE_DIR',
+      'SALES_ORDER_IMPORT_EVIDENCE_DIR',
       'SUPPLIER_UX_EVIDENCE_DIR',
     ]
     for (const name of evidenceEnvironmentNames) {

@@ -28,7 +28,7 @@ async function submit() {
 </script>
 
 <template>
-  <div class="payment-mask" @mousedown.self="!saving && emit('close')" @keydown.esc="!saving && emit('close')">
+  <div class="payment-mask" @keydown.esc="!saving && emit('close')">
     <section class="payment-modal" role="dialog" aria-modal="true" aria-labelledby="payment-title">
       <header><div><span class="payment-eyebrow">供应商付款</span><h3 id="payment-title"><CircleDollarSign :size="20" /> 登记付款</h3><p>{{ purchase.purchase_no }} · {{ purchase.supplier_name }}</p></div><button class="icon-btn" aria-label="关闭付款登记" :disabled="saving" @click="emit('close')"><X :size="18" /></button></header>
       <div class="payment-balance"><span>当前未付金额</span><strong>{{ purchase.currency }} {{ money(purchase.unpaid_amount) }}</strong><small>已付 {{ purchase.currency }} {{ money(purchase.paid_amount) }}</small></div>

@@ -166,12 +166,17 @@ def available(row):
 def normalize(payload):
     if not isinstance(payload, dict):
         raise ValidationError("需要资金事件对象。")
-    fields = {"event_no", "request_key", "kind", "currency", "direction", "bank_date", "bank_net_amount", "fee_mode", "fee_amount", "source_account", "rmb_account", "bank_reference", "bank_counterparty", "bank_summary", "bank_transaction_id", "evidence_reference", "evidence_sha256", "evidence_note", "quoted_rate", "sources", "fee_for", "correction_of", "private_voucher"}
+    fields = {"event_no", "request_key", "kind", "currency", "direction", "bank_date", "bank_net_amount", "fee_mode", "fee_amount", "source_account", "rmb_account", "bank_reference", "bank_counterparty", "bank_summary", "bank_transaction_id", "evidence_reference", "evidence_sha256", "evidence_note", "quoted_rate", "sources", "fee_for", "correction_of", "private_voucher", "source_receipt_id"}
     if set(payload) - fields:
         raise ValidationError("存在未支持的字段，不接受银行登录凭据或推测的资金更正。")
     if payload.get("correction_of") is not None:
         raise ValidationError("请使用账户资金更正流程保留原事实；不能直接覆盖银行事件或释放来源。")
     p = {}
+    if "source_receipt_id" in payload:
+        value = payload["source_receipt_id"]
+        if type(value) is not int or not 0 < value <= 9223372036854775807:
+            raise ValidationError("关联收款无效，请重新核对已保存流水。")
+        p["source_receipt_id"] = value
     if payload.get("private_voucher") is not None:
         from crm.services.finance_closeout import pk
         p["private_voucher"] = pk(payload["private_voucher"])
@@ -246,6 +251,16 @@ def normalize(payload):
 
 
 def validate_sources(p, user, *, confirmation=False):
+    allowed_receipt_sources = None
+    receipt_id = p.get("source_receipt_id")
+    if receipt_id is not None:
+        receipt = Transaction.objects.filter(pk=receipt_id).first()
+        if receipt is None or not source_visible(receipt, user):
+            raise NotFound("关联收款不存在或不可访问。")
+        if (receipt.split_from_id or receipt.kind != "customer_receipt" or receipt.status != "confirmed"
+                or receipt.direction != "income" or not receipt.order_id or receipt.currency != p["currency"]):
+            raise ValidationError("关联收款必须是已保存、已确认且关联订单的同币种客户收款。")
+        allowed_receipt_sources = {row.pk for row in family(receipt)}
     rows = []
     for s in p["sources"]:
         row = Transaction.objects.filter(pk=s["transaction_id"]).first()
@@ -253,6 +268,8 @@ def validate_sources(p, user, *, confirmation=False):
             raise NotFound("资金来源不存在或不可访问。")
         if row.status != "confirmed" or row.currency != p["currency"] or row.direction != p["direction"]:
             raise ValidationError("来源状态、币种或方向不一致。")
+        if allowed_receipt_sources is not None and row.pk not in allowed_receipt_sources:
+            raise ValidationError("结汇来源必须来自指定的已保存客户收款及其拆分流水。")
         error = uncertainty(row)
         if error:
             raise ValidationError(error)
@@ -330,7 +347,7 @@ def register_event(payload, user):
             raise CashConflict()
         return existing, False
     rows = validate_sources(p, user)
-    values = {k: v for k, v in p.items() if k not in {"sources", "fee_for", "private_voucher"}}
+    values = {k: v for k, v in p.items() if k not in {"sources", "fee_for", "private_voucher", "source_receipt_id"}}
     values.update(request_hash=digest, request_payload=p, amount=sum((Decimal(s["amount"]) for s in p["sources"]), Decimal("0")), created_actor=actor(user, "register"), fee_for_id=p["fee_for"])
     try:
         with transaction.atomic():

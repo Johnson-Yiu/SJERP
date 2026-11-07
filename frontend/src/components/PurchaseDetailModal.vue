@@ -52,7 +52,7 @@ function taskAction(task) { if (task.target === 'confirm') { if (can('purchases'
 watch(() => row.value?.purchase_no, title => { if (workspace && title) { workspace.objectTitle = String(title); workspace.title = String(title) } }, { immediate: true })
 </script>
 <template>
-  <div class="purchase-workbench-mask" @mousedown.self="emit('close')" @keydown.esc="emit('close')">
+  <div class="purchase-workbench-mask" @keydown.esc="emit('close')">
     <section class="purchase-workbench" role="dialog" aria-modal="true" aria-label="采购工作台" tabindex="-1">
       <header class="workbench-header">
         <button class="close-action" aria-label="关闭采购详情" @click="emit('close')"><X :size="18" /><span>关闭</span></button>

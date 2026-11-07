@@ -18,7 +18,7 @@ from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
 from rest_framework.test import APIClient
 
-from crm.models import CashSourceAllocation, Customer, FinanceBankVoucherBinding, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
+from crm.models import CashSourceAllocation, Customer, FinanceAccount, FinanceBankVoucherBinding, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
 from crm.services import cash_events as cash
 from crm.services.finance import allocate_advance, record_contract_refund, record_transaction, void_transaction
 from crm.tests import test_finance_data_scope as scope_fixture
@@ -134,6 +134,53 @@ class CashEventTests(CashFixture, TestCase):
         self.assertEqual(RmbCashEvent.objects.get(pk=pk).amount, D("100"))
         self.assertEqual(CashSourceAllocation.objects.count(), 2)
         self.assertEqual(self.client.post(URL, payload([self.receipt, self.receipt], ["10", "10"], key="DUP"), format="json").status_code, 400)
+
+    def test_linked_receipt_uses_saved_split_family_and_keeps_unallocated_advance_distinct(self):
+        order = Order.objects.create(order_no="BOUND-O", customer=self.customer, currency="USD", exchange_rate=7, status="confirmed", order_date=date(2026, 10, 18))
+        order.items.create(sku=self.sku, quantity=1, unit_price=100)
+        PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=40)
+        PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=60)
+        receipt = record_transaction(dict(transaction_no="BOUND-RECEIPT", order=order, customer=self.customer,
+            kind="customer_receipt", amount="130", currency="USD", exchange_rate="7"))
+        family = cash.family(receipt)
+        advance = next(row for row in family if row.kind == "unallocated_advance")
+        self.assertEqual(sum((row.amount for row in family), D("0")), D("130"))
+        self.assertEqual(advance.amount, D("30"))
+
+        sources = self.client.get(URL + "sources/", {"currency": "USD", "family_root": receipt.pk})
+        self.assertEqual(sources.status_code, 200, sources.data)
+        self.assertEqual({row["id"] for row in sources.data["results"]}, {row.pk for row in family})
+        advance_source = next(row for row in sources.data["results"] if row["id"] == advance.pk)
+        self.assertEqual(advance_source["kind"], "unallocated_advance")
+        self.assertEqual(advance_source["order_no"], order.order_no)
+
+        event_payload = payload(family, [format(row.amount, ".2f") for row in family], key="BOUND-FX",
+            bank_net_amount="910", source_receipt_id=receipt.pk)
+        preview = self.client.post(URL + "preview/", event_payload, format="json")
+        self.assertEqual(preview.status_code, 200, preview.data)
+        response = self.client.post(URL, event_payload, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["source_receipt"]["transaction_no"], receipt.transaction_no)
+        self.assertEqual(response.data["source_receipt"]["order_no"], order.order_no)
+        self.assertEqual(response.data["orders"], [{"id": order.pk, "order_no": order.order_no}])
+        event_id = response.data["id"]
+        self.confirm(event_id)
+        duplicate = self.client.post(URL, event_payload, format="json")
+        self.assertEqual(duplicate.status_code, 200)
+        self.assertEqual(RmbCashEvent.objects.filter(request_key="BOUND-FX").count(), 1)
+        repeated_sources = payload(family, [format(row.amount, ".2f") for row in family], key="BOUND-FX-REPEAT",
+            bank_net_amount="910", source_receipt_id=receipt.pk)
+        self.assertEqual(self.client.post(URL, repeated_sources, format="json").status_code, 409)
+
+        unrelated = payload([self.receipt], key="BOUND-WRONG", source_receipt_id=receipt.pk)
+        rejected = self.client.post(URL + "preview/", unrelated, format="json")
+        self.assertEqual(rejected.status_code, 400)
+
+    def test_cash_account_choices_return_configured_readable_names_only(self):
+        FinanceAccount.objects.create(code=ACCOUNTS[0], name="美元收款账户", account_type="bank", ownership="own", currency="USD", ownership_reason="合成测试配置")
+        response = self.client.get(URL + "accounts/")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["results"], [{"code": ACCOUNTS[0], "name": "美元收款账户", "currency": "USD", "account_type": "bank"}])
 
     def test_advance_allocation_does_not_consume_cash_source(self):
         source = record_transaction(dict(transaction_no="ADV-BANK", kind="unallocated_advance", direction="income", customer=self.customer, amount="100", currency="USD", exchange_rate="7", category="合成预收"))

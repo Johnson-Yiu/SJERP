@@ -126,7 +126,7 @@ async function save() {
 </script>
 
 <template>
-  <div class="modal-backdrop order-draft-backdrop" @mousedown.self="requestClose">
+  <div class="modal-backdrop order-draft-backdrop">
     <form class="modal wide order-draft-modal" role="dialog" aria-modal="true" aria-label="销售订单草稿" @submit.prevent="save">
       <div class="modal-head">
         <div><h3>新建销售订单</h3><p>来源报价：{{ draft.source_quote_no || draft.quote_no || '—' }}</p></div>

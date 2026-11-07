@@ -1,128 +1,20 @@
 <script setup>
-import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
-const { workspace, storageKey } = useWorkspaceNavigation()
-import { useWorkspaceApi } from '../composables/useWorkspaceApi'
-const { api } = useWorkspaceApi()
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 import { apiErrorMessage } from '../utils/apiErrors.js'
-import { optionalSettlementId } from '../utils/cashEventPayload.js'
+import { useAccessControl } from '../accessControl'
 import PageLoadState from '../components/PageLoadState.vue'
 import ListEmptyState from '../components/ListEmptyState.vue'
-import { useAccessControl } from '../accessControl'
-import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+import CashEventEntryForm from '../components/CashEventEntryForm.vue'
 
+const { api } = useWorkspaceApi()
 const { can } = useAccessControl()
 const route = useRoute()
-const today = new Date().toLocaleDateString('en-CA')
-const currencies = [
-  { value: 'CNY', label: 'CNY · 人民币' },
-  { value: 'USD', label: 'USD · 美元' },
-  { value: 'EUR', label: 'EUR · 欧元' },
-  { value: 'GBP', label: 'GBP · 英镑' },
-  { value: 'HKD', label: 'HKD · 港币' },
-  { value: 'AUD', label: 'AUD · 澳元' },
-  { value: 'JPY', label: 'JPY · 日元' },
-]
-const events = ref([])
-const loading = ref(true)
-const hasLoaded = ref(false)
-const loadError = ref('')
-const error = ref('')
-const notice = ref('')
-const statusFilter = ref('')
-const listSearch = ref('')
-const selected = ref(null)
-const showForm = ref(false)
-const formStep = ref('form')
-const saving = ref(false)
-const confirming = ref(false)
-const cancelling = ref(false)
-const lookupLoading = ref(false)
-const cancelReason = ref('')
-const showCancelReason = ref(false)
-const saveOutcome = ref('not-submitted')
-const preview = ref(null)
-const previewFingerprint = ref('')
-const previewRequestId = ref(0)
-const sourceRows = ref([])
-const sourceLoading = ref(false)
-const sourceError = ref('')
-const sourceSearch = ref('')
-const allocations = ref([])
-const reviewConfirmed = ref(false)
-const duplicateCandidates = ref(null)
-const duplicateReason = ref('')
-const draftRestoredRequiresEvidence = ref(false)
-const voucherFile = ref(null)
-const voucherUploading = ref(false)
-const draftStorageKey = 'sunjack:r1-fin-p2-b:cash-event-draft:v1'
-const identityStorageKey = storageKey('sunjack:cash-event:request-identity:v1')
-const allocationAmountBaseline = new Map()
-let sourceRequestId = 0
-let sourceAbortController = null
-const form = reactive({
-  event_no: '', request_key: '', kind: 'fx_settlement', currency: 'USD', direction: 'income',
-  bank_date: today, bank_net_amount: '', fee_mode: 'none', fee_amount: '0',
-  source_account: '', rmb_account: '', bank_reference: '', bank_counterparty: '', bank_summary: '', bank_transaction_id: '', evidence_reference: '',
-  evidence_sha256: '', evidence_note: '', quoted_rate: '', fee_for: '', private_voucher: null,
-})
+const events = ref([]), loading = ref(true), hasLoaded = ref(false), loadError = ref('')
+const error = ref(''), notice = ref(''), statusFilter = ref(''), listSearch = ref('')
+const selected = ref(null), showForm = ref(false)
 
-function makeKey(prefix) {
-  const uuid = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`
-  return `P2B-${prefix}-${uuid}`.replace(/[^A-Za-z0-9_-]/g, '-')
-}
-function resetForm() {
-  form.private_voucher = null; voucherFile.value = null
-  Object.assign(form, { event_no: makeKey('EVENT'), request_key: makeKey('REQUEST'), kind: 'fx_settlement', currency: 'USD', direction: 'income', bank_date: today, bank_net_amount: '', fee_mode: 'none', fee_amount: '0', source_account: '', rmb_account: '', bank_reference: '', evidence_reference: '', evidence_sha256: '', evidence_note: '', quoted_rate: '', fee_for: '' })
-  Object.assign(form, { bank_counterparty: '', bank_summary: '', bank_transaction_id: '' })
-  allocations.value = []
-  preview.value = null
-  previewFingerprint.value = ''
-  reviewConfirmed.value = false
-  duplicateCandidates.value = null; duplicateReason.value = ''
-  draftRestoredRequiresEvidence.value = false
-  allocationAmountBaseline.clear()
-  formStep.value = 'form'
-  saveOutcome.value = 'not-submitted'
-  showCancelReason.value = false
-  cancelReason.value = ''
-  error.value = ''
-  sourceError.value = ''
-  sourceSearch.value = ''
-}
-function clearDraftSnapshot() {
-  if (typeof window === 'undefined') return
-  try { window.localStorage.removeItem(draftStorageKey); if (workspace) window.sessionStorage.removeItem(identityStorageKey) } catch { /* Storage may be disabled. */ }
-}
-function persistDraftSnapshot() {
-  if (!workspace || !showForm.value || formStep.value !== 'form') return
-  const attempted = ['submitting', 'unknown'].includes(saveOutcome.value)
-  try { window.sessionStorage.setItem(identityStorageKey, JSON.stringify({ event_no: form.event_no, request_key: form.request_key, saved_at: Date.now(), attempted })) } catch { /* Storage may be disabled. */ }
-}
-function clearLegacyDraftSnapshot() {
-  try {
-    if (!window.localStorage.getItem(draftStorageKey)) return
-    window.localStorage.removeItem(draftStorageKey)
-    notice.value = '旧版浏览器草稿已清理。已提交的操作请核对资金记录。'
-  } catch { /* Storage may be disabled. */ }
-}
-function restoreDraftSnapshot() {
-  if (!workspace) return false
-  try {
-    const saved = JSON.parse(window.sessionStorage.getItem(identityStorageKey) || 'null')
-    if (!saved?.request_key || !saved.event_no || Date.now() - saved.saved_at > 24 * 60 * 60 * 1000) {
-      window.sessionStorage.removeItem(identityStorageKey)
-      return false
-    }
-    form.request_key = saved.request_key
-    form.event_no = saved.event_no
-    draftRestoredRequiresEvidence.value = true
-    if (saved.attempted) saveOutcome.value = 'unknown'
-    return true
-  } catch { return false }
-}
 function money(value, currency = 'CNY') {
   if (value === null || value === undefined || value === '') return '待核对'
   const digits = currency === 'JPY' ? 0 : 2
@@ -131,258 +23,76 @@ function money(value, currency = 'CNY') {
 function statusLabel(value) { return ({ pending: '待确认', confirmed: '已确认', cancelled: '已放弃' })[value] || value || '—' }
 function kindLabel(value) { return ({ fx_settlement: '外币结汇流入', cny_direct: '人民币直接收付', bank_fee: '独立银行扣费' })[value] || value || '—' }
 function directionLabel(value) { return value === 'income' ? '流入' : value === 'expense' ? '流出' : '—' }
-function sourceLabel(row) { return `${row.transaction_no || `流水 #${row.id}`} · ${row.currency} ${money(row.amount, row.currency)}` }
-function allocationFor(id) { return allocations.value.find(item => item.id === id) }
-function needsExplicitPrecision(value, currency) {
-  const digits = currency === 'JPY' ? 0 : 2
-  return String(value).split('.')[1]?.length > digits
-}
-function sourceTotal() { return allocations.value.reduce((total, item) => total + (Number(item.amount) || 0), 0) }
-function filteredSources() {
-  const keyword = sourceSearch.value.trim().toLowerCase()
-  return sourceRows.value.filter(row => !keyword || `${row.transaction_no} ${row.id}`.toLowerCase().includes(keyword))
-}
-function stableSerialize(value) {
-  if (Array.isArray(value)) return `[${value.map(stableSerialize).join(',')}]`
-  if (value && typeof value === 'object') return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${stableSerialize(value[key])}`).join(',')}}`
-  return JSON.stringify(value)
-}
-function payloadFingerprint(payload) { return stableSerialize(payload) }
-function eventPayload() {
-  return {
-    ...(form.private_voucher ? { private_voucher: form.private_voucher } : {}),
-    event_no: form.event_no.trim(), request_key: form.request_key.trim(), kind: form.kind, currency: form.currency,
-    direction: form.direction, bank_date: form.bank_date, bank_net_amount: String(form.bank_net_amount ?? '').trim(), fee_mode: form.fee_mode,
-    fee_amount: form.fee_mode === 'included' ? String(form.fee_amount ?? '').trim() : '0', source_account: form.source_account.trim(), rmb_account: form.rmb_account.trim(),
-    bank_reference: form.bank_reference.trim(), bank_counterparty: form.bank_counterparty.trim(), bank_summary: form.bank_summary.trim(), bank_transaction_id: form.bank_transaction_id.trim(), evidence_reference: form.evidence_reference.trim(), evidence_sha256: form.evidence_sha256.trim(),
-    evidence_note: String(form.evidence_note || '').trim(), quoted_rate: form.quoted_rate === null || form.quoted_rate === undefined || form.quoted_rate === '' ? null : String(form.quoted_rate).trim(), fee_for: optionalSettlementId(form.fee_for),
-    correction_of: null, sources: allocations.value.filter(item => item.amount !== '' && Number(item.amount) > 0).map(item => ({ transaction_id: item.id, amount: String(item.amount).trim(), verified: item.verified === true })),
-  }
-}
-async function uploadPrivateVoucher() {
-  const existing = formStep.value === 'review' ? selected.value : null
-  const ids = existing ? existing.sources.map(s => s.transaction_id) : allocations.value.map(s => s.id)
-  if (!voucherFile.value || !ids.length) { error.value = '请先选择来源，再选择实际凭证文件。'; return }
-  voucherUploading.value = true; error.value = ''
-  try {
-    const body = new FormData(); body.append('file', voucherFile.value); body.append('sources', JSON.stringify(ids))
-    const proof = (await api.post('/rmb-cash-events/voucher-upload/', body)).data
-    if (existing) selected.value = (await api.post(`/rmb-cash-events/${existing.id}/bind-voucher/`, { private_voucher: proof.id })).data
-    else { form.private_voucher = proof.id; form.evidence_sha256 = proof.sha256; if (!form.evidence_reference) form.evidence_reference = `PRIVATE-${proof.id}`; preview.value = null }
-    notice.value = '私有凭证文件已保存并计算摘要。'
-  } catch (e) { error.value = apiErrorMessage(e) }
-  finally { voucherUploading.value = false }
-}
-function clientError() {
-  if (!form.event_no || !form.request_key) return '请先填写事件编号和稳定请求键。'
-  if (!form.bank_date || !form.bank_reference) return '请填写银行日期和银行参考号。'
-  if (draftRestoredRequiresEvidence.value && (!form.evidence_reference || !form.evidence_sha256 || !form.evidence_note)) return '恢复的草稿未保存凭证资料，请重新填写凭证引用、SHA256和人工核实说明。'
-  if (!form.source_account || !form.rmb_account) return '请填写受控账户标识；账户未配置时确认仍会被后端阻止。'
-  if (!form.bank_net_amount || Number(form.bank_net_amount) <= 0) return '请填写大于0的银行净额。'
-  if (!allocations.value.length) return '请至少选择一条来源流水。'
-  if (allocations.value.some(item => !item.amount || Number(item.amount) <= 0)) return '每条来源都要填写大于0的分配金额。'
-  if (allocations.value.some(item => item.verified !== true)) return '请逐条核实来源流水后再预览。'
-  if (form.kind === 'fx_settlement' && form.currency === 'CNY') return '结汇来源必须是外币；人民币直接收付请选择对应类型。'
-  if (form.kind === 'fx_settlement' && form.direction !== 'income') return '结汇只支持人民币资金流入。'
-  if (form.fee_for !== '' && form.fee_for !== null && optionalSettlementId(form.fee_for) === null) return '请选择有效的结汇事件，或选择“不关联结汇”。'
-  return ''
-}
 async function loadEvents() {
   loading.value = true; loadError.value = ''
   try {
     events.value = (await api.get('/rmb-cash-events/')).data.results || []; hasLoaded.value = true
     const detailId = Number(route.query.event)
-    if (detailId > 0) { const row = events.value.find(item => item.id === detailId); if (row) openDetail(row) }
-  }
-  catch (err) { loadError.value = apiErrorMessage(err) || '人民币资金记录加载失败，请重试。' }
+    if (detailId > 0) {
+      const row = events.value.find(item => item.id === detailId)
+      if (row) openDetail(row)
+    }
+  } catch (err) { loadError.value = apiErrorMessage(err) || '人民币资金记录加载失败，请重试。' }
   finally { loading.value = false }
 }
-async function loadSources() {
-  const requestId = ++sourceRequestId
-  sourceAbortController?.abort()
-  sourceAbortController = typeof AbortController !== 'undefined' ? new AbortController() : null
-  const currency = form.currency
-  sourceLoading.value = true; sourceError.value = ''; sourceRows.value = []
-  try {
-    const response = await api.get('/rmb-cash-events/sources/', { params: { currency }, signal: sourceAbortController?.signal })
-    if (requestId !== sourceRequestId || form.currency !== currency) return
-    sourceRows.value = response.data.results || []
-  } catch (err) {
-    if (err?.code === 'ERR_CANCELED' || err?.name === 'CanceledError' || requestId !== sourceRequestId) return
-    sourceRows.value = []; sourceError.value = apiErrorMessage(err) || '来源流水加载失败，请重试。'
-  } finally { if (requestId === sourceRequestId) sourceLoading.value = false }
-}
-function openCreate() {
-  if (!can('transactions', 'create')) return
-  resetForm(); showForm.value = true; selected.value = null
-  formGuard.markClean()
-  const restored = restoreDraftSnapshot()
-  if (restored) notice.value = '已恢复请求标识。请重新填写财务内容并核对凭证。'
-  void loadSources()
-}
-function closeForm() { return formGuard.requestClose(() => { clearDraftSnapshot(); showForm.value = false; selected.value = null; preview.value = null; previewFingerprint.value = '' }) }
-function addSource(row) {
-  if (row.blocked_reason || row.remaining_candidate_amount === null || allocationFor(row.id)) return
-  allocations.value.push({ id: row.id, amount: needsExplicitPrecision(row.remaining_candidate_amount, form.currency) ? '' : row.remaining_candidate_amount, verified: false })
-}
-function removeSource(id) { allocations.value = allocations.value.filter(item => item.id !== id); allocationAmountBaseline.delete(id) }
-function markAllocationEdited(item) { item.verified = false }
-function onKindChange() {
-  if (form.kind === 'fx_settlement') { form.currency = form.currency === 'CNY' ? 'USD' : form.currency; form.direction = 'income'; form.fee_for = '' }
-  if (form.kind === 'cny_direct' || form.kind === 'bank_fee') { form.currency = 'CNY'; if (form.kind === 'bank_fee') form.direction = 'expense'; form.quoted_rate = '1'; form.fee_for = '' }
-  allocations.value = []
-  void loadSources()
-}
-function onCurrencyChange() { allocations.value = []; void loadSources() }
-async function previewEvent() {
-  error.value = ''; notice.value = ''; saveOutcome.value = 'submitting'
-  const localError = clientError(); if (localError) { error.value = localError; saveOutcome.value = 'not-submitted'; return }
-  saving.value = true
-  const requestId = ++previewRequestId.value
-  const payload = eventPayload()
-  const fingerprint = payloadFingerprint(payload)
-  try {
-    const response = await api.post('/rmb-cash-events/preview/', payload)
-    if (requestId !== previewRequestId.value || payloadFingerprint(eventPayload()) !== fingerprint) {
-      preview.value = null; previewFingerprint.value = ''; saveOutcome.value = 'not-submitted'; notice.value = '表单已修改，旧预览已失效，请重新预览。'; return
-    }
-    preview.value = response.data; previewFingerprint.value = fingerprint; notice.value = '后端预览已完成；来源额度尚未占用。'; saveOutcome.value = 'previewed'
-  }
-  catch (err) { saveOutcome.value = 'failed'; error.value = apiErrorMessage(err) || '预览失败，已保留全部输入。' }
-  finally { saving.value = false }
-}
-async function registerDraft() {
+function openCreate() { selected.value = null; showForm.value = true; error.value = ''; notice.value = '' }
+function openDetail(row) {
+  selected.value = row
+  showForm.value = row.status === 'pending' && can('finance', 'update')
   error.value = ''; notice.value = ''
-  const localError = clientError(); if (localError) { error.value = localError; return }
-  if (!preview.value || !previewFingerprint.value || payloadFingerprint(eventPayload()) !== previewFingerprint.value) { preview.value = null; previewFingerprint.value = ''; saveOutcome.value = 'not-submitted'; error.value = '预览已失效，请重新预览后再登记。'; return }
-  saving.value = true; saveOutcome.value = 'submitting'; persistDraftSnapshot()
-  try {
-    const response = await api.post('/rmb-cash-events/', eventPayload())
-    selected.value = response.data; formStep.value = 'review'; showCancelReason.value = false; preview.value = null; previewFingerprint.value = ''; reviewConfirmed.value = false; clearDraftSnapshot(); formGuard.markClean(); saveOutcome.value = 'saved'; notice.value = response.status === 200 ? '已按稳定请求键回查原资金事件。' : '已登记待确认资金事件。'
-    await loadEvents()
-  } catch (err) {
-    saveOutcome.value = 'unknown'
-    const status = err?.status || err?.response?.status
-    error.value = status ? (apiErrorMessage(err) || '登记失败，输入仍已保留。') : `登记结果尚未确认。请按请求键 ${form.request_key} 回查，不要新建同笔记录。`
-  } finally { saving.value = false }
 }
-async function lookupRequest() {
-  if (!form.request_key || lookupLoading.value) return
-  lookupLoading.value = true; error.value = ''
-  try { selected.value = (await api.get('/rmb-cash-events/by-request-key/', { params: { request_key: form.request_key } })).data; formStep.value = 'review'; reviewConfirmed.value = false; clearDraftSnapshot(); formGuard.markClean(); notice.value = '已按稳定请求键找到历史结果。'; await loadEvents() }
-  catch (err) { error.value = apiErrorMessage(err) || '未找到可查看的资金事件；请保留请求键并核对后端。' }
-  finally { lookupLoading.value = false }
+function closeEntry() { showForm.value = false }
+async function refreshAfterSave(row) {
+  if (row) selected.value = row
+  await loadEvents()
+  if (row) selected.value = events.value.find(item => item.id === row.id) || row
 }
-async function confirmEvent() {
-  if (!selected.value || confirming.value || !reviewConfirmed.value) return
-  confirming.value = true; error.value = ''; notice.value = ''
-  try {
-    if (!duplicateCandidates.value) {
-      duplicateCandidates.value = (await api.get(`/rmb-cash-events/${selected.value.id}/duplicate-candidates/`)).data
-      if (duplicateCandidates.value.count) { error.value = '请核对疑似重复记录并填写放行说明，再次确认。'; return }
-    }
-    const body = { voucher_checked: true }
-    if (duplicateCandidates.value.count) { body.duplicate_token = duplicateCandidates.value.token; body.duplicate_reason = duplicateReason.value.trim() }
-    selected.value = (await api.post(`/rmb-cash-events/${selected.value.id}/confirm/`, body)).data; notice.value = '资金事件已确认，已保存银行凭证核实结果。'; reviewConfirmed.value = false; clearDraftSnapshot(); formGuard.markClean(); await loadEvents()
-  }
-  catch (err) { duplicateCandidates.value = null; error.value = apiErrorMessage(err) || '确认失败；记录仍保留为待确认。' }
-  finally { confirming.value = false }
-}
-async function cancelDraft() {
-  if (!selected.value || cancelling.value || !cancelReason.value.trim()) return
-  cancelling.value = true; error.value = ''; notice.value = ''
-  try { selected.value = (await api.post(`/rmb-cash-events/${selected.value.id}/cancel/`, { reason: cancelReason.value.trim() })).data; showCancelReason.value = false; notice.value = '待确认草稿已留痕放弃，来源额度未被释放为银行事实。'; reviewConfirmed.value = false; clearDraftSnapshot(); formGuard.markClean(); await loadEvents() }
-  catch (err) { error.value = apiErrorMessage(err) || '草稿放弃失败，原记录仍保留。' }
-  finally { cancelling.value = false }
-}
-function openDetail(row) { selected.value = row; reviewConfirmed.value = false; showForm.value = row.status === 'pending' && can('finance', 'update'); if (showForm.value) { formStep.value = 'review'; saveOutcome.value = 'saved'; formGuard.markClean() }; error.value = ''; notice.value = '' }
 function filteredEvents() {
   const keyword = listSearch.value.trim().toLowerCase()
-  return events.value.filter(row => (!statusFilter.value || row.status === statusFilter.value) && (!keyword || `${row.event_no} ${row.request_key} ${row.bank_reference}`.toLowerCase().includes(keyword)))
+  return events.value.filter(row => (!statusFilter.value || row.status === statusFilter.value) && (!keyword || `${row.event_no} ${row.bank_reference}`.toLowerCase().includes(keyword)))
 }
 const filtered = computed(filteredEvents)
-const confirmedSettlementEvents = computed(() => events.value.filter(event => event.status === 'confirmed' && event.kind === 'fx_settlement' && (!form.rmb_account || event.rmb_account === form.rmb_account)))
-const canCreate = computed(() => can('transactions', 'create'))
-const formGuard = useUnsavedChangesGuard({
-  data: () => ({ ...form, allocations: allocations.value, step: formStep.value }),
-  enabled: () => showForm.value && formStep.value === 'form',
-  busy: () => saving.value || confirming.value || cancelling.value,
-  confirmOptions: () => saveOutcome.value === 'unknown' ? { title: '登记结果尚未确认', message: `请求键：${form.request_key}。后端可能已经登记，请先按请求键回查；放弃当前表单不会撤销已保存记录。`, cancelText: '继续核对', confirmText: '已记录请求键，放弃表单' } : {},
-})
-watch(() => form.kind, value => { if (value === 'fx_settlement' && form.currency === 'CNY') form.currency = 'USD' })
-watch([form, allocations], () => {
-  if (showForm.value && formStep.value === 'form') {
-    const presentIds = new Set()
-    allocations.value.forEach(item => {
-      presentIds.add(item.id)
-      const amount = String(item.amount ?? '').trim()
-      const previousAmount = allocationAmountBaseline.get(item.id)
-      if (previousAmount !== undefined && previousAmount !== amount) item.verified = false
-      allocationAmountBaseline.set(item.id, amount)
-    })
-    for (const id of allocationAmountBaseline.keys()) if (!presentIds.has(id)) allocationAmountBaseline.delete(id)
-    persistDraftSnapshot()
-    if (preview.value || previewFingerprint.value) {
-      previewRequestId.value += 1; preview.value = null; previewFingerprint.value = ''; saveOutcome.value = 'not-submitted'; notice.value = '表单已修改，旧预览已失效，请重新预览。'
-    }
-  }
-}, { deep: true })
-onMounted(() => { clearLegacyDraftSnapshot(); loadEvents() })
+onMounted(loadEvents)
 </script>
 
 <template>
   <section class="cash-events-page">
     <header class="cash-page-head">
-      <div><p class="eyebrow">人民币实际资金</p><h2>银行资金记录</h2><p class="page-lede">登记系统中的人民币银行资金事件；只有已确认的事件才纳入银行实际人民币资金汇总。结汇不新增客户收款，也不改变应收核销。</p></div>
-      <div class="head-actions"><RouterLink class="secondary-link" to="/transactions">查看财务流水</RouterLink><button v-if="canCreate" class="primary" type="button" @click="openCreate">新建资金事件</button></div>
+      <div><p class="eyebrow">人民币资金</p><h2>银行资金记录</h2><p class="page-lede">登记实际到账信息。只有完成凭证核验的资金事件才计入银行资金汇总；客户收款和应收核销仍按原流程保存。</p></div>
+      <div class="head-actions"><RouterLink class="secondary-link" to="/transactions">查看财务流水</RouterLink><button v-if="can('transactions', 'create')" class="primary" type="button" @click="openCreate">新增资金事件</button></div>
     </header>
-    <p class="definition-note"><strong>口径：</strong>只有人工核实银行凭证的事件可以确认。已确认仅表示本系统已登记且确认的银行事实，不代表公司全部银行余额；待确认资金不是已实际到账。参考折算只用于对照，不代表银行实际到账；手续费按银行净额说明，不重复扣除。</p>
+    <p class="definition-note"><strong>核对口径：</strong>银行净额以实际凭证为准；手续费已计入净额时不再重复扣除。仅已核对并绑定实际银行凭证的事件可以确认。</p>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
-    <p v-if="error && !showForm" class="error" role="alert">{{ error }}</p>
+    <p v-if="error" class="error" role="alert">{{ error }}</p>
     <form class="cash-filters" aria-label="人民币资金筛选" @submit.prevent>
       <label>状态<select v-model="statusFilter"><option value="">全部状态</option><option value="pending">待确认</option><option value="confirmed">已确认</option><option value="cancelled">已放弃</option></select></label>
-      <label class="search-field">搜索<input v-model="listSearch" type="search" placeholder="事件编号、请求键或银行参考号"></label>
+      <label class="search-field">搜索<input v-model="listSearch" type="search" placeholder="事件编号或银行参考号"></label>
       <button type="button" class="secondary" @click="loadEvents">刷新</button>
     </form>
-    <p class="definition-note">列表同时包含待确认、已确认和已放弃记录；只有已确认记录计入银行实际人民币资金。本页“银行日期”指银行实际入账 / 扣款日期；流水发生日期请在财务流水页查看。退款、反向更正和历史资金归属不会在本页自动处理，请按原始凭证核对。</p>
-    <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="loadEvents" />
-    <table v-if="hasLoaded" class="cash-table"><thead><tr><th>银行日期 / 事件编号</th><th>类型</th><th>原币来源</th><th>银行净额</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead><tbody>
-      <tr v-if="!filtered.length"><td colspan="7"><ListEmptyState entity="人民币资金事件" :filtered="Boolean(statusFilter || listSearch)" @clear="statusFilter = ''; listSearch = ''"><template #action>当前还没有人民币资金事件。</template></ListEmptyState></td></tr>
+    <p class="field-hint">列表包含待确认、已确认和已放弃记录；只有已确认事件计入银行资金汇总。</p>
+    <PageLoadState v-if="loading && !hasLoaded" entity="人民币资金记录" />
+    <div v-else-if="loadError" class="cash-load-error" role="alert"><p>{{ loadError }}</p><button type="button" @click="loadEvents">重试</button></div>
+    <ListEmptyState v-else-if="!filtered.length" entity="人民币资金记录" :filtered="statusFilter || listSearch" @clear="statusFilter='';listSearch=''" />
+    <div v-else class="cash-table-wrap"><table class="cash-table"><thead><tr><th>实际到账日期 / 事件编号</th><th>类型 / 方向</th><th>来源金额</th><th>银行净额 / 参考号</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead><tbody>
       <tr v-for="row in filtered" :key="row.id" class="cash-row" @click="openDetail(row)"><td>{{ row.bank_date }}<small>{{ row.event_no }}</small></td><td>{{ kindLabel(row.kind) }}<small>{{ directionLabel(row.direction) }}</small></td><td>{{ row.currency }} {{ money(row.amount, row.currency) }}<small>{{ row.sources?.length || 0 }} 条来源</small></td><td>CNY {{ money(row.bank_net_amount) }}<small>{{ row.bank_reference }}</small></td><td>{{ row.fee_mode === 'included' ? `含扣 CNY ${money(row.fee_amount)}` : '无' }}</td><td><span class="status" :class="row.status">{{ statusLabel(row.status) }}</span></td><td><button type="button" class="row-action" @click.stop="openDetail(row)">查看详情</button></td></tr>
-    </tbody></table>
+    </tbody></table></div>
 
-    <div v-if="selected && !showForm" class="cash-detail-panel" role="dialog" aria-modal="true" aria-labelledby="cash-detail-title"><header><div><p class="eyebrow">银行资金事件</p><h3 id="cash-detail-title">{{ selected.event_no }}</h3></div><button type="button" class="close-button" aria-label="关闭资金详情" @click="selected = null">×</button></header><div class="detail-status"><span class="status" :class="selected.status">{{ statusLabel(selected.status) }}</span><span>{{ kindLabel(selected.kind) }} · {{ directionLabel(selected.direction) }}</span></div><dl class="detail-grid"><dt>银行日期</dt><dd>{{ selected.bank_date }}</dd><dt>银行净额</dt><dd>CNY {{ money(selected.bank_net_amount) }}</dd><dt>原币来源</dt><dd>{{ selected.currency }} {{ money(selected.amount, selected.currency) }}</dd><dt>手续费</dt><dd>{{ selected.fee_mode === 'included' ? `含扣 CNY ${money(selected.fee_amount)}` : '无' }}</dd><dt>银行参考号</dt><dd>{{ selected.bank_reference }}</dd><dt>凭证引用</dt><dd>{{ selected.evidence_reference || '待确认' }}</dd><dt>来源账户</dt><dd>{{ selected.source_account }}</dd><dt>人民币账户</dt><dd>{{ selected.rmb_account }}</dd><dt>参考折算</dt><dd>CNY {{ money(selected.reference_amount) }}（差额 {{ money(selected.net_minus_reference_information_only) }}，仅供信息对照）</dd><dt>请求键</dt><dd>{{ selected.request_key }}</dd></dl><p class="detail-note">{{ selected.note }}</p><p v-if="selected.private_voucher"><a :href="`/api/rmb-cash-events/${selected.id}/voucher-download/`">下载私有银行凭证</a></p><p v-else>此历史记录保留人工凭证引用，未升级为系统文件核验记录。</p><section><h4>来源分配</h4><table class="source-detail"><thead><tr><th>流水</th><th>分配</th><th>状态</th></tr></thead><tbody><tr v-for="source in selected.sources" :key="source.transaction_id"><td>{{ source.snapshot?.transaction_no || `流水 #${source.transaction_id}` }}</td><td>{{ source.currency }} {{ money(source.amount, source.currency) }}</td><td>已锁定来源快照</td></tr></tbody></table></section><footer class="detail-actions"><button type="button" class="secondary" @click="selected = null">关闭</button></footer></div>
+    <div v-if="selected && !showForm" class="cash-detail-panel" role="dialog" aria-modal="true" aria-labelledby="cash-detail-title">
+      <header><div><p class="eyebrow">银行资金事件</p><h3 id="cash-detail-title">{{ selected.event_no }}</h3></div><button type="button" class="close-button" aria-label="关闭资金详情" @click="selected = null">×</button></header>
+      <div class="detail-status"><span class="status" :class="selected.status">{{ statusLabel(selected.status) }}</span><span>{{ kindLabel(selected.kind) }} · {{ directionLabel(selected.direction) }}</span></div>
+      <dl class="detail-grid"><dt>实际到账日期</dt><dd>{{ selected.bank_date }}</dd><dt>银行净额</dt><dd>CNY {{ money(selected.bank_net_amount) }}</dd><dt>来源金额</dt><dd>{{ selected.currency }} {{ money(selected.amount, selected.currency) }}</dd><dt>手续费</dt><dd>{{ selected.fee_mode === 'included' ? `含扣 CNY ${money(selected.fee_amount)}` : '无' }}</dd><dt>银行参考号</dt><dd>{{ selected.bank_reference }}</dd><dt>来源账户</dt><dd>{{ selected.source_account_name || '账户名称待配置' }}</dd><dt>人民币账户</dt><dd>{{ selected.rmb_account_name || '账户名称待配置' }}</dd><dt>关联订单</dt><dd>{{ selected.orders?.map(item => item.order_no).filter(Boolean).join('、') || '—' }}</dd><dt>收款流水</dt><dd>{{ selected.source_receipt?.transaction_no || '—' }}</dd><dt>凭证</dt><dd>{{ selected.private_voucher ? '实际凭证已校验' : '历史记录缺少实际凭证文件' }}</dd></dl>
+      <p v-if="selected.evidence_note" class="detail-note">{{ selected.evidence_note }}</p>
+      <p v-if="!selected.private_voucher" class="field-hint">需要确认此历史事件时，请补传原始银行凭证文件后再核对。</p>
+      <p v-if="selected.private_voucher"><a :href="`/api/rmb-cash-events/${selected.id}/voucher-download/`">下载银行凭证</a></p>
+      <section><h4>结汇来源</h4><table class="source-detail"><thead><tr><th>来源流水</th><th>本次结汇</th></tr></thead><tbody><tr v-for="source in selected.sources" :key="source.transaction_id"><td>{{ source.snapshot?.transaction_no || `流水 #${source.transaction_id}` }}</td><td>{{ source.currency }} {{ money(source.amount, source.currency) }}</td></tr></tbody></table></section>
+      <footer class="detail-actions"><button type="button" class="secondary" @click="selected = null">关闭</button><button v-if="selected.status === 'pending' && can('finance', 'update')" type="button" class="primary" @click="showForm = true">核对并确认</button></footer>
+    </div>
 
-    <div v-if="showForm" class="mask" @click.self="closeForm"><form class="cash-dialog" role="dialog" aria-modal="true" aria-labelledby="cash-form-title" @submit.prevent="formStep === 'form' ? (preview ? registerDraft() : previewEvent()) : undefined"><header class="dialog-head"><div><p class="eyebrow">人工凭证流程</p><h3 id="cash-form-title">{{ formStep === 'form' ? '新建人民币资金事件' : '资金事件待确认' }}</h3><p v-if="formStep === 'form'">先预览，再登记待确认草稿，最后单独确认银行凭证。</p><p v-else>已登记的事件只读，确认或放弃都会保留审计留痕。</p></div><button type="button" class="close-button" aria-label="关闭资金表单" :disabled="saving || confirming || cancelling" @click="closeForm">×</button></header>
-      <div v-if="saveOutcome === 'unknown'" class="warning-box" role="alert"><strong>登记结果尚未确认</strong><p>请按请求键回查，不要生成新的请求键。请求键：<code>{{ form.request_key }}</code></p><button type="button" class="secondary" :disabled="lookupLoading" @click="lookupRequest">{{ lookupLoading ? '回查中…' : '按请求键回查' }}</button></div>
-      <section v-if="formStep === 'review' && duplicateCandidates?.count" class="warning-box" role="alert">
-        <strong>发现 {{ duplicateCandidates.count }} 条疑似重复银行记录</strong>
-        <p>银行净额均为 CNY；同账户、日期、方向及净额相同，或同账户银行交易标识相同时需核对，不代表一定重复。</p>
-        <p v-if="duplicateCandidates.restricted">部分记录无权查看，请联系有权人员核对。</p>
-        <ul v-else><li v-for="item in duplicateCandidates.items" :key="item.id">{{ item.event_no }}；参考号：{{ item.bank_reference || '未提供' }}；交易对手：{{ item.bank_counterparty || '未提供' }}；摘要：{{ item.bank_summary || '未提供' }}；银行交易标识：{{ item.bank_transaction_id || '未提供' }}</li></ul>
-        <label v-if="!duplicateCandidates.restricted">核实放行说明<textarea v-model="duplicateReason" maxlength="500" rows="3" placeholder="说明为什么是不同银行交易"></textarea></label>
-      </section>
-      <div v-if="formStep === 'form'">
-        <fieldset><legend>实际私有凭证</legend><p class="field-hint">先选择来源，再上传PDF、PNG或JPEG（最多10MB）。手填SHA仅为人工引用，不能代替系统读取文件核验。</p><label>银行私有凭证文件<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="voucherFile = $event.target.files[0]"></label><button type="button" :disabled="voucherUploading || saving" @click="uploadPrivateVoucher">{{ voucherUploading ? '上传中…' : '上传银行私有凭证' }}</button><p v-if="form.private_voucher">文件已绑定：#{{ form.private_voucher }}；确认时将再次核对文件完整性。</p></fieldset>
-        <fieldset :disabled="saving"><legend>银行交易资料（可选）</legend><div class="form-grid"><label>交易对手<input v-model="form.bank_counterparty" maxlength="200"></label><label>银行交易标识<input v-model="form.bank_transaction_id" maxlength="120"></label><label class="wide">银行摘要<textarea v-model="form.bank_summary" maxlength="500" rows="2"></textarea></label></div><p class="field-hint">按银行凭证填写；未知时留空，不从客户资料推测。</p></fieldset>
-        <p v-if="preview?.duplicate_candidates?.count" class="warning-box">发现 {{ preview.duplicate_candidates.count }} 条疑似重复记录，登记后确认前须核对。</p>
-<fieldset :disabled="saving"><legend>1. 事件与银行金额（待确认前）</legend><div class="form-grid"><label>事件编号<input v-model="form.event_no" maxlength="64" required></label><label>稳定请求键<input v-model="form.request_key" maxlength="128" required><small>重试必须沿用此编号。</small></label><label>事件类型<select v-model="form.kind" @change="onKindChange"><option value="fx_settlement">外币结汇流入</option><option value="cny_direct">人民币直接收付</option><option value="bank_fee">独立银行扣费</option></select></label><label>来源币种<select v-model="form.currency" @change="onCurrencyChange"><option v-for="item in currencies" :key="item.value" :value="item.value">{{ item.label }}</option></select></label><label>资金方向<select v-model="form.direction" :disabled="form.kind === 'fx_settlement'"><option value="income">流入</option><option value="expense">流出</option></select></label><label>银行实际日期<input v-model="form.bank_date" type="date" required></label><label>银行净额（CNY）<input v-model="form.bank_net_amount" type="number" min="0.01" step="0.01" required><small>以银行凭证净到账/扣款为准；待确认前仅是待核对金额。</small></label><label>参考折算汇率<input v-model="form.quoted_rate" type="text" inputmode="decimal" placeholder="可留空"><small>仅作差异对照，不覆盖银行净额；保留原始十进制输入。</small></label><label>手续费方式<select v-model="form.fee_mode"><option value="none">无含扣手续费</option><option value="included">净额已含扣费</option></select></label><label v-if="form.fee_mode === 'included'">含扣手续费（CNY）<input v-model="form.fee_amount" type="number" min="0.01" step="0.01" required></label><label v-if="form.kind === 'bank_fee'">关联结汇事件（可选）<select v-model="form.fee_for"><option value="">不关联结汇</option><option v-for="event in confirmedSettlementEvents" :key="event.id" :value="event.id">{{ event.event_no }} · {{ event.bank_reference }} · CNY {{ money(event.bank_net_amount) }}</option></select><small>与结汇有关时，请选择同一人民币账户的已确认结汇事件；无关的银行扣费可留空。</small></label></div></fieldset>
-        <fieldset :disabled="saving"><legend>2. 银行凭证与受控账户</legend><div class="form-grid"><label>来源银行账户标识<input v-model="form.source_account" maxlength="40" placeholder="例如 SYNTH-FX-01" required></label><label>人民币账户标识<input v-model="form.rmb_account" maxlength="40" placeholder="例如 SYNTH-CNY-01" required></label><label>银行参考号<input v-model="form.bank_reference" maxlength="120" required></label><label>凭证引用<input v-model="form.evidence_reference" maxlength="200" placeholder="文件名或内部凭证编号"></label><label class="wide">凭证 SHA256<input v-model="form.evidence_sha256" maxlength="64" placeholder="确认时必填"></label><label class="wide">人工核实说明<textarea v-model="form.evidence_note" maxlength="500" rows="2" placeholder="确认时必填，记录核对人和核对内容"></textarea></label></div><p class="field-hint">账户标识仅用于后端受控校验，不填写银行登录信息。当前环境未配置账户时，确认会被安全阻止。</p></fieldset>
-        <fieldset :disabled="saving"><legend>3. 来源分配</legend><div class="source-toolbar"><input v-model="sourceSearch" type="search" placeholder="搜索流水号"><button type="button" class="secondary" @click="loadSources">刷新来源</button></div><p v-if="sourceError" class="error" role="alert">{{ sourceError }} <button type="button" class="secondary" @click="loadSources">重试</button></p><p v-else-if="sourceLoading" class="field-hint" role="status">正在加载可用来源…</p><div v-else class="source-list"><div v-for="row in filteredSources()" :key="row.id" class="source-option"><div><strong>{{ sourceLabel(row) }}</strong><small>{{ row.direction === 'income' ? '收入' : '支出' }} · 可用 {{ row.remaining_candidate_amount === null ? '待核对' : `${row.currency} ${money(row.remaining_candidate_amount, row.currency)}` }}</small><small v-if="row.blocked_reason" class="blocked">{{ row.blocked_reason }}</small></div><button type="button" :disabled="Boolean(row.blocked_reason) || row.remaining_candidate_amount === null || Boolean(allocationFor(row.id))" @click="addSource(row)">{{ allocationFor(row.id) ? '已选择' : row.remaining_candidate_amount === null ? '待核对' : '选择' }}</button></div><p v-if="!filteredSources().length" class="empty-note">没有可选择的来源流水。</p></div><div v-if="allocations.length" class="allocation-table"><table><thead><tr><th>来源</th><th>可用额度</th><th>本次分配</th><th>人工核实</th><th></th></tr></thead><tbody><tr v-for="item in allocations" :key="item.id"><td>{{ sourceRows.find(row => row.id === item.id)?.transaction_no || `流水 #${item.id}` }}</td><td>{{ sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount === null ? '待核对' : `${form.currency} ${money(sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount, form.currency)}` }}</td><td><input v-model="item.amount" @input="markAllocationEdited(item)" type="number" min="0.01" :step="form.currency === 'JPY' ? '1' : '0.01'" required></td><td><label class="verification-toggle"><input v-model="item.verified" type="checkbox"><span>{{ item.verified ? '已核实' : '待核实' }}</span></label></td><td><button type="button" class="text-button" @click="removeSource(item.id)">移除</button></td></tr></tbody></table><p class="allocation-total">已分配 {{ form.currency }} {{ money(sourceTotal(), form.currency) }} · 银行净额 CNY {{ money(form.bank_net_amount) }}</p></div></fieldset>
-        <p class="field-hint">手续费口径：银行净额已含扣费时不要再次扣除；独立银行扣费使用单独的人民币手续费来源，关联结汇可选。</p>
-        <p v-if="allocations.some(item => !item.amount)" class="field-hint">历史来源保留了更高精度，请按币种精度人工填写本次分配；系统不会自动舍入历史金额。</p>
-        <p class="field-hint">来源分配只保存本次逐条核实的归属，不会自动推定历史资金归属。</p>
-        <p v-if="preview" class="preview-box" role="status"><strong>后端预览通过</strong>：来源合计 {{ form.currency }} {{ money(preview.source_total, form.currency) }}，银行净额 CNY {{ money(preview.bank_net_amount) }}。预览不会占用额度；修改金额、日期、手续费、来源或凭证后必须重新预览。</p>
-        <p v-if="error" class="error" role="alert">{{ error }}</p>
-        <footer class="dialog-actions"><button type="button" class="secondary" :disabled="saving" @click="closeForm">取消</button><button v-if="!preview" class="primary" :disabled="saving" @click="previewEvent">{{ saving ? '预览中…' : '后端预览' }}</button><button v-else class="primary" :disabled="saving" @click="registerDraft">{{ saving ? '登记中…' : '登记待确认草稿' }}</button></footer>
-      </div>
-      <div v-else class="review-step"><section class="private-bank-proof"><p v-if="selected?.private_voucher">系统文件摘要：{{ selected.private_voucher_sha256 }} <a :href="`/api/rmb-cash-events/${selected.id}/voucher-download/`">下载私有银行凭证</a></p><template v-else><p>历史人工SHA仅为引用；继续确认前须绑定实际文件。</p><label>补充银行私有凭证文件<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="voucherFile = $event.target.files[0]"></label><button type="button" :disabled="voucherUploading" @click="uploadPrivateVoucher">补充并绑定实际凭证</button></template></section><div class="review-banner"><span class="status" :class="selected?.status">{{ statusLabel(selected?.status) }}</span><strong>{{ selected?.event_no }}</strong><small>请求键：{{ selected?.request_key }}</small></div><div class="detail-grid"><div><span>银行日期</span><strong>{{ selected?.bank_date }}</strong></div><div><span>银行参考号</span><strong>{{ selected?.bank_reference }}</strong></div><div><span>类型 / 方向</span><strong>{{ kindLabel(selected?.kind) }} · {{ directionLabel(selected?.direction) }}</strong></div><div><span>来源币种总额</span><strong>{{ selected?.currency }} {{ money(selected?.amount, selected?.currency) }}</strong></div><div><span>银行净额</span><strong>CNY {{ money(selected?.bank_net_amount) }}</strong></div><div><span>手续费</span><strong>{{ selected?.fee_mode === 'included' ? '含扣 CNY ' + money(selected?.fee_amount) : '无含扣手续费' }}</strong></div><div><span>来源银行账户</span><strong>{{ selected?.source_account }}</strong></div><div><span>人民币账户</span><strong>{{ selected?.rmb_account }}</strong></div><div><span>凭证引用</span><strong>{{ selected?.evidence_reference || '待确认' }}</strong></div><div><span>参考差异</span><strong>CNY {{ money(selected?.net_minus_reference_information_only) }}</strong></div></div><p class="definition-note">{{ selected?.note }}</p><section class="review-sources"><h4>来源分配</h4><table class="source-detail"><thead><tr><th>流水</th><th>分配</th><th>核实</th></tr></thead><tbody><tr v-for="source in selected?.sources" :key="source.transaction_id"><td>{{ source.snapshot?.transaction_no || ('流水 #' + source.transaction_id) }}</td><td>{{ source.currency }} {{ money(source.amount, source.currency) }}</td><td>{{ source.verified === false ? '未核实' : '已核实（已通过登记校验）' }}</td></tr></tbody></table></section><p v-if="selected?.status === 'pending'" class="field-hint">请核对银行日期、参考号、凭证、账户、净额、手续费和每条来源分配。未配置受控账户时，后端会拒绝确认并保留待确认状态。</p><label v-if="selected?.status === 'pending'" class="review-confirm"><input v-model="reviewConfirmed" type="checkbox">我已核对以上银行凭证和来源分配，确认提交人工核实结果。</label><div v-if="selected?.status === 'pending' && showCancelReason" class="cancel-box"><label>放弃原因<textarea v-model="cancelReason" maxlength="500" rows="3" required placeholder="说明为什么放弃此草稿"></textarea></label><div class="dialog-actions"><button type="button" class="secondary" @click="showCancelReason = false">继续核对</button><button type="button" class="danger" :disabled="cancelling || !cancelReason.trim()" @click="cancelDraft">{{ cancelling ? '保存中…' : '确认放弃草稿' }}</button></div></div><p v-if="error" class="error" role="alert">{{ error }}</p><footer class="dialog-actions"><button type="button" class="secondary" @click="closeForm">关闭</button><button v-if="selected?.status === 'pending' && !showCancelReason" type="button" class="secondary" @click="showCancelReason = true">放弃草稿</button><button v-if="selected?.status === 'pending'" type="button" class="primary" :disabled="confirming || showCancelReason || !reviewConfirmed" @click="confirmEvent">{{ confirming ? '确认中…' : '确认银行凭证' }}</button></footer></div>
-    </form></div>
+    <CashEventEntryForm v-if="showForm" :key="selected?.id || 'new'" mode="standalone" :initial-event="selected?.status === 'pending' ? selected : null" @close="closeEntry" @created="refreshAfterSave" @updated="refreshAfterSave" />
   </section>
 </template>
 
 <style scoped>
-.private-bank-proof{min-width:0;overflow-wrap:anywhere}.cash-events-page input[type=file]{max-width:100%;font-size:14px}
-.cash-events-page{display:grid;gap:16px;min-width:0}.cash-page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.cash-page-head h2{margin:0;color:#173d30;font-size:var(--text-page)}.eyebrow{margin:0 0 5px;color:#4b7564;font-size:var(--text-caption);font-weight:700;letter-spacing:.04em}.page-lede{margin:6px 0 0;color:#718078;line-height:1.6}.head-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.cash-events-page button,.secondary-link{border:1px solid #d6e1da;border-radius:8px;background:#fff;color:#31594b;padding:9px 13px;cursor:pointer;font:inherit;text-decoration:none;white-space:nowrap}.cash-events-page button:hover,.secondary-link:hover{border-color:#8db7a7;background:#f4faf6}.cash-events-page button:disabled{opacity:.5;cursor:not-allowed}.cash-events-page button.primary{background:#0d4b40;color:#fff;border-color:#0d4b40}.cash-events-page button.danger{background:#a33c2f;color:#fff;border-color:#a33c2f}.definition-note{margin:0;padding:12px 14px;border-left:3px solid #8db7a7;border-radius:0 8px 8px 0;background:#f2f7f4;color:#52675d;line-height:1.7}.notice{margin:0;padding:11px 14px;border:1px solid #b8d8ca;border-radius:9px;background:#eff8f3;color:#1d4d40}.error{margin:0;color:#a33c2f;background:#fff7f5;border:1px solid #edcbc5;border-radius:8px;padding:10px 12px;line-height:1.6}.cash-filters{display:flex;align-items:end;gap:10px;flex-wrap:wrap;padding:14px 16px;border:1px solid #e2e8e4;border-radius:12px;background:#fff}.cash-filters label{display:grid;gap:5px;color:#52655e;font-size:var(--text-caption)}.cash-filters select,.cash-filters input{height:39px;border:1px solid #d8e1dd;border-radius:8px;padding:0 10px;background:#fff;color:#253b33;font:inherit}.search-field{flex:1 1 260px}.cash-table{width:100%;display:block;overflow:auto;border-collapse:collapse;background:#fff;border:1px solid #e2e8e4;border-radius:12px}.cash-table th,.cash-table td{padding:12px;text-align:left;border-bottom:1px solid #edf1ee;white-space:nowrap}.cash-table th{color:#60736b;background:#f6faf8;font-size:var(--text-body)}.cash-table td small{display:block;color:#718078;margin-top:4px}.cash-row{cursor:pointer}.cash-row:hover{background:#f8fbf9}.row-action{padding:6px 9px!important;font-size:var(--text-caption)!important}.status{display:inline-flex;padding:4px 8px;border-radius:999px;background:#eef3f0;color:#426153;font-size:var(--text-caption);white-space:nowrap}.status.pending{background:#fff3d9;color:#856426}.status.confirmed{background:#e5f4eb;color:#216244}.status.cancelled{background:#f1eded;color:#7a5550}.mask{position:fixed;inset:0;z-index:60;background:#10261d66;display:grid;place-items:center;padding:16px}.cash-dialog{width:min(880px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;padding:24px;background:#fff;border-radius:14px;box-shadow:0 22px 60px #001a1340}.dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}.dialog-head h3{margin:0;color:#173d30;font-size:var(--text-dialog)}.dialog-head p{margin:5px 0 0;color:#718078;line-height:1.6}.close-button{padding:2px 8px!important;font-size:22px!important;line-height:1}.cash-dialog fieldset{margin:0 0 14px;padding:14px 16px;border:1px solid #e1e8e3;border-radius:10px;min-width:0}.cash-dialog legend{padding:0 7px;color:#27584b;font-weight:700}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px 14px}.cash-dialog label{display:grid;gap:5px;color:#40554b;font-size:var(--text-body)}.cash-dialog input,.cash-dialog select,.cash-dialog textarea{box-sizing:border-box;width:100%;padding:9px;border:1px solid #d8e1dd;border-radius:7px;background:#fff;color:#253b33;font:inherit}.cash-dialog textarea{resize:vertical}.cash-dialog label small,.field-hint{color:#718078;font-size:var(--text-caption);line-height:1.5}.wide{grid-column:1/-1}.source-toolbar{display:flex;gap:8px;margin-bottom:9px}.source-toolbar input{flex:1}.source-list{display:grid;gap:7px;max-height:210px;overflow:auto}.source-option{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 10px;border:1px solid #e7eee8;border-radius:8px;background:#fbfdfb}.source-option strong,.source-option small{display:block}.source-option small{color:#718078;margin-top:3px}.source-option .blocked{color:#a33c2f}.source-option button{flex:none;padding:6px 9px}.allocation-table{margin-top:12px;overflow:auto}.allocation-table table,.source-detail{width:100%;border-collapse:collapse}.allocation-table th,.allocation-table td,.source-detail th,.source-detail td{padding:8px;text-align:left;border-bottom:1px solid #edf1ee;white-space:nowrap}.allocation-table input{width:140px}.text-button{border:0!important;background:none!important;padding:3px!important;color:#a33c2f!important}.allocation-total{margin:9px 0 0;color:#31594b;font-weight:700}.preview-box,.warning-box{margin:12px 0;padding:11px 13px;border-radius:8px;line-height:1.6}.preview-box{background:#eff8f3;border:1px solid #b8d8ca;color:#245c48}.warning-box{background:#fff7e6;border:1px solid #eed7a3;color:#795c25}.warning-box p{margin:5px 0 9px}.warning-box code{word-break:break-all}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:16px}.review-banner{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;padding:13px;background:#f4f8f5;border-radius:9px}.review-banner small{grid-column:2;color:#718078;word-break:break-all}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.detail-grid>div{padding:11px 12px;border:1px solid #e6ede7;border-radius:8px}.detail-grid span,.detail-grid dt{display:block;color:#718078;font-size:var(--text-caption)}.detail-grid strong,.detail-grid dd{display:block;margin-top:5px;color:#25463a;overflow-wrap:anywhere}.detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-grid dt{margin-top:8px}.detail-grid dd{margin-left:0}.review-step .definition-note{margin-top:12px}.cancel-box{padding:12px;border:1px solid #eed7a3;border-radius:9px;background:#fffaf0}.cancel-box label{margin:0}.cash-detail-panel{position:fixed;z-index:55;right:24px;top:84px;width:min(560px,calc(100vw - 48px));max-height:calc(100vh - 108px);overflow:auto;padding:22px;background:#fff;border:1px solid #dce7df;border-radius:14px;box-shadow:0 22px 60px #001a1330}.cash-detail-panel header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.cash-detail-panel h3{margin:0;color:#173d30;font-size:var(--text-dialog);word-break:break-all}.cash-detail-panel .detail-status{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:14px 0}.cash-detail-panel .detail-grid{display:grid;grid-template-columns:130px minmax(0,1fr);gap:8px;margin:0}.cash-detail-panel section{margin-top:18px}.cash-detail-panel h4{margin:0 0 8px}.detail-note{padding:10px 12px;background:#f6f8f6;border-radius:8px;color:#62776a;line-height:1.6}.detail-actions{display:flex;justify-content:flex-end;margin-top:16px}@media(max-width:850px){.cash-page-head{flex-direction:column}.head-actions{width:100%}.head-actions>*{flex:1;text-align:center}.cash-dialog{padding:18px}.form-grid,.detail-grid{grid-template-columns:1fr}}@media(max-width:560px){.cash-filters{display:grid;grid-template-columns:1fr 1fr}.cash-filters .search-field{grid-column:1/-1}.cash-filters button{width:100%}.cash-dialog{width:calc(100vw - 20px);max-height:calc(100vh - 20px);padding:14px}.cash-detail-panel{right:10px;top:70px;width:calc(100vw - 20px);max-height:calc(100vh - 80px)}.source-toolbar{flex-direction:column}.dialog-actions button{flex:1}.detail-grid{grid-template-columns:1fr 1fr}}
-.verification-toggle,.review-confirm{display:flex!important;align-items:center;gap:7px!important;min-width:max-content}.verification-toggle input,.review-confirm input{width:auto!important}.review-sources{margin-top:14px}
+.cash-events-page{padding:0}.cash-page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.cash-page-head h2{margin:0;font-size:var(--text-title)}.eyebrow{margin:0 0 5px;color:#618075;font-size:var(--text-caption);text-transform:uppercase;letter-spacing:.04em}.page-lede{margin:6px 0 0;color:#718078;line-height:1.6}.head-actions{display:flex;gap:8px;align-items:center}.head-actions button,.secondary-link,.cash-filters button,.cash-load-error button{padding:8px 13px;border:1px solid #d8e1dd;border-radius:8px;background:#fff;color:#344d44;text-decoration:none;cursor:pointer}.head-actions .primary{background:#0d4b40;color:white;border-color:#0d4b40}.definition-note{margin:16px 0;padding:12px 14px;border:1px solid #e0e8e2;border-radius:9px;background:#f7faf8;color:#526b5d;line-height:1.6}.notice{margin:12px 0;padding:10px 14px;border:1px solid #b8d8ca;border-radius:9px;background:#eff8f3;color:#1d4d40}.error{color:#b42318}.cash-filters{display:grid;grid-template-columns:180px minmax(220px,1fr) auto;gap:10px;align-items:end;margin:18px 0 8px;padding:14px;border:1px solid #e2e8e4;border-radius:12px;background:#fff}.cash-filters label{display:grid;gap:5px;color:#586b63;font-size:var(--text-body)}.cash-filters input,.cash-filters select{width:100%;height:39px;padding:0 10px;border:1px solid #d8e1dd;border-radius:8px;background:#fff;color:#253b33}.field-hint{color:#718078;font-size:var(--text-caption)}.cash-table-wrap{overflow:auto;margin-top:14px;border:1px solid #e2e8e4;border-radius:12px;background:#fff}.cash-table{width:100%;border-collapse:collapse;white-space:nowrap}.cash-table th,.cash-table td{padding:12px;text-align:left;border-bottom:1px solid #edf1ee}.cash-table th{background:#f6faf8;color:#60736b}.cash-table td small{display:block;margin-top:4px;color:#718078}.cash-row{cursor:pointer}.cash-row:hover{background:#f8fbf9}.status{display:inline-block;padding:3px 8px;border-radius:999px;background:#edf3ef}.status.confirmed{background:#e8f5eb;color:#1f6b41}.status.pending{background:#fff5df;color:#805b14}.status.cancelled{background:#f4eeee;color:#785858}.row-action{padding:5px 9px;border:1px solid #d8e1dd;border-radius:7px;background:#fff;color:#31594b;cursor:pointer}.cash-detail-panel{position:fixed;z-index:55;right:24px;top:84px;width:min(560px,calc(100vw - 48px));max-height:calc(100vh - 108px);overflow:auto;padding:22px;background:#fff;border:1px solid #dce7df;border-radius:14px;box-shadow:0 22px 60px #001a1330}.cash-detail-panel header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.cash-detail-panel h3{margin:0;color:#173d30;font-size:var(--text-dialog);overflow-wrap:anywhere}.close-button{padding:2px 8px;border:0;background:transparent;font-size:22px;cursor:pointer}.detail-status{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:14px 0}.detail-grid{display:grid;grid-template-columns:130px minmax(0,1fr);gap:8px;margin:0}.detail-grid dt{color:#718078;font-size:var(--text-caption)}.detail-grid dd{margin:0;color:#25463a;overflow-wrap:anywhere}.detail-note{padding:10px 12px;background:#f6f8f6;border-radius:8px;color:#62776a;line-height:1.6}.cash-detail-panel section{margin-top:18px}.cash-detail-panel h4{margin:0 0 8px}.source-detail{width:100%;border-collapse:collapse}.source-detail th,.source-detail td{padding:8px;text-align:left;border-bottom:1px solid #edf1ee}.detail-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.detail-actions button{padding:8px 13px;border:1px solid #d8e1dd;border-radius:8px;background:#fff;color:#344d44;cursor:pointer}.detail-actions .primary{background:#0d4b40;color:#fff;border-color:#0d4b40}.cash-load-error{padding:20px;border:1px solid #f2c9c5;border-radius:10px;background:#fff6f5;color:#913d34}
+@media(max-width:760px){.cash-page-head{flex-direction:column}.head-actions{width:100%}.head-actions>*{flex:1;text-align:center}.cash-filters{grid-template-columns:1fr 1fr}.cash-filters .search-field{grid-column:1/-1}.cash-filters button{width:100%}.cash-detail-panel{right:10px;top:70px;width:calc(100vw - 20px);max-height:calc(100vh - 80px);padding:16px}.detail-grid{grid-template-columns:105px minmax(0,1fr)}}
 </style>

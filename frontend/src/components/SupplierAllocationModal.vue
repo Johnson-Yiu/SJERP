@@ -52,7 +52,7 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="supplier-allocation-backdrop" @mousedown.self="emit('close')">
+  <div class="supplier-allocation-backdrop">
     <aside class="supplier-allocation-drawer" role="dialog" aria-modal="true" aria-label="选择当前采购来源">
       <header class="allocation-header"><div><span>销售订单 · 采购分配</span><h2>选择当前采购来源</h2></div><button type="button" class="icon-button" aria-label="关闭" @click="emit('close')"><X :size="20" /></button></header>
       <main class="allocation-body">

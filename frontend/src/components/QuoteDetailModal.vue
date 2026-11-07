@@ -298,7 +298,7 @@ onBeforeUnmount(() => { ++partyGeneration })
 </script>
 
 <template>
-  <div class="modal-backdrop detail-backdrop" @mousedown.self="emit('close')">
+  <div class="modal-backdrop detail-backdrop">
     <article class="detail-modal quote-workbench" role="dialog" aria-modal="true" aria-label="报价工作台">
       <div v-if="loading" class="detail-loading"><div class="spinner" /> 正在加载报价工作台…</div>
       <div v-else-if="error" class="detail-error"><AlertTriangle :size="27" /><strong>加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>

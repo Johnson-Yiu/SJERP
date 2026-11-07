@@ -1,13 +1,15 @@
 """Minimal bank-fact API. No legacy dashboard/report source changes."""
 from decimal import Decimal, ROUND_HALF_UP
 
+from django.conf import settings
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
-from .models import FinanceBankVoucherBinding, RmbCashEvent, Transaction
+from .models import FinanceAccount, FinanceBankVoucherBinding, RmbCashEvent, Transaction
+from .permissions import user_can
 from .services import cash_events as cash
 
 
@@ -18,21 +20,49 @@ class CashEventPermission(BasePermission):
         return True
 
 
-def event_data(event):
+def _source_order(row):
+    for member in cash.family(row):
+        if member.order_id:
+            return member.order
+        if member.plan_id and member.plan.order_id:
+            return member.plan.order
+    return None
+
+
+def event_data(event, user=None):
     allocations = list(event.sources.order_by("source_id"))
     reference = sum((a.amount * Decimal(a.source_snapshot["exchange_rate"]) for a in allocations), Decimal("0")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     binding = FinanceBankVoucherBinding.objects.filter(event=event).select_related("voucher").first()
+    orders = {}
+    if user is None or user_can(user, "orders", "view"):
+        for allocation in allocations:
+            order = _source_order(allocation.source)
+            if order:
+                orders[order.pk] = {"id": order.pk, "order_no": order.order_no}
+    source_receipt = None
+    receipt_id = event.request_payload.get("source_receipt_id")
+    if receipt_id:
+        receipt = Transaction.objects.filter(pk=receipt_id).first()
+        if receipt:
+            source_receipt = {"id": receipt.pk, "transaction_no": receipt.transaction_no}
+            if (user is None or user_can(user, "orders", "view")) and receipt.order_id:
+                source_receipt["order_id"] = receipt.order_id
+                source_receipt["order_no"] = receipt.order.order_no
+    account_codes = {event.source_account, event.rmb_account}
+    account_names = {row.code: row.name for row in FinanceAccount.objects.filter(code__in=account_codes)}
     return {
         "private_voucher": binding.voucher_id if binding else None,
         "private_voucher_sha256": binding.voucher.sha256 if binding else None,
         "evidence_basis": "file_bound_v1" if binding else "historical_manual_reference_only",
+        "source_receipt": source_receipt, "orders": list(orders.values()),
         "id": event.pk, "event_no": event.event_no, "request_key": event.request_key,
         "kind": event.kind, "currency": event.currency, "amount": str(event.amount),
         "direction": event.direction, "bank_date": event.bank_date,
         "bank_net_amount": str(event.bank_net_amount), "fee_mode": event.fee_mode,
         "bank_currency": "CNY", "fee_currency": "CNY",
         "fee_amount": str(event.fee_amount), "source_account": event.source_account,
-        "rmb_account": event.rmb_account, "bank_reference": event.bank_reference,
+        "source_account_name": account_names.get(event.source_account),
+        "rmb_account": event.rmb_account, "rmb_account_name": account_names.get(event.rmb_account), "bank_reference": event.bank_reference,
         "bank_counterparty": event.bank_counterparty, "bank_summary": event.bank_summary,
         "bank_transaction_id": event.bank_transaction_id,
         "evidence_reference": event.evidence_reference, "evidence_sha256": event.evidence_sha256,
@@ -85,7 +115,7 @@ class RmbCashEventViewSet(viewsets.ViewSet):
     def bind_voucher(self, request, pk=None, format=None):
         from .services.bank_vouchers import bind
         bind(cash.get_event(request.user, pk=pk), request.data.get("private_voucher"), request.user)
-        return Response(event_data(cash.get_event(request.user, pk=pk)))
+        return Response(event_data(cash.get_event(request.user, pk=pk), request.user))
 
     @action(detail=True, methods=["get"], url_path="voucher-download")
     def voucher_download(self, request, pk=None, format=None):
@@ -101,18 +131,29 @@ class RmbCashEventViewSet(viewsets.ViewSet):
         cash.access(request.user)
         # Whole batch visibility: neither its total nor its bank reference leaks.
         events = [e for e in RmbCashEvent.objects.all() if cash.visible(e, request.user)]
-        return Response({"results": [event_data(e) for e in events], "coverage_since": None, "note": "人工凭证事件列表，不代表全部银行资金。"})
+        return Response({"results": [event_data(e, request.user) for e in events], "coverage_since": None, "note": "人工凭证事件列表，不代表全部银行资金。"})
+
+    @action(detail=False, methods=["get"])
+    def accounts(self, request, format=None):
+        cash.access(request.user)
+        configured = getattr(settings, "RMB_CASH_ACCOUNT_IDS", ())
+        codes = tuple(configured) if isinstance(configured, (list, tuple, set)) else ()
+        rows = FinanceAccount.objects.filter(code__in=codes, is_active=True).order_by("name", "pk")
+        return Response({
+            "results": [{"code": row.code, "name": row.name, "currency": row.currency, "account_type": row.account_type} for row in rows],
+            "configured": bool(rows),
+        })
 
     def retrieve(self, request, pk=None, format=None):
-        return Response(event_data(cash.get_event(request.user, pk=pk)))
+        return Response(event_data(cash.get_event(request.user, pk=pk), request.user))
 
     def create(self, request, format=None):
         event, created = cash.register_event(request.data, request.user)
-        return Response(event_data(event), status=201 if created else 200)
+        return Response(event_data(event, request.user), status=201 if created else 200)
 
     @action(detail=False, methods=["get"], url_path="by-request-key")
     def by_request_key(self, request, format=None):
-        return Response(event_data(cash.get_event(request.user, request_key=request.query_params.get("request_key", ""))))
+        return Response(event_data(cash.get_event(request.user, request_key=request.query_params.get("request_key", "")), request.user))
 
     @action(detail=False, methods=["post"])
     def preview(self, request, format=None):
@@ -134,6 +175,20 @@ class RmbCashEventViewSet(viewsets.ViewSet):
         rows = Transaction.objects.filter(status="confirmed").order_by("pk")
         if currency:
             rows = rows.filter(currency=currency)
+        transaction_no = request.query_params.get("transaction_no")
+        if transaction_no:
+            rows = rows.filter(transaction_no=transaction_no)
+        family_root = request.query_params.get("family_root")
+        if family_root:
+            if not family_root.isdigit() or len(family_root) > 19 or not 0 < int(family_root) <= 9223372036854775807:
+                raise ValidationError("关联收款无效，请重新核对已保存流水。")
+            root = Transaction.objects.filter(pk=int(family_root)).first()
+            if (root is None or root.split_from_id or root.kind != "customer_receipt" or root.status != "confirmed"
+                    or root.direction != "income" or not root.order_id or not cash.source_visible(root, request.user)):
+                raise NotFound("关联收款不存在或不可访问。")
+            if currency and currency != root.currency:
+                raise ValidationError("来源币种必须与已保存收款一致。")
+            rows = rows.filter(pk__in=[member.pk for member in cash.family(root)])
         result = []
         for row in rows:
             if not cash.source_visible(row, request.user):
@@ -141,8 +196,11 @@ class RmbCashEventViewSet(viewsets.ViewSet):
             error = cash.uncertainty(row)
             if row.currency not in cash.UNITS:
                 error = "币种未配置。"
+            order = _source_order(row)
             result.append({"id": row.pk, "transaction_no": row.transaction_no,
-                           "currency": row.currency, "direction": row.direction, "amount": str(row.amount),
+                           "currency": row.currency, "direction": row.direction, "amount": str(row.amount), "kind": row.kind,
+                           "order_id": order.pk if order and user_can(request.user, "orders", "view") else None,
+                           "order_no": order.order_no if order and user_can(request.user, "orders", "view") else "",
                            "family_root": cash.family(row)[0].pk,
                            "remaining_candidate_amount": None if error else str(cash.available(row)),
                            "manual_verification_required": True, "blocked_reason": error})
@@ -153,7 +211,7 @@ class RmbCashEventViewSet(viewsets.ViewSet):
         if not isinstance(request.data, dict) or set(request.data) - {"voucher_checked", "duplicate_token", "duplicate_reason"} or "voucher_checked" not in request.data:
             raise ValidationError("确认不可覆盖草稿金额或凭证。")
         return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
-            duplicate_token=request.data.get("duplicate_token"), duplicate_reason=request.data.get("duplicate_reason"))))
+            duplicate_token=request.data.get("duplicate_token"), duplicate_reason=request.data.get("duplicate_reason")), request.user))
 
     @action(detail=True, methods=["get"], url_path="duplicate-candidates")
     def duplicate_candidates(self, request, pk=None, format=None):
@@ -164,4 +222,4 @@ class RmbCashEventViewSet(viewsets.ViewSet):
     def cancel(self, request, pk=None, format=None):
         if not isinstance(request.data, dict) or set(request.data) != {"reason"}:
             raise ValidationError("草稿放弃只接受原因。")
-        return Response(event_data(cash.cancel_pending(pk, request.user, request.data.get("reason"))))
+        return Response(event_data(cash.cancel_pending(pk, request.user, request.data.get("reason")), request.user))

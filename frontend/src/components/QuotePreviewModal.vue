@@ -64,7 +64,7 @@ async function printPreview() {
 </script>
 
 <template>
-  <div class="modal-backdrop quote-preview-backdrop" @mousedown.self="$emit('close')">
+  <div class="modal-backdrop quote-preview-backdrop">
     <section class="quote-preview-modal" role="dialog" aria-modal="true" aria-label="PI 预览">
       <header class="quote-preview-toolbar">
         <div><strong>PI 预览</strong><small>{{ saved ? '已保存报价 · PI 预览' : '当前内容尚未保存 · 关闭后返回编辑' }}</small></div>

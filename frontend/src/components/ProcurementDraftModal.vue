@@ -48,7 +48,7 @@ onMounted(() => { reset(); guard.markClean() })
 </script>
 
 <template>
-  <div class="procurement-backdrop" @mousedown.self="requestClose">
+  <div class="procurement-backdrop">
     <aside class="procurement-drawer" role="dialog" aria-modal="true" aria-label="采购草稿预览">
       <header><div><span>销售订单 {{ plan.order_no }}</span><h2>采购草稿预览</h2><p>按供应商与币种分组。数量和实际单价仅作用于本次新建草稿。</p></div><button type="button" aria-label="关闭" @click="requestClose"><X :size="20" /></button></header>
       <main>

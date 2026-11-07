@@ -346,7 +346,7 @@ onMounted(init)
 <template>
   <Teleport to="body">
     <QuoteEditorModal v-if="isQuote && can('quotes', 'create') && !loading && !error" class="related-quote-editor" :quote="quoteSeed" :customers="customers" :skus="visibleDocumentSkus" mode="create" @saved="savedQuote = $event" @close="closeQuote" />
-    <div v-else-if="can(accessModule, 'create')" class="modal-backdrop related-create-backdrop" @mousedown.self="requestClose">
+    <div v-else-if="can(accessModule, 'create')" class="modal-backdrop related-create-backdrop">
       <form class="modal related-create-modal" @submit.prevent="save">
         <div class="modal-head">
           <h3>{{ title }}</h3>

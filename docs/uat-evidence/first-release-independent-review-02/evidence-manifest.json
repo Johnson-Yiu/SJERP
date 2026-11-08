@@ -105,5 +105,7 @@
       "bytes": 10116,
       "sha256": "f0bcab739fcd370edfe80b35d1087637282325281a15034bfb6987264430349a"
     }
-  ]
+  ],
+  "tested_integration_commit": "1c570164b754db4be0695fc195de3372b9017ffc",
+  "finance_source_checkpoint": "0a3418d7c35bfd006ea70816c71a866646b73aa2"
 }

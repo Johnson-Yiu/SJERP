@@ -1,9 +1,9 @@
 # 财务流水统一入口验收记录
 
-日期：2026-11-07  
-分支：`codex/finance-transactions-unified-entry-01`  
-基线：`78bcedb217d3d6ca0a05c9348e72d37c35801312`  
-工作树：`.worktrees/finance-transactions-unified-entry-01`  
+日期：2026-11-07
+分支：`codex/finance-transactions-unified-entry-01`
+基线：`78bcedb217d3d6ca0a05c9348e72d37c35801312`
+工作树：`.worktrees/finance-transactions-unified-entry-01`
 提交 SHA：以本轮最终提交回执为准。GitHub Actions 按 2026-11-05 CI 额度约定跳过，不记为通过。
 
 ## 现行规则核对

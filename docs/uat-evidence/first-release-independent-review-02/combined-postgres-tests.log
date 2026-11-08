@@ -1,0 +1,154 @@
+Creating test database for alias 'default'...
+
+...Conflict: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/5/confirm/
+..Bad Request: /api/transactions/13/writeoff/
+Internal Server Error: /api/transactions/13/writeoff/
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python314\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\first-release-independent-review-02\backend\crm\views.py", line 2979, in writeoff
+    record_operation(request=request, instance=row, action="create", action_label="�Ǽ���ȨĨ��",
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        metadata={"transaction_id": source.pk, "plan_id": plan.pk, "amount": str(row.amount),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            "confirmed_actor": row.confirmed_actor})
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+...Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+.Conflict: /api/rmb-cash-events/13/confirm/
+Conflict: /api/rmb-cash-events/15/confirm/
+..Not Found: /api/rmb-cash-events/sources/
+Bad Request: /api/rmb-cash-events/sources/
+Bad Request: /api/rmb-cash-events/sources/
+Bad Request: /api/rmb-cash-events/sources/
+.Bad Request: /api/rmb-cash-events/17/confirm/
+Bad Request: /api/rmb-cash-events/18/confirm/
+Bad Request: /api/rmb-cash-events/18/confirm/
+.Bad Request: /api/rmb-cash-events/19/cancel/
+Bad Request: /api/rmb-cash-events/
+.Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/20/confirm/
+Method Not Allowed: /api/rmb-cash-events/20/
+Method Not Allowed: /api/rmb-cash-events/20/
+Method Not Allowed: /api/rmb-cash-events/20/
+..Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+.Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+..Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/preview/
+.Bad Request: /api/rmb-cash-events/25/confirm/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Not Found: /api/rmb-cash-events/not-an-id/
+...Bad Request: /api/rmb-cash-events/preview/
+.Internal Server Error: /api/transactions/58/writeoff-corrections/
+Traceback (most recent call last):
+  File "C:\Python314\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Python314\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python314\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Python314\Lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Python314\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\first-release-independent-review-02\backend\crm\views.py", line 3007, in writeoff_corrections
+    record_operation(request=request, instance=correction, action="create", action_label="������ȨĨ��",
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        metadata={"transaction_id": source.pk, "writeoff_id": original.pk, "amount": str(correction.amount),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            "reason": correction.reason, "actor": correction.actor})
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic correction audit failure
+Bad Request: /api/transactions/58/writeoff-corrections/
+.Bad Request: /api/rmb-cash-events/
+......Bad Request: /api/import/orders/execute/
+.....Bad Request: /api/orders/63/
+.........
+----------------------------------------------------------------------
+Ran 47 tests in 55.365s
+
+OK
+Found 47 test(s).
+System check identified no issues (0 silenced).
+P2A-DATABASE_VERIFICATION {"before": "a2ac43047a94f17718f71f52ebeab773dd8a92d7f931e2a7bc3993b5050811b8", "after": "a2ac43047a94f17718f71f52ebeab773dd8a92d7f931e2a7bc3993b5050811b8", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "confirm_void_refund", "legacy_unchanged": true, "remaining": "0.0000", "vendor": "postgresql"}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "same_request_and_confirm", "one_event": true, "one_allocation": true, "vendor": "postgresql"}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "different_keys_shared_source", "results": ["conflict", "confirmed"], "source": "100.0000", "confirmed_usage": "60.0000", "remaining": "40.0000", "vendor": "postgresql"}
+FINANCE_REAL_POSTGRES_CONCURRENCY {"case": "writeoff_correction_competition_and_idempotency", "competing": [["rejected", null], ["created", 4]], "same_request_ids": [[5, false], [5, true]], "net_writeoff": "2.0000", "vendor": "postgresql"}
+P2A_MIGRATION_VERIFICATION {"vendor": "postgresql", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}

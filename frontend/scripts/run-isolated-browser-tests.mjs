@@ -408,6 +408,7 @@ export function isolatedCashAccountEnvironment(selection) {
 
 export function isolatedFixtureSeed(businessTest) {
   const allowed = {
+    'global-numeric-wheel-guard.spec.js': { seedFile: path.join('test_support', 'seed_numeric_wheel_browser.py'), evidenceEnv: 'GLOBAL_NUMERIC_WHEEL_EVIDENCE_DIR' },
     'workspace-tabs-real.spec.js': { seedFile: path.join('test_support', 'seed_workspace_tabs.py'), evidenceEnv: 'WORKSPACE_EVIDENCE_DIR' },
     'workspace-integration-real.spec.js': { seedFile: path.join('test_support', 'seed_workspace_integration.py'), evidenceEnv: 'WORKSPACE_EVIDENCE_DIR' },
     'finance-closeout-approval.spec.js': { seedFile: path.join('..', 'docs', 'uat-evidence', 'finance-closeout-batch-20261104', 'seed_finance_browser.py'), evidenceEnv: 'FINANCE_AUTH_EVIDENCE_DIR' },
@@ -576,7 +577,7 @@ async function runProfile(selection) {
       ISOLATED_PLAYWRIGHT_API_BASE_URL: `http://127.0.0.1:${apiPort}`,
       ISS007_BASE_URL: baseURL,
       ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',
-      PLAYWRIGHT_CHANNEL: ['iss028-035-category-schema.spec.js', 'access-session-real.spec.js', 'workspace-tabs-real.spec.js', 'workspace-integration-real.spec.js', 'quote-editor-mobile-actions.spec.js', 'first-release-consolidation-02.spec.js'].includes(selection.businessTest) ? 'chrome' : '',
+      PLAYWRIGHT_CHANNEL: ['global-numeric-wheel-guard.spec.js', 'iss028-035-category-schema.spec.js', 'access-session-real.spec.js', 'workspace-tabs-real.spec.js', 'workspace-integration-real.spec.js', 'quote-editor-mobile-actions.spec.js', 'first-release-consolidation-02.spec.js'].includes(selection.businessTest) ? 'chrome' : '',
       ISOLATED_PLAYWRIGHT_TEST_EXCLUDE: selection.businessSuite
         ? JSON.stringify(isolatedExcludedTests(selection))
         : '',

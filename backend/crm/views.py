@@ -2570,6 +2570,7 @@ def finance_dashboard(request):
     profits = [order_profit_summary(order) for order in period_orders] if can_view_orders and can_view_purchases else []
     purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
     order_expense_rmb = sum((row["expense_rmb"] for row in profits), Decimal("0"))
+    receivable_reduction_rmb = sum((row["receivable_reduction_rmb"] for row in profits), Decimal("0"))
     estimated_profit_rmb = sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
     cash = _finance_cash(request.user, start, end)
     income, expense = Decimal("0"), Decimal("0")
@@ -2601,7 +2602,7 @@ def finance_dashboard(request):
     payload = {"metrics": {
         "receivable_count": receivables.count(), "receivable_rmb": remaining(receivables),
         "payable_count": payables.count(), "payable_rmb": remaining(payables), "sales_rmb": sales_rmb, "monthly_sales_rmb": sales_rmb,
-        "purchase_cost_rmb": purchase_cost_rmb, "order_expense_rmb": order_expense_rmb, "estimated_profit_rmb": estimated_profit_rmb,
+        "purchase_cost_rmb": purchase_cost_rmb, "order_expense_rmb": order_expense_rmb, "receivable_reduction_rmb": receivable_reduction_rmb, "estimated_profit_rmb": estimated_profit_rmb,
         "income_rmb": income, "expense_rmb": expense, "net_cash_rmb": income - expense,
         "advance_receipt_rmb": unallocated("income"), "advance_payment_rmb": unallocated("expense"),
     }, "period": {"date_from": start, "date_to": end}, "due_items": due_items,
@@ -2644,7 +2645,8 @@ def finance_dashboard_details(request):
         "sales_rmb": ("合同销售额", "order_date", "人民币", "订单日期范围内的正式销售订单；包含已批准合同变更，变更不分配至商品行。"),
         "purchase_cost_rmb": ("订单采购归属成本", "order_date", "人民币", "沿用现有订单采购归属成本服务，按订单日期统计。"),
         "order_expense_rmb": ("订单费用", "order_date", "人民币", "沿用现有订单利润服务中的已确认订单费用，按订单日期统计。"),
-        "estimated_profit_rmb": ("预计订单利润", "order_date", "人民币", "经营估算：合同销售额 − 采购归属成本 − 订单费用，不代表会计利润。"),
+        "receivable_reduction_rmb": ("核准非现金抵减", "order_date", "人民币折算参考", "按订单日期统计已授权应收抵减；订单金额已包含的优惠不重复计入。"),
+        "estimated_profit_rmb": ("预计订单利润", "order_date", "人民币", "经营估算：合同销售额 − 采购归属成本 − 订单费用 − 核准非现金抵减，不代表会计利润。"),
         "income_rmb": ("账面收入（折算参考）", "transaction_date", "人民币折算参考", "仅统计已确认财务流水，按流水发生日期和既有人民币折算参考口径。"),
         "expense_rmb": ("账面支出（折算参考）", "transaction_date", "人民币折算参考", "仅统计已确认财务流水，按流水发生日期和既有人民币折算参考口径。"),
         "net_cash_rmb": ("账面净收支（折算参考）", "transaction_date", "人民币折算参考", "已确认账面收入减已确认账面支出；不代表银行实际到账或银行账户余额。"),
@@ -2674,7 +2676,7 @@ def finance_dashboard_details(request):
     can_view_purchases = user_can(request.user, "purchases", "view")
     if metric in {"sales_rmb", "receivable_count", "receivable_rmb"} and not can_view_orders:
         require_finance_permission(request.user, "orders", "view")
-    if metric in {"purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb"} and not (can_view_orders and can_view_purchases):
+    if metric in {"purchase_cost_rmb", "order_expense_rmb", "receivable_reduction_rmb", "estimated_profit_rmb"} and not (can_view_orders and can_view_purchases):
         require_finance_permission(request.user, "purchases", "view")
         require_finance_permission(request.user, "orders", "view")
     if metric in {"payable_count", "payable_rmb"} and not can_view_purchases:
@@ -2700,7 +2702,7 @@ def finance_dashboard_details(request):
             "detail_label": "查看订单",
         }
 
-    if metric in {"sales_rmb", "purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb"}:
+    if metric in {"sales_rmb", "purchase_cost_rmb", "order_expense_rmb", "receivable_reduction_rmb", "estimated_profit_rmb"}:
         orders = _finance_period_orders(request.user, start, end, can_view_orders)
         for order in orders:
             sales = order.total_amount * order.exchange_rate
@@ -2712,11 +2714,12 @@ def finance_dashboard_details(request):
                 amount = {
                     "purchase_cost_rmb": profit["purchase_cost_rmb"],
                     "order_expense_rmb": profit["expense_rmb"],
+                    "receivable_reduction_rmb": profit["receivable_reduction_rmb"],
                     "estimated_profit_rmb": profit["estimated_profit_rmb"],
                 }[metric]
                 note = (
                     f"销售额 ¥{sales}；采购归属成本 ¥{profit['purchase_cost_rmb']}；"
-                    f"订单费用 ¥{profit['expense_rmb']}。"
+                    f"订单费用 ¥{profit['expense_rmb']}；核准非现金抵减 ¥{profit['receivable_reduction_rmb']}。"
                 )
             total_amount += amount
             rows.append(order_row(order, amount, note))
@@ -2779,10 +2782,10 @@ def finance_dashboard_details(request):
             })
     else:
         direction = "income" if metric == "advance_receipt_rmb" else "expense"
-        advances = _finance_advances(request.user).filter(direction=direction)
+        advances = _finance_advances(request.user).filter(direction=direction, reference_rate_missing=False, exchange_rate__isnull=False)
         advances = advances.select_related("customer", "supplier", "order", "purchase_order")
         for row in advances:
-            amount = (row.amount - row.allocated_amount) * row.exchange_rate
+            amount = (row.allocation_capacity - row.allocated_amount) * row.exchange_rate
             total_amount += amount
             relation = "客户" if row.customer_id and not user_can(request.user, "customers", "view") else (row.customer.name if row.customer_id else "供应商")
             if row.supplier_id and user_can(request.user, "suppliers", "view"):

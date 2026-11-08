@@ -26,7 +26,7 @@ let actualCashVersion = 0
 let drillVersion = 0
 const rangeError = computed(() => dateFrom.value && dateTo.value && dateFrom.value > dateTo.value ? '开始日期不能晚于结束日期。' : '')
 const periodCards = [
-  ['sales_rmb', '合同销售额'], ['estimated_profit_rmb', '预计订单利润'], ['purchase_cost_rmb', '订单采购归属成本'], ['order_expense_rmb', '订单费用'],
+  ['sales_rmb', '合同销售额'], ['estimated_profit_rmb', '预计订单利润'], ['purchase_cost_rmb', '订单采购归属成本'], ['order_expense_rmb', '订单费用'], ['receivable_reduction_rmb', '核准非现金抵减'],
   ['income_rmb', '账面收入（折算参考）'], ['expense_rmb', '账面支出（折算参考）'], ['net_cash_rmb', '账面净收支（折算参考）'],
 ]
 const balanceCards = [
@@ -37,7 +37,7 @@ const balanceCards = [
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function canDrill(metric) {
   if (metric === 'sales_rmb' || metric === 'receivable_count' || metric === 'receivable_rmb') return can('orders', 'view')
-  if (['purchase_cost_rmb', 'order_expense_rmb', 'estimated_profit_rmb'].includes(metric)) return can('orders', 'view') && can('purchases', 'view')
+  if (['purchase_cost_rmb', 'order_expense_rmb', 'receivable_reduction_rmb', 'estimated_profit_rmb'].includes(metric)) return can('orders', 'view') && can('purchases', 'view')
   if (['payable_count', 'payable_rmb'].includes(metric)) return can('purchases', 'view')
   return can('transactions', 'view')
 }
@@ -159,7 +159,7 @@ onMounted(load)
     <form class="report-filters" aria-label="概览日期范围" @submit.prevent="applyPeriod"><label>开始日期<input v-model="dateFrom" type="date" required></label><label>结束日期<input v-model="dateTo" type="date" required></label><button :disabled="loading || !!rangeError">查询</button><button type="button" class="secondary" @click="resetPeriod">本月至今</button><button v-if="can('finance', 'export')" type="button" class="secondary" :disabled="loading || exporting || !data.period || !!error" @click="exportReport">{{ exporting ? '正在导出…' : '导出 CSV' }}</button></form>
     <p v-if="rangeError" class="error" role="alert">{{ rangeError }}</p>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
-    <p class="definition-note">合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。银行实际人民币资金按银行实际日期统计；当前待结与未核销不受所选期间限制。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用，仅作经营估算。</p>
+    <p class="definition-note">合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。银行实际人民币资金按银行实际日期统计；当前待结与未核销不受所选期间限制。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用 − 核准非现金抵减，仅作经营估算。</p>
     <p class="definition-note">{{ data.cash_basis?.note || BOOK_RMB_NOTE }}</p>
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="error" @retry="load" />
     <template v-if="hasLoaded">

@@ -3,15 +3,21 @@ from decimal import Decimal
 import hashlib
 import tempfile
 import uuid
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
+from unittest import skipUnless
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.files.base import ContentFile
-from django.test import TestCase, override_settings
+from django.test import TestCase, TransactionTestCase, override_settings
+from django.db import close_old_connections, connection, connections
+from django.contrib.auth.models import AnonymousUser
 from rest_framework.test import APIClient
 
 from crm.models import AdvanceAllocation, ContractChangeRequest, Customer, FinancePlanWriteoff, FinanceReceiptAdjustment, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
-from crm.services.finance import approve_contract_change, record_contract_refund
+from crm.services.finance import approve_contract_change, record_contract_refund, record_customer_receipt
 
 
 @override_settings(
@@ -102,6 +108,18 @@ class CustomerReceiptOptimizationTests(TestCase):
         self.assertEqual(allocation.fee_credit_amount, Decimal("5"))
         self.assertEqual(order.paid_amount, Decimal("985"))
         self.assertEqual(order.outstanding_amount, Decimal("0"))
+        from crm.services.profit import order_profit_summary
+        profit = order_profit_summary(order)
+        self.assertEqual(profit["receipt_bank_fee_rmb"], Decimal("36"))
+        self.assertEqual(profit["receivable_reduction_rmb"], Decimal("72"))
+        self.assertEqual(profit["estimated_profit_rmb"], Decimal("7092"))
+        metrics = self.client.get("/api/finance-dashboard/", {"date_from": "2026-11-01", "date_to": "2026-11-30"}).data["metrics"]
+        self.assertEqual(metrics["estimated_profit_rmb"], Decimal("7092"))
+        self.assertEqual(metrics["order_expense_rmb"], Decimal("36"))
+        self.assertEqual(metrics["receivable_reduction_rmb"], Decimal("72"))
+        reduction_details = self.client.get("/api/finance-dashboard/details/", {"metric": "receivable_reduction_rmb", "date_from": "2026-11-01", "date_to": "2026-11-30"})
+        self.assertEqual(reduction_details.status_code, 200)
+        self.assertEqual(reduction_details.data["total_amount"], Decimal("72"))
         self.assertEqual(FinancePlanWriteoff.objects.get(source_transaction=row).amount, Decimal("10"))
         self.assertEqual(RmbCashEvent.objects.count(), 0)
         actual_cash = self.client.get("/api/actual-rmb-cash/", {"date_from": "2026-11-01", "date_to": "2026-11-30"})
@@ -217,6 +235,24 @@ class CustomerReceiptOptimizationTests(TestCase):
         self.assertEqual(bad.status_code, 400)
         self.assertFalse(Transaction.objects.filter(transaction_no="RCPT-BAD-AMOUNT").exists())
 
+    def test_audit_failure_rolls_back_receipt_deductions_and_plan_allocation(self):
+        order, plan = self.order_and_plan("AUDIT-ROLLBACK")
+        proof = self.voucher()
+        payload = self.receipt_payload("RCPT-AUDIT-ROLLBACK", order=order, adjustments=[
+            {"nature": "discount", "amount": "10", "handling": "applied", "reason": "已批准优惠抵减应收", "evidence": proof.pk, "plan": plan.pk},
+            {"nature": "bank_fee", "amount": "5", "handling": "company", "reason": "我方承担银行扣费", "evidence": proof.pk},
+        ])
+        with patch("crm.views.record_operation", side_effect=RuntimeError("synthetic audit failure")):
+            with self.assertRaises(RuntimeError):
+                self.client.post("/api/transactions/", payload, format="json")
+        self.assertFalse(Transaction.objects.filter(transaction_no=payload["transaction_no"]).exists())
+        self.assertFalse(FinanceReceiptAdjustment.objects.exists())
+        self.assertFalse(FinancePlanWriteoff.objects.exists())
+        self.assertFalse(AdvanceAllocation.objects.exists())
+        plan.refresh_from_db()
+        self.assertEqual(plan.settled_amount, Decimal("0"))
+        self.assertEqual(plan.remaining_amount, Decimal("1000"))
+
     def test_multi_order_allocation_currency_defaults_and_refund_cap_use_real_cash(self):
         order_a, plan_a = self.order_and_plan("MULTI-A", net_amount="100")
         order_b, plan_b = self.order_and_plan("MULTI-B", net_amount="200")
@@ -262,10 +298,65 @@ class CustomerReceiptOptimizationTests(TestCase):
         after_unknown_reference = self.client.get("/api/finance-dashboard/").data["metrics"]
         self.assertEqual(after_unknown_reference["income_rmb"], before_unknown_reference["income_rmb"])
         self.assertEqual(after_unknown_reference["advance_receipt_rmb"], before_unknown_reference["advance_receipt_rmb"])
+        advance_details = self.client.get("/api/finance-dashboard/details/", {"metric": "advance_receipt_rmb"})
+        self.assertEqual(advance_details.status_code, 200)
+        self.assertEqual(advance_details.data["total_amount"], after_unknown_reference["advance_receipt_rmb"])
         jpy = self.receipt_payload("RCPT-JPY-NO-ORDER", amount="25", remittance="25", currency="JPY", order=None, exchange_rate=None)
         jpy.pop("exchange_rate", None)
         jpy_response = self.post_receipt(jpy)
         self.assertEqual(jpy_response.data["currency"], "JPY")
         self.assertEqual(Decimal(jpy_response.data["amount"]), Decimal("25"))
         self.assertTrue(jpy_response.data["reference_rate_missing"])
+
+
+@skipUnless(connection.vendor == "postgresql", "Receipt row-lock tests require PostgreSQL")
+@override_settings(APP_STAGE="development", DEBUG=True, DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False)
+class ReceiptConcurrencyTests(TransactionTestCase):
+    def setUp(self):
+        self.customer = Customer.objects.create(code="PG-RCPT-C", name="合成并发收款客户")
+        sku = SKU.objects.create(sku="PG-RCPT-SKU", product=Product.objects.create(code="PG-RCPT-P", name="合成产品"))
+        self.order = Order.objects.create(order_no="PG-RCPT-O", customer=self.customer, currency="USD", exchange_rate="7.2", status="confirmed", order_date=date(2026, 11, 8))
+        self.order.items.create(sku=sku, quantity=1, unit_price="1000")
+        self.plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount="1000")
+
+    def race(self, callback):
+        barrier = Barrier(2)
+        def run(index):
+            close_old_connections()
+            try:
+                barrier.wait(timeout=10)
+                return callback(index)
+            finally:
+                connections.close_all()
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            return list(executor.map(run, range(2)))
+
+    def payload(self, number, value):
+        return dict(transaction_no=number, transaction_date=date(2026, 11, 8), customer=self.customer, order=self.order, amount=value, remittance_amount=value, currency="USD", exchange_rate="7.2")
+
+    def test_same_request_after_concurrent_full_settlement_creates_one_receipt(self):
+        payload = self.payload("PG-RCPT-SAME", "1000")
+        results = self.race(lambda _: record_customer_receipt(payload, AnonymousUser()))
+        self.assertEqual(results[0][0].pk, results[1][0].pk)
+        self.assertCountEqual([result[1] for result in results], [True, False])
+        self.assertEqual(Transaction.objects.count(), 1)
+        self.assertEqual(AdvanceAllocation.objects.count(), 1)
+        self.plan.refresh_from_db()
+        self.assertEqual(self.plan.remaining_amount, Decimal("0"))
+
+    def test_competing_explicit_allocations_reject_the_overallocation_atomically(self):
+        def write(index):
+            payload = self.payload(f"PG-RCPT-RACE-{index}", "600")
+            payload["plan_allocations"] = [{"plan": self.plan.pk, "amount": "600"}]
+            try:
+                record_customer_receipt(payload, AnonymousUser())
+                return "created"
+            except DjangoValidationError:
+                return "rejected"
+        self.assertCountEqual(self.race(write), ["created", "rejected"])
+        self.assertEqual(Transaction.objects.count(), 1)
+        self.assertEqual(AdvanceAllocation.objects.count(), 1)
+        self.plan.refresh_from_db()
+        self.assertEqual(self.plan.settled_amount, Decimal("600"))
+        self.assertEqual(self.plan.remaining_amount, Decimal("400"))
 

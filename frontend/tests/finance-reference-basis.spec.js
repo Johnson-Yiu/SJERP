@@ -49,7 +49,10 @@ it('transaction amount column and rate input clarify reference without changing 
  mocks.listAll.mockResolvedValue([]);mocks.api.get.mockResolvedValue({data:[]})
  await view(TransactionPage,'/transactions');expect(w.text()).toContain('账面人民币折算参考');expect(w.findAll('th').map(x=>x.text())).toContain('人民币折算参考')
  await w.findAll('button').find(b=>b.text()==='新增记账').trigger('click');await flushPromises()
- const label=w.findAll('label').find(x=>x.text().includes('参考折算汇率'));expect(label.get('input').element.value).toBe('1');expect(w.text()).not.toContain('结汇汇率')
+ expect(w.findAll('select').find(x=>x.find('option[value="CNY"]').exists()).element.value).toBe('CNY')
+ expect(w.findAll('label').some(x=>x.text().includes('账面折算参考汇率'))).toBe(false)
+ const currency=w.findAll('select').find(x=>x.find('option[value="USD"]').exists());await currency.setValue('USD');await flushPromises()
+ const label=w.findAll('label').find(x=>x.text().includes('账面折算参考汇率'));expect(label.get('input').element.value).toBe('');expect(w.text()).not.toContain('结汇汇率')
 })
 it('saved cash config keeps its title/query and signed values with an unconditional reference note',async()=>{
  mocks.api.get.mockResolvedValue({data:{date_label:'发生日期',period:{date_from:'2026-09-01',date_to:'2026-09-30'},comparison_period:{date_from:'2026-08-01',date_to:'2026-08-31'},totals:{amount:'-16.6689',count:1,quantities:{}},changes:{amount:null},rows:[{key:'expense',label:'支出',amount:'-16.6689',count:1,quantities:{}}],note:'旧API说明'}})

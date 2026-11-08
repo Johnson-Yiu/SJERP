@@ -196,4 +196,18 @@ describe('history preflight page', () => {
     expect(wrapper.find('.preflight-summary').exists()).toBe(false)
     wrapper.unmount()
   })
+  it('ignores a CSV response and late error belonging to the previous workbook', async () => {
+    const csv = deferred(), old = deferred()
+    mocks.post.mockResolvedValueOnce({ data: workbookResult('A', 1) }).mockReturnValueOnce(csv.promise).mockReturnValueOnce(old.promise).mockResolvedValueOnce({ data: workbookResult('B', 2) })
+    const wrapper = mountPage()
+    await selectWorkbook(wrapper, 'A.xlsx'); await wrapper.get('button.preflight-primary').trigger('click'); await flushPromises()
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    await wrapper.findAll('button').find(button => button.text().includes('下载 CSV')).trigger('click')
+    await selectWorkbook(wrapper, 'C.xlsx'); await wrapper.get('button.preflight-primary').trigger('click')
+    await selectWorkbook(wrapper, 'B.xlsx'); await wrapper.get('button.preflight-primary').trigger('click'); await flushPromises()
+    csv.resolve({data:new Blob(['A CSV'])}); old.reject(new Error('C late error')); await flushPromises()
+    expect(click).not.toHaveBeenCalled(); expect(wrapper.text()).toContain('B-SO-1'); expect(wrapper.text()).not.toContain('C late error')
+    click.mockRestore(); wrapper.unmount()
+  })
+
 })

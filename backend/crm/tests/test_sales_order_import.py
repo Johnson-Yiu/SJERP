@@ -4,6 +4,8 @@ from io import BytesIO
 from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
 from unittest import skipUnless
+from unittest.mock import patch
+from django.core import signing
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -90,6 +92,26 @@ class SalesOrderImportApiTests(TestCase):
             {"file": upload(data), "preview_token": token},
             format="multipart",
         )
+
+    def test_expired_preview_only_recovers_an_existing_batch(self):
+        source = workbook_bytes(self.rows())
+        preview = self.preview(source).data
+        original_loads = signing.loads
+        def expired_then_verify(value, **kwargs):
+            if "max_age" in kwargs:
+                raise signing.SignatureExpired("expired")
+            return original_loads(value, **kwargs)
+        with patch("crm.sales_order_import.signing.loads", side_effect=expired_then_verify):
+            refused = self.execute(source, preview["preview_token"])
+        self.assertEqual(refused.status_code, 400)
+        self.assertEqual(Order.objects.count(), 0)
+        first = self.execute(source, preview["preview_token"])
+        self.assertEqual(first.status_code, 200)
+        with patch("crm.sales_order_import.signing.loads", side_effect=expired_then_verify):
+            recovered = self.execute(source, preview["preview_token"])
+        self.assertEqual(recovered.status_code, 200)
+        self.assertEqual(recovered.data, first.data)
+        self.assertEqual(SalesOrderImportBatch.objects.count(), 1)
 
     def test_template_is_a_real_xlsx_with_required_columns(self):
         response = self.client.get("/api/import/orders/template/")

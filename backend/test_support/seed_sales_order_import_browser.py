@@ -25,7 +25,8 @@ evidence_dir = Path(os.environ.get("SALES_ORDER_IMPORT_EVIDENCE_DIR", "")).resol
 expected_evidence_dir = (
     repo_root / "docs" / "uat-evidence" / "sales-order-import-01" / "browser" / "sales-order-import-real.spec"
 ).resolve()
-if evidence_dir != expected_evidence_dir or evidence_dir.is_symlink():
+review_evidence_dir = (repo_root / "docs" / "uat-evidence" / "first-release-independent-review-02" / "browser" / "sales-order-import-real.spec").resolve()
+if evidence_dir not in {expected_evidence_dir, review_evidence_dir} or evidence_dir.is_symlink():
     raise SystemExit("The sales import browser fixture must use its allowlisted evidence directory.")
 evidence_dir.mkdir(parents=True, exist_ok=True)
 

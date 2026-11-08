@@ -1,8 +1,9 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onBeforeUnmount } from 'vue'
 import { AlertTriangle, ArrowRight, CircleHelp, Download, FileUp } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
-import { api } from '../api'
+import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+const { api } = useWorkspaceApi()
 
 const fileInput = ref(null)
 const file = ref(null)
@@ -12,7 +13,8 @@ const loading = ref(false)
 const downloading = ref(false)
 const error = ref('')
 const showPassedRows = ref(false)
-let selectionVersion = 0
+let selectionVersion = 0, alive = true
+onBeforeUnmount(() => { alive = false; selectionVersion++ })
 
 const summary = computed(() => preview.value?.summary || {})
 const issueRows = computed(() => (preview.value?.results || []).filter(row => row.status !== '通过'))
@@ -51,15 +53,15 @@ async function runPreflight() {
   showPassedRows.value = false
   try {
     const response = await api.post('/import/history-preflight/', formData(workbook))
-    if (version !== selectionVersion || file.value !== workbook) return
+    if (!alive || version !== selectionVersion || file.value !== workbook) return
     preview.value = response.data
     previewFile.value = workbook
   } catch (e) {
-    if (version === selectionVersion && file.value === workbook) {
+    if (alive && version === selectionVersion && file.value === workbook) {
       error.value = e.message || '预检失败，请检查文件后重试。'
     }
   } finally {
-    if (version === selectionVersion && file.value === workbook) loading.value = false
+    if (alive && version === selectionVersion && file.value === workbook) loading.value = false
   }
 }
 
@@ -71,7 +73,7 @@ async function downloadCsv() {
   error.value = ''
   try {
     const response = await api.post('/import/history-preflight/?report=csv', formData(workbook), { responseType: 'blob' })
-    if (version !== selectionVersion || file.value !== workbook || previewFile.value !== workbook) return
+    if (!alive || version !== selectionVersion || file.value !== workbook || previewFile.value !== workbook) return
     const url = URL.createObjectURL(response.data)
     const anchor = document.createElement('a')
     anchor.href = url
@@ -83,11 +85,11 @@ async function downloadCsv() {
       URL.revokeObjectURL(url)
     }, 1000)
   } catch (e) {
-    if (version === selectionVersion && file.value === workbook && previewFile.value === workbook) {
+    if (alive && version === selectionVersion && file.value === workbook && previewFile.value === workbook) {
       error.value = e.message || 'CSV 下载失败，请重试。'
     }
   } finally {
-    if (version === selectionVersion) downloading.value = false
+    if (alive && version === selectionVersion) downloading.value = false
   }
 }
 

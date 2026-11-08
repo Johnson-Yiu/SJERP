@@ -613,6 +613,7 @@ class SalesOrderImportExecuteView(APIView):
     def post(self, request):
         _require_order_permissions(request.user)
         django_request = getattr(request, "_request", request)
+        expired = False
         try:
             data, digest = _read_upload(request.FILES.get("file"), django_request)
             token = signing.loads(
@@ -621,7 +622,9 @@ class SalesOrderImportExecuteView(APIView):
                 max_age=PREVIEW_MAX_AGE_SECONDS,
             )
         except signing.SignatureExpired:
-            return Response({"detail": "预览已过期，请重新上传并校验。"}, status=status.HTTP_400_BAD_REQUEST)
+            # An expired preview may retrieve an existing result, never create a batch.
+            token = signing.loads(str(request.data.get("preview_token") or ""), salt=PREVIEW_SALT)
+            expired = True
         except (signing.BadSignature, TypeError, SalesOrderImportInputError) as exc:
             return Response({"detail": str(exc) or "预览凭证无效，请重新上传并校验。"}, status=status.HTTP_400_BAD_REQUEST)
         operator_id = getattr(request.user, "pk", None) if request.user.is_authenticated else None
@@ -633,6 +636,13 @@ class SalesOrderImportExecuteView(APIView):
             preview_id = uuid.UUID(token["preview_id"])
         except (KeyError, ValueError, TypeError, AttributeError):
             return Response({"detail": "预览凭证无效，请重新上传并校验。"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if expired:
+            batch = SalesOrderImportBatch.objects.filter(preview_id=preview_id).first()
+            if batch is not None:
+                _require_batch_result_access(batch, request.user)
+                return Response(batch.result)
+            return Response({"detail": "预览已过期且未找到已完成批次，请重新上传并校验。", "business_write_performed": False}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             with transaction.atomic():

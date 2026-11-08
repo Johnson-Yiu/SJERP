@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
+import { ref } from 'vue'
+import { workspaceKey, workspaceManagerKey } from '../src/composables/useWorkspaceNavigation'
 import ImportPage from '../src/views/ImportPage.vue'
 
 const mocks = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), confirm: vi.fn() }))
@@ -25,6 +27,7 @@ const preview = {
 }
 
 beforeEach(() => {
+  sessionStorage.clear()
   vi.resetAllMocks()
   mocks.get.mockResolvedValue({ data: { customers: ['code', 'name'] } })
   mocks.confirm.mockResolvedValue(true)
@@ -89,4 +92,51 @@ it('keeps whole-order errors downloadable while confirming valid drafts once', a
     expect(wrapper.text()).toContain('SO-2026-00017')
     expect(wrapper.text()).toContain('历史资料预检与承接')
   } finally { wrapper.unmount() }
+})
+
+function deferred() { let resolve; const promise = new Promise(done => { resolve = done }); return { promise, resolve } }
+async function readyPage() {
+  const wrapper = mountPage(); await flushPromises(); await button(wrapper, '销售订单').trigger('click')
+  const input = orderFileInput(wrapper)
+  const file = new File(['workbook'], 'orders.xlsx', { lastModified: 42 })
+  Object.defineProperty(input.element, 'files', { configurable: true, value: [file] }); await input.trigger('change')
+  mocks.post.mockResolvedValueOnce({ data: preview }); await button(wrapper, '预览并校验').trigger('click'); await flushPromises()
+  return { wrapper, file }
+}
+it('does not execute a stale confirmation after component unmount', async () => {
+  const { wrapper } = await readyPage(), confirm = deferred()
+  mocks.confirm.mockReturnValueOnce(confirm.promise)
+  await button(wrapper, '确认导入 1 张草稿').trigger('click'); wrapper.unmount()
+  confirm.resolve(true); await flushPromises()
+  expect(mocks.post).toHaveBeenCalledTimes(1)
+})
+it('restores the original preview identity after a lost response and reopen', async () => {
+  const { wrapper, file } = await readyPage()
+  mocks.post.mockRejectedValueOnce(new Error('Network response lost'))
+  await button(wrapper, '确认导入 1 张草稿').trigger('click'); await flushPromises()
+  wrapper.unmount()
+  const reopened = mountPage(); await flushPromises(); await button(reopened, '销售订单').trigger('click')
+  const input = orderFileInput(reopened)
+  Object.defineProperty(input.element, 'files', { configurable: true, value: [file] }); await input.trigger('change')
+  expect(reopened.text()).toContain('已恢复原提交身份')
+  mocks.post.mockResolvedValueOnce({ data: { batch_id:'17', total_rows:3, total_orders:2, created_orders:1, failed_orders:1, orders:[], errors:[] } })
+  await button(reopened, '确认导入 1 张草稿').trigger('click'); await flushPromises()
+  expect(mocks.post.mock.calls[2][1].get('preview_token')).toBe(preview.preview_token)
+  expect(sessionStorage.length).toBe(0); reopened.unmount()
+})
+
+it('blocks workspace close and refresh throughout confirmation and execution', async () => {
+  const workspace = { id:'guard-test', guards:new Set(), controller:new AbortController(), closed:false, busy:0, stale:false }
+  const wrapper = mount(ImportPage, { global:{ provide:{ [workspaceKey]:workspace, [workspaceManagerKey]:{identity:ref('codex-test')} }, stubs:{RouterLink:{template:'<a><slot /></a>'}} } })
+  await flushPromises(); await button(wrapper, '销售订单').trigger('click')
+  const input=orderFileInput(wrapper); Object.defineProperty(input.element,'files',{value:[new File(['xlsx'],'guard.xlsx')],configurable:true}); await input.trigger('change')
+  mocks.post.mockResolvedValueOnce({data:preview}); await button(wrapper,'预览并校验').trigger('click'); await flushPromises()
+  const confirmation=deferred(), execution=deferred(); mocks.confirm.mockReturnValueOnce(confirmation.promise); mocks.post.mockReturnValueOnce(execution.promise)
+  await button(wrapper,'确认导入 1 张草稿').trigger('click')
+  const guard=[...workspace.guards][0]; expect(await guard.confirmLeave()).toBe(false)
+  let event=new Event('beforeunload',{cancelable:true}); window.dispatchEvent(event); expect(event.defaultPrevented).toBe(true)
+  confirmation.resolve(true); await flushPromises(); expect(await guard.confirmLeave()).toBe(false)
+  event=new Event('beforeunload',{cancelable:true}); window.dispatchEvent(event); expect(event.defaultPrevented).toBe(true)
+  execution.resolve({data:{batch_id:'18',total_rows:3,total_orders:2,created_orders:1,failed_orders:1,orders:[],errors:[]}}); await flushPromises()
+  expect(await guard.confirmLeave()).toBe(true); wrapper.unmount()
 })

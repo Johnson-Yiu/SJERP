@@ -7,22 +7,30 @@ import { UploadCloud, Download, FileSpreadsheet, CheckCircle2, AlertTriangle } f
 import { confirmDialog } from '../dialogs'
 import { useAccessControl } from '../accessControl'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
 
 const entity = ref('customers'), file = ref(null), fileInput = ref(null), templates = ref({}), previewing = ref(false), confirming = ref(false), executing = ref(false), result = ref(null), error = ref('')
 const templateLoading = ref(false), templateError = ref(''), phase = ref('idle'), errorPage = ref(1)
 const importMode = ref('csv'), orderFile = ref(null), orderFileInput = ref(null), orderTemplateLoading = ref(false)
 const orderPreviewing = ref(false), orderConfirming = ref(false), orderExecuting = ref(false), orderResult = ref(null), orderError = ref(''), orderPhase = ref('idle')
-let version = 0, alive = true, retryOfBatchId = null
+let version = 0, orderVersion = 0, alive = true, retryOfBatchId = null
+const { storageKey } = useWorkspaceNavigation()
+const recoveryKey = storageKey('sales-order-import-pending-v1', { accountOnly: true })
+const fileIdentity = value => value ? [value.name, value.size, value.lastModified].join(':') : ''
+function pendingOrder() { try { return JSON.parse(sessionStorage.getItem(recoveryKey) || 'null') } catch { return null } }
+function rememberOrder(preview, selected) {
+  sessionStorage.setItem(recoveryKey, JSON.stringify({ file: fileIdentity(selected), preview_token: preview.preview_token, total_rows: preview.total_rows, total_orders: preview.total_orders, valid_orders: preview.valid_orders, invalid_orders: preview.invalid_orders }))
+}
 const { can } = useAccessControl()
 const mayImport = computed(() => can('imports', 'import'))
 const busy = computed(() => previewing.value || confirming.value || executing.value)
-useUnsavedChangesGuard({ data: () => null, enabled: () => false, busy: () => busy.value })
 const types = { customers: ['客户', '按客户编号匹配'], products: ['产品', '分类须预先建立'], skus: ['SKU', '按 SKU 与产品编号匹配'], transactions: ['财务流水', '只新增，不覆盖'] }
 const destinations = { customers: '/customers', products: '/products', skus: '/skus', transactions: '/transactions' }
 const headers = computed(() => Array.isArray(templates.value[entity.value]) ? templates.value[entity.value] : [])
 const canExecute = computed(() => mayImport.value && phase.value === 'ready' && Boolean(result.value?.preview_token) && !result.value?.errors?.length)
 const canExecuteOrders = computed(() => mayImport.value && orderPhase.value === 'ready' && Boolean(orderResult.value?.preview_token) && Number(orderResult.value?.valid_orders) > 0)
 const orderBusy = computed(() => orderPreviewing.value || orderConfirming.value || orderExecuting.value)
+useUnsavedChangesGuard({ data: () => null, enabled: () => false, busy: () => busy.value || orderBusy.value })
 const orderStatusCopy = computed(() => ({ idle: '尚未选择文件', selected: '文件已选择，尚未校验', previewing: '正在上传并校验，未写入业务数据', invalid: '没有可导入的完整订单', ready: '校验完成，可确认创建草稿', confirming: '等待确认创建销售草稿', executing: '正在创建销售草稿，请勿离开', completed: '导入结果已保存', 'preview-error': '预览失败，请检查文件后重试', 'execute-error': '提交结果待核对，请先查看订单管理' }[orderPhase.value]))
 const errors = computed(() => result.value?.errors || [])
 const orderErrors = computed(() => orderResult.value?.errors || [])
@@ -30,7 +38,7 @@ function errorCopy(message) { return message === 'Product matching query does no
 const visibleErrors = computed(() => errors.value.slice((errorPage.value - 1) * 20, errorPage.value * 20))
 const statusCopy = computed(() => ({ idle: '尚未选择文件', selected: '文件已选择，尚未校验', previewing: '正在上传并校验，尚未写入', invalid: '校验未通过，尚未写入', ready: '校验通过，尚未写入', confirming: '等待确认正式写入', executing: '正在执行导入，请勿离开', completed: '导入完成，已写入数据库', 'preview-error': '预览失败，请检查后重试', 'execute-error': '未确认导入完成，请先核对记录' }[phase.value]))
 onMounted(loadTemplates)
-onBeforeUnmount(() => { alive = false; version++ })
+onBeforeUnmount(() => { alive = false; version++; orderVersion++ })
 async function loadTemplates() {
   if (templateLoading.value) return
   templateLoading.value = true; templateError.value = ''
@@ -43,10 +51,17 @@ function choose(e) { if (busy.value) return; retryOfBatchId = null; file.value =
 watch(entity, () => { retryOfBatchId = null; file.value = null; if (fileInput.value) fileInput.value.value = ''; invalidatePreview() }, { flush: 'sync' })
 function selectOrderFile(event) {
   if (orderBusy.value) return
+  orderVersion++
   orderFile.value = event.target.files[0] || null
   orderResult.value = null; orderError.value = ''; orderPhase.value = orderFile.value ? 'selected' : 'idle'
+  const pending = pendingOrder()
+  if (pending?.file === fileIdentity(orderFile.value)) {
+    orderResult.value = { ...pending, orders: [], errors: [] }; orderPhase.value = 'ready'
+    orderError.value = '已恢复原提交身份。再次确认会核对原批次；离开页面不代表回滚。'
+  }
 }
 function clearOrderPreview() {
+  orderVersion++
   orderResult.value = null; orderError.value = ''; orderPhase.value = orderFile.value ? 'selected' : 'idle'
 }
 function downloadCsv(text, filename) {
@@ -74,17 +89,20 @@ async function downloadOrderTemplate() {
 }
 async function previewOrders() {
   if (orderBusy.value) return
+  if (pendingOrder()) { orderError.value = '存在结果待核对的提交，请选择原文件，再次确认原批次后继续。'; return }
   if (!mayImport.value) { orderError.value = '当前账号没有销售订单导入权限。'; return }
   if (!orderFile.value) { orderError.value = '请先选择销售订单 XLSX 文件。'; return }
+  const request = ++orderVersion, selectedFile = orderFile.value
   orderPreviewing.value = true; orderError.value = ''; orderResult.value = null; orderPhase.value = 'previewing'
-  const data = new FormData(); data.append('file', orderFile.value)
+  const data = new FormData(); data.append('file', selectedFile)
   try {
     const response = (await api.post('/import/orders/preview/', data)).data
+    if (!alive || request !== orderVersion || selectedFile !== orderFile.value) return
     if (!Array.isArray(response.errors) || !Array.isArray(response.orders) || ![response.total_rows, response.total_orders, response.valid_orders, response.invalid_orders].every(n => Number.isInteger(n) && n >= 0) || response.valid_orders + response.invalid_orders !== response.total_orders || response.orders.length !== response.total_orders || (response.valid_orders > 0 && !response.preview_token)) throw new Error('预览结果不完整，请重新上传并校验。')
     orderResult.value = response
     orderPhase.value = response.valid_orders > 0 ? 'ready' : 'invalid'
-  } catch (e) { orderError.value = e.message; orderPhase.value = 'preview-error' }
-  finally { orderPreviewing.value = false }
+  } catch (e) { if (alive && request === orderVersion) { orderError.value = e.message; orderPhase.value = 'preview-error' } }
+  finally { if (alive && request === orderVersion) orderPreviewing.value = false }
 }
 function downloadOrderFailures() {
   if (!orderErrors.value.length) return
@@ -98,20 +116,32 @@ function downloadOrderFailures() {
 }
 async function executeOrders() {
   if (orderBusy.value || !canExecuteOrders.value) return
-  const previewResult = orderResult.value, selectedFile = orderFile.value
+  const previewResult = orderResult.value, selectedFile = orderFile.value, request = orderVersion
+  const valid = () => alive && request === orderVersion && selectedFile === orderFile.value && previewResult === orderResult.value
   orderConfirming.value = true; orderPhase.value = 'confirming'
   try {
     const invalidNote = previewResult.invalid_orders ? `另有 ${previewResult.invalid_orders} 张订单含错误，将整单跳过。` : ''
     const approved = await confirmDialog({ title: '确认导入销售草稿', message: `将创建 ${previewResult.valid_orders} 张销售订单草稿，共 ${previewResult.total_rows} 条明细。${invalidNote}导入不会确认订单、占库存、生成应收计划或登记发货。`, confirmText: '确认导入' })
+    if (!valid()) return
     if (!approved || !mayImport.value) { orderPhase.value = 'ready'; return }
+    rememberOrder(previewResult, selectedFile)
+    if (!valid() || !mayImport.value) return
     orderExecuting.value = true; orderPhase.value = 'executing'; orderError.value = ''
     const data = new FormData(); data.append('file', selectedFile); data.append('preview_token', previewResult.preview_token)
     const response = (await api.post('/import/orders/execute/', data)).data
+    if (!valid()) return
     if (!response.batch_id || !Array.isArray(response.errors) || !Array.isArray(response.orders) || ![response.total_rows, response.total_orders, response.created_orders, response.failed_orders].every(n => Number.isInteger(n) && n >= 0) || response.created_orders + response.failed_orders !== response.total_orders) throw new Error('返回结果不完整，请核对订单管理后重新预览。')
+    sessionStorage.removeItem(recoveryKey)
     orderResult.value = { ...response, completed: true }; orderPhase.value = 'completed'
   } catch (e) {
-    orderError.value = `${e.message} 请核对订单管理后重新预览，不要直接重复确认。`; orderPhase.value = 'execute-error'
-  } finally { orderConfirming.value = false; orderExecuting.value = false }
+    if (valid()) {
+      if (e.data?.business_write_performed === false) {
+        sessionStorage.removeItem(recoveryKey); orderResult.value = null; orderPhase.value = 'preview-error'; orderError.value = e.message
+      } else {
+        orderError.value = `${e.message} 提交结果待核对，请保留原文件和预览再次确认原批次；离开页面不代表回滚。`; orderPhase.value = 'ready'
+      }
+    }
+  } finally { if (alive && request === orderVersion) { orderConfirming.value = false; orderExecuting.value = false } }
 }
 async function preview() {
   if (busy.value) return

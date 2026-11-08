@@ -1,7 +1,7 @@
 """Shared operational profit estimate; intentionally not an accounting net-profit calculation."""
 from decimal import Decimal
 
-from crm.models import AdvanceAllocation, Transaction
+from crm.models import AdvanceAllocation, FinancePlanWriteoff, FinancePlanWriteoffCorrection, Transaction
 from .purchase_costs import order_purchase_cost
 
 
@@ -20,9 +20,12 @@ def order_profit_summary(order):
     )), Decimal("0"))
     allocated_fees = sum((row.fee_credit_amount * row.advance.exchange_rate for row in AdvanceAllocation.objects.filter(
         plan__order=order, is_active=True, advance__status="confirmed", advance__fee_responsibility="company",
-    ).select_related("advance")), Decimal("0"))
+    ).exclude(advance__kind="customer_receipt", advance__order=order).select_related("advance")), Decimal("0"))
     expense_rmb += direct_fees + allocated_fees
-    sales_rmb = order.total_amount * order.exchange_rate
+    writeoffs = FinancePlanWriteoff.objects.filter(plan__order=order, source_transaction__status="confirmed")
+    reduction = sum(writeoffs.values_list("amount", flat=True), Decimal("0"))
+    reduction -= sum(FinancePlanWriteoffCorrection.objects.filter(writeoff__in=writeoffs).values_list("amount", flat=True), Decimal("0"))
+    sales_rmb = (order.total_amount - reduction) * order.exchange_rate
     purchase_cost_rmb = purchase_base_rmb + purchase_additional_rmb
     estimated_profit_rmb = sales_rmb - purchase_cost_rmb - expense_rmb
     return {

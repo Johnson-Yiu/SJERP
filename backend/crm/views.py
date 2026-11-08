@@ -2871,6 +2871,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 qs = qs.filter(**{lookup: self.request.query_params[key]})
         return qs
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -2943,6 +2944,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response(self.get_serializer(row).data)
 
     @action(detail=True, methods=["post"])
+    @transaction.atomic
     def allocate(self, request, pk=None):
         from rest_framework import serializers as drf_serializers
         plan_id = drf_serializers.IntegerField(min_value=1).run_validation(request.data.get("plan"))
@@ -3163,6 +3165,7 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return qs
 
     @action(detail=True, methods=["post"])
+    @transaction.atomic
     def settle(self, request, pk=None):
         require_finance_permission(request.user, "transactions", "create")
         plan = self.get_object()

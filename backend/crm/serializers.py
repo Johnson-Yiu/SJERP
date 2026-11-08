@@ -2588,7 +2588,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             "amount": str(row.amount),
             "reason": row.reason,
             "confirmed_actor": row.confirmed_actor,
-            "corrected_amount": str(row.corrections.aggregate(total=Sum("amount"))["total"] or Decimal("0")),
+            "corrected_amount": str((row.corrections.aggregate(total=Sum("amount"))["total"] or Decimal("0")).quantize(Decimal("0.0001"))),
             "corrections": [{"id": correction.pk, "amount": str(correction.amount), "reason": correction.reason,
                 "actor": correction.actor, "created_at": correction.created_at}
                 for correction in row.corrections.order_by("created_at", "pk")],

@@ -252,6 +252,33 @@ class CashEventTests(CashFixture, TestCase):
         self.assertEqual(plan.settled_amount, D("20"))
         self.assertEqual(Transaction.objects.filter(order=order, direction="expense", kind="refund").count(), 2)
 
+    def test_fee_only_installment_is_non_cash_and_voidable(self):
+        content = b"%PDF-1.4\nSynthetic fee installment voucher\n%%EOF"
+        proof = FinanceVoucher(original_name="fee-installment.pdf", sha256=hashlib.sha256(content).hexdigest(), size=len(content), scope="transaction", actor={})
+        proof.file.save("fee-installment.pdf", ContentFile(content), save=False)
+        proof.save()
+        order = Order.objects.create(order_no="FEE-ONLY-O", customer=self.customer, currency="USD", exchange_rate="7.1", status="confirmed", order_date=date(2026, 10, 18))
+        order.items.create(sku=self.sku, quantity=1, unit_price=1000)
+        first = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=980)
+        second = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=20)
+        receipt = record_transaction(dict(kind="customer_receipt", direction="income", order=order, customer=self.customer,
+            amount="980", remittance_amount="1000", bank_fee_amount="20", fee_responsibility="company",
+            fee_reason="银行凭证确认我方承担手续费", fee_evidence=proof, currency="USD", exchange_rate="7.1"))
+        first.refresh_from_db(); second.refresh_from_db(); order.refresh_from_db()
+        self.assertEqual((first.remaining_amount, second.remaining_amount), (0, 0))
+        self.assertEqual(order.paid_amount, D("980"))
+        self.assertEqual(order_profit_summary(order)["order_expense_rmb"], D("142"))
+        allocation = receipt.allocations.get(plan=second)
+        self.assertEqual((allocation.cash_amount, allocation.fee_credit_amount), (0, 20))
+        self.assertEqual(Transaction.objects.filter(order=order).count(), 1)
+        refund = record_contract_refund(order, {"amount": "20", "currency": "USD"})
+        first.refresh_from_db(); second.refresh_from_db()
+        self.assertEqual((first.remaining_amount, second.remaining_amount), (20, 0))
+        void_transaction(refund, "退款登记错误需重新核实")
+        void_transaction(receipt, "凭证登记错误需重新核实")
+        first.refresh_from_db(); second.refresh_from_db()
+        self.assertEqual((first.remaining_amount, second.remaining_amount), (980, 20))
+
     def test_customer_and_unknown_fee_keep_unreceived_amount_open_and_void_restores_full_settlement(self):
         def receipt_proof(name):
             content = b"%PDF-1.4\nSynthetic receipt voucher\n%%EOF"

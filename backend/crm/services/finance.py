@@ -360,7 +360,7 @@ def record_transaction(payload):
         if remaining <= 0:
             raise ValidationError("该计划已无待结余额，请核对计划状态。")
         if kind == "customer_receipt" and not plan_chunk:
-            return record_contract_payment(plan.order, {**payload, "amount": amount})
+            return record_contract_payment(plan.order, {**payload, "amount": amount, "_preferred_plan": plan.pk})
         settlement_request = positive_decimal(requested_settlement, "本笔核销金额") if requested_settlement is not None else amount
         applied_amount = min(settlement_request, remaining)
         if plan.order_id:
@@ -571,6 +571,8 @@ def allocate_advance(advance, plan, amount):
 @transaction.atomic
 def record_contract_payment(contract, payload):
     """One cash event may settle several installments; only true excess becomes an advance."""
+    payload = payload.copy()
+    preferred_plan = payload.pop("_preferred_plan", None)
     contract = contract.__class__.objects.select_for_update().get(pk=contract.pk)
     reject_unlinked_historical_finance(contract, "登记收付款")
     if contract.status in {"draft", "cancelled"}:
@@ -580,6 +582,10 @@ def record_contract_payment(contract, payload):
         raise ValidationError("收付款币种必须与合同一致。")
     ensure_default_payment_plans(contract)
     plans = list(contract.payment_plans.select_for_update().filter(status="open").order_by("due_date", "pk"))
+    if preferred_plan is not None:
+        if not any(plan.pk == preferred_plan for plan in plans):
+            raise ValidationError("所选收款计划已结清或不属于当前订单。")
+        plans.sort(key=lambda plan: plan.pk != preferred_plan)
     if not plans:
         if is_historical(contract) or hasattr(contract, "history_continuation"):
             raise ValidationError("历史接续合同没有未结计划；额外款项请登记为未分配预收预付。")
@@ -625,9 +631,26 @@ def record_contract_payment(contract, payload):
     else:
         chunks[0]["fee_extra"] = Decimal("0")
 
+    # A later installment can consist entirely of a company-borne bank fee.
+    # Keep that fee on the real receipt and represent the allocation without
+    # creating a zero-value cash transaction.
+    fee_only = sum((chunk["fee_credit"] for chunk in chunks if not chunk["cash"]), Decimal("0"))
+    chunks[0]["fee_extra"] += fee_only
+
     first = None
     fee_memo_attached = False
     for index, chunk in enumerate(chunks):
+        if not chunk["cash"]:
+            if first is None or not chunk["fee_credit"]:
+                raise ValidationError("手续费核销必须关联实际到账的原收款。")
+            AdvanceAllocation.objects.create(advance=first, plan=chunk["plan"], amount=chunk["settlement"],
+                cash_amount=Decimal("0"), fee_credit_amount=chunk["fee_credit"])
+            first.allocated_amount += chunk["settlement"]
+            first.save(update_fields=["allocated_amount", "updated_at"])
+            chunk["plan"].settled_amount += chunk["settlement"]
+            _sync_plan_status(chunk["plan"])
+            chunk["plan"].save(update_fields=["settled_amount", "status", "updated_at"])
+            continue
         row_fee = chunk["fee_credit"]
         if index == 0:
             row_fee += chunk["fee_extra"]
@@ -695,7 +718,15 @@ def record_contract_refund(contract, payload):
     remaining = amount
     first = None
     for plan in plans:
-        applied = min(remaining, plan.settled_amount)
+        # Only actual cash associated with this plan can be returned. A plan
+        # settled entirely by a fee credit has no cash to refund.
+        payment_kind = "customer_receipt" if is_order else "supplier_payment"
+        refund_kind = "refund" if is_order else "supplier_refund"
+        paid_cash = sum(plan.transactions.filter(status="confirmed", kind=payment_kind).values_list("amount", flat=True), Decimal("0"))
+        paid_cash += sum((allocation.cash_amount if allocation.cash_amount is not None else allocation.amount
+            for allocation in plan.advance_allocations.filter(is_active=True, advance__status="confirmed")), Decimal("0"))
+        refunded = sum(plan.transactions.filter(status="confirmed", kind=refund_kind).values_list("amount", flat=True), Decimal("0"))
+        applied = min(remaining, plan.settled_amount, max(paid_cash - refunded, Decimal("0")))
         if applied <= 0:
             continue
         row = Transaction.objects.create(
@@ -770,7 +801,10 @@ def approve_contract_change(change):
             if reduction <= 0:
                 continue
             candidate.planned_amount -= reduction
-            candidate.status = "cancelled" if candidate.planned_amount == 0 else ("settled" if candidate.planned_amount == candidate.settled_amount else "open")
+            if candidate.planned_amount == 0:
+                candidate.status = "cancelled"
+            else:
+                _sync_plan_status(candidate)
             candidate.save(update_fields=["planned_amount", "status", "updated_at"])
             plan = candidate
             remaining_reduction -= reduction
@@ -798,7 +832,7 @@ def order_receivable_state(order, plans, today=None):
         return {"state": order.status, "label": "尚未生效" if order.status == "draft" else "已取消", "overdue_amount": Decimal("0")}
     effective = [p for p in plans if p.direction == "receivable" and p.status != "cancelled"]
     total = sum((p.planned_amount for p in effective), Decimal("0"))
-    settled = sum((p.settled_amount for p in effective), Decimal("0"))
+    settled = sum((p.settled_amount + _writeoff_total(p) for p in effective), Decimal("0"))
     balance = sum((p.remaining_amount for p in effective if p.status == "open"), Decimal("0"))
     overdue = sum((p.remaining_amount for p in effective if p.status == "open" and p.remaining_amount > 0 and p.due_date and p.due_date < today), Decimal("0"))
     if not effective:

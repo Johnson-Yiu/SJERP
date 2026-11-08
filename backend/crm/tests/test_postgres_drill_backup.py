@@ -1,5 +1,6 @@
 """Real PostgreSQL tests, enabled only for an explicitly owned temp cluster."""
 
+import hashlib
 import json
 import os
 import socket
@@ -20,6 +21,7 @@ from django.test import SimpleTestCase
 
 from crm.services.backup_recovery import BackupRecoveryError, _sha256
 from crm.services.postgres_drill_backup import IsolatedPostgresDrill
+from crm.services.private_media import build_private_media_manifest, compare_private_media_manifest
 
 
 @unittest.skipUnless(os.getenv("ISS018_DRILL_ROOT"), "requires an explicitly owned PostgreSQL 17 drill cluster")
@@ -48,7 +50,7 @@ class PostgresDrillBackupTests(SimpleTestCase):
         tables = ("auth_user", "crm_customer", "crm_supplier", "crm_product", "crm_sku", "crm_quote",
                   "crm_quoteitem", "crm_order", "crm_orderitem", "crm_purchaseorder", "crm_purchaseorderitem",
                   "crm_purchasecostallocation", "crm_goodsreceipt", "crm_inventorymovement", "crm_inventoryreservation",
-                  "crm_paymentplan", "crm_transaction", "crm_followup", "crm_followupattachment", "crm_operationlog",
+                  "crm_paymentplan", "crm_transaction", "crm_followup", "crm_followupattachment", "crm_financevoucher", "crm_operationlog",
                   "crm_csvimportpreviewaudit", "crm_csvimportbatch", "crm_csvimportrowaudit")
         with self.drill._connect(database) as connection:
             rows = {table: connection.execute(sql.SQL("SELECT * FROM {} ORDER BY id").format(sql.Identifier(table))).fetchall()
@@ -161,8 +163,17 @@ class PostgresDrillBackupTests(SimpleTestCase):
         self.assertEqual((Path(restored["media"]) / "followups/synthetic.txt").read_bytes(),
                          b"isolated synthetic attachment")
         self.assertEqual(self._business_snapshot(restored["database"]), source_state)
-        for key in ("attachment", "image"):
+        for key in ("attachment", "image", "voucher"):
             self.assertTrue((Path(restored["media"]) / self.fixture[key]).is_file())
+        restored_voucher = Path(restored["media"]) / self.fixture["voucher"]
+        self.assertEqual(hashlib.sha256(restored_voucher.read_bytes()).hexdigest(), self.fixture["voucher_sha256"])
+        with self.drill._connect(restored["database"]) as connection:
+            voucher_row = connection.execute(
+                "SELECT file,size,sha256 FROM crm_financevoucher ORDER BY id LIMIT 1"
+            ).fetchone()
+        self.assertEqual(voucher_row[0], self.fixture["voucher"])
+        self.assertEqual(voucher_row[1], restored_voucher.stat().st_size)
+        self.assertEqual(voucher_row[2], self.fixture["voucher_sha256"])
         self._audit_rejects_mutation(restored["database"])
         http = self._http_check(restored)
         print("ISS018_PG_DRILL " + json.dumps({"source": self.drill.source, "target": restored["database"],
@@ -206,6 +217,32 @@ class PostgresDrillBackupTests(SimpleTestCase):
         with self.assertRaisesRegex(BackupRecoveryError, "Media manifest mismatch"):
             self.drill.restore(archive=missing, expected_sha256=_sha256(missing), current_app_sha=self.drill.app_sha)
 
+        corrupt_media = self.drill.root / "corrupt-media-test.zip"
+        with zipfile.ZipFile(backup["archive"]) as source, zipfile.ZipFile(corrupt_media, "w") as target:
+            for info in source.infolist():
+                content = source.read(info.filename)
+                if info.filename == "media/followups/synthetic.txt":
+                    content = b"corrupted isolated attachment"
+                target.writestr(info, content)
+        if os.name != "nt":
+            os.chmod(corrupt_media, 0o600)
+        with self.assertRaisesRegex(BackupRecoveryError, "Media manifest mismatch"):
+            self.drill.restore(archive=corrupt_media, expected_sha256=_sha256(corrupt_media), current_app_sha=self.drill.app_sha)
+
+        bad_media_manifest = self.drill.root / "bad-media-manifest-test.zip"
+        with zipfile.ZipFile(backup["archive"]) as source, zipfile.ZipFile(bad_media_manifest, "w") as target:
+            for info in source.infolist():
+                content = source.read(info.filename)
+                if info.filename == "manifest.json":
+                    manifest = json.loads(content)
+                    manifest["media"]["manifest_sha256"] = "0" * 64
+                    content = json.dumps(manifest).encode("utf-8")
+                target.writestr(info, content)
+        if os.name != "nt":
+            os.chmod(bad_media_manifest, 0o600)
+        with self.assertRaisesRegex(BackupRecoveryError, "Media manifest mismatch"):
+            self.drill.restore(archive=bad_media_manifest, expected_sha256=_sha256(bad_media_manifest), current_app_sha=self.drill.app_sha)
+
         corrupt = self.drill.root / "bad-database-test.zip"
         with zipfile.ZipFile(backup["archive"]) as source, zipfile.ZipFile(corrupt, "w") as target:
             manifest = json.loads(source.read("manifest.json"))
@@ -238,3 +275,29 @@ class PostgresDrillBackupTests(SimpleTestCase):
         self.assertEqual(set(self.drill.root.glob("iss018-pg-*.zip")), archives_before)
         with self.drill._connect(self.drill.source) as connection:
             self.assertEqual(str(connection.execute("SELECT amount FROM fixture WHERE id=1").fetchone()[0]), "42.25")
+
+    def test_empty_postgresql_media_root_is_restored_as_a_real_directory(self):
+        empty_drill = IsolatedPostgresDrill(
+            task_root=self.drill.root, pg_bin=self.drill.pg_bin, port=self.drill.port,
+            user=self.drill.user, password=self.drill._password, app_sha=self.drill.app_sha,
+        )
+        empty_drill._manage("migrate", "--noinput", "--verbosity", "0")
+        source_state = self._business_snapshot(empty_drill.source)
+        source_media = build_private_media_manifest(empty_drill.media)
+        self.assertEqual(source_media["files"], [])
+        self.assertEqual(source_media["directories"], [])
+        backup = empty_drill.backup()
+        with zipfile.ZipFile(backup["archive"]) as archive:
+            self.assertIn("media/", archive.namelist())
+            manifest = json.loads(archive.read("manifest.json"))
+            self.assertEqual(manifest["media"]["files"], [])
+            self.assertEqual(manifest["media"]["directories"], [])
+        restored = empty_drill.restore(
+            archive=backup["archive"], expected_sha256=backup["sha256"], current_app_sha=empty_drill.app_sha,
+        )
+        self.assertTrue(Path(restored["media"]).is_dir())
+        self.assertEqual(compare_private_media_manifest(manifest["media"], restored["media"]), [])
+        self.assertEqual(self._business_snapshot(empty_drill.source), source_state)
+        self.assertEqual(build_private_media_manifest(empty_drill.media), source_media)
+        if os.name != "nt":
+            self.assertEqual(Path(restored["media"]).stat().st_mode & 0o777, 0o700)

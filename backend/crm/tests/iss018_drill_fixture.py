@@ -1,6 +1,7 @@
 """Synthetic ISS-018 drill fixture; invoked only on the owned source database."""
 
 import json
+import hashlib
 import os
 import tempfile
 from datetime import date
@@ -16,7 +17,7 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 
 from crm.models import (CSVImportBatch, CSVImportRowAudit, Customer, FollowUp, FollowUpAttachment,
-                        OperationLog, Order, Product, PurchaseOrder, Quote, SKU, Supplier)
+                        FinanceVoucher, OperationLog, Order, Product, PurchaseOrder, Quote, SKU, Supplier)
 from crm.services.finance import record_transaction
 from crm.services.order_lifecycle import confirm_order
 from crm.services.purchase_lifecycle import place_purchase_order
@@ -90,9 +91,15 @@ def seed():
     plan = order.payment_plans.order_by("id").first()
     if not plan:
         raise RuntimeError("Order confirmation did not create a payment plan")
-    record_transaction({"transaction_no": "ISS018-TX", "transaction_date": day, "plan": plan,
-                        "amount": Decimal("5"), "currency": "USD", "exchange_rate": Decimal("7"),
-                        "category": "Synthetic receipt"})
+    receipt = record_transaction({"transaction_no": "ISS018-TX", "transaction_date": day, "plan": plan,
+                                  "amount": Decimal("5"), "currency": "USD", "exchange_rate": Decimal("7"),
+                                  "category": "Synthetic receipt"})
+    voucher_bytes = b"%PDF-1.4\nSynthetic bank voucher\n%%EOF"
+    voucher = FinanceVoucher.objects.create(
+        file=SimpleUploadedFile("synthetic-bank-voucher.pdf", voucher_bytes, content_type="application/pdf"),
+        original_name="synthetic-bank-voucher.pdf", sha256=hashlib.sha256(voucher_bytes).hexdigest(),
+        size=len(voucher_bytes), actor={"kind": "synthetic_fixture"}, scope="bank", bank_sources=[receipt.pk],
+    )
     followup = FollowUp.objects.create(customer=customer, followed_at=timezone.now(), subject="Synthetic follow-up")
     attachment_bytes = b"synthetic private file\n"
     attachment = FollowUpAttachment.objects.create(
@@ -102,6 +109,7 @@ def seed():
     if not OperationLog.objects.filter(operator=owner).exists():
         raise RuntimeError("Authenticated operation audit was not persisted")
     print(json.dumps({"attachment": attachment.file.name, "image": quote_item.image_snapshot.name,
+                      "voucher": voucher.file.name, "voucher_sha256": voucher.sha256,
                       "owner": owner.pk, "customer": customer.pk, "order": order.pk,
                       "purchase": purchase.pk, "quote": quote.pk, "sku": sku.pk}, sort_keys=True))
 

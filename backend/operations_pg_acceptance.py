@@ -27,6 +27,7 @@ django.setup()
 from isolated_postgres_drill import run_tool, tool
 from crm.services.postgres_drill_backup import IsolatedPostgresDrill
 from crm.services.operations_postgres import MaintenanceBackup, database_state
+from crm.services.private_media import build_private_media_manifest, compare_private_media_manifest
 from crm.services.operations_copy import digest
 from crm.services.operations_copy import verified_copy
 from crm.services.operations_crypto import crypt_file
@@ -68,6 +69,10 @@ def main():
         with drill._connect(drill.source) as connection:
             system = connection.execute("SELECT system_identifier::text FROM pg_control_system()").fetchone()[0]
             before = database_state(connection)
+            voucher_path, voucher_size, voucher_sha = connection.execute(
+                "SELECT file,size,sha256 FROM crm_financevoucher WHERE scope='bank' ORDER BY id LIMIT 1"
+            ).fetchone()
+        before_media = build_private_media_manifest(drill.media)
         with drill._connect(drill.source) as holder, drill._connect(drill.source) as competitor:
             holder.execute("LOCK TABLE crm_customer IN SHARE MODE")
             competitor.execute("SET LOCAL lock_timeout='300ms'")
@@ -103,6 +108,91 @@ def main():
         with patch("crm.services.operations_postgres.verify_readonly_filesystem", return_value={"evidence": "SIMULATED-LINUX-MEDIA-FENCE"}):
             backup = service.backup(media_root=drill.media, destination=archive)
         restored = service.restore(archive=archive, expected_sha256=backup["sha256"], media_parent=root)
+        restored_voucher = Path(restored["media_root"]) / voucher_path
+        assert restored_voucher.is_file()
+        assert restored_voucher.stat().st_size == voucher_size
+        assert hashlib.sha256(restored_voucher.read_bytes()).hexdigest() == voucher_sha
+
+        # Run the same PostgreSQL maintenance path against a migrated database
+        # with a truly empty MEDIA_ROOT and require an actual independent restore.
+        empty_drill = IsolatedPostgresDrill(
+            task_root=root, pg_bin=pg, port=port, user="iss018_drill_admin", password=password, app_sha=sha,
+        )
+        empty_drill._manage("migrate", "--noinput", "--verbosity", "0")
+        empty_options = dict(host="127.0.0.1", port=port, user="iss018_drill_admin",
+                             password=password, dbname=empty_drill.source)
+        with empty_drill._connect(empty_drill.source) as connection:
+            empty_system = connection.execute("SELECT system_identifier::text FROM pg_control_system()").fetchone()[0]
+            empty_before = database_state(connection)
+        empty_service = MaintenanceBackup(
+            connection_options=empty_options, pg_bin=pg, expected_database=empty_drill.source,
+            expected_system_identifier=empty_system, app_sha=sha,
+        )
+        empty_archive = root / "empty-media-backup.zip"
+        with patch("crm.services.operations_postgres.verify_readonly_filesystem", return_value={"evidence": "SIMULATED-LINUX-MEDIA-FENCE"}):
+            empty_backup = empty_service.backup(media_root=empty_drill.media, destination=empty_archive)
+        with zipfile.ZipFile(empty_archive) as bundle:
+            assert "media/" in bundle.namelist()
+            empty_manifest = json.loads(bundle.read("manifest.json"))
+            assert empty_manifest["media"]["files"] == []
+            assert empty_manifest["media"]["directories"] == []
+        empty_restored = empty_service.restore(
+            archive=empty_archive, expected_sha256=empty_backup["sha256"], media_parent=root,
+        )
+        assert Path(empty_restored["media_root"]).is_dir()
+        assert compare_private_media_manifest(empty_manifest["media"], empty_restored["media_root"]) == []
+        with empty_drill._connect(empty_drill.source) as connection:
+            assert database_state(connection) == empty_before
+
+        def rewrite_media_archive(filename, transform):
+            changed_path = root / filename
+            with zipfile.ZipFile(archive) as original, zipfile.ZipFile(changed_path, "w", zipfile.ZIP_DEFLATED) as changed:
+                for info in original.infolist():
+                    content = original.read(info.filename)
+                    replacement = transform(info.filename, content)
+                    if replacement is not None:
+                        changed.writestr(info, replacement)
+            if os.name != "nt":
+                changed_path.chmod(0o600)
+            return changed_path
+
+        missing_media_archive = rewrite_media_archive(
+            "missing-media-member.zip", lambda name, content: None if name == "media/" + voucher_path else content,
+        )
+        try:
+            service.restore(archive=missing_media_archive, expected_sha256=digest(missing_media_archive), media_parent=root)
+        except ValueError:
+            missing_media_rejected = True
+        else:
+            raise AssertionError("PostgreSQL restore accepted a missing voucher member")
+
+        corrupt_media_archive = rewrite_media_archive(
+            "corrupt-media-member.zip",
+            lambda name, content: b"corrupted synthetic voucher bytes" if name == "media/" + voucher_path else content,
+        )
+        try:
+            service.restore(archive=corrupt_media_archive, expected_sha256=digest(corrupt_media_archive), media_parent=root)
+        except ValueError:
+            corrupt_media_rejected = True
+        else:
+            raise AssertionError("PostgreSQL restore accepted a corrupt voucher member")
+
+        bad_manifest_archive = rewrite_media_archive(
+            "bad-media-manifest.zip",
+            lambda name, content: json.dumps({**json.loads(content), "media": {
+                **json.loads(content)["media"], "manifest_sha256": "0" * 64,
+            }}, sort_keys=True).encode("utf-8") if name == "manifest.json" else content,
+        )
+        try:
+            service.restore(archive=bad_manifest_archive, expected_sha256=digest(bad_manifest_archive), media_parent=root)
+        except ValueError:
+            manifest_digest_rejected = True
+        else:
+            raise AssertionError("PostgreSQL restore accepted a mismatched media manifest digest")
+
+        with drill._connect(drill.source) as connection:
+            assert database_state(connection) == before
+        assert build_private_media_manifest(drill.media) == before_media
         corrupt = root / "invalid-dump.zip"
         invalid_dump = b"SYNTHETIC INVALID POSTGRES CUSTOM DUMP"
         with zipfile.ZipFile(archive) as original, zipfile.ZipFile(corrupt, "w") as changed:
@@ -181,6 +271,13 @@ def main():
             assert (backup_root / receipts[0]["name"]).exists()
         result = {"status": "PASS", "source_sha": sha, "scope": "real-PG17-with-simulated-media-fence", "active_session_rejected": active_rejected,
                           "other_login_rejected": login_rejected, "restored_verified": restored["verified"],
+                          "nonempty_media_restored": compare_private_media_manifest(backup["manifest"]["media"], restored["media_root"]) == [],
+                          "bank_voucher_file_restored_and_sha_verified": True,
+                          "empty_media_root_restored": compare_private_media_manifest(empty_manifest["media"], empty_restored["media_root"]) == [],
+                          "missing_media_member_rejected": missing_media_rejected,
+                          "corrupt_media_member_rejected": corrupt_media_rejected,
+                          "manifest_digest_mismatch_rejected": manifest_digest_rejected,
+                          "source_media_unchanged": build_private_media_manifest(drill.media) == before_media,
                           "audit_truncate_rejected": restored["audit_truncate_rejected"], "source_unchanged": True,
                           "audit_row_mutations_rejected": restored["audit_row_mutations_rejected"],
                           "real_lock_competition_rejected": lock_competition_rejected, "bad_digest_rejected": bad_digest_rejected,

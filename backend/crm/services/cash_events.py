@@ -166,12 +166,17 @@ def available(row):
 def normalize(payload):
     if not isinstance(payload, dict):
         raise ValidationError("需要资金事件对象。")
-    fields = {"event_no", "request_key", "kind", "currency", "direction", "bank_date", "bank_net_amount", "fee_mode", "fee_amount", "source_account", "rmb_account", "bank_reference", "bank_counterparty", "bank_summary", "bank_transaction_id", "evidence_reference", "evidence_sha256", "evidence_note", "quoted_rate", "sources", "fee_for", "correction_of", "private_voucher"}
+    fields = {"event_no", "request_key", "kind", "currency", "direction", "bank_date", "bank_net_amount", "gross_rmb_amount", "actual_rate", "fee_mode", "fee_amount", "source_account", "rmb_account", "bank_reference", "bank_counterparty", "bank_summary", "bank_transaction_id", "evidence_reference", "evidence_sha256", "evidence_note", "quoted_rate", "sources", "fee_for", "correction_of", "private_voucher", "source_receipt_id"}
     if set(payload) - fields:
         raise ValidationError("存在未支持的字段，不接受银行登录凭据或推测的资金更正。")
     if payload.get("correction_of") is not None:
         raise ValidationError("请使用账户资金更正流程保留原事实；不能直接覆盖银行事件或释放来源。")
     p = {}
+    if "source_receipt_id" in payload:
+        value = payload["source_receipt_id"]
+        if type(value) is not int or not 0 < value <= 9223372036854775807:
+            raise ValidationError("关联收款无效，请重新核对已保存流水。")
+        p["source_receipt_id"] = value
     if payload.get("private_voucher") is not None:
         from crm.services.finance_closeout import pk
         p["private_voucher"] = pk(payload["private_voucher"])
@@ -214,7 +219,7 @@ def normalize(payload):
         p["bank_date"] = date.fromisoformat(payload.get("bank_date", "")).isoformat()
     except (TypeError, ValueError):
         raise ValidationError("必须提供银行实际入账/扣款日期。")
-    p["bank_net_amount"] = str(money(payload.get("bank_net_amount")))
+    p["bank_net_amount"] = str(money(payload.get("bank_net_amount"), zero=p["kind"] == "fx_settlement"))
     p["fee_mode"] = payload.get("fee_mode", "none")
     p["fee_amount"] = str(money(payload.get("fee_amount", "0"), zero=True))
     if not isinstance(p["fee_mode"], str) or p["fee_mode"] not in {"none", "included"} or (p["fee_mode"] == "none" and Decimal(p["fee_amount"]) != 0):
@@ -240,12 +245,58 @@ def normalize(payload):
     p["sources"].sort(key=lambda s: s["transaction_id"])
     total = sum((Decimal(s["amount"]) for s in p["sources"]), Decimal("0"))
     money(total, p["currency"])
-    if p["currency"] == "CNY" and total != Decimal(p["bank_net_amount"]):
-        raise ValidationError("CNY直接收付必须与分配的银行净额精确一致。")
+    net_amount = Decimal(p["bank_net_amount"])
+    fee_amount = Decimal(p["fee_amount"])
+    gross_input = payload.get("gross_rmb_amount")
+    rate_input = payload.get("actual_rate")
+    if p["kind"] == "fx_settlement":
+        actual_rate = money(rate_input, "USD", rate=True) if rate_input not in (None, "") else None
+        if gross_input not in (None, ""):
+            gross_amount = money(gross_input)
+        elif actual_rate is not None:
+            gross_amount = (total * actual_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        else:
+            gross_amount = net_amount + fee_amount if p["fee_mode"] == "included" else net_amount
+        if actual_rate is not None:
+            calculated_gross = (total * actual_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            if calculated_gross != gross_amount:
+                raise ValidationError("扣费前兑换额与实际汇率、原币来源合计不一致。")
+        else:
+            actual_rate = (gross_amount / total).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+        expected_net = gross_amount - (fee_amount if p["fee_mode"] == "included" else Decimal("0"))
+        if expected_net < 0 or net_amount != expected_net:
+            raise ValidationError("人民币净到账必须等于扣费前兑换额减本笔已含手续费。")
+        if gross_input not in (None, "") or rate_input not in (None, ""):
+            p["gross_rmb_amount"] = str(gross_amount)
+            p["actual_rate"] = str(actual_rate)
+    else:
+        gross_amount = net_amount
+        actual_rate = Decimal("1")
+        if p["fee_mode"] != "none" or fee_amount != 0:
+            raise ValidationError("人民币直接收付和独立扣费不能把手续费计入净额。")
+        if p["currency"] == "CNY" and total != net_amount:
+            raise ValidationError("CNY直接收付必须与分配的银行净额精确一致。")
+        if gross_input not in (None, "") and money(gross_input) != gross_amount:
+            raise ValidationError("人民币直接收付的扣费前金额必须等于银行净额。")
+        if rate_input not in (None, "") and money(rate_input, "USD", rate=True) != 1:
+            raise ValidationError("人民币直接收付的实际汇率必须为1。")
+        if gross_input not in (None, "") or rate_input not in (None, ""):
+            p["gross_rmb_amount"] = str(gross_amount)
+            p["actual_rate"] = "1.000000"
     return p
 
 
 def validate_sources(p, user, *, confirmation=False):
+    allowed_receipt_sources = None
+    receipt_id = p.get("source_receipt_id")
+    if receipt_id is not None:
+        receipt = Transaction.objects.filter(pk=receipt_id).first()
+        if receipt is None or not source_visible(receipt, user):
+            raise NotFound("关联收款不存在或不可访问。")
+        if (receipt.split_from_id or receipt.kind != "customer_receipt" or receipt.status != "confirmed"
+                or receipt.direction != "income" or not receipt.order_id or receipt.currency != p["currency"]):
+            raise ValidationError("关联收款必须是已保存、已确认且关联订单的同币种客户收款。")
+        allowed_receipt_sources = {row.pk for row in family(receipt)}
     rows = []
     for s in p["sources"]:
         row = Transaction.objects.filter(pk=s["transaction_id"]).first()
@@ -253,6 +304,8 @@ def validate_sources(p, user, *, confirmation=False):
             raise NotFound("资金来源不存在或不可访问。")
         if row.status != "confirmed" or row.currency != p["currency"] or row.direction != p["direction"]:
             raise ValidationError("来源状态、币种或方向不一致。")
+        if allowed_receipt_sources is not None and row.pk not in allowed_receipt_sources:
+            raise ValidationError("结汇来源必须来自指定的已保存客户收款及其拆分流水。")
         error = uncertainty(row)
         if error:
             raise ValidationError(error)
@@ -330,8 +383,12 @@ def register_event(payload, user):
             raise CashConflict()
         return existing, False
     rows = validate_sources(p, user)
-    values = {k: v for k, v in p.items() if k not in {"sources", "fee_for", "private_voucher"}}
-    values.update(request_hash=digest, request_payload=p, amount=sum((Decimal(s["amount"]) for s in p["sources"]), Decimal("0")), created_actor=actor(user, "register"), fee_for_id=p["fee_for"])
+    values = {k: v for k, v in p.items() if k not in {"sources", "fee_for", "private_voucher", "source_receipt_id"}}
+    source_amount = sum((Decimal(s["amount"]) for s in p["sources"]), Decimal("0"))
+    gross_amount = Decimal(p["gross_rmb_amount"]) if p.get("gross_rmb_amount") else Decimal(p["bank_net_amount"]) + (Decimal(p["fee_amount"]) if p["fee_mode"] == "included" else Decimal("0"))
+    actual_rate = Decimal(p.get("actual_rate") or ((gross_amount / source_amount).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP) if p["currency"] != "CNY" else Decimal("1")))
+    values.update(request_hash=digest, request_payload=p, amount=source_amount, gross_rmb_amount=gross_amount,
+        actual_rate=actual_rate, created_actor=actor(user, "register"), fee_for_id=p["fee_for"])
     try:
         with transaction.atomic():
             event = RmbCashEvent.objects.create(**values)

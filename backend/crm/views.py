@@ -20,7 +20,7 @@ from django.db.models.deletion import ProtectedError
 from django.db.models import Case, CharField, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
 from django.db.models.functions import Cast
-from django.http import Http404, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse
 from django.core import signing
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -30,7 +30,7 @@ from rest_framework.exceptions import NotFound, ValidationError as DRFValidation
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit, Customer, CustomerSupplierPreference, EmployeeProfile, FinancePlanWriteoff, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
 from .country_registry import CountryResolutionError, country_options as build_country_options, country_stored_values, display_country
 from .error_messages import CUSTOMER_NOT_FOUND_MESSAGE
 from .money import CURRENT_AMOUNT_CALCULATION_VERSION
@@ -43,8 +43,10 @@ from .quotation_export_dto import QuotationExportValidationError, build_quotatio
 from .quote_snapshots import create_quote_items
 from .serializers import protected_media_url, certificate_expiry, AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .serializers import ProcurementDraftInputSerializer
+from .serializers import FinancePlanWriteoffInputSerializer
+from .serializers import FinancePlanWriteoffCorrectionInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
-from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_transaction, void_transaction
+from .services.finance import allocate_advance, approve_contract_change, correct_receivable_writeoff, reject_contract_change, record_contract_payment, record_transaction, void_transaction, writeoff_receivable
 from .services.attachments import delete_follow_up_attachment, upload_follow_up_attachments
 from .services.fulfillment import (
     begin_fulfillment_idempotency,
@@ -2584,7 +2586,7 @@ def finance_dashboard(request):
         bucket = monthly.setdefault(month, {"month": month, "income": Decimal("0"), "expense": Decimal("0")})
         bucket[row.direction] += value
     advances = _finance_advances(request.user)
-    unallocated = lambda direction: sum(((row.amount - row.allocated_amount) * row.exchange_rate for row in advances if row.direction == direction), Decimal("0"))
+    unallocated = lambda direction: sum(((row.allocation_capacity - row.allocated_amount) * row.exchange_rate for row in advances if row.direction == direction), Decimal("0"))
     due_items = [
         {
             "id": row.id, "direction": row.direction, "contract_no": row.order.order_no if row.order_id else row.purchase_order.purchase_no,
@@ -2843,6 +2845,12 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return fields
     ordering_fields = ["transaction_date", "amount", "created_at"]
 
+    def initialize_request(self, request, *args, **kwargs):
+        if request.method == "POST" and request.path.rstrip("/").endswith("/transactions/voucher-upload"):
+            from .finance_closeout_api import FinanceVoucherUploadHandler
+            request.upload_handlers.insert(0, FinanceVoucherUploadHandler(request))
+        return super().initialize_request(request, *args, **kwargs)
+
     def get_queryset(self):
         qs = scope_transaction_queryset(super().get_queryset(), self.request.user)
         if self.request.query_params.get("customer"):
@@ -2874,6 +2882,32 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=row, action="create", action_label="登记财务流水")
         return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=["post"], url_path="voucher-upload", parser_classes=[MultiPartParser, FormParser])
+    def voucher_upload(self, request):
+        require_finance_permission(request.user, "finance", "create")
+        from .finance_closeout_api import VoucherTooLarge
+        from .services.finance_closeout import upload
+        files = request.FILES
+        if getattr(request._request, "_csv_import_upload_limit_exceeded", None):
+            raise VoucherTooLarge()
+        if set(files) != {"file"} or len(files.getlist("file")) != 1:
+            raise DRFValidationError("每次只上传一份凭证。")
+        obj = upload(files.get("file"), request.user, scope="transaction")
+        return Response({"id": obj.pk, "name": obj.original_name, "sha256": obj.sha256, "size": obj.size}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["get"], url_path="voucher-download")
+    def voucher_download(self, request, pk=None):
+        row = self.get_object()
+        require_finance_permission(request.user, "finance", "view")
+        if not row.fee_evidence_id:
+            raise NotFound("该流水没有关联私有收款凭证。")
+        from .services.finance_closeout import voucher
+        proof = voucher(row.fee_evidence_id, scope="transaction")
+        response = FileResponse(proof.file.open("rb"), as_attachment=True, filename=proof.original_name, content_type="application/octet-stream")
+        response["Cache-Control"] = "private, no-store"
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
 
     def update(self, request, *args, **kwargs):
         return Response({"detail": "财务流水保留原始记录，请作废后重记。"}, status=status.HTTP_400_BAD_REQUEST)
@@ -2922,6 +2956,60 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         record_operation(request=request, instance=plan, action="custom", action_label="核销预收预付", metadata={"transaction_id": source.id, "amount": str(request.data.get("amount") or "")})
         return Response(PaymentPlanSerializer(plan, context={"request": request}).data)
+
+    @action(detail=True, methods=["post"], url_path="writeoff")
+    @transaction.atomic
+    def writeoff(self, request, pk=None):
+        source = self.get_object()
+        require_finance_permission(request.user, "finance", "update")
+        serializer = FinancePlanWriteoffInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        plan = get_object_or_404(
+            scope_plan_queryset(PaymentPlan.objects.select_related("order", "purchase_order"), request.user),
+            pk=serializer.validated_data["plan"],
+        )
+        try:
+            row, created = writeoff_receivable(
+                source, plan, serializer.validated_data["amount"], serializer.validated_data["reason"],
+                serializer.validated_data["request_key"], request.user,
+            )
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        if created:
+            record_operation(request=request, instance=row, action="create", action_label="登记授权抹零",
+                metadata={"transaction_id": source.pk, "plan_id": plan.pk, "amount": str(row.amount),
+                    "confirmed_actor": row.confirmed_actor})
+        return Response({
+            "id": row.pk,
+            "plan": row.plan_id,
+            "amount": str(row.amount),
+            "reason": row.reason,
+            "confirmed_actor": row.confirmed_actor,
+            "created_at": row.created_at,
+        }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"], url_path="writeoff-corrections")
+    @transaction.atomic
+    def writeoff_corrections(self, request, pk=None):
+        source = self.get_object()
+        require_finance_permission(request.user, "finance", "update")
+        serializer = FinancePlanWriteoffCorrectionInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        original = get_object_or_404(FinancePlanWriteoff, pk=serializer.validated_data["writeoff"])
+        try:
+            correction, created = correct_receivable_writeoff(
+                source, original, serializer.validated_data["amount"], serializer.validated_data["reason"],
+                serializer.validated_data["request_key"], request.user,
+            )
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        if created:
+            record_operation(request=request, instance=correction, action="create", action_label="更正授权抹零",
+                metadata={"transaction_id": source.pk, "writeoff_id": original.pk, "amount": str(correction.amount),
+                    "reason": correction.reason, "actor": correction.actor})
+        return Response({"id": correction.pk, "writeoff": original.pk, "amount": str(correction.amount),
+            "reason": correction.reason, "actor": correction.actor, "created_at": correction.created_at},
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):

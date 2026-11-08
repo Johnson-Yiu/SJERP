@@ -1253,7 +1253,7 @@ class Order(TimestampedModel):
             return Decimal("0")
         receipts = sum(self.transactions.filter(status="confirmed", kind="customer_receipt").values_list("amount", flat=True), Decimal("0"))
         refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
-        allocations = sum(AdvanceAllocation.objects.filter(plan__order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
+        allocations = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.filter(plan__order=self, is_active=True, advance__status="confirmed")), Decimal("0"))
         return receipts + allocations - refunds
 
     @property
@@ -1266,9 +1266,9 @@ class Order(TimestampedModel):
         """
         if self.status in {"draft", "cancelled"} or ((self.status == "historical" or self.historical_only) and not hasattr(self, "history_balance")):
             return Decimal("0")
-        return self.payment_plans.filter(
+        return sum((plan.remaining_amount for plan in self.payment_plans.filter(
             direction="receivable", status="open",
-        ).aggregate(total=models.Sum(models.F("planned_amount") - models.F("settled_amount")))["total"] or Decimal("0")
+        )), Decimal("0"))
 
 
 class OrderItem(TradeUnitLine):
@@ -1560,7 +1560,7 @@ class PurchaseOrder(TimestampedModel):
         if (self.status == "historical" or self.historical_only) and not hasattr(self, "history_balance"):
             return Decimal("0")
         paid = sum(self.transactions.filter(status="confirmed", kind="supplier_payment").values_list("amount", flat=True), Decimal("0"))
-        allocations = sum(AdvanceAllocation.objects.filter(plan__purchase_order=self, is_active=True, advance__status="confirmed").values_list("amount", flat=True), Decimal("0"))
+        allocations = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.filter(plan__purchase_order=self, is_active=True, advance__status="confirmed")), Decimal("0"))
         refunds = sum(self.transactions.filter(direction="income", status="confirmed", kind="supplier_refund").values_list("amount", flat=True), Decimal("0"))
         return paid + allocations - refunds
 
@@ -1569,8 +1569,9 @@ class PurchaseOrder(TimestampedModel):
         if (self.status == "historical" or self.historical_only) and not hasattr(self, "history_balance"):
             return Decimal("0")
         if self.history_finance_mode or self.status == "historical" or self.historical_only:
-            return self.payment_plans.filter(direction="payable", status="open").aggregate(total=models.Sum(models.F("planned_amount") - models.F("settled_amount")))["total"] or Decimal("0")
-        return self.total_amount - self.paid_amount
+            return sum((plan.remaining_amount for plan in self.payment_plans.filter(direction="payable", status="open")), Decimal("0"))
+        written_off = FinancePlanWriteoff.objects.filter(plan__purchase_order=self).aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+        return self.total_amount - self.paid_amount - written_off
 
     def __str__(self):
         return self.purchase_no
@@ -1713,7 +1714,9 @@ class PaymentPlan(TimestampedModel):
 
     @property
     def remaining_amount(self):
-        return self.planned_amount - self.settled_amount
+        written_off = self.finance_writeoffs.aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+        corrected = FinancePlanWriteoffCorrection.objects.filter(writeoff__plan=self).aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+        return max(self.planned_amount - self.settled_amount - written_off + corrected, Decimal("0"))
 
     def clean(self):
         super().clean()
@@ -2044,6 +2047,12 @@ class Transaction(TimestampedModel):
     exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
     rmb_amount = models.DecimalField("账面人民币折算参考", max_digits=14, decimal_places=4, default=0)
     allocated_amount = models.DecimalField("已分配原币金额", max_digits=14, decimal_places=4, default=0)
+    remittance_amount = models.DecimalField("客户汇款原币金额", max_digits=14, decimal_places=4, null=True, blank=True)
+    bank_fee_amount = models.DecimalField("收款扣费原币金额", max_digits=14, decimal_places=4, default=0)
+    fee_responsibility = models.CharField("收款扣费承担方", max_length=10, choices=[("", "未涉及"), ("company", "我方承担"), ("customer", "客户承担"), ("unknown", "待查")], blank=True)
+    fee_reason = models.TextField("收款扣费依据", blank=True)
+    fee_evidence = models.ForeignKey("FinanceVoucher", on_delete=models.PROTECT, null=True, blank=True, related_name="transactions")
+    settlement_amount = models.DecimalField("本笔核销原币金额", max_digits=14, decimal_places=4, default=0)
     kind = models.CharField("业务类型", max_length=30, choices=KIND_CHOICES, default="other")
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
@@ -2066,6 +2075,34 @@ class Transaction(TimestampedModel):
 
     class Meta:
         ordering = ["-transaction_date", "-id"]
+
+    @property
+    def allocation_capacity(self):
+        if (self.kind == "unallocated_advance" and self.direction == "income" and self.fee_responsibility == "company"
+                and self.fee_evidence_id and self.bank_fee_amount > 0
+                and self.remittance_amount is not None and self.remittance_amount - self.amount == self.bank_fee_amount
+                and self._has_valid_fee_evidence()):
+            return self.amount + self.bank_fee_amount
+        return self.amount
+
+    def _has_valid_fee_evidence(self):
+        cached = getattr(self, "_fee_evidence_valid_cache", None)
+        if cached is not None:
+            return cached
+        try:
+            from .services.finance_closeout import voucher
+            from .services.cash_events import family
+            proof = voucher(self.fee_evidence_id, scope="transaction")
+            family_ids = [row.pk for row in family(self)]
+            valid = (
+                proof.pk == self.fee_evidence_id
+                and not proof.bank_sources
+                and not proof.transactions.exclude(pk__in=family_ids).exists()
+            )
+        except Exception:
+            valid = False
+        self._fee_evidence_valid_cache = valid
+        return valid
 
 
 class FinanceAccount(TimestampedModel):
@@ -2281,12 +2318,14 @@ class RmbCashEvent(TimestampedModel):
     cancelled_reason = models.CharField(max_length=500, blank=True)
     correction_of = models.ForeignKey("self", null=True, blank=True, on_delete=models.PROTECT, related_name="corrections")
     fee_for = models.ForeignKey("self", null=True, blank=True, on_delete=models.PROTECT, related_name="separate_fees")
+    gross_rmb_amount = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    actual_rate = models.DecimalField(max_digits=18, decimal_places=6, default=0)
 
     class Meta:
         ordering = ["-bank_date", "-pk"]
         constraints = [
             models.CheckConstraint(condition=models.Q(amount__gt=0), name="cash_event_source_positive"),
-            models.CheckConstraint(condition=models.Q(bank_net_amount__gt=0), name="cash_event_net_positive"),
+            models.CheckConstraint(condition=models.Q(kind="fx_settlement", bank_net_amount__gte=0) | models.Q(kind__in=["cny_direct", "bank_fee"], bank_net_amount__gt=0), name="cash_event_net_positive"),
             models.CheckConstraint(condition=models.Q(fee_amount__gte=0), name="cash_event_fee_nonnegative"),
             models.CheckConstraint(condition=models.Q(status="confirmed", confirmed_at__isnull=False) | models.Q(status__in=["pending", "cancelled"], confirmed_at__isnull=True), name="cash_event_confirmation_state"),
         ]
@@ -2366,10 +2405,60 @@ class AdvanceAllocation(TimestampedModel):
     advance = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="allocations")
     plan = models.ForeignKey(PaymentPlan, on_delete=models.PROTECT, related_name="advance_allocations")
     amount = models.DecimalField(max_digits=14, decimal_places=4)
+    cash_amount = models.DecimalField(max_digits=14, decimal_places=4, null=True, blank=True, default=None)
+    fee_credit_amount = models.DecimalField(max_digits=14, decimal_places=4, default=0)
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="advance_allocation_positive")]
+        constraints = [
+            models.CheckConstraint(condition=models.Q(amount__gt=0), name="advance_allocation_positive"),
+            models.CheckConstraint(condition=models.Q(cash_amount__isnull=True) | models.Q(cash_amount__gte=0), name="advance_allocation_cash_nonnegative"),
+            models.CheckConstraint(condition=models.Q(fee_credit_amount__gte=0), name="advance_allocation_fee_nonnegative"),
+            models.CheckConstraint(condition=models.Q(cash_amount__isnull=True) | models.Q(amount=models.F("cash_amount") + models.F("fee_credit_amount")), name="advance_allocation_split_matches"),
+        ]
+
+
+class FinancePlanWriteoff(TimestampedModel):
+    """Append-only, non-cash customer rounding adjustment against an open plan."""
+    plan = models.ForeignKey(PaymentPlan, on_delete=models.PROTECT, related_name="finance_writeoffs")
+    source_transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="finance_writeoffs")
+    amount = models.DecimalField(max_digits=14, decimal_places=4)
+    reason = models.TextField()
+    request_key = models.CharField(max_length=128, unique=True)
+    request_hash = models.CharField(max_length=64)
+    confirmed_actor = models.JSONField()
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="finance_plan_writeoff_positive")]
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            raise ValidationError("抹零记录只允许追加；需要调整时须保留原记录并另行核实。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("抹零记录不可删除。")
+
+
+class FinancePlanWriteoffCorrection(TimestampedModel):
+    """Append-only reversal of an authorized non-cash write-off."""
+    writeoff = models.ForeignKey(FinancePlanWriteoff, on_delete=models.PROTECT, related_name="corrections")
+    amount = models.DecimalField(max_digits=14, decimal_places=4)
+    reason = models.TextField()
+    request_key = models.CharField(max_length=128, unique=True)
+    request_hash = models.CharField(max_length=64)
+    actor = models.JSONField()
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="finance_writeoff_correction_positive")]
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            raise ValidationError("抹零更正只允许追加。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("抹零更正不可删除。")
 
 
 class SalesRule(TimestampedModel):

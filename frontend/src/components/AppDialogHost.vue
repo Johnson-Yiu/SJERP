@@ -48,7 +48,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
 <template>
   <Teleport to="body">
-    <div v-if="dialogState.current" class="app-dialog-backdrop" @mousedown.self="!dialogState.current.danger && cancel()">
+    <div v-if="dialogState.current" class="app-dialog-backdrop">
       <section class="app-dialog" role="dialog" aria-modal="true" :aria-labelledby="`app-dialog-title-${dialogState.current.id}`" :aria-describedby="dialogState.current.message ? `app-dialog-message-${dialogState.current.id}` : undefined">
         <header><h2 :id="`app-dialog-title-${dialogState.current.id}`">{{ dialogState.current.title }}</h2></header>
         <div class="app-dialog-body">

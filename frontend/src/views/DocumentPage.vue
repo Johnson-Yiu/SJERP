@@ -533,7 +533,7 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
       </table></div>
     </div>
 
-    <div v-if="open && isOrder" class="modal-backdrop" @mousedown.self="closeEditor"><form class="modal wide" novalidate @submit.prevent="save">
+    <div v-if="open && isOrder" class="modal-backdrop"><form class="modal wide" novalidate @submit.prevent="save">
       <div class="modal-head"><div><h3>{{ editingId ? '编辑' : '新建' }}{{ isOrder ? '订单' : '报价' }}</h3><small v-if="editingId">{{ rows.find(row => row.id === editingId)?.order_no }}</small></div><button type="button" class="mini-btn" @click="closeEditor"><X :size="17" /></button></div>
       <div class="modal-body">
         <div class="form-grid">

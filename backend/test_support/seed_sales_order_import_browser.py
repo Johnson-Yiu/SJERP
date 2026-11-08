@@ -13,7 +13,7 @@ from django.conf import settings
 from django.db import connection
 from openpyxl import Workbook
 
-from crm.models import Customer, Product, SKU, SKUTradeUnit
+from crm.models import Customer, Product, SKU, SKUTradeUnit, Order, PaymentPlan, FinanceAccount
 from test_support.isolated_runtime import verify_isolated_runtime
 
 repo_root = Path(__file__).resolve().parents[2]
@@ -49,6 +49,14 @@ SKUTradeUnit.objects.get_or_create(
     unit="箱",
     defaults={"name": "10 件/箱", "factor": "10", "allow_fraction": False, "is_default": True},
 )
+
+for suffix, total in [('COMPANY',1000),('CUSTOMER',1000),('UNKNOWN',1000),('WRITEOFF',90),('REFUND',1000)]:
+    order, created = Order.objects.get_or_create(order_no='SYN-FIN-'+suffix, defaults={'customer':customer,'order_date':date(2026,11,6),'status':'confirmed','currency':'USD','exchange_rate':'7.1'})
+    if created:
+        order.items.create(sku=sku_each,quantity=1,unit_price=total)
+        PaymentPlan.objects.create(order=order,direction='receivable',currency='USD',planned_amount=total)
+for code, currency in [('SYNTH_FX','USD'),('SYNTH_CNY','CNY')]:
+    FinanceAccount.objects.get_or_create(code=code,defaults={'name':'Synthetic '+currency+' acceptance account','currency':currency,'account_type':'bank','ownership':'own','ownership_reason':'Synthetic isolated acceptance only'})
 
 workbook = Workbook()
 sheet = workbook.active

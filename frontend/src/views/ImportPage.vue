@@ -17,9 +17,20 @@ let version = 0, orderVersion = 0, alive = true, retryOfBatchId = null
 const { storageKey } = useWorkspaceNavigation()
 const recoveryKey = storageKey('sales-order-import-pending-v1', { accountOnly: true })
 const fileIdentity = value => value ? [value.name, value.size, value.lastModified].join(':') : ''
-function pendingOrder() { try { return JSON.parse(sessionStorage.getItem(recoveryKey) || 'null') } catch { return null } }
+function pendingOrders() {
+  try { const saved = JSON.parse(sessionStorage.getItem(recoveryKey) || '[]'); return Array.isArray(saved) ? saved : saved ? [saved] : [] } catch { return [] }
+}
+function pendingOrder() { return pendingOrders().find(row => row.file === fileIdentity(orderFile.value)) }
 function rememberOrder(preview, selected) {
-  sessionStorage.setItem(recoveryKey, JSON.stringify({ file: fileIdentity(selected), preview_token: preview.preview_token, total_rows: preview.total_rows, total_orders: preview.total_orders, valid_orders: preview.valid_orders, invalid_orders: preview.invalid_orders }))
+  const pending = pendingOrders(), existing = pending.find(row => row.file === fileIdentity(selected))
+  if (existing && existing.preview_token !== preview.preview_token) throw new Error('该文件已有结果待核对的提交，请重新选择原文件恢复原批次。')
+  if (!existing) pending.push({ file: fileIdentity(selected), preview_token: preview.preview_token, total_rows: preview.total_rows, total_orders: preview.total_orders, valid_orders: preview.valid_orders, invalid_orders: preview.invalid_orders })
+  sessionStorage.setItem(recoveryKey, JSON.stringify(pending))
+}
+function forgetOrder(token) {
+  const remaining = pendingOrders().filter(row => row.preview_token !== token)
+  if (remaining.length) sessionStorage.setItem(recoveryKey, JSON.stringify(remaining))
+  else sessionStorage.removeItem(recoveryKey)
 }
 const { can } = useAccessControl()
 const mayImport = computed(() => can('imports', 'import'))
@@ -131,12 +142,12 @@ async function executeOrders() {
     const response = (await api.post('/import/orders/execute/', data)).data
     if (!valid()) return
     if (!response.batch_id || !Array.isArray(response.errors) || !Array.isArray(response.orders) || ![response.total_rows, response.total_orders, response.created_orders, response.failed_orders].every(n => Number.isInteger(n) && n >= 0) || response.created_orders + response.failed_orders !== response.total_orders) throw new Error('返回结果不完整，请核对订单管理后重新预览。')
-    sessionStorage.removeItem(recoveryKey)
+    forgetOrder(previewResult.preview_token)
     orderResult.value = { ...response, completed: true }; orderPhase.value = 'completed'
   } catch (e) {
     if (valid()) {
       if (e.data?.business_write_performed === false) {
-        sessionStorage.removeItem(recoveryKey); orderResult.value = null; orderPhase.value = 'preview-error'; orderError.value = e.message
+        forgetOrder(previewResult.preview_token); orderResult.value = null; orderPhase.value = 'preview-error'; orderError.value = e.message
       } else {
         orderError.value = `${e.message} 提交结果待核对，请保留原文件和预览再次确认原批次；离开页面不代表回滚。`; orderPhase.value = 'ready'
       }
@@ -199,6 +210,7 @@ async function execute() {
     </div>
     <div v-if="importMode === 'orders'" class="import-layout">
       <div class="panel import-main">
+        <p v-if="pendingOrders().length" class="stage" role="status">有提交结果待核对：{{ pendingOrders().map(row => row.file.split(':')[0]).join('、') }}。请重新选择对应原文件，恢复原批次后再次确认；离开页面不代表回滚。</p>
         <div class="step"><span>01</span><div><h3>下载销售订单模板</h3><p>一行填写一条 SKU 明细。同一来源订单编号的多行会合并为一张销售订单草稿。</p></div></div>
         <button class="template-btn" :disabled="orderTemplateLoading || !mayImport" @click="downloadOrderTemplate"><Download :size="16" /><span><strong>{{ orderTemplateLoading ? '正在准备模板…' : '下载销售订单 XLSX 模板' }}</strong><small>包含来源订单编号、客户编号、订单日期、币种、SKU、交易单位、数量和单价</small></span></button>
         <div class="step"><span>02</span><div><h3>上传并检查订单</h3><p>客户编号和 SKU 按系统编号匹配。每张订单的客户、日期、币种和汇率必须一致；预览不会写入业务数据，有明细错误时整单不导入。</p></div></div>

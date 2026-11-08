@@ -350,7 +350,7 @@ def _apply_payment_delta(order, financial, adjustment_id):
     remaining = -delta
     affected = None
     for plan in financial_order.payment_plans.select_for_update().exclude(status="cancelled").order_by("-due_date", "-id"):
-        reducible = plan.planned_amount - plan.settled_amount
+        reducible = plan.remaining_amount
         reduction = min(reducible, remaining)
         if reduction <= 0:
             continue

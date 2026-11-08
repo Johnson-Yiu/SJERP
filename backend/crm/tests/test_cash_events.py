@@ -13,14 +13,17 @@ from django.apps import apps
 from django.contrib.auth.models import AnonymousUser
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.files.base import ContentFile
-from django.db import connection, close_old_connections, connections
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import connection, close_old_connections, connections, models
 from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
 from rest_framework.test import APIClient
 
-from crm.models import CashSourceAllocation, Customer, FinanceBankVoucherBinding, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
+from crm.models import AdvanceAllocation, CashSourceAllocation, Customer, FinanceAccount, FinanceBankVoucherBinding, FinancePlanWriteoff, FinancePlanWriteoffCorrection, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
 from crm.services import cash_events as cash
-from crm.services.finance import allocate_advance, record_contract_refund, record_transaction, void_transaction
+from crm.services.finance import allocate_advance, correct_receivable_writeoff, record_contract_refund, record_transaction, void_transaction, writeoff_receivable
+from crm.serializers import TransactionSerializer
+from crm.services.profit import order_profit_summary
 from crm.tests import test_finance_data_scope as scope_fixture
 
 ACCOUNTS = ("SYNTH_FX", "SYNTH_CNY")
@@ -110,6 +113,300 @@ class CashEventTests(CashFixture, TestCase):
         self.assertEqual(old_report, self.client.get("/api/finance-dashboard/").data)
         print("P2A-DATABASE_VERIFICATION", json.dumps({"before": before, "after": legacy_hash(), "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": True}))
 
+    def test_company_fee_allocation_fx_settlement_and_customer_fee_receivable(self):
+        content = b"%PDF-1.4\nSynthetic receipt voucher\n%%EOF"
+        voucher = FinanceVoucher(original_name="synthetic-receipt.pdf", sha256=hashlib.sha256(content).hexdigest(),
+            size=len(content), scope="transaction", actor={"kind": "synthetic_fixture"})
+        voucher.file.save("synthetic-receipt.pdf", ContentFile(content), save=False)
+        voucher.save()
+
+        company_order = Order.objects.create(order_no="UNIFIED-COMPANY-O", customer=self.customer, currency="USD", exchange_rate="7.100000", status="confirmed", order_date=date(2026, 10, 18))
+        company_order.items.create(sku=self.sku, quantity=1, unit_price=1000)
+        company_plan = PaymentPlan.objects.create(order=company_order, direction="receivable", currency="USD", planned_amount=1000)
+        company_receipt = record_transaction(dict(transaction_no="UNIFIED-COMPANY-RECEIPT", kind="unallocated_advance", direction="income",
+            category="客户收款", customer=self.customer, amount="980", remittance_amount="1000", bank_fee_amount="20",
+            fee_responsibility="company", fee_reason="银行回单注明中转行扣费由我方承担", fee_evidence=voucher,
+            currency="USD", exchange_rate="7.1"))
+        self.assertEqual(company_receipt.amount, D("980"))
+        self.assertEqual(company_receipt.allocation_capacity, D("1000"))
+        allocate_advance(company_receipt, company_plan, "1000")
+        # Simulate the pre-split legacy allocation and apply the additive reconciliation.
+        from importlib import import_module
+        allocation = AdvanceAllocation.objects.get(advance=company_receipt, plan=company_plan)
+        AdvanceAllocation.objects.filter(pk=allocation.pk).update(cash_amount=D("1000"), fee_credit_amount=0)
+        from types import SimpleNamespace
+        import_module("crm.migrations.0121_reconcile_legacy_fee_allocation_cash").reconcile(apps, SimpleNamespace(connection=connection))
+        allocation.refresh_from_db()
+        self.assertEqual(allocation.cash_amount, D("980"))
+        self.assertEqual(allocation.fee_credit_amount, D("20"))
+        self.assertEqual(company_order.paid_amount, D("980"))
+        company_plan.refresh_from_db()
+        self.assertEqual(company_plan.remaining_amount, 0)
+
+        fx_payload = payload([company_receipt], key="UNIFIED-FX-6958", bank_date="2026-10-19", bank_net_amount="6928.00",
+            gross_rmb_amount="6958.00", actual_rate="7.100000", fee_mode="included", fee_amount="30.00", quoted_rate="7.200000")
+        event_id = self.register(fx_payload)
+        confirmed = self.confirm(event_id)
+        self.assertEqual(confirmed.data["gross_rmb_amount"], "6958.00")
+        self.assertEqual(confirmed.data["bank_net_amount"], "6928.00")
+        self.assertEqual(confirmed.data["actual_rate"], "7.100000")
+        self.assertEqual(confirmed.data["quoted_reference_delta"], "-98.00")
+        self.assertEqual(confirmed.data["fee_amount"], "30.00")
+        transaction_data = TransactionSerializer(company_receipt, context={}).data
+        self.assertEqual(transaction_data["cash_settlements"][0]["quoted_reference_delta"], "-98.00")
+        self.assertEqual(transaction_data["cash_settlements"][0]["pre_fee_reference_delta"], "0.00")
+        self.assertEqual(Transaction.objects.filter(transaction_no="UNIFIED-COMPANY-RECEIPT").count(), 1)
+        actual_cash = self.client.get("/api/actual-rmb-cash/", {"date_from": "2026-10-19", "date_to": "2026-10-19"})
+        self.assertEqual(actual_cash.status_code, 200, actual_cash.data)
+        self.assertEqual(actual_cash.data["totals"]["inflow"], "6928.00")
+        self.assertEqual(actual_cash.data["totals"]["count"], 1)
+
+        customer_order = Order.objects.create(order_no="UNIFIED-CUSTOMER-O", customer=self.customer, currency="USD", exchange_rate="7.100000", status="confirmed", order_date=date(2026, 10, 18))
+        customer_order.items.create(sku=self.sku, quantity=1, unit_price=1000)
+        customer_plan = PaymentPlan.objects.create(order=customer_order, direction="receivable", currency="USD", planned_amount=1000)
+        customer_voucher = FinanceVoucher(original_name="synthetic-customer-receipt.pdf", sha256=hashlib.sha256(content).hexdigest(),
+            size=len(content), scope="transaction", actor={"kind": "synthetic_fixture"})
+        customer_voucher.file.save("synthetic-customer-receipt.pdf", ContentFile(content), save=False); customer_voucher.save()
+        customer_receipt = record_transaction(dict(transaction_no="UNIFIED-CUSTOMER-RECEIPT", kind="unallocated_advance", direction="income",
+            category="客户收款", customer=self.customer, amount="980", remittance_amount="1000", bank_fee_amount="20",
+            fee_responsibility="customer", fee_reason="银行回单显示扣费，合同约定客户承担", fee_evidence=customer_voucher,
+            currency="USD", exchange_rate="7.1"))
+        self.assertEqual(customer_receipt.allocation_capacity, D("980"))
+        allocate_advance(customer_receipt, customer_plan, "980")
+        customer_plan.refresh_from_db()
+        self.assertEqual(customer_plan.remaining_amount, D("20"))
+
+        before_transactions = Transaction.objects.count()
+        writeoff_payload = {"plan": customer_plan.pk, "amount": "20.0000", "reason": "客户邮件确认本次尾差抹零", "request_key": "UNIFIED-WRITEOFF-20"}
+        over_limit = self.client.post(f"/api/transactions/{customer_receipt.pk}/writeoff/", {**writeoff_payload, "amount": "21.0000", "request_key": "UNIFIED-WRITEOFF-OVER"}, format="json")
+        self.assertEqual(over_limit.status_code, 400, over_limit.data)
+        self.assertEqual(FinancePlanWriteoff.objects.count(), 0)
+        with patch("crm.views.record_operation", side_effect=RuntimeError("synthetic audit failure")):
+            with self.assertRaisesRegex(RuntimeError, "synthetic audit failure"):
+                self.client.post(f"/api/transactions/{customer_receipt.pk}/writeoff/", writeoff_payload, format="json")
+        customer_plan.refresh_from_db()
+        self.assertEqual(customer_plan.remaining_amount, D("20"))
+        self.assertEqual(FinancePlanWriteoff.objects.count(), 0)
+        saved = self.client.post(f"/api/transactions/{customer_receipt.pk}/writeoff/", writeoff_payload, format="json")
+        self.assertEqual(saved.status_code, 201, saved.data)
+        self.assertEqual(saved.data["confirmed_actor"]["kind"], "development_superadmin")
+        retry = self.client.post(f"/api/transactions/{customer_receipt.pk}/writeoff/", writeoff_payload, format="json")
+        self.assertEqual(retry.status_code, 200, retry.data)
+        self.assertEqual(FinancePlanWriteoff.objects.count(), 1)
+        customer_plan.refresh_from_db(); customer_order.refresh_from_db(); customer_receipt.refresh_from_db()
+        self.assertEqual(customer_plan.remaining_amount, D("0"))
+        self.assertEqual(customer_plan.status, "settled")
+        self.assertEqual(customer_order.outstanding_amount, D("0"))
+        self.assertEqual(customer_receipt.amount, D("980"))
+        self.assertEqual(Transaction.objects.count(), before_transactions)
+        details = TransactionSerializer(customer_receipt, context={}).data
+        self.assertEqual(details["writeoffs"][0]["amount"], "20.0000")
+        self.assertEqual(details["writeoffs"][0]["reason"], writeoff_payload["reason"])
+        cash_totals = self.client.get("/api/actual-rmb-cash/", {"date_from": "2026-10-19", "date_to": "2026-10-19"}).data["totals"]
+        self.assertEqual(cash_totals["inflow"], "6928.00")
+        self.assertEqual(cash_totals["count"], 1)
+
+    def test_zero_net_fx_requires_included_fee_and_keeps_actual_cash_at_zero(self):
+        p = payload([self.receipt], key="ZERO-NET-FX", bank_net_amount="0.00", gross_rmb_amount="710.00",
+            actual_rate="7.100000", fee_mode="included", fee_amount="710.00", quoted_rate="7.100000")
+        event_id = self.register(p)
+        confirmed = self.confirm(event_id)
+        self.assertEqual(confirmed.data["gross_rmb_amount"], "710.00")
+        self.assertEqual(confirmed.data["fee_amount"], "710.00")
+        self.assertEqual(confirmed.data["bank_net_amount"], "0.00")
+        self.assertEqual(self.client.get("/api/actual-rmb-cash/", {"date_from": "2026-10-18", "date_to": "2026-10-18"}).data["totals"]["inflow"], "0.00")
+        invalid = payload([self.receipt], key="ZERO-NET-NO-FEE", bank_net_amount="0.00", gross_rmb_amount="710.00",
+            actual_rate="7.100000", fee_mode="none", fee_amount="0.00", quoted_rate="7.100000")
+        self.assertEqual(self.client.post(URL, invalid, format="json").status_code, 400)
+
+    def test_actual_receipt_caps_refunds_while_company_fee_settles_plan_and_hits_profit_once(self):
+        content = b"%PDF-1.4\nSynthetic receipt voucher\n%%EOF"
+        proof = FinanceVoucher(original_name="receipt-cap.pdf", sha256=hashlib.sha256(content).hexdigest(),
+            size=len(content), scope="transaction", actor={"kind": "synthetic_fixture"})
+        proof.file.save("receipt-cap.pdf", ContentFile(content), save=False); proof.save()
+        order = Order.objects.create(order_no="REFUND-CAP-O", customer=self.customer, currency="USD",
+            exchange_rate="7.100000", status="confirmed", order_date=date(2026, 10, 18))
+        order.items.create(sku=self.sku, quantity=1, unit_price=1000)
+        plan = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=1000)
+        receipt = record_transaction(dict(transaction_no="REFUND-CAP-R", kind="customer_receipt", direction="income",
+            order=order, customer=self.customer, plan=plan, amount="980", remittance_amount="1000", bank_fee_amount="20",
+            fee_responsibility="company", fee_reason="银行回单核实我方承担中转费", fee_evidence=proof,
+            currency="USD", exchange_rate="7.1"))
+        plan.refresh_from_db(); order.refresh_from_db()
+        self.assertEqual(receipt.amount, D("980"))
+        self.assertEqual(receipt.settlement_amount, D("1000"))
+        self.assertEqual(plan.settled_amount, D("1000"))
+        self.assertEqual(order.paid_amount, D("980"))
+        self.assertEqual(order_profit_summary(order)["order_expense_rmb"], D("142.000000"))
+        self.assertFalse(Transaction.objects.filter(order=order, direction="expense").exists())
+        with self.assertRaises(DjangoValidationError):
+            record_contract_refund(order, {"amount": "980.0001", "currency": "USD"})
+        record_contract_refund(order, {"amount": "500", "currency": "USD"})
+        order.refresh_from_db()
+        self.assertEqual(order.paid_amount, D("480"))
+        with self.assertRaises(DjangoValidationError):
+            record_contract_refund(order, {"amount": "480.0001", "currency": "USD"})
+        record_contract_refund(order, {"amount": "480", "currency": "USD"})
+        order.refresh_from_db(); plan.refresh_from_db()
+        self.assertEqual(order.paid_amount, D("0"))
+        self.assertEqual(plan.settled_amount, D("20"))
+        self.assertEqual(Transaction.objects.filter(order=order, direction="expense", kind="refund").count(), 2)
+
+    def test_customer_and_unknown_fee_keep_unreceived_amount_open_and_void_restores_full_settlement(self):
+        def receipt_proof(name):
+            content = b"%PDF-1.4\nSynthetic receipt voucher\n%%EOF"
+            proof = FinanceVoucher(original_name=f"{name}.pdf", sha256=hashlib.sha256(content).hexdigest(),
+                size=len(content), scope="transaction", actor={"kind": "synthetic_fixture"})
+            proof.file.save(f"{name}.pdf", ContentFile(content), save=False); proof.save()
+            return proof
+        for responsibility in ("customer", "unknown"):
+            order = Order.objects.create(order_no=f"FEE-{responsibility}-O", customer=self.customer, currency="USD",
+                exchange_rate="7.100000", status="confirmed", order_date=date(2026, 10, 18))
+            order.items.create(sku=self.sku, quantity=1, unit_price=1000)
+            plan = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=1000)
+            proof = receipt_proof(f"responsibility-{responsibility}")
+            receipt = record_transaction(dict(transaction_no=f"FEE-{responsibility}-R", kind="customer_receipt", direction="income",
+                order=order, customer=self.customer, plan=plan, amount="980", remittance_amount="1000", bank_fee_amount="20",
+                fee_responsibility=responsibility, fee_reason="银行回单扣费承担方待确认", fee_evidence=proof,
+                currency="USD", exchange_rate="7.1"))
+            order.refresh_from_db(); plan.refresh_from_db()
+            self.assertEqual(order.paid_amount, D("980"))
+            self.assertEqual(plan.settled_amount, D("980"))
+            self.assertEqual(plan.remaining_amount, D("20"))
+            self.assertEqual(order_profit_summary(order)["order_expense_rmb"], D("0"))
+
+        void_order = Order.objects.create(order_no="VOID-FEE-CREDIT-O", customer=self.customer, currency="USD",
+            exchange_rate="7.100000", status="confirmed", order_date=date(2026, 10, 18))
+        void_order.items.create(sku=self.sku, quantity=1, unit_price=1000)
+        void_plan = PaymentPlan.objects.create(order=void_order, direction="receivable", currency="USD", planned_amount=1000)
+        proof = receipt_proof("responsibility-void")
+        void_receipt = record_transaction(dict(transaction_no="VOID-FEE-CREDIT-R", kind="customer_receipt", direction="income",
+            order=void_order, customer=self.customer, plan=void_plan, amount="980", remittance_amount="1000", bank_fee_amount="20",
+            fee_responsibility="company", fee_reason="银行回单核实我方承担中转费", fee_evidence=proof,
+            currency="USD", exchange_rate="7.1"))
+        void_plan.refresh_from_db()
+        self.assertEqual(void_plan.settled_amount, D("1000"))
+        void_transaction(void_receipt, "合成验证撤销整笔收款及手续费核销")
+        void_plan.refresh_from_db(); void_order.refresh_from_db()
+        self.assertEqual(void_plan.settled_amount, D("0"))
+        self.assertEqual(void_plan.status, "open")
+        self.assertEqual(void_order.paid_amount, D("0"))
+
+    def test_invalid_receipt_fee_evidence_never_expands_allocation_capacity(self):
+        content = b"%PDF-1.4\nSynthetic fee voucher\n%%EOF"
+        cases = []
+        missing = FinanceVoucher.objects.create(original_name="missing.pdf", sha256=hashlib.sha256(content).hexdigest(),
+            size=len(content), scope="transaction", actor={"kind": "synthetic_fixture"})
+        cases.append(("missing", missing))
+        damaged = FinanceVoucher(original_name="damaged.pdf", sha256=hashlib.sha256(content).hexdigest(),
+            size=len(content), scope="transaction", actor={"kind": "synthetic_fixture"})
+        damaged.file.save("damaged.pdf", ContentFile(content), save=False); damaged.save()
+        with damaged.file.open("wb") as stored_file:
+            stored_file.write(b"corrupt")
+        cases.append(("damaged", damaged))
+        wrong_scope = FinanceVoucher(original_name="wrong-scope.pdf", sha256=hashlib.sha256(content).hexdigest(),
+            size=len(content), scope="account", actor={"kind": "synthetic_fixture"})
+        wrong_scope.file.save("wrong-scope.pdf", ContentFile(content), save=False); wrong_scope.save()
+        cases.append(("scope", wrong_scope))
+        bound_elsewhere = FinanceVoucher(original_name="wrong-source.pdf", sha256=hashlib.sha256(content).hexdigest(),
+            size=len(content), scope="transaction", actor={"kind": "synthetic_fixture"})
+        bound_elsewhere.file.save("wrong-source.pdf", ContentFile(content), save=False); bound_elsewhere.save()
+        unrelated = Transaction.objects.create(transaction_no="FEE-PROOF-OTHER-SOURCE", kind="customer_receipt", direction="income",
+            amount=5, currency="USD", exchange_rate=1, transaction_date=date(2026, 10, 18), customer=self.customer, fee_evidence=bound_elsewhere)
+        cases.append(("source-binding", bound_elsewhere))
+
+        for index, (label, proof) in enumerate(cases):
+            with self.subTest(evidence=label):
+                advance = Transaction.objects.create(transaction_no=f"FEE-PROOF-{index}", kind="unallocated_advance", direction="income",
+                    amount=980, remittance_amount=1000, bank_fee_amount=20, fee_responsibility="company",
+                    fee_reason="合成回单说明由我方承担", fee_evidence=proof, currency="USD", exchange_rate=7,
+                    transaction_date=date(2026, 10, 18), customer=self.customer)
+                self.assertEqual(advance.allocation_capacity, D("980"))
+                target = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=100)
+                with self.assertRaises(DjangoValidationError):
+                    allocate_advance(advance, target, "1000")
+                target.refresh_from_db()
+                self.assertEqual(target.settled_amount, D("0"))
+
+    def test_writeoff_corrections_restore_plan_without_cash_and_roll_back_on_audit_failure(self):
+        order = Order.objects.create(order_no="WRITEOFF-CORRECTION-O", customer=self.customer, currency="USD",
+            exchange_rate="7.000000", status="confirmed", order_date=date(2026, 10, 18))
+        order.items.create(sku=self.sku, quantity=1, unit_price=90)
+        plan = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=90)
+        receipt = record_transaction(dict(transaction_no="WRITEOFF-CORRECTION-R", kind="customer_receipt", direction="income",
+            order=order, customer=self.customer, plan=plan, amount="80", currency="USD", exchange_rate="7"))
+        original, created = writeoff_receivable(receipt, plan, "10", "客户确认抹零，回单核对后发现金额有误", "WOF-CORR-ORIGINAL", self.user)
+        self.assertTrue(created)
+        before_transactions = Transaction.objects.count()
+        payload_data = {"writeoff": original.pk, "amount": "4", "reason": "恢复部分应收以更正原抹零", "request_key": "WOF-CORR-4"}
+        with patch("crm.views.record_operation", side_effect=RuntimeError("synthetic correction audit failure")):
+            with self.assertRaisesRegex(RuntimeError, "synthetic correction audit failure"):
+                self.client.post(f"/api/transactions/{receipt.pk}/writeoff-corrections/", payload_data, format="json")
+        plan.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, D("0"))
+        self.assertEqual(FinancePlanWriteoffCorrection.objects.count(), 0)
+        saved = self.client.post(f"/api/transactions/{receipt.pk}/writeoff-corrections/", payload_data, format="json")
+        self.assertEqual(saved.status_code, 201, saved.data)
+        retry = self.client.post(f"/api/transactions/{receipt.pk}/writeoff-corrections/", payload_data, format="json")
+        self.assertEqual(retry.status_code, 200, retry.data)
+        self.assertEqual(retry.data["id"], saved.data["id"])
+        plan.refresh_from_db(); order.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, D("4"))
+        self.assertEqual(plan.status, "open")
+        self.assertEqual(order.outstanding_amount, D("4"))
+        second = self.client.post(f"/api/transactions/{receipt.pk}/writeoff-corrections/", {
+            "writeoff": original.pk, "amount": "6", "reason": "恢复剩余应收以完整更正", "request_key": "WOF-CORR-6",
+        }, format="json")
+        self.assertEqual(second.status_code, 201, second.data)
+        over = self.client.post(f"/api/transactions/{receipt.pk}/writeoff-corrections/", {
+            "writeoff": original.pk, "amount": "0.0001", "reason": "尝试超过原记录剩余金额", "request_key": "WOF-CORR-OVER",
+        }, format="json")
+        self.assertEqual(over.status_code, 400, over.data)
+        plan.refresh_from_db(); order.refresh_from_db(); receipt.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, D("10"))
+        self.assertEqual(order.outstanding_amount, D("10"))
+        self.assertEqual(receipt.amount, D("80"))
+        self.assertEqual(FinancePlanWriteoff.objects.get(pk=original.pk).amount, D("10"))
+        self.assertEqual(FinancePlanWriteoffCorrection.objects.count(), 2)
+        self.assertEqual(Transaction.objects.count(), before_transactions)
+        details = TransactionSerializer(receipt, context={}).data
+        self.assertEqual(details["writeoffs"][0]["corrected_amount"], "10.0000")
+        self.assertEqual(len(details["writeoffs"][0]["corrections"]), 2)
+
+    def test_one_fx_settlement_merges_multiple_independent_receipts(self):
+        second = record_transaction(dict(transaction_no="UNIFIED-MERGE-SOURCE", kind="other_income", direction="income",
+            category="合成外币收入", amount="50", currency="USD", exchange_rate="7.1"))
+        p = payload([self.receipt, second], amounts=["40", "10"], key="UNIFIED-MULTI-SOURCE", bank_net_amount="355.00",
+            gross_rmb_amount="355.00", actual_rate="7.100000", fee_mode="none", fee_amount="0.00", quoted_rate="7.200000")
+        event_id = self.register(p)
+        confirmed = self.confirm(event_id)
+        self.assertEqual(confirmed.data["amount"], "50.0000")
+        self.assertEqual(len(confirmed.data["sources"]), 2)
+        self.assertEqual(confirmed.data["quoted_reference_delta"], "-5.00")
+        self.assertEqual(CashSourceAllocation.objects.filter(event_id=event_id).count(), 2)
+
+    def test_receipt_fee_requires_difference_and_private_proof(self):
+        for values in (
+            {"remittance_amount": "1000", "bank_fee_amount": "19", "fee_responsibility": "company", "fee_reason": "银行扣费", "fee_evidence": None},
+            {"remittance_amount": "1000", "bank_fee_amount": "20", "fee_responsibility": "company", "fee_reason": "银行扣费", "fee_evidence": None},
+        ):
+            with self.subTest(values=values), self.assertRaises(DjangoValidationError):
+                record_transaction(dict(transaction_no="UNIFIED-INVALID-FEE", kind="unallocated_advance", direction="income",
+                    category="客户收款", customer=self.customer, amount="980", currency="USD", exchange_rate="7", **values))
+        self.assertFalse(Transaction.objects.filter(transaction_no="UNIFIED-INVALID-FEE").exists())
+
+    def test_family_root_invalid_inputs_return_4xx_without_internal_errors(self):
+        missing = self.client.get(URL + "sources/", {"currency": "USD", "family_root": "9223372036854775807"})
+        self.assertEqual(missing.status_code, 404, missing.data)
+        wrong_kind = record_transaction(dict(transaction_no="FAMILY-WRONG-KIND", kind="other_income", direction="income",
+            category="合成", amount="10", currency="USD", exchange_rate="7"))
+        wrong_type = self.client.get(URL + "sources/", {"currency": "USD", "family_root": wrong_kind.pk})
+        self.assertEqual(wrong_type.status_code, 400, wrong_type.data)
+        wrong_currency = self.client.get(URL + "sources/", {"currency": "EUR", "family_root": self.receipt.pk})
+        self.assertEqual(wrong_currency.status_code, 400, wrong_currency.data)
+        malformed = self.client.get(URL + "sources/", {"currency": "USD", "family_root": "-1"})
+        self.assertEqual(malformed.status_code, 400, malformed.data)
+
     def test_c_partial_60_40_and_overallocation(self):
         for n, amount in enumerate(["60", "40"]):
             pk = self.register(payload([self.receipt], [amount], key=f"PART-{n}", bank_net_amount=["426", "284"][n]))
@@ -134,6 +431,53 @@ class CashEventTests(CashFixture, TestCase):
         self.assertEqual(RmbCashEvent.objects.get(pk=pk).amount, D("100"))
         self.assertEqual(CashSourceAllocation.objects.count(), 2)
         self.assertEqual(self.client.post(URL, payload([self.receipt, self.receipt], ["10", "10"], key="DUP"), format="json").status_code, 400)
+
+    def test_linked_receipt_uses_saved_split_family_and_keeps_unallocated_advance_distinct(self):
+        order = Order.objects.create(order_no="BOUND-O", customer=self.customer, currency="USD", exchange_rate=7, status="confirmed", order_date=date(2026, 10, 18))
+        order.items.create(sku=self.sku, quantity=1, unit_price=100)
+        PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=40)
+        PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=60)
+        receipt = record_transaction(dict(transaction_no="BOUND-RECEIPT", order=order, customer=self.customer,
+            kind="customer_receipt", amount="130", currency="USD", exchange_rate="7"))
+        family = cash.family(receipt)
+        advance = next(row for row in family if row.kind == "unallocated_advance")
+        self.assertEqual(sum((row.amount for row in family), D("0")), D("130"))
+        self.assertEqual(advance.amount, D("30"))
+
+        sources = self.client.get(URL + "sources/", {"currency": "USD", "family_root": receipt.pk})
+        self.assertEqual(sources.status_code, 200, sources.data)
+        self.assertEqual({row["id"] for row in sources.data["results"]}, {row.pk for row in family})
+        advance_source = next(row for row in sources.data["results"] if row["id"] == advance.pk)
+        self.assertEqual(advance_source["kind"], "unallocated_advance")
+        self.assertEqual(advance_source["order_no"], order.order_no)
+
+        event_payload = payload(family, [format(row.amount, ".2f") for row in family], key="BOUND-FX",
+            bank_net_amount="910", source_receipt_id=receipt.pk)
+        preview = self.client.post(URL + "preview/", event_payload, format="json")
+        self.assertEqual(preview.status_code, 200, preview.data)
+        response = self.client.post(URL, event_payload, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data["source_receipt"]["transaction_no"], receipt.transaction_no)
+        self.assertEqual(response.data["source_receipt"]["order_no"], order.order_no)
+        self.assertEqual(response.data["orders"], [{"id": order.pk, "order_no": order.order_no}])
+        event_id = response.data["id"]
+        self.confirm(event_id)
+        duplicate = self.client.post(URL, event_payload, format="json")
+        self.assertEqual(duplicate.status_code, 200)
+        self.assertEqual(RmbCashEvent.objects.filter(request_key="BOUND-FX").count(), 1)
+        repeated_sources = payload(family, [format(row.amount, ".2f") for row in family], key="BOUND-FX-REPEAT",
+            bank_net_amount="910", source_receipt_id=receipt.pk)
+        self.assertEqual(self.client.post(URL, repeated_sources, format="json").status_code, 409)
+
+        unrelated = payload([self.receipt], key="BOUND-WRONG", source_receipt_id=receipt.pk)
+        rejected = self.client.post(URL + "preview/", unrelated, format="json")
+        self.assertEqual(rejected.status_code, 400)
+
+    def test_cash_account_choices_return_configured_readable_names_only(self):
+        FinanceAccount.objects.create(code=ACCOUNTS[0], name="美元收款账户", account_type="bank", ownership="own", currency="USD", ownership_reason="合成测试配置")
+        response = self.client.get(URL + "accounts/")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["results"], [{"code": ACCOUNTS[0], "name": "美元收款账户", "currency": "USD", "account_type": "bank"}])
 
     def test_advance_allocation_does_not_consume_cash_source(self):
         source = record_transaction(dict(transaction_no="ADV-BANK", kind="unallocated_advance", direction="income", customer=self.customer, amount="100", currency="USD", exchange_rate="7", category="合成预收"))
@@ -240,11 +584,13 @@ class CashEventTests(CashFixture, TestCase):
         self.assertEqual(RmbCashEvent.objects.count(), 0); self.assertEqual(CashSourceAllocation.objects.count(), 0)
 
     def test_k_invalid_money_rate_sources_and_unknown_fields(self):
-        for field, values in {"bank_net_amount": ["NaN", "Infinity", "-1", "0", "0.001", "1.000", "1000000000000", 1.5, True], "quoted_rate": ["NaN", "Infinity", "-1", "1.0000001", "1.0000000"], "currency": ["XYZ", [], {}], "kind": [[], {}], "direction": [[], {}], "fee_amount": ["-1", "0.001"], "fee_mode": ["separate", [], {}]}.items():
+        for field, values in {"bank_net_amount": ["NaN", "Infinity", "-1", "0.001", "1.000", "1000000000000", 1.5, True], "quoted_rate": ["NaN", "Infinity", "-1", "1.0000001", "1.0000000"], "currency": ["XYZ", [], {}], "kind": [[], {}], "direction": [[], {}], "fee_amount": ["-1", "0.001"], "fee_mode": ["separate", [], {}]}.items():
             for value in values:
                 with self.subTest(field=field, value=value):
                     self.assertEqual(self.client.post(URL, payload([self.receipt], **{field: value}), format="json").status_code, 400)
         self.assertEqual(self.client.post(URL, payload([self.receipt], password="forbidden"), format="json").status_code, 400)
+        zero_cny = payload([self.receipt], key="ZERO-CNY", currency="CNY", kind="cny_direct", bank_net_amount="0.00", fee_mode="none", fee_amount="0", quoted_rate=None)
+        self.assertEqual(self.client.post(URL, zero_cny, format="json").status_code, 400)
         p = payload([self.receipt]); p["sources"][0]["verified"] = False
         self.assertEqual(self.client.post(URL, p, format="json").status_code, 400)
         self.assertEqual(RmbCashEvent.objects.count(), 0)
@@ -334,6 +680,12 @@ class CashPermissionsTests(TestCase):
         ids = {r["id"] for r in self.client.get(URL + "sources/").data["results"]}
         self.assertNotIn(source.pk, ids); self.assertNotIn(self.receipts[0].pk, ids)
 
+    def test_family_root_outside_scope_is_indistinguishable_from_missing(self):
+        response = self.client.get(URL + "sources/", {"currency": "CNY", "family_root": self.receipts[1].pk})
+        self.assertEqual(response.status_code, 404, response.data)
+        self.assertNotIn("amount", response.data)
+        self.assertNotIn("transaction_no", response.data)
+
 
 @unittest.skipUnless(connection.vendor == "postgresql", "Real PostgreSQL locks required")
 @override_settings(RMB_CASH_ACCOUNT_IDS=ACCOUNTS)
@@ -384,6 +736,37 @@ class CashConcurrencyTests(CashFixture, TransactionTestCase):
         self.assertCountEqual(self.race(refund), ["idempotent", "refund_rejected"])
         self.assertEqual(before, legacy_hash())
         print("P2A_REAL_POSTGRES_CONCURRENCY", json.dumps({"case": "confirm_void_refund", "legacy_unchanged": True, "remaining": "0.0000", "vendor": connection.vendor}))
+
+    def test_writeoff_correction_competition_and_same_request_are_serialized(self):
+        order = Order.objects.create(order_no="PG-WRITEOFF-RACE-O", customer=self.customer, currency="USD",
+            exchange_rate="7.000000", status="confirmed", order_date=date(2026, 10, 18))
+        order.items.create(sku=self.sku, quantity=1, unit_price=100)
+        plan = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=100)
+        source = record_transaction(dict(transaction_no="PG-WRITEOFF-RACE-R", kind="customer_receipt", direction="income",
+            order=order, customer=self.customer, plan=plan, amount="90", currency="USD", exchange_rate="7"))
+        writeoff, created = writeoff_receivable(source, plan, "10", "合成并发测试：客户确认授权抹零", "PG-WOF-RACE", self.user)
+        self.assertTrue(created)
+
+        def compete(index):
+            try:
+                row, created = correct_receivable_writeoff(source, writeoff, "6", "并发争用抹零更正额度", f"PG-WOF-COMPETE-{index}", self.user)
+                return ("created" if created else "replay", row.pk)
+            except DjangoValidationError:
+                return ("rejected", None)
+        competing = self.race(compete)
+        self.assertCountEqual([result[0] for result in competing], ["created", "rejected"])
+        plan.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, D("6"))
+
+        same_request = self.race(lambda _: (lambda result: (result[0].pk, result[1]))(
+            correct_receivable_writeoff(source, writeoff, "2", "同一更正请求的并发幂等重试", "PG-WOF-SAME-KEY", self.user)))
+        self.assertEqual(same_request[0][0], same_request[1][0])
+        self.assertCountEqual([same_request[0][1], same_request[1][1]], [True, False])
+        plan.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, D("8"))
+        self.assertEqual(FinancePlanWriteoffCorrection.objects.filter(writeoff=writeoff).aggregate(total=models.Sum("amount"))["total"], D("8"))
+        print("FINANCE_REAL_POSTGRES_CONCURRENCY", json.dumps({"case": "writeoff_correction_competition_and_idempotency", "competing": competing,
+            "same_request_ids": same_request, "net_writeoff": "2.0000", "vendor": connection.vendor}))
 
 
 class CashMigrationTests(TransactionTestCase):

@@ -1,7 +1,7 @@
 from .permissions import user_can
 from .finance_scope import validate_finance_relations
 from .trade_units import TradeLineSerializerMixin, TRADE_FIELDS, SKUTradeUnitSerializer, trade_values, validate_document_amount
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 import re
 from uuid import uuid4
 from urllib.parse import quote as urlquote
@@ -10,14 +10,14 @@ import bleach
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.utils import timezone
 from django.utils.html import strip_tags
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from .models import ShipmentItem
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseMOQException, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, Customer, CustomerCodeSequence, EmployeeProfile, FinancePlanWriteoff, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PackingPlanCarton, PackingPlanCartonItem, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductCodeSequence, ProductParameter, PurchaseMOQException, PurchaseOrder, PurchaseOrderItem, Quote, QuoteImportantNote, QuoteItem, RolePermission, Shipment, ShipmentPackage, ShipmentPackageItem, SKUPackagingProfile, SKU, SKUVersion, Supplier, SupplierSKU, Transaction
 from .country_registry import AmbiguousCountryError, CountryNotFoundError, display_country, resolve_country_code
 from .customer_status import customer_status_display
 from .supplier_display import payment_terms_summary
@@ -416,6 +416,20 @@ class InventoryMovementReversalInputSerializer(serializers.Serializer):
 
 class TransactionVoidInputSerializer(serializers.Serializer):
     reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
+
+
+class FinancePlanWriteoffInputSerializer(serializers.Serializer):
+    plan = serializers.IntegerField(min_value=1)
+    amount = serializers.DecimalField(max_digits=14, decimal_places=4, min_value=Decimal("0.0001"))
+    reason = serializers.CharField(min_length=5, max_length=500, allow_blank=False, trim_whitespace=True)
+    request_key = serializers.CharField(min_length=1, max_length=128, allow_blank=False, trim_whitespace=True)
+
+
+class FinancePlanWriteoffCorrectionInputSerializer(serializers.Serializer):
+    writeoff = serializers.IntegerField(min_value=1)
+    amount = serializers.DecimalField(max_digits=14, decimal_places=4, min_value=Decimal("0.0001"))
+    reason = serializers.CharField(min_length=5, max_length=500, allow_blank=False, trim_whitespace=True)
+    request_key = serializers.CharField(min_length=1, max_length=128, allow_blank=False, trim_whitespace=True)
 
 
 class ProcurementDraftItemInputSerializer(serializers.Serializer):
@@ -2437,12 +2451,19 @@ class TransactionSerializer(serializers.ModelSerializer):
     direction_display = serializers.CharField(source="get_direction_display", read_only=True)
     status_display = serializers.CharField(source="get_status_display", read_only=True)
     rmb_amount = serializers.SerializerMethodField(label="账面人民币折算参考", help_text="保留既有折算值，含原币为CNY的流水；不代表银行实际到账或结汇结果。")
+    allocation_capacity = serializers.DecimalField(max_digits=14, decimal_places=4, read_only=True)
+    unallocated_amount = serializers.SerializerMethodField()
+    remitted_amount_display = serializers.SerializerMethodField()
+    fee_evidence_name = serializers.SerializerMethodField()
+    fee_evidence_sha256 = serializers.SerializerMethodField()
+    cash_settlements = serializers.SerializerMethodField()
+    writeoffs = serializers.SerializerMethodField()
 
     class Meta:
         model = Transaction
         fields = "__all__"
         extra_kwargs = {"transaction_no": {"required": False}}
-        read_only_fields = ["status", "allocated_amount", "split_from", "voided_at", "void_reason"]
+        read_only_fields = ["status", "allocated_amount", "split_from", "voided_at", "void_reason", "settlement_amount"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -2459,6 +2480,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             data["plan"] = None
             data["allocations"] = []
             data["allocated_amount"] = None
+            data["cash_settlements"] = []
         else:
             from .finance_scope import scope_plan_queryset
             plan_ids = {row["plan"] for row in data.get("allocations", [])}
@@ -2481,18 +2503,97 @@ class TransactionSerializer(serializers.ModelSerializer):
         allocations = getattr(obj, "_prefetched_objects_cache", {}).get("allocations")
         if allocations is None:
             allocations = obj.allocations.select_related("plan__order", "plan__purchase_order")
-        return [{
+        rows = [{
             "id": row.id,
             "plan": row.plan_id,
             "contract_no": row.plan.order.order_no if row.plan.order_id else row.plan.purchase_order.purchase_no,
             "order": row.plan.order_id,
             "purchase_order": row.plan.purchase_order_id,
             "amount": row.amount,
+            "remaining_amount": row.plan.remaining_amount,
             "is_active": row.is_active,
         } for row in allocations]
+        if obj.plan_id and obj.kind in {"customer_receipt", "supplier_payment"}:
+            plan = obj.plan
+            rows.append({
+                "id": f"plan-{obj.pk}", "plan": plan.pk,
+                "contract_no": plan.order.order_no if plan.order_id else plan.purchase_order.purchase_no,
+                "order": plan.order_id, "purchase_order": plan.purchase_order_id,
+                "amount": obj.settlement_amount or obj.amount,
+                "remaining_amount": plan.remaining_amount, "is_active": obj.status == "confirmed",
+            })
+        return rows
+
+    def get_unallocated_amount(self, obj):
+        if obj.kind not in {"unallocated_advance", "unallocated_payment"}:
+            return Decimal("0")
+        return max(obj.allocation_capacity - obj.allocated_amount, Decimal("0"))
 
     def get_rmb_amount(self, obj):
         return obj.rmb_amount or (obj.amount * obj.exchange_rate).quantize(Decimal("0.0001"))
+
+    def get_remitted_amount_display(self, obj):
+        return obj.remittance_amount if obj.remittance_amount is not None else obj.amount
+
+    def get_fee_evidence_name(self, obj):
+        return obj.fee_evidence.original_name if obj.fee_evidence_id else ""
+
+    def get_fee_evidence_sha256(self, obj):
+        return obj.fee_evidence.sha256 if obj.fee_evidence_id else ""
+
+    def get_cash_settlements(self, obj):
+        from .models import CashSourceAllocation
+        from .services.cash_events import visible
+
+        user = serializer_user(self.context)
+        if not user_can(user, "finance", "view"):
+            return []
+        rows = CashSourceAllocation.objects.filter(source=obj).select_related("event").order_by("event__bank_date", "event_id")
+        result = []
+        for row in rows:
+            event = row.event
+            if not visible(event, user):
+                continue
+            source_allocations = event.sources.select_related("source").all()
+            reference_amount = sum(
+                (item.amount * Decimal(item.source_snapshot["exchange_rate"]) for item in source_allocations), Decimal("0"),
+            ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            gross = event.gross_rmb_amount or event.bank_net_amount + event.fee_amount
+            quoted_reference = (event.amount * event.quoted_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if event.quoted_rate is not None else None
+            result.append({
+                "id": row.event_id,
+                "event_no": event.event_no,
+                "bank_date": event.bank_date,
+                "amount": str(row.amount),
+                "currency": row.currency,
+                "gross_rmb_amount": str(gross),
+                "bank_net_amount": str(event.bank_net_amount),
+                "fee_amount": str(event.fee_amount),
+                "actual_rate": str(event.actual_rate),
+                "quoted_rate": str(event.quoted_rate) if event.quoted_rate is not None else None,
+                "quoted_reference_delta": str((gross - quoted_reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if quoted_reference is not None else None,
+                "pre_fee_reference_delta": str((gross - reference_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                "status": event.status,
+            })
+        return result
+
+    def get_writeoffs(self, obj):
+        if not user_can(serializer_user(self.context), "finance", "view"):
+            return []
+        rows = FinancePlanWriteoff.objects.filter(source_transaction=obj).select_related("plan__order").order_by("created_at", "pk")
+        return [{
+            "id": row.pk,
+            "plan": row.plan_id,
+            "contract_no": row.plan.order.order_no,
+            "amount": str(row.amount),
+            "reason": row.reason,
+            "confirmed_actor": row.confirmed_actor,
+            "corrected_amount": str(row.corrections.aggregate(total=Sum("amount"))["total"] or Decimal("0")),
+            "corrections": [{"id": correction.pk, "amount": str(correction.amount), "reason": correction.reason,
+                "actor": correction.actor, "created_at": correction.created_at}
+                for correction in row.corrections.order_by("created_at", "pk")],
+            "created_at": row.created_at,
+        } for row in rows]
 
     def validate(self, attrs):
         request = self.context.get("request")
@@ -2522,6 +2623,31 @@ class TransactionSerializer(serializers.ModelSerializer):
             attrs["supplier"] = purchase_order.supplier
         if order and purchase_order:
             raise serializers.ValidationError("一笔流水只能关联销售订单或采购单之一。")
+        if kind in {"customer_receipt", "unallocated_advance"} and direction == "income":
+            actual = attrs.get("amount", getattr(self.instance, "amount", Decimal("0")))
+            remitted = attrs.get("remittance_amount", getattr(self.instance, "remittance_amount", None))
+            remitted = actual if remitted is None else remitted
+            fee = attrs.get("bank_fee_amount", getattr(self.instance, "bank_fee_amount", Decimal("0")))
+            responsibility = attrs.get("fee_responsibility", getattr(self.instance, "fee_responsibility", ""))
+            evidence = attrs.get("fee_evidence", getattr(self.instance, "fee_evidence", None))
+            reason = str(attrs.get("fee_reason", getattr(self.instance, "fee_reason", "")) or "").strip()
+            if remitted < actual or remitted - actual != fee:
+                raise serializers.ValidationError("客户汇款额减银行实际到账额必须等于扣费金额。")
+            if fee > 0:
+                if responsibility not in {"company", "customer", "unknown"} or len(reason) < 5:
+                    raise serializers.ValidationError("有银行扣费时，请记录承担方和扣费依据。")
+                if evidence is None or evidence.scope != "transaction":
+                    raise serializers.ValidationError("有银行扣费时，请上传并关联收款凭证。")
+                from .services.finance_closeout import voucher as checked_voucher
+                try:
+                    checked_voucher(evidence.pk, scope="transaction")
+                except Exception as exc:
+                    raise serializers.ValidationError({"fee_evidence": str(exc)})
+            elif responsibility or reason or evidence:
+                raise serializers.ValidationError("没有扣费时无需填写扣费承担方、依据或凭证。")
+            attrs["remittance_amount"] = remitted
+        elif any(attrs.get(field) not in (None, "", Decimal("0")) for field in ("bank_fee_amount", "fee_responsibility", "fee_reason", "fee_evidence")):
+            raise serializers.ValidationError("客户汇款扣费仅支持登记在客户收款或未分配预收款上。")
         if kind in {"unallocated_advance", "unallocated_payment"}:
             if order or purchase_order or attrs.get("plan"):
                 raise serializers.ValidationError("未分配预收预付请只选择往来方，之后再核销计划。")
@@ -2549,11 +2675,17 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
     contract_no = serializers.SerializerMethodField()
     counterparty_name = serializers.SerializerMethodField()
     is_overdue = serializers.SerializerMethodField()
+    writeoff_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = PaymentPlan
         fields = "__all__"
         read_only_fields = ["settled_amount", "status"]
+
+    def get_writeoff_amount(self, obj):
+        written = obj.finance_writeoffs.aggregate(total=Sum("amount"))["total"] or Decimal("0")
+        corrected = sum((row.amount for writeoff in obj.finance_writeoffs.all() for row in writeoff.corrections.all()), Decimal("0"))
+        return written - corrected
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

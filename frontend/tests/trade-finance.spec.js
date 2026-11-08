@@ -83,6 +83,39 @@ describe('trade finance interactions', () => {
     wrapper.unmount()
   })
 
+  it('records actual bank receipt, remittance amount, fee responsibility and uploaded proof', async () => {
+    mocks.listAll.mockImplementation(async url => url === '/customers/' ? [{ id: 9, name: '合成客户甲' }] : [])
+    mocks.post.mockImplementation(async (url) => url === '/transactions/voucher-upload/'
+      ? { data: { id: 77, name: 'synthetic-bank.pdf', sha256: 'a'.repeat(64) } }
+      : { data: {} })
+    const wrapper = mount(TransactionPage, { ...options, global: { ...options.global, plugins: [await purchaseRouter('/transactions')] } })
+    await flushPromises()
+    await wrapper.findAll('button').find(button => button.text() === '新增记账').trigger('click')
+    const dialog = wrapper.get('form.dialog')
+    await dialog.find('select').setValue('unallocated_advance')
+    await dialog.findAll('select')[1].setValue('USD')
+    await dialog.findAll('select')[2].setValue('9')
+    await dialog.find('input[type="number"]').setValue('980')
+    await dialog.findAll('input[type="number"]')[1].setValue('7.1')
+    await dialog.findAll('input[type="number"]')[2].setValue('1000')
+    await dialog.findAll('select')[3].setValue('company')
+    await dialog.find('textarea').setValue('银行回单注明中转行扣费由我方承担')
+    const proof = new File(['%PDF-1.4 synthetic'], 'synthetic-bank.pdf', { type: 'application/pdf' })
+    const fileInput = dialog.find('input[type="file"]')
+    Object.defineProperty(fileInput.element, 'files', { configurable: true, value: [proof] })
+    await fileInput.trigger('change')
+    await dialog.findAll('button').find(button => button.text() === '上传并关联凭证').trigger('click')
+    await flushPromises()
+    await dialog.trigger('submit')
+    await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/transactions/voucher-upload/', expect.any(FormData))
+    expect(mocks.post).toHaveBeenCalledWith('/transactions/', expect.objectContaining({
+      kind: 'unallocated_advance', amount: 980, remittance_amount: 1000, bank_fee_amount: '20.0000',
+      fee_responsibility: 'company', fee_evidence: 77, currency: 'USD', exchange_rate: 7.1,
+    }))
+    wrapper.unmount()
+  })
+
   it('requires a reason for root transaction void and hides child void actions', async () => {
     const rows = [
       { id: 11, transaction_date: '2026-09-01', transaction_no: 'FIN-11', direction: 'income', direction_display: '收入', kind: 'customer_receipt', amount: '30', currency: 'USD', rmb_amount: '210', status: 'confirmed', status_display: '已确认', customer_name: '客户甲', order_no: 'SO-11', allocations: [], allocated_amount: '0' },

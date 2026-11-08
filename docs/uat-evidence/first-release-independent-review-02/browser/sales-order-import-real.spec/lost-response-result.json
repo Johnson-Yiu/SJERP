@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "batch_id": "1",
+    "status": "partial",
+    "total_rows": 3,
+    "total_orders": 2,
+    "created_orders": 1,
+    "failed_orders": 1,
+    "orders": [
+      {
+        "source_order_no": "UAT-EXT-ORDER-001",
+        "order_id": 6,
+        "order_no": "SO-2026-00001",
+        "status": "draft",
+        "customer_code": "UAT-IMP-C001",
+        "line_count": 2,
+        "currency": "CNY",
+        "total_amount": "96.00"
+      }
+    ],
+    "errors": [
+      {
+        "row": 4,
+        "key": "UAT-EXT-ORDER-BAD",
+        "message": "找不到 SKU：UAT-UNKNOWN-SKU。"
+      }
+    ],
+    "business_write_performed": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "refundStatus": 400,
+  "restored": {
+    "id": 4,
+    "customer_id": 1,
+    "supplier_id": null,
+    "exchange_rate": 7.1,
+    "remaining_rmb": 71,
+    "remaining_amount": "10.0000",
+    "contract_no": "SYN-FIN-WRITEOFF",
+    "counterparty_name": "导入验收合成客户",
+    "is_overdue": false,
+    "writeoff_amount": 0,
+    "created_at": "2026-11-09T01:25:49.964820+08:00",
+    "updated_at": "2026-11-09T01:26:28.217348+08:00",
+    "direction": "receivable",
+    "due_date": null,
+    "planned_amount": "90.0000",
+    "settled_amount": "80.0000",
+    "currency": "USD",
+    "status": "open",
+    "notes": "",
+    "order": 4,
+    "purchase_order": null
+  },
+  "transactionsUnchanged": true
+}

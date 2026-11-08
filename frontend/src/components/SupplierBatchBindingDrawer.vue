@@ -37,7 +37,7 @@ async function save() {
 }
 </script>
 <template>
-<Teleport to="body"><div class="binding-backdrop" @mousedown.self="requestClose"><section class="binding-drawer" role="dialog" aria-modal="true" aria-label="批量绑定供应商">
+<Teleport to="body"><div class="binding-backdrop"><section class="binding-drawer" role="dialog" aria-modal="true" aria-label="批量绑定供应商">
 <header><div><h3>批量绑定供应商</h3><p>为 {{ skuIds.length }} 个 SKU 添加候选供应商。采购时仍需选择实际供应来源。</p></div><button type="button" :disabled="busy" @click="requestClose">关闭</button></header>
 <div class="binding-body" :inert="busy"><p class="hint">优先展示分类匹配的供应商，也可打开开关从全部供应商中选择。切换筛选不会清除已选供应商。</p>
 <div class="supplier-filter-bar"><input v-model="search" class="binding-search" placeholder="搜索名称、代码或可供分类" aria-label="搜索供应商" /><label class="all-suppliers-toggle"><input v-model="showAll" type="checkbox" role="switch" />显示全部供应商</label></div>

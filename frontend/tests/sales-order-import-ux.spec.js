@@ -112,6 +112,7 @@ it('does not execute a stale confirmation after component unmount', async () => 
 })
 it('restores the original preview identity after a lost response and reopen', async () => {
   const { wrapper, file } = await readyPage()
+  sessionStorage.setItem('sales-order-import-pending-v1', JSON.stringify([{file:'other.xlsx:1:2',preview_token:'other-tab-token'}]))
   mocks.post.mockRejectedValueOnce(new Error('Network response lost'))
   await button(wrapper, '确认导入 1 张草稿').trigger('click'); await flushPromises()
   wrapper.unmount()
@@ -122,7 +123,7 @@ it('restores the original preview identity after a lost response and reopen', as
   mocks.post.mockResolvedValueOnce({ data: { batch_id:'17', total_rows:3, total_orders:2, created_orders:1, failed_orders:1, orders:[], errors:[] } })
   await button(reopened, '确认导入 1 张草稿').trigger('click'); await flushPromises()
   expect(mocks.post.mock.calls[2][1].get('preview_token')).toBe(preview.preview_token)
-  expect(sessionStorage.length).toBe(0); reopened.unmount()
+  expect(JSON.parse(sessionStorage.getItem('sales-order-import-pending-v1'))).toEqual([{file:'other.xlsx:1:2',preview_token:'other-tab-token'}]); reopened.unmount()
 })
 
 it('blocks workspace close and refresh throughout confirmation and execution', async () => {

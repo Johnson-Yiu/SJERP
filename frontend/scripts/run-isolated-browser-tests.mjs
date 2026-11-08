@@ -401,7 +401,7 @@ export async function resolvePlaywrightSelection(userArgs) {
 export function isolatedCashAccountEnvironment(selection) {
   // Synthetic aliases for the bank-fee fixture, only in owned test runtimes.
   // Other selections inherit their original configuration, including unset.
-  return selection?.businessSuite || ['independent-bank-fee-real.spec.js', 'cash-duplicate-real.spec.js'].includes(selection?.businessTest)
+  return selection?.businessSuite || ['independent-bank-fee-real.spec.js', 'cash-duplicate-real.spec.js', 'sales-order-import-real.spec.js'].includes(selection?.businessTest)
     ? { RMB_CASH_ACCOUNT_IDS: 'SYNTH_FX,SYNTH_CNY' }
     : {}
 }

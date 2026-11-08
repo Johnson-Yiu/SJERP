@@ -1,0 +1,109 @@
+{
+  "date": "2026-11-09",
+  "postgresql": {
+    "version": "17.11",
+    "passed": 47,
+    "failed": 0,
+    "concurrency": "real PostgreSQL"
+  },
+  "chrome": {
+    "passed": 4,
+    "failed": 0,
+    "identity": "authenticated codex superuser",
+    "database": "isolated SQLite",
+    "profile": "sales-order-import-real.spec.js"
+  },
+  "vitest": {
+    "passed": 12,
+    "failed": 0
+  },
+  "node_finance": {
+    "passed": 11,
+    "failed": 0
+  },
+  "build": "PASS",
+  "ci": "NOT_RUN",
+  "full_suite": "NOT_RUN",
+  "files": [
+    {
+      "file": "browser/sales-order-import-real.spec/browser-results.json",
+      "bytes": 821,
+      "sha256": "428c13aea2b90aa99900293d9726810c33565050ea6d116af9a8fe864d458d12"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/finance-correction-result.json",
+      "bytes": 700,
+      "sha256": "cd055386310242d3eeb7b6e46299e1551f58cb390242be9d1b08a4d51c0c01e6"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/finance-inline-confirmed.png",
+      "bytes": 216060,
+      "sha256": "dedbb3c1a4dad2965ea61223d63ef9ffbe34f4969fc55fd0b7b44613ace62721"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/finance-inline-result.json",
+      "bytes": 4939,
+      "sha256": "37fa23239fdbbbc8727e783759a2caf0957e0afb5c02b8acab293d97511137e8"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/finance-refund-refused.png",
+      "bytes": 228650,
+      "sha256": "a2e20709aff3c62813435c474cc42b3d5118f67fe5b42a4a5f1f3d0d9220e52e"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/finance-writeoff-corrected.png",
+      "bytes": 296169,
+      "sha256": "c6e171114336b759907faa23c0ed93bf1f04f940d24478a16fcc8655cf264618"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/fixture.json",
+      "bytes": 271,
+      "sha256": "5d8ea91603ff3c5553b245c4d21bed191f55d66716e1cc8a2195e1769efd1dc2"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/history-readonly-snapshot.json",
+      "bytes": 20344,
+      "sha256": "86ec9e22c4ed146c08688e308e6da375c42dbea668e62637e7e72a9f6e57778c"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/integrated-history-preflight.csv",
+      "bytes": 1981,
+      "sha256": "39b0ed7e9b00ad50aa73923152afe59b9e2773361667741d91b7fc9da51f0bb9"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/integrated-history-preflight.png",
+      "bytes": 205353,
+      "sha256": "149f2cf272442cc04256b0bfe057edc98fb4bec34165010f1ab185560a40277f"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/lost-response-result.json",
+      "bytes": 660,
+      "sha256": "c871f277805323ba122e2524c174166a682886f72002c00603afc2bc6d03685b"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/sales-order-import-1600.png",
+      "bytes": 217579,
+      "sha256": "1abc44c3e53c1c9a8a9ac0850f2e425bc2d2c461353a56382092c027059ef6ad"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/sales-order-import-390.png",
+      "bytes": 161186,
+      "sha256": "95c2797c88871e1913fd0ea0bbebd721bc4ddc2ee889a19b965ae4c3d033dae1"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/sales-order-import-errors.csv",
+      "bytes": 109,
+      "sha256": "69c1008b26050dd5943d2a0fa8885aaee8ef0efc7eace10d1e9e17955d41b0db"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/sales-order-import-input.xlsx",
+      "bytes": 5252,
+      "sha256": "93741d894de958c6822739324ce97158a5b4de24345414aa7011f4e3c3e7f58f"
+    },
+    {
+      "file": "browser/sales-order-import-real.spec/sales-order-import-template.xlsx",
+      "bytes": 10116,
+      "sha256": "f0bcab739fcd370edfe80b35d1087637282325281a15034bfb6987264430349a"
+    }
+  ]
+}

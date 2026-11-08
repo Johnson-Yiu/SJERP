@@ -1,0 +1,15 @@
+{
+  "checked_on": "2026-11-09",
+  "instance": "D:/SUNJACK-HISTORY-UPLOAD-01",
+  "instance_manifest_sha": "b37fbaa76564e0d281c237ab71ceaf5f1add5c58",
+  "recorded_browser": "Codex in-app browser",
+  "recorded_acceptance": "PASS_OWNER_IN_APP_BROWSER",
+  "recorded_web_fix_sha": "ecb38a7869ebff35ac76a876ee1f801616a64db0",
+  "actual_csv_bytes": 550,
+  "actual_csv_sha256": "05fe40ea66d1c1ffc5c5248155591b14eb2a613d0d35ee82d4cc8f43e7d7c048",
+  "recorded_business_models_unchanged": 19,
+  "recorded_private_media_unchanged": true,
+  "live_runtime_process_sha": "NOT_VERIFIED",
+  "stale_manifest_field": "preflight_browser_acceptance=PENDING_OWNER_MANUAL_CHROME conflicts with later PASS fields",
+  "next": "Independent review of manifest consistency and current live runtime; no deployment or instance changes performed"
+}

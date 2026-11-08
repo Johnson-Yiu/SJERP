@@ -56,7 +56,7 @@ onMounted(loadEvents)
 </script>
 
 <template>
-  <section class="cash-events-page">
+  <section class="cash-events-page" :class="{ embedded }">
     <header class="cash-page-head">
       <div><p class="eyebrow">人民币资金</p><h2>银行资金记录</h2><p class="page-lede">登记实际到账信息。只有完成凭证核验的资金事件才计入银行资金汇总；客户收款和应收核销仍按原流程保存。</p></div>
       <div class="head-actions"><RouterLink class="secondary-link" to="/transactions">查看财务流水</RouterLink><button v-if="can('transactions', 'create')" class="primary" type="button" @click="openCreate">新增资金事件</button></div>

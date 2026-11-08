@@ -42,7 +42,7 @@ let sourceRequestId = 0
 let sourceAbortController = null
 const form = reactive({
   event_no: '', request_key: '', kind: 'fx_settlement', currency: 'USD', direction: 'income',
-  bank_date: today, bank_net_amount: '', fee_mode: 'none', fee_amount: '0',
+  bank_date: today, bank_net_amount: '', gross_rmb_amount: '', actual_rate: '', fee_mode: 'none', fee_amount: '0',
   source_account: '', rmb_account: '', bank_reference: '', bank_counterparty: '', bank_summary: '', bank_transaction_id: '',
   evidence_reference: '', evidence_sha256: '', evidence_note: '', quoted_rate: '', fee_for: '', private_voucher: null,
 })
@@ -58,7 +58,7 @@ function resetForm() {
   form.private_voucher = null; voucherFile.value = null
   Object.assign(form, {
     event_no: makeKey('EVENT'), request_key: makeKey('REQUEST'), kind: 'fx_settlement', currency: 'USD', direction: 'income',
-    bank_date: today, bank_net_amount: '', fee_mode: 'none', fee_amount: '0', source_account: '', rmb_account: '',
+    bank_date: today, bank_net_amount: '', gross_rmb_amount: '', actual_rate: '', fee_mode: 'none', fee_amount: '0', source_account: '', rmb_account: '',
     bank_reference: '', bank_counterparty: '', bank_summary: '', bank_transaction_id: '', evidence_reference: '',
     evidence_sha256: '', evidence_note: '', quoted_rate: '', fee_for: '',
   })
@@ -115,6 +115,16 @@ function exactCashAmount(value, currency) {
   return digits ? `${whole}.${fraction.slice(0, digits).padEnd(digits, '0')}` : whole
 }
 function sourceTotal() { return allocations.value.reduce((total, item) => total + (Number(item.amount) || 0), 0) }
+function grossRmbAmount() { return form.kind === 'fx_settlement' ? Number(form.gross_rmb_amount) || 0 : Number(form.bank_net_amount) || 0 }
+function bankNetAmount() {
+  if (form.kind !== 'fx_settlement') return String(form.bank_net_amount ?? '').trim()
+  const fee = form.fee_mode === 'included' ? Number(form.fee_amount) || 0 : 0
+  return Math.max(0, grossRmbAmount() - fee).toFixed(2)
+}
+function actualRate() {
+  const total = sourceTotal()
+  return total > 0 ? (grossRmbAmount() / total).toFixed(6) : ''
+}
 function filteredSources() {
   const keyword = sourceSearch.value.trim().toLowerCase()
   return sourceRows.value.filter(row => !keyword || `${row.transaction_no} ${row.id}`.toLowerCase().includes(keyword))
@@ -131,7 +141,8 @@ function eventPayload() {
     ...(receiptId ? { source_receipt_id: receiptId } : {}),
     ...(form.private_voucher ? { private_voucher: form.private_voucher } : {}),
     event_no: form.event_no.trim(), request_key: form.request_key.trim(), kind: form.kind, currency: form.currency,
-    direction: form.direction, bank_date: form.bank_date, bank_net_amount: String(form.bank_net_amount ?? '').trim(), fee_mode: form.fee_mode,
+    direction: form.direction, bank_date: form.bank_date, bank_net_amount: bankNetAmount(),
+    ...(form.kind === 'fx_settlement' ? { gross_rmb_amount: String(form.gross_rmb_amount ?? '').trim(), actual_rate: actualRate() } : {}), fee_mode: form.fee_mode,
     fee_amount: form.fee_mode === 'included' ? String(form.fee_amount ?? '').trim() : '0', source_account: form.source_account.trim(), rmb_account: form.rmb_account.trim(),
     bank_reference: form.bank_reference.trim(), bank_counterparty: form.bank_counterparty.trim(), bank_summary: form.bank_summary.trim(), bank_transaction_id: form.bank_transaction_id.trim(),
     evidence_reference: form.evidence_reference.trim(), evidence_sha256: form.evidence_sha256.trim(), evidence_note: String(form.evidence_note || '').trim(),
@@ -192,7 +203,11 @@ function clientError() {
   if (!form.bank_date || !form.bank_reference) return '请填写银行实际日期和银行参考号。'
   if (draftRestoredRequiresEvidence.value && (!form.private_voucher || !form.evidence_note)) return '请重新上传实际银行凭证并填写核对说明。'
   if (!form.source_account || !form.rmb_account) return sourceAccountOptions.value.length && rmbAccountOptions.value.length ? '请选择资金账户。' : '暂无匹配的资金账户；请先在财务台账登记对应币种账户，并联系系统管理员完成账户配置。'
-  if (!form.bank_net_amount || Number(form.bank_net_amount) <= 0) return '请填写大于0的银行净额。'
+  if (form.kind === 'fx_settlement') {
+    if (!form.gross_rmb_amount || grossRmbAmount() <= 0) return '请填写大于0的扣费前人民币兑换额。'
+    if (form.fee_mode === 'included' && Number(form.fee_amount) > grossRmbAmount()) return '含扣手续费不能超过扣费前兑换额。'
+    if (Number(bankNetAmount()) <= 0) return '银行净到账必须大于0。'
+  } else if (!form.bank_net_amount || Number(form.bank_net_amount) <= 0) return '请填写大于0的银行净额。'
   if (linked.value && !props.receipt?.id) return '请先保存本笔收款，再继续登记结汇。'
   if (!allocations.value.length) return linked.value ? '本笔收款没有可用的结汇来源额度。' : '请至少选择一条来源流水。'
   if (allocations.value.some(item => !item.amount || Number(item.amount) <= 0)) return '每条来源都要填写大于0的分配金额。'
@@ -346,9 +361,12 @@ onMounted(() => { if (!props.initialEvent) { if (!linked.value) { clearLegacyDra
           <label>来源币种<select v-model="form.currency" @change="onCurrencyChange"><option v-for="item in currencies" :key="item.value" :value="item.value">{{ item.label }}</option></select></label>
           <label v-if="form.kind !== 'fx_settlement'">资金方向<select v-model="form.direction"><option value="income">流入</option><option value="expense">流出</option></select></label>
           <label>实际到账日期<input v-model="form.bank_date" type="date" required></label>
-          <label>银行净额（CNY）<input v-model="form.bank_net_amount" type="number" min="0.01" step="0.01" required></label>
+           <label v-if="form.kind === 'fx_settlement'">扣费前兑换额（CNY）<input v-model="form.gross_rmb_amount" type="number" min="0.01" step="0.01" required></label>
+           <label v-else>银行净额（CNY）<input v-model="form.bank_net_amount" type="number" min="0.01" step="0.01" required></label>
           <label>手续费<select v-model="form.fee_mode"><option value="none">无</option><option value="included">银行净额已含扣</option></select></label>
           <label v-if="form.fee_mode === 'included'">手续费（CNY）<input v-model="form.fee_amount" type="number" min="0.01" step="0.01" required></label>
+           <label v-if="form.kind === 'fx_settlement'">银行净到账（CNY）<input :value="bankNetAmount()" type="number" readonly></label>
+           <label v-if="form.kind === 'fx_settlement'">实际汇率<input :value="actualRate()" readonly></label>
           <label>来源账户<select v-model="form.source_account" required><option value="">请选择账户</option><option v-for="item in sourceAccountOptions" :key="item.code" :value="item.code">{{ item.name }}</option></select></label>
           <label>人民币账户<select v-model="form.rmb_account" required><option value="">请选择账户</option><option v-for="item in rmbAccountOptions" :key="item.code" :value="item.code">{{ item.name }}</option></select></label>
           <label>银行参考号<input v-model="form.bank_reference" maxlength="120" required></label>
@@ -394,9 +412,11 @@ onMounted(() => { if (!props.initialEvent) { if (!linked.value) { clearLegacyDra
       <fieldset :disabled="saving"><div class="form-grid">
         <label>实际到账日期<input v-model="form.bank_date" type="date" required></label>
         <label>来源币种<input :value="form.currency" readonly></label>
-        <label>银行净额（CNY）<input v-model="form.bank_net_amount" type="number" min="0.01" step="0.01" required></label>
+          <label>扣费前兑换额（CNY）<input v-model="form.gross_rmb_amount" type="number" min="0.01" step="0.01" required></label>
         <label>手续费<select v-model="form.fee_mode"><option value="none">无</option><option value="included">银行净额已含扣</option></select></label>
         <label v-if="form.fee_mode === 'included'">手续费（CNY）<input v-model="form.fee_amount" type="number" min="0.01" step="0.01" required></label>
+          <label>银行净到账（CNY）<input :value="bankNetAmount()" type="number" readonly></label>
+          <label>实际汇率<input :value="actualRate()" readonly></label>
         <label>来源账户<select v-model="form.source_account" required><option value="">请选择账户</option><option v-for="item in sourceAccountOptions" :key="item.code" :value="item.code">{{ item.name }}</option></select></label>
         <label>人民币账户<select v-model="form.rmb_account" required><option value="">请选择账户</option><option v-for="item in rmbAccountOptions" :key="item.code" :value="item.code">{{ item.name }}</option></select></label>
         <label>银行参考号<input v-model="form.bank_reference" maxlength="120" required></label>

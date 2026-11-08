@@ -8,7 +8,7 @@ from .purchase_costs import order_purchase_cost
 def order_profit_summary(order):
     purchase_base_rmb, purchase_additional_rmb = order_purchase_cost(order)
     expense_rmb = sum(
-        (row.rmb_amount or row.amount * row.exchange_rate for row in order.transactions.filter(
+        (row.rmb_reference_amount or Decimal("0") for row in order.transactions.filter(
             status="confirmed", direction="expense",
         ).exclude(kind__in=["supplier_payment", "refund", "unallocated_advance", "unallocated_payment"])),
         Decimal("0"),

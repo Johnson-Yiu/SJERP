@@ -42,7 +42,7 @@ let sourceRequestId = 0
 let sourceAbortController = null
 const form = reactive({
   event_no: '', request_key: '', kind: 'fx_settlement', currency: 'USD', direction: 'income',
-  bank_date: today, bank_net_amount: '', fee_mode: 'none', fee_amount: '0',
+  bank_date: today, bank_net_amount: '', gross_rmb_amount: '', actual_rate: '', fee_mode: 'none', fee_amount: '0',
   source_account: '', rmb_account: '', bank_reference: '', bank_counterparty: '', bank_summary: '', bank_transaction_id: '',
   evidence_reference: '', evidence_sha256: '', evidence_note: '', quoted_rate: '', fee_for: '', private_voucher: null,
 })
@@ -58,7 +58,7 @@ function resetForm() {
   form.private_voucher = null; voucherFile.value = null
   Object.assign(form, {
     event_no: makeKey('EVENT'), request_key: makeKey('REQUEST'), kind: 'fx_settlement', currency: 'USD', direction: 'income',
-    bank_date: today, bank_net_amount: '', fee_mode: 'none', fee_amount: '0', source_account: '', rmb_account: '',
+    bank_date: today, bank_net_amount: '', gross_rmb_amount: '', actual_rate: '', fee_mode: 'none', fee_amount: '0', source_account: '', rmb_account: '',
     bank_reference: '', bank_counterparty: '', bank_summary: '', bank_transaction_id: '', evidence_reference: '',
     evidence_sha256: '', evidence_note: '', quoted_rate: '', fee_for: '',
   })
@@ -115,6 +115,8 @@ function exactCashAmount(value, currency) {
   return digits ? `${whole}.${fraction.slice(0, digits).padEnd(digits, '0')}` : whole
 }
 function sourceTotal() { return allocations.value.reduce((total, item) => total + (Number(item.amount) || 0), 0) }
+const grossRmbPreview = computed(() => Number(form.gross_rmb_amount || (Number(form.bank_net_amount || 0) + (form.fee_mode === 'included' ? Number(form.fee_amount || 0) : 0))) || 0)
+const effectiveRatePreview = computed(() => form.actual_rate || (sourceTotal() > 0 && grossRmbPreview.value > 0 ? (grossRmbPreview.value / sourceTotal()).toFixed(6) : ''))
 function filteredSources() {
   const keyword = sourceSearch.value.trim().toLowerCase()
   return sourceRows.value.filter(row => !keyword || `${row.transaction_no} ${row.id}`.toLowerCase().includes(keyword))
@@ -132,6 +134,8 @@ function eventPayload() {
     ...(form.private_voucher ? { private_voucher: form.private_voucher } : {}),
     event_no: form.event_no.trim(), request_key: form.request_key.trim(), kind: form.kind, currency: form.currency,
     direction: form.direction, bank_date: form.bank_date, bank_net_amount: String(form.bank_net_amount ?? '').trim(), fee_mode: form.fee_mode,
+    ...(String(form.gross_rmb_amount || '').trim() ? { gross_rmb_amount: String(form.gross_rmb_amount).trim() } : {}),
+    ...(String(form.actual_rate || '').trim() ? { actual_rate: String(form.actual_rate).trim() } : {}),
     fee_amount: form.fee_mode === 'included' ? String(form.fee_amount ?? '').trim() : '0', source_account: form.source_account.trim(), rmb_account: form.rmb_account.trim(),
     bank_reference: form.bank_reference.trim(), bank_counterparty: form.bank_counterparty.trim(), bank_summary: form.bank_summary.trim(), bank_transaction_id: form.bank_transaction_id.trim(),
     evidence_reference: form.evidence_reference.trim(), evidence_sha256: form.evidence_sha256.trim(), evidence_note: String(form.evidence_note || '').trim(),
@@ -395,6 +399,8 @@ onMounted(() => { if (!props.initialEvent) { if (!linked.value) { clearLegacyDra
         <label>实际到账日期<input v-model="form.bank_date" type="date" required></label>
         <label>来源币种<input :value="form.currency" readonly></label>
         <label>银行净额（CNY）<input v-model="form.bank_net_amount" type="number" min="0.01" step="0.01" required></label>
+        <label>扣费前人民币兑换额（CNY）<input v-model="form.gross_rmb_amount" type="number" min="0.01" step="0.01" placeholder="可留空，按净额和本笔含扣手续费计算"></label>
+        <label>实际结汇汇率<input v-model="form.actual_rate" inputmode="decimal" placeholder="可留空，按扣费前兑换额和来源原币计算"></label>
         <label>手续费<select v-model="form.fee_mode"><option value="none">无</option><option value="included">银行净额已含扣</option></select></label>
         <label v-if="form.fee_mode === 'included'">手续费（CNY）<input v-model="form.fee_amount" type="number" min="0.01" step="0.01" required></label>
         <label>来源账户<select v-model="form.source_account" required><option value="">请选择账户</option><option v-for="item in sourceAccountOptions" :key="item.code" :value="item.code">{{ item.name }}</option></select></label>
@@ -409,7 +415,7 @@ onMounted(() => { if (!props.initialEvent) { if (!linked.value) { clearLegacyDra
       <div class="linked-receipt-summary"><p>关联订单：<strong>{{ props.receipt?.order_no || props.receipt?.orders?.[0]?.order_no || props.order?.order_no || '保存后读取' }}</strong></p><p>财务流水：<strong>{{ props.receipt?.transaction_no || '收款保存后读取' }}</strong></p><p class="field-hint">结汇来源只取本笔已保存收款及其拆分流水；未分配预收单独列示，不计作订单计划核销。</p></div>
       <p v-if="sourceError" class="error" role="alert">{{ sourceError }}</p><p v-else-if="sourceLoading" class="field-hint" role="status">正在读取已保存收款流水…</p>
       <div v-if="allocations.length" class="allocation-table"><table><thead><tr><th>来源流水</th><th>类型</th><th>可用金额</th><th>本次结汇</th><th>核实</th></tr></thead><tbody><tr v-for="item in allocations" :key="item.id"><td>{{ sourceRows.find(row => row.id === item.id)?.transaction_no }}</td><td>{{ sourceRows.find(row => row.id === item.id)?.kind === 'unallocated_advance' ? '未分配预收款' : '客户收款' }}</td><td>{{ form.currency }} {{ money(sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount, form.currency) }}</td><td>{{ form.currency }} {{ money(item.amount, form.currency) }}</td><td>已核实</td></tr></tbody></table><p class="allocation-total">本次结汇来源合计 {{ form.currency }} {{ money(sourceTotal(), form.currency) }}</p></div>
-      <p v-if="preview" class="preview-box" role="status"><strong>结汇信息已核对</strong>：来源合计 {{ form.currency }} {{ money(preview.source_total, form.currency) }}，银行净额 CNY {{ money(preview.bank_net_amount) }}。来源额度尚未占用。</p>
+      <p v-if="preview" class="preview-box" role="status"><strong>结汇信息已核对</strong>：兑换 {{ form.currency }} {{ money(preview.source_total, form.currency) }}，实际汇率 {{ preview.actual_rate }}，扣费前兑换额 CNY {{ money(preview.gross_rmb_amount) }}，结汇手续费 CNY {{ money(form.fee_mode === 'included' ? form.fee_amount : 0) }}，人民币净到账 CNY {{ money(preview.bank_net_amount) }}。来源额度尚未占用。</p>
       <p v-if="error" class="error" role="alert">{{ error }}</p>
       <footer class="dialog-actions"><button v-if="!preview" type="button" class="primary" :disabled="saving || !props.receipt?.id" @click="previewEvent">{{ saving ? '核对中…' : '预览结汇信息' }}</button><button v-else type="button" class="primary" :disabled="saving" @click="registerDraft">{{ saving ? '登记中…' : '登记待确认结汇' }}</button></footer>
     </template>

@@ -30,7 +30,7 @@ from rest_framework.exceptions import NotFound, ValidationError as DRFValidation
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit, Customer, CustomerSupplierPreference, EmployeeProfile, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
+from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit, Customer, CustomerSupplierPreference, EmployeeProfile, FinanceReceiptAdjustment, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
 from .country_registry import CountryResolutionError, country_options as build_country_options, country_stored_values, display_country
 from .error_messages import CUSTOMER_NOT_FOUND_MESSAGE
 from .money import CURRENT_AMOUNT_CALCULATION_VERSION
@@ -45,7 +45,7 @@ from .serializers import protected_media_url, certificate_expiry, AccessRoleSeri
 from .serializers import ProcurementDraftInputSerializer
 from .serializers import FinancePlanWriteoffInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
-from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_transaction, void_transaction, writeoff_receivable
+from .services.finance import allocate_advance, approve_contract_change, reject_contract_change, record_contract_payment, record_customer_receipt, record_transaction, void_transaction, writeoff_receivable
 from .services.attachments import delete_follow_up_attachment, upload_follow_up_attachments
 from .services.fulfillment import (
     begin_fulfillment_idempotency,
@@ -2531,12 +2531,15 @@ def _finance_cash(user, start, end):
 
 def _finance_advances(user):
     return scope_transaction_queryset(Transaction.objects.all(), user).filter(
-        status="confirmed", kind__in=["unallocated_advance", "unallocated_payment"]
+        status="confirmed",
+    ).filter(
+        Q(kind__in=["unallocated_advance", "unallocated_payment"])
+        | Q(kind="customer_receipt", order__isnull=True, plan__isnull=True)
     )
 
 
 def _finance_row_rmb(row):
-    return row.rmb_amount or row.amount * row.exchange_rate
+    return row.rmb_reference_amount or Decimal("0")
 
 
 def _finance_plan_rmb(row):
@@ -2583,7 +2586,9 @@ def finance_dashboard(request):
         bucket = monthly.setdefault(month, {"month": month, "income": Decimal("0"), "expense": Decimal("0")})
         bucket[row.direction] += value
     advances = _finance_advances(request.user)
-    unallocated = lambda direction: sum(((row.allocation_capacity - row.allocated_amount) * row.exchange_rate for row in advances if row.direction == direction), Decimal("0"))
+    unallocated = lambda direction: sum(((row.allocation_capacity - row.allocated_amount) * row.exchange_rate for row in advances.filter(
+        direction=direction, reference_rate_missing=False, exchange_rate__isnull=False,
+    )), Decimal("0"))
     due_items = [
         {
             "id": row.id, "direction": row.direction, "contract_no": row.order.order_no if row.order_id else row.purchase_order.purchase_no,
@@ -2855,7 +2860,8 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             qs = qs.filter(customer_id=self.request.query_params["customer"])
         if self.request.query_params.get("order"):
             require_finance_permission(self.request.user, "orders", "view")
-            qs = qs.filter(order_id=self.request.query_params["order"])
+            order_id = self.request.query_params["order"]
+            qs = qs.filter(Q(order_id=order_id) | Q(plan__order_id=order_id) | Q(allocations__plan__order_id=order_id)).distinct()
         for key, module in (("supplier", "suppliers"), ("purchase_order", "purchases")):
             if self.request.query_params.get(key):
                 require_finance_permission(self.request.user, module, "view")
@@ -2868,17 +2874,35 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 qs = qs.filter(**{lookup: self.request.query_params[key]})
         return qs
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         if serializer.validated_data.get("plan") or serializer.validated_data.get("kind") in {"customer_receipt", "supplier_payment", "refund", "supplier_refund", "unallocated_advance", "unallocated_payment"}:
             require_finance_permission(request.user, "finance", "update")
         try:
-            row = record_transaction(serializer.validated_data.copy())
+            if serializer.validated_data.get("kind") == "customer_receipt":
+                row, created = record_customer_receipt(serializer.validated_data.copy(), request.user)
+            else:
+                row = record_transaction(serializer.validated_data.copy())
+                created = True
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=row, action="create", action_label="登记财务流水")
-        return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED)
+        if created:
+            record_operation(request=request, instance=row, action="create", action_label="登记财务流水",
+                metadata={"receipt_adjustments": row.receipt_adjustments.count(), "allocated_amount": str(row.allocated_amount)})
+            for adjustment in row.receipt_adjustments.select_related("writeoff", "plan", "evidence").order_by("pk"):
+                record_operation(request=request, instance=adjustment, action="create", action_label="登记客户收款扣减",
+                    metadata={"transaction_id": row.pk, "nature": adjustment.nature, "handling": adjustment.handling,
+                        "amount": str(adjustment.amount), "currency": adjustment.currency,
+                        "plan_id": adjustment.plan_id, "evidence_id": adjustment.evidence_id,
+                        "contract_change_id": adjustment.contract_change_id})
+                if adjustment.writeoff_id:
+                    record_operation(request=request, instance=adjustment.writeoff, action="create", action_label="登记应收非现金抵减",
+                        metadata={"transaction_id": row.pk, "plan_id": adjustment.writeoff.plan_id,
+                            "amount": str(adjustment.writeoff.amount), "nature": adjustment.writeoff.nature,
+                            "confirmed_actor": adjustment.writeoff.confirmed_actor})
+        return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path="voucher-upload", parser_classes=[MultiPartParser, FormParser])
     def voucher_upload(self, request):
@@ -2901,6 +2925,20 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             raise NotFound("该流水没有关联私有收款凭证。")
         from .services.finance_closeout import voucher
         proof = voucher(row.fee_evidence_id, scope="transaction")
+        response = FileResponse(proof.file.open("rb"), as_attachment=True, filename=proof.original_name, content_type="application/octet-stream")
+        response["Cache-Control"] = "private, no-store"
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
+
+    @action(detail=True, methods=["get"], url_path=r"receipt-adjustments/(?P<adjustment_id>[^/.]+)/evidence")
+    def receipt_adjustment_evidence(self, request, pk=None, adjustment_id=None):
+        row = self.get_object()
+        require_finance_permission(request.user, "finance", "view")
+        adjustment = FinanceReceiptAdjustment.objects.filter(pk=adjustment_id, transaction=row).select_related("evidence").first()
+        if adjustment is None or not adjustment.evidence_id:
+            raise NotFound("扣减凭证不存在或不可访问。")
+        from .services.finance_closeout import voucher
+        proof = voucher(adjustment.evidence_id, scope="transaction")
         response = FileResponse(proof.file.open("rb"), as_attachment=True, filename=proof.original_name, content_type="application/octet-stream")
         response["Cache-Control"] = "private, no-store"
         response["X-Content-Type-Options"] = "nosniff"
@@ -3274,8 +3312,8 @@ def dashboard(request):
     )
     if not user_can(request.user, "transactions", "view"):
         cash = cash.none()
-    income = sum((row.rmb_amount or row.amount * row.exchange_rate for row in cash if row.direction == "income"), Decimal("0"))
-    expense = sum((row.rmb_amount or row.amount * row.exchange_rate for row in cash if row.direction == "expense"), Decimal("0"))
+    income = sum((_finance_row_rmb(row) for row in cash if row.direction == "income"), Decimal("0"))
+    expense = sum((_finance_row_rmb(row) for row in cash if row.direction == "expense"), Decimal("0"))
     due_follow_ups = scope_customer_related_queryset(current_due_follow_ups(today=today), request.user).select_related("customer", "contact").prefetch_related("attachments") if can_view_followups else FollowUp.objects.none()
     certificates = ProductCertificate.objects.filter(expires_on__lte=today + timedelta(days=90)).select_related("product") if can_view_certificates else ProductCertificate.objects.none()
     certificate_alerts = [

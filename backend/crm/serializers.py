@@ -2446,17 +2446,28 @@ class TransactionSerializer(serializers.ModelSerializer):
     rmb_amount = serializers.SerializerMethodField(label="账面人民币折算参考", help_text="保留既有折算值，含原币为CNY的流水；不代表银行实际到账或结汇结果。")
     allocation_capacity = serializers.DecimalField(max_digits=14, decimal_places=4, read_only=True)
     unallocated_amount = serializers.SerializerMethodField()
+    fx_available_amount = serializers.SerializerMethodField()
     remitted_amount_display = serializers.SerializerMethodField()
     fee_evidence_name = serializers.SerializerMethodField()
     fee_evidence_sha256 = serializers.SerializerMethodField()
     cash_settlements = serializers.SerializerMethodField()
     writeoffs = serializers.SerializerMethodField()
+    receipt_adjustments = serializers.JSONField(write_only=True, required=False)
+    plan_allocations = serializers.JSONField(write_only=True, required=False)
+    receipt_adjustment_rows = serializers.SerializerMethodField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance is None and getattr(self, "initial_data", {}).get("kind") == "customer_receipt":
+            # The receipt service owns idempotency and distinguishes exact
+            # retries from conflicting content under the same transaction no.
+            self.fields["transaction_no"].validators = []
 
     class Meta:
         model = Transaction
         fields = "__all__"
         extra_kwargs = {"transaction_no": {"required": False}}
-        read_only_fields = ["status", "allocated_amount", "split_from", "voided_at", "void_reason", "settlement_amount"]
+        read_only_fields = ["status", "allocated_amount", "split_from", "voided_at", "void_reason", "settlement_amount", "request_hash", "reference_rate_missing"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -2474,6 +2485,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             data["allocations"] = []
             data["allocated_amount"] = None
             data["cash_settlements"] = []
+            data["receipt_adjustment_rows"] = []
         else:
             from .finance_scope import scope_plan_queryset
             plan_ids = {row["plan"] for row in data.get("allocations", [])}
@@ -2503,6 +2515,8 @@ class TransactionSerializer(serializers.ModelSerializer):
             "order": row.plan.order_id,
             "purchase_order": row.plan.purchase_order_id,
             "amount": row.amount,
+            "cash_amount": row.cash_amount,
+            "fee_credit_amount": row.fee_credit_amount,
             "remaining_amount": row.plan.remaining_amount,
             "is_active": row.is_active,
         } for row in allocations]
@@ -2518,12 +2532,18 @@ class TransactionSerializer(serializers.ModelSerializer):
         return rows
 
     def get_unallocated_amount(self, obj):
-        if obj.kind not in {"unallocated_advance", "unallocated_payment"}:
+        if obj.kind not in {"unallocated_advance", "unallocated_payment", "customer_receipt"}:
             return Decimal("0")
         return max(obj.allocation_capacity - obj.allocated_amount, Decimal("0"))
 
+    def get_fx_available_amount(self, obj):
+        if obj.kind != "customer_receipt" or obj.direction != "income" or obj.status != "confirmed":
+            return Decimal("0")
+        from .services.cash_events import available
+        return available(obj)
+
     def get_rmb_amount(self, obj):
-        return obj.rmb_amount or (obj.amount * obj.exchange_rate).quantize(Decimal("0.0001"))
+        return obj.rmb_reference_amount or Decimal("0")
 
     def get_remitted_amount_display(self, obj):
         return obj.remittance_amount if obj.remittance_amount is not None else obj.amount
@@ -2548,9 +2568,10 @@ class TransactionSerializer(serializers.ModelSerializer):
             if not visible(event, user):
                 continue
             source_allocations = event.sources.select_related("source").all()
+            has_book_reference = all(not item.source_snapshot.get("reference_rate_missing", False) for item in source_allocations)
             reference_amount = sum(
                 (item.amount * Decimal(item.source_snapshot["exchange_rate"]) for item in source_allocations), Decimal("0"),
-            ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if has_book_reference else None
             gross = event.gross_rmb_amount or event.bank_net_amount + event.fee_amount
             quoted_reference = (event.amount * event.quoted_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if event.quoted_rate is not None else None
             result.append({
@@ -2565,7 +2586,8 @@ class TransactionSerializer(serializers.ModelSerializer):
                 "actual_rate": str(event.actual_rate),
                 "quoted_rate": str(event.quoted_rate) if event.quoted_rate is not None else None,
                 "quoted_reference_delta": str((gross - quoted_reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if quoted_reference is not None else None,
-                "pre_fee_reference_delta": str((gross - reference_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                "book_reference_amount": str(reference_amount) if reference_amount is not None else None,
+                "book_reference_delta": str((gross - reference_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if reference_amount is not None else None,
                 "status": event.status,
             })
         return result
@@ -2579,27 +2601,61 @@ class TransactionSerializer(serializers.ModelSerializer):
             "plan": row.plan_id,
             "contract_no": row.plan.order.order_no,
             "amount": str(row.amount),
+            "nature": row.nature,
             "reason": row.reason,
+            "evidence_name": row.evidence.original_name if row.evidence_id else "",
             "confirmed_actor": row.confirmed_actor,
             "created_at": row.created_at,
         } for row in rows]
+
+    def get_receipt_adjustment_rows(self, obj):
+        if not user_can(serializer_user(self.context), "finance", "view"):
+            return []
+        return [{
+            "id": row.pk, "nature": row.nature, "handling": row.handling,
+            "amount": str(row.amount), "currency": row.currency, "reason": row.reason,
+            "order": row.order_id, "plan": row.plan_id, "contract_no": row.order.order_no if row.order_id else (row.plan.order.order_no if row.plan_id else ""),
+            "evidence": row.evidence_id, "evidence_name": row.evidence.original_name if row.evidence_id else "",
+            "evidence_sha256": row.evidence.sha256 if row.evidence_id else "",
+            "contract_change": row.contract_change_id, "writeoff": row.writeoff_id,
+            "actor": row.actor, "created_at": row.created_at,
+        } for row in obj.receipt_adjustments.select_related("order", "plan__order", "evidence", "contract_change").order_by("pk")]
 
     def validate(self, attrs):
         request = self.context.get("request")
         if request:
             validate_finance_relations(attrs, request.user, self.instance)
+        kind = attrs.get("kind", getattr(self.instance, "kind", "other"))
+        order = attrs.get("order", getattr(self.instance, "order", None))
+        if kind == "customer_receipt":
+            if order and "currency" not in self.initial_data:
+                attrs["currency"] = order.currency
+            currency = attrs.get("currency", getattr(self.instance, "currency", "USD"))
+            if currency != "CNY" and not self.initial_data.get("exchange_rate"):
+                if order:
+                    attrs["exchange_rate"] = order.exchange_rate
+                else:
+                    attrs["exchange_rate"] = None
+                    attrs["reference_rate_missing"] = True
         for field in ("amount", "exchange_rate"):
             value = attrs.get(field, getattr(self.instance, field, Decimal("1")))
-            if value <= 0:
+            if field == "exchange_rate" and value is None and kind == "customer_receipt" and attrs.get("reference_rate_missing"):
+                continue
+            if value is None or value <= 0:
                 raise serializers.ValidationError({field: "必须大于零。"})
-        kind = attrs.get("kind", getattr(self.instance, "kind", "other"))
         direction = attrs.get("direction", getattr(self.instance, "direction", None))
         income_kinds = {"customer_receipt", "supplier_refund", "other_income"}
         either_kinds = {"other", "unallocated_advance", "exchange_difference"}
         if kind not in either_kinds and direction != ("income" if kind in income_kinds else "expense"):
             raise serializers.ValidationError("业务类型与收支方向不一致。")
-        order = attrs.get("order", getattr(self.instance, "order", None))
         customer = attrs.get("customer", getattr(self.instance, "customer", None))
+        receipt_adjustments = attrs.get("receipt_adjustments", [])
+        if kind != "customer_receipt" and receipt_adjustments:
+            raise serializers.ValidationError({"receipt_adjustments": "扣减明细只能登记在客户收款中。"})
+        if kind == "customer_receipt" and not customer and not order:
+            raise serializers.ValidationError({"customer": "客户收款请选择客户；可暂不关联订单。"})
+        if kind == "customer_receipt" and any(field in self.initial_data for field in ("bank_fee_amount", "fee_responsibility", "fee_reason", "fee_evidence")):
+            raise serializers.ValidationError({"receipt_adjustments": "请在收款扣减明细中逐条登记银行手续费。"})
         purchase_order = attrs.get("purchase_order", getattr(self.instance, "purchase_order", None))
         supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
         if order and customer and order.customer_id != customer.id:

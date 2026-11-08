@@ -287,7 +287,9 @@ class CashEventTests(CashFixture, TestCase):
         self.assertEqual(RmbCashEvent.objects.count(), 0); self.assertEqual(CashSourceAllocation.objects.count(), 0)
 
     def test_k_invalid_money_rate_sources_and_unknown_fields(self):
-        for field, values in {"bank_net_amount": ["NaN", "Infinity", "-1", "0", "0.001", "1.000", "1000000000000", 1.5, True], "quoted_rate": ["NaN", "Infinity", "-1", "1.0000001", "1.0000000"], "currency": ["XYZ", [], {}], "kind": [[], {}], "direction": [[], {}], "fee_amount": ["-1", "0.001"], "fee_mode": ["separate", [], {}]}.items():
+        # A zero net FX event remains valid when the included fee consumes the
+        # entire gross amount; the persisted model constraint deliberately allows it.
+        for field, values in {"bank_net_amount": ["NaN", "Infinity", "-1", "0.001", "1.000", "1000000000000", 1.5, True], "quoted_rate": ["NaN", "Infinity", "-1", "1.0000001", "1.0000000"], "currency": ["XYZ", [], {}], "kind": [[], {}], "direction": [[], {}], "fee_amount": ["-1", "0.001"], "fee_mode": ["separate", [], {}]}.items():
             for value in values:
                 with self.subTest(field=field, value=value):
                     self.assertEqual(self.client.post(URL, payload([self.receipt], **{field: value}), format="json").status_code, 400)
@@ -335,6 +337,48 @@ class CashEventTests(CashFixture, TestCase):
             self.assertEqual(cash.available(source), D(amount) - D(accepted))
             self.assertEqual(self.client.post(URL, payload([source], [rejected], key="BAD-" + currency, currency=currency), format="json").status_code, 400)
             self.assertEqual(self.client.get(f"{URL}{pk}/").data["reference_amount"], "1.01")
+
+    def test_m_fx_receipt_980_counts_net_once_and_separates_fee_from_reference_delta(self):
+        plan = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount="980")
+        receipt = record_transaction({"transaction_no": "FX-980-RECEIPT", "plan": plan, "amount": "980", "currency": "USD", "exchange_rate": "7.2"})
+        p = payload([receipt], ["980"], key="FX-980-SETTLEMENT", bank_net_amount="6928", fee_mode="included", fee_amount="30",
+            gross_rmb_amount="6958", actual_rate="7.1", quoted_rate="7.2")
+        event_id = self.register(p)
+        response = self.confirm(event_id)
+        self.assertEqual(D(response.data["amount"]), D("980"))
+        self.assertEqual(response.data["gross_rmb_amount"], "6958.00")
+        self.assertEqual(response.data["actual_rate"], "7.100000")
+        self.assertEqual(response.data["fee_amount"], "30.00")
+        self.assertEqual(response.data["bank_net_amount"], "6928.00")
+        self.assertEqual(response.data["quoted_reference_delta"], "-98.00")
+        self.assertEqual(Transaction.objects.filter(transaction_no="FX-980-RECEIPT").count(), 1)
+        self.assertEqual(RmbCashEvent.objects.filter(pk=event_id, status="confirmed", bank_net_amount="6928").count(), 1)
+        actual_cash = self.client.get("/api/actual-rmb-cash/", {"date_from": "2026-10-01", "date_to": "2026-10-31"})
+        self.assertEqual(D(actual_cash.data["totals"]["inflow"]), D("6928.00"))
+        self.assertEqual(actual_cash.data["totals"]["count"], 1)
+        transaction_detail = self.client.get(f"/api/transactions/{receipt.pk}/")
+        settlement = transaction_detail.data["cash_settlements"][0]
+        self.assertEqual(settlement["book_reference_delta"], "-98.00")
+        self.assertEqual(settlement["quoted_reference_delta"], "-98.00")
+
+    def test_n_missing_book_reference_stays_unknown_while_quote_difference_remains_visible(self):
+        receipt = Transaction.objects.create(
+            transaction_no="FX-NO-BOOK-RATE", transaction_date=date(2026, 10, 18), direction="income",
+            category="合成收款", amount="100", currency="USD", exchange_rate="1", rmb_amount="0",
+            reference_rate_missing=True, remittance_amount="100", kind="customer_receipt", customer=self.customer,
+        )
+        p = payload([receipt], ["100"], key="FX-QUOTE-ONLY", bank_net_amount="700", fee_mode="none", fee_amount="0",
+            gross_rmb_amount="700", actual_rate="7", quoted_rate="7.2")
+        event_id = self.register(p)
+        response = self.confirm(event_id)
+        self.assertIsNone(response.data["reference_amount"])
+        self.assertEqual(response.data["reference_basis"], "missing_confirmed_book_rate")
+        self.assertIsNone(response.data["pre_fee_reference_delta"])
+        self.assertEqual(response.data["quoted_reference_delta"], "-20.00")
+        details = self.client.get(f"/api/transactions/{receipt.pk}/").data["cash_settlements"][0]
+        self.assertIsNone(details["book_reference_amount"])
+        self.assertIsNone(details["book_reference_delta"])
+        self.assertEqual(details["quoted_reference_delta"], "-20.00")
 
 
 @override_settings(**scope_fixture.RBAC_SETTINGS, RMB_CASH_ACCOUNT_IDS=ACCOUNTS, PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"])

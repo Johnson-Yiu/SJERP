@@ -27,11 +27,21 @@ const customers = ref([]), suppliers = ref([]), purchases = ref([]), plans = ref
 const referenceErrors = ref([]), referencesLoaded = ref(false), referencesLoading = ref(true), orderSearchError = ref(''), orderSearchLoading = ref(false)
 const allocation = ref(null), allocationPlan = ref(''), allocationAmount = ref('')
 const voidTarget = ref(null), voidReason = ref(''), voidSaving = ref(false)
+const detailTarget = ref(null), receiptAdjustments = ref([]), receiptRemittance = ref(''), receiptPlanChoices = ref([])
+const receiptAllocations = ref([]), multiOrderMode = ref(false), adjustmentUploadBusy = ref(false)
+const pendingCurrency = ref(''), pendingOrder = ref(null), currencyChangeMessage = ref('')
+const pendingPurchase = ref(null), pendingCustomer = ref(undefined)
+const pendingKind = ref(''), previousKind = ref('period_expense'), approvedReceiptChanges = ref([]), receiptChangeLoadId = ref(0)
 const filters = reactive({ status: 'confirmed', direction: '', date_from: '', date_to: '' })
 const filterRangeError = computed(() => filters.date_from && filters.date_to && filters.date_from > filters.date_to ? '开始日期不能晚于结束日期。' : '')
 const routeFilterKey = computed(() => JSON.stringify(['search', 'status', 'direction', 'date_from', 'date_to'].map(key => route.query[key] ?? null)))
 const contractKinds = ['customer_receipt', 'order_expense', 'freight_expense', 'sample_expense', 'bank_fee', 'refund']
 const eligiblePlans = computed(() => plans.value.filter(plan => plan.status === 'open' && plan.currency === allocation.value?.currency && plan.direction === (allocation.value?.direction === 'income' ? 'receivable' : 'payable') && (plan.order ? plan.customer_id === allocation.value?.customer : plan.supplier_id === allocation.value?.supplier)))
+const eligibleReceiptPlans = computed(() => receiptPlanChoices.value.filter(plan => plan.status === 'open' && plan.direction === 'receivable' && plan.currency === form.currency && plan.customer_id === form.customer))
+const receiptBankFees = computed(() => receiptAdjustments.value.filter(row => row.nature === 'bank_fee').reduce((sum, row) => sum + (Number(row.amount) || 0), 0))
+const receiptPendingDifference = computed(() => receiptAdjustments.value.filter(row => row.nature === 'pending_difference').reduce((sum, row) => sum + (Number(row.amount) || 0), 0))
+const receiptRemittancePreview = computed(() => Number(form.amount || 0) + receiptBankFees.value + receiptPendingDifference.value)
+const incompatibleRelations = computed(() => (form.order && !contractKinds.includes(form.kind)) || (form.purchase_order && !['supplier_payment', 'supplier_refund'].includes(form.kind)) || (form.customer && !['customer_receipt', 'unallocated_advance'].includes(form.kind) && !form.order) || (form.supplier && !['supplier_payment', 'supplier_refund', 'unallocated_payment'].includes(form.kind) && !form.purchase_order))
 
 const kindGroups = [
   {
@@ -86,7 +96,7 @@ const form = reactive({
 })
 const saveOutcome = ref('not-submitted')
 const formGuard = useUnsavedChangesGuard({
-  data: () => ({ ...form, orderQuery: orderQuery.value, selectedOrder: selectedOrder.value, settlementOpen: settlementOpen.value, savedReceipt: savedReceipt.value?.id || null, settlement: settlementSnapshot.value }),
+  data: () => ({ ...form, orderQuery: orderQuery.value, selectedOrder: selectedOrder.value, settlementOpen: settlementOpen.value, savedReceipt: savedReceipt.value?.id || null, settlement: settlementSnapshot.value, receiptAdjustments: receiptAdjustments.value, receiptRemittance: receiptRemittance.value, receiptAllocations: receiptAllocations.value, multiOrderMode: multiOrderMode.value }),
   enabled: () => showForm.value,
   busy: () => saving.value || receiptLookupLoading.value || Boolean(settlementSnapshot.value?.busy),
   confirmOptions: () => saveOutcome.value === 'unknown' ? {
@@ -110,6 +120,9 @@ const filtersActive = computed(() => Boolean(query.value.trim() || (filters.stat
 const referenceErrorText = computed(() => referenceErrors.value.join(' '))
 
 function kindLabel(kind) { return kindLookup.get(kind)?.label || legacyKindLabels[kind] || kind || '—' }
+function feeResponsibilityLabel(value) { return ({ company: '我方承担', customer: '客户承担', unknown: '待查', mixed: '按明细区分' })[value] || '待分类' }
+function adjustmentNatureLabel(value) { return ({ discount: '优惠/减免', bank_fee: '银行手续费', pending_difference: '待核实差额', other: '其他扣减' })[value] || value }
+function adjustmentHandlingLabel(value) { return ({ company: '我方承担，不减少客户汇款额', customer: '客户承担，保留应收差额', pending: '待核实，不抵减应收', applied: '已核准抵减应收', already_in_order: '已计入订单金额，不重复抵减' })[value] || value }
 function directionLabel(direction) { return direction === 'income' ? '收入' : direction === 'expense' ? '支出' : '—' }
 function queryValue(value) { return Array.isArray(value) ? String(value[0] ?? '') : String(value ?? '') }
 function syncFiltersFromRoute() {
@@ -154,30 +167,64 @@ function contractLocation(row) {
   if (row.purchase_order) return purchaseDetailLocation(row.purchase_order)
   return null
 }
+function openDetail(row) { detailTarget.value = row }
 function allocationLocation(item) {
   if (item.order) return orderDetailLocation(item.order)
   if (item.purchase_order) return purchaseDetailLocation(item.purchase_order)
   return null
 }
 function syncKind() {
-  const meta = kindLookup.get(form.kind)
+  const nextKind = form.kind
+  const oldKind = previousKind.value
+  if (oldKind === 'customer_receipt' && nextKind !== 'customer_receipt' && hasReceiptAmounts()) {
+    pendingKind.value = nextKind
+    form.kind = oldKind
+    currencyChangeMessage.value = '切换业务类型会清除客户汇款、扣减明细和收款分配，请确认后继续。'
+    return
+  }
+  previousKind.value = nextKind
+  const meta = kindLookup.get(nextKind)
   if (meta) {
     form.direction = meta.direction
     form.category = meta.label
   }
-  form.customer = null; form.supplier = null; form.purchase_order = null
-  if (form.kind !== 'customer_receipt') { settlementOpen.value = false; savedReceipt.value = null; settlementSnapshot.value = null }
-  if (!contractKinds.includes(form.kind)) {
-    form.order = null
-    selectedOrder.value = null
-    orders.value = []
-    orderQuery.value = ''
+  if (nextKind === 'customer_receipt') {
+    const preferredCurrency = selectedOrder.value?.currency || 'USD'
+    if (form.currency !== preferredCurrency) {
+      if (form.amount || receiptRemittance.value || receiptAdjustments.value.length || receiptAllocations.value.length) {
+        pendingCurrency.value = preferredCurrency
+        currencyChangeMessage.value = `客户收款默认使用${preferredCurrency}。切换会清空现有金额和收款明细，请先确认。`
+      } else applyCurrency(preferredCurrency)
+    }
+    if (selectedOrder.value) form.customer = selectedOrder.value.customer
+    void loadReceiptPlans()
   }
+  if (nextKind !== 'customer_receipt') { settlementOpen.value = false; savedReceipt.value = null; settlementSnapshot.value = null }
+  if (!pendingCurrency.value) currencyChangeMessage.value = ''
+}
+function confirmKindChange() {
+  if (!pendingKind.value) return
+  const nextKind = pendingKind.value
+  pendingKind.value = ''
+  form.amount = ''; receiptRemittance.value = ''; receiptAdjustments.value = []; receiptAllocations.value = []
+  receiptPlanChoices.value = []; approvedReceiptChanges.value = []; multiOrderMode.value = false
+  settlementOpen.value = false; savedReceipt.value = null; settlementSnapshot.value = null
+  form.kind = nextKind; previousKind.value = nextKind
+  const meta = kindLookup.get(nextKind)
+  if (meta) { form.direction = meta.direction; form.category = meta.label }
+  currencyChangeMessage.value = ''
+}
+function clearIncompatibleRelations() {
+  form.order = null; selectedOrder.value = null; form.purchase_order = null; form.customer = null; form.supplier = null
+  orderQuery.value = ''; orders.value = []; receiptPlanChoices.value = []; receiptAllocations.value = []
 }
 function openForm() {
   if (saving.value || showForm.value || !can('transactions', 'create')) return
   Object.assign(form, { transaction_no: '', transaction_date: new Date().toLocaleDateString('en-CA'), kind: 'period_expense', direction: 'expense', category: '其他期间费用', amount: '', currency: 'CNY', exchange_rate: '1', payment_method: '', reference: '', notes: '', order: null, customer: null, supplier: null, purchase_order: null })
   settlementOpen.value = false; savedReceipt.value = null; settlementSnapshot.value = null
+  receiptAdjustments.value = []; receiptRemittance.value = ''; receiptPlanChoices.value = []; receiptAllocations.value = []; multiOrderMode.value = false
+  pendingCurrency.value = ''; pendingOrder.value = null; pendingPurchase.value = null; pendingCustomer.value = undefined; currencyChangeMessage.value = ''
+  pendingKind.value = ''; previousKind.value = 'period_expense'
   selectedOrder.value = null
   orderQuery.value = ''
   orders.value = []
@@ -187,9 +234,65 @@ function openForm() {
   showForm.value = true
   formGuard.markClean()
 }
-function onCurrencyChange() {
-  if (form.currency === 'CNY') form.exchange_rate = '1'
-  else if (form.exchange_rate === '1') form.exchange_rate = ''
+function hasReceiptAmounts() {
+  return Boolean(form.amount || receiptRemittance.value || receiptAdjustments.value.some(row => row.amount || row.evidence || row.reason) || receiptAllocations.value.some(row => row.plan || row.amount))
+}
+function applyCurrency(currency) {
+  form.currency = currency
+  form.exchange_rate = currency === 'CNY' ? '1' : selectedOrder.value?.currency === currency ? String(selectedOrder.value.exchange_rate || '') : ''
+  if (currency === 'CNY') { settlementOpen.value = false; settlementSnapshot.value = null }
+  if (form.kind === 'customer_receipt' && form.customer) void loadReceiptPlans()
+}
+function requestCurrencyChange(event) {
+  const currency = event.target.value
+  if (currency === form.currency) return
+  if (hasReceiptAmounts() || (selectedOrder.value && selectedOrder.value.currency !== currency)) {
+    pendingCurrency.value = currency
+    currencyChangeMessage.value = `切换到${currency}会清空当前金额、扣减明细和核销分配，请先确认。`
+    event.target.value = form.currency
+    return
+  }
+  applyCurrency(currency)
+}
+function confirmCurrencyChange() {
+  if (!pendingCurrency.value) return
+  form.amount = ''; receiptRemittance.value = ''; receiptAdjustments.value = []; receiptAllocations.value = []
+  if (selectedOrder.value && selectedOrder.value.currency !== pendingCurrency.value) {
+    form.order = null; selectedOrder.value = null; orderQuery.value = ''
+  }
+  applyCurrency(pendingCurrency.value)
+  pendingCurrency.value = ''; currencyChangeMessage.value = ''
+}
+function cancelCurrencyChange() { pendingCurrency.value = ''; pendingOrder.value = null; pendingPurchase.value = null; pendingCustomer.value = undefined; pendingKind.value = ''; currencyChangeMessage.value = '' }
+function requestCustomerChange(event) {
+  const customer = Number(event.target.value) || null
+  if (hasReceiptAmounts()) {
+    pendingCustomer.value = customer
+    currencyChangeMessage.value = '更换客户会清空当前金额、扣减明细和核销分配，请先确认。'
+    event.target.value = form.customer || ''
+    return
+  }
+  form.customer = customer; receiptPlanChoices.value = []; receiptAllocations.value = []
+  form.order = null; selectedOrder.value = null; orderQuery.value = ''
+  if (form.kind === 'customer_receipt') void loadReceiptPlans()
+}
+function confirmCustomerChange() {
+  if (pendingCustomer.value === undefined) return
+  form.amount = ''; receiptRemittance.value = ''; receiptAdjustments.value = []; receiptAllocations.value = []
+  form.order = null; selectedOrder.value = null; orderQuery.value = ''
+  form.customer = pendingCustomer.value; pendingCustomer.value = undefined; currencyChangeMessage.value = ''
+  void loadReceiptPlans()
+}
+function applyOrder(row, { clearReceiptValues = false } = {}) {
+  if (clearReceiptValues) { form.amount = ''; receiptRemittance.value = ''; receiptAdjustments.value = []; receiptAllocations.value = [] }
+  form.order = row.id
+  form.customer = row.customer
+  selectedOrder.value = { id: row.id, order_no: row.order_no, currency: row.currency, customer: row.customer, exchange_rate: row.exchange_rate }
+  orderQuery.value = row.order_no
+  if (['customer_receipt', 'refund'].includes(form.kind)) applyCurrency(row.currency)
+  orders.value = []
+  pendingOrder.value = null; currencyChangeMessage.value = ''
+  if (form.kind === 'customer_receipt') void loadReceiptPlans()
 }
 async function load() {
   if (filterRangeError.value) { loadError.value = filterRangeError.value; loading.value = false; return }
@@ -205,8 +308,6 @@ async function load() {
   } catch (err) { loadError.value = apiErrorMessage(err) || '财务流水加载失败，请稍后重试。' } finally { loading.value = false }
 }
 async function searchOrders() {
-  form.order = null
-  selectedOrder.value = null
   orderSearchError.value = ''
   orderSearchLoading.value = true
   try { orders.value = (await listAll('/orders/', { params: { search: orderQuery.value } })).filter(row => !['draft', 'cancelled'].includes(row.status)) }
@@ -214,21 +315,109 @@ async function searchOrders() {
   finally { orderSearchLoading.value = false }
 }
 function chooseOrder(row) {
-  form.order = row.id
-  selectedOrder.value = { id: row.id, order_no: row.order_no, currency: row.currency }
-  orderQuery.value = row.order_no
-  if (['customer_receipt', 'refund'].includes(form.kind)) { form.currency = row.currency; form.exchange_rate = row.exchange_rate }
-  orders.value = []
+  const relationshipChange = (selectedOrder.value && selectedOrder.value.id !== row.id) || (form.customer && form.customer !== row.customer)
+  const currencyChange = form.currency !== row.currency
+  if ((relationshipChange || currencyChange) && hasReceiptAmounts()) {
+    pendingOrder.value = row
+    currencyChangeMessage.value = currencyChange
+      ? `订单币种为${row.currency}，切换会清空现有收款金额和扣减明细。`
+      : '更换订单会清空已选核销分配和订单扣减明细。'
+    orders.value = []
+    return
+  }
+  applyOrder(row)
+}
+function confirmOrderChange() {
+  if (!pendingOrder.value) return
+  const row = pendingOrder.value
+  const clearValues = hasReceiptAmounts() && (row.currency !== form.currency || row.customer !== form.customer)
+  if (!clearValues) {
+    receiptAllocations.value = []
+    receiptAdjustments.value.forEach(line => { line.plan = '' })
+  }
+  applyOrder(row, { clearReceiptValues: clearValues })
 }
 function choosePurchase() {
   const row = purchases.value.find(row => row.id === form.purchase_order)
-  if (row) { form.currency = row.currency; form.exchange_rate = row.exchange_rate }
+  if (row) {
+    if (hasReceiptAmounts() && form.currency !== row.currency) {
+      pendingPurchase.value = row; pendingCurrency.value = row.currency
+      currencyChangeMessage.value = `采购单币种为${row.currency}，切换会清空现有金额。`
+      form.purchase_order = null
+      return
+    }
+    applyCurrency(row.currency); form.supplier = row.supplier
+  }
 }
+function confirmPurchaseChange() {
+  if (!pendingPurchase.value) return
+  form.amount = ''; applyCurrency(pendingPurchase.value.currency); form.purchase_order = pendingPurchase.value.id; form.supplier = pendingPurchase.value.supplier
+  pendingPurchase.value = null; pendingCurrency.value = ''; currencyChangeMessage.value = ''
+}
+async function loadReceiptPlans() {
+  if (!form.customer) { receiptPlanChoices.value = []; approvedReceiptChanges.value = []; return }
+  try {
+    receiptPlanChoices.value = (await listAll('/payment-plans/', { params: { status: 'open' } })).filter(plan => plan.customer_id === form.customer && plan.direction === 'receivable' && plan.currency === form.currency)
+    if (form.order) await loadReceiptContractChanges(form.order)
+  } catch (err) { receiptPlanChoices.value = []; orderSearchError.value = apiErrorMessage(err) || '应收计划加载失败，请重试。' }
+}
+async function loadReceiptContractChanges(orderId) {
+  const requestId = ++receiptChangeLoadId.value
+  if (!orderId) { approvedReceiptChanges.value = []; return }
+  try {
+    const rows = await listAll('/contract-changes/', { params: { order: orderId } })
+    if (requestId === receiptChangeLoadId.value) approvedReceiptChanges.value = rows.filter(row => row.status === 'approved' && Number(row.amount_delta) < 0)
+  } catch { if (requestId === receiptChangeLoadId.value) approvedReceiptChanges.value = [] }
+}
+async function onReceiptAdjustmentPlanChange(line) {
+  if (!form.order && line.plan) {
+    const plan = eligibleReceiptPlans.value.find(item => item.id === Number(line.plan))
+    if (plan?.order) await loadReceiptContractChanges(plan.order)
+  }
+}
+function addReceiptAdjustment() { receiptAdjustments.value.push({ nature: 'bank_fee', amount: '', handling: 'company', reason: '', evidence: null, evidence_name: '', file: null, plan: '', contract_change: '' }) }
+function removeReceiptAdjustment(index) { receiptAdjustments.value.splice(index, 1) }
+function onAdjustmentNatureChange(line) { line.handling = line.nature === 'bank_fee' ? 'company' : 'pending'; line.plan = ''; line.contract_change = '' }
+function adjustmentHandlingOptions(nature) {
+  if (nature === 'bank_fee') return [{ value: 'company', label: '我方承担' }, { value: 'customer', label: '客户承担' }, { value: 'pending', label: '待核实' }]
+  if (nature === 'discount') return [{ value: 'applied', label: '授权抵减应收' }, { value: 'already_in_order', label: '已计入订单金额' }, { value: 'pending', label: '待核实' }]
+  if (nature === 'other') return [{ value: 'applied', label: '凭证核准抵减应收' }, { value: 'pending', label: '待核实' }]
+  return [{ value: 'pending', label: '待核实' }]
+}
+async function uploadAdjustmentEvidence(line) {
+  if (!line.file || adjustmentUploadBusy.value) return
+  adjustmentUploadBusy.value = true
+  try {
+    const body = new FormData(); body.append('file', line.file)
+    const proof = (await api.post('/transactions/voucher-upload/', body)).data
+    line.evidence = proof.id; line.evidence_name = proof.name; line.file = null
+  } catch (err) { error.value = apiErrorMessage(err) || '扣减凭证上传失败，请重试。' }
+  finally { adjustmentUploadBusy.value = false }
+}
+function addReceiptAllocation() { multiOrderMode.value = true; receiptAllocations.value.push({ plan: '', amount: '' }) }
+function removeReceiptAllocation(index) { receiptAllocations.value.splice(index, 1) }
 async function save() {
   if (saving.value || !can('transactions', 'create')) return
   if (savedReceipt.value) return
   if (!referencesLoaded.value) { error.value = '客户、供应商或采购单资料尚未加载完成，请重试后再保存。'; return }
   if (form.kind === 'customer_receipt' && (orderSearchLoading.value || orderSearchError.value)) { error.value = '订单选项尚未成功加载，请重试后再保存。'; return }
+  if (currencyChangeMessage.value || pendingKind.value) { error.value = '请先确认或取消当前业务类型、币种或关联变更。'; return }
+  if (incompatibleRelations.value) { error.value = '所选客户或合同与当前业务类型不匹配，请清除不适用的关联。'; return }
+  if (form.kind === 'customer_receipt') {
+    if (!form.customer) { error.value = '请选择收款客户。'; return }
+    if (!form.amount || Number(form.amount) <= 0) { error.value = '请填写银行实际到账原币金额。'; return }
+    if (form.order && (selectedOrder.value?.currency !== form.currency || selectedOrder.value?.customer !== form.customer)) { error.value = '收款币种和客户必须与所选订单一致。'; return }
+    const missingProof = receiptAdjustments.value.find(line => ['bank_fee'].includes(line.nature) || line.handling === 'applied' ? !line.evidence : false)
+    if (missingProof) { error.value = '银行手续费和抵减应收的扣减项必须先上传依据凭证。'; return }
+    const invalidLine = receiptAdjustments.value.find(line => !line.amount || Number(line.amount) <= 0 || String(line.reason || '').trim().length < (line.handling === 'applied' ? 5 : 3))
+    if (invalidLine) { error.value = '请补齐每条扣减明细的正数金额和处理原因。'; return }
+    if (multiOrderMode.value) {
+      const ids = receiptAllocations.value.map(line => Number(line.plan))
+      if (!ids.length || ids.some(id => !id) || new Set(ids).size !== ids.length || receiptAllocations.value.some(line => !line.amount || Number(line.amount) <= 0)) {
+        error.value = '多订单核销请为每个应收计划填写不同的订单和正数金额。'; return
+      }
+    }
+  }
   if (form.kind !== 'customer_receipt') {
     saving.value = true
     error.value = ''; notice.value = ''
@@ -263,6 +452,16 @@ async function save() {
   try {
     if (!form.transaction_no) form.transaction_no = `FIN-${Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('').toUpperCase()}`
     const payload = { ...form }
+    payload.receipt_adjustments = receiptAdjustments.value.map(line => ({
+      nature: line.nature, amount: line.amount, handling: line.handling, reason: line.reason,
+      evidence: line.evidence || null, plan: line.plan || null, contract_change: line.contract_change || null,
+    }))
+    if (receiptRemittance.value) payload.remittance_amount = receiptRemittance.value
+    else delete payload.remittance_amount
+    if (form.exchange_rate === '') delete payload.exchange_rate
+    if (multiOrderMode.value) payload.plan_allocations = receiptAllocations.value.map(line => ({ plan: line.plan, amount: line.amount }))
+    else delete payload.plan_allocations
+    delete payload.bank_fee_amount; delete payload.fee_responsibility; delete payload.fee_reason; delete payload.fee_evidence
     if (!payload.transaction_no) delete payload.transaction_no
     const attempt = await saveOrVerifyCustomerReceipt({
       outcome: outcomeBeforeSubmit,
@@ -396,14 +595,47 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     <p v-if="error && !showForm && !allocation && !voidTarget" class="error" role="alert">{{ error }}</p>
     <template v-if="hasLoaded">
     <table>
-      <thead><tr><th>流水发生日期 / 流水号</th><th>收支 / 类型</th><th>往来方 / 合同</th><th>原币金额</th><th>人民币折算参考</th><th>状态 / 核销</th><th>操作</th></tr></thead>
-      <tbody><tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ kindLabel(row.kind) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}</td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind)">未核销 {{ row.currency }} {{ formatMoney(Number(row.amount) - Number(row.allocated_amount)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button v-if="can('transactions', 'update') && row.status === 'confirmed' && ['unallocated_advance', 'unallocated_payment'].includes(row.kind) && Number(row.amount) > Number(row.allocated_amount)" @click="openAllocate(row)">核销</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
+      <thead><tr><th>流水日期 / 编号</th><th>收支 / 类型</th><th>往来方 / 订单</th><th>原币实际收付</th><th>人民币参考</th><th>已核销 / 未分配</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr>
+        <tr v-for="row in rows" :key="row.id">
+          <td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td>
+          <td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ kindLabel(row.kind) }}</small></td>
+          <td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联订单</span></small></td>
+          <td>{{ row.currency }} {{ formatMoney(row.amount) }}<small v-if="row.kind === 'customer_receipt'">银行实际到账</small><small v-if="row.kind === 'customer_receipt'">客户汇款 {{ row.currency }} {{ formatMoney(row.remitted_amount_display) }}</small><small v-if="row.kind === 'customer_receipt' && Number(row.bank_fee_amount) > 0">银行扣费 {{ row.currency }} {{ formatMoney(row.bank_fee_amount) }} · {{ feeResponsibilityLabel(row.fee_responsibility) }}</small></td>
+          <td>{{ row.reference_rate_missing ? '未录入' : '¥' + formatMoney(row.rmb_amount) }}</td>
+          <td>{{ row.status_display }}<small v-if="row.kind === 'customer_receipt'">本笔核销 {{ row.currency }} {{ formatMoney(row.settlement_amount || 0) }}</small><small v-if="Number(row.unallocated_amount) > 0">未分配 {{ row.currency }} {{ formatMoney(row.unallocated_amount) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：核销 {{ formatMoney(item.amount) }}，订单剩余 {{ formatMoney(item.remaining_amount) }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td>
+          <td><button type="button" @click="openDetail(row)">详情</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && Number(row.unallocated_amount) > 0 && (['unallocated_advance', 'unallocated_payment'].includes(row.kind) || row.kind === 'customer_receipt' && !row.order && !row.plan)" @click="openAllocate(row)">核销</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td>
+        </tr>
+      </tbody>
     </table>
     </template>
 
+    <div v-if="detailTarget" class="mask">
+      <section class="dialog detail-dialog" role="dialog" aria-modal="true" aria-labelledby="transaction-detail-title">
+        <header class="dialog-head"><div><h3 id="transaction-detail-title">流水详情</h3><p>{{ detailTarget.transaction_no }} · {{ detailTarget.transaction_date }}</p></div><button type="button" class="close" aria-label="关闭" @click="detailTarget = null">×</button></header>
+        <div class="detail-grid">
+          <div><span>往来方</span><strong>{{ detailTarget.customer_name || detailTarget.supplier_name || '—' }}</strong></div>
+          <div><span>币种</span><strong>{{ detailTarget.currency }}</strong></div>
+          <div><span>{{ detailTarget.kind === 'customer_receipt' ? '银行实际到账原币' : '流水金额' }}</span><strong>{{ detailTarget.currency }} {{ formatMoney(detailTarget.amount) }}</strong></div>
+          <div v-if="detailTarget.kind === 'customer_receipt'"><span>客户实际汇款</span><strong>{{ detailTarget.currency }} {{ formatMoney(detailTarget.remitted_amount_display) }}</strong></div>
+          <div v-if="detailTarget.kind === 'customer_receipt'"><span>已核销应收</span><strong>{{ detailTarget.currency }} {{ formatMoney(detailTarget.settlement_amount || 0) }}</strong></div>
+          <div v-if="detailTarget.kind === 'customer_receipt'"><span>未分配，可继续核销</span><strong>{{ detailTarget.currency }} {{ formatMoney(detailTarget.unallocated_amount || 0) }}</strong></div>
+          <div v-if="detailTarget.kind === 'customer_receipt'"><span>尚未结汇原币</span><strong>{{ detailTarget.currency }} {{ formatMoney(detailTarget.fx_available_amount || 0) }}</strong></div>
+          <div><span>{{ detailTarget.currency === 'CNY' ? '人民币实际金额' : '人民币折算参考' }}</span><strong>{{ detailTarget.reference_rate_missing ? '未录入' : '¥' + formatMoney(detailTarget.rmb_amount) }}</strong></div>
+          <div><span>状态</span><strong>{{ detailTarget.status_display }}</strong></div>
+        </div>
+        <section v-if="detailTarget.allocations?.length"><h4>订单核销</h4><ul class="detail-list"><li v-for="item in detailTarget.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：已核销 {{ detailTarget.currency }} {{ formatMoney(item.amount) }}；订单剩余 {{ detailTarget.currency }} {{ formatMoney(item.remaining_amount) }}<small>其中到账 {{ formatMoney(item.cash_amount ?? item.amount) }}，我方承担手续费核销 {{ formatMoney(item.fee_credit_amount || 0) }}</small></li></ul></section>
+        <section v-if="detailTarget.receipt_adjustment_rows?.length"><h4>扣减明细</h4><ul class="detail-list"><li v-for="item in detailTarget.receipt_adjustment_rows" :key="item.id"><strong>{{ adjustmentNatureLabel(item.nature) }} · {{ detailTarget.currency }} {{ formatMoney(item.amount) }}</strong><small>{{ adjustmentHandlingLabel(item.handling) }}：{{ item.reason }}</small><small v-if="item.evidence_name">凭证：<a :href="`/api/transactions/${detailTarget.id}/receipt-adjustments/${item.id}/evidence/`">{{ item.evidence_name }}</a></small><small v-if="item.contract_no">关联订单：{{ item.contract_no }}</small><small v-if="item.contract_change">订单金额修订：#{{ item.contract_change }}</small></li></ul></section>
+        <section v-if="detailTarget.cash_settlements?.length"><h4>结汇记录</h4><ul class="detail-list"><li v-for="item in detailTarget.cash_settlements" :key="item.id"><strong>{{ item.event_no }} · {{ item.status === 'confirmed' ? '已核实' : '待核实' }}</strong><small>兑换 {{ item.amount }} {{ item.currency }}；实际汇率 {{ item.actual_rate }}；扣费前兑换额 ¥{{ item.gross_rmb_amount }}；结汇手续费 ¥{{ item.fee_amount }}；人民币净到账 ¥{{ item.bank_net_amount }}</small><small v-if="item.quoted_rate">参考汇率 {{ item.quoted_rate }} · 与参考汇率差额 ¥{{ item.quoted_reference_delta }}（按扣费前兑换额比较，不自动计入汇损）</small><small v-if="item.book_reference_amount !== null && item.book_reference_amount !== undefined">账面比较基准 ¥{{ item.book_reference_amount }} · 与账面基准差额 ¥{{ item.book_reference_delta }}</small><small v-else-if="!item.quoted_rate">未录入已确认的账面比较基准，不显示账面汇率差额</small></li></ul></section>
+        <section v-if="detailTarget.writeoffs?.length"><h4>授权抹零 / 非现金抵减</h4><ul class="detail-list"><li v-for="item in detailTarget.writeoffs" :key="item.id">{{ item.nature === 'discount' ? '优惠减免' : item.nature === 'other' ? '其他有依据扣减' : '授权抹零' }} {{ detailTarget.currency }} {{ formatMoney(item.amount) }} · {{ item.reason }}<small>确认人记录：{{ JSON.stringify(item.confirmed_actor) }}</small></li></ul></section>
+        <section><h4>备注</h4><p>{{ detailTarget.notes || '—' }}</p><p v-if="detailTarget.reference">银行参考号：{{ detailTarget.reference }}</p></section>
+      </section>
+    </div>
+
     <div v-if="showForm && can('transactions', 'create')" class="mask">
       <form class="dialog" role="dialog" aria-modal="true" aria-labelledby="transaction-form-title" @submit.prevent="save">
-        <header class="dialog-head"><div><h3 id="transaction-form-title">新增记账</h3><p>保存后只更新系统流水及可核销计划，不代表银行资金已到账。</p></div><button type="button" class="close" aria-label="关闭" @click="closeForm" :disabled="saving">×</button></header>
+        <header class="dialog-head"><div><h3 id="transaction-form-title">新增记账</h3><p>{{ form.kind === 'customer_receipt' ? '分别登记客户汇款、银行实际到账和应收核销；外币结汇可稍后办理。' : '记录业务收付款；银行账户资金确认仍按资金事件流程办理。' }}</p></div><button type="button" class="close" aria-label="关闭" @click="closeForm" :disabled="saving">×</button></header>
         <div v-if="saveOutcome === 'unknown'" class="error" role="alert"><strong>记账结果尚未确认</strong><p>请先按下方流水号核对实际记录，再决定是否重试。重试沿用原编号；不要另建同笔记账。</p></div>
         <fieldset :disabled="saving || !!savedReceipt"><legend>流水信息（业务记账）</legend>
         <label>类型
@@ -414,13 +646,15 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         </label>
         <label>流水发生日期<input v-model="form.transaction_date" type="date" required></label>
         <p class="category-hint">分类由所选类型自动生成：{{ form.category }}，无需重复填写。</p>
-        <label>原币金额<input v-model="form.amount" v-money-input type="number" min="0.0001" step="any" required></label>
-        <label>币种<select v-model="form.currency" required @change="onCurrencyChange"><option v-for="currency in currencies" :key="currency.value" :value="currency.value">{{ currency.label }}</option></select></label>
-        <label>参考折算汇率 <small>1 原币对应人民币，仅用于账面折算</small><input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label>
+        <label>{{ form.kind === 'customer_receipt' ? '银行实际到账金额' : '原币金额' }}<input v-model="form.amount" v-money-input type="number" min="0.0001" step="any" required></label>
+        <label>币种<select :value="form.currency" required @change="requestCurrencyChange"><option v-for="currency in currencies" :key="currency.value" :value="currency.value">{{ currency.label }}</option></select></label>
+        <label v-if="form.currency !== 'CNY'">账面折算参考汇率 <small>{{ form.kind === 'customer_receipt' ? '可留空；结汇时另记银行实际汇率' : '1原币对应人民币，仅用于账面折算' }}</small><input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" :required="form.kind !== 'customer_receipt'"></label>
+        <p v-if="form.kind === 'customer_receipt' && form.currency === 'CNY'" class="field-hint">人民币收款的参考汇率为1。</p>
         </fieldset>
         <fieldset :disabled="saving || !!savedReceipt"><legend>业务关联</legend>
+        <label v-if="form.kind === 'customer_receipt'">客户<select :value="form.customer || ''" :disabled="Boolean(form.order)" required @change="requestCustomerChange"><option value="">请选择客户</option><option v-for="row in customers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
         <div v-if="contractKinds.includes(form.kind)" class="order-picker">
-          <label>关联订单（客户收款必选，费用可选）<input v-model="orderQuery" placeholder="客户或订单号" @input="searchOrders"></label><small v-if="orderSearchLoading">正在加载订单…</small><p v-if="orderSearchError" class="option-load-error-text" role="alert">{{ orderSearchError }} <button type="button" @click="searchOrders">重试</button></p>
+          <label>关联订单（客户收款可暂不选择）<input v-model="orderQuery" placeholder="客户或订单号" @input="searchOrders"></label><small v-if="orderSearchLoading">正在加载订单…</small><p v-if="orderSearchError" class="option-load-error-text" role="alert">{{ orderSearchError }} <button type="button" @click="searchOrders">重试</button></p>
           <button v-for="row in orders" :key="row.id" type="button" class="order" @click="chooseOrder(row)">{{ row.customer_name }}｜{{ row.customer_country || '—' }}｜{{ row.order_no }}｜{{ row.currency }} {{ formatMoney(row.total_amount) }}</button>
           <p v-if="form.order">已选择订单：{{ selectedOrder?.order_no }}</p>
         </div>
@@ -428,12 +662,46 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <label v-if="form.kind === 'unallocated_advance'">客户<select v-model="form.customer" required><option :value="null">请选择客户</option><option v-for="row in customers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
         <label v-if="form.kind === 'unallocated_payment'">供应商<select v-model="form.supplier" required><option :value="null">请选择供应商</option><option v-for="row in suppliers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
         </fieldset>
+        <div v-if="currencyChangeMessage" class="change-confirm" role="alert"><p>{{ currencyChangeMessage }}</p><button v-if="pendingKind" type="button" @click="confirmKindChange">切换类型并清空收款输入</button><button v-else-if="pendingOrder" type="button" @click="confirmOrderChange">更换订单</button><button v-else-if="pendingPurchase" type="button" @click="confirmPurchaseChange">更换采购单</button><button v-else-if="pendingCustomer !== undefined" type="button" @click="confirmCustomerChange">更换客户</button><button v-else type="button" @click="confirmCurrencyChange">清空金额并切换币种</button><button type="button" class="secondary" @click="cancelCurrencyChange">取消</button></div>
+        <p v-if="incompatibleRelations" class="error" role="alert">当前类型与已选择的客户或合同不匹配。<button type="button" @click="clearIncompatibleRelations">清除不适用的关联</button></p>
+        <fieldset v-if="form.kind === 'customer_receipt'" class="receipt-adjustments" :disabled="saving || !!savedReceipt"><legend>收款扣减与核销</legend>
+          <label>客户实际汇款金额（{{ form.currency }}）<input v-model="receiptRemittance" v-money-input type="number" min="0" step="any" placeholder="留空时按到账与差额明细计算"></label>
+          <p class="field-hint">银行实际到账 {{ form.currency }} {{ formatMoney(form.amount || 0) }}；预计客户汇款 {{ form.currency }} {{ formatMoney(receiptRemittance || receiptRemittancePreview) }}。结汇额度只按银行核实的原币到账计算。</p>
+          <div v-for="(line, index) in receiptAdjustments" :key="index" class="adjustment-card">
+            <header><strong>扣减明细 {{ index + 1 }}</strong><button type="button" class="secondary" @click="removeReceiptAdjustment(index)">移除</button></header>
+            <div class="adjustment-grid">
+              <label>性质<select v-model="line.nature" @change="onAdjustmentNatureChange(line)"><option value="discount">优惠/减免</option><option value="bank_fee">银行手续费</option><option value="pending_difference">待核实差额</option><option value="other">其他扣减</option></select></label>
+              <label>金额（{{ form.currency }}）<input v-model="line.amount" v-money-input type="number" min="0.0001" step="any" required></label>
+              <label>处理方式<select v-model="line.handling"><option v-for="option in adjustmentHandlingOptions(line.nature)" :key="option.value" :value="option.value">{{ option.label }}</option></select></label>
+              <label v-if="line.nature === 'discount' || line.handling === 'applied'">关联应收计划<select v-model="line.plan" @change="onReceiptAdjustmentPlanChange(line)"><option value="">请选择</option><option v-for="plan in eligibleReceiptPlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · 剩余应收 {{ formatMoney(plan.remaining_amount) }}</option></select></label>
+              <label v-if="line.nature === 'discount' && line.handling === 'already_in_order' && approvedReceiptChanges.length">订单金额修订<select v-model="line.contract_change"><option value="">按订单已有优惠金额</option><option v-for="change in approvedReceiptChanges" :key="change.id" :value="change.id">修订 #{{ change.id }} · {{ change.amount_delta }} {{ form.currency }}</option></select></label>
+            </div>
+            <label>原因<textarea v-model="line.reason" rows="2" maxlength="500" required></textarea></label>
+            <label>依据凭证<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="line.file = $event.target.files[0]"></label>
+            <div class="proof-line"><span>{{ line.evidence_name || (line.evidence ? '凭证已关联' : '未上传凭证') }}</span><button type="button" class="secondary" :disabled="adjustmentUploadBusy || !line.file" @click="uploadAdjustmentEvidence(line)">{{ adjustmentUploadBusy ? '上传中…' : '上传凭证' }}</button></div>
+            <p v-if="line.nature === 'bank_fee'" class="field-hint">银行扣费会解释汇款额与到账额差异；手续费只记录一次，不重复减少到账金额。</p>
+            <p v-else-if="line.nature === 'discount' && line.handling === 'already_in_order'" class="field-hint">只记录订单已有优惠，不会再次抵减应收。</p>
+            <p v-else-if="line.handling === 'pending'" class="field-hint">待核实项目不会自动冲减订单应收。</p>
+          </div>
+          <button type="button" class="secondary" @click="addReceiptAdjustment">添加扣减明细</button>
+          <div v-if="form.customer && eligibleReceiptPlans.length" class="receipt-plan-area">
+            <p>单个订单可按应收计划顺序核销；需要分配多张订单时添加计划。</p>
+            <button v-if="!multiOrderMode" type="button" class="secondary" @click="addReceiptAllocation">分配到多张订单</button>
+            <div v-for="(item, index) in receiptAllocations" :key="index" class="adjustment-grid receipt-allocation-row">
+              <label>订单应收计划<select v-model="item.plan" required><option value="">请选择</option><option v-for="plan in eligibleReceiptPlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.currency }} · 剩余 {{ formatMoney(plan.remaining_amount) }}</option></select></label>
+              <label>本次核销金额（{{ form.currency }}）<input v-model="item.amount" v-money-input type="number" min="0.0001" step="any" required></label>
+              <button type="button" class="secondary" @click="removeReceiptAllocation(index)">移除计划</button>
+            </div>
+            <button v-if="multiOrderMode" type="button" class="secondary" @click="addReceiptAllocation">添加订单计划</button>
+          </div>
+        </fieldset>
         <fieldset :disabled="saving || !!savedReceipt"><legend>收付款信息</legend>
         <label>支付方式<input v-model="form.payment_method" placeholder="银行转账、现金等"></label><label>银行参考号<input v-model="form.reference"></label><label>备注<input v-model="form.notes"></label>
         </fieldset>
-        <p v-if="['customer_receipt', 'supplier_payment'].includes(form.kind)">款项将按合同计划顺序在系统内核销；超出计划的部分转为未分配预收预付，不等于银行资金已确认。</p>
+        <p v-if="form.kind === 'customer_receipt'">未核实差额保留应收；实际到账超出核销金额的部分保留为未分配预收款。</p>
+        <p v-else-if="form.kind === 'supplier_payment'">款项按采购单付款计划核销；超出计划的部分保留为未分配预付款。</p>
         <div v-if="form.kind === 'customer_receipt' && form.currency === 'CNY'" class="empty-note">本笔收款无需登记外币结汇。</div>
-        <button v-if="form.kind === 'customer_receipt' && form.currency !== 'CNY' && !settlementOpen && !savedReceipt" type="button" class="settlement-expand" @click="settlementOpen = true">登记收汇记录</button>
+        <button v-if="form.kind === 'customer_receipt' && form.currency !== 'CNY' && !settlementOpen && !savedReceipt" type="button" class="settlement-expand" @click="settlementOpen = true">登记结汇到账</button>
         <section v-if="settlementOpen && form.kind === 'customer_receipt' && form.currency !== 'CNY'" class="settlement-inline-area">
           <p v-if="savedReceipt" class="notice" role="status">收款已保存，流水号 {{ savedReceipt.transaction_no }}。结汇失败时重试只会提交结汇信息。</p>
           <CashEventEntryForm mode="linked" :order="selectedOrder" :receipt="savedReceipt" @state-change="onSettlementStateChange" @created="onSettlementCreated" @updated="onSettlementUpdated" />
@@ -443,7 +711,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <p v-if="error" class="error">{{ error }}</p>
         <footer>
           <button type="button" @click="closeForm" :disabled="saving || receiptLookupLoading || settlementSnapshot?.busy">{{ savedReceipt ? '关闭' : '取消' }}</button>
-          <button v-if="!savedReceipt" :disabled="saving || receiptLookupLoading || !referencesLoaded || (form.kind === 'customer_receipt' && (orderSearchLoading || !!orderSearchError))">{{ saving ? '保存中…' : receiptLookupLoading ? '核对中…' : saveOutcome === 'unknown' && form.kind === 'customer_receipt' ? '核对收款流水' : saveOutcome === 'unknown' ? '按原编号重试' : saveOutcome === 'rejected' && settlementOpen ? '按原编号重试保存' : settlementOpen && form.kind === 'customer_receipt' && form.currency !== 'CNY' ? '保存收款并继续' : '保存' }}</button>
+          <button v-if="!savedReceipt" :disabled="saving || adjustmentUploadBusy || receiptLookupLoading || !referencesLoaded || (form.kind === 'customer_receipt' && (orderSearchLoading || !!orderSearchError))">{{ saving ? '保存中…' : adjustmentUploadBusy ? '凭证上传中…' : receiptLookupLoading ? '核对中…' : saveOutcome === 'unknown' && form.kind === 'customer_receipt' ? '核对收款流水' : saveOutcome === 'unknown' ? '按原编号重试' : saveOutcome === 'rejected' && settlementOpen ? '按原编号重试保存' : settlementOpen && form.kind === 'customer_receipt' && form.currency !== 'CNY' ? '保存收款并继续' : '保存' }}</button>
         </footer>
       </form>
     </div>

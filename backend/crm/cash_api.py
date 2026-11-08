@@ -26,21 +26,28 @@ def _source_order(row):
             return member.order
         if member.plan_id and member.plan.order_id:
             return member.plan.order
+        allocation = member.allocations.select_related("plan__order").filter(is_active=True, plan__order__isnull=False).first()
+        if allocation:
+            return allocation.plan.order
     return None
 
 
 def event_data(event, user=None):
     allocations = list(event.sources.order_by("source_id"))
-    reference = sum((a.amount * Decimal(a.source_snapshot["exchange_rate"]) for a in allocations), Decimal("0")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    has_book_reference = all(not a.source_snapshot.get("reference_rate_missing", False) for a in allocations)
+    reference = sum((a.amount * Decimal(a.source_snapshot["exchange_rate"]) for a in allocations), Decimal("0")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if has_book_reference else None
     gross = event.gross_rmb_amount or event.bank_net_amount + event.fee_amount
     quoted_reference = (event.amount * event.quoted_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if event.quoted_rate is not None else None
     binding = FinanceBankVoucherBinding.objects.filter(event=event).select_related("voucher").first()
     orders = {}
     if user is None or user_can(user, "orders", "view"):
         for allocation in allocations:
-            order = _source_order(allocation.source)
-            if order:
-                orders[order.pk] = {"id": order.pk, "order_no": order.order_no}
+            direct_order = _source_order(allocation.source)
+            if direct_order:
+                orders[direct_order.pk] = {"id": direct_order.pk, "order_no": direct_order.order_no}
+            linked_orders = allocation.source.allocations.filter(is_active=True, plan__order__isnull=False).select_related("plan__order")
+            for link in linked_orders:
+                orders[link.plan.order_id] = {"id": link.plan.order_id, "order_no": link.plan.order.order_no}
     source_receipt = None
     receipt_id = event.request_payload.get("source_receipt_id")
     if receipt_id:
@@ -76,9 +83,10 @@ def event_data(event, user=None):
         "cancelled_actor": event.confirmed_actor if event.status == "cancelled" else {},
         "cancelled_reason": event.cancelled_reason, "correction_of": event.correction_of_id, "fee_for": event.fee_for_id,
         "sources": [{"transaction_id": a.source_id, "amount": str(a.amount), "currency": a.currency, "snapshot": a.source_snapshot} for a in allocations],
-        "reference_amount": str(reference),
-        "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
-        "pre_fee_reference_delta": str((gross - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+        "reference_amount": str(reference) if reference is not None else None,
+        "reference_basis": "confirmed_book_rate" if reference is not None else "missing_confirmed_book_rate",
+        "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if reference is not None else None,
+        "pre_fee_reference_delta": str((gross - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if reference is not None else None,
         "quoted_reference_amount": str(quoted_reference) if quoted_reference is not None else None,
         "quoted_reference_delta": str((gross - quoted_reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if quoted_reference is not None else None,
         "basis": "bank_voucher_manual_v1", "coverage_since": None,
@@ -193,7 +201,7 @@ class RmbCashEventViewSet(viewsets.ViewSet):
                 raise ValidationError("关联收款无效，请重新核对已保存流水。")
             root = Transaction.objects.filter(pk=int(family_root)).first()
             if (root is None or root.split_from_id or root.kind != "customer_receipt" or root.status != "confirmed"
-                    or root.direction != "income" or not root.order_id or not cash.source_visible(root, request.user)):
+                    or root.direction != "income" or not root.customer_id or not cash.source_visible(root, request.user)):
                 raise NotFound("关联收款不存在或不可访问。")
             if currency and currency != root.currency:
                 raise ValidationError("来源币种必须与已保存收款一致。")

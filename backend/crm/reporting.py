@@ -131,7 +131,7 @@ def records(source, date_field, start, end, user=None):
                 yield day, obj.pk, {**dims, **product_dims(None)}, adjustment, Decimal(0), ""
         elif source == "cash":
             dims["category"] = (obj.category, obj.category or "未填写")
-            amount = obj.rmb_amount or obj.amount * obj.exchange_rate
+            amount = obj.rmb_reference_amount or Decimal("0")
             yield day, obj.pk, dims, amount if obj.direction == "income" else -amount, Decimal(0), ""
         elif source == "actual_cash":
             # Visibility is checked per event so hidden source batches cannot be

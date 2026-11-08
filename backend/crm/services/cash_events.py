@@ -76,8 +76,9 @@ def source_visible(row, user):
 
 
 def source_snapshot(row):
-    return {k: str(getattr(row, k)) if k in {"amount", "exchange_rate", "rmb_amount"} else getattr(row, k)
-            for k in ("id", "transaction_no", "amount", "currency", "direction", "kind", "split_from_id", "customer_id", "supplier_id", "order_id", "purchase_order_id", "plan_id", "exchange_rate", "rmb_amount")}
+    decimal_fields = {"amount", "exchange_rate", "rmb_amount", "remittance_amount", "bank_fee_amount", "settlement_amount"}
+    return {k: str(getattr(row, k)) if k in decimal_fields and getattr(row, k) is not None else getattr(row, k)
+            for k in ("id", "transaction_no", "amount", "remittance_amount", "bank_fee_amount", "fee_responsibility", "settlement_amount", "currency", "direction", "kind", "split_from_id", "customer_id", "supplier_id", "order_id", "purchase_order_id", "plan_id", "exchange_rate", "reference_rate_missing", "rmb_amount")}
 
 
 def visible(event, user):
@@ -294,8 +295,8 @@ def validate_sources(p, user, *, confirmation=False):
         if receipt is None or not source_visible(receipt, user):
             raise NotFound("关联收款不存在或不可访问。")
         if (receipt.split_from_id or receipt.kind != "customer_receipt" or receipt.status != "confirmed"
-                or receipt.direction != "income" or not receipt.order_id or receipt.currency != p["currency"]):
-            raise ValidationError("关联收款必须是已保存、已确认且关联订单的同币种客户收款。")
+                or receipt.direction != "income" or not receipt.customer_id or receipt.currency != p["currency"]):
+            raise ValidationError("关联收款必须是已保存、已确认且已识别客户的同币种客户收款。")
         allowed_receipt_sources = {row.pk for row in family(receipt)}
     rows = []
     for s in p["sources"]:

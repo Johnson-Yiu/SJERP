@@ -1,12 +1,16 @@
 from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
+import hashlib
+import json
 from uuid import uuid4
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import IntegrityError, models, transaction
 
 from django.utils import timezone
-from crm.models import AdvanceAllocation, ContractChangeRequest, Order, PaymentPlan, PurchaseOrder, Transaction
+from crm.models import AdvanceAllocation, ContractChangeRequest, FinancePlanWriteoff, Order, PaymentPlan, PurchaseOrder, Transaction
+from crm.finance_scope import require_finance_permission, scope_plan_queryset, scope_transaction_queryset, validate_finance_relations
+from crm.services import cash_events as cash
 from crm.services.historical import reject_historical, reject_unlinked_historical_finance, is_historical, has_verified_history_balance
 
 
@@ -18,6 +22,78 @@ def positive_decimal(value, label):
         return number
     except (InvalidOperation, ValueError, TypeError):
         raise ValidationError(f"{label}必须是大于零的有效数字。")
+
+
+def _writeoff_total(plan):
+    return plan.finance_writeoffs.aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+
+
+def _sync_plan_status(plan):
+    plan.status = "settled" if plan.settled_amount + _writeoff_total(plan) == plan.planned_amount else "open"
+
+
+@transaction.atomic
+def writeoff_receivable(source_transaction, plan, amount, reason, request_key, user):
+    """Record an authorized rounding write-off without creating any cash movement."""
+    require_finance_permission(user, "finance", "update")
+    request_key = str(request_key or "").strip()
+    reason = str(reason or "").strip()
+    if not request_key or len(request_key) > 128:
+        raise ValidationError("本次操作编号无效，请重新打开登记窗口。")
+    if len(reason) < 5 or len(reason) > 500:
+        raise ValidationError("请填写至少 5 个字的抹零原因。")
+    amount = positive_decimal(amount, "抹零金额")
+    if amount.quantize(Decimal("0.0001")) != amount or amount >= Decimal("10000000000"):
+        raise ValidationError("抹零金额最多保留 4 位小数，且不能超限。")
+    amount = amount.quantize(Decimal("0.0001"))
+    source = Transaction.objects.select_for_update().filter(pk=source_transaction.pk).first()
+    locked_plan = PaymentPlan.objects.select_for_update().filter(pk=plan.pk).first()
+    if source is None or locked_plan is None:
+        raise ValidationError("原收款或应收计划不存在。")
+    if not scope_transaction_queryset(Transaction.objects.filter(pk=source.pk), user).exists():
+        raise ValidationError("原收款不在当前账号的数据范围内。")
+    if not scope_plan_queryset(PaymentPlan.objects.filter(pk=locked_plan.pk), user).exists():
+        raise ValidationError("应收计划不在当前账号的数据范围内。")
+    validate_finance_relations({"plan": locked_plan, "customer": source.customer}, user)
+    actor = cash.actor(user, "writeoff_receivable")
+    payload = {"source": source.pk, "plan": locked_plan.pk, "amount": str(amount), "reason": reason, "actor": actor}
+    fingerprint = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")).hexdigest()
+    existing = FinancePlanWriteoff.objects.filter(request_key=request_key).first()
+    if existing:
+        if existing.request_hash != fingerprint:
+            raise cash.CashConflict("本次操作编号已用于其他抹零内容。")
+        return existing, False
+    if source.status != "confirmed" or source.direction != "income" or source.kind not in {"customer_receipt", "unallocated_advance"}:
+        raise ValidationError("抹零只能关联已确认的客户收款或预收款。")
+    if locked_plan.direction != "receivable" or not locked_plan.order_id or locked_plan.status != "open":
+        raise ValidationError("抹零只能用于有效销售订单的未结应收计划。")
+    order = locked_plan.order
+    if order.status in {"draft", "cancelled"} or source.customer_id != order.customer_id or source.currency != locked_plan.currency:
+        raise ValidationError("原收款与应收计划的客户、币种或订单状态不匹配。")
+    linked = source.plan_id == locked_plan.pk or AdvanceAllocation.objects.filter(
+        advance=source, plan=locked_plan, is_active=True,
+    ).exists()
+    if not linked:
+        raise ValidationError("抹零须关联本笔收款已核销的订单计划。")
+    if amount > locked_plan.remaining_amount:
+        raise ValidationError("抹零金额不能超过订单尚欠金额。")
+    try:
+        with transaction.atomic():
+            row = FinancePlanWriteoff.objects.create(
+                source_transaction=source, plan=locked_plan, amount=amount,
+                reason=reason, request_key=request_key, request_hash=fingerprint,
+                confirmed_actor=actor,
+            )
+    except IntegrityError:
+        existing = FinancePlanWriteoff.objects.filter(request_key=request_key).first()
+        if existing is None:
+            raise
+        if existing.request_hash != fingerprint:
+            raise cash.CashConflict("本次操作编号已用于其他抹零内容。")
+        return existing, False
+    _sync_plan_status(locked_plan)
+    locked_plan.save(update_fields=["status", "updated_at"])
+    return row, True
 
 
 def _transaction_no(prefix="FIN"):
@@ -124,6 +200,33 @@ def record_transaction(payload):
     plan = payload.pop("plan", None)
     allow_unplanned_contract_payment = payload.pop("_allow_unplanned_contract_payment", False)
     amount = positive_decimal(payload.get("amount"), "收付款金额")
+    kind = payload.get("kind", "other")
+    direction = payload.get("direction")
+    if kind == "unallocated_advance" and direction == "income":
+        from crm.models import FinanceVoucher
+        remitted = positive_decimal(payload.get("remittance_amount", amount), "客户汇款金额")
+        try:
+            fee = Decimal(str(payload.get("bank_fee_amount") or "0"))
+        except (InvalidOperation, TypeError, ValueError):
+            raise ValidationError("收款扣费金额无效。")
+        responsibility = payload.get("fee_responsibility", "")
+        reason = str(payload.get("fee_reason") or "").strip()
+        evidence = payload.get("fee_evidence")
+        if not fee.is_finite() or fee < 0 or remitted - amount != fee:
+            raise ValidationError("客户汇款额减银行实际到账额必须等于扣费金额。")
+        if fee > 0:
+            if responsibility not in {"company", "customer", "unknown"} or len(reason) < 5:
+                raise ValidationError("有银行扣费时，请记录承担方和扣费依据。")
+            if evidence is not None and not isinstance(evidence, FinanceVoucher):
+                evidence = FinanceVoucher.objects.filter(pk=evidence).first()
+            if evidence is None or evidence.scope != "transaction":
+                raise ValidationError("有银行扣费时，请上传并关联收款凭证。")
+        elif responsibility or reason or evidence:
+            raise ValidationError("没有扣费时无需填写扣费承担方、依据或凭证。")
+        payload.update(remittance_amount=remitted, bank_fee_amount=fee, fee_responsibility=responsibility,
+            fee_reason=reason, fee_evidence=evidence)
+    elif any(payload.get(field) not in (None, "", Decimal("0")) for field in ("bank_fee_amount", "fee_responsibility", "fee_reason", "fee_evidence")):
+        raise ValidationError("客户汇款扣费仅支持登记在未分配预收款上，再按实际情况核销。")
     # Transaction status is controlled by this service; callers cannot override it.
     payload.pop("status", None)
     payload.pop("allocated_amount", None)
@@ -216,13 +319,14 @@ def record_transaction(payload):
         transaction_no=payload.pop("transaction_no", None) or _transaction_no(),
         transaction_date=payload.pop("transaction_date", None) or timezone.localdate(),
         amount=applied_amount,
+        settlement_amount=applied_amount if plan and payload.get("kind") not in {"refund", "supplier_refund"} else Decimal("0"),
         status="confirmed",
         plan=plan,
         **payload,
     )
     if plan:
         plan.settled_amount += applied_amount
-        plan.status = "settled" if plan.settled_amount == plan.planned_amount else "open"
+        _sync_plan_status(plan)
         plan.save(update_fields=["settled_amount", "status", "updated_at"])
         excess = amount - applied_amount
         if excess > 0:
@@ -263,6 +367,9 @@ def void_transaction(row, reason):
     collect(root)
     root = rows[0]
 
+    if FinancePlanWriteoff.objects.filter(source_transaction__in=rows).exists():
+        raise ValidationError("原收款已有授权抹零记录，不能直接作废；请先核实抹零调整。")
+
     from .cash_events import guard_void
     guard_void(rows)
 
@@ -302,7 +409,7 @@ def void_transaction(row, reason):
     for plan_id, delta in sorted(plan_deltas.items()):
         plan = plans[plan_id]
         plan.settled_amount -= delta
-        plan.status = "settled" if plan.settled_amount == plan.planned_amount else "open"
+        _sync_plan_status(plan)
         plan.save(update_fields=["settled_amount", "status", "updated_at"])
     for allocation in active_allocations:
         allocation.is_active = False
@@ -338,7 +445,7 @@ def allocate_advance(advance, plan, amount):
         raise ValidationError("只能分配到有效合同的待结清计划。")
     if advance.direction != ("income" if plan.order_id else "expense"):
         raise ValidationError("预收预付方向与计划不匹配。")
-    if amount <= 0 or amount > advance.amount - advance.allocated_amount:
+    if amount <= 0 or amount > advance.allocation_capacity - advance.allocated_amount:
         raise ValidationError("分配金额不能超过未分配余额。")
     if amount > plan.remaining_amount or advance.currency != plan.currency:
         raise ValidationError("计划余额或币种不匹配。")
@@ -349,7 +456,7 @@ def allocate_advance(advance, plan, amount):
     advance.allocated_amount += amount
     advance.save(update_fields=["allocated_amount", "updated_at"])
     plan.settled_amount += amount
-    plan.status = "settled" if plan.settled_amount == plan.planned_amount else "open"
+    _sync_plan_status(plan)
     plan.save(update_fields=["settled_amount", "status", "updated_at"])
     AdvanceAllocation.objects.create(advance=advance, plan=plan, amount=amount)
     return plan
@@ -459,7 +566,7 @@ def record_contract_refund(contract, payload):
         )
         first = first or row
         plan.settled_amount -= applied
-        plan.status = "settled" if plan.settled_amount == plan.planned_amount else "open"
+        _sync_plan_status(plan)
         plan.save(update_fields=["settled_amount", "status", "updated_at"])
         remaining -= applied
         if remaining == 0:

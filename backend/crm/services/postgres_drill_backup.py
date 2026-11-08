@@ -36,7 +36,7 @@ from .backup_recovery import (
     _sha256,
     assert_secure_backup_file,
 )
-from .private_media import build_private_media_manifest, compare_private_media_manifest
+from .private_media import build_private_media_manifest, compare_private_media_manifest, secure_private_media_tree
 
 
 class IsolatedPostgresDrill:
@@ -272,8 +272,17 @@ class IsolatedPostgresDrill:
                 if media_target.exists():
                     raise BackupRecoveryError("Restore media target already exists")
                 os.replace(stage / "media", media_target)
+                secure_private_media_tree(media_target)
+                differences = compare_private_media_manifest(manifest.get("media", {}), media_target)
+                if differences:
+                    raise BackupRecoveryError("Restored media manifest mismatch: " + "; ".join(differences))
             return {"database": target, "media": str(media_target), "manifest": manifest}
         except Exception as original:
+            if media_target.exists() and media_target.is_dir() and not media_target.is_symlink():
+                try:
+                    shutil.rmtree(media_target)
+                except OSError as cleanup_error:
+                    original.add_note("Owned restore media cleanup failed: " + type(cleanup_error).__name__)
             if created and target in self._owned_targets:
                 try:
                     with self._connect("postgres", autocommit=True) as connection:

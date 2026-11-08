@@ -39,6 +39,7 @@ from .private_media import (
     PrivateMediaStorageError,
     build_private_media_manifest,
     compare_private_media_manifest,
+    secure_private_media_tree,
 )
 
 
@@ -312,6 +313,17 @@ def _snapshot_sqlite(source, destination):
 def _copy_media_snapshot(source_root, destination_root, manifest):
     source_root = Path(source_root).resolve()
     destination_root = Path(destination_root).resolve()
+    destination_root.mkdir(parents=True, exist_ok=True)
+    for directory_path in manifest.get("directories", []):
+        relative = _safe_member_path(directory_path)
+        source = (source_root / Path(*relative.parts)).resolve()
+        try:
+            source.relative_to(source_root)
+        except ValueError as exc:
+            raise BackupRecoveryError(f"Media directory escapes MEDIA_ROOT: {directory_path}") from exc
+        if source.is_symlink() or not source.is_dir():
+            raise BackupRecoveryError(f"Media directory is missing or invalid: {directory_path}")
+        destination_root.joinpath(*relative.parts).mkdir(parents=True, exist_ok=True, mode=0o700)
     for entry in manifest["files"]:
         relative = _safe_member_path(entry["path"])
         source = (source_root / Path(*relative.parts)).resolve()
@@ -337,8 +349,11 @@ def _archive_directory(stage, archive_path):
         secure_backup_file(temporary)
         with zipfile.ZipFile(temporary, "w", compression=zipfile.ZIP_DEFLATED, strict_timestamps=False) as archive:
             for path in sorted(Path(stage).rglob("*")):
-                if path.is_file():
-                    archive.write(path, path.relative_to(stage).as_posix())
+                relative = path.relative_to(stage).as_posix()
+                if path.is_dir():
+                    archive.write(path, relative.rstrip("/") + "/")
+                elif path.is_file():
+                    archive.write(path, relative)
         with zipfile.ZipFile(temporary) as archive:
             if archive.testzip() is not None:
                 raise BackupRecoveryError("Created backup archive failed CRC verification")
@@ -525,8 +540,23 @@ def restore_consistent_backup(*, archive, target_dir, result_file=None):
         target.parent.mkdir(parents=True, exist_ok=True)
         staging = Path(tempfile.mkdtemp(prefix=f".{target.name}.restore-", dir=target.parent))
         ensure_secure_backup_directory(staging, require_windows_acl=require_windows_acl)
+        with zipfile.ZipFile(archive_path) as bundle:
+            members = bundle.infolist()
+            names = [item.filename for item in members]
+            if len(names) != len(set(names)):
+                raise BackupRecoveryError("Backup archive contains duplicate members")
+            if bundle.testzip() is not None:
+                raise BackupRecoveryError("Backup archive failed CRC verification")
+            for item in members:
+                _safe_member_path(item.filename)
+                if stat.S_ISLNK(item.external_attr >> 16) or item.flag_bits & 1:
+                    raise BackupRecoveryError("Backup archive links and encrypted members are unsupported")
+                if item.filename not in {DATABASE_MEMBER, CONFIG_MEMBER, MANIFEST_MEMBER} and not item.filename.startswith(f"{MEDIA_DIRECTORY}/"):
+                    raise BackupRecoveryError(f"Unexpected backup member: {item.filename}")
         _extract_archive(archive_path, staging)
         manifest = json.loads((staging / MANIFEST_MEMBER).read_text(encoding="utf-8"))
+        if not isinstance(manifest, dict) or not isinstance(manifest.get("media"), dict):
+            raise BackupRecoveryError("Backup manifest is invalid")
         if manifest.get("schema_version") != ARCHIVE_SCHEMA_VERSION:
             raise BackupRecoveryError("Unsupported backup manifest schema")
         if manifest.get("consistency", {}).get("quiesced") is not True:
@@ -542,6 +572,11 @@ def restore_consistent_backup(*, archive, target_dir, result_file=None):
         if integrity != "ok":
             raise BackupRecoveryError(f"Restored database integrity check failed: {integrity}")
         media = staging / MEDIA_DIRECTORY
+        if not media.exists():
+            # Older archives omitted empty media directories from ZIP member lists.
+            # Recreate the root before validating the manifest; any expected files
+            # or recorded child directories still fail the comparison below.
+            media.mkdir(mode=0o700)
         differences = compare_private_media_manifest(manifest.get("media", {}), media)
         if differences:
             raise BackupRecoveryError("Restored media manifest mismatch: " + "; ".join(differences))
@@ -549,6 +584,7 @@ def restore_consistent_backup(*, archive, target_dir, result_file=None):
         if _sha256(config) != manifest.get("recovery_config", {}).get("sha256"):
             raise BackupRecoveryError("Recovery configuration SHA256 does not match manifest")
         _secure_tree(staging, require_windows_acl=require_windows_acl)
+        secure_private_media_tree(media)
         if target.exists():
             raise BackupRecoveryError(f"Restore target appeared during verification: {target}")
         os.replace(staging, target)

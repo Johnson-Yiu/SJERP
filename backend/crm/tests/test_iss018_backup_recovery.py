@@ -1,4 +1,5 @@
 import json
+import hashlib
 import os
 import sqlite3
 import stat
@@ -35,22 +36,37 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
         (media / "followups").mkdir()
         (media / "followups" / "invoice.pdf").write_bytes(b"invoice-private-bytes")
         (media / "sku.png").write_bytes(b"sku-image-private-bytes")
+        voucher = b"%PDF-1.4\nSynthetic bank voucher\n%%EOF"
+        voucher_path = "finance-vouchers/2026/11/bank-voucher.pdf"
+        voucher_file = media / voucher_path
+        voucher_file.parent.mkdir(parents=True)
+        voucher_file.write_bytes(voucher)
         connection = sqlite3.connect(database)
         try:
             connection.executescript(
-                """
+                f"""
                 CREATE TABLE orders (id INTEGER PRIMARY KEY, order_no TEXT, total_amount DECIMAL);
                 CREATE TABLE inventory (id INTEGER PRIMARY KEY, sku TEXT, quantity DECIMAL);
                 CREATE TABLE attachments (id INTEGER PRIMARY KEY, order_id INTEGER, path TEXT);
+                CREATE TABLE finance_vouchers (id INTEGER PRIMARY KEY, path TEXT, size INTEGER, sha256 TEXT);
                 INSERT INTO orders VALUES (1, 'SO-ISS018-001', '5000.00');
                 INSERT INTO inventory VALUES (1, 'SKU-ISS018-001', '42.00');
                 INSERT INTO attachments VALUES (1, 1, 'followups/invoice.pdf');
+                INSERT INTO finance_vouchers VALUES (1, 'finance-vouchers/2026/11/bank-voucher.pdf', {len(voucher)}, '{hashlib.sha256(voucher).hexdigest()}');
                 """
             )
             connection.commit()
         finally:
             connection.close()
         return database, media
+
+    def _rewrite_archive(self, source, target, transform):
+        with zipfile.ZipFile(source) as original, zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as changed:
+            for info in original.infolist():
+                content = original.read(info.filename)
+                transformed = transform(info.filename, content)
+                if transformed is not None:
+                    changed.writestr(info, transformed)
 
     def _make_archive(self, root, backup_id="test"):
         database, media = self._make_fixture(root)
@@ -73,6 +89,8 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
     def test_single_archive_restore_preserves_rows_amount_inventory_and_media_relation(self):
         with TemporaryDirectory() as root:
             database, media = self._make_fixture(root)
+            source_database_sha = hashlib.sha256(database.read_bytes()).hexdigest()
+            source_media_manifest = build_private_media_manifest(media)
             output = Path(root) / "backup"
             result = create_consistent_backup(
                 database=database,
@@ -87,6 +105,7 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
                 names = set(source.namelist())
                 self.assertIn("database.sqlite3", names)
                 self.assertIn("media/followups/invoice.pdf", names)
+                self.assertIn("media/finance-vouchers/2026/11/bank-voucher.pdf", names)
                 self.assertIn("manifest.json", names)
                 manifest = json.loads(source.read("manifest.json"))
             self.assertEqual(manifest["consistency"]["method"], "application-quiesced-sqlite-backup-and-media-archive")
@@ -106,9 +125,135 @@ class ISS018BackupRecoveryTests(SimpleTestCase):
                 connection.close()
             self.assertEqual(path, "followups/invoice.pdf")
             self.assertTrue((restored / "media" / path).is_file())
+            connection = sqlite3.connect(restored / "database.sqlite3")
+            try:
+                voucher_path, voucher_size, voucher_sha = connection.execute(
+                    "SELECT path,size,sha256 FROM finance_vouchers WHERE id=1"
+                ).fetchone()
+            finally:
+                connection.close()
+            voucher_file = restored / "media" / voucher_path
+            self.assertEqual(voucher_file.stat().st_size, voucher_size)
+            self.assertEqual(hashlib.sha256(voucher_file.read_bytes()).hexdigest(), voucher_sha)
             self.assertEqual(compare_private_media_manifest(manifest["media"], restored / "media"), [])
+            self.assertEqual(hashlib.sha256(database.read_bytes()).hexdigest(), source_database_sha)
+            self.assertEqual(build_private_media_manifest(media), source_media_manifest)
             result_report = Path(root) / ".restored.restore-result.json"
             self.assertEqual(json.loads(result_report.read_text())["status"], "PASS")
+
+    def test_empty_media_root_is_archived_and_actually_restored_without_source_changes(self):
+        with TemporaryDirectory() as root:
+            root = Path(root)
+            database = root / "empty.sqlite3"
+            media = root / "empty-media"
+            media.mkdir()
+            connection = sqlite3.connect(database)
+            try:
+                connection.execute("CREATE TABLE source_fact (id INTEGER PRIMARY KEY, value TEXT NOT NULL)")
+                connection.execute("INSERT INTO source_fact VALUES (1, 'synthetic unchanged')")
+                connection.commit()
+            finally:
+                connection.close()
+            source_database_sha = hashlib.sha256(database.read_bytes()).hexdigest()
+            source_manifest = build_private_media_manifest(media)
+            result = create_consistent_backup(
+                database=database, media_root=media, output_dir=root / "backup",
+                backup_id="empty-media", quiesced=True,
+            )
+            archive = Path(result["archive"])
+            with zipfile.ZipFile(archive) as bundle:
+                self.assertIn("media/", bundle.namelist())
+                manifest = json.loads(bundle.read("manifest.json"))
+                self.assertEqual(manifest["media"]["directories"], [])
+                self.assertEqual(manifest["media"]["files"], [])
+            target = root / "empty-restored"
+            restored = restore_consistent_backup(archive=archive, target_dir=target)
+            self.assertEqual(restored["restore_status"], "PASS")
+            restored_media = target / "media"
+            self.assertTrue(restored_media.is_dir())
+            self.assertEqual(compare_private_media_manifest(manifest["media"], restored_media), [])
+            if os.name != "nt":
+                self.assertEqual(stat.S_IMODE(restored_media.stat().st_mode), 0o700)
+            self.assertEqual(hashlib.sha256(database.read_bytes()).hexdigest(), source_database_sha)
+            self.assertEqual(build_private_media_manifest(media), source_manifest)
+
+    def test_empty_nested_media_directories_are_recorded_and_recreated(self):
+        with TemporaryDirectory() as root:
+            root = Path(root)
+            database = root / "nested-empty.sqlite3"
+            media = root / "nested-empty-media"
+            (media / "certificates" / "2026" / "unused").mkdir(parents=True)
+            connection = sqlite3.connect(database)
+            try:
+                connection.execute("CREATE TABLE source_fact (id INTEGER PRIMARY KEY)")
+                connection.execute("INSERT INTO source_fact VALUES (1)")
+                connection.commit()
+            finally:
+                connection.close()
+            result = create_consistent_backup(
+                database=database, media_root=media, output_dir=root / "backup",
+                backup_id="nested-empty-media", quiesced=True,
+            )
+            archive = Path(result["archive"])
+            with zipfile.ZipFile(archive) as bundle:
+                names = bundle.namelist()
+                manifest = json.loads(bundle.read("manifest.json"))
+                self.assertIn("media/certificates/2026/unused/", names)
+                self.assertEqual(manifest["media"]["directories"], ["certificates", "certificates/2026", "certificates/2026/unused"])
+            target = root / "nested-empty-restored"
+            restore_consistent_backup(archive=archive, target_dir=target)
+            self.assertEqual(compare_private_media_manifest(manifest["media"], target / "media"), [])
+            self.assertTrue((target / "media/certificates/2026/unused").is_dir())
+            if os.name != "nt":
+                self.assertEqual(stat.S_IMODE((target / "media/certificates/2026/unused").stat().st_mode), 0o700)
+
+    def test_missing_and_corrupt_media_members_fail_before_restore_target_commit(self):
+        with TemporaryDirectory() as root:
+            root = Path(root)
+            database, media = self._make_fixture(root)
+            source_database_sha = hashlib.sha256(database.read_bytes()).hexdigest()
+            source_media_manifest = build_private_media_manifest(media)
+            archive = Path(create_consistent_backup(
+                database=database, media_root=media, output_dir=root / "backup",
+                backup_id="failure-boundaries", quiesced=True,
+            )["archive"])
+            missing = root / "missing-member.zip"
+            self._rewrite_archive(archive, missing, lambda name, content: None if name == "media/followups/invoice.pdf" else content)
+            missing_target = root / "missing-target"
+            with self.assertRaises(BackupRecoveryError):
+                restore_consistent_backup(archive=missing, target_dir=missing_target)
+            self.assertFalse(missing_target.exists())
+
+            corrupt = root / "corrupt-member.zip"
+            self._rewrite_archive(
+                archive, corrupt,
+                lambda name, content: b"corrupted-but-valid-zip-member" if name == "media/followups/invoice.pdf" else content,
+            )
+            corrupt_target = root / "corrupt-target"
+            with self.assertRaises(BackupRecoveryError):
+                restore_consistent_backup(archive=corrupt, target_dir=corrupt_target)
+            self.assertFalse(corrupt_target.exists())
+            self.assertEqual(hashlib.sha256(database.read_bytes()).hexdigest(), source_database_sha)
+            self.assertEqual(build_private_media_manifest(media), source_media_manifest)
+
+    def test_media_manifest_digest_and_unsafe_paths_fail_before_target_commit(self):
+        with TemporaryDirectory() as root:
+            root = Path(root)
+            archive = self._make_archive(root)
+            bad_manifest = root / "bad-manifest.zip"
+
+            def alter_manifest(name, content):
+                if name != "manifest.json":
+                    return content
+                manifest = json.loads(content)
+                manifest["media"]["directories"].append("../outside")
+                return json.dumps(manifest, sort_keys=True).encode("utf-8")
+
+            self._rewrite_archive(archive, bad_manifest, alter_manifest)
+            target = root / "bad-manifest-target"
+            with self.assertRaises(BackupRecoveryError):
+                restore_consistent_backup(archive=bad_manifest, target_dir=target)
+            self.assertFalse(target.exists())
 
     def test_media_change_during_copy_discards_archive(self):
         with TemporaryDirectory() as root:

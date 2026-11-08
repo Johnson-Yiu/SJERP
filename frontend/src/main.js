@@ -3,7 +3,10 @@ import App from './App.vue'
 import router from './router'
 import './styles.css'
 import { normalizeMoneyInput } from './utils/money'
+import { installNumericWheelGuard } from './utils/numericWheelGuard'
 import { workspaceAccountScope } from './workspaceSession'
+
+const removeNumericWheelGuard = installNumericWheelGuard()
 
 function scrollStorageKey() {
   const workspace = window.history.state?.__workspace
@@ -77,3 +80,7 @@ app.directive('money-input', {
 })
 app.use(router).mount('#app')
 router.isReady().then(() => restorePageScroll())
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => removeNumericWheelGuard())
+}

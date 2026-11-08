@@ -113,6 +113,63 @@ class SalesOrderImportApiTests(TestCase):
         self.assertEqual(recovered.data, first.data)
         self.assertEqual(SalesOrderImportBatch.objects.count(), 1)
 
+    @override_settings(**RBAC_SETTINGS)
+    def test_expired_result_recovery_requires_same_operator_file_and_current_permission(self):
+        unit = OrganizationUnit.objects.create(name="过期恢复验收组", code="IMP-RECOVERY-UNIT")
+        position = Position.objects.create(unit=unit, name="导入验收", code="IMP-RECOVERY-POS")
+        role = AccessRole.objects.create(name="导入验收角色", code="IMP-RECOVERY-ROLE", default_data_scope="all")
+        for module, values in {
+            "imports": {"can_view": True, "can_import": True},
+            "orders": {"can_view": True, "can_create": True},
+            "customers": {"can_view": True},
+            "skus": {"can_view": True},
+            "trade_units": {"can_view": True},
+        }.items():
+            RolePermission.objects.create(role=role, module=module, **values)
+
+        def operator(username):
+            user = get_user_model().objects.create_user(username=username, password="synthetic-test-password")
+            profile = EmployeeProfile.objects.create(user=user, display_name=username, unit=unit, position=position)
+            profile.roles.add(role)
+            return user
+
+        owner = operator("sales-import-recovery-owner")
+        other = operator("sales-import-recovery-other")
+        self.client.force_authenticate(owner)
+        source = workbook_bytes(self.rows(source="EXT-RECOVERY-OWNER"))
+        preview = self.preview(source)
+        self.assertEqual(preview.status_code, 200, preview.data)
+        token = preview.data["preview_token"]
+        committed = self.execute(source, token)
+        self.assertEqual(committed.status_code, 200, committed.data)
+        self.assertEqual(committed.data["created_orders"], 2)
+        original_loads = signing.loads
+
+        def expired_then_verify(value, **kwargs):
+            if "max_age" in kwargs:
+                raise signing.SignatureExpired("expired")
+            return original_loads(value, **kwargs)
+
+        self.client.force_authenticate(other)
+        with patch("crm.sales_order_import.signing.loads", side_effect=expired_then_verify):
+            wrong_operator = self.execute(source, token)
+        self.assertEqual(wrong_operator.status_code, 403)
+        self.assertNotIn("orders", wrong_operator.data)
+
+        self.client.force_authenticate(owner)
+        changed_file = workbook_bytes(self.rows(source="EXT-RECOVERY-OWNER", first_price="99.50"))
+        with patch("crm.sales_order_import.signing.loads", side_effect=expired_then_verify):
+            wrong_file = self.execute(changed_file, token)
+        self.assertEqual(wrong_file.status_code, 400)
+        self.assertNotIn("orders", wrong_file.data)
+
+        RolePermission.objects.filter(role=role, module="imports").update(can_import=False)
+        with patch("crm.sales_order_import.signing.loads", side_effect=expired_then_verify):
+            narrowed_permission = self.execute(source, token)
+        self.assertEqual(narrowed_permission.status_code, 403)
+        self.assertEqual(Order.objects.count(), 2)
+        self.assertEqual(SalesOrderImportBatch.objects.count(), 1)
+
     def test_template_is_a_real_xlsx_with_required_columns(self):
         response = self.client.get("/api/import/orders/template/")
         self.assertEqual(response.status_code, 200)

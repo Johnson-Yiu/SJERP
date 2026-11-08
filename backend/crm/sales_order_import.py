@@ -461,6 +461,7 @@ def _match_group(group, request):
         return errors
     group["payload"] = payload
     group["customer_code"] = customer_code
+    group["customer_name"] = customer.name
     group["amount"] = total_amount.quantize(Decimal("0.01"))
     group["currency"] = group["header"]["currency"]
     return errors
@@ -482,6 +483,7 @@ def _prepare_groups(data, request):
             {
                 "source_order_no": group["source_order_no"],
                 "customer_code": group.get("customer_code", ""),
+                "customer_name": group.get("customer_name", ""),
                 "line_count": group["line_count"],
                 "currency": group.get("currency", group.get("header", {}).get("currency", "")),
                 "total_amount": str(group["amount"].quantize(Decimal("0.01"))),
@@ -563,6 +565,7 @@ def _execute_group(group, request, batch):
             "order_no": order.order_no,
             "status": order.status,
             "customer_code": group["customer_code"],
+            "customer_name": order.customer_name_snapshot or group.get("customer_name", ""),
             "line_count": group["line_count"],
             "currency": order.currency,
             "total_amount": str(order.total_amount.quantize(Decimal("0.01"))),

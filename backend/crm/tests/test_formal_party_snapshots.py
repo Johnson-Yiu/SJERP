@@ -2,9 +2,10 @@ from datetime import date
 from unittest.mock import patch
 
 from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-from crm.models import Contact, Customer, Order, OrderItem, Product, PurchaseOrder, PurchaseOrderItem, Quote, SKU, Supplier
+from crm.models import Contact, Customer, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, Quote, SKU, Supplier
 from crm.serializers import OrderSerializer, PurchaseOrderSerializer, SupplierSerializer
 from crm.services.order_lifecycle import confirm_order
 from crm.services.purchase_lifecycle import place_purchase_order
@@ -26,11 +27,13 @@ class FormalPartySnapshotTests(TestCase):
             email="original@example.com",
             is_primary=True,
         )
-        product = Product.objects.create(code="P-FORMAL-SNAPSHOT", name="快照产品")
-        self.sku = SKU.objects.create(product=product, sku="SKU-FORMAL-SNAPSHOT", default_price="10")
+        self.category = ProductCategory.objects.create(name="快照旧分类")
+        self.product = Product.objects.create(code="P-FORMAL-SNAPSHOT", name="快照产品", category=self.category)
+        self.sku = SKU.objects.create(product=self.product, sku="SKU-FORMAL-SNAPSHOT", default_price="10")
         self.supplier = Supplier.objects.create(
             code="FS",
             name="供应商 S 原始名称",
+            country="Germany",
             address="原始供应商地址",
             contact_name="供应商原始联系人",
             phone="+86 111",
@@ -81,6 +84,9 @@ class FormalPartySnapshotTests(TestCase):
         self.assertEqual(order.status, "confirmed")
         self.assertEqual(order.customer_name_snapshot, "报价中的交易主体")
         self.assertEqual(order.customer_country_snapshot, "Germany")
+        item = order.items.get()
+        self.assertEqual(item.product_category_reference_snapshot, str(self.category.pk))
+        self.assertEqual(item.product_category_name_snapshot, "快照旧分类")
         self.assertEqual(order.customer_address_snapshot, "报价地址")
         self.assertEqual(order.customer_contact_name_snapshot, "报价联系人")
         self.assertEqual(order.customer_phone_snapshot, "+49 222")
@@ -102,6 +108,22 @@ class FormalPartySnapshotTests(TestCase):
         self.assertEqual(order.customer_contact_name_snapshot, "报价联系人")
         self.assertEqual(order.customer_phone_snapshot, "+49 222")
         self.assertEqual(order.customer_email_snapshot, "quote@example.com")
+        self.assertEqual(order.items.get().product_category_name_snapshot, "快照旧分类")
+
+        new_category = ProductCategory.objects.create(name="快照新分类")
+        self.product.category = new_category
+        self.product.save(update_fields=["category"])
+        self.assertEqual(order.items.get().product_category_name_snapshot, "快照旧分类")
+        with self.assertRaises(ValidationError):
+            item.product_category_name_snapshot = "快照新分类"
+            item.save(update_fields=["product_category_name_snapshot"])
+
+        new_order = self._order(order_no="SO-FORMAL-NEW-CATEGORY")
+        with patch("crm.services.order_lifecycle.allocate_order"):
+            confirm_order(new_order)
+        new_order.refresh_from_db()
+        self.assertEqual(new_order.items.get().product_category_name_snapshot, "快照新分类")
+        self.assertEqual(new_order.customer_country_snapshot, "France")
         serialized = OrderSerializer(order).data
         self.assertEqual(serialized["customer_name"], "客户 A 新名称")
         self.assertEqual(serialized["customer_name_snapshot"], "报价中的交易主体")
@@ -139,13 +161,18 @@ class FormalPartySnapshotTests(TestCase):
         self.assertEqual(purchase.supplier_contact_name_snapshot, "供应商原始联系人")
         self.assertEqual(purchase.supplier_phone_snapshot, "+86 111")
         self.assertEqual(purchase.supplier_email_snapshot, "supplier-original@example.com")
+        self.assertEqual(purchase.supplier_country_snapshot, "Germany")
+        item = purchase.items.get()
+        self.assertEqual(item.product_category_reference_snapshot, str(self.category.pk))
+        self.assertEqual(item.product_category_name_snapshot, "快照旧分类")
 
         self.supplier.name = "供应商 S 新名称"
+        self.supplier.country = "France"
         self.supplier.address = "供应商新地址"
         self.supplier.contact_name = "供应商新联系人"
         self.supplier.phone = "+86 222"
         self.supplier.email = "supplier-new@example.com"
-        self.supplier.save(update_fields=["name", "address", "contact_name", "phone", "email"])
+        self.supplier.save(update_fields=["name", "country", "address", "contact_name", "phone", "email"])
         purchase.refresh_from_db()
 
         self.assertEqual(purchase.supplier_name_snapshot, "供应商 S 原始名称")
@@ -153,6 +180,8 @@ class FormalPartySnapshotTests(TestCase):
         self.assertEqual(purchase.supplier_contact_name_snapshot, "供应商原始联系人")
         self.assertEqual(purchase.supplier_phone_snapshot, "+86 111")
         self.assertEqual(purchase.supplier_email_snapshot, "supplier-original@example.com")
+        self.assertEqual(purchase.supplier_country_snapshot, "Germany")
+        self.assertEqual(purchase.items.get().product_category_name_snapshot, "快照旧分类")
         serialized = PurchaseOrderSerializer(purchase).data
         self.assertEqual(serialized["supplier_name"], "供应商 S 新名称")
         self.assertEqual(serialized["supplier_name_snapshot"], "供应商 S 原始名称")

@@ -195,6 +195,12 @@ class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
             headers = list(next(workbook["库存盘点"].iter_rows(min_row=1, max_row=1, values_only=True)))
             self.assertIn("仓库归属", headers)
             self.assertIn("适用批次/货位", headers)
+            sales_headers = list(next(workbook["销售明细"].iter_rows(min_row=1, max_row=1, values_only=True)))
+            purchase_headers = list(next(workbook["采购订单"].iter_rows(min_row=1, max_row=1, values_only=True)))
+            self.assertIn("历史产品主分类快照", sales_headers)
+            self.assertIn("历史供应商国家/地区快照", purchase_headers)
+            instructions = [row[0] for row in workbook["使用说明"].iter_rows(min_row=1, max_row=5, values_only=True)]
+            self.assertTrue(any("不从当前主档回填" in str(value) for value in instructions))
         finally:
             workbook.close()
 

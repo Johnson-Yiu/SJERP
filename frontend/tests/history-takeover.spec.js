@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import HistoryTakeoverPage from '../src/views/HistoryTakeoverPage.vue'
@@ -48,12 +49,78 @@ beforeEach(() => {
 })
 
 describe('controlled history takeover UI', () => {
+  it('shows unknown internal states as 待核实 and hides full hashes and request identities', async () => {
+    const value = detail('future-workflow-state')
+    value.preflight_summary.overall_status = 'future-summary-state'
+    value.events = [{ id: 9981, event_type: 'application_submitted', actor_label: 'codex-private-actor', actor_kind: 'development', created_at: '2026-11-09T00:00:00Z', details: { request_identity: 'internal-request-identity' } }]
+    Object.assign(value.groups[0], {
+      coverage_status: 'future-coverage-value', truth_status: 'future-truth-value',
+      finance_handoff_status: 'future-finance-value', inventory_handoff_status: 'future-inventory-value',
+      fulfillment_handoff_status: 'future-fulfillment-value', operational_overall: { state: 'future-operational-value' },
+      execution_result: { orders: [], purchase_orders: [] },
+      remainder_snapshot: { sales_orders: [{ source_record_id: 'SRC-1', source_document_no: 'SRC-1', source_lifecycle_state: 'future-lifecycle-value', lines: [] }] },
+    })
+    value.groups[0].preflight_result.results[0].status = 'future-row-state'
+    const wrapper = await mountPage(value)
+    const text = wrapper.text()
+    expect(text).toContain('待核实')
+    expect(text).not.toContain('future-')
+    expect(text).not.toContain('a'.repeat(64))
+    expect(text).not.toContain('codex-private-actor')
+    expect(text).not.toContain('internal-request-identity')
+    wrapper.unmount()
+  })
+
+  it('lets the reviewer search and select an existing customer while keeping internal field names out of the page', async () => {
+    const value = detail()
+    mocks.get.mockImplementation(async (url) => {
+      if (url === '/import/history-takeovers/') return { data: { results: [summary(value)] } }
+      if (url === '/import/history-takeovers/31/') return { data: value }
+      if (url === '/customers/') return { data: { results: [{ id: 94, code: 'C-001', name: '合成客户甲' }] } }
+      return { data: value }
+    })
+    mocks.post.mockResolvedValue({ data: {} })
+    const wrapper = mount(HistoryTakeoverPage)
+    await flushPromises()
+    await wrapper.findAll('label').find(item => item.text().includes('搜索现有对象')).find('input').setValue('合成客户')
+    await flushPromises()
+    const selected = wrapper.findAll('label').find(item => item.text().includes('选择现有对象')).find('select')
+    expect(selected.text()).toContain('合成客户甲 · C-001')
+    await selected.setValue('C-001')
+    await wrapper.findAll('label').find(item => item.text().includes('原资料行号')).find('input').setValue('2')
+    await wrapper.findAll('label').find(item => item.text().includes('关联依据')).find('input').setValue('已对照历史合同')
+    await wrapper.findAll('button').find(item => item.text().includes('保存关联并重新预检')).trigger('click')
+    await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/import/history-takeovers/31/groups/41/resolve-master/', {
+      sheet: '销售订单', row: 2, field: 'customer_code', target_code: 'C-001', note: '已对照历史合同',
+    })
+    expect(wrapper.text()).not.toContain('customer_code')
+    expect(wrapper.text()).not.toContain('target_code')
+    wrapper.unmount()
+  })
+
+  it('shows the historical SKU name with its business SKU label during inventory review', async () => {
+    const value = detail('executed')
+    mocks.post.mockImplementation(async url => url.endsWith('/inventory-status/') ? { data: {
+      status: 'pending_review',
+      sources: [{ source_id: 'SYN-STOCK-1', source: {
+        sku_code: 'SYN-SKU-1', sku_name_snapshot: '合成灯具样本', counted_quantity: '4.00', unit_snapshot: 'pcs',
+        warehouse_type: '自有仓', warehouse: '合成仓', lot_reference: '',
+      } }],
+    } } : { data: {} })
+    const wrapper = await mountPage(value)
+    await wrapper.findAll('button').find(item => item.text().includes('读取盘点来源')).trigger('click')
+    await flushPromises()
+    expect(wrapper.text()).toContain('SKU 合成灯具样本 · SYN-SKU-1')
+    wrapper.unmount()
+  })
+
   it('explains the approval boundary and prevents anonymous or under-scoped intake from being presented as ready', async () => {
     mocks.get.mockResolvedValue({ data: { results: [] } })
     const wrapper = mount(HistoryTakeoverPage)
     await flushPromises()
-    expect(wrapper.text()).toContain('预检通过不代表已批准或已迁移')
-    expect(wrapper.text()).toContain('模拟或待核实资料只留在暂存区')
+    expect(wrapper.text()).toContain('预检通过不代表已批准或已入账')
+    expect(wrapper.text()).toContain('合成或待核实资料留在申请区')
     expect(wrapper.text()).toContain('下载承接模板')
     expect(wrapper.text()).toContain('还没有历史承接申请')
     wrapper.unmount()

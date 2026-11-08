@@ -3,6 +3,7 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { ref } from 'vue'
 import { workspaceKey, workspaceManagerKey } from '../src/composables/useWorkspaceNavigation'
+import { setAccessOperator } from '../src/accessControl'
 import ImportPage from '../src/views/ImportPage.vue'
 
 const mocks = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), confirm: vi.fn() }))
@@ -29,6 +30,7 @@ const preview = {
 beforeEach(() => {
   sessionStorage.clear()
   vi.resetAllMocks()
+  setAccessOperator({ id: 'codex-test', username: 'codex-test', authenticated: true, has_all_permissions: true })
   mocks.get.mockResolvedValue({ data: { customers: ['code', 'name'] } })
   mocks.confirm.mockResolvedValue(true)
 })
@@ -94,6 +96,43 @@ it('keeps whole-order errors downloadable while confirming valid drafts once', a
   } finally { wrapper.unmount() }
 })
 
+it('exports the order preview and validation issues as a UTF-8 result CSV', async () => {
+  const create = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:sales-order-results')
+  let downloadedLink
+  const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function () { downloadedLink = this })
+  const wrapper = mountPage()
+  try {
+    await flushPromises()
+    await button(wrapper, '销售订单').trigger('click')
+    const input = orderFileInput(wrapper)
+    Object.defineProperty(input.element, 'files', { configurable: true, value: [new File(['workbook'], 'orders.xlsx')] })
+    await input.trigger('change')
+    mocks.post.mockResolvedValueOnce({ data: preview })
+    await button(wrapper, '预览并校验').trigger('click')
+    await flushPromises()
+    await button(wrapper, '下载导入结果 CSV').trigger('click')
+    const blob = create.mock.calls.at(-1)[0]
+    const buffer = await new Promise(resolve => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result)
+      reader.readAsArrayBuffer(blob)
+    })
+    const bytes = new Uint8Array(buffer)
+    const csv = new TextDecoder('utf-8').decode(buffer)
+    expect(downloadedLink.download).toBe('sales-order-import-results.csv')
+    expect(Array.from(bytes.slice(0, 3))).toEqual([0xef, 0xbb, 0xbf])
+    expect(csv).toContain('来源订单编号')
+    expect(csv).toContain('SRC-OK')
+    expect(csv).toContain('SRC-BAD')
+    expect(csv).toContain('找不到 SKU。')
+    expect(click).toHaveBeenCalled()
+  } finally {
+    click.mockRestore()
+    create.mockRestore()
+    wrapper.unmount()
+  }
+})
+
 function deferred() { let resolve; const promise = new Promise(done => { resolve = done }); return { promise, resolve } }
 async function readyPage() {
   const wrapper = mountPage(); await flushPromises(); await button(wrapper, '销售订单').trigger('click')
@@ -112,18 +151,58 @@ it('does not execute a stale confirmation after component unmount', async () => 
 })
 it('restores the original preview identity after a lost response and reopen', async () => {
   const { wrapper, file } = await readyPage()
-  sessionStorage.setItem('sales-order-import-pending-v1', JSON.stringify([{file:'other.xlsx:1:2',preview_token:'other-tab-token'}]))
+  sessionStorage.setItem('sales-order-import-pending-v1:codex-test', JSON.stringify([{file:'other.xlsx:1:2',preview_token:'other-tab-token'}]))
   mocks.post.mockRejectedValueOnce(new Error('Network response lost'))
   await button(wrapper, '确认导入 1 张草稿').trigger('click'); await flushPromises()
   wrapper.unmount()
   const reopened = mountPage(); await flushPromises(); await button(reopened, '销售订单').trigger('click')
   const input = orderFileInput(reopened)
   Object.defineProperty(input.element, 'files', { configurable: true, value: [file] }); await input.trigger('change')
-  expect(reopened.text()).toContain('已恢复原提交身份')
+  expect(reopened.text()).toContain('已恢复待核对导入批次')
   mocks.post.mockResolvedValueOnce({ data: { batch_id:'17', total_rows:3, total_orders:2, created_orders:1, failed_orders:1, orders:[], errors:[] } })
   await button(reopened, '确认导入 1 张草稿').trigger('click'); await flushPromises()
   expect(mocks.post.mock.calls[2][1].get('preview_token')).toBe(preview.preview_token)
-  expect(JSON.parse(sessionStorage.getItem('sales-order-import-pending-v1'))).toEqual([{file:'other.xlsx:1:2',preview_token:'other-tab-token'}]); reopened.unmount()
+  expect(JSON.parse(sessionStorage.getItem('sales-order-import-pending-v1:codex-test'))).toEqual([{file:'other.xlsx:1:2',preview_token:'other-tab-token'}]); reopened.unmount()
+})
+
+it('keeps the latest selected file when preview responses arrive out of order', async () => {
+  const wrapper = mountPage(); await flushPromises(); await button(wrapper, '销售订单').trigger('click')
+  const input = orderFileInput(wrapper), requestA = deferred(), requestB = deferred()
+  Object.defineProperty(input.element, 'files', { configurable: true, value: [new File(['A'], 'A.xlsx')] }); await input.trigger('change')
+  mocks.post.mockReturnValueOnce(requestA.promise)
+  await button(wrapper, '预览并校验').trigger('click')
+  Object.defineProperty(input.element, 'files', { configurable: true, value: [new File(['B'], 'B.xlsx')] }); await input.trigger('change')
+  mocks.post.mockReturnValueOnce(requestB.promise)
+  await button(wrapper, '预览并校验').trigger('click')
+  const responseFor = (file, token) => ({
+    ...preview, total_rows: 1, total_orders: 1, valid_orders: 1, invalid_orders: 0, errors: [],
+    preview_token: token, orders: [{ ...preview.orders[0], source_order_no: file }],
+  })
+  requestB.resolve({ data: responseFor('FILE-B', 'token-b') }); await flushPromises()
+  requestA.resolve({ data: responseFor('FILE-A', 'token-a') }); await flushPromises()
+  expect(wrapper.text()).toContain('FILE-B')
+  expect(wrapper.text()).not.toContain('FILE-A')
+  wrapper.unmount()
+})
+
+it('invalidates a late confirmation after the signed-in account changes', async () => {
+  const { wrapper } = await readyPage(), confirmation = deferred()
+  mocks.confirm.mockReturnValueOnce(confirmation.promise)
+  await button(wrapper, '确认导入 1 张草稿').trigger('click')
+  setAccessOperator({ id: 'different-account', username: 'different-account', authenticated: true, has_all_permissions: true })
+  confirmation.resolve(true); await flushPromises()
+  expect(mocks.post).toHaveBeenCalledTimes(1)
+  wrapper.unmount()
+})
+
+it('does not execute when import permission is narrowed while confirmation is open', async () => {
+  const { wrapper } = await readyPage(), confirmation = deferred()
+  mocks.confirm.mockReturnValueOnce(confirmation.promise)
+  await button(wrapper, '确认导入 1 张草稿').trigger('click')
+  setAccessOperator({ id: 'codex-test', username: 'codex-test', authenticated: true, rbac_enforcement: true, permissions: { imports: { import: false } } })
+  confirmation.resolve(true); await flushPromises()
+  expect(mocks.post).toHaveBeenCalledTimes(1)
+  wrapper.unmount()
 })
 
 it('blocks workspace close and refresh throughout confirmation and execution', async () => {

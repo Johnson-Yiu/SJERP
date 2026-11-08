@@ -101,7 +101,7 @@ def place_purchase_order(purchase, *, moq_exception_reason="", operator=None):
     reject_historical(purchase, "确认下单或生成应付计划")
     if purchase.status != "draft":
         raise ValidationError("只有采购草稿可以确认下单。")
-    items = list(purchase.items.select_related("sku", "supplier_sku", "trade_unit").order_by("id"))
+    items = list(purchase.items.select_related("sku__product__category", "supplier_sku", "trade_unit").order_by("id"))
     _validate_purchase_for_placement(purchase, items)
     moq_exceptions = _purchase_moq_exceptions(items)
     reason = str(moq_exception_reason or "").strip()
@@ -111,20 +111,31 @@ def place_purchase_order(purchase, *, moq_exception_reason="", operator=None):
         raise PurchaseMOQExceptionRequired(moq_exceptions)
     from crm.party_replacement import snapshot_for_confirmation
     replacement = snapshot_for_confirmation(purchase, 'purchase_order', context=replacement_context)
+    supplier = Supplier.objects.select_for_update().get(pk=purchase.supplier_id)
     if replacement is not None:
         for field, value in replacement.items():
             setattr(purchase, field, value)
     else:
-        supplier = Supplier.objects.select_for_update().get(pk=purchase.supplier_id)
         purchase.supplier_name_snapshot = supplier.name
         purchase.supplier_address_snapshot = supplier.address or ""
         purchase.supplier_contact_name_snapshot = supplier.contact_name or ""
         purchase.supplier_phone_snapshot = supplier.phone or ""
         purchase.supplier_email_snapshot = supplier.email or ""
+    purchase.supplier_country_snapshot = supplier.country or ""
+    for item in items:
+        category = item.sku.product.category
+        item.product_category_reference_snapshot = str(category.pk) if category else ""
+        item.product_category_name_snapshot = category.name if category else ""
+    from crm.models import PurchaseOrderItem
+    PurchaseOrderItem.objects.bulk_update(
+        items,
+        ["product_category_reference_snapshot", "product_category_name_snapshot"],
+    )
     purchase.status = "ordered"
     purchase.save(update_fields=[
         "status",
         "supplier_name_snapshot",
+        "supplier_country_snapshot",
         "supplier_address_snapshot",
         "supplier_contact_name_snapshot",
         "supplier_phone_snapshot",

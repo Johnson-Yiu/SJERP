@@ -1,0 +1,150 @@
+{
+  "database": "isolated temporary SQLite",
+  "account": "codex (real local test superuser)",
+  "development_superadmin": false,
+  "rbac_enforcement": true,
+  "sales-order-import-template.xlsx": {
+    "status": 200,
+    "content_disposition": "attachment; filename=\"sales-order-import-template.xlsx\"",
+    "bytes": 10115
+  },
+  "sales_template_content": {
+    "sheets": [
+      "使用说明",
+      "订单明细"
+    ],
+    "headers": [
+      "来源订单编号",
+      "客户编号",
+      "订单日期",
+      "币种",
+      "SKU",
+      "交易单位",
+      "数量",
+      "单价",
+      "对人民币汇率"
+    ]
+  },
+  "history-takeover-template-v2.xlsx": {
+    "status": 200,
+    "content_disposition": "attachment; filename=\"history-takeover-template-v2.xlsx\"",
+    "bytes": 14337
+  },
+  "history_template_content": {
+    "sheets": [
+      "使用说明",
+      "分组",
+      "销售订单",
+      "销售明细",
+      "采购订单",
+      "采购明细",
+      "收付款计划",
+      "收付款流水",
+      "履约记录",
+      "库存盘点"
+    ],
+    "instructions": [
+      "历史资料承接模板 · v2",
+      "每行注明真实/模拟/待核实；只有真实且凭证、依赖核实通过的关联组可申请执行。",
+      "预检通过不等于审批或执行；历史收付款、履约和盘点只进入待交接区，不生成正式资金或库存流水。",
+      "不得按名称猜测主体，不得自动创建客户、供应商或 SKU。请填写历史快照及原系统编号。",
+      "历史国家/地区和产品主分类须填写发生/确认时的原始快照；缺少证据时留空，统计显示待核实，不从当前主档回填。"
+    ],
+    "sales_line_headers": [
+      "来源关联组编号",
+      "原销售订单记录编号",
+      "原销售明细编号",
+      "SKU编码",
+      "历史SKU名称快照",
+      "历史产品主分类快照",
+      "历史销售型号快照",
+      "历史商品描述快照",
+      "历史单位快照",
+      "历史基础单位快照",
+      "基础数量",
+      "基础单位单价",
+      "交易单位数量",
+      "交易单位快照",
+      "交易单位单价",
+      "历史换算系数快照",
+      "历史允许分数包装",
+      "真实性状态",
+      "订单明细凭证引用",
+      "说明"
+    ],
+    "purchase_headers": [
+      "来源关联组编号",
+      "原系统记录编号",
+      "原采购订单编号",
+      "业务日期",
+      "原业务状态",
+      "供应商编码",
+      "历史供应商名称快照",
+      "历史供应商国家/地区快照",
+      "历史供应商地址快照",
+      "历史供应商联系人快照",
+      "历史供应商电话快照",
+      "历史供应商邮箱快照",
+      "币种",
+      "历史合同汇率",
+      "真实性状态",
+      "合同/凭证引用",
+      "说明"
+    ]
+  },
+  "preflight_csv": {
+    "status": 200,
+    "filename": "history-preflight.csv",
+    "utf8_bom": true,
+    "row_count": 3,
+    "business_counts_unchanged": true,
+    "period": "2024-08",
+    "source": "合成验收样本",
+    "all_crm_model_counts_unchanged": true,
+    "private_media_files_unchanged": true,
+    "database_id_or_request_identity_exported": false
+  },
+  "preflight_csv_headers": [
+    "工作表",
+    "原行号",
+    "原系统记录编号",
+    "来源关联组编号",
+    "结果",
+    "原因",
+    "关联记录",
+    "建议动作"
+  ],
+  "takeover_application": {
+    "status_code": 201,
+    "preflight_only": true,
+    "application_status": "submitted",
+    "group_status": "pending",
+    "summary": {
+      "total_rows": 3,
+      "passed": 0,
+      "warnings": 0,
+      "blocked": 0,
+      "manual_review": 3,
+      "overall_status": "待人工核实"
+    }
+  },
+  "sales_order_preview": {
+    "status_code": 200,
+    "total_rows": 1,
+    "valid_orders": 1,
+    "invalid_orders": 0,
+    "business_write_performed": false,
+    "preview_token_present": true
+  },
+  "sales_order_invalid_preview": {
+    "status_code": 200,
+    "errors": [
+      {
+        "row": 2,
+        "key": "SYNTHETIC-SO-ERROR-001",
+        "message": "找不到 SKU：NO-SUCH-SYNTHETIC-SKU。"
+      }
+    ],
+    "business_write_performed": false
+  }
+}

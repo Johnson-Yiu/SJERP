@@ -20,6 +20,11 @@ const error = ref('')
 const note = ref('')
 const confirmManual = ref(false)
 const mapping = ref({ sheet: '销售订单', row: '', field: 'customer_code', target_code: '', note: '' })
+const mappingKind = ref('customer')
+const masterSearch = ref('')
+const masterOptions = ref([])
+const masterLoading = ref(false)
+let masterSearchVersion = 0
 const correction = ref({ kind: 'late_fact', occurred_at: '', reason: '', details: '' })
 const financeSources = ref([])
 const financeAccounts = ref([])
@@ -45,9 +50,34 @@ const statuses = {
   approved: '已批准', executed: '已归档', withdrawn: '已撤回', pending: '待审核', blocked: '存在阻断',
   needs_reapproval: '需重新审核',
 }
+const coverageLabels = { complete: '完整', partial: '部分', unknown: '待核实' }
+const truthLabels = { '真实': '真实资料', real: '真实资料', synthetic: '合成资料', '模拟': '合成资料', unknown: '待核实', '待核实': '待核实' }
+const lifecycleLabels = { open: '未结', partial: '部分完成', partially_settled: '部分结清', settled: '已结清', completed: '已完成', cancelled: '已取消', unknown: '待核实' }
+const directionLabels = { income: '收入', expense: '支出' }
+const mappingFields = { customer: 'customer_code', supplier: 'supplier_code', sku: 'sku_code' }
+const masterResources = { customer: '/customers/', supplier: '/suppliers/', sku: '/skus/' }
 const handoffLabels = { not_connected: '尚未接续', pending_review: '待复核', approved: '已复核，待启用', posted: '已启用', reversed: '已撤销', sources_posted: '来源资金已记账', drafts_created: '未结余额已启用，接续草稿已生成', no_remaining: '无剩余履约', unmapped: '待映射', pending: '待复核', cancelled: '已取消', failed: '已核实失败', draft: '草稿', confirmed: '已确认', ordered: '已下单', partial: '部分到货', shipped: '已发货', completed: '已完成', production: '生产中' }
 const overallLabels = { not_archived: '未归档', archived: '已归档，待准备接续', pending_review: '接续资料待复核', ready: '可接续或待确认接续单', connected: '适用项目已接续' }
-function handoffLabel(value) { return handoffLabels[value] || value }
+function statusLabel(value) { return statuses[value] || '待核实' }
+function handoffLabel(value) { return handoffLabels[value] || '待核实' }
+function coverageLabel(value) { return coverageLabels[value] || '待核实' }
+function truthLabel(value) { return truthLabels[value] || '待核实' }
+function lifecycleLabel(value) { return lifecycleLabels[value] || '待核实' }
+function directionLabel(value) { return directionLabels[value] || '待核实' }
+function reviewStatusLabel(value) { return ({ '通过': '通过', '警告': '警告', '待人工核实': '待人工核实', '阻断': '阻断' })[value] || '待核实' }
+function eventLabel(value) { return eventNames[value] || '待核实操作' }
+function auditActorLabel(event) { return event.actor_kind === 'development' ? '开发操作（非实名）' : event.actor_label || '待核实操作人' }
+function formatSubmittedAt(value) { return value ? new Date(value).toLocaleString('zh-CN') : '未记录' }
+function masterLabel(item) {
+  const code = item.code || item.sku || ''
+  const name = item.name || item.display_name_cn || item.product_name || ''
+  return [name || '未命名对象', code].filter(Boolean).join(' · ')
+}
+function skuBusinessLabel(source) {
+  const name = source?.sku_name_snapshot || source?.display_name_snapshot || ''
+  const code = source?.sku_code || ''
+  return [name, code].filter(Boolean).join(' · ') || '待核实'
+}
 const eventNames = {
   application_submitted: '已提交申请', group_submitted: '关联组已提交', group_approved: '管理员已批准',
   group_rejected: '管理员已拒绝', group_executed: '已承接历史记录', group_withdrawn: '申请已撤回',
@@ -107,13 +137,42 @@ async function loadApplication(id) {
 
 function chooseFile(event) { file.value = event.target.files?.[0] || null; error.value = '' }
 
+async function searchMasters() {
+  const request = ++masterSearchVersion
+  const kind = mappingKind.value
+  const query = masterSearch.value.trim()
+  masterOptions.value = []
+  masterLoading.value = false
+  if (!query || query.length < 1) return
+  masterLoading.value = true
+  try {
+    const response = await api.get(masterResources[kind], { params: { search: query } })
+    if (request !== masterSearchVersion || kind !== mappingKind.value) return
+    const rows = response.data?.results || response.data || []
+    masterOptions.value = rows.slice(0, 50).filter(item => kind === 'sku' ? item.sku : item.code)
+  } catch (e) {
+    if (request === masterSearchVersion) error.value = `读取现有${kind === 'customer' ? '客户' : kind === 'supplier' ? '供应商' : 'SKU'}失败：${e.message}`
+  } finally {
+    if (request === masterSearchVersion) masterLoading.value = false
+  }
+}
+
+function changeMappingKind() {
+  mapping.value.field = mappingFields[mappingKind.value]
+  mapping.value.target_code = ''
+  masterSearch.value = ''
+  masterOptions.value = []
+  masterLoading.value = false
+  masterSearchVersion++
+}
+
 async function downloadTemplate() {
   if (templateLoading.value) return
   templateLoading.value = true; error.value = ''
   try {
     const response = await api.get('/import/history-takeovers/template/', { responseType: 'blob' })
     const url = URL.createObjectURL(response.data)
-    const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'history-takeover-template-v1.xlsx'; anchor.click()
+    const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'history-takeover-template-v2.xlsx'; anchor.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   } catch (e) { error.value = e.message }
   finally { templateLoading.value = false }
@@ -302,9 +361,9 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
   <main class="takeover-page">
     <header class="takeover-intro">
       <div>
-        <p class="takeover-eyebrow">受控流程</p>
+        <p class="takeover-eyebrow">申请与核验</p>
         <h2>历史资料承接</h2>
-        <p>申请、核实和逐组承接；预检通过不代表已批准或已迁移。</p>
+        <p>先检查来源资料，再逐组审核和承接。预检通过不代表已批准或已入账。</p>
       </div>
       <div class="takeover-intro-actions">
         <RouterLink class="takeover-preflight-link" to="/history-preflight">只预检文件</RouterLink>
@@ -316,12 +375,12 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
     <section v-if="error" class="takeover-alert" role="alert"><AlertTriangle :size="18" />{{ error }}</section>
 
     <section class="takeover-upload panel">
-      <div class="takeover-section-title"><div><h3><FileUp :size="18" />提交承接申请</h3><p>来源行和凭证引用会纳入申请记录。</p></div><button class="takeover-secondary" :disabled="templateLoading" @click="downloadTemplate">{{ templateLoading ? '正在准备…' : '下载承接模板' }}</button></div>
+      <div class="takeover-section-title"><div><h3><span class="takeover-step-number">01</span><FileUp :size="18" />选择资料</h3><p>提交后会建立申请与核验记录，不会立即创建正式订单、资金或库存记录。</p></div><button class="takeover-secondary" :disabled="templateLoading" @click="downloadTemplate">{{ templateLoading ? '正在准备…' : '下载承接模板' }}</button></div>
       <div class="takeover-upload-row">
         <label class="takeover-file"><span>{{ file?.name || '选择 .xlsx 文件' }}</span><input ref="fileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :disabled="!canApply || saving" @change="chooseFile" /></label>
-        <button class="takeover-primary" :disabled="!canApply || !file || saving" @click="submitApplication">{{ saving ? '正在提交…' : '提交申请并预检' }}</button>
+        <button class="takeover-primary" :disabled="!canApply || !file || saving" @click="submitApplication">{{ saving ? '正在检查…' : '提交资料并检查' }}</button>
       </div>
-      <p class="takeover-caution"><CircleHelp :size="16" />模拟或待核实资料只留在暂存区；不会创建主档、资金流水、库存流水或履约记录。</p>
+      <p class="takeover-caution"><CircleHelp :size="16" />合成或待核实资料留在申请区；不会自动创建主档、资金流水、库存流水或履约记录。</p>
     </section>
 
     <div class="takeover-columns">
@@ -330,14 +389,13 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
         <p v-if="loading && !applications.length" class="takeover-empty">正在读取申请…</p>
         <p v-else-if="!applications.length" class="takeover-empty">还没有历史承接申请</p>
         <button v-for="application in applications" :key="application.id" class="takeover-list-item" :class="{ active: selected?.id === application.id }" @click="loadApplication(application.id)">
-          <strong>{{ application.source_file_name }}</strong><span>{{ statuses[application.status] || application.status }} · {{ application.groups?.length || 0 }} 组</span>
-          <small>SHA256 {{ application.source_sha256?.slice(0, 12) }}</small>
+          <strong>{{ application.source_file_name }}</strong><span>{{ statusLabel(application.status) }} · {{ application.groups?.length || 0 }} 组</span>
         </button>
       </aside>
 
       <section v-if="selected" class="takeover-detail panel">
         <div class="takeover-detail-head">
-          <div><p class="takeover-eyebrow">申请 #{{ selected.id }} · {{ statuses[selected.status] || selected.status }}</p><h3>{{ selected.source_file_name }}</h3><p>申请人：{{ selected.created_by_label || '开发身份（非实名）' }} · {{ selected.created_actor_kind === 'development' ? '不得作为实名审核人' : '实名账号' }}</p></div>
+          <div><p class="takeover-eyebrow"><span class="takeover-step-number">02</span>检查结果 · {{ statusLabel(selected.status) }}</p><h3>{{ selected.source_file_name }}</h3><p>提交时间：{{ formatSubmittedAt(selected.submitted_at) }}</p></div>
           <button class="takeover-secondary" @click="downloadReport">下载核验报告</button>
         </div>
 
@@ -347,32 +405,32 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
           <span>待核实 <strong>{{ formatCount(selected.preflight_summary?.manual_review) }}</strong></span>
           <span>警告 <strong>{{ formatCount(selected.preflight_summary?.warnings) }}</strong></span>
         </div>
-        <p class="takeover-caution">预检状态：{{ selected.preflight_summary?.overall_status || '未完成' }}。审核前须核实真实性、来源凭证、主档依赖和关联冲突。</p>
+        <p class="takeover-caution">预检状态：{{ reviewStatusLabel(selected.preflight_summary?.overall_status) }}。审核前须核实真实性、来源凭证、主档依赖和关联冲突。来源关联组编号用于回查原资料并核对同组记录。</p>
 
         <div class="takeover-groups">
           <button v-for="group in selected.groups" :key="group.id" class="takeover-group-tab" :class="{ active: selectedGroupId === group.id }" @click="selectedGroupId = group.id">
-            {{ group.source_group_id }} <em>{{ statuses[group.status] || group.status }}</em>
+            {{ group.source_group_id }} <em>{{ statusLabel(group.status) }}</em>
           </button>
         </div>
 
         <article v-if="selectedGroup" class="takeover-group-detail">
-          <div class="takeover-group-head"><div><h4>关联组 {{ selectedGroup.source_group_id }}</h4><p>{{ selectedGroup.source_system }} · {{ selectedGroup.coverage_status }} · {{ selectedGroup.truth_status }}</p></div><span class="takeover-status">{{ statuses[selectedGroup.status] || selectedGroup.status }}</span></div>
+          <div class="takeover-group-head"><div><h4>关联组 {{ selectedGroup.source_group_id }}</h4><p>{{ selectedGroup.source_system }} · 覆盖：{{ coverageLabel(selectedGroup.coverage_status) }} · 资料：{{ truthLabel(selectedGroup.truth_status) }}</p></div><span class="takeover-status">{{ statusLabel(selectedGroup.status) }}</span></div>
           <p v-if="selectedGroup.evidence_reference" class="takeover-evidence">来源凭证：{{ selectedGroup.evidence_reference }}</p>
           <div v-for="result in reviewResults" :key="`${result.sheet}-${result.row}`" class="takeover-result-row" :class="`state-${result.status}`">
-            <strong>{{ result.sheet }} · 第 {{ result.row }} 行 · {{ result.status }}</strong>
+              <strong>{{ result.sheet }} · 第 {{ result.row }} 行 · {{ reviewStatusLabel(result.status) }}</strong>
             <ul v-if="result.reasons?.length"><li v-for="reason in result.reasons" :key="reason.message">{{ reason.message }} {{ reason.status === '阻断' ? '请核实来源或主档关联。' : '' }}</li></ul>
           </div>
 
           <details class="takeover-resolution" v-if="canReview && selectedGroup.status !== 'executed'">
-            <summary>人工关联现有主档</summary>
+            <summary><span class="takeover-step-number">03</span>修正问题 · 关联现有主档</summary>
             <p>仅选择已存在的客户、供应商或 SKU；不会自动新建主档。修正后需重新审核。</p>
             <div class="takeover-form-grid">
               <label>工作表<input v-model="mapping.sheet" list="takeover-sheets" /></label>
               <datalist id="takeover-sheets"><option v-for="item in sourceItems" :key="item.sheet" :value="item.sheet" /></datalist>
-              <label>原行号<input v-model="mapping.row" type="number" min="2" /></label>
-              <label>字段<input v-model="mapping.field" list="takeover-fields" /></label>
-              <datalist id="takeover-fields"><option value="customer_code" /><option value="supplier_code" /><option value="sku_code" /></datalist>
-              <label>现有主档编码<input v-model="mapping.target_code" /></label>
+              <label>原资料行号<input v-model="mapping.row" type="number" min="2" /></label>
+              <label>对象类型<select v-model="mappingKind" @change="changeMappingKind"><option value="customer">客户</option><option value="supplier">供应商</option><option value="sku">SKU</option></select></label>
+              <label>搜索现有对象<input v-model="masterSearch" :placeholder="mappingKind === 'sku' ? '输入 SKU 编号或名称' : '输入名称或业务编号'" @input="searchMasters" /></label>
+              <label class="wide">选择现有对象<select v-model="mapping.target_code" :disabled="masterLoading || !masterOptions.length"><option value="">{{ masterLoading ? '正在查找…' : masterOptions.length ? '请选择匹配对象' : '先搜索现有对象' }}</option><option v-for="item in masterOptions" :key="item.id" :value="item.code || item.sku">{{ masterLabel(item) }}</option></select></label>
               <label class="wide">关联依据<input v-model="mapping.note" /></label>
             </div>
             <button class="takeover-secondary" :disabled="saving || !mapping.row || !mapping.target_code || !mapping.note" @click="addMasterResolution">保存关联并重新预检</button>
@@ -382,12 +440,14 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             <h4>未结业务测算</h4>
             <p>展示核实履约后的剩余数量；审核并启用后可建立接续草稿。</p>
             <div v-for="order in openOrders" :key="order.source_record_id" class="takeover-remainder-item">
-              <strong>{{ order.source_document_no }}</strong><span>{{ order.source_lifecycle_state }}</span>
+              <strong>原系统单据 {{ order.source_document_no }}</strong><span>{{ lifecycleLabel(order.source_lifecycle_state) }}</span>
               <small v-for="line in order.lines" :key="line.source_line_id">行 {{ line.source_line_id }}：已履约 {{ line.verified_net_fulfilled_quantity_base }} / {{ line.ordered_quantity_base }}，剩余 {{ line.remaining_quantity_base }} {{ line.unit_snapshot }}</small>
             </div>
           </div>
 
           <div v-if="canReview && selectedGroup.status !== 'executed' && !['rejected','withdrawn'].includes(selectedGroup.status)" class="takeover-review">
+            <h4><span class="takeover-step-number">04</span>确认承接</h4>
+            <p>逐组审核通过后，仍须单独执行承接；历史资金、库存和履约不会在此步骤自动入账。</p>
             <label>审核依据<textarea v-model="note" rows="3" placeholder="写明真实性、来源凭证和依赖核对结果" /></label>
             <label class="takeover-checkbox"><input v-model="confirmManual" type="checkbox" />已依据原始凭证核实所有待核实项</label>
             <div class="takeover-actions">
@@ -400,15 +460,15 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 
           <div v-if="selectedGroup.status === 'executed'" class="takeover-execution">
             <h4>执行结果</h4><p>历史销售单 {{ selectedGroup.execution_result?.orders?.length || 0 }} 张；历史采购单 {{ selectedGroup.execution_result?.purchase_orders?.length || 0 }} 张。</p>
-            <p>整体进度：{{ overallLabels[selectedGroup.operational_overall?.state] || '已归档，待核查接续' }}。</p>
+            <p>整体进度：{{ overallLabels[selectedGroup.operational_overall?.state] || '待核实' }}。</p>
             <p>归档阶段未产生正式资金、库存流水或履约记录。资金交接：{{ handoffLabel(selectedGroup.finance_handoff_status) }}；库存交接：{{ handoffLabel(inventoryStatus?.status || selectedGroup.inventory_handoff_status) }}；履约交接：{{ handoffLabel(operationalStatus?.status || selectedGroup.fulfillment_handoff_status) }}。</p>
             <details v-if="canReview" class="takeover-resolution">
               <summary>历史资金接续</summary>
               <p>先在资金管理中建立自有账户并上传实际凭证。填写实际人民币金额和实际日期；保存后须由另一名授权人员复核，再核对凭证记账。</p>
               <button class="takeover-secondary" :disabled="saving" @click="loadFinance">读取资金来源、账户和凭证</button>
               <div v-for="item in financeSources" :key="item.source_id" class="takeover-remainder-item">
-                <strong>{{ item.source_record_id }} · {{ item.source.direction }} {{ item.source.amount }} {{ item.source.currency }}</strong>
-                <span>{{ handoffLabel(item.status) }}<template v-if="item.fact_id"> · 资金事实 #{{ item.fact_id }}</template></span>
+                <strong>原系统记录 {{ item.source_record_id }} · {{ directionLabel(item.source.direction) }} {{ item.source.amount }} {{ item.source.currency }}</strong>
+                <span>{{ handoffLabel(item.status) }}</span>
                 <div v-if="item.instruction_id" class="takeover-actions">
                   <button v-if="item.status === 'pending'" class="takeover-secondary" :disabled="saving" @click="financeAction('finance-approve', item.source_id)">复核指令</button>
                   <button v-if="item.status === 'approved'" class="takeover-primary" :disabled="saving" @click="financeAction('finance-post', item.source_id)">核对凭证并记账</button>
@@ -421,7 +481,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
               <div class="takeover-form-grid">
                 <label>历史收付款来源<select v-model="financeMapping.source_id"><option value="">请选择</option><option v-for="item in financeSources.filter(row => !row.instruction_id || ['cancelled','failed'].includes(row.status))" :key="item.source_id" :value="item.source_id">{{ item.source_record_id }} · {{ item.source.amount }} {{ item.source.currency }}{{ item.instruction_id ? '（修订）' : '' }}</option></select></label>
                 <label>自有人民币账户<select v-model="financeMapping.account"><option value="">请选择</option><option v-for="item in financeAccounts" :key="item.id" :value="item.id">{{ item.name }} ({{ item.code }})</option></select></label>
-                <label>实际凭证<select v-model="financeMapping.voucher"><option value="">请选择</option><option v-for="item in financeVouchers" :key="item.id" :value="item.id">{{ item.name }} · {{ item.sha256?.slice(0, 12) }}</option></select></label>
+                <label>实际凭证<select v-model="financeMapping.voucher"><option value="">请选择</option><option v-for="item in financeVouchers" :key="item.id" :value="item.id">{{ item.name }}</option></select></label>
                 <label>实际发生日期<input v-model="financeMapping.actual_date" type="date" /></label>
                 <label>实际人民币金额<input v-model="financeMapping.amount" inputmode="decimal" placeholder="0.00" /></label>
                 <label class="wide">核实依据<input v-model="financeMapping.reason" /></label>
@@ -434,7 +494,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
               <button class="takeover-secondary" :disabled="saving" @click="loadInventory">读取盘点来源</button>
               <p v-if="inventoryStatus">当前状态：{{ handoffLabel(inventoryStatus.status) }}；基准记录 {{ inventoryStatus.baselines?.length || 0 }} 条。</p>
               <div v-for="row in inventoryRows" :key="row.source_id" class="takeover-remainder-item">
-                <strong>{{ row.source.sku_code }} · {{ row.source.counted_quantity }} {{ row.source.unit_snapshot }}</strong>
+                <strong>SKU {{ skuBusinessLabel(row.source) }} · {{ row.source.counted_quantity }} {{ row.source.unit_snapshot }}</strong>
                 <span>{{ row.source.warehouse_type }} · {{ row.source.warehouse }} · {{ row.source.lot_reference || '无批次/货位' }}</span>
                 <div class="takeover-form-grid wide">
                   <label>货物所有权<select v-model="row.goods_ownership"><option value="">请选择</option><option value="own">自有货物</option><option value="third_party">第三方货物</option></select></label>
@@ -465,7 +525,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                 </div>
                 <section v-for="doc in operationalStatus.contracts" :key="doc.source_id" class="takeover-remainder">
                   <h4>{{ doc.record_type }} · {{ doc.source.order_no || doc.source.purchase_no }} · {{ doc.source.currency }}</h4>
-                  <p>来源状态：{{ doc.source.lifecycle_state }}；有剩余数量的明细 {{ doc.remaining_lines.length }} 条。</p>
+                  <p>来源状态：{{ lifecycleLabel(doc.source.lifecycle_state) }}；有剩余数量的明细 {{ doc.remaining_lines.length }} 条。</p>
                   <div class="takeover-form-grid">
                     <label>未结承接方式<select v-model="operationalForms[doc.source_id].balance_mode"><option value="">请选择</option><option value="itemized">逐笔核实全部来源计划</option><option value="balance_only">按核实余额承接</option></select></label>
                     <label v-if="operationalForms[doc.source_id].balance_mode === 'balance_only'">未结原币余额<input v-model="operationalForms[doc.source_id].balance_amount" inputmode="decimal" /></label>
@@ -473,9 +533,9 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                     <label class="wide">余额核实依据<input v-model="operationalForms[doc.source_id].evidence_reference" /></label>
                   </div>
                   <p v-if="operationalForms[doc.source_id].balance_mode === 'itemized'">逐笔方式会核对本合同全部来源计划及其已确认流水；没有完整计划时请选择余额承接。</p>
-                  <div v-for="plan in doc.plans" :key="plan.source_id" class="takeover-remainder-item"><strong>计划 {{ plan.source_record_id }}</strong><span>{{ plan.source.lifecycle_state }}</span><small>计划 {{ plan.source.planned_amount }} / 已核销 {{ plan.source.settled_amount }} {{ plan.source.currency }} · {{ plan.source.voucher_reference }}</small></div>
+                  <div v-for="plan in doc.plans" :key="plan.source_id" class="takeover-remainder-item"><strong>原系统收付款计划 {{ plan.source_record_id }}</strong><span>{{ lifecycleLabel(plan.source.lifecycle_state) }}</span><small>计划 {{ plan.source.planned_amount }} / 已核销 {{ plan.source.settled_amount }} {{ plan.source.currency }} · {{ plan.source.voucher_reference }}</small></div>
                   <div v-for="(line, index) in doc.remaining_lines" :key="line.source_id" class="takeover-remainder-item">
-                    <strong>{{ line.source.sku_code }} · 剩余 {{ line.remaining_quantity }} {{ line.source.base_unit_snapshot }}</strong><span>{{ line.source_record_id }}</span>
+                    <strong>SKU {{ skuBusinessLabel(line.source) }} · 剩余 {{ line.remaining_quantity }} {{ line.source.base_unit_snapshot }}</strong><span>原系统明细 {{ line.source_record_id }}</span>
                     <div v-if="doc.record_type === '销售订单'" class="takeover-form-grid wide">
                       <label>核实单位成本<input v-model="operationalForms[doc.source_id].line_options[index].unit_cost" inputmode="decimal" /></label>
                       <label>成本币种（SKU：{{ line.sku_currency }}）<input v-model="operationalForms[doc.source_id].line_options[index].cost_currency" /></label>
@@ -511,7 +571,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                 <div v-for="link in operationalStatus.links" :key="link.id" class="takeover-remainder-item">
                   <strong>{{ link.archived_no }} · 未结 {{ link.outstanding_balance }} {{ link.currency }}</strong><span>{{ handoffLabel(link.continuation_status) }}</span>
                   <small v-if="link.continuation_no">接续单：{{ link.continuation_no }}</small><small v-else>没有剩余履约</small>
-                  <small v-for="plan in link.plans" :key="plan.id">未结计划 #{{ plan.id }} · {{ plan.planned_amount }} / 已结 {{ plan.settled_amount }}</small>
+                  <small v-for="plan in link.plans" :key="plan.id">未结计划 · {{ plan.planned_amount }} / 已结 {{ plan.settled_amount }}</small>
                   <div class="takeover-actions wide"><a :href="link.record_type === '销售订单' ? '/receivables' : '/payables'">查看未结计划</a><a v-if="link.continuation_id" :href="link.record_type === '销售订单' ? '/orders' : '/purchase-orders'">查看接续单</a>
                     <button v-if="link.continuation_status === 'draft'" class="takeover-secondary" :disabled="saving" @click="confirmContinuation(link)">{{ link.record_type === '销售订单' ? '确认销售接续单' : '确认采购下单' }}</button></div>
                 </div>
@@ -527,7 +587,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
           </div>
         </article>
 
-        <section class="takeover-audit"><h4>申请与操作记录</h4><ol><li v-for="event in selected.events" :key="event.id"><span>{{ eventNames[event.event_type] || event.event_type }}</span><small>{{ event.actor_label || '未记录实名操作人' }} · {{ new Date(event.created_at).toLocaleString('zh-CN') }}</small><p v-if="['late_fact_submitted','correction_submitted','voucher_added_submitted'].includes(event.event_type)">发生日期：{{ event.details?.occurred_at || '未提供' }} · {{ event.details?.reason }}</p><div v-if="canReview && ['late_fact_submitted','correction_submitted','voucher_added_submitted'].includes(event.event_type) && !selectedGroup.verified_correction_ids?.includes(event.id)" class="takeover-actions"><button class="takeover-secondary" :disabled="saving || !note.trim()" @click="reviewCorrection(event,'reject')">退回更正</button><button class="takeover-primary" :disabled="saving || !note.trim()" @click="reviewCorrection(event,'approve')">核实并保留更正轨迹</button></div></li></ol></section>
+        <section class="takeover-audit"><h4>申请与操作记录</h4><ol><li v-for="event in selected.events" :key="event.id"><span>{{ eventLabel(event.event_type) }}</span><small>{{ auditActorLabel(event) }} · {{ new Date(event.created_at).toLocaleString('zh-CN') }}</small><p v-if="['late_fact_submitted','correction_submitted','voucher_added_submitted'].includes(event.event_type)">发生日期：{{ event.details?.occurred_at || '未提供' }} · {{ event.details?.reason }}</p><div v-if="canReview && ['late_fact_submitted','correction_submitted','voucher_added_submitted'].includes(event.event_type) && !selectedGroup.verified_correction_ids?.includes(event.id)" class="takeover-actions"><button class="takeover-secondary" :disabled="saving || !note.trim()" @click="reviewCorrection(event,'reject')">退回更正</button><button class="takeover-primary" :disabled="saving || !note.trim()" @click="reviewCorrection(event,'approve')">核实并保留更正轨迹</button></div></li></ol></section>
       </section>
       <section v-else class="takeover-detail panel takeover-empty">选择一条申请，查看分组核验结果。</section>
     </div>
@@ -538,5 +598,6 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 .takeover-remainder-item > .wide{grid-column:1/-1;min-width:0}
 .takeover-intro-actions{display:grid;justify-items:end;gap:8px}.takeover-preflight-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 11px;border:1px solid #cddbd3;border-radius:8px;background:#fff;color:#315c4a;font-size:13px;font-weight:700;text-decoration:none}.takeover-preflight-link:hover{background:#f3f8f5;border-color:#9ebca9}
 @media(max-width:900px){.takeover-columns{grid-template-columns:1fr}.takeover-list{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-list-head,.takeover-empty{grid-column:1/-1}}
-@media(max-width:600px){.takeover-intro{display:grid;padding:16px}.takeover-intro-actions{justify-items:start;width:100%}.takeover-lock{white-space:normal;width:max-content;max-width:100%}.takeover-upload,.takeover-list,.takeover-detail{padding:14px}.takeover-upload-row{display:grid}.takeover-file{align-items:flex-start;flex-direction:column}.takeover-file input{max-width:100%;width:100%}.takeover-list{grid-template-columns:1fr}.takeover-detail-head{display:grid}.takeover-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-actions>*{flex:1}.takeover-actions button{min-height:40px}.takeover-group-tab{max-width:100%;flex-wrap:wrap}}
+.takeover-step-number{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-right:5px;border-radius:50%;background:#e7f1eb;color:#285c49;font-size:11px;vertical-align:middle}.takeover-group-head,.takeover-remainder-item,.takeover-result-row,.takeover-audit{min-width:0}.takeover-result-row,.takeover-result-row li,.takeover-remainder-item,.takeover-group-tab,.takeover-audit li{overflow-wrap:anywhere;word-break:break-word}.takeover-form-grid input,.takeover-form-grid select{min-width:0;max-width:100%}.takeover-resolution summary{cursor:pointer;font-weight:700}.takeover-resolution p{line-height:1.6}
+@media(max-width:600px){.takeover-intro{display:grid;padding:16px}.takeover-intro-actions{justify-items:start;width:100%}.takeover-lock{white-space:normal;width:max-content;max-width:100%}.takeover-upload,.takeover-list,.takeover-detail{padding:14px}.takeover-upload-row{display:grid}.takeover-file{align-items:flex-start;flex-direction:column}.takeover-file input{max-width:100%;width:100%}.takeover-list{grid-template-columns:1fr}.takeover-detail-head{display:grid}.takeover-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-form-grid{grid-template-columns:minmax(0,1fr)}.takeover-actions>*{flex:1}.takeover-actions button{min-height:40px}.takeover-group-tab{max-width:100%;flex-wrap:wrap}.takeover-step-number{flex:none}}
 </style>

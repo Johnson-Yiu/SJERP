@@ -277,8 +277,8 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
             return Response({"supported": False, "reason": "原账户事实没有关联银行来源；请先核实来源。", "items": []})
         if event.status != "confirmed" or not ledger.cash.visible(event, request.user):
             raise NotFound("原银行记录不存在或不可访问。")
-        if event.kind != "cny_direct" or event.currency != "CNY":
-            return Response({"supported": False, "reason": "外币结汇退回的原币关系待核实，不能直接按人民币恢复订单。", "items": []})
+        if event.kind not in {"cny_direct", "fx_settlement"}:
+            return Response({"supported": False, "reason": "该银行记录没有可恢复的原收付款。", "items": []})
         items = []
         for allocation in event.sources.select_related("source__plan__order", "source__plan__purchase_order").order_by("source_id"):
             source = allocation.source
@@ -302,11 +302,11 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
                 remaining = min(event_remaining, max(paid - refunded - already, Decimal("0")), plan.settled_amount)
                 if remaining > 0:
                     contract = plan.order.order_no if plan.order_id else plan.purchase_order.purchase_no
-                    items.append({"source": source.pk, "plan": plan.pk, "remaining": str(remaining), "label": f"{source.transaction_no} · {contract} · 尚可退回 CNY {remaining}"})
+                    items.append({"source": source.pk, "plan": plan.pk, "remaining": str(remaining), "label": f"{source.transaction_no} · {contract} · 尚可退回 {event.currency} {remaining}"})
             unallocated = min(event_remaining, source.unallocated_cash_amount if not source.plan_id else Decimal("0"))
             if unallocated > 0:
-                items.append({"source": source.pk, "plan": None, "remaining": str(unallocated), "label": f"{source.transaction_no} · 未分配现金 · 尚可退回 CNY {unallocated}"})
-        return Response({"supported": True, "items": items})
+                items.append({"source": source.pk, "plan": None, "remaining": str(unallocated), "label": f"{source.transaction_no} · 未分配现金 · 尚可退回 {event.currency} {unallocated}"})
+        return Response({"supported": True, "currency": event.currency, "items": items})
 
     @action(detail=False, methods=["post"])
     def instructions(self, request, format=None):

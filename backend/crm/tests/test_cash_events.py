@@ -799,10 +799,20 @@ class CashConcurrencyTests(CashFixture, TransactionTestCase):
 class CashMigrationTests(TransactionTestCase):
     def test_additive_migration_preserves_historical_rows_and_decimal_fields(self):
         from django.db.migrations.executor import MigrationExecutor
-        executor = MigrationExecutor(connection)
-        latest_targets = tuple(executor.loader.graph.leaf_nodes())
-        executor.migrate([("crm", "0076_customer_owner_profile")])
+        if connection.vendor != "postgresql":
+            self.skipTest("Historical forward migration requires an isolated PostgreSQL schema")
+        from uuid import uuid4
+
+        schema = connection.ops.quote_name("cash_migration_" + uuid4().hex)
+        with connection.cursor() as cursor:
+            cursor.execute("SHOW search_path")
+            original_path = cursor.fetchone()[0]
+            cursor.execute(f"CREATE SCHEMA {schema}")
         try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT set_config('search_path', %s, false)", [schema])
+            executor = MigrationExecutor(connection)
+            executor.migrate([("crm", "0076_customer_owner_profile")])
             state_0076 = executor.loader.project_state([("crm", "0076_customer_owner_profile")]).apps
             old = state_0076.get_model("crm", "Transaction")
             old.objects.create(transaction_no="LEGACY-FOUR", transaction_date=date(2026, 10, 1), direction="income", kind="other_income", category="Synthetic", amount=D("12.3401"), currency="USD", exchange_rate=D("7.123456"), rmb_amount=D("87.9034"), allocated_amount=D("0.0001"))
@@ -820,4 +830,6 @@ class CashMigrationTests(TransactionTestCase):
             self.assertEqual(state_0077.get_model("crm", "CashSourceAllocation").objects.count(), 0)
             print("P2A_MIGRATION_VERIFICATION", json.dumps({"vendor": connection.vendor, "all_legacy_rows_equal": True, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}))
         finally:
-            MigrationExecutor(connection).migrate(latest_targets)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT set_config('search_path', %s, false)", [original_path])
+                cursor.execute(f"DROP SCHEMA {schema} CASCADE")

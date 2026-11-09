@@ -25,3 +25,5 @@
 ## 人民币银行退回
 
 通过 `GET /api/finance-ledger/bank-return-options/` 按原 `event` 或已匹配 `fact` 查询可见的来源和计划。提交 `bank_return` 指令时，`return_allocations` 逐条提供 `source`、`plan`（未分配现金使用 null）及十进制 `amount`。人民币直接收付款的分配总额须等于银行实际退回。提交使用原 `request_key`，确认使用同一指令；分配、计划、资金事实和审计统一提交。迁移节点为 `crm.0127_finance_bank_return_allocation`，依赖 `crm.0126_finance_cash_confirmation`。
+
+外币结汇记录的退回选项返回原币 `currency`。凭证确认原收付款同时退回时，指令显式提交 `return_currency`，并以原币提供 `return_allocations`。指令 `amount` 仍表示实际人民币反向资金，两个额度分别验证，原币退回需要双人复核。仅退回人民币结汇款可不填原币分配。本次扩展复用 0127 模型。

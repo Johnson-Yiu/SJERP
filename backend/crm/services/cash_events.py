@@ -198,7 +198,9 @@ def refundable_cash(row):
     allocations = getattr(row, "_prefetched_objects_cache", {}).get("cash_source_allocations")
     converted = sum((item.amount for item in allocations if item.event.status == "confirmed" and item.event.kind == "fx_settlement"), Decimal("0")) if allocations is not None else row.cash_source_allocations.filter(event__status="confirmed", event__kind="fx_settlement").aggregate(n=Sum("amount"))["n"] or Decimal("0")
     refunded = row.refunded_cash_amount()
-    return row.amount - converted - refunded - row.returned_cash_amount()
+    # FX bank returns draw from cash already included in confirmed conversions.
+    direct_returns = row.returned_cash_amount() if row.currency == "CNY" else Decimal("0")
+    return row.amount - converted - refunded - direct_returns
 
 
 def refund_source_uncertainty(row):

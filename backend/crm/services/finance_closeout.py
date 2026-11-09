@@ -218,7 +218,7 @@ def map_account(data, user):
 
 def normalize(data, user=None):
     allowed = {"request_key", "kind", "account", "voucher", "actual_date", "amount", "direction", "nature", "truth",
-        "source_system", "source_key", "reason", "parent", "legacy_parent", "approval", "allocations", "excess_reason", "replaces", "duplicate_review_token", "duplicate_review_reason", "same_legacy_event", "return_allocations"}
+        "source_system", "source_key", "reason", "parent", "legacy_parent", "approval", "allocations", "excess_reason", "replaces", "duplicate_review_token", "duplicate_review_reason", "same_legacy_event", "return_allocations", "return_currency"}
     if not isinstance(data, dict) or set(data) - allowed:
         raise ValidationError("资金承接字段无效。")
     p = dict(data)
@@ -264,6 +264,12 @@ def normalize(data, user=None):
         total += Decimal(row["amount"])
     if total > Decimal(p["amount"]):
         raise ValidationError("订单分配超过本次金额。")
+    return_currency = p.get("return_currency")
+    if "return_currency" in p and (
+        p["kind"] != "bank_return" or not isinstance(return_currency, str)
+        or return_currency == "CNY" or return_currency not in cash.UNITS or not p.get("return_allocations")
+    ):
+        raise ValidationError("原币退回须填写非人民币币种及原核销分配。")
     if "return_allocations" in p:
         entries = p["return_allocations"]
         if p["kind"] != "bank_return" or not isinstance(entries, list) or len(entries) > 100:
@@ -276,7 +282,7 @@ def normalize(data, user=None):
                 raise ValidationError("银行退回须逐条选择原流水、计划及金额。")
             entry["source"] = pk(entry["source"])
             entry["plan"] = pk(entry["plan"]) if entry["plan"] not in (None, "") else None
-            entry["amount"] = str(cash.money(entry["amount"], "CNY"))
+            entry["amount"] = str(cash.money(entry["amount"], return_currency or "CNY"))
             key = (entry["source"], entry["plan"])
             if key in seen_return:
                 raise ValidationError("同一原流水和计划不可重复分配。")
@@ -285,7 +291,7 @@ def normalize(data, user=None):
                 raise PermissionDenied("原收付款流水不可访问。")
             if user is not None and entry["plan"] and not scope_plan_queryset(PaymentPlan.objects.filter(pk=entry["plan"]), user).exists():
                 raise PermissionDenied("原收付款计划不可访问。")
-        if sum((Decimal(entry["amount"]) for entry in entries), Decimal("0")) > Decimal(p["amount"]):
+        if not return_currency and sum((Decimal(entry["amount"]) for entry in entries), Decimal("0")) > Decimal(p["amount"]):
             raise ValidationError("退回分配合计不能超过银行实际退回金额。")
     if p["kind"] == "refund_approval" and not p.get("excess_reason"):
         # Approval may exceed original receipts, but basis must explicitly say why.
@@ -400,7 +406,7 @@ def post(value, user, voucher_checked=False):
         raise ValidationError("模拟或待核实资料不能计入实际资金。")
     for allocation in p["allocations"]:
         validate_finance_relations({"order": Order.objects.get(pk=allocation["order"])}, user)
-    if obj.kind in APPROVAL_KINDS and obj.status != "approved":
+    if (obj.kind in APPROVAL_KINDS or p.get("return_currency")) and obj.status != "approved":
         raise ValidationError("此操作须经另一名授权人员复核。")
     if obj.kind == "refund_approval":
         raise ValidationError("批准退款不等于实际扣款；请登记真实扣款。")
@@ -463,10 +469,16 @@ def post(value, user, voucher_checked=False):
             raise ValidationError("退回方向错误或累计超过尚未退回金额。")
         if obj.kind == "bank_return" and own.account_type != "bank":
             raise ValidationError("银行退回必须属于银行账户。")
-        if obj.kind == "bank_return" and return_event and return_event.kind == "cny_direct":
-            return_entries = validate_bank_return_allocations(return_event, p.get("return_allocations", []), value, user)
-        elif obj.kind == "bank_return" and p.get("return_allocations"):
-            raise ValidationError("外币结汇退回应先核实原币与退回金额关系，不能按人民币直接恢复计划。")
+        if obj.kind == "bank_return":
+            original_currency = p.get("return_currency")
+            if original_currency:
+                if not return_event or return_event.kind != "fx_settlement" or return_event.currency != original_currency:
+                    raise ValidationError("原币退回须引用同币种的已确认结汇记录。")
+                return_entries = validate_bank_return_allocations(return_event, p["return_allocations"], None, user)
+            elif return_event and return_event.kind == "cny_direct":
+                return_entries = validate_bank_return_allocations(return_event, p.get("return_allocations", []), value, user)
+            elif p.get("return_allocations"):
+                raise ValidationError("外币退回须提供原币币种和银行凭证依据。")
     if obj.kind == "correction" and ((parent is None and legacy_parent is None) or (parent is not None and parent.account_id != own.pk)):
         raise ValidationError("更正须保留同账户原事实关联；来源不明继续待核实。")
     if obj.kind == "correction":
@@ -546,12 +558,12 @@ def post(value, user, voucher_checked=False):
 
 
 def validate_bank_return_allocations(event, entries, amount, user):
-    """Validate an explicit split against the original confirmed CNY sources."""
+    """Validate the split in the original source currency."""
     from crm.finance_scope import scope_plan_queryset
     from crm.models import FinanceBankReturnAllocation, PaymentPlan, Transaction
-    if not cash.visible(event, user) or event.status != "confirmed" or event.currency != "CNY":
-        raise ValidationError("原银行记录不可访问或不是已确认人民币收付。")
-    if not entries or sum((Decimal(entry["amount"]) for entry in entries), Decimal("0")) != amount:
+    if not cash.visible(event, user) or event.status != "confirmed":
+        raise ValidationError("原银行记录不可访问或尚未确认。")
+    if not entries or (amount is not None and sum((Decimal(entry["amount"]) for entry in entries), Decimal("0")) != amount):
         raise ValidationError("请按原流水和计划分配全部银行退回金额。")
     event_sources = {a.source_id: a.amount for a in event.sources.all()}
     source_current = {}
@@ -562,7 +574,7 @@ def validate_bank_return_allocations(event, entries, amount, user):
     result = []
     for entry in entries:
         source = Transaction.objects.select_related("plan").get(pk=entry["source"])
-        if source.pk not in event_sources or not cash.source_visible(source, user) or source.status != "confirmed" or source.currency != "CNY" or source.direction != event.direction:
+        if source.pk not in event_sources or not cash.source_visible(source, user) or source.status != "confirmed" or source.currency != event.currency or source.direction != event.direction:
             raise ValidationError("退回来源须属于原银行记录且仍可访问。")
         if cash.uncertainty(source):
             raise ValidationError("原流水存在来源不明的退款或更正，请先核实。")
@@ -582,7 +594,7 @@ def validate_bank_return_allocations(event, entries, amount, user):
                     plan_objects[entry["plan"]] = plan
             if plan is None:
                 raise ValidationError("原收付款计划不可访问。")
-            if plan.currency != "CNY" or plan.direction != ("receivable" if source.direction == "income" else "payable"):
+            if plan.currency != event.currency or plan.direction != ("receivable" if source.direction == "income" else "payable"):
                 raise ValidationError("原计划币种或收付方向不匹配。")
             from crm.models import AdvanceAllocation
             paid = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.filter(advance=source, plan=plan, is_active=True)), Decimal("0"))

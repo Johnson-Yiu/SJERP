@@ -21,7 +21,7 @@ from psycopg import sql
 
 from .operations_copy import digest
 from .operations_fence import verify_readonly_filesystem
-from .private_media import build_private_media_manifest, compare_private_media_manifest
+from .private_media import build_private_media_manifest, compare_private_media_manifest, secure_private_media_tree
 from .backup_recovery import _copy_media_snapshot, _extract_archive, _safe_member_path
 
 
@@ -220,9 +220,12 @@ class MaintenanceBackup:
                         "migrations": sorted(applied)}
             (stage / "manifest.json").write_text(json.dumps(manifest, sort_keys=True), encoding="utf-8")
             with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-                for file in sorted(stage.rglob("*")):
-                    if file.is_file():
-                        archive.write(file, file.relative_to(stage).as_posix())
+                for path in sorted(stage.rglob("*")):
+                    relative = path.relative_to(stage).as_posix()
+                    if path.is_dir():
+                        archive.write(path, relative.rstrip("/") + "/")
+                    elif path.is_file():
+                        archive.write(path, relative)
         return {"sha256": digest(destination), "manifest": manifest,
                 "staging_cleanup_warning": output.staging_cleanup_warning}
 
@@ -263,6 +266,7 @@ class MaintenanceBackup:
             if manifest.get("kind") != "sunjack-maintenance-backup" or manifest.get("version") != 1 or manifest.get("app_sha") != self.app_sha or manifest.get("postgres_major") != 17:
                 raise ValueError("Archive application or format is incompatible")
             self.application_identity()
+            (stage / "media").mkdir(mode=0o700, exist_ok=True)
             if digest(stage / "database.dump") != manifest["database_sha256"] or compare_private_media_manifest(manifest["media"], stage / "media"):
                 raise ValueError("Archive database or media integrity failed")
             try:
@@ -312,6 +316,7 @@ class MaintenanceBackup:
                 media.mkdir(mode=0o700)
                 media_created = True
                 shutil.copytree(stage / "media", media, dirs_exist_ok=True)
+                secure_private_media_tree(media)
                 if compare_private_media_manifest(manifest["media"], media):
                     raise RuntimeError("Restored media integrity failed")
                 return {"database": target, "media_root": str(media), "verified": True,

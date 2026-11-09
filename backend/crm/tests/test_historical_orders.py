@@ -100,6 +100,43 @@ class HistoricalOrderIsolationTests(TestCase):
         self.assertEqual(historical.data["sales"]["amount_rmb"], Decimal("960"))
         self.assertFalse(historical.data["profit"]["available"])
 
+    def test_history_dimensions_use_saved_evidence_and_keep_legacy_unknown_unfilled(self):
+        old_category = ProductCategory.objects.create(name="旧历史分类")
+        current_category = ProductCategory.objects.create(name="当前产品分类")
+        product = self.sku.product
+        product.category = old_category
+        product.save(update_fields=["category"])
+        known = Order.objects.create(
+            order_no="HIST-KNOWN-DIMS", customer=self.customer, customer_name_snapshot="旧客户快照",
+            customer_country_snapshot="GB", order_date=date(2019, 6, 15), currency="CNY",
+            exchange_rate="1", status="historical", historical_only=True,
+        )
+        OrderItem.objects.create(
+            order=known, sku=self.sku, quantity="1", unit_price="10",
+            product_category_reference_snapshot=str(old_category.pk),
+            product_category_name_snapshot="旧历史分类",
+        )
+        unknown = Order.objects.create(
+            order_no="HIST-UNKNOWN-DIMS", customer=self.customer, customer_country_snapshot="",
+            order_date=date(2019, 6, 16), currency="CNY", exchange_rate="1",
+            status="historical", historical_only=True,
+        )
+        OrderItem.objects.create(order=unknown, sku=self.sku, quantity="2", unit_price="10")
+
+        self.customer.country = "DE"
+        self.customer.save(update_fields=["country"])
+        product.category = current_category
+        product.save(update_fields=["category"])
+
+        response = self.client.get("/api/reports/historical/", {"date_from": "2019-01-01", "date_to": "2019-12-31"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        country_labels = {row["label"] for row in response.data["sales"]["by_country"]}
+        category_labels = {row["label"] for row in response.data["sales"]["by_category"]}
+        self.assertEqual(country_labels, {"GB", "待核实"})
+        self.assertEqual(category_labels, {"旧历史分类", "待核实"})
+        self.assertNotIn("DE", country_labels)
+        self.assertNotIn("当前产品分类", category_labels)
+
     def test_historical_order_never_inherits_current_sku_cost(self):
         self.sku.cost_price = Decimal("99.50")
         self.sku.save(update_fields=["cost_price"])

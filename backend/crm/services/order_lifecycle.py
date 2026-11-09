@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from crm.models import AdvanceAllocation, Customer, InventoryReservation, Order, PaymentPlan, PurchaseOrder, Quote, Shipment
+from crm.models import AdvanceAllocation, Customer, InventoryReservation, Order, OrderItem, PaymentPlan, PurchaseOrder, Quote, Shipment
 from crm.money import CURRENT_AMOUNT_CALCULATION_VERSION
 from crm.services.finance import ensure_default_payment_plans
 from crm.services.fulfillment import allocate_order, order_item_metrics
@@ -15,7 +15,7 @@ from crm.services.historical import reject_historical
 
 
 def _validate_order_for_confirmation(order):
-    items = list(order.items.select_related("sku", "trade_unit").order_by("id"))
+    items = list(order.items.select_related("sku__product__category", "trade_unit").order_by("id"))
     if not items:
         raise ValidationError("订单至少需要一条商品明细。")
     if order.exchange_rate <= 0:
@@ -126,6 +126,14 @@ def confirm_order(order):
         )
 
     _capture_order_party_snapshot(order, final_quote, replacement_context)
+    for item in items:
+        category = item.sku.product.category
+        item.product_category_reference_snapshot = str(category.pk) if category else ""
+        item.product_category_name_snapshot = category.name if category else ""
+    OrderItem.objects.bulk_update(
+        items,
+        ["product_category_reference_snapshot", "product_category_name_snapshot"],
+    )
     order.quote = final_quote
     order.status = "confirmed"
     # Existing formal orders are migrated as legacy records. A pre-existing

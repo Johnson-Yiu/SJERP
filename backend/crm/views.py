@@ -3273,7 +3273,8 @@ def dashboard(request):
             customer = customer_rows[order.customer_id]
             customer["sales"] += amount
             customer["orders"] += 1
-            customer["name"], customer["country"] = order.customer.name, order.customer.country
+            customer["name"] = order.customer_name_snapshot or "待核实"
+            customer["country"] = order.customer_country_snapshot or "待核实"
     trend_months = []
     month_cursor = trend_start
     while month_cursor <= date(today.year, today.month, 1):
@@ -3288,9 +3289,34 @@ def dashboard(request):
         if monthly_rows else []
     )
     # Product-category sales deliberately remain item-only: contract adjustments have no SKU/category allocation.
-    categories = OrderItem.objects.filter(order__in=valid_orders, order__order_date__range=(year_start, today)).values(
-        "sku__product__category__name"
-    ).annotate(sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)), quantity=Sum("quantity")).order_by("-sales")[:8]
+    category_rows = OrderItem.objects.filter(
+        order__in=valid_orders, order__order_date__range=(year_start, today),
+    ).values("product_category_reference_snapshot", "product_category_name_snapshot").annotate(
+        sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)),
+        quantity=Sum("quantity"),
+    ).order_by("-sales")[:8]
+    from .reporting import category_snapshot_dimension
+    category_ids = set()
+    for row in category_rows:
+        try:
+            category_ids.add(int(row["product_category_reference_snapshot"]))
+        except (TypeError, ValueError):
+            pass
+    category_names = dict(ProductCategory.objects.filter(pk__in=category_ids).values_list("pk", "name"))
+    categories = []
+    for row in category_rows:
+        reference = row["product_category_reference_snapshot"]
+        try:
+            current_name = category_names.get(int(reference))
+        except (TypeError, ValueError):
+            current_name = None
+        key, label = category_snapshot_dimension(reference, row["product_category_name_snapshot"], current_name=current_name)
+        categories.append({
+            "sku__product__category__name": label,
+            "category_snapshot_key": key,
+            "sales": row["sales"],
+            "quantity": row["quantity"],
+        })
     top_customers = [
         {"id": customer_id, **values}
         for customer_id, values in sorted(customer_rows.items(), key=lambda row: row[1]["sales"], reverse=True)[:6]

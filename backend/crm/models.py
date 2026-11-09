@@ -1287,6 +1287,8 @@ class OrderItem(TradeUnitLine):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     sku = models.ForeignKey(SKU, on_delete=models.PROTECT, related_name="order_items")
     sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
+    product_category_reference_snapshot = models.CharField("产品主分类来源编号快照", max_length=64, blank=True)
+    product_category_name_snapshot = models.CharField("产品主分类名称快照", max_length=120, blank=True)
     sales_model_snapshot = models.CharField("销售型号快照", max_length=80, blank=True)
     display_name_snapshot = models.CharField("显示名称快照", max_length=300, blank=True)
     description_snapshot = models.TextField("描述快照", blank=True)
@@ -1319,6 +1321,14 @@ class OrderItem(TradeUnitLine):
     supplier_allocated_at = models.DateTimeField("供应商分配时间", null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        snapshot_fields = ("product_category_reference_snapshot", "product_category_name_snapshot")
+        update_fields = kwargs.get("update_fields")
+        if not self._state.adding and (update_fields is None or set(update_fields) & set(snapshot_fields)):
+            order_status = Order.objects.filter(pk=self.order_id).values_list("status", flat=True).first()
+            if order_status and order_status != "draft":
+                saved = type(self)._base_manager.filter(pk=self.pk).values(*snapshot_fields).first()
+                if saved and any(getattr(self, field) != saved[field] for field in snapshot_fields):
+                    raise ValidationError("正式销售单据的产品分类快照不能直接修改。")
         if self._state.adding and self.sku_id:
             sku = self.sku
             self.sku_code_snapshot = self.sku_code_snapshot or sku.sku
@@ -1516,6 +1526,7 @@ class PurchaseOrder(TimestampedModel):
     purchase_no = models.CharField("采购单号", max_length=40, unique=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, related_name="purchase_orders")
     supplier_name_snapshot = models.CharField("供应商名称快照", max_length=200, blank=True)
+    supplier_country_snapshot = models.CharField("供应商国家/地区快照", max_length=100, blank=True)
     supplier_address_snapshot = models.TextField("供应商地址快照", blank=True)
     supplier_contact_name_snapshot = models.CharField("供应商联系人快照", max_length=100, blank=True)
     supplier_phone_snapshot = models.CharField("供应商电话快照", max_length=50, blank=True)
@@ -1539,6 +1550,7 @@ class PurchaseOrder(TimestampedModel):
     def save(self, *args, **kwargs):
         from .party_snapshot_guard import guard_formal_party_snapshot
         guard_formal_party_snapshot(self, ('supplier_id', 'supplier_name_snapshot', 'supplier_address_snapshot',
+            'supplier_country_snapshot',
             'supplier_contact_name_snapshot', 'supplier_phone_snapshot', 'supplier_email_snapshot'),
             kwargs.get('update_fields'))
         return super().save(*args, **kwargs)
@@ -1603,6 +1615,8 @@ class PurchaseOrderItem(TradeUnitLine):
         related_name="purchase_items",
     )
     sku_code_snapshot = models.CharField("SKU 编码快照", max_length=80, blank=True)
+    product_category_reference_snapshot = models.CharField("产品主分类来源编号快照", max_length=64, blank=True)
+    product_category_name_snapshot = models.CharField("产品主分类名称快照", max_length=120, blank=True)
     sales_model_snapshot = models.CharField("销售型号快照", max_length=80, blank=True)
     display_name_snapshot = models.CharField("显示名称快照", max_length=300, blank=True)
     description_snapshot = models.TextField("描述快照", blank=True)
@@ -1634,6 +1648,14 @@ class PurchaseOrderItem(TradeUnitLine):
 
     def save(self, *args, **kwargs):
         creating = self._state.adding
+        snapshot_fields = ("product_category_reference_snapshot", "product_category_name_snapshot")
+        update_fields = kwargs.get("update_fields")
+        if not creating and (update_fields is None or set(update_fields) & set(snapshot_fields)):
+            order_status = PurchaseOrder.objects.filter(pk=self.purchase_order_id).values_list("status", flat=True).first()
+            if order_status and order_status != "draft":
+                saved = type(self)._base_manager.filter(pk=self.pk).values(*snapshot_fields).first()
+                if saved and any(getattr(self, field) != saved[field] for field in snapshot_fields):
+                    raise ValidationError("正式采购单据的产品分类快照不能直接修改。")
         if self._state.adding and self.sku_id:
             sku = self.sku
             self.sku_code_snapshot = self.sku_code_snapshot or sku.sku

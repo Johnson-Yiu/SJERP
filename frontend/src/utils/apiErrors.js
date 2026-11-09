@@ -3,6 +3,7 @@ const errorFieldLabels = {
   customer: '客户', buyer_company_name: '买方公司', supplier: '供应商', items: '商品明细',
   sku: 'SKU', warehouse: '仓库', movement_date: '流水日期', unit_cost: '单位成本',
   related_orders: '关联订单', trade_unit: '交易单位', reference: '业务参考号',
+  packaging_profile_input: '包装设置', qty_per_carton_override: '每箱数量',
 }
 
 function errorPathLabel(path) {

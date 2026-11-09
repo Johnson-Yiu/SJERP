@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
-import HistoryPreflightPage from './HistoryPreflightPage.vue'
+import HistoryPreflightPage from '../src/views/HistoryPreflightPage.vue'
 
 const mocks = vi.hoisted(() => ({ post: vi.fn() }))
-vi.mock('../api', () => ({ api: mocks }))
+vi.mock('../src/api', () => ({ api: mocks }))
 const originalCreateObjectURL = URL.createObjectURL
 const originalRevokeObjectURL = URL.revokeObjectURL
 

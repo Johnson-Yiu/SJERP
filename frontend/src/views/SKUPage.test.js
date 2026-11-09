@@ -131,5 +131,5 @@ test('image failure retains saved SKU IDs for independent retry and reports data
 
 test('nested packaging validation messages remain readable', async () => {
   const { apiErrorMessage } = await import('../utils/apiErrors.js')
-  assert.equal(apiErrorMessage({ response: { status: 400, data: { packaging_profile_input: { qty_per_carton_override: ['每箱数量必须大于 0。'] } } }, status: 400 }), 'packaging_profile_input · qty_per_carton_override：每箱数量必须大于 0。')
+  assert.equal(apiErrorMessage({ response: { status: 400, data: { packaging_profile_input: { qty_per_carton_override: ['每箱数量必须大于 0。'] } } }, status: 400 }), '包装设置 · 每箱数量：每箱数量必须大于 0。')
 })

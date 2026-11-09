@@ -24,9 +24,9 @@ test('finance due contracts navigate by their returned record IDs', async () => 
 test('import page exposes only supported types and explains insert-only finance imports', async () => {
   const view = await source('./ImportPage.vue')
   assert.match(view, /const types = \{ customers:/)
-  assert.doesNotMatch(view, /orders:\s*\[/)
+  assert.doesNotMatch(view.match(/const types = \{[^\n]+/)[0], /orders:\s*\[/)
   assert.match(view, /财务流水只新增/)
-  assert.match(view, /正式订单导入暂未开放/)
+  assert.match(view, /只创建销售订单草稿|创建销售订单草稿|张销售订单草稿/)
   assert.doesNotMatch(view, /订单使用 <code>order_no<\/code>/)
 })
 

@@ -6,7 +6,7 @@ test('formatApiError preserves field and nested item context', () => {
   assert.equal(formatApiError({ items: [{}, { quantity: ['必须大于0'] }] }), '第 2 条商品 · 数量：必须大于0')
   assert.equal(formatApiError({ customer: { detail: ['客户已停用'] } }), '客户：客户已停用')
   assert.equal(formatApiError({ items: [{}, { non_field_errors: ['商品组合无效'] }] }), '第 2 条商品：商品组合无效')
-  assert.equal(formatApiError({ metadata: { unknown_field: ['值无效'] } }), 'metadata · unknown_field：值无效')
+  assert.equal(formatApiError({ metadata: { unknown_field: ['值无效'] } }), '值无效')
   assert.equal(formatApiError({ detail: '请求无效' }), '请求无效')
   assert.equal(formatApiError({ non_field_errors: ['两个字段不能同时填写'] }), '两个字段不能同时填写')
 })

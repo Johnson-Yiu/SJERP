@@ -476,6 +476,21 @@ test('Chrome native page zoom keeps long finance and history records usable', as
   }
 })
 
+test('certificate validation identifies the business field without closing the draft', async ({ page }) => {
+  await page.goto('/product-certificates')
+  await page.getByRole('button', { name: '新建产品证书', exact: true }).click()
+  const form = page.getByRole('dialog', { name: '新建产品证书', exact: true })
+  await form.getByLabel('所属产品').selectOption({ label: '导入验收合成灯具' })
+  const name = form.getByLabel('证书名称')
+  await name.fill('Long certificate '.repeat(12))
+  const invalid = page.waitForResponse(response => response.url().endsWith('/api/product-certificates/') && response.request().method() === 'POST')
+  await form.getByRole('button', { name: '保存', exact: true }).click()
+  expect((await invalid).status()).toBe(400)
+  await expect(form.getByRole('alert')).toContainText('证书名称：')
+  await expect(name).toHaveValue('Long certificate '.repeat(12))
+  await page.screenshot({ path: path.join(evidenceDir, 'certificate-field-error.png') })
+})
+
 test('codex logout clears the workspaces and returns to sign-in', async ({ page }) => {
   await page.goto('/finance')
   await expect(page.locator('.workspace-pane')).toBeVisible()

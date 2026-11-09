@@ -1,5 +1,7 @@
 # RELEASE-INTEGRATION-REPAIR-01 验收记录
 
+2026-11-10 补验见[独立补验记录](../release-integration-repair-01-followup/README.md)。以下保留原交付时的状态与证据。
+
 2026-11-09 · 分支 `codex/release-integration-repair-01` · 共同基线 `c90cacaa99a468d92dd61c41437834c5d8acb094`。业务候选 `019367baa389c2a73ea2d8c58162313e4868fcca`；其后的回归脚本和证据变动不改变业务源码或迁移。状态：集成完成，定向验收通过，仍有发布验收缺项。
 
 | 来源 | 保留和接入的能力 | 本轮核验 |

@@ -1,5 +1,9 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## 2026-11-10 RELEASE-INTEGRATION-REPAIR-01 补验
+
+补齐同一浏览器标签页内库存未知提交恢复，复验 Chrome 原生 100%／125% 和长记录，并完成隔离 PostgreSQL 真实恢复、加密签名及保留策略。前端全量定向门禁通过；SQLite 后端全量未通过，前向迁移复验结果单列。正式目标环境未核验，详见[补验记录](uat-evidence/release-integration-repair-01-followup/README.md)。
+
 ## 2026-11-09 RELEASE-INTEGRATION-REPAIR-01
 
 以 `c90cacaa` 为共同基线，已合入 A、B、C、D，迁移在 `0128` 汇合。PostgreSQL 17 和 SQLite 各完成空库、c978、c90 三入口定向复验；真实 Chrome codex 定向验收及实际 XLSX/CSV 下载已记录。阶段为集成完成、待补发布验收；未执行项及测试口径见[本轮验收记录](uat-evidence/release-integration-repair-01/README.md)。旧证据和旧阶段状态保留。

@@ -1,5 +1,9 @@
 # SUNJACK-ERP 项目问题台账
 
+## 2026-11-10 RELEASE-INTEGRATION-REPAIR-01 补验
+
+追加库存重开重放、长内容与 125% 缩放、证书业务字段提示及恢复演练证据。后端全量测试未通过，需隔离旧迁移回退测试并核对其他失败；未改变迁移保护或关闭旧问题。原证据保留，后续结果见[补验记录](uat-evidence/release-integration-repair-01-followup/README.md)。
+
 ## 2026-11-09 RELEASE-INTEGRATION-REPAIR-01 补充证据
 
 补齐工作区弹层、库存调整保护及重放、SKU 成本快照、采购库存参考和财务抵减导出；合入附件恢复与历史统计交付。三入口合成迁移、定向回归及 Chrome 下载见[本轮验收记录](uat-evidence/release-integration-repair-01/README.md)。保留已有 Issue 状态及先前证据；本轮未执行全量套件、CI 和生产部署。

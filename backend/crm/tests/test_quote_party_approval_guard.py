@@ -113,7 +113,8 @@ class QuotePartyApprovalGuardTests(ApplicationFixture, TestCase):
         legacy.save(update_fields=['status'])
         order = Order.objects.create(order_no='GUARD-LEGACY', customer=self.customer,
                                      quote=legacy, order_date=date(2026, 1, 1))
-        with patch('crm.services.order_lifecycle._validate_order_for_confirmation', return_value=[object()]), \
+        line = order.items.create(sku=self.quote.items.first().sku, quantity=1, unit_price=10)
+        with patch('crm.services.order_lifecycle._validate_order_for_confirmation', return_value=[line]), \
              patch('crm.services.order_lifecycle._order_item_payload', return_value=[]), \
              patch('crm.serializers.OrderSerializer._create_quote_revision_if_needed', return_value=legacy), \
              patch('crm.services.order_lifecycle.allocate_order'), \

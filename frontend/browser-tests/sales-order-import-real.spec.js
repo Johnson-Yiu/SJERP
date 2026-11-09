@@ -4,7 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { syntheticVoucherPdf } from './helpers/bank-voucher.js'
 
-import { expect, test } from '@playwright/test'
+import { chromium, expect, test } from '@playwright/test'
 
 const evidenceDir = process.env.SALES_ORDER_IMPORT_EVIDENCE_DIR
 if (!evidenceDir) throw new Error('SALES_ORDER_IMPORT_EVIDENCE_DIR must be set by the isolated test runner.')
@@ -281,8 +281,15 @@ test('inventory draft guards the form and replays the same write after a lost re
   const save = form.getByRole('button', { name: '保存 1 条流水', exact: true })
   await save.click()
   await expect(form.getByRole('alert')).toContainText('保存结果尚未确认')
+  const draftTab = page.locator('.workspace-tab').filter({ has: movementTab })
+  await draftTab.getByRole('button', { name: /^关闭/ }).press('Enter', { timeout: 10000 })
+  await page.getByTestId('dialog-confirm').click({ timeout: 10000 })
+  await expect(form).toBeHidden()
+  await page.goto('/inventory-movements')
+  await page.getByRole('button', { name: '新建库存调整', exact: true }).click()
+  await expect(form.getByRole('region', { name: '待核对的库存调整' })).toContainText('UAT-IMP-SKU-002')
   const replay = page.waitForResponse(response => response.url().endsWith('/inventory-movements/batch/') && response.ok())
-  await save.click()
+  await form.getByRole('button', { name: '重试原提交', exact: true }).click()
   expect((await replay).headers()['idempotent-replay']).toBe('true')
   expect(attempts[0].key).toBeTruthy()
   expect(attempts[1]).toEqual(attempts[0])
@@ -400,6 +407,73 @@ test('finance fee scenarios refuse excess refunds and reverse writeoffs without 
   expect((await (await page.request.get('/api/transactions/')).json()).count).toBe(before)
   await page.screenshot({path:path.join(evidenceDir,'finance-writeoff-corrected.png'),fullPage:true})
   await writeFile(path.join(evidenceDir,'finance-correction-result.json'),JSON.stringify({refundStatus:refused.status(),restored,transactionsUnchanged:true},null,2))
+})
+
+test('Chrome native page zoom keeps long finance and history records usable', async ({ page, baseURL }) => {
+  test.setTimeout(180000)
+  const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8')).long_content
+  test.skip(!fixture, 'Requires the follow-up evidence fixture')
+  const profile = path.join(process.env.ISOLATED_TEST_ROOT, 'chrome-native-zoom')
+  const context = await chromium.launchPersistentContext(profile, { channel: 'chrome', viewport: { width: 1366, height: 768 } })
+  const results = []
+  try {
+    await context.addCookies(await page.context().cookies())
+    const browserSettings = context.pages()[0]
+    const app = await context.newPage()
+    const history = await context.newPage()
+    const cdp = new Map([[app, await context.newCDPSession(app)], [history, await context.newCDPSession(history)]])
+    async function capture(candidate, screenshot) {
+      const { data } = await cdp.get(candidate).send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+      await writeFile(path.join(evidenceDir, screenshot), Buffer.from(data, 'base64'))
+    }
+    for (const zoom of [1, 1.25]) {
+      await browserSettings.goto('chrome://settings/appearance')
+      const zoomControl = browserSettings.locator('settings-appearance-page select').filter({
+        has: browserSettings.locator('option[value="1.25"]'),
+      })
+      await zoomControl.selectOption(String(zoom))
+      await app.goto(new URL('/finance?date_from=2026-11-01&date_to=2026-11-30', baseURL).href)
+      const sales = app.locator('article').filter({ hasText: '合同销售额' }).first()
+      await sales.getByRole('button', { name: '查看构成明细' }).click()
+      const detail = app.getByRole('region', { name: '财务金额构成明细' })
+      const orderRow = detail.getByRole('row').filter({ hasText: fixture.order })
+      await expect(orderRow).toContainText(fixture.customer)
+      await expect(orderRow).toContainText('¥71,035.50')
+      await history.goto(new URL('/history-preflight', baseURL).href)
+      await history.locator('input[type="file"]').setInputFiles(path.join(evidenceDir, fixture.workbook))
+      await history.getByRole('button', { name: '开始预检', exact: true }).click()
+      await expect(history.locator('.preflight-summary')).toContainText(fixture.workbook)
+      await expect(history.getByRole('row').filter({ hasText: fixture.historical_order })).not.toHaveCount(0)
+      await expect(history.getByRole('row').filter({ hasText: 'SYNTH-HISTORY-LONG-LINE-' })).toHaveCount(4)
+      for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
+        for (const [name, candidate] of [['finance', app], ['history-preflight', history]]) {
+          await candidate.setViewportSize({ width, height })
+          const metrics = await candidate.evaluate(() => ({
+            dpr: devicePixelRatio, width: innerWidth, documentWidth: document.documentElement.scrollWidth,
+          }))
+          expect(metrics.dpr).toBeCloseTo(zoom, 2)
+          expect(metrics.width).toBeCloseTo(width / zoom, 0)
+          expect(metrics.documentWidth).toBeLessThanOrEqual(metrics.width + 1)
+          if (metrics.width < 768) await expect.poll(() => candidate.locator('.sidebar').evaluate(element => element.getBoundingClientRect().right)).toBeLessThanOrEqual(1)
+          const stem = `${name}-${width}-zoom-${zoom * 100}`
+          await candidate.evaluate(() => scrollTo(0, 0))
+          await capture(candidate, `${stem}.png`)
+          const action = name === 'finance' ? orderRow.getByRole('link', { name: '查看订单' }) : history.getByRole('button', { name: /下载 CSV/ })
+          await action.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }))
+          const bounds = await action.boundingBox()
+          expect(bounds.x).toBeGreaterThanOrEqual(0)
+          expect(bounds.x + bounds.width).toBeLessThanOrEqual(metrics.width + 1)
+          expect(bounds.y).toBeGreaterThanOrEqual(0)
+          expect(bounds.y + bounds.height).toBeLessThanOrEqual(height / zoom + 1)
+          await capture(candidate, `${stem}-action.png`)
+          results.push({ name, width, height, zoom, ...metrics, screenshot: `${stem}.png`, actionScreenshot: `${stem}-action.png` })
+        }
+      }
+    }
+    await writeFile(path.join(evidenceDir, 'native-zoom-results.json'), JSON.stringify(results, null, 2))
+  } finally {
+    await context.close()
+  }
 })
 
 test('codex logout clears the workspaces and returns to sign-in', async ({ page }) => {

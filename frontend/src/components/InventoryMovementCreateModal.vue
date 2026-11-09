@@ -5,7 +5,9 @@ import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
 import { useAccessControl } from '../accessControl'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
 import { apiErrorMessage } from '../utils/apiErrors'
+import { confirmDialog } from '../dialogs'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { tradePayload } from '../utils/tradeUnits'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
@@ -15,7 +17,11 @@ import ComboInput from './ComboInput.vue'
 import SkuPickerPanel from './SkuPickerPanel.vue'
 import SegmentedDateInput from './SegmentedDateInput.vue'
 
-const { can } = useAccessControl()
+const { can, accessState } = useAccessControl()
+const { workspace, storageKey } = useWorkspaceNavigation()
+const recoveryKey = workspace
+  ? storageKey('inventory-adjustment-pending-v1', { accountOnly: true })
+  : `inventory-adjustment-pending-v1:${accessState.operator?.user_id ?? 'standalone'}`
 const ready = ref(false)
 function close() { if (!saving.value) guard.requestClose(() => emit('close')) }
 const emit = defineEmits(['close', 'saved'])
@@ -24,6 +30,21 @@ const skus = ref([]), orders = ref([]), selectedSkuIds = ref([]), selectedOrderI
 const form = reactive({ movement_date: new Date().toLocaleDateString('en-CA'), type: 'adjust_in' })
 const lines = reactive({})
 let submission = null
+const pending = ref([])
+function readPending() {
+  const saved = JSON.parse(sessionStorage.getItem(recoveryKey) || '[]')
+  if (!Array.isArray(saved) || saved.some(row => typeof row.key !== 'string' || !Array.isArray(row.payload?.items))) {
+    throw new Error('Invalid inventory recovery record')
+  }
+  return saved
+}
+function updatePending(attempt, keep) {
+  const next = readPending().filter(row => row.key !== attempt.key)
+  if (keep) next.push(attempt)
+  if (next.length) sessionStorage.setItem(recoveryKey, JSON.stringify(next))
+  else sessionStorage.removeItem(recoveryKey)
+  pending.value = next
+}
 const guard = useUnsavedChangesGuard({
   data: () => ({ form, selectedSkuIds: selectedSkuIds.value, selectedOrderIds: selectedOrderIds.value, lines }),
   busy: () => saving.value,
@@ -66,12 +87,47 @@ async function init() {
     const [skuResponse, orderResponse] = await Promise.all([listAll('/skus/', { params: { include_inactive: 1 } }), can('orders', 'view') ? listAll('/orders/') : Promise.resolve([])])
     skus.value = skuResponse
     orders.value = orderResponse
+    pending.value = readPending()
     ready.value = true
   } catch (requestError) {
     error.value = apiErrorMessage(requestError) || '表单所需数据加载失败。'
   } finally { loading.value = false }
 }
 function lineFor(sku) { return lines[sku.id] }
+function skuLabel(id) { return skus.value.find(row => row.id === id)?.sku || 'SKU 资料不可用' }
+async function sendAttempt(attempt) {
+  let response
+  try {
+    response = await api.post('/inventory-movements/batch/', attempt.payload, { headers: { 'Idempotency-Key': attempt.key } })
+  } catch (requestError) {
+    if (requestError.response?.status === 400) {
+      try { updatePending(attempt, false) } catch { /* Retain the original attempt if storage is unavailable. */ }
+      if (submission?.key === attempt.key) submission.snapshot = null
+      error.value = `库存调整未保存。 ${apiErrorMessage(requestError)} 请修正后重试。`
+    } else {
+      error.value = '保存结果尚未确认。请重试原提交，或先核对库存流水。'
+    }
+    return
+  }
+  try { updatePending(attempt, false) } catch { /* A retained attempt can only replay the confirmed write. */ }
+  guard.markClean()
+  emit('saved', response.data)
+}
+async function retryPending(attempt) {
+  if (saving.value || !ready.value) return
+  // Do not close an unrelated unsaved draft when recovering an older attempt.
+  const run = async () => {
+    saving.value = true; error.value = ''
+    try { await sendAttempt(attempt) } finally { saving.value = false }
+  }
+  if (guard.dirty.value && !await confirmDialog({
+    title: '重试原提交',
+    message: '将核对之前的库存调整。核对成功后关闭本表单，当前未保存的填写不会保留。',
+    confirmText: '重试原提交',
+    cancelText: '继续编辑',
+  })) return
+  if (!saving.value) await run()
+}
 async function save() {
   if (saving.value || !ready.value) return
   error.value = ''
@@ -91,18 +147,13 @@ async function save() {
     }
     if (!submission) submission = { snapshot, key: crypto.randomUUID() }
     else if (submission.snapshot === null) submission.snapshot = snapshot
-    const response = await api.post('/inventory-movements/batch/', payload, { headers: { 'Idempotency-Key': submission.key } })
-    guard.markClean()
-    emit('saved', response.data)
-  } catch (requestError) {
-    // A validation response confirms the transaction rolled back. Keep the
-    // identity, but allow correcting the input before the next attempt.
-    if (requestError.response?.status === 400 && submission) {
-      submission.snapshot = null
-      error.value = `库存调整未保存。 ${apiErrorMessage(requestError)} 请修正后重试。`
-    } else {
-      error.value = '保存结果尚未确认，请保持表单内容并重试；也可先核对库存流水。'
+    const attempt = { key: submission.key, payload }
+    try { updatePending(attempt, true) }
+    catch {
+      error.value = '库存调整未提交。浏览器无法保存本次提交记录，请恢复浏览器存储后重试。'
+      return
     }
+    await sendAttempt(attempt)
   } finally { saving.value = false }
 }
 onMounted(init)
@@ -117,6 +168,14 @@ onMounted(init)
           <div v-if="error" role="alert" class="inline-error">{{ error }}<button v-if="!ready && !loading" type="button" class="btn btn-secondary" @click="init">重新加载</button></div>
           <div v-if="loading" class="modal-loading">正在加载...</div>
           <template v-else-if="ready">
+            <section v-if="pending.length" class="movement-section" aria-label="待核对的库存调整">
+              <h4>待核对的库存调整</h4>
+              <p class="movement-help">上次提交的结果还未确认。重试会核对原提交，已经入账的流水不会重复登记。</p>
+              <div v-for="attempt in pending" :key="attempt.key" class="pending-movement">
+                <span>{{ attempt.payload.movement_date }} · {{ skuLabel(attempt.payload.items[0]?.sku) }} · {{ attempt.payload.items.length }} 条明细</span>
+                <button type="button" class="btn btn-secondary" :disabled="saving" @click="retryPending(attempt)">重试原提交</button>
+              </div>
+            </section>
             <section class="movement-section"><h4>流水基本信息</h4><div class="movement-grid">
               <div class="field"><label>流水号</label><input aria-label="流水号" :value="movementPreview" class="readonly-input" readonly /></div>
               <div class="field"><label>发生日期 <em>*</em></label><SegmentedDateInput :model-value="form.movement_date" required @update:model-value="value => form.movement_date = value" /></div>

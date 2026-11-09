@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { installNumericWheelGuard } from './numericWheelGuard'
+import { installNumericWheelGuard } from '../src/utils/numericWheelGuard'
 
 let removeGuard
 

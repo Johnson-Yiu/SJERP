@@ -2,8 +2,10 @@
 import csv
 from decimal import Decimal
 
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import FileResponse, HttpResponse
 from django.utils import timezone
 from rest_framework import viewsets
@@ -12,7 +14,7 @@ from rest_framework.exceptions import APIException, NotFound, ValidationError
 from rest_framework.response import Response
 
 from .models import (FinanceAccount, FinanceAccountMapping, FinanceClassification, FinanceFact,
-    FinanceHistoricalTransfer, FinanceInstruction, FinanceReview, FinanceTransferMatch, FinanceVoucher)
+    FinanceHistoricalTransfer, FinanceInstruction, FinanceReview, FinanceTransferMatch, FinanceVoucher, Order, RmbCashEvent)
 from .permissions import user_can
 from .reporting import safe_csv
 from .services import finance_closeout as ledger
@@ -31,9 +33,28 @@ class FinanceVoucherUploadHandler(CsvImportSizeLimitUploadHandler):
         self.limit = 10 * 1024 * 1024
 
 
+def actor_name(actor):
+    if not isinstance(actor, dict) or actor.get("kind") != "authenticated_user":
+        return "开发身份（非正式审批人）" if actor else "尚未复核"
+    user = get_user_model().objects.filter(pk=actor.get("user_id")).first()
+    return (user.get_full_name() or user.get_username()) if user else "已停用或不存在的账号"
+
+
+def fact_label(fact):
+    reference = "手工登记" if fact.source_system == "manual" and fact.source_key == fact.instruction.request_key else fact.source_key
+    return f"{fact.actual_date} · {fact.account.name} · {'流入' if fact.direction == 'income' else '流出'} ¥{fact.amount} · {reference}"
+
+
+def bank_label(event, user):
+    if not ledger.cash.visible(event, user):
+        return "银行记录不可查看"
+    return f"{event.bank_date} · {event.rmb_account} · {'流入' if event.direction == 'income' else '流出'} ¥{event.bank_net_amount} · {event.bank_reference or '银行参考号未提供'} · {event.event_no}"
+
+
 def instruction_data(obj):
     return {"id": obj.pk, "kind": obj.kind, "status": obj.status, "payload": obj.payload,
         "created_actor": obj.created_actor, "approved_actor": obj.approved_actor,
+        "created_actor_name": actor_name(obj.created_actor), "approved_actor_name": actor_name(obj.approved_actor),
         "created_at": obj.created_at, "approved_at": obj.approved_at, "replaces": obj.replaces_id}
 
 
@@ -54,6 +75,7 @@ def fact_data(obj, matched=None):
         "unallocated_amount": str(obj.amount - sum((Decimal(a["amount"]) for a in obj.instruction.payload["allocations"]), Decimal("0"))) if obj.kind == "refund_payment" else "0.00",
         "voucher": obj.voucher_id, "voucher_sha256": obj.voucher.sha256,
         "source_system": obj.source_system, "source_key": obj.source_key, "parent": obj.parent_id, "legacy_parent": obj.legacy_parent_id,
+        "source_reference": "" if obj.source_system == "manual" and obj.source_key == obj.instruction.request_key else obj.source_key,
         "actor": obj.actor, "created_at": obj.created_at,
         "company_flow_included": obj.kind != "opening" and obj.amount != 0 and obj.pk not in (matched or set()),
         "flow_exclusion_reason": "opening" if obj.kind == "opening" else "superseded" if obj.pk in superseded else "zero_correction" if obj.amount == 0 else "internal_principal" if obj.pk in matched else "",
@@ -128,12 +150,26 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
                 "statement_balance": str(r.statement_balance), "calculated_balance": str(r.calculated_balance),
                 "difference": str(r.difference), "voucher": r.voucher_id, "reason": r.reason,
                 "actor": r.actor, "created_at": r.created_at,
+                "actor_name": actor_name(r.actor),
                 "status": "needs_review" if fingerprint != r.fingerprint else "completed" if r.completed else "difference_pending"})
+        transfers = [{"id": row.pk, "outgoing_id": row.outgoing_id, "incoming_id": row.incoming_id, "reason": row.reason, "actor": row.actor,
+            "outgoing_label": fact_label(row.outgoing), "incoming_label": fact_label(row.incoming)} for row in FinanceTransferMatch.objects.select_related("outgoing__account", "outgoing__instruction", "incoming__account", "incoming__instruction")]
+        historical_transfers = []
+        for row in FinanceHistoricalTransfer.objects.select_related("outgoing_fact__account", "outgoing_fact__instruction", "incoming_fact__account", "incoming_fact__instruction", "outgoing_legacy", "incoming_legacy"):
+            historical_transfers.append({"id": row.pk, "reason": row.reason, "actor": row.actor,
+                "outgoing_fact_id": row.outgoing_fact_id, "incoming_fact_id": row.incoming_fact_id,
+                "outgoing_legacy_id": row.outgoing_legacy_id, "incoming_legacy_id": row.incoming_legacy_id,
+                "outgoing_voucher_id": row.outgoing_voucher_id, "incoming_voucher_id": row.incoming_voucher_id,
+                "outgoing_label": bank_label(row.outgoing_legacy, request.user) if row.outgoing_legacy_id else fact_label(row.outgoing_fact),
+                "incoming_label": bank_label(row.incoming_legacy, request.user) if row.incoming_legacy_id else fact_label(row.incoming_fact)})
+        mapped_codes = set(FinanceAccountMapping.objects.values_list("legacy_code", flat=True))
+        legacy_codes = {event.rmb_account for event in RmbCashEvent.objects.order_by("pk") if event.rmb_account not in mapped_codes and ledger.cash.visible(event, request.user)}
+        legacy_names = {account.code: account.name for account in FinanceAccount.objects.filter(code__in=legacy_codes)}
+        legacy_accounts = [{"code": code, "name": legacy_names.get(code) or code} for code in sorted(legacy_codes)]
         return Response({"accounts": accounts, "instructions": [instruction_data(i) for i in FinanceInstruction.objects.order_by("-pk")],
             "vouchers": [{"id": v.pk, "name": v.original_name, "sha256": v.sha256, "size": v.size} for v in FinanceVoucher.objects.filter(scope="account").order_by("-pk")],
             "reviews": reviews, "mappings": list(FinanceAccountMapping.objects.values("id", "legacy_code", "account_id", "reason", "actor")),
-            "transfers": list(FinanceTransferMatch.objects.values("id", "outgoing_id", "incoming_id", "reason", "actor")),
-            "historical_transfers": list(FinanceHistoricalTransfer.objects.values("id", "outgoing_fact_id", "incoming_fact_id", "outgoing_legacy_id", "incoming_legacy_id", "outgoing_voucher_id", "incoming_voucher_id", "reason", "actor"))})
+            "transfers": transfers, "historical_transfers": historical_transfers, "legacy_accounts": legacy_accounts})
 
     @action(detail=False, methods=["post"])
     def accounts(self, request, format=None):
@@ -172,6 +208,57 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
     def preview(self, request, format=None):
         p = ledger.normalize(request.data, request.user)
         return Response({"payload": p, "duplicate_candidates": ledger.duplicate_candidates(p, request.user), "written": False})
+
+    @action(detail=False, methods=["get"])
+    def choices(self, request, format=None):
+        """Search by business references; identifiers stay inside option values."""
+        kind = request.query_params.get("type", "")
+        query = request.query_params.get("q", "").strip()[:100]
+        direction = request.query_params.get("direction", "")
+        if direction not in {"", "income", "expense"}:
+            raise ValidationError("资金方向无效。")
+        items = []
+        if kind in {"fact", "transfer_fact", "transfer_any"}:
+            facts = FinanceFact.objects.select_related("account", "instruction").order_by("-actual_date", "-pk")
+            if direction:
+                facts = facts.filter(direction=direction)
+            if query:
+                facts = facts.filter(Q(source_key__icontains=query) | Q(account__name__icontains=query))
+            for fact in facts[:30]:
+                label = fact_label(fact)
+                items.append({"value": f"fact:{fact.pk}" if kind == "transfer_any" else fact.pk, "label": label})
+        if kind in {"event", "transfer_any"}:
+            events = RmbCashEvent.objects.filter(status="confirmed").order_by("-bank_date", "-pk")
+            if direction:
+                events = events.filter(direction=direction)
+            if query:
+                events = events.filter(Q(event_no__icontains=query) | Q(bank_reference__icontains=query) | Q(rmb_account__icontains=query))
+            for event in events[:100]:
+                if ledger.cash.visible(event, request.user):
+                    label = bank_label(event, request.user)
+                    items.append({"value": f"legacy:{event.pk}" if kind == "transfer_any" else event.pk, "label": label})
+                    if len(items) >= 60:
+                        break
+        if kind == "order":
+            orders = Order.objects.select_related("customer").order_by("-order_date", "-pk")
+            if query:
+                orders = orders.filter(Q(order_no__icontains=query) | Q(customer__name__icontains=query))
+            for order in orders[:30]:
+                items.append({"value": order.pk, "label": f"{order.order_no} · {order.order_date} · {order.customer.name} · {order.currency} · {order.get_status_display()}"})
+        if kind in {"approval", "replacement"}:
+            instructions = FinanceInstruction.objects.order_by("-created_at", "-pk")
+            instructions = instructions.filter(kind="refund_approval", status="approved") if kind == "approval" else instructions.filter(status__in=("cancelled", "failed"))
+            for obj in instructions[:100]:
+                p = obj.payload
+                reference = "手工登记" if p.get("source_system") == "manual" and p.get("source_key") == obj.request_key else p.get("source_key", "")
+                label = f"{reference} · {p.get('actual_date', '')} · ¥{p.get('amount', '')} · {obj.reason}"
+                if not query or query.lower() in label.lower():
+                    items.append({"value": obj.pk, "label": label})
+                    if len(items) >= 30:
+                        break
+        if kind not in {"fact", "transfer_fact", "transfer_any", "event", "order", "approval", "replacement"}:
+            raise ValidationError("选择类型无效。")
+        return Response({"items": items})
 
     @action(detail=False, methods=["post"])
     def instructions(self, request, format=None):

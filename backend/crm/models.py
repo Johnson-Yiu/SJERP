@@ -1714,6 +1714,11 @@ class PaymentPlan(TimestampedModel):
 
     @property
     def remaining_amount(self):
+        prefetched = getattr(self, "_prefetched_objects_cache", {}).get("finance_writeoffs")
+        if prefetched is not None and all("corrections" in getattr(row, "_prefetched_objects_cache", {}) for row in prefetched):
+            written_off = sum((row.amount for row in prefetched), Decimal("0"))
+            corrected = sum((entry.amount for row in prefetched for entry in row.corrections.all()), Decimal("0"))
+            return max(self.planned_amount - self.settled_amount - written_off + corrected, Decimal("0"))
         written_off = self.finance_writeoffs.aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
         corrected = FinancePlanWriteoffCorrection.objects.filter(writeoff__plan=self).aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
         return max(self.planned_amount - self.settled_amount - written_off + corrected, Decimal("0"))
@@ -2091,12 +2096,26 @@ class Transaction(TimestampedModel):
             rows = self.allocations.filter(is_active=True)
         used = sum((row.cash_amount if row.cash_amount is not None else row.amount
                     for row in rows if row.is_active), Decimal("0"))
-        return max(self.amount - used, Decimal("0"))
+        refunded = self.refunded_cash_amount(unallocated_only=True)
+        return max(self.amount - used - refunded, Decimal("0"))
+
+    def refunded_cash_amount(self, *, unallocated_only=False):
+        rows = getattr(self, "_prefetched_objects_cache", {}).get("attributed_refunds")
+        if rows is not None:
+            return sum((row.refund.amount for row in rows if row.refund.status == "confirmed" and (not unallocated_only or row.refund.plan_id is None)), Decimal("0"))
+        rows = self.attributed_refunds.filter(refund__status="confirmed")
+        if unallocated_only:
+            rows = rows.filter(refund__plan__isnull=True)
+        return rows.aggregate(total=models.Sum("refund__amount"))["total"] or Decimal("0")
 
     @property
     def allocation_capacity(self):
+        refunded = self.refunded_cash_amount(unallocated_only=True)
         if self.kind == "customer_receipt" and self.direction == "income" and not self.order_id and not self.plan_id:
-            fees = self.receipt_adjustments.filter(nature="bank_fee", handling="company").select_related("evidence")
+            adjustments = getattr(self, "_prefetched_objects_cache", {}).get("receipt_adjustments")
+            fees = [item for item in adjustments if item.nature == "bank_fee" and item.handling == "company"] if adjustments is not None else self.receipt_adjustments.filter(nature="bank_fee", handling="company").select_related("evidence")
+            if not fees:
+                return self.amount - refunded
             from .services.finance_closeout import voucher
             from .services.cash_events import family
             family_ids = [row.pk for row in family(self)]
@@ -2104,19 +2123,19 @@ class Transaction(TimestampedModel):
             for item in fees:
                 try:
                     proof = voucher(item.evidence_id, scope="transaction")
-                    if (proof.bank_sources or proof.transactions.exclude(pk__in=family_ids).exists()
+                    if (proof.bank_sources or proof.receipt_refunds.exists() or proof.transactions.exclude(pk__in=family_ids).exists()
                             or proof.receipt_adjustments.exclude(transaction_id__in=family_ids).exists()):
                         continue
                 except Exception:
                     continue
                 total += item.amount
-            return self.amount + total
+            return self.amount + total - refunded
         if (self.kind == "unallocated_advance" and self.direction == "income" and self.fee_responsibility == "company"
                 and self.fee_evidence_id and self.bank_fee_amount > 0
                 and self.remittance_amount is not None and self.remittance_amount - self.amount == self.bank_fee_amount
                 and self._has_valid_fee_evidence()):
-            return self.amount + self.bank_fee_amount
-        return self.amount
+            return self.amount + self.bank_fee_amount - refunded
+        return self.amount - refunded
 
     def _has_valid_fee_evidence(self):
         cached = getattr(self, "_fee_evidence_valid_cache", None)
@@ -2130,6 +2149,7 @@ class Transaction(TimestampedModel):
             valid = (
                 proof.pk == self.fee_evidence_id
                 and not proof.bank_sources
+                and not proof.receipt_refunds.exists()
                 and not proof.transactions.exclude(pk__in=family_ids).exists()
             )
         except Exception:
@@ -2188,6 +2208,23 @@ class FinanceVoucher(FinanceAppendOnly):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("凭证不可删除。")
+
+
+class FinanceReceiptRefund(FinanceAppendOnly):
+    """Immutable attribution of a real refund to the cash actually received."""
+    source = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="attributed_refunds")
+    refund = models.OneToOneField(Transaction, on_delete=models.PROTECT, related_name="receipt_refund_link")
+    voucher = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT, related_name="receipt_refunds")
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class FinanceCashConfirmation(FinanceAppendOnly):
+    """Original confirmation intent, used to distinguish retries from changes."""
+    event = models.OneToOneField("RmbCashEvent", on_delete=models.PROTECT, related_name="confirmation_identity")
+    request_hash = models.CharField(max_length=64)
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class FinanceBankVoucherBinding(FinanceAppendOnly):

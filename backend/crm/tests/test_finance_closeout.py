@@ -50,6 +50,19 @@ class FinanceCloseoutTests(CloseoutFixture, TestCase):
     def setUp(self):
         self.setup_ledger()
 
+    def test_business_choices_use_searchable_labels_and_internal_values(self):
+        data = self.data(source_system="manual", request_key="a-private-request-key", source_key="a-private-request-key")
+        instruction, _ = ledger.submit(data, self.maker)
+        fact = ledger.post(instruction.pk, self.maker, voucher_checked=True)
+        client = APIClient()
+        client.force_authenticate(self.maker)
+        response = client.get("/api/finance-ledger/choices/", {"type": "fact", "q": self.account.name})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["items"][0]["value"], fact.pk)
+        self.assertIn(self.account.name, response.data["items"][0]["label"])
+        self.assertNotIn("a-private-request-key", response.data["items"][0]["label"])
+        self.assertEqual(client.get("/api/finance-ledger/choices/", {"type": "unknown"}).status_code, 400)
+
     def test_persistent_identity_and_conflicting_payload(self):
         data = self.data()
         obj, created = ledger.submit(data, self.maker)

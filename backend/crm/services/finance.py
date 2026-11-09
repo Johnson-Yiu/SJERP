@@ -70,8 +70,9 @@ def writeoff_receivable(source_transaction, plan, amount, reason, request_key, u
         if evidence is None or contract_change is not None:
             raise ValidationError("非现金抵减须关联凭证；已修订订单不能再次抵减。")
         from .finance_closeout import voucher
+        FinanceVoucher.objects.select_for_update().filter(pk=evidence.pk).first()
         evidence = voucher(evidence.pk, scope="transaction")
-        if (evidence.bank_sources or evidence.transactions.exclude(pk=source.pk).exists()
+        if (evidence.bank_sources or evidence.receipt_refunds.exists() or evidence.plan_writeoffs.exclude(source_transaction=source).exists() or evidence.transactions.exclude(pk=source.pk).exists()
                 or evidence.receipt_adjustments.exclude(transaction_id=source.pk).exists()):
             raise ValidationError("抵减凭证已绑定其他资金来源。")
     payload = {"source": source.pk, "plan": locked_plan.pk, "amount": str(amount), "reason": reason, "actor": actor}
@@ -213,8 +214,9 @@ def _receipt_fee_fields(payload, amount):
         if evidence is None:
             raise ValidationError("有银行扣费时，请上传并关联收款凭证。")
         from .finance_closeout import voucher
+        FinanceVoucher.objects.select_for_update().filter(pk=evidence.pk).first()
         evidence = voucher(evidence.pk, scope="transaction")
-        if evidence.bank_sources:
+        if evidence.bank_sources or evidence.receipt_refunds.exists():
             raise ValidationError("收款凭证不能绑定其他银行事件来源。")
         split_from = payload.get("split_from")
         root_id = (split_from.pk if hasattr(split_from, "pk") else split_from) or None
@@ -383,12 +385,12 @@ def _receipt_adjustment_input(rows, currency, *, customer, order, plans, request
                 evidence_id = int(raw["evidence"])
             except (TypeError, ValueError):
                 raise ValidationError("扣减凭证无效。")
-            evidence = FinanceVoucher.objects.filter(pk=evidence_id, scope="transaction").first()
+            evidence = FinanceVoucher.objects.select_for_update().filter(pk=evidence_id, scope="transaction").first()
             if evidence is None:
                 raise ValidationError("扣减凭证不存在或不是收款凭证。")
             from .finance_closeout import voucher
             evidence = voucher(evidence.pk, scope="transaction")
-            if evidence.bank_sources or evidence.transactions.exists() or evidence.receipt_adjustments.exists():
+            if evidence.bank_sources or evidence.receipt_refunds.exists() or evidence.plan_writeoffs.exists() or evidence.transactions.exists() or evidence.receipt_adjustments.exists():
                 raise ValidationError("扣减凭证已绑定其他资金来源，请核对后重试。")
         change = None
         if raw.get("contract_change") not in (None, ""):
@@ -966,11 +968,12 @@ def allocate_advance(advance, plan, amount):
     plan.save(update_fields=["settled_amount", "status", "updated_at"])
     cash_used = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.select_for_update().filter(advance=advance, is_active=True)), Decimal("0"))
     fee_used = sum(AdvanceAllocation.objects.select_for_update().filter(advance=advance, is_active=True).values_list("fee_credit_amount", flat=True), Decimal("0"))
-    cash_part = min(amount, max(advance.amount - cash_used, Decimal("0")))
+    unallocated_refunds = advance.attributed_refunds.filter(refund__status="confirmed", refund__plan__isnull=True).aggregate(total=models.Sum("refund__amount"))["total"] or Decimal("0")
+    cash_part = min(amount, max(advance.amount - cash_used - unallocated_refunds, Decimal("0")))
     fee_part = amount - cash_part
     if fee_part:
         if advance.kind == "customer_receipt":
-            if fee_part > advance.allocation_capacity - advance.amount - fee_used:
+            if fee_part > advance.allocation_capacity - advance.amount + unallocated_refunds - fee_used:
                 raise ValidationError("我方承担的扣费核销额度不足。")
         else:
             if advance.fee_responsibility != "company" or not advance.fee_evidence_id or fee_part > advance.bank_fee_amount - fee_used:
@@ -979,7 +982,7 @@ def allocate_advance(advance, plan, amount):
             proof = voucher(advance.fee_evidence_id, scope="transaction")
             family_root_id = advance.split_from_id or advance.pk
             linked_ids = {family_root_id, *Transaction.objects.filter(split_from_id=family_root_id).values_list("pk", flat=True)}
-            if proof.transactions.exclude(pk__in=linked_ids).exists():
+            if proof.receipt_refunds.exists() or proof.transactions.exclude(pk__in=linked_ids).exists():
                 raise ValidationError("收款手续费凭证已绑定其他收款来源。")
     AdvanceAllocation.objects.create(advance=advance, plan=plan, amount=amount, cash_amount=cash_part, fee_credit_amount=fee_part)
     return plan
@@ -1177,6 +1180,81 @@ def record_contract_refund(contract, payload):
     if remaining != 0:
         raise ValidationError("合同已结收付款计划不足，不能安全登记退款。")
     return first
+
+
+@transaction.atomic
+def refund_receipt_cash(source, order, value, reason, evidence_id, user):
+    """Refund traceable, unconverted cash; keep source and allocations immutable."""
+    from crm.models import Customer, FinanceReceiptRefund
+    if not source.customer_id:
+        raise ValidationError("原收款尚未核实客户，不能登记退款。")
+    Customer.objects.select_for_update().get(pk=source.customer_id)
+    members = cash.family(source)
+    for member in members:
+        Transaction.objects.select_for_update().get(pk=member.pk)
+    source = Transaction.objects.get(pk=source.pk)
+    if source.status != "confirmed" or source.direction != "income" or source.kind not in {"customer_receipt", "unallocated_advance"}:
+        raise ValidationError("只能从已确认客户收款登记退款。")
+    reason = str(reason or "").strip()
+    if not 5 <= len(reason) <= 500:
+        raise ValidationError("请填写至少 5 个字的退款依据。")
+    from .finance_closeout import voucher
+    FinanceVoucher.objects.select_for_update().filter(pk=evidence_id).first()
+    proof = voucher(evidence_id, scope="transaction")
+    if proof.bank_sources or proof.transactions.exists() or proof.receipt_adjustments.exists() or proof.plan_writeoffs.exists() or proof.receipt_refunds.exists():
+        raise ValidationError("退款凭证已用于其他业务，请上传本次实际退款凭证。")
+    amount = _receipt_amount(value, source.currency, "退款金额")
+    if cash.refund_source_uncertainty(source):
+        raise ValidationError("原收款有来源不明的历史退款或替代关系，请先核实。")
+    if source.cash_source_allocations.filter(event__status="pending").exists():
+        raise ValidationError("原收款有待确认银行登记，请先完成或放弃该登记。")
+    if amount > cash.refundable_cash(source):
+        raise ValidationError("退款超过原收款尚未结汇且尚未退回的实际现金。")
+    if order:
+        plan_ids = set(source.allocations.filter(is_active=True, plan__order=order).values_list("plan_id", flat=True))
+        if source.plan_id and source.plan.order_id == order.pk:
+            plan_ids.add(source.plan_id)
+        # Match allocation's source → plan → contract lock order, and acquire
+        # multiple plan locks by primary key before choosing refund priority.
+        plans = list(PaymentPlan.objects.select_for_update().filter(pk__in=plan_ids).order_by("pk"))
+        order = Order.objects.select_for_update().get(pk=order.pk)
+        reject_unlinked_historical_finance(order, "登记退款")
+        if order.customer_id != source.customer_id or order.currency != source.currency or order.status in {"draft", "cancelled"}:
+            raise ValidationError("订单与原收款的客户、币种或状态不匹配。")
+        plans.sort(key=lambda plan: (plan.due_date is not None, plan.due_date or date.min, plan.pk), reverse=True)
+    else:
+        plans = [None]
+    remaining, rows = amount, []
+    for plan in plans:
+        if plan is None:
+            eligible = source.unallocated_cash_amount
+        else:
+            eligible = sum((a.cash_amount if a.cash_amount is not None else a.amount for a in source.allocations.filter(is_active=True, plan=plan)), Decimal("0"))
+            if source.plan_id == plan.pk:
+                eligible += source.amount
+            previous = source.attributed_refunds.filter(refund__status="confirmed", refund__plan=plan).aggregate(total=models.Sum("refund__amount"))["total"] or Decimal("0")
+            eligible = min(max(eligible - previous, Decimal("0")), plan.settled_amount)
+        applied = min(remaining, eligible)
+        if applied <= 0:
+            continue
+        rate = source.exchange_rate
+        refund = Transaction.objects.create(transaction_no=_transaction_no(), transaction_date=timezone.localdate(),
+            direction="expense", kind="refund", category="客户退款", amount=applied, currency=source.currency,
+            exchange_rate=rate, rmb_amount=(applied * rate).quantize(Decimal("0.0001")) if rate else Decimal("0"),
+            reference_rate_missing=source.reference_rate_missing or rate is None, customer_id=source.customer_id,
+            order=order, plan=plan, status="confirmed", split_from=rows[0][0] if rows else None, notes=reason)
+        link = FinanceReceiptRefund.objects.create(source=source, refund=refund, voucher=proof, actor=cash.actor(user, "refund_receipt_cash"))
+        if plan:
+            plan.settled_amount -= applied
+            _sync_plan_status(plan)
+            plan.save(update_fields=["settled_amount", "status", "updated_at"])
+        rows.append((refund, link))
+        remaining -= applied
+        if not remaining:
+            break
+    if remaining:
+        raise ValidationError("所选订单可退的原收款现金不足；未分配款请单独选择退款。")
+    return rows
 
 
 @transaction.atomic

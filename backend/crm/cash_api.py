@@ -8,7 +8,7 @@ from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
-from .models import FinanceAccount, FinanceBankVoucherBinding, RmbCashEvent, Transaction
+from .models import FinanceAccount, FinanceBankVoucherBinding, Order, RmbCashEvent, Transaction
 from .permissions import user_can
 from .services import cash_events as cash
 
@@ -21,46 +21,65 @@ class CashEventPermission(BasePermission):
 
 
 def _source_order(row):
+    return next(iter(_source_orders(row)), None)
+
+
+def _source_orders(row):
+    orders = {}
     for member in cash.family(row):
         if member.order_id:
-            return member.order
+            orders[member.order_id] = member.order
         if member.plan_id and member.plan.order_id:
-            return member.plan.order
-    return None
+            orders[member.plan.order_id] = member.plan.order
+        for allocation in member.allocations.filter(is_active=True, plan__order__isnull=False).select_related("plan__order"):
+            orders[allocation.plan.order_id] = allocation.plan.order
+    return list(orders.values())
 
 
 def event_data(event, user=None):
     allocations = list(event.sources.order_by("source_id"))
-    reference = sum((a.amount * Decimal(a.source_snapshot["exchange_rate"]) for a in allocations), Decimal("0")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    reference = Decimal("0")
+    for allocation in allocations:
+        rate = allocation.source_snapshot.get("exchange_rate")
+        if rate in (None, "", "None") or allocation.source_snapshot.get("reference_rate_missing"):
+            reference = None
+            break
+        reference += allocation.amount * Decimal(rate)
+    if reference is not None:
+        reference = reference.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     gross = event.gross_rmb_amount or event.bank_net_amount + event.fee_amount
     quoted_reference = (event.amount * event.quoted_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if event.quoted_rate is not None else None
     binding = FinanceBankVoucherBinding.objects.filter(event=event).select_related("voucher").first()
     orders = {}
     if user is None or user_can(user, "orders", "view"):
         for allocation in allocations:
-            order = _source_order(allocation.source)
-            if order:
+            for order in _source_orders(allocation.source):
                 orders[order.pk] = {"id": order.pk, "order_no": order.order_no}
+        if user is not None and orders:
+            from .sales_scope import scope_customer_related_queryset
+            permitted = set(scope_customer_related_queryset(Order.objects.filter(pk__in=orders), user).values_list("pk", flat=True))
+            orders = {key: value for key, value in orders.items() if key in permitted}
     source_receipt = None
     receipt_id = event.request_payload.get("source_receipt_id")
     if receipt_id:
         receipt = Transaction.objects.filter(pk=receipt_id).first()
         if receipt:
             source_receipt = {"id": receipt.pk, "transaction_no": receipt.transaction_no}
-            if (user is None or user_can(user, "orders", "view")) and receipt.order_id:
+            if receipt.order_id and receipt.order_id in orders:
                 source_receipt["order_id"] = receipt.order_id
                 source_receipt["order_no"] = receipt.order.order_no
     account_codes = {event.source_account, event.rmb_account}
     account_names = {row.code: row.name for row in FinanceAccount.objects.filter(code__in=account_codes)}
     return {
         "private_voucher": binding.voucher_id if binding else None,
+        "private_voucher_name": binding.voucher.original_name if binding else "",
         "private_voucher_sha256": binding.voucher.sha256 if binding else None,
         "evidence_basis": "file_bound_v1" if binding else "historical_manual_reference_only",
         "source_receipt": source_receipt, "orders": list(orders.values()),
         "id": event.pk, "event_no": event.event_no, "request_key": event.request_key,
         "kind": event.kind, "currency": event.currency, "amount": str(event.amount),
         "direction": event.direction, "bank_date": event.bank_date,
-        "gross_rmb_amount": str(gross), "actual_rate": str(event.actual_rate),
+        "gross_rmb_amount": str(gross), "actual_rate": str(event.actual_rate) if event.actual_rate > 0 else None,
         "bank_net_amount": str(event.bank_net_amount), "fee_mode": event.fee_mode,
         "bank_currency": "CNY", "fee_currency": "CNY",
         "fee_amount": str(event.fee_amount), "source_account": event.source_account,
@@ -76,9 +95,9 @@ def event_data(event, user=None):
         "cancelled_actor": event.confirmed_actor if event.status == "cancelled" else {},
         "cancelled_reason": event.cancelled_reason, "correction_of": event.correction_of_id, "fee_for": event.fee_for_id,
         "sources": [{"transaction_id": a.source_id, "amount": str(a.amount), "currency": a.currency, "snapshot": a.source_snapshot} for a in allocations],
-        "reference_amount": str(reference),
-        "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
-        "pre_fee_reference_delta": str((gross - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+        "reference_amount": str(reference) if reference is not None else None,
+        "net_minus_reference_information_only": str((event.bank_net_amount - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if reference is not None else None,
+        "pre_fee_reference_delta": str((gross - reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if reference is not None else None,
         "quoted_reference_amount": str(quoted_reference) if quoted_reference is not None else None,
         "quoted_reference_delta": str((gross - quoted_reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if quoted_reference is not None else None,
         "basis": "bank_voucher_manual_v1", "coverage_since": None,
@@ -115,7 +134,7 @@ class RmbCashEventViewSet(viewsets.ViewSet):
         if not isinstance(sources, list) or len(files.getlist("file")) != 1:
             raise ValidationError("须上传一份文件并明确来源列表。")
         obj = upload(files.get("file"), request.user, bank_sources=sources)
-        return Response({"id": obj.pk, "sha256": obj.sha256, "size": obj.size}, status=201)
+        return Response({"id": obj.pk, "name": obj.original_name, "sha256": obj.sha256, "size": obj.size}, status=201)
 
     @action(detail=True, methods=["post"], url_path="bind-voucher")
     def bind_voucher(self, request, pk=None, format=None):
@@ -194,8 +213,8 @@ class RmbCashEventViewSet(viewsets.ViewSet):
             root = Transaction.objects.filter(pk=int(family_root)).first()
             if root is None or not cash.source_visible(root, request.user):
                 raise NotFound("关联收款不存在或不可访问。")
-            if root.split_from_id or root.kind != "customer_receipt" or root.status != "confirmed" or root.direction != "income" or not root.order_id:
-                raise ValidationError("family_root 必须指向已确认、关联订单的客户收款主流水。")
+            if root.split_from_id or root.kind != "customer_receipt" or root.status != "confirmed" or root.direction != "income":
+                raise ValidationError("关联收款须为已确认的客户收款主流水。")
             if currency and currency != root.currency:
                 raise ValidationError("来源币种必须与已保存收款一致。")
             rows = rows.filter(pk__in=[member.pk for member in cash.family(root)])
@@ -207,8 +226,14 @@ class RmbCashEventViewSet(viewsets.ViewSet):
             if row.currency not in cash.UNITS:
                 error = "币种未配置。"
             order = _source_order(row)
+            customer = row.customer or (order.customer if order else None)
+            if order and user_can(request.user, "orders", "view"):
+                from .sales_scope import scope_customer_related_queryset
+                if not scope_customer_related_queryset(Order.objects.filter(pk=order.pk), request.user).exists():
+                    order = None
             result.append({"id": row.pk, "transaction_no": row.transaction_no,
                            "currency": row.currency, "direction": row.direction, "amount": str(row.amount), "kind": row.kind,
+                           "customer_name": customer.name if customer and user_can(request.user, "customers", "view") else "",
                            "order_id": order.pk if order and user_can(request.user, "orders", "view") else None,
                            "order_no": order.order_no if order and user_can(request.user, "orders", "view") else "",
                            "family_root": cash.family(row)[0].pk,

@@ -19,7 +19,7 @@ from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
 from rest_framework.test import APIClient
 
-from crm.models import AdvanceAllocation, CashSourceAllocation, Customer, FinanceAccount, FinanceBankVoucherBinding, FinancePlanWriteoff, FinancePlanWriteoffCorrection, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
+from crm.models import AdvanceAllocation, CashSourceAllocation, Customer, FinanceAccount, FinanceBankVoucherBinding, FinanceCashConfirmation, FinancePlanWriteoff, FinancePlanWriteoffCorrection, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
 from crm.services import cash_events as cash
 from crm.services.finance import allocate_advance, correct_receivable_writeoff, record_contract_refund, record_transaction, void_transaction, writeoff_receivable
 from crm.serializers import TransactionSerializer
@@ -33,7 +33,7 @@ URL = "/api/rmb-cash-events/"
 def legacy_hash():
     # Appended financial audit is an intended side effect; business facts still
     # remain byte-for-byte unchanged. Audit correctness is asserted separately.
-    data = {m.__name__: list(m.objects.order_by("pk").values()) for m in apps.get_app_config("crm").get_models() if m not in {RmbCashEvent, CashSourceAllocation, OperationLog, FinanceVoucher, FinanceBankVoucherBinding}}
+    data = {m.__name__: list(m.objects.order_by("pk").values()) for m in apps.get_app_config("crm").get_models() if m not in {RmbCashEvent, CashSourceAllocation, OperationLog, FinanceVoucher, FinanceBankVoucherBinding, FinanceCashConfirmation}}
     return hashlib.sha256(json.dumps(data, sort_keys=True, cls=DjangoJSONEncoder).encode()).hexdigest()
 
 

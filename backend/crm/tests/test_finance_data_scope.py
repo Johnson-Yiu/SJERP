@@ -75,13 +75,25 @@ class FinanceDataScopeTests(TestCase):
         self.receipts[1].refresh_from_db(); self.assertEqual(self.receipts[1].status, 'confirmed')
 
     def test_normal_settle_refund_void_and_purchase_payment(self):
+        import tempfile
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        media = tempfile.TemporaryDirectory(prefix='scope-refund-proof-')
+        self.addCleanup(media.cleanup)
+        media_settings = override_settings(MEDIA_ROOT=media.name)
+        media_settings.enable(); self.addCleanup(media_settings.disable)
         settled = self.client.post(f'/api/payment-plans/{self.plans[0].pk}/settle/', {'amount': '20', 'transaction_date': '2026-10-12'}, format='json', HTTP_IDEMPOTENCY_KEY='scoped-plan-receipt')
         self.assertEqual(settled.status_code, 201, settled.data)
-        refund = self.client.post('/api/transactions/', {**self.payload(order=self.orders[0].pk), 'direction': 'expense', 'kind': 'refund', 'amount': '5'}, format='json')
+        proof = self.client.post('/api/transactions/voucher-upload/', {'file': SimpleUploadedFile('synthetic.pdf', b'%PDF-1.4\nrefund\n%%EOF')}, format='multipart')
+        self.assertEqual(proof.status_code, 201, proof.data)
+        refund = self.client.post(f"/api/transactions/{settled.data['id']}/refund-cash/", {'order': self.orders[0].pk, 'amount': '5', 'reason': '合成退款凭证已核实', 'voucher': proof.data['id']}, format='json', HTTP_IDEMPOTENCY_KEY='scoped-refund')
         self.assertEqual(refund.status_code, 201, refund.data)
-        self.assertEqual(self.client.post(f"/api/transactions/{refund.data['id']}/void/", {'reason': '重记'}, format='json').status_code, 200)
-        self.assertEqual(self.client.post(f"/api/transactions/{settled.data['id']}/void/", {'reason': '重记'}, format='json').status_code, 200)
-        self.plans[0].refresh_from_db(); self.assertEqual(self.plans[0].settled_amount, 0)
+        self.assertEqual(self.client.post(f"/api/transactions/{refund.data['refunds'][0]['id']}/void/", {'reason': '重记'}, format='json').status_code, 400)
+        self.assertEqual(self.client.post(f"/api/transactions/{settled.data['id']}/void/", {'reason': '重记'}, format='json').status_code, 400)
+        self.plans[0].refresh_from_db(); self.assertEqual(self.plans[0].settled_amount, 15)
+        separate = self.client.post(f'/api/payment-plans/{self.plans[0].pk}/settle/', {'amount': '10', 'transaction_date': '2026-10-12'}, format='json', HTTP_IDEMPOTENCY_KEY='scoped-separate-receipt')
+        self.assertEqual(separate.status_code, 201, separate.data)
+        self.assertEqual(self.client.post(f"/api/transactions/{separate.data['id']}/void/", {'reason': '重记'}, format='json').status_code, 200)
+        self.plans[0].refresh_from_db(); self.assertEqual(self.plans[0].settled_amount, 15)
         paid = self.client.post(f'/api/payment-plans/{self.purchase_plan.pk}/settle/', {'amount': '10', 'transaction_date': '2026-10-12'}, format='json', HTTP_IDEMPOTENCY_KEY='scoped-plan-payment')
         self.assertEqual(paid.status_code, 201, paid.data)
 

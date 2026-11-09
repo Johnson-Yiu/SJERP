@@ -124,8 +124,10 @@ def upload(file, user, bank_sources=None, scope=None):
         scope = "bank" if bank_sources is not None else "account"
     if scope not in {"account", "bank", "transaction"} or (bank_sources is not None and scope != "bank"):
         raise ValidationError("凭证用途无效。")
-    if bank_sources is None:
+    if bank_sources is None and scope == "account":
         access(user, "create")
+    elif scope == "transaction":
+        cash.access(user, "create")
     else:
         cash.access(user, "create")
         if not bank_sources or len(bank_sources) > 100:

@@ -13,3 +13,11 @@
 客户收款结构化入口复用 `POST /api/transactions/` 和 `crm.services.finance.record_customer_receipt`：使用稳定的流水业务编号 `transaction_no`，同编号同指纹重放返回原记录，不同内容返回 409。收款原币实到、银行手续费和核销分配分开保存；折让等非现金抵减通过 `FinancePlanWriteoff` 和 `FinanceReceiptAdjustment` 保留凭证、审计及更正链，不应通过创建现金流水模拟。`allocation_capacity` 是可核销额度，`unallocated_amount` 是未分配的实际现金，`fx_available_amount` 以实际原币现金扣减已确认结汇为基础。
 
 原始直接计划收款及历史承接仍有独立路径；不要在历史工作包复制旧财务实现。此工作稿不证明退款或跨模块银行确认已实现同一请求身份契约；库存弹窗与最终集成版本仍须验证。
+
+## 原收款退款（新增，待最终联调）
+
+`POST /api/transactions/{source_id}/refund-cash/` 需财务更新权限、`Idempotency-Key` 和 `{order, amount, reason, voucher}`；`order` 为空表示未分配预收，`voucher` 是新上传的 transaction 范围实际退款凭证。服务使用同客户原收款、明确的原币现金和实际结汇占用计算额度，订单退款只恢复该来源对应的已核销现金部分。手续费、优惠和抹零不扩充可退额。结果不明时必须保留原键及完整原内容重放；同键异内容冲突。人民币退款自身可作为人民币银行扣款事件来源，但旧退款来源不明时仍须人工核实；商业超额退款仍走现有独立批准及账户实际付款路径。本契约尚需 A/D 最终合流验证，不应复制旧财务退款算法。
+
+兼容迁移起点及顺序见 `WORK-IN-PROGRESS.md`；本包新增 `crm.0124_finance_bank_fact_match`、`crm.0125_finance_receipt_refund`，两表含数据时禁止逆向删除。A 合入自己的最终迁移图后需重新做三入口 PostgreSQL 升级及关联数据核对。
+
+结汇／银行确认还依赖 `crm.0126_finance_cash_confirmation`：以银行事件与首次确认内容建立不可变指纹；同内容重放返回原事件，不同内容冲突，旧事件没有指纹时不猜测旧核对说明。A 汇合时请连同 0124、0125 一起处理并重跑三种升级入口。

@@ -17,7 +17,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError
-from django.db.models import Case, CharField, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
+from django.db.models import Case, CharField, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Prefetch, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
 from django.db.models.functions import Cast
 from django.http import FileResponse, Http404, HttpResponse
@@ -31,6 +31,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from .models import AccessRole, CategoryAttribute, Contact, ContractChangeRequest, CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit, Customer, CustomerSupplierPreference, EmployeeProfile, FinancePlanWriteoff, FollowUp, FollowUpAttachment, GoodsReceipt, HSCode, InventoryMovement, OperationLog, Order, OrderItem, OrganizationUnit, PackagingTemplate, PackingPlan, PaymentPlan, Position, Product, ProductCategory, ProductCertificate, ProductParameter, PurchaseMOQException, PurchaseOrder, Quote, QuoteImportantNote, RolePermission, Shipment, ShipmentPackage, SKUPackagingProfile, SKU, SharedReportTemplate, Supplier, SupplierSKU, Transaction
+from .models import AdvanceAllocation, CashSourceAllocation, FinanceReceiptAdjustment, FinanceReceiptRefund
 from .country_registry import CountryResolutionError, country_options as build_country_options, country_stored_values, display_country
 from .error_messages import CUSTOMER_NOT_FOUND_MESSAGE
 from .money import CURRENT_AMOUNT_CALCULATION_VERSION
@@ -570,10 +571,7 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                     prior = identity.response_payload
                     payment = get_object_or_404(scope_transaction_queryset(Transaction.objects.all(), request.user), pk=prior.get("id"))
                     current = TransactionSerializer(payment, context={"request": request}).data
-                    result = dict(prior)
-                    for field in ("customer", "customer_name", "order", "order_no", "supplier", "supplier_name", "purchase_order", "purchase_no", "plan", "allocations", "allocated_amount", "cash_settlements", "receipt_adjustment_rows"):
-                        if current.get(field) in (None, "", []):
-                            result[field] = current.get(field)
+                    result = finance_replay_with_current_scope(prior, current)
                     response = Response(result, status=identity.response_status)
                     response["Idempotent-Replay"] = "true"
                     return response
@@ -2870,9 +2868,39 @@ def finance_dashboard_details(request):
     })
 
 
+def finance_replay_with_current_scope(prior, current):
+    """Keep the original response while removing relations no longer visible."""
+    result = dict(prior)
+    for field in ("customer", "customer_name", "order", "order_no", "supplier", "supplier_name", "purchase_order", "purchase_no", "plan", "allocated_amount"):
+        if current.get(field) in (None, "", []):
+            result[field] = current.get(field)
+    for field in ("allocations", "cash_settlements", "receipt_adjustment_rows", "writeoffs", "receipt_refunds"):
+        if field not in result:
+            continue
+        visible = {str(row.get("id")): row for row in current.get(field, [])}
+        scoped = []
+        for item in result[field] or []:
+            allowed = visible.get(str(item.get("id")))
+            if allowed is None:
+                continue
+            row = dict(item)
+            for key in ("order", "purchase_order", "plan", "contract_no", "contract_change"):
+                if key in row and allowed.get(key) in (None, ""):
+                    row[key] = allowed.get(key)
+            scoped.append(row)
+        result[field] = scoped
+    return result
+
+
 class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
-    queryset = Transaction.objects.select_related("customer", "order", "supplier", "purchase_order").prefetch_related("allocations__plan__order", "allocations__plan__purchase_order")
+    queryset = Transaction.objects.select_related("customer", "order", "supplier", "purchase_order", "plan__order", "plan__purchase_order", "fee_evidence").prefetch_related(
+        Prefetch("allocations", queryset=AdvanceAllocation.objects.select_related("plan__order", "plan__purchase_order").prefetch_related("plan__finance_writeoffs__corrections").order_by("pk")),
+        Prefetch("attributed_refunds", queryset=FinanceReceiptRefund.objects.select_related("refund", "voucher").order_by("pk")),
+        Prefetch("receipt_adjustments", queryset=FinanceReceiptAdjustment.objects.select_related("order", "plan__order", "evidence", "contract_change").order_by("pk")),
+        Prefetch("finance_writeoffs", queryset=FinancePlanWriteoff.objects.select_related("plan__order").prefetch_related("corrections").order_by("created_at", "pk")),
+        Prefetch("cash_source_allocations", queryset=CashSourceAllocation.objects.select_related("event").prefetch_related("event__sources__source").order_by("event__bank_date", "event_id")),
+        "plan__finance_writeoffs__corrections")
     search_fields = ["transaction_no", "category", "customer__name", "supplier__name", "order__order_no", "purchase_order__purchase_no", "reference"]
 
     def get_search_fields(self, request):
@@ -2967,10 +2995,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                     prior = identity.response_payload
                     row = get_object_or_404(scope_transaction_queryset(Transaction.objects.all(), request.user), pk=prior.get("id"))
                     current = self.get_serializer(row).data
-                    result = dict(prior)
-                    for field in ("customer", "customer_name", "order", "order_no", "supplier", "supplier_name", "purchase_order", "purchase_no", "plan", "allocations", "allocated_amount", "cash_settlements", "receipt_adjustment_rows"):
-                        if current.get(field) in (None, "", []):
-                            result[field] = current.get(field)
+                    result = finance_replay_with_current_scope(prior, current)
                     response = Response(result, status=identity.response_status)
                     response["Idempotent-Replay"] = "true"
                     return response
@@ -3014,6 +3039,31 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             raise NotFound("该流水没有关联私有收款凭证。")
         from .services.finance_closeout import voucher
         proof = voucher(row.fee_evidence_id, scope="transaction")
+        response = FileResponse(proof.file.open("rb"), as_attachment=True, filename=proof.original_name, content_type="application/octet-stream")
+        response["Cache-Control"] = "private, no-store"
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
+
+    @action(detail=True, methods=["get"], url_path="refund-voucher-download")
+    def refund_voucher_download(self, request, pk=None):
+        source = self.get_object()
+        require_finance_permission(request.user, "finance", "view")
+        from .services.finance_closeout import voucher
+        link = get_object_or_404(source.attributed_refunds.select_related("voucher"), pk=request.query_params.get("id"))
+        get_object_or_404(scope_transaction_queryset(Transaction.objects.all(), request.user), pk=link.refund_id)
+        proof = voucher(link.voucher_id, scope="transaction")
+        response = FileResponse(proof.file.open("rb"), as_attachment=True, filename=proof.original_name, content_type="application/octet-stream")
+        response["Cache-Control"] = "private, no-store"
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
+
+    @action(detail=True, methods=["get"], url_path="adjustment-voucher-download")
+    def adjustment_voucher_download(self, request, pk=None):
+        source = self.get_object()
+        require_finance_permission(request.user, "finance", "view")
+        from .services.finance_closeout import voucher
+        adjustment = get_object_or_404(source.receipt_adjustments.select_related("evidence"), pk=request.query_params.get("id"), evidence__isnull=False)
+        proof = voucher(adjustment.evidence_id, scope="transaction")
         response = FileResponse(proof.file.open("rb"), as_attachment=True, filename=proof.original_name, content_type="application/octet-stream")
         response["Cache-Control"] = "private, no-store"
         response["X-Content-Type-Options"] = "nosniff"
@@ -3090,6 +3140,48 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         return Response(result)
+
+    @action(detail=True, methods=["post"], url_path="refund-cash")
+    @transaction.atomic
+    def refund_cash(self, request, pk=None):
+        from rest_framework import serializers as drf_serializers
+        from .services.finance import refund_receipt_cash
+        if not isinstance(request.data, dict) or set(request.data) - {"order", "amount", "reason", "voucher"}:
+            raise DRFValidationError("退款登记字段无效。")
+        require_finance_permission(request.user, "finance", "update")
+        source = self.get_object()
+        amount = drf_serializers.DecimalField(max_digits=14, decimal_places=4, min_value=Decimal("0.0001")).run_validation(request.data.get("amount"))
+        order_id = request.data.get("order")
+        order = None
+        if order_id not in (None, ""):
+            order_id = drf_serializers.IntegerField(min_value=1).run_validation(order_id)
+            order = get_object_or_404(Order, pk=order_id)
+            validate_finance_relations({"order": order}, request.user)
+        reason = str(request.data.get("reason") or "").strip()
+        evidence_id = drf_serializers.IntegerField(min_value=1).run_validation(request.data.get("voucher"))
+        try:
+            key = require_finance_request_key(request)
+            with transaction.atomic():
+                identity, replay = begin_fulfillment_idempotency(
+                    key=key, operation="finance_refund", target_id=source.pk,
+                    payload={"order": order_id, "amount": amount, "reason": reason, "voucher": evidence_id},
+                    operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None)
+                if replay:
+                    response = Response(identity.response_payload, status=identity.response_status)
+                    response["Idempotent-Replay"] = "true"
+                    return response
+                rows = refund_receipt_cash(source, order, amount, reason, evidence_id, request.user)
+                for refund, link in rows:
+                    record_operation(request=request, instance=refund, action="create", action_label="登记原收款退款",
+                        metadata={"source_transaction_id": source.pk, "link_id": link.pk, "reason": reason})
+                result = {"refunds": [{"id": refund.pk, "transaction_no": refund.transaction_no,
+                    "amount": str(refund.amount), "currency": refund.currency} for refund, _ in rows]}
+                complete_fulfillment_idempotency(identity, result, response_status=201)
+        except FulfillmentIdempotencyConflict:
+            return Response({"detail": "本次退款标识已用于其他内容，请核对原操作。"}, status=status.HTTP_409_CONFLICT)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(result, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"], url_path="writeoff")
     @transaction.atomic
@@ -3378,10 +3470,7 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                     prior = identity.response_payload
                     row = get_object_or_404(scope_transaction_queryset(Transaction.objects.all(), request.user), pk=prior.get("id"))
                     current = TransactionSerializer(row, context={"request": request}).data
-                    result = dict(prior)
-                    for field in ("customer", "customer_name", "order", "order_no", "supplier", "supplier_name", "purchase_order", "purchase_no", "plan", "allocations", "allocated_amount", "cash_settlements", "receipt_adjustment_rows"):
-                        if current.get(field) in (None, "", []):
-                            result[field] = current.get(field)
+                    result = finance_replay_with_current_scope(prior, current)
                     response = Response(result, status=identity.response_status)
                     response["Idempotent-Replay"] = "true"
                     return response

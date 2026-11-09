@@ -75,6 +75,25 @@ class CrossModuleBankTests(CloseoutFixture, CashFixture, TestCase):
         self.assertFalse(FinanceBankFactMatch.objects.exists())
         self.assertEqual(FinanceFact.objects.count(), 1)
 
+    def test_confirmation_replay_requires_same_review_intent(self):
+        event = self.event()
+        first = cash.confirm_event(event.pk, self.maker, voucher_checked=True)
+        second = cash.confirm_event(event.pk, self.maker, voucher_checked=True)
+        self.assertEqual(first.pk, second.pk)
+        with self.assertRaises(APIException):
+            cash.confirm_event(event.pk, self.maker, voucher_checked=True, duplicate_reason="更改核对说明")
+
+    def test_confirmation_identity_rolls_back_if_audit_fails(self):
+        from crm.models import FinanceCashConfirmation
+        event = self.event()
+        with patch("crm.services.cash_events.audit_cash_event", side_effect=RuntimeError("synthetic audit failure")):
+            with self.assertRaises(RuntimeError):
+                cash.confirm_event(event.pk, self.maker, voucher_checked=True)
+        event.refresh_from_db()
+        self.assertEqual(event.status, "pending")
+        self.assertFalse(FinanceCashConfirmation.objects.filter(event=event).exists())
+        cash.confirm_event(event.pk, self.maker, voucher_checked=True)
+
 
 @override_settings(RMB_CASH_ACCOUNT_IDS=("SYNTH_FX", "SYNTH_CNY"))
 class CrossModuleBankConcurrencyTests(CloseoutFixture, CashFixture, TransactionTestCase):

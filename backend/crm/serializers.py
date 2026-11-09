@@ -2462,6 +2462,8 @@ class TransactionSerializer(serializers.ModelSerializer):
     plan_allocations = serializers.JSONField(write_only=True, required=False)
     receipt_adjustment_rows = serializers.SerializerMethodField()
     fx_available_amount = serializers.SerializerMethodField()
+    refundable_cash_amount = serializers.SerializerMethodField()
+    receipt_refunds = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -2494,6 +2496,9 @@ class TransactionSerializer(serializers.ModelSerializer):
             data["allocations"] = []
             data["allocated_amount"] = None
             data["cash_settlements"] = []
+            data["receipt_refunds"] = []
+            data["fx_available_amount"] = None
+            data["refundable_cash_amount"] = None
         else:
             from .finance_scope import scope_plan_queryset
             plan_ids = {row["plan"] for row in data.get("allocations", [])}
@@ -2543,17 +2548,41 @@ class TransactionSerializer(serializers.ModelSerializer):
         return obj.unallocated_cash_amount
 
     def get_fx_available_amount(self, obj):
-        if obj.kind != "customer_receipt" or obj.direction != "income" or obj.status != "confirmed":
+        if obj.kind not in {"customer_receipt", "unallocated_advance"} or obj.direction != "income" or obj.status != "confirmed":
             return Decimal("0")
         from .services.cash_events import available
         return available(obj)
+
+    def get_refundable_cash_amount(self, obj):
+        if obj.kind not in {"customer_receipt", "unallocated_advance"} or obj.direction != "income" or obj.status != "confirmed":
+            return Decimal("0")
+        from .services.cash_events import refundable_cash
+        return refundable_cash(obj)
+
+    def get_receipt_refunds(self, obj):
+        user = serializer_user(self.context)
+        if not user_can(user, "finance", "view"):
+            return []
+        rows = getattr(obj, "_prefetched_objects_cache", {}).get("attributed_refunds")
+        if rows is None:
+            rows = obj.attributed_refunds.select_related("refund", "voucher").order_by("pk")
+        rows = list(rows)
+        from .finance_scope import scope_transaction_queryset
+        refund_ids = {link.refund_id for link in rows}
+        visible_ids = set(scope_transaction_queryset(Transaction.objects.filter(pk__in=refund_ids), user).values_list("pk", flat=True)) if refund_ids else set()
+        return [{"id": link.pk, "transaction_no": link.refund.transaction_no, "amount": str(link.refund.amount),
+            "currency": link.refund.currency, "date": link.refund.transaction_date,
+            "status": link.refund.status, "reason": link.refund.notes, "voucher_name": link.voucher.original_name}
+            for link in rows if link.refund_id in visible_ids]
 
     def get_receipt_adjustment_rows(self, obj):
         user = serializer_user(self.context)
         if not user_can(user, "finance", "view"):
             return []
         from .finance_scope import scope_plan_queryset
-        rows = list(obj.receipt_adjustments.select_related("order", "plan__order", "evidence", "contract_change").order_by("pk"))
+        rows = getattr(obj, "_prefetched_objects_cache", {}).get("receipt_adjustments")
+        if rows is None:
+            rows = list(obj.receipt_adjustments.select_related("order", "plan__order", "evidence", "contract_change").order_by("pk"))
         plans = {row.plan_id for row in rows if row.plan_id}
         visible_plans = set(scope_plan_queryset(PaymentPlan.objects.filter(pk__in=plans), user).values_list("pk", flat=True)) if plans else set()
         can_orders = user_can(user, "orders", "view")
@@ -2589,13 +2618,17 @@ class TransactionSerializer(serializers.ModelSerializer):
         user = serializer_user(self.context)
         if not user_can(user, "finance", "view"):
             return []
-        rows = CashSourceAllocation.objects.filter(source=obj).select_related("event").order_by("event__bank_date", "event_id")
+        rows = getattr(obj, "_prefetched_objects_cache", {}).get("cash_source_allocations")
+        if rows is None:
+            rows = CashSourceAllocation.objects.filter(source=obj).select_related("event").order_by("event__bank_date", "event_id")
         result = []
         for row in rows:
             event = row.event
             if not visible(event, user):
                 continue
-            source_allocations = event.sources.select_related("source").all()
+            source_allocations = getattr(event, "_prefetched_objects_cache", {}).get("sources")
+            if source_allocations is None:
+                source_allocations = event.sources.select_related("source").all()
             reference_amount = Decimal("0")
             for item in source_allocations:
                 rate = item.source_snapshot.get("exchange_rate")
@@ -2613,10 +2646,11 @@ class TransactionSerializer(serializers.ModelSerializer):
                 "bank_date": event.bank_date,
                 "amount": str(row.amount),
                 "currency": row.currency,
+                "source_count": len(source_allocations),
                 "gross_rmb_amount": str(gross),
                 "bank_net_amount": str(event.bank_net_amount),
                 "fee_amount": str(event.fee_amount),
-                "actual_rate": str(event.actual_rate),
+                "actual_rate": str(event.actual_rate) if event.actual_rate > 0 else None,
                 "quoted_rate": str(event.quoted_rate) if event.quoted_rate is not None else None,
                 "quoted_reference_delta": str((gross - quoted_reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if quoted_reference is not None else None,
                 "pre_fee_reference_delta": str((gross - reference_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if reference_amount is not None else None,
@@ -2625,20 +2659,30 @@ class TransactionSerializer(serializers.ModelSerializer):
         return result
 
     def get_writeoffs(self, obj):
-        if not user_can(serializer_user(self.context), "finance", "view"):
+        user = serializer_user(self.context)
+        if not user_can(user, "finance", "view"):
             return []
-        rows = FinancePlanWriteoff.objects.filter(source_transaction=obj).select_related("plan__order").order_by("created_at", "pk")
+        rows = getattr(obj, "_prefetched_objects_cache", {}).get("finance_writeoffs")
+        if rows is None:
+            rows = FinancePlanWriteoff.objects.filter(source_transaction=obj).select_related("plan__order").prefetch_related("corrections").order_by("created_at", "pk")
+        rows = list(rows)
+        from .finance_scope import scope_plan_queryset
+        plan_ids = {row.plan_id for row in rows}
+        visible_plans = set(scope_plan_queryset(PaymentPlan.objects.filter(pk__in=plan_ids), user).values_list("pk", flat=True)) if plan_ids else set()
+        rows = [row for row in rows if row.plan_id in visible_plans]
+        from .finance_closeout_api import actor_name
         return [{
             "id": row.pk,
             "plan": row.plan_id,
-            "contract_no": row.plan.order.order_no,
+            "contract_no": row.plan.order.order_no if user_can(user, "orders", "view") else "",
             "amount": str(row.amount),
             "reason": row.reason,
             "confirmed_actor": row.confirmed_actor,
-            "corrected_amount": str((row.corrections.aggregate(total=Sum("amount"))["total"] or Decimal("0")).quantize(Decimal("0.0001"))),
+            "confirmed_actor_name": actor_name(row.confirmed_actor),
+            "corrected_amount": str(sum((correction.amount for correction in row.corrections.all()), Decimal("0")).quantize(Decimal("0.0001"))),
             "corrections": [{"id": correction.pk, "amount": str(correction.amount), "reason": correction.reason,
-                "actor": correction.actor, "created_at": correction.created_at}
-                for correction in row.corrections.order_by("created_at", "pk")],
+                "actor": correction.actor, "actor_name": actor_name(correction.actor), "created_at": correction.created_at}
+                for correction in sorted(row.corrections.all(), key=lambda item: (item.created_at, item.pk))],
             "created_at": row.created_at,
         } for row in rows]
 
@@ -2647,6 +2691,10 @@ class TransactionSerializer(serializers.ModelSerializer):
         if request:
             validate_finance_relations(attrs, request.user, self.instance)
         kind = attrs.get("kind", getattr(self.instance, "kind", "other"))
+        if self.instance is None and kind == "exchange_difference":
+            raise serializers.ValidationError("汇率差额不是实际收付款；请在结汇记录中查看参考差额。")
+        if self.instance is None and kind == "refund":
+            raise serializers.ValidationError("客户退款请从原收款详情登记，并关联本次实际退款凭证。")
         initial = getattr(self, "initial_data", {})
         if kind != "customer_receipt" and ("receipt_adjustments" in initial or "plan_allocations" in initial):
             raise serializers.ValidationError("收款扣减和应收分配仅适用于客户收款。")

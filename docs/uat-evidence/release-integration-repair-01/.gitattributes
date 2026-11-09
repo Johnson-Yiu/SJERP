@@ -1,0 +1,2 @@
+# Keep the bytes returned by the browser, including CSV CRLF and BOM.
+*.csv -text

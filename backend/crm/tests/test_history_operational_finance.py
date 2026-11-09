@@ -63,6 +63,66 @@ class HistoricalFinanceBridgeTests(HistoryTakeoverFixtureMixin, TestCase):
         self.group.refresh_from_db()
         self.assertEqual(self.group.finance_handoff_status, "pending_review")
 
+    def test_duplicate_review_is_required_and_retained_across_history_post(self):
+        other = {**self.mapping, "request_key": "other-synthetic", "kind": "cash", "direction": "income",
+                 "nature": "unclassified", "truth": "verified", "source_system": "OTHER", "source_key": "OTHER-1", "allocations": []}
+        existing, _ = finance_closeout.submit(other, self.maker)
+        finance_closeout.post(existing.pk, self.maker, voucher_checked=True)
+        candidates = bridge.preview_source(self.group.pk, self.source.pk, self.mapping, self.maker)
+        self.assertEqual(len(candidates["items"]), 1)
+        self.assertNotIn("OTHER-1", candidates["items"][0]["label"])
+        mapping = {**self.mapping, "duplicate_review_token": candidates["token"], "duplicate_review_reason": "凭证核实为另一笔"}
+        instruction, created = bridge.submit_source(self.group.pk, self.source.pk, mapping, self.maker)
+        self.assertTrue(created)
+        replay, created = bridge.submit_source(self.group.pk, self.source.pk, mapping, self.maker)
+        self.assertFalse(created)
+        self.assertEqual(replay.pk, instruction.pk)
+        bridge.advance_source(self.group.pk, self.source.pk, "approve", self.reviewer)
+        fact = bridge.advance_source(self.group.pk, self.source.pk, "post", self.maker, voucher_checked=True)
+        self.assertEqual(fact.instruction_id, instruction.pk)
+        self.assertEqual(FinanceFact.objects.count(), 2)
+
+    def test_new_duplicate_after_preview_blocks_post_without_partial_write(self):
+        candidates = bridge.preview_source(self.group.pk, self.source.pk, self.mapping, self.maker)
+        self.assertFalse(candidates["items"])
+        instruction, _ = bridge.submit_source(self.group.pk, self.source.pk, self.mapping, self.maker)
+        bridge.advance_source(self.group.pk, self.source.pk, "approve", self.reviewer)
+        other = {**self.mapping, "request_key": "later-synthetic", "kind": "cash", "direction": "income",
+                 "nature": "unclassified", "truth": "verified", "source_system": "OTHER", "source_key": "OTHER-2", "allocations": []}
+        existing, _ = finance_closeout.submit(other, self.maker)
+        finance_closeout.post(existing.pk, self.maker, voucher_checked=True)
+        with self.assertRaises(APIException):
+            bridge.advance_source(self.group.pk, self.source.pk, "post", self.maker, voucher_checked=True)
+        instruction.refresh_from_db()
+        self.assertEqual(instruction.status, "approved")
+        self.assertFalse(FinanceFact.objects.filter(instruction=instruction).exists())
+
+    @override_settings(RMB_CASH_ACCOUNT_IDS=("SYNTH_FX", "SYNTH_CNY"))
+    def test_existing_bank_event_links_once_without_reapplying_receivable(self):
+        from decimal import Decimal
+        from crm.models import FinanceBankFactMatch
+        from crm.services import cash_events
+        from crm.tests.test_cash_events import CashFixture, payload
+        CashFixture.setup_cash(self)
+        self.voucher = finance_closeout.upload(SimpleUploadedFile("history.pdf", b"%PDF-1.4\nsynthetic history\n%%EOF"), self.maker)
+        mapping = {**self.mapping, "voucher": self.voucher.pk, "actual_date": "2026-10-18", "amount": "700.00"}
+        event, _ = cash_events.register_event(payload([self.receipt], key="HIST-LINK", bank_net_amount="700.00", fee_amount="5.00"), self.maker)
+        cash_events.confirm_event(event.pk, self.maker, voucher_checked=True)
+        finance_closeout.map_account({"account": self.account.pk, "legacy_code": "SYNTH_CNY", "reason": "核对合成账户"}, self.maker)
+        self.plan.refresh_from_db()
+        settled_before = self.plan.settled_amount
+        candidates = bridge.preview_source(self.group.pk, self.source.pk, mapping, self.maker)
+        self.assertIn(-event.pk, candidates["ids"])
+        mapping.update(duplicate_review_token=candidates["token"], duplicate_review_reason="核对凭证为同一笔", same_legacy_event=event.pk)
+        instruction, _ = bridge.submit_source(self.group.pk, self.source.pk, mapping, self.maker)
+        bridge.advance_source(self.group.pk, self.source.pk, "approve", self.reviewer)
+        fact = bridge.advance_source(self.group.pk, self.source.pk, "post", self.maker, voucher_checked=True)
+        self.assertTrue(FinanceBankFactMatch.objects.filter(fact=fact, event=event).exists())
+        self.plan.refresh_from_db()
+        self.assertEqual(self.plan.settled_amount, settled_before)
+        rows = finance_closeout.reporting_events(self.maker, "2026-10-01", "2026-10-31")
+        self.assertEqual(sum(row.bank_net_amount for row in rows), Decimal("700"))
+
     def test_posted_source_correction_preserves_fact_and_auditable_event_link(self):
         instruction, _ = bridge.submit_source(self.group.pk, self.source.pk, self.mapping, self.maker)
         bridge.advance_source(self.group.pk, self.source.pk, "approve", self.reviewer)

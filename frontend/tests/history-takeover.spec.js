@@ -180,6 +180,7 @@ describe('controlled history takeover UI', () => {
     })
     mocks.post.mockImplementation(async url => url.endsWith('/finance-status/')
       ? { data: { sources: [{ source_id: 9, source_record_id: 'TX-1', status: 'unmapped', source: { amount: '40', currency: 'USD', direction: 'income' } }] } }
+      : url.endsWith('/finance-preview/') ? { data: { items: [{ id: -12, type: 'bank_event', label: '银行参考号 ABC' }], token: 'opaque-token', restricted: false } }
       : { data: { instruction_id: 17, status: 'pending' } })
     const wrapper = mount(HistoryTakeoverPage)
     await flushPromises()
@@ -194,10 +195,15 @@ describe('controlled history takeover UI', () => {
     const submit = wrapper.findAll('button').find(button => button.text() === '保存资金指令')
     expect(submit.attributes('disabled')).toBeDefined()
     await field('实际人民币金额').find('input').setValue('287.43')
+    await wrapper.findAll('button').find(button => button.text() === '核对可能重复的资金').trigger('click')
+    await flushPromises()
+    expect(submit.attributes('disabled')).toBeDefined()
+    await field('核对结果').find('select').setValue('12')
+    await field('核对说明').find('input').setValue('凭证为同一笔')
     await submit.trigger('click')
     await flushPromises()
     expect(mocks.post).toHaveBeenCalledWith('/import/history-takeovers/31/groups/41/finance-submit/', {
-      source_id: 9, mapping: { account: 7, voucher: 8, actual_date: '2024-09-03', amount: '287.43', reason: '已核对银行凭证' },
+      source_id: 9, mapping: { account: 7, voucher: 8, actual_date: '2024-09-03', amount: '287.43', reason: '已核对银行凭证', duplicate_review_token: 'opaque-token', duplicate_review_reason: '凭证为同一笔', same_legacy_event: 12 },
     })
     wrapper.unmount()
   })

@@ -30,6 +30,10 @@ const financeSources = ref([])
 const financeAccounts = ref([])
 const financeVouchers = ref([])
 const financeMapping = ref({ source_id: '', account: '', voucher: '', actual_date: '', amount: '', reason: '' })
+const financePreview = ref(null)
+const financeDuplicateChoice = ref('')
+const financeDuplicateReason = ref('')
+watch(financeMapping, () => { financePreview.value = null; financeDuplicateChoice.value = ''; financeDuplicateReason.value = '' }, { deep: true, flush: 'sync' })
 const financeChangeReason = ref('')
 const financeNoDebit = ref(false)
 const inventoryStatus = ref(null)
@@ -226,6 +230,12 @@ async function financeAction(action, sourceId = financeMapping.value.source_id) 
       actual_date: financeMapping.value.actual_date, amount: financeMapping.value.amount, reason: financeMapping.value.reason }
     const payload = { source_id: Number(sourceId) }
     if (action === 'finance-submit') {
+      if (!financePreview.value || financePreview.value.restricted || (financePreview.value.items?.length && (!financeDuplicateChoice.value || !financeDuplicateReason.value.trim()))) return
+      if (financePreview.value.items?.length) {
+        mapping.duplicate_review_token = financePreview.value.token
+        mapping.duplicate_review_reason = financeDuplicateReason.value.trim()
+        if (financeDuplicateChoice.value !== 'distinct') mapping.same_legacy_event = Number(financeDuplicateChoice.value)
+      }
       payload.mapping = mapping
       const selectedSource = financeSources.value.find(item => item.source_id === Number(sourceId))
       if (selectedSource && ['cancelled', 'failed'].includes(selectedSource.status)) {
@@ -240,6 +250,21 @@ async function financeAction(action, sourceId = financeMapping.value.source_id) 
   } catch (e) { error.value = e.message; return }
   finally { saving.value = false }
   await loadFinance()
+}
+
+async function previewFinance() {
+  if (!selectedGroup.value || saving.value) return
+  const snapshot = JSON.stringify(financeMapping.value)
+  const applicationId = selected.value.id; const groupId = selectedGroup.value.id
+  const mapping = { account: financeMapping.value.account, voucher: financeMapping.value.voucher,
+    actual_date: financeMapping.value.actual_date, amount: financeMapping.value.amount, reason: financeMapping.value.reason }
+  saving.value = true; error.value = ''; financePreview.value = null
+  try {
+    const response = await api.post(`/import/history-takeovers/${applicationId}/groups/${groupId}/finance-preview/`,
+      { source_id: Number(financeMapping.value.source_id), mapping })
+    if (selected.value?.id === applicationId && selectedGroup.value?.id === groupId && snapshot === JSON.stringify(financeMapping.value)) financePreview.value = response.data
+  } catch (e) { error.value = e.message }
+  finally { saving.value = false }
 }
 
 async function loadInventory() {
@@ -486,7 +511,16 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                 <label>实际人民币金额<input v-model="financeMapping.amount" inputmode="decimal" placeholder="0.00" /></label>
                 <label class="wide">核实依据<input v-model="financeMapping.reason" /></label>
               </div>
-              <button class="takeover-secondary" :disabled="saving || !financeMapping.source_id || !financeMapping.account || !financeMapping.voucher || !financeMapping.actual_date || !financeMapping.amount || !financeMapping.reason" @click="financeAction('finance-submit')">保存资金指令</button>
+              <button class="takeover-secondary" :disabled="saving || !financeMapping.source_id || !financeMapping.account || !financeMapping.voucher || !financeMapping.actual_date || !financeMapping.amount || !financeMapping.reason" @click="previewFinance">核对可能重复的资金</button>
+              <p v-if="financePreview?.restricted">存在无法查看的银行记录，暂不能保存，请联系财务核实。</p>
+              <div v-else-if="financePreview?.items?.length" class="takeover-remainder-item">
+                <p>发现可能重复的资金，请核对凭证。若与已有账户资金为同一笔，请停止保存并联系财务处理。</p>
+                <ul><li v-for="item in financePreview.items" :key="item.id">{{ item.label }}</li></ul>
+                <label>核对结果<select v-model="financeDuplicateChoice"><option value="">请选择</option><option value="distinct">已核实为另一笔</option><option v-for="item in financePreview.items.filter(row => row.type === 'bank_event')" :key="item.id" :value="String(-item.id)">与 {{ item.label }} 为同一笔</option></select></label>
+                <label>核对说明<input v-model="financeDuplicateReason" /></label>
+              </div>
+              <p v-else-if="financePreview">未发现同账户、同日期、同方向和同金额的候选记录。</p>
+              <button class="takeover-secondary" :disabled="saving || !financePreview || financePreview.restricted || (financePreview.items?.length && (!financeDuplicateChoice || !financeDuplicateReason.trim()))" @click="financeAction('finance-submit')">保存资金指令</button>
             </details>
             <details v-if="canReview" class="takeover-resolution">
               <summary>库存盘点基准</summary>

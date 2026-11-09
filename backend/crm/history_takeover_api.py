@@ -199,7 +199,7 @@ class HistoryTakeoverGroupActionView(APIView):
 
         data = request.data
         try:
-            if operation in {"review", "execute", "resolve-master", "correction-review", "finance-status", "finance-submit", "finance-replace", "finance-approve", "finance-post", "finance-cancel", "finance-fail", "inventory-status", "inventory-propose", "inventory-approve", "inventory-execute", "inventory-reverse", "operational-status", "operational-propose", "operational-approve", "operational-execute", "operational-reverse"} and not _admin_required(request):
+            if operation in {"review", "execute", "resolve-master", "correction-review", "finance-status", "finance-preview", "finance-submit", "finance-replace", "finance-approve", "finance-post", "finance-cancel", "finance-fail", "inventory-status", "inventory-propose", "inventory-approve", "inventory-execute", "inventory-reverse", "operational-status", "operational-propose", "operational-approve", "operational-execute", "operational-reverse"} and not _admin_required(request):
                 return Response({"detail": "仅管理员可以审核、关联主档或执行历史承接。"}, status=403)
             if operation == "operational-status":
                 return Response({**history_operational_contracts.status(group, request.user), "overall": overall_status(group)})
@@ -231,6 +231,8 @@ class HistoryTakeoverGroupActionView(APIView):
                 return Response({"status": "reversed", "idempotent_replay": replay})
             if operation == "finance-status":
                 return Response({"sources": history_operational_finance.source_status(group, request.user), "overall": overall_status(group)})
+            if operation == "finance-preview":
+                return Response(history_operational_finance.preview_source(group.pk, data.get("source_id"), data.get("mapping"), request.user))
             if operation in {"finance-submit", "finance-replace"}:
                 if operation == "finance-replace" and data.get("replaces") is None:
                     return Response({"detail": "请指定需要修订的原资金指令。"}, status=400)

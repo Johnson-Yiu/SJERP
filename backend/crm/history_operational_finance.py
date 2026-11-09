@@ -38,15 +38,36 @@ def _mapping(handoff, source):
     return dict(handoff.payload.get("operational_instructions", {})).get(str(source.pk))
 
 
-@transaction.atomic
-def submit_source(group_id, source_id, data, user, *, replace_id=None):
-    group, handoff, source, row = _locked(group_id, source_id)
-    allowed = {"account", "voucher", "actual_date", "amount", "reason"}
-    if not isinstance(data, dict) or set(data) != allowed:
+def _payload(source, row, data, request_key):
+    required = {"account", "voucher", "actual_date", "amount", "reason"}
+    optional = {"duplicate_review_token", "duplicate_review_reason", "same_legacy_event"}
+    if not isinstance(data, dict) or not required <= set(data) or set(data) - required - optional:
         raise ValidationError("须明确填写账户、凭证、实际日期、实际人民币金额及核实依据。")
     direction = row.get("direction")
     if direction not in {"income", "expense"}:
         raise ValidationError("历史来源的收支方向不明确。")
+    return {**data, "request_key": request_key, "source_system": SOURCE_SYSTEM,
+            "source_key": _source_key(source), "kind": "cash", "direction": direction,
+            "nature": "unclassified", "truth": "verified", "allocations": []}
+
+
+@transaction.atomic
+def preview_source(group_id, source_id, data, user):
+    finance_closeout.access(user, "create")
+    _group, _handoff, source, row = _locked(group_id, source_id)
+    p = finance_closeout.normalize(_payload(source, row, data, "history-preview:" + _source_key(source)), user)
+    candidates = finance_closeout.duplicate_candidates(p, user)
+    # An internal hash is not a useful business reference. Keep the candidate
+    # identity only as an opaque option value, and display business details.
+    for item in candidates.get("items", []):
+        if item["type"] == "account_fact":
+            item["label"] = f'账户资金 · {p["actual_date"]} · {p["amount"]} 元'
+    return candidates
+
+
+@transaction.atomic
+def submit_source(group_id, source_id, data, user, *, replace_id=None):
+    group, handoff, source, row = _locked(group_id, source_id)
     key = _source_key(source)
     old = _mapping(handoff, source)
     previous = FinanceInstruction.objects.filter(pk=old).first() if old else None
@@ -60,9 +81,7 @@ def submit_source(group_id, source_id, data, user, *, replace_id=None):
         else:
             raise ValidationError("仅可修订当前已取消或已核实失败的资金指令。")
     request_key = ("history-cash:" + key + ":" + str(previous.pk)) if replace else (previous.request_key if previous else "history-cash:" + key)
-    payload = {**data, "request_key": request_key, "source_system": SOURCE_SYSTEM,
-               "source_key": key, "kind": "cash", "direction": direction,
-               "nature": "unclassified", "truth": "verified", "allocations": []}
+    payload = _payload(source, row, data, request_key)
     if replace:
         payload["replaces"] = previous.pk
     elif previous and previous.replaces_id:

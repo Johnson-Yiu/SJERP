@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import FileResponse, HttpResponse
 from django.utils import timezone
 from rest_framework import viewsets
@@ -259,6 +259,54 @@ class FinanceCloseoutViewSet(viewsets.ViewSet):
         if kind not in {"fact", "transfer_fact", "transfer_any", "event", "order", "approval", "replacement"}:
             raise ValidationError("选择类型无效。")
         return Response({"items": items})
+
+    @action(detail=False, methods=["get"], url_path="bank-return-options")
+    def bank_return_options(self, request, format=None):
+        from .finance_scope import scope_plan_queryset
+        from .models import AdvanceAllocation, FinanceBankFactMatch, FinanceBankReturnAllocation, PaymentPlan
+        event_id, fact_id = request.query_params.get("event"), request.query_params.get("fact")
+        if bool(event_id) == bool(fact_id):
+            raise ValidationError("请选择一条原银行记录。")
+        if fact_id:
+            fact = FinanceFact.objects.get(pk=ledger.pk(fact_id))
+            match = FinanceBankFactMatch.objects.filter(fact=fact).select_related("event").first()
+            event = match.event if match else None
+        else:
+            event = ledger.cash.get_event(request.user, pk=ledger.pk(event_id))
+        if event is None:
+            return Response({"supported": False, "reason": "原账户事实没有关联银行来源；请先核实来源。", "items": []})
+        if event.status != "confirmed" or not ledger.cash.visible(event, request.user):
+            raise NotFound("原银行记录不存在或不可访问。")
+        if event.kind != "cny_direct" or event.currency != "CNY":
+            return Response({"supported": False, "reason": "外币结汇退回的原币关系待核实，不能直接按人民币恢复订单。", "items": []})
+        items = []
+        for allocation in event.sources.select_related("source__plan__order", "source__plan__purchase_order").order_by("source_id"):
+            source = allocation.source
+            if not ledger.cash.source_visible(source, request.user):
+                continue
+            returned = FinanceBankReturnAllocation.objects.filter(source=source).filter(
+                Q(fact__legacy_parent=event) | Q(fact__parent__bank_event_match__event=event)).aggregate(total=Sum("amount"))["total"] or Decimal("0")
+            event_remaining = max(allocation.amount - returned, Decimal("0"))
+            plans = {row.plan_id: row.plan for row in AdvanceAllocation.objects.filter(advance=source, is_active=True).select_related("plan__order", "plan__purchase_order")}
+            if source.plan_id:
+                plans[source.plan_id] = source.plan
+            visible = set(scope_plan_queryset(PaymentPlan.objects.filter(pk__in=plans), request.user).values_list("pk", flat=True)) if plans else set()
+            for plan_id, plan in plans.items():
+                if plan_id not in visible:
+                    continue
+                paid = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.filter(advance=source, plan=plan, is_active=True)), Decimal("0"))
+                if source.plan_id == plan_id:
+                    paid += source.amount
+                refunded = source.attributed_refunds.filter(refund__status="confirmed", refund__plan=plan).aggregate(total=Sum("refund__amount"))["total"] or Decimal("0")
+                already = source.bank_return_allocations.filter(plan=plan).aggregate(total=Sum("amount"))["total"] or Decimal("0")
+                remaining = min(event_remaining, max(paid - refunded - already, Decimal("0")), plan.settled_amount)
+                if remaining > 0:
+                    contract = plan.order.order_no if plan.order_id else plan.purchase_order.purchase_no
+                    items.append({"source": source.pk, "plan": plan.pk, "remaining": str(remaining), "label": f"{source.transaction_no} · {contract} · 尚可退回 CNY {remaining}"})
+            unallocated = min(event_remaining, source.unallocated_cash_amount if not source.plan_id else Decimal("0"))
+            if unallocated > 0:
+                items.append({"source": source.pk, "plan": None, "remaining": str(unallocated), "label": f"{source.transaction_no} · 未分配现金 · 尚可退回 CNY {unallocated}"})
+        return Response({"supported": True, "items": items})
 
     @action(detail=False, methods=["post"])
     def instructions(self, request, format=None):

@@ -198,7 +198,7 @@ def refundable_cash(row):
     allocations = getattr(row, "_prefetched_objects_cache", {}).get("cash_source_allocations")
     converted = sum((item.amount for item in allocations if item.event.status == "confirmed" and item.event.kind == "fx_settlement"), Decimal("0")) if allocations is not None else row.cash_source_allocations.filter(event__status="confirmed", event__kind="fx_settlement").aggregate(n=Sum("amount"))["n"] or Decimal("0")
     refunded = row.refunded_cash_amount()
-    return row.amount - converted - refunded
+    return row.amount - converted - refunded - row.returned_cash_amount()
 
 
 def refund_source_uncertainty(row):
@@ -569,8 +569,8 @@ def cancel_pending(event_id, user, reason):
 
 
 def guard_void(rows, operation="作废"):
-    if any(row.attributed_refunds.exists() or hasattr(row, "receipt_refund_link") for row in rows):
-        raise ValidationError("流水已关联原收款退款，须通过受控更正保留退款链，不能直接作废。")
+    if any(row.attributed_refunds.exists() or row.bank_return_allocations.exists() or hasattr(row, "receipt_refund_link") for row in rows):
+        raise ValidationError("流水已关联退款或银行退回，须通过受控更正保留原记录，不能直接作废。")
     if CashSourceAllocation.objects.filter(source_id__in=[r.pk for r in rows], event__status__in=ACTIVE).exists():
         raise ValidationError(f"来源有关联待确认/已确认银行资金事件，不能直接{operation}。未确认草稿可留痕放弃；已确认事实请走账户资金更正，不能自动释放来源。")
 

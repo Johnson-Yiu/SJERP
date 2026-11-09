@@ -2897,6 +2897,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     queryset = Transaction.objects.select_related("customer", "order", "supplier", "purchase_order", "plan__order", "plan__purchase_order", "fee_evidence").prefetch_related(
         Prefetch("allocations", queryset=AdvanceAllocation.objects.select_related("plan__order", "plan__purchase_order").prefetch_related("plan__finance_writeoffs__corrections").order_by("pk")),
         Prefetch("attributed_refunds", queryset=FinanceReceiptRefund.objects.select_related("refund", "voucher").order_by("pk")),
+        "bank_return_allocations",
         Prefetch("receipt_adjustments", queryset=FinanceReceiptAdjustment.objects.select_related("order", "plan__order", "evidence", "contract_change").order_by("pk")),
         Prefetch("finance_writeoffs", queryset=FinancePlanWriteoff.objects.select_related("plan__order").prefetch_related("corrections").order_by("created_at", "pk")),
         Prefetch("cash_source_allocations", queryset=CashSourceAllocation.objects.select_related("event").prefetch_related("event__sources__source").order_by("event__bank_date", "event_id")),

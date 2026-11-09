@@ -1254,7 +1254,8 @@ class Order(TimestampedModel):
         receipts = sum(self.transactions.filter(status="confirmed", kind="customer_receipt").values_list("amount", flat=True), Decimal("0"))
         refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
         allocations = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.filter(plan__order=self, is_active=True, advance__status="confirmed")), Decimal("0"))
-        return receipts + allocations - refunds
+        returns = FinanceBankReturnAllocation.objects.filter(plan__order=self).aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+        return receipts + allocations - refunds - returns
 
     @property
     def outstanding_amount(self):
@@ -1562,7 +1563,8 @@ class PurchaseOrder(TimestampedModel):
         paid = sum(self.transactions.filter(status="confirmed", kind="supplier_payment").values_list("amount", flat=True), Decimal("0"))
         allocations = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.filter(plan__purchase_order=self, is_active=True, advance__status="confirmed")), Decimal("0"))
         refunds = sum(self.transactions.filter(direction="income", status="confirmed", kind="supplier_refund").values_list("amount", flat=True), Decimal("0"))
-        return paid + allocations - refunds
+        returns = FinanceBankReturnAllocation.objects.filter(plan__purchase_order=self).aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+        return paid + allocations - refunds - returns
 
     @property
     def unpaid_amount(self):
@@ -2097,7 +2099,8 @@ class Transaction(TimestampedModel):
         used = sum((row.cash_amount if row.cash_amount is not None else row.amount
                     for row in rows if row.is_active), Decimal("0"))
         refunded = self.refunded_cash_amount(unallocated_only=True)
-        return max(self.amount - used - refunded, Decimal("0"))
+        returned = self.returned_cash_amount(unallocated_only=True)
+        return max(self.amount - used - refunded - returned, Decimal("0"))
 
     def refunded_cash_amount(self, *, unallocated_only=False):
         rows = getattr(self, "_prefetched_objects_cache", {}).get("attributed_refunds")
@@ -2108,9 +2111,18 @@ class Transaction(TimestampedModel):
             rows = rows.filter(refund__plan__isnull=True)
         return rows.aggregate(total=models.Sum("refund__amount"))["total"] or Decimal("0")
 
+    def returned_cash_amount(self, *, unallocated_only=False):
+        rows = getattr(self, "_prefetched_objects_cache", {}).get("bank_return_allocations")
+        if rows is not None:
+            return sum((row.amount for row in rows if not unallocated_only or row.plan_id is None), Decimal("0"))
+        rows = self.bank_return_allocations.all()
+        if unallocated_only:
+            rows = rows.filter(plan__isnull=True)
+        return rows.aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+
     @property
     def allocation_capacity(self):
-        refunded = self.refunded_cash_amount(unallocated_only=True)
+        refunded = self.refunded_cash_amount(unallocated_only=True) + self.returned_cash_amount(unallocated_only=True)
         if self.kind == "customer_receipt" and self.direction == "income" and not self.order_id and not self.plan_id:
             adjustments = getattr(self, "_prefetched_objects_cache", {}).get("receipt_adjustments")
             fees = [item for item in adjustments if item.nature == "bank_fee" and item.handling == "company"] if adjustments is not None else self.receipt_adjustments.filter(nature="bank_fee", handling="company").select_related("evidence")
@@ -2225,6 +2237,19 @@ class FinanceCashConfirmation(FinanceAppendOnly):
     request_hash = models.CharField(max_length=64)
     actor = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class FinanceBankReturnAllocation(FinanceAppendOnly):
+    """A verified CNY bank return traced to the original cash and plan."""
+    fact = models.ForeignKey("FinanceFact", on_delete=models.PROTECT, related_name="return_allocations")
+    source = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="bank_return_allocations")
+    plan = models.ForeignKey(PaymentPlan, on_delete=models.PROTECT, null=True, blank=True, related_name="bank_return_allocations")
+    amount = models.DecimalField(max_digits=14, decimal_places=4)
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="finance_bank_return_alloc_positive")]
 
 
 class FinanceBankVoucherBinding(FinanceAppendOnly):

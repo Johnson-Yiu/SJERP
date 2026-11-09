@@ -968,7 +968,7 @@ def allocate_advance(advance, plan, amount):
     plan.save(update_fields=["settled_amount", "status", "updated_at"])
     cash_used = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.select_for_update().filter(advance=advance, is_active=True)), Decimal("0"))
     fee_used = sum(AdvanceAllocation.objects.select_for_update().filter(advance=advance, is_active=True).values_list("fee_credit_amount", flat=True), Decimal("0"))
-    unallocated_refunds = advance.attributed_refunds.filter(refund__status="confirmed", refund__plan__isnull=True).aggregate(total=models.Sum("refund__amount"))["total"] or Decimal("0")
+    unallocated_refunds = advance.refunded_cash_amount(unallocated_only=True) + advance.returned_cash_amount(unallocated_only=True)
     cash_part = min(amount, max(advance.amount - cash_used - unallocated_refunds, Decimal("0")))
     fee_part = amount - cash_part
     if fee_part:
@@ -1233,7 +1233,8 @@ def refund_receipt_cash(source, order, value, reason, evidence_id, user):
             if source.plan_id == plan.pk:
                 eligible += source.amount
             previous = source.attributed_refunds.filter(refund__status="confirmed", refund__plan=plan).aggregate(total=models.Sum("refund__amount"))["total"] or Decimal("0")
-            eligible = min(max(eligible - previous, Decimal("0")), plan.settled_amount)
+            returned = source.bank_return_allocations.filter(plan=plan).aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+            eligible = min(max(eligible - previous - returned, Decimal("0")), plan.settled_amount)
         applied = min(remaining, eligible)
         if applied <= 0:
             continue

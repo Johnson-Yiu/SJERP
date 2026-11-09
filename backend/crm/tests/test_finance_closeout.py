@@ -293,6 +293,59 @@ class FinanceCloseoutTests(CloseoutFixture, TestCase):
         with self.assertRaises(APIException):
             self.fact(kind="bank_return", legacy_parent=original.pk, direction="expense", amount="605.01", actual_date="2026-10-19")
 
+    @override_settings(RMB_CASH_ACCOUNT_IDS=("SYNTH_CNY",))
+    def test_cny_bank_return_restores_receivable_atomically(self):
+        self.assert_cny_bank_return_restores_plan("receivable")
+
+    @override_settings(RMB_CASH_ACCOUNT_IDS=("SYNTH_CNY",))
+    def test_cny_bank_return_restores_payable_atomically(self):
+        self.assert_cny_bank_return_restores_plan("payable")
+
+    def assert_cny_bank_return_restores_plan(self, direction):
+        from crm.models import Customer, FinanceBankReturnAllocation, Order, PaymentPlan, PurchaseOrder, Supplier
+        from crm.services import cash_events
+        from crm.services.finance import record_transaction
+        from crm.tests.test_cash_events import payload
+
+        if direction == "receivable":
+            customer = Customer.objects.create(code="RETURN-CNY", name="合成退回客户")
+            order = Order.objects.create(order_no="RETURN-CNY", customer=customer, currency="CNY", status="confirmed", order_date=date(2026, 1, 2))
+            relation = {"order": order}
+            bank_direction, return_direction = "income", "expense"
+        else:
+            supplier = Supplier.objects.create(code="BR", name="合成退回供应商")
+            order = PurchaseOrder.objects.create(purchase_no="RETURN-CNY", supplier=supplier, currency="CNY", status="ordered", order_date=date(2026, 1, 2))
+            relation = {"purchase_order": order}
+            bank_direction, return_direction = "expense", "income"
+        plan = PaymentPlan.objects.create(direction=direction, currency="CNY", planned_amount=100, **relation)
+        source = record_transaction({"transaction_no": "RETURN-SOURCE", "plan": plan, "direction": bank_direction, "amount": "100", "currency": "CNY", "exchange_rate": "1"})
+        event, _ = cash_events.register_event(payload([source], currency="CNY", direction=bank_direction, key="RETURN-BANK", kind="cny_direct", source_account="SYNTH_CNY", rmb_account="SYNTH_CNY", bank_net_amount="100", fee_mode="none", fee_amount="0", quoted_rate=None), self.maker)
+        cash_events.confirm_event(event.pk, self.maker, voucher_checked=True)
+        ledger.map_account({"account": self.account.pk, "legacy_code": "SYNTH_CNY", "reason": "合成银行开户映射凭证"}, self.maker)
+        client = APIClient()
+        client.force_authenticate(self.maker)
+        options = client.get("/api/finance-ledger/bank-return-options/", {"event": event.pk})
+        self.assertEqual(options.status_code, 200)
+        self.assertEqual(options.data["items"][0]["plan"], plan.pk)
+        data = self.data(kind="bank_return", legacy_parent=event.pk, direction=return_direction, amount="40.00",
+                         actual_date="2026-10-19", return_allocations=[{"source": source.pk, "plan": plan.pk, "amount": "40.00"}])
+        instruction, _ = ledger.submit(data, self.maker)
+        with patch.object(ledger, "audit", side_effect=RuntimeError("audit unavailable")):
+            with self.assertRaisesRegex(RuntimeError, "audit unavailable"):
+                ledger.post(instruction.pk, self.maker, voucher_checked=True)
+        plan.refresh_from_db()
+        self.assertEqual(plan.settled_amount, Decimal("100"))
+        self.assertFalse(FinanceBankReturnAllocation.objects.exists())
+        fact = ledger.post(instruction.pk, self.maker, voucher_checked=True)
+        self.assertEqual(ledger.post(instruction.pk, self.maker, voucher_checked=True).pk, fact.pk)
+        plan.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, Decimal("40"))
+        self.assertEqual(order.paid_amount, Decimal("60"))
+        self.assertEqual(source.returned_cash_amount(), Decimal("40"))
+        self.assertEqual(FinanceBankReturnAllocation.objects.count(), 1)
+        with self.assertRaises(APIException):
+            self.fact(kind="bank_return", legacy_parent=event.pk, direction=return_direction, amount="60.01", actual_date="2026-10-20")
+
     def test_separate_refund_approvals_still_identify_cumulative_excess(self):
         receipt = self.fact()
         payments = []

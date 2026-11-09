@@ -21,3 +21,7 @@
 兼容迁移起点及顺序见 `WORK-IN-PROGRESS.md`；本包新增 `crm.0124_finance_bank_fact_match`、`crm.0125_finance_receipt_refund`，两表含数据时禁止逆向删除。A 合入自己的最终迁移图后需重新做三入口 PostgreSQL 升级及关联数据核对。
 
 结汇／银行确认还依赖 `crm.0126_finance_cash_confirmation`：以银行事件与首次确认内容建立不可变指纹；同内容重放返回原事件，不同内容冲突，旧事件没有指纹时不猜测旧核对说明。A 汇合时请连同 0124、0125 一起处理并重跑三种升级入口。
+
+## 人民币银行退回
+
+通过 `GET /api/finance-ledger/bank-return-options/` 按原 `event` 或已匹配 `fact` 查询可见的来源和计划。提交 `bank_return` 指令时，`return_allocations` 逐条提供 `source`、`plan`（未分配现金使用 null）及十进制 `amount`。人民币直接收付款的分配总额须等于银行实际退回。提交使用原 `request_key`，确认使用同一指令；分配、计划、资金事实和审计统一提交。迁移节点为 `crm.0127_finance_bank_return_allocation`，依赖 `crm.0126_finance_cash_confirmation`。

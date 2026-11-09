@@ -596,9 +596,13 @@ class SalesDataScopeTests(TestCase):
         self.assertEqual(created.owner, self.employee_a.display_name)
 
     def test_dashboard_and_sales_reports_use_the_same_customer_scope(self):
-        self.make_order(self.customer_a, "SCOPE-O-A")
-        self.make_order(self.customer_b, "SCOPE-O-B")
-        self.make_order(self.customer_c, "SCOPE-O-C-SALES")
+        for customer, number in [
+            (self.customer_a, "SCOPE-O-A"),
+            (self.customer_b, "SCOPE-O-B"),
+            (self.customer_c, "SCOPE-O-C-SALES"),
+        ]:
+            order, _ = self.make_order(customer, number)
+            Order.objects.filter(pk=order.pk).update(customer_name_snapshot=customer.name)
         self.login(self.employee_a)
         dashboard = self.client.get("/api/dashboard/")
         self.assertEqual(dashboard.status_code, 200)

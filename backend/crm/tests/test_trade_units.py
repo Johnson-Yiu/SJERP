@@ -25,7 +25,7 @@ class TradeUnitsTests(TestCase):
 
     def post(self, url, data, code=201):
         kwargs = {}
-        if url.endswith(('/receive/', '/ship/')):
+        if url == 'inventory-movements/' or url.endswith(('/receive/', '/ship/')):
             self._fulfillment_request_number += 1
             kwargs['HTTP_IDEMPOTENCY_KEY'] = f'trade-units-fulfillment-{self._fulfillment_request_number}'
         response = self.client.post('/api/' + url, data, format='json', **kwargs)

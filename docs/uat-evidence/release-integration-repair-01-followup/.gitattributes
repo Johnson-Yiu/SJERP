@@ -1,0 +1,2 @@
+# Keep the browser's exact CSV bytes.
+*.csv -text

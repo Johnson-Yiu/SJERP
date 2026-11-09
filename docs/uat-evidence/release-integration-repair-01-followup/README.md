@@ -5,17 +5,21 @@
 ## 本轮补齐
 
 - 库存调整在发送前把原请求标识和完整提交写入当前浏览器标签页的会话存储，并按账号隔离。响应丢失时，关闭原工作区并重进后可重试原提交；已登记流水重放原结果，不再次入账。确定的业务校验失败允许更正；其他未确认结果继续保留。保护范围是同一浏览器标签页，关闭整个标签页或换设备无法读取这份会话存储。
-- 财务概览与历史资料预检在真实 Chrome 的 1366×768、1440×900、390×844 下分别切换原生 100%／125%。由 Chrome 设置页切换，以设备像素比及 CSS 可视宽度复核。使用长客户名、长订单号、四条明细合成样本。390px 放大后有效宽度为 312 CSS 像素，已消除整页横向溢出；宽表仍可在容器内滚动。通过 Chrome CDP 保存原尺寸视口及主要按钮的截图。[测量记录](browser/sales-order-import-real.spec/native-zoom-results.json)。
+- 财务概览、历史资料预检和历史资料承接在真实 Chrome 的 1366×768、1440×900、390×844 下分别切换原生 100%／125%。由 Chrome 设置页切换，以设备像素比及 CSS 可视宽度复核。使用长客户名、长订单号、四条明细合成样本。390px 放大后有效宽度为 312 CSS 像素，已消除整页横向溢出；宽表仍可在容器内滚动。通过 Chrome CDP 保存原尺寸视口及主要按钮的截图。[测量记录](browser/sales-order-import-real.spec/native-zoom-results.json)。
 - 产品证书 400 校验保留“证书名称”等业务字段提示，并保留未保存输入；500 错误仍显示通用提示。
 - C 的真实隔离 PostgreSQL 17.11 [恢复演练](../attachments-recovery-hardening-01/final-candidate-pg17-20261110.md)和 [GPG/OpenSSL 加密、解密、签名、保留演练](../attachments-recovery-hardening-01/final-candidate-pg17-crypto-20261110.md)均通过。验证包括数据库和媒体、银行凭证文件、空媒体目录、损坏拒绝、真实锁竞争和审计保护；媒体写入栅栏为模拟，副本在本地。
+- D 的历史资金补丁来源 `efa808aac214f082853f7b0b110a22e1ce379fcf`，合入为 `a1693bd58ba57a9ed68eed787af8a47d5f468426`。历史资金先经现有财务重复候选核对，再提交人工核对结论；最终记账仍会重新核实候选。服务端验证候选变化拒绝写入、原请求重放、已存在银行事实关联后只计一次且不重复核销。审批仍要求两名真实账号。
 
 ## 回归命令与结果
 
 - 在 frontend 运行 `npm run test:unit`：197/197 通过。
 - 在 frontend 运行 `npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js --maxWorkers 4`：87 个文件、818/818 通过。调整旧断言以继续覆盖明确关闭保护、业务字段、历史预检入口、实际付款汇率和幂等标识。
-- 浏览器：使用已配置的隔离 codex 真实会话、`ISOLATED_CODEX_TEST_SUPERADMIN=1`、`ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT=docs/uat-evidence/release-integration-repair-01-followup`，运行 `node frontend/scripts/run-isolated-browser-tests.mjs --business-test sales-order-import-real.spec.js`，9/9 通过。包括库存真实写入后丢响应、关闭工作区后原提交重放，以及长证书名称由实际 API 拒绝且输入保留。
+- `node --test tests/detail-drawer-typography.spec.js` 1/1 通过，`npm run build` 通过。
+- 在 backend 运行 `python manage.py test crm.tests.test_history_operational_finance crm.tests.test_history_source_boundaries --noinput`：合流候选 `a1693bd5` 在本机独立 PostgreSQL 17 集群的新随机测试库内 21/21 通过，无跳过，测试库已清理。SQLite 另加库存幂等套件，26 项中 23 通过、3 跳过。D 无新迁移，`makemigrations --check --dry-run` 无遗漏。
+- 浏览器：使用已配置的隔离 codex 真实会话、`ISOLATED_CODEX_TEST_SUPERADMIN=1`、`ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT=docs/uat-evidence/release-integration-repair-01-followup`，运行 `node frontend/scripts/run-isolated-browser-tests.mjs --business-test sales-order-import-real.spec.js`，10/10 通过。库存真实写入后丢响应，关闭工作区后原提交重放；长证书名称由实际 API 拒绝且输入保留；历史资金实际返回提交 201、自审拒绝 400、第二名认证用户复核 200、记账 200。见[重复候选核对](browser/sales-order-import-real.spec/history-finance-duplicate-review.png)和[记账结果](browser/sales-order-import-real.spec/history-finance-posted.png)。
 - SQLite 全量 `python manage.py test --noinput` 未通过：发现 1751 项，报告运行 1736 项，9 失败、47 错误、118 跳过。旧回退测试试图从合流后的数据库跨过 0120 不可逆保护，一些用例在注册恢复前已经撤掉新字段，引发后续共享库缺列。此外存在本地 Python 缺 PostgreSQL 依赖和旧接口断言。不得把全量结果写成通过，也未关闭这些测试或降低门禁；原三入口前向升级结果不受影响。
 
 ## 边界
 
 - 正式目标的媒体 ACL、异地副本、调度和目标库真实历史资料未提供，尚未验收。正式部署、GitHub Actions 与完整打印和分页均未运行。
+- 本轮实际下载的销售导入 XLSX 模板、财务 CSV、历史预检 CSV、导入错误 CSV 见[补验下载清单](download-manifest.json)；正式报价 XLSX 与原验收仍保留在[原下载清单](../release-integration-repair-01/download-manifest.json)。

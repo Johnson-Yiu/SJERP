@@ -629,6 +629,42 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 </template>
 
 <style scoped>
+.takeover-page{display:grid;gap:16px;min-width:0}
+.takeover-intro,.takeover-section-title,.takeover-list-head,.takeover-detail-head,.takeover-group-head,.takeover-upload-row{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap
+}
+.takeover-intro,.takeover-upload,.takeover-list,.takeover-detail{padding:18px;min-width:0}
+.takeover-intro{border-radius:12px;background:#eaf3ee}
+.takeover-intro h2,.takeover-section-title h3,.takeover-list-head h3,.takeover-detail-head h3,.takeover-group-head h4{margin:0;overflow-wrap:anywhere}
+.takeover-section-title h3,.takeover-list-head h3,.takeover-lock,.takeover-caution,.takeover-alert{display:flex;align-items:center;gap:8px}
+.takeover-eyebrow{color:#527264;margin:0 0 5px;font-size:var(--text-caption)}
+.takeover-intro p,.takeover-section-title p,.takeover-detail-head p,.takeover-group-head p{margin:6px 0}
+.takeover-columns{display:grid;grid-template-columns:minmax(200px,1fr) minmax(0,3fr);gap:16px;align-items:start}
+.takeover-list{display:grid;gap:8px}
+.takeover-list-item,.takeover-group-tab{display:grid;gap:3px;text-align:left;min-width:0;overflow-wrap:anywhere}
+.takeover-list-item.active,.takeover-group-tab.active{background:#edf6f1;border-color:#8ab4a3}
+.takeover-summary,.takeover-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.takeover-summary span{padding:10px;border-radius:8px;background:#f1f5f3}
+.takeover-groups,.takeover-actions{display:flex;flex-wrap:wrap;gap:8px}
+.takeover-group-detail,.takeover-resolution,.takeover-result-row,.takeover-remainder-item{margin-top:12px;padding:12px;border:1px solid #dce8e1;border-radius:9px}
+.takeover-resolution{background:#f7faf8}
+.takeover-remainder-item{display:grid;gap:6px;background:white}
+.takeover-form-grid label,.takeover-remainder-item label{display:grid;align-content:start;gap:5px;min-width:0;color:#345849}
+.takeover-form-grid input,.takeover-form-grid select,.takeover-form-grid textarea,.takeover-remainder-item select,.takeover-remainder-item input{
+  width:100%;min-height:36px;padding:6px 8px;border:1px solid #cbdcd3;border-radius:7px;background:#fff;color:#223d32
+}
+.takeover-form-grid .wide{grid-column:1/-1}
+.takeover-primary,.takeover-secondary,.takeover-text-button,.takeover-list-item,.takeover-group-tab{
+  min-height:36px;padding:7px 11px;border:1px solid #cddbd3;border-radius:8px;background:#fff;color:#315c4a;font-weight:650;white-space:normal
+}
+.takeover-primary{background:#195c49;color:#fff;border-color:#195c49}
+.takeover-page button:not(:disabled){cursor:pointer}
+.takeover-page button:disabled{opacity:.55;cursor:not-allowed}
+.takeover-lock,.takeover-caution,.takeover-alert{flex-wrap:wrap;padding:9px 11px;border-radius:8px;background:#edf6f1}
+.takeover-alert{color:#972a2a;background:#fff0ec}
+.takeover-file,.takeover-evidence{min-width:0;overflow-wrap:anywhere}
+.takeover-file input{max-width:100%}
+.takeover-resolution > button{margin:4px 8px 4px 0;max-width:100%}
 .takeover-remainder-item > .wide{grid-column:1/-1;min-width:0}
 .takeover-intro-actions{display:grid;justify-items:end;gap:8px}.takeover-preflight-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 11px;border:1px solid #cddbd3;border-radius:8px;background:#fff;color:#315c4a;font-size:13px;font-weight:700;text-decoration:none}.takeover-preflight-link:hover{background:#f3f8f5;border-color:#9ebca9}
 @media(max-width:900px){.takeover-columns{grid-template-columns:1fr}.takeover-list{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-list-head,.takeover-empty{grid-column:1/-1}}

@@ -2,7 +2,7 @@
 
 ## 2026-11-10 RELEASE-INTEGRATION-REPAIR-01 补验
 
-补齐同一浏览器标签页内库存未知提交恢复，复验 Chrome 原生 100%／125% 和长记录，并完成隔离 PostgreSQL 真实恢复、加密签名及保留策略。前端全量定向门禁通过；SQLite 后端全量未通过，前向迁移复验结果单列。正式目标环境未核验，详见[补验记录](uat-evidence/release-integration-repair-01-followup/README.md)。
+补齐同一浏览器标签页内库存未知提交恢复和历史资金重复核对，复验 Chrome 原生 100%／125% 和长记录，并完成隔离 PostgreSQL 真实恢复、加密签名及保留策略。前端 Node 与 Vitest 全量通过；SQLite 后端全量未通过，前向迁移和历史资金 PostgreSQL 定向结果单列。正式目标环境未核验，详见[补验记录](uat-evidence/release-integration-repair-01-followup/README.md)。
 
 ## 2026-11-09 RELEASE-INTEGRATION-REPAIR-01
 

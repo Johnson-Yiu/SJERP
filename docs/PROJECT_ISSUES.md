@@ -2,7 +2,7 @@
 
 ## 2026-11-10 RELEASE-INTEGRATION-REPAIR-01 补验
 
-追加库存重开重放、长内容与 125% 缩放、证书业务字段提示及恢复演练证据。后端全量测试未通过，需隔离旧迁移回退测试并核对其他失败；未改变迁移保护或关闭旧问题。原证据保留，后续结果见[补验记录](uat-evidence/release-integration-repair-01-followup/README.md)。
+追加库存重开重放、长内容与 125% 缩放、历史资金重复核对和双人复核、证书业务字段提示及恢复演练证据。后端全量测试未通过，需隔离旧迁移回退测试并核对其他失败；未改变迁移保护或关闭旧问题。原证据保留，后续结果见[补验记录](uat-evidence/release-integration-repair-01-followup/README.md)。
 
 ## 2026-11-09 RELEASE-INTEGRATION-REPAIR-01 补充证据
 

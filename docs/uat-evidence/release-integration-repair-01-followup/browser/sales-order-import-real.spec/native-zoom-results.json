@@ -7,7 +7,8 @@
     "dpr": 1,
     "documentWidth": 1366,
     "screenshot": "finance-1366-zoom-100.png",
-    "actionScreenshot": "finance-1366-zoom-100-action.png"
+    "actionScreenshot": "finance-1366-zoom-100-action.png",
+    "cssWidth": 1366
   },
   {
     "name": "history-preflight",
@@ -17,7 +18,19 @@
     "dpr": 1,
     "documentWidth": 1366,
     "screenshot": "history-preflight-1366-zoom-100.png",
-    "actionScreenshot": "history-preflight-1366-zoom-100-action.png"
+    "actionScreenshot": "history-preflight-1366-zoom-100-action.png",
+    "cssWidth": 1366
+  },
+  {
+    "name": "history-takeover",
+    "width": 1366,
+    "height": 768,
+    "zoom": 1,
+    "dpr": 1,
+    "documentWidth": 1366,
+    "screenshot": "history-takeover-1366-zoom-100.png",
+    "actionScreenshot": "history-takeover-1366-zoom-100-action.png",
+    "cssWidth": 1366
   },
   {
     "name": "finance",
@@ -27,7 +40,8 @@
     "dpr": 1,
     "documentWidth": 1440,
     "screenshot": "finance-1440-zoom-100.png",
-    "actionScreenshot": "finance-1440-zoom-100-action.png"
+    "actionScreenshot": "finance-1440-zoom-100-action.png",
+    "cssWidth": 1440
   },
   {
     "name": "history-preflight",
@@ -37,7 +51,19 @@
     "dpr": 1,
     "documentWidth": 1440,
     "screenshot": "history-preflight-1440-zoom-100.png",
-    "actionScreenshot": "history-preflight-1440-zoom-100-action.png"
+    "actionScreenshot": "history-preflight-1440-zoom-100-action.png",
+    "cssWidth": 1440
+  },
+  {
+    "name": "history-takeover",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1,
+    "dpr": 1,
+    "documentWidth": 1440,
+    "screenshot": "history-takeover-1440-zoom-100.png",
+    "actionScreenshot": "history-takeover-1440-zoom-100-action.png",
+    "cssWidth": 1440
   },
   {
     "name": "finance",
@@ -47,7 +73,8 @@
     "dpr": 1,
     "documentWidth": 390,
     "screenshot": "finance-390-zoom-100.png",
-    "actionScreenshot": "finance-390-zoom-100-action.png"
+    "actionScreenshot": "finance-390-zoom-100-action.png",
+    "cssWidth": 390
   },
   {
     "name": "history-preflight",
@@ -57,66 +84,117 @@
     "dpr": 1,
     "documentWidth": 390,
     "screenshot": "history-preflight-390-zoom-100.png",
-    "actionScreenshot": "history-preflight-390-zoom-100-action.png"
+    "actionScreenshot": "history-preflight-390-zoom-100-action.png",
+    "cssWidth": 390
+  },
+  {
+    "name": "history-takeover",
+    "width": 390,
+    "height": 844,
+    "zoom": 1,
+    "dpr": 1,
+    "documentWidth": 390,
+    "screenshot": "history-takeover-390-zoom-100.png",
+    "actionScreenshot": "history-takeover-390-zoom-100-action.png",
+    "cssWidth": 390
   },
   {
     "name": "finance",
-    "width": 1093,
+    "width": 1366,
     "height": 768,
     "zoom": 1.25,
     "dpr": 1.25,
     "documentWidth": 1093,
     "screenshot": "finance-1366-zoom-125.png",
-    "actionScreenshot": "finance-1366-zoom-125-action.png"
+    "actionScreenshot": "finance-1366-zoom-125-action.png",
+    "cssWidth": 1093
   },
   {
     "name": "history-preflight",
-    "width": 1093,
+    "width": 1366,
     "height": 768,
     "zoom": 1.25,
     "dpr": 1.25,
     "documentWidth": 1093,
     "screenshot": "history-preflight-1366-zoom-125.png",
-    "actionScreenshot": "history-preflight-1366-zoom-125-action.png"
+    "actionScreenshot": "history-preflight-1366-zoom-125-action.png",
+    "cssWidth": 1093
+  },
+  {
+    "name": "history-takeover",
+    "width": 1366,
+    "height": 768,
+    "zoom": 1.25,
+    "dpr": 1.25,
+    "documentWidth": 1093,
+    "screenshot": "history-takeover-1366-zoom-125.png",
+    "actionScreenshot": "history-takeover-1366-zoom-125-action.png",
+    "cssWidth": 1093
   },
   {
     "name": "finance",
-    "width": 1152,
+    "width": 1440,
     "height": 900,
     "zoom": 1.25,
     "dpr": 1.25,
     "documentWidth": 1152,
     "screenshot": "finance-1440-zoom-125.png",
-    "actionScreenshot": "finance-1440-zoom-125-action.png"
+    "actionScreenshot": "finance-1440-zoom-125-action.png",
+    "cssWidth": 1152
   },
   {
     "name": "history-preflight",
-    "width": 1152,
+    "width": 1440,
     "height": 900,
     "zoom": 1.25,
     "dpr": 1.25,
     "documentWidth": 1152,
     "screenshot": "history-preflight-1440-zoom-125.png",
-    "actionScreenshot": "history-preflight-1440-zoom-125-action.png"
+    "actionScreenshot": "history-preflight-1440-zoom-125-action.png",
+    "cssWidth": 1152
+  },
+  {
+    "name": "history-takeover",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1.25,
+    "dpr": 1.25,
+    "documentWidth": 1152,
+    "screenshot": "history-takeover-1440-zoom-125.png",
+    "actionScreenshot": "history-takeover-1440-zoom-125-action.png",
+    "cssWidth": 1152
   },
   {
     "name": "finance",
-    "width": 312,
+    "width": 390,
     "height": 844,
     "zoom": 1.25,
     "dpr": 1.25,
     "documentWidth": 312,
     "screenshot": "finance-390-zoom-125.png",
-    "actionScreenshot": "finance-390-zoom-125-action.png"
+    "actionScreenshot": "finance-390-zoom-125-action.png",
+    "cssWidth": 312
   },
   {
     "name": "history-preflight",
-    "width": 312,
+    "width": 390,
     "height": 844,
     "zoom": 1.25,
     "dpr": 1.25,
     "documentWidth": 312,
     "screenshot": "history-preflight-390-zoom-125.png",
-    "actionScreenshot": "history-preflight-390-zoom-125-action.png"
+    "actionScreenshot": "history-preflight-390-zoom-125-action.png",
+    "cssWidth": 312
+  },
+  {
+    "name": "history-takeover",
+    "width": 390,
+    "height": 844,
+    "zoom": 1.25,
+    "dpr": 1.25,
+    "documentWidth": 312,
+    "screenshot": "history-takeover-390-zoom-125.png",
+    "actionScreenshot": "history-takeover-390-zoom-125-action.png",
+    "cssWidth": 312
   }
 ]

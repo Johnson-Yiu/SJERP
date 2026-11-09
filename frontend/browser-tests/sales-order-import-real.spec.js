@@ -409,6 +409,83 @@ test('finance fee scenarios refuse excess refunds and reverse writeoffs without 
   await writeFile(path.join(evidenceDir,'finance-correction-result.json'),JSON.stringify({refundStatus:refused.status(),restored,transactionsUnchanged:true},null,2))
 })
 
+async function openHistoricalFinance(page, baseURL) {
+  await page.goto(new URL('/history-takeover', baseURL).href)
+  await page.locator('.takeover-list-item').first().click()
+  const summary = page.getByText('历史资金接续', { exact: true })
+  await summary.click()
+  const section = page.locator('details').filter({ has: summary })
+  await section.getByRole('button', { name: '读取资金来源、账户和凭证' }).click()
+  await expect(section.getByText(/原系统记录 SYNTH-HISTORY-RECEIPT/)).toBeVisible()
+  return section
+}
+
+test('historical finance reviews a duplicate and posts only after second-user approval', async ({ browser, baseURL }) => {
+  test.setTimeout(90000)
+  const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8')).history_finance
+  test.skip(!fixture, 'Requires the follow-up historical finance fixture')
+  const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } })
+  try {
+    const page = await context.newPage()
+    async function signIn(username) {
+      await page.goto('/login')
+      await page.getByLabel('账号').fill(username)
+      await page.getByLabel('密码').fill(process.env.CODEX_TEST_PASSWORD)
+      const login = page.waitForResponse(response => response.url().endsWith('/api/session/login/') && response.ok())
+      await page.getByRole('button', { name: '登录', exact: true }).click()
+      await login
+      const identity = await (await page.request.get('/api/session/current-operator/')).json()
+      expect(identity.authenticated).toBe(true)
+      expect(identity.development_superadmin).toBe(false)
+      return identity
+    }
+    const maker = await signIn('codex')
+    const section = await openHistoricalFinance(page, baseURL)
+    const source = section.getByLabel('历史收付款来源')
+    await source.selectOption({ label: await source.locator('option').filter({ hasText: fixture.source }).innerText() })
+    await section.getByLabel('自有人民币账户').selectOption(String(fixture.account))
+    await section.getByLabel('实际凭证').selectOption(String(fixture.voucher))
+    await section.getByLabel('实际发生日期').fill('2024-09-03')
+    await section.getByLabel('实际人民币金额').fill('287.43')
+    await section.getByLabel('核实依据').fill('合成历史凭证与同日账户流水已逐项核对')
+    const save = section.getByRole('button', { name: '保存资金指令' })
+    await expect(save).toBeDisabled()
+    await section.getByRole('button', { name: '核对可能重复的资金' }).click()
+    await expect(section.getByText(/发现可能重复的资金/)).toBeVisible()
+    await expect(save).toBeDisabled()
+    await section.getByLabel('核对结果').selectOption('distinct')
+    await section.getByLabel('核对说明').fill('凭证独立，同金额不是同一笔')
+    await page.screenshot({ path: path.join(evidenceDir, 'history-finance-duplicate-review.png') })
+    const submitted = page.waitForResponse(response => response.url().endsWith('/finance-submit/'))
+    await save.click()
+    expect((await submitted).status()).toBe(201)
+    const row = section.locator('.takeover-remainder-item').filter({ hasText: fixture.source }).first()
+    const approve = row.getByRole('button', { name: '复核指令' })
+    await expect(approve).toBeVisible()
+    const denied = page.waitForResponse(response => response.url().endsWith('/finance-approve/'))
+    await approve.click()
+    expect((await denied).status()).toBe(400)
+    const logout = page.waitForResponse(response => response.url().endsWith('/api/session/logout/') && response.ok())
+    await page.getByRole('button', { name: '退出登录', exact: true }).click()
+    await logout
+    const reviewer = await signIn('codex-history-reviewer')
+    expect(reviewer.user_id).not.toBe(maker.user_id)
+    const reviewSection = await openHistoricalFinance(page, baseURL)
+    const reviewRow = reviewSection.locator('.takeover-remainder-item').filter({ hasText: fixture.source }).first()
+    const approved = page.waitForResponse(response => response.url().endsWith('/finance-approve/'))
+    await reviewRow.getByRole('button', { name: '复核指令' }).click()
+    expect((await approved).ok()).toBe(true)
+    page.once('dialog', dialog => dialog.accept())
+    const posted = page.waitForResponse(response => response.url().endsWith('/finance-post/'))
+    await reviewRow.getByRole('button', { name: '核对凭证并记账' }).click()
+    expect((await posted).ok()).toBe(true)
+    await expect(reviewRow).toContainText('已启用')
+    await page.screenshot({ path: path.join(evidenceDir, 'history-finance-posted.png') })
+  } finally {
+    await context.close()
+  }
+})
+
 test('Chrome native page zoom keeps long finance and history records usable', async ({ page, baseURL }) => {
   test.setTimeout(180000)
   const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8')).long_content
@@ -421,7 +498,8 @@ test('Chrome native page zoom keeps long finance and history records usable', as
     const browserSettings = context.pages()[0]
     const app = await context.newPage()
     const history = await context.newPage()
-    const cdp = new Map([[app, await context.newCDPSession(app)], [history, await context.newCDPSession(history)]])
+    const takeover = await context.newPage()
+    const cdp = new Map([[app, await context.newCDPSession(app)], [history, await context.newCDPSession(history)], [takeover, await context.newCDPSession(takeover)]])
     async function capture(candidate, screenshot) {
       const { data } = await cdp.get(candidate).send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
       await writeFile(path.join(evidenceDir, screenshot), Buffer.from(data, 'base64'))
@@ -445,8 +523,9 @@ test('Chrome native page zoom keeps long finance and history records usable', as
       await expect(history.locator('.preflight-summary')).toContainText(fixture.workbook)
       await expect(history.getByRole('row').filter({ hasText: fixture.historical_order })).not.toHaveCount(0)
       await expect(history.getByRole('row').filter({ hasText: 'SYNTH-HISTORY-LONG-LINE-' })).toHaveCount(4)
+      const takeoverFinance = await openHistoricalFinance(takeover, baseURL)
       for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
-        for (const [name, candidate] of [['finance', app], ['history-preflight', history]]) {
+        for (const [name, candidate] of [['finance', app], ['history-preflight', history], ['history-takeover', takeover]]) {
           await candidate.setViewportSize({ width, height })
           const metrics = await candidate.evaluate(() => ({
             dpr: devicePixelRatio, width: innerWidth, documentWidth: document.documentElement.scrollWidth,
@@ -458,7 +537,9 @@ test('Chrome native page zoom keeps long finance and history records usable', as
           const stem = `${name}-${width}-zoom-${zoom * 100}`
           await candidate.evaluate(() => scrollTo(0, 0))
           await capture(candidate, `${stem}.png`)
-          const action = name === 'finance' ? orderRow.getByRole('link', { name: '查看订单' }) : history.getByRole('button', { name: /下载 CSV/ })
+          const action = name === 'finance' ? orderRow.getByRole('link', { name: '查看订单' })
+            : name === 'history-preflight' ? history.getByRole('button', { name: /下载 CSV/ })
+              : takeoverFinance.getByRole('button', { name: '读取资金来源、账户和凭证' })
           await action.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }))
           const bounds = await action.boundingBox()
           expect(bounds.x).toBeGreaterThanOrEqual(0)
@@ -466,7 +547,10 @@ test('Chrome native page zoom keeps long finance and history records usable', as
           expect(bounds.y).toBeGreaterThanOrEqual(0)
           expect(bounds.y + bounds.height).toBeLessThanOrEqual(height / zoom + 1)
           await capture(candidate, `${stem}-action.png`)
-          results.push({ name, width, height, zoom, ...metrics, screenshot: `${stem}.png`, actionScreenshot: `${stem}-action.png` })
+          results.push({
+            name, width, height, zoom, dpr: metrics.dpr, cssWidth: metrics.width,
+            documentWidth: metrics.documentWidth, screenshot: `${stem}.png`, actionScreenshot: `${stem}-action.png`,
+          })
         }
       }
     }

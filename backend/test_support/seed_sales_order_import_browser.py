@@ -114,5 +114,51 @@ if evidence_dir == followup_evidence_dir:
         "customer": long_customer.name, "order": long_order.order_no,
         "historical_order": historical_order, "workbook": "long-history-preflight.xlsx",
     }
+    from django.contrib.auth import get_user_model
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    from django.test import TestCase
+    from crm.services import finance_closeout
+    from crm.tests.test_history_takeover import HistoryTakeoverFixtureMixin
+
+    class HistoryFixture(HistoryTakeoverFixtureMixin, TestCase):
+        pass
+
+    history = HistoryFixture()
+    history.setUp()
+    history.client.defaults["HTTP_HOST"] = "127.0.0.1"
+    source_rows = history.source_rows()
+    source_id = "SYNTH-HISTORY-RECEIPT-ARCHIVE-2024-000000001"
+    source_rows["收付款流水"][0]["source_record_id"] = source_id
+    source_rows["销售订单"][0]["customer_name_snapshot"] = long_customer.name
+    source_rows["销售订单"][0]["order_no"] = "SYNTH-HISTORY-SALES-ARCHIVE-2024-0001"
+    application, group, _ = history.application_and_group(source_rows)
+    group_url = f"/api/import/history-takeovers/{application.pk}/groups/{group.pk}/"
+    for operation, data in [
+        ("review", {"decision": "approve", "note": "合成资料复核", "confirm_manual": True}),
+        ("execute", {}),
+    ]:
+        response = history.client.post(group_url + operation + "/", data, format="json")
+        if response.status_code != 200:
+            raise RuntimeError(f"Synthetic history {operation} failed: {response.data}")
+
+    users = get_user_model()
+    codex = users.objects.get(username="codex")
+    users.objects.create_superuser(
+        username="codex-history-reviewer", password=os.environ["CODEX_TEST_PASSWORD"], first_name="历史测试复核员",
+    )
+    account = finance_closeout.create_account({
+        "code": "SYN-HISTORY", "name": "合成历史账户", "account_type": "bank",
+        "ownership": "own", "ownership_reason": "合成验收",
+    }, codex)
+    voucher = finance_closeout.upload(SimpleUploadedFile("history-receipt.pdf", b"%PDF-1.4\nSynthetic\n%%EOF"), codex)
+    existing_voucher = finance_closeout.upload(SimpleUploadedFile("other-receipt.pdf", b"%PDF-1.4\nOther synthetic receipt\n%%EOF"), codex)
+    existing, _ = finance_closeout.submit({
+        "account": account.pk, "voucher": existing_voucher.pk, "actual_date": "2024-09-03",
+        "amount": "287.43", "reason": "合成验收", "request_key": "existing-history-browser",
+        "kind": "cash", "direction": "income", "nature": "unclassified", "truth": "verified",
+        "source_system": "SYNTHETIC", "source_key": "SYNTHETIC-HISTORY-EXISTING", "allocations": [],
+    }, codex)
+    finance_closeout.post(existing.pk, codex, voucher_checked=True)
+    fixture["history_finance"] = {"source": source_id, "account": account.pk, "voucher": voucher.pk}
 (evidence_dir / "fixture.json").write_text(json.dumps(fixture, ensure_ascii=False, indent=2), encoding="utf-8")
 print({"fixture": "synthetic sales order workbook seeded in the isolated SQLite database"})

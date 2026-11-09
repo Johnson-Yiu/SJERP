@@ -2763,6 +2763,10 @@ def finance_dashboard(request):
         writer.writerow(["方向", "分类", "人民币折算参考金额"])
         for row in payload["categories"]:
             writer.writerow(["收入" if row["direction"] == "income" else "支出", safe_csv(row["category"]), row["amount"]])
+        if can_view_orders and can_view_purchases:
+            writer.writerow([])
+            writer.writerow(["订单指标（按订单日期）", "人民币折算参考金额"])
+            writer.writerow(["核准非现金抵减", payload["metrics"]["receivable_reduction_rmb"]])
         return response
     return Response(payload)
 
@@ -2854,8 +2858,8 @@ def finance_dashboard_details(request):
                     "estimated_profit_rmb": profit["estimated_profit_rmb"],
                 }[metric]
                 note = (
-                    f"销售额 ¥{sales}；采购归属成本 ¥{profit['purchase_cost_rmb']}；"
-                    f"订单费用 ¥{profit['expense_rmb']}；有效非现金抵减 ¥{profit['receivable_reduction_rmb']}。"
+                    f"销售额 ¥{sales:,.2f}；采购归属成本 ¥{profit['purchase_cost_rmb']:,.2f}；"
+                    f"订单费用 ¥{profit['expense_rmb']:,.2f}；有效非现金抵减 ¥{profit['receivable_reduction_rmb']:,.2f}。"
                 )
                 if profit["reference_incomplete"]:
                     note += "部分费用未录入参考汇率，预计利润暂未包含这些费用。"

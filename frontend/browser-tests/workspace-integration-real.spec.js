@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 import path from 'node:path'
 
 const evidence = process.env.WORKSPACE_EVIDENCE_DIR
+test.use({ storageState: { cookies: [], origins: [] } })
 const active = page => page.locator('.workspace-pane[aria-hidden="false"]')
 const name = page => active(page).locator('.customer-editor .field').filter({ hasText: '客户名称' }).locator('input').first()
 

@@ -14,8 +14,8 @@ export default async function setupCodexTestSession() {
   try {
     const context = await browser.newContext()
     const page = await context.newPage()
-    await page.goto(`${baseURL}/login`)
-    await page.getByLabel('账号').fill(username)
+    await page.goto(`${baseURL}/login`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    await page.getByLabel('账号').fill(username, { timeout: 60000 })
     await page.getByLabel('密码').fill(password)
     const loginResponsePromise = page.waitForResponse(response =>
       new URL(response.url()).pathname === '/api/session/login/' && response.request().method() === 'POST')

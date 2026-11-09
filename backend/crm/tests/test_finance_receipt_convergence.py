@@ -85,6 +85,16 @@ class ReceiptConvergenceTests(TestCase):
         summary = order_profit_summary(self.order)
         self.assertEqual(summary["receipt_bank_fee_rmb"], Decimal("144"))
         self.assertEqual(summary["receivable_reduction_rmb"], Decimal("360"))
+        period = {"date_from": "2026-11-01", "date_to": "2026-11-30"}
+        dashboard = self.client.get("/api/finance-dashboard/", period)
+        details = self.client.get("/api/finance-dashboard/details/", {**period, "metric": "receivable_reduction_rmb"})
+        csv = self.client.get("/api/finance-dashboard/", {**period, "export": "csv"})
+        self.assertEqual((dashboard.status_code, details.status_code, csv.status_code), (200, 200, 200))
+        self.assertEqual(Decimal(dashboard.data["metrics"]["receivable_reduction_rmb"]), Decimal("360"))
+        self.assertEqual(Decimal(details.data["total_amount"]), Decimal("360"))
+        import csv as csv_format
+        export_rows = dict((row[0], row[1]) for row in csv_format.reader(csv.content.decode("utf-8-sig").splitlines()) if len(row) == 2)
+        self.assertEqual(Decimal(export_rows["核准非现金抵减"]), Decimal("360"))
 
     def test_unallocated_balance_counts_cash_not_fee_credit(self):
         payload = self.payload(number="CONVERGE-CASH-BALANCE")

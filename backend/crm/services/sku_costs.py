@@ -6,6 +6,7 @@ cost data boundary.
 """
 
 from datetime import timedelta
+from decimal import Decimal, InvalidOperation
 
 from django.utils import timezone
 
@@ -25,7 +26,11 @@ RISK_LABELS = {
 
 def verification_state(value, currency, verified_at, *, now=None):
     """Return a stable display state without converting or inferring amounts."""
-    if value is None or value <= 0 or not str(currency or "").strip():
+    try:
+        amount = Decimal(str(value))
+    except InvalidOperation:
+        return "missing"
+    if not amount.is_finite() or amount <= 0 or not str(currency or "").strip():
         return "missing"
     if verified_at is None:
         return "unverified"

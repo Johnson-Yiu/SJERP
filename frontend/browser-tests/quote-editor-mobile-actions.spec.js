@@ -165,6 +165,9 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
   const exportResponse = await exportResponsePromise
   expect(exportResponse.status()).toBe(201)
   const exportedQuote = await exportResponse.json()
+  const risk = page.getByRole('dialog', { name: '导出前风险提示' })
+  await expect(risk).toBeVisible()
+  await risk.getByRole('button', { name: '了解风险，继续导出' }).click()
   const download = await downloadPromise
   expect(download.suggestedFilename().toLowerCase()).toContain('.xlsx')
   const downloadPath = path.join(process.env.ISOLATED_TEST_ROOT, download.suggestedFilename())

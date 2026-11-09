@@ -29,6 +29,7 @@ let drillVersion = 0
 const rangeError = computed(() => dateFrom.value && dateTo.value && dateFrom.value > dateTo.value ? '开始日期不能晚于结束日期。' : '')
 const periodCards = [
   ['sales_rmb', '合同销售额'], ['estimated_profit_rmb', '预计订单利润'], ['purchase_cost_rmb', '订单采购归属成本'], ['order_expense_rmb', '订单费用'],
+  ['receivable_reduction_rmb', '核准非现金抵减'],
   ['income_rmb', '账面收入（折算参考）'], ['expense_rmb', '账面支出（折算参考）'], ['net_cash_rmb', '账面净收支（折算参考）'],
 ]
 const balanceCards = [
@@ -39,7 +40,7 @@ const balanceCards = [
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function canDrill(metric) {
   if (metric === 'sales_rmb' || metric === 'receivable_count' || metric === 'receivable_rmb') return can('orders', 'view')
-  if (['purchase_cost_rmb', 'order_expense_rmb', 'estimated_profit_rmb'].includes(metric)) return can('orders', 'view') && can('purchases', 'view')
+  if (['purchase_cost_rmb', 'order_expense_rmb', 'receivable_reduction_rmb', 'estimated_profit_rmb'].includes(metric)) return can('orders', 'view') && can('purchases', 'view')
   if (['payable_count', 'payable_rmb'].includes(metric)) return can('purchases', 'view')
   return can('transactions', 'view')
 }
@@ -165,7 +166,8 @@ onMounted(load)
     <p v-if="rangeError" class="error" role="alert">{{ rangeError }}</p>
     <p v-if="exportError" class="error" role="alert">{{ exportError }}</p>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
-    <p class="definition-note">合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。银行实际人民币资金按银行实际日期统计；当前待结与未核销不受所选期间限制。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用，仅作经营估算。</p>
+    <p class="definition-note">合同销售额和核准非现金抵减按订单日期统计。抵减按合同汇率折算，扣除已更正金额，已计入合同金额的优惠不重复计算。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用 − 核准非现金抵减，仅作经营估算。</p>
+    <p class="definition-note">账面收支按流水日期统计，银行实际资金按银行日期统计。待收、待付及未核销金额为当前参考值，不受所选期间限制。</p>
     <p class="definition-note">{{ data.cash_basis?.note || BOOK_RMB_NOTE }}</p>
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="error" @retry="load" />
     <template v-if="hasLoaded">
@@ -210,5 +212,6 @@ onMounted(load)
 </template>
 
 <style scoped>
+.finance-drill-panel td:nth-child(3),.finance-drill-panel td:nth-child(6){white-space:normal;overflow-wrap:anywhere;min-width:9rem}
 .finance-page{padding:0}.finance-page>header,.metric-section>header,.drill-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.page-lede{margin:0;color:#718078}.finance-page h3{margin:0;font-size:var(--text-section)}.finance-page p{color:#718078}.finance-page button{border:1px solid #d8e1dd;background:#0d4b40;color:#fff;border-radius:9px;padding:9px 14px;font-weight:700;white-space:nowrap}.finance-page button.secondary{background:#fff;color:#344d44}.finance-page button:disabled{opacity:.55;cursor:not-allowed}.report-filters{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:20px 0;padding:15px 16px;border:1px solid #e2e8e4;border-radius:12px;background:#fff}.report-filters label{display:grid;gap:5px;color:#52655e;font-size:var(--text-caption)}.report-filters input{height:39px;padding:0 10px;border:1px solid #d8e1dd;border-radius:8px;background:#fff}.definition-note{margin:12px 0;padding:12px 14px;border-left:3px solid #8db7a7;border-radius:0 8px 8px 0;background:#f2f7f4;line-height:1.65}.notice{padding:10px 14px;border:1px solid #b8d8ca;border-radius:9px;background:#eff8f3;color:#1d4d40!important}.error{color:#b42318}.metric-section{margin-top:22px}.metric-section>header{align-items:end}.metric-section>header p{margin:4px 0 0;font-size:var(--text-caption)}.cards{display:grid;gap:12px;margin:12px 0 20px}.period-cards{grid-template-columns:repeat(4,minmax(0,1fr))}.balance-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.actual-cash-cards{grid-template-columns:repeat(4,minmax(0,1fr))}.cards article,.panel{min-width:0;background:#fff;border:1px solid #e2e8e4;border-radius:12px;padding:16px;box-shadow:0 4px 16px #1643340d}.cards span{color:#718078;display:block;font-size:var(--text-body)}.cards strong{display:block;font-size:clamp(20px,2vw,27px);margin-top:9px;color:#073f36;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.metric-drill{margin-top:12px;padding:6px 9px!important;font-size:var(--text-caption);background:#f4faf7!important;color:#0d5c4e!important}.report-tables{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}.panel{margin-top:12px;overflow:auto}.panel h3{margin:0 0 12px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid #edf1ee;font-size:var(--text-body);white-space:nowrap}.table-sort{padding:0!important;border:0!important;background:transparent!important;color:inherit!important;font:inherit!important;font-weight:700!important}.finance-drill-panel{margin-top:18px}.drill-header{align-items:center}.drill-header p{margin:4px 0 0;font-size:var(--text-caption)}.drill-total{margin:12px 0!important}.drill-total strong{color:#073f36;font-size:18px}.empty-state{padding:12px 0}.drill-pagination{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:14px;color:#718078;font-size:var(--text-caption)}.header-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.actual-cash-events{margin-top:14px}.actual-cash-events a,.finance-drill-panel a{color:#0d5c4e;font-weight:700}.finance-links{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.finance-links a{display:inline-flex;padding:8px 12px;border:1px solid #cbdcd3;border-radius:8px;color:#0d5c4e;text-decoration:none;background:#fff;font-weight:700}.finance-links a:hover{background:#f1f8f4}@media(max-width:1000px){.period-cards,.actual-cash-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.balance-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.report-tables{grid-template-columns:1fr}}@media(max-width:650px){.finance-page>header{align-items:stretch;flex-direction:column}.report-filters{display:grid;grid-template-columns:1fr 1fr}.report-filters label{min-width:0}.report-filters label input{width:100%}.report-filters button{min-height:39px;padding:7px 9px}.definition-note{font-size:var(--text-caption)}.period-cards,.balance-cards,.actual-cash-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.cards article,.panel{padding:13px}.cards strong{font-size:20px}.drill-header{align-items:stretch;flex-direction:column}.header-actions{justify-content:flex-start}.drill-pagination{justify-content:space-between}}
 </style>

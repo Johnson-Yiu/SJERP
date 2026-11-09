@@ -5,6 +5,7 @@ import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
 import { useAccessControl } from '../accessControl'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
+import { apiErrorMessage } from '../utils/apiErrors'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { tradePayload } from '../utils/tradeUnits'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
@@ -67,7 +68,7 @@ async function init() {
     orders.value = orderResponse
     ready.value = true
   } catch (requestError) {
-    error.value = requestError.response?.data?.detail || requestError.message || '表单所需数据加载失败。'
+    error.value = apiErrorMessage(requestError) || '表单所需数据加载失败。'
   } finally { loading.value = false }
 }
 function lineFor(sku) { return lines[sku.id] }
@@ -96,8 +97,12 @@ async function save() {
   } catch (requestError) {
     // A validation response confirms the transaction rolled back. Keep the
     // identity, but allow correcting the input before the next attempt.
-    if (requestError.response?.status === 400 && submission) submission.snapshot = null
-    error.value = requestError.response?.data?.detail || '保存结果尚未确认，请保持表单内容并重试；也可先核对库存流水。'
+    if (requestError.response?.status === 400 && submission) {
+      submission.snapshot = null
+      error.value = `库存调整未保存。 ${apiErrorMessage(requestError)} 请修正后重试。`
+    } else {
+      error.value = '保存结果尚未确认，请保持表单内容并重试；也可先核对库存流水。'
+    }
   } finally { saving.value = false }
 }
 onMounted(init)

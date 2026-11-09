@@ -497,8 +497,9 @@ export function isolatedRbacMode(selection) {
 }
 
 export function isolatedAuthenticationEnvironment(selection, runId) {
-  const restricted = isolatedRbacMode(selection)
   const codexSuperuser = process.env.ISOLATED_CODEX_TEST_SUPERADMIN === '1'
+  const codexWorkspace = codexSuperuser && selection.businessTest === 'workspace-integration-real.spec.js'
+  const restricted = isolatedRbacMode(selection) && !codexWorkspace
   if (codexSuperuser && restricted) {
     throw new Error('The codex test superuser profile cannot be combined with a restricted RBAC browser profile.')
   }
@@ -509,8 +510,8 @@ export function isolatedAuthenticationEnvironment(selection, runId) {
     DEVELOPMENT_SUPERADMIN: restricted || codexSuperuser ? '0' : '1',
     RBAC_ENFORCEMENT: restricted ? '1' : '0',
     ISOLATED_TEST_RBAC_MODE: restricted ? 'iss055' : '',
-    ISS055_UI_USERNAME: restricted ? `iss055-${runId.slice(0, 8)}` : '',
-    ISS055_UI_PASSWORD: restricted ? randomBytes(24).toString('base64url') : '',
+    ISS055_UI_USERNAME: codexWorkspace ? 'codex' : restricted ? `iss055-${runId.slice(0, 8)}` : '',
+    ISS055_UI_PASSWORD: codexWorkspace ? process.env.ERP_TEST_PASSWORD : restricted ? randomBytes(24).toString('base64url') : '',
     ISOLATED_CODEX_TEST_SUPERADMIN: codexSuperuser ? '1' : '0',
     CODEX_TEST_USERNAME: codexSuperuser ? process.env.ERP_TEST_USERNAME : '',
     CODEX_TEST_PASSWORD: codexSuperuser ? process.env.ERP_TEST_PASSWORD : '',
@@ -549,7 +550,8 @@ async function runProfile(selection) {
     const databasePath = path.join(tempRoot, 'db.sqlite3')
     const mediaRoot = path.join(tempRoot, 'media')
     const baseURL = `http://127.0.0.1:${vitePort}`
-    const rbacTestMode = isolatedRbacMode(selection)
+    const authEnvironment = isolatedAuthenticationEnvironment(selection, runId)
+    const rbacTestMode = authEnvironment.RBAC_ENFORCEMENT === '1'
     let evidenceRoot
     try {
       evidenceRoot = await resolveEvidenceRoot(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, tempRoot)
@@ -560,7 +562,7 @@ async function runProfile(selection) {
     const env = {
       ...process.env,
       ...isolatedCashAccountEnvironment(selection),
-      ...isolatedAuthenticationEnvironment(selection, runId),
+      ...authEnvironment,
       APP_STAGE: 'development',
       DJANGO_DEBUG: '1',
       AUDIT_LOG_ENABLED: '0',

@@ -1,12 +1,14 @@
 const errorFieldLabels = {
   quantity: '数量', unit_price: '单价', currency: '币种', exchange_rate: '汇率',
   customer: '客户', buyer_company_name: '买方公司', supplier: '供应商', items: '商品明细',
+  sku: 'SKU', warehouse: '仓库', movement_date: '流水日期', unit_cost: '单位成本',
+  related_orders: '关联订单', trade_unit: '交易单位', reference: '业务参考号',
 }
 
 function errorPathLabel(path) {
   return path.map((part, index) => {
     if (part === 'items' && typeof path[index + 1] === 'object') return ''
-    return typeof part === 'string' ? (errorFieldLabels[part] || part) : `第 ${part.item + 1} 条商品`
+    return typeof part === 'string' ? (errorFieldLabels[part] || '') : `第 ${part.item + 1} 条商品`
   }).filter(Boolean).join(' · ')
 }
 

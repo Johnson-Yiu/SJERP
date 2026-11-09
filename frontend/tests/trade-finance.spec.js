@@ -63,7 +63,7 @@ describe('trade finance interactions', () => {
     await dialog.find('input[type="number"]').setValue('10')
     await dialog.trigger('submit')
     await flushPromises()
-    expect(mocks.post).toHaveBeenCalledWith('/payment-plans/1/settle/', expect.objectContaining({ amount: 10, currency: 'USD', exchange_rate: '7' }))
+    expect(mocks.post).toHaveBeenCalledWith('/payment-plans/1/settle/', expect.objectContaining({ amount: 10, currency: 'USD', exchange_rate: '7' }), expect.objectContaining({ headers: expect.objectContaining({ 'Idempotency-Key': expect.stringMatching(/^PLAN-/) }) }))
     expect(wrapper.find('.mask').exists()).toBe(false)
     wrapper.unmount()
   })

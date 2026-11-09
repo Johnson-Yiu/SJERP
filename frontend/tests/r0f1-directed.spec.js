@@ -37,7 +37,7 @@ it('restores all plan filters on initial URL and subsequent navigation', async (
   w.unmount()
 })
 it('retains the complete selected order number after clearing candidates and resets selection on new search', async () => {
-  api.listAll.mockImplementation(async url => url === '/orders/' ? [{id:23,order_no:'SO-2026-FULL-000023',status:'confirmed',currency:'CNY',exchange_rate:'1'}] : [])
+  api.listAll.mockImplementation(async url => url === '/orders/' ? [{id:23,order_no:'SO-2026-FULL-000023',customer:7,status:'confirmed',currency:'CNY',exchange_rate:'1'}] : [])
   const {wrapper:w} = await page(TransactionPage,'/transactions')
   await click(w,'新增记账'); await w.get('.dialog select').setValue('customer_receipt')
   await w.get('.dialog input[placeholder="客户或订单号"]').setValue('SO'); await flushPromises()

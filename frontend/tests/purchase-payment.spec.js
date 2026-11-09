@@ -11,8 +11,9 @@ async function purchaseRouter() {
   return router
 }
 const purchase = { id: 2, purchase_no: 'PO-2', supplier_name: 'Supplier', currency: 'USD', exchange_rate: '7', total_amount: '100', paid_amount: '20', unpaid_amount: '80', status: 'ordered', items: [] }
-beforeEach(() => { vi.clearAllMocks(); mocks.listAll.mockImplementation(async url => url === '/purchase-orders/' ? [purchase] : []); mocks.post.mockResolvedValue({ data: {} }) })
-it('opens payment from the purchase row and submits inherited currency', async () => {
+beforeEach(() => { window.sessionStorage.clear(); vi.clearAllMocks(); mocks.listAll.mockImplementation(async url => url === '/purchase-orders/' ? [purchase] : []); mocks.post.mockResolvedValue({ data: {} }) })
+const paymentIdentity = expect.objectContaining({ headers: expect.objectContaining({ 'Idempotency-Key': expect.stringMatching(/^PURCHASE-PAY-/) }) })
+it('opens payment from the purchase row and submits the verified actual rate', async () => {
   const wrapper = mount(PurchaseOrderPage, { global: { plugins: [await purchaseRouter()], directives: { 'money-input': {} }, stubs: { ContractAmountAdjustments: true } } })
   await flushPromises()
   await wrapper.get('.purchase-list-row').trigger('click')
@@ -20,9 +21,10 @@ it('opens payment from the purchase row and submits inherited currency', async (
   await wrapper.findAll('button').find(b => b.text() === '登记付款').trigger('click')
   expect(wrapper.find('[aria-labelledby="payment-title"]').exists()).toBe(true)
   await wrapper.find('.payment-modal input[type="number"]').setValue('30')
+  await wrapper.get('[aria-label="本次实际汇率"]').setValue('7')
   await wrapper.find('.payment-modal form').trigger('submit')
   await flushPromises()
-  expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', expect.objectContaining({ amount: 30, currency: 'USD', exchange_rate: '7' }))
+  expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', expect.objectContaining({ amount: 30, currency: 'USD', exchange_rate: 7 }), paymentIdentity)
   expect(wrapper.find('.payment-modal').exists()).toBe(false)
   expect(wrapper.text()).toContain('供应商付款已登记为支出流水')
   wrapper.unmount()
@@ -34,6 +36,7 @@ it('rejects overpayment and preserves input on server failure', async () => {
   expect(mocks.post).not.toHaveBeenCalled()
   expect(wrapper.find('[role="alert"]').text()).toContain('不能超过')
   await wrapper.find('input[type="number"]').setValue('10')
+  await wrapper.get('[aria-label="本次实际汇率"]').setValue('7')
   mocks.post.mockRejectedValue({ response: { data: { detail: '余额已更新，请刷新' } } })
   await wrapper.find('form').trigger('submit'); await flushPromises()
   expect(wrapper.find('[role="alert"]').text()).toContain('余额已更新')
@@ -56,11 +59,11 @@ it('defaults new purchases to CNY and asks for a rate for foreign currency', asy
 
 it('foreign payment uses the entered actual rate without changing the purchase contract', async () => {
   const wrapper = mount(PurchasePaymentModal, { props: { purchase } })
-  expect(wrapper.get('[aria-label="本次实际汇率"]').element.value).toBe('7')
+  expect(wrapper.get('[aria-label="本次实际汇率"]').element.value).toBe('')
   await wrapper.find('input[type="number"]').setValue('10')
   await wrapper.get('[aria-label="本次实际汇率"]').setValue('7.45')
   await wrapper.get('form').trigger('submit'); await flushPromises()
-  expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', expect.objectContaining({ exchange_rate: 7.45 }))
+  expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', expect.objectContaining({ exchange_rate: 7.45 }), paymentIdentity)
   expect(purchase.exchange_rate).toBe('7'); wrapper.unmount()
 })
 it('CNY actual payment rate is readonly 1 regardless of historical contract input', async () => {
@@ -68,7 +71,7 @@ it('CNY actual payment rate is readonly 1 regardless of historical contract inpu
   expect(wrapper.get('[aria-label="本次实际汇率"]').element.value).toBe('1')
   expect(wrapper.get('[aria-label="本次实际汇率"]').attributes('readonly')).toBeDefined()
   await wrapper.find('input[type="number"]').setValue('10'); await wrapper.get('form').trigger('submit'); await flushPromises()
-  expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', expect.objectContaining({ currency: 'CNY', exchange_rate: 1 })); wrapper.unmount()
+  expect(mocks.post).toHaveBeenCalledWith('/purchase-orders/2/pay/', expect.objectContaining({ currency: 'CNY', exchange_rate: 1 }), paymentIdentity); wrapper.unmount()
 })
 it.each(['0', '-1', ''])('rejects an invalid actual payment rate (%s)', async rate => {
   const wrapper = mount(PurchasePaymentModal, { props: { purchase } })

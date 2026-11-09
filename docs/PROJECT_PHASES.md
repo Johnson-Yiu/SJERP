@@ -1,5 +1,9 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## 2026-11-09 RELEASE-INTEGRATION-REPAIR-01
+
+以 `c90cacaa` 为共同基线，已合入 A、B、C、D，迁移在 `0128` 汇合。PostgreSQL 17 和 SQLite 各完成空库、c978、c90 三入口定向复验；真实 Chrome codex 定向验收及实际 XLSX/CSV 下载已记录。阶段为集成完成、待补发布验收；未执行项及测试口径见[本轮验收记录](uat-evidence/release-integration-repair-01/README.md)。旧证据和旧阶段状态保留。
+
 ## 2026-11-09 首发追加独立复审
 
 从 `37520998` 创建独立分支 `codex/first-release-independent-review-02`。已接入 `4c29837f`/`ecb38a78` 完整预检页面，局部接入工作区路由与 API 生命周期；销售离开保护及结果恢复补修 `49189649` 后继续完善。找回财务未提交工作树并保存 `0a3418d7`，合流来源 A/B，新增 `0122` 合并迁移保留主体、销售和财务各自迁移历史。PG 47/47、真实 Chrome、实际下载和现有库升级证据按[统一交付清单](uat-evidence/first-release-independent-review-02/README.md)逐项解释；不以导航改名代替全站中文，不以产品集成代替本地历史上传实例验收。完成提交推送后等待独立复审；旧 Issue 不自行关闭，CI=`NOT_RUN`。

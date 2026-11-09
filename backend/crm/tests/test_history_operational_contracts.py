@@ -164,7 +164,7 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         sale_plan = original_sale.payment_plans.get()
         purchase_plan = original_purchase.payment_plans.get()
         for plan, amount in ((sale_plan, "20"), (purchase_plan, "4")):
-            response = self.client.post(f"/api/payment-plans/{plan.pk}/settle/", {"amount": amount, "currency": "USD", "exchange_rate": "1", "transaction_date": "2025-01-05"}, format="json")
+            response = self.client.post(f"/api/payment-plans/{plan.pk}/settle/", {"amount": amount, "currency": "USD", "exchange_rate": "1", "transaction_date": "2025-01-05"}, format="json", HTTP_IDEMPOTENCY_KEY=f"history-settle-{plan.pk}")
             self.assertEqual(response.status_code, 201, response.data)
         original_sale.refresh_from_db(); original_purchase.refresh_from_db()
         self.assertEqual(original_sale.outstanding_amount, Decimal("40"))
@@ -239,13 +239,13 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
     def test_manual_movements_respect_opening_stock_location(self):
         self.activate_inventory()
         payload = {"movement_date": "2025-01-03", "type": "adjust_out", "sku": self.sku.pk, "quantity": "2"}
-        response = self.client.post("/api/inventory-movements/", payload, format="json")
+        response = self.client.post("/api/inventory-movements/", payload, format="json", HTTP_IDEMPOTENCY_KEY="history-manual-missing")
         self.assertEqual(response.status_code, 400, response.data)
         payload.update({"warehouse_type": "自有仓", "warehouse": "SYN-WH-01", "lot_reference": "wrong"})
-        response = self.client.post("/api/inventory-movements/", payload, format="json")
+        response = self.client.post("/api/inventory-movements/", payload, format="json", HTTP_IDEMPOTENCY_KEY="history-manual-wrong")
         self.assertEqual(response.status_code, 400, response.data)
         payload["lot_reference"] = "LOT-HT-01"
-        response = self.client.post("/api/inventory-movements/", payload, format="json")
+        response = self.client.post("/api/inventory-movements/", payload, format="json", HTTP_IDEMPOTENCY_KEY="history-manual-valid")
         self.assertEqual(response.status_code, 201, response.data)
         ident = response.data["id"]
         self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("16"))

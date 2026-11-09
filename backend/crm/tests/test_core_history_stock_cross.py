@@ -43,15 +43,15 @@ class CoreHistoryStockCrossTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertFalse(replay)
         self.assertEqual(len(ids), 1)
         incoming = {'movement_date': '2025-01-01', 'type': 'adjust_in', 'sku': self.sku.pk, 'quantity': '4', 'unit_cost': '0', **self.default}
-        response = self.client.post('/api/inventory-movements/', incoming, format='json')
+        response = self.client.post('/api/inventory-movements/', incoming, format='json', HTTP_IDEMPOTENCY_KEY='history-stock-in')
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(sku_metrics(self.sku)['actual_quantity'], Decimal('22'))
         outgoing = {**incoming, 'type': 'sample_out', 'quantity': '5'}
-        response = self.client.post('/api/inventory-movements/', outgoing, format='json')
+        response = self.client.post('/api/inventory-movements/', outgoing, format='json', HTTP_IDEMPOTENCY_KEY='history-stock-over')
         self.assertEqual(response.status_code, 400, response.data)
         self.assertEqual(location_quantity(self.sku, self.default), Decimal('4'))
         self.assertEqual(location_quantity(self.sku, self.history), Decimal('18'))
-        response = self.client.post('/api/inventory-movements/', {**outgoing, 'quantity': '4'}, format='json')
+        response = self.client.post('/api/inventory-movements/', {**outgoing, 'quantity': '4'}, format='json', HTTP_IDEMPOTENCY_KEY='history-stock-out')
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(location_quantity(self.sku, self.default), Decimal('0'))
         self.assertEqual(location_quantity(self.sku, self.history), Decimal('18'))

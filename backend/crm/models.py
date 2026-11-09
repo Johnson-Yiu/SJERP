@@ -2086,8 +2086,11 @@ class Transaction(TimestampedModel):
 
     @property
     def unallocated_cash_amount(self):
+        rows = getattr(self, "_prefetched_objects_cache", {}).get("allocations")
+        if rows is None:
+            rows = self.allocations.filter(is_active=True)
         used = sum((row.cash_amount if row.cash_amount is not None else row.amount
-                    for row in self.allocations.filter(is_active=True)), Decimal("0"))
+                    for row in rows if row.is_active), Decimal("0"))
         return max(self.amount - used, Decimal("0"))
 
     @property
@@ -2263,6 +2266,15 @@ class FinanceAccountMapping(FinanceAppendOnly):
     actor = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
     objects = OperationLogQuerySet.as_manager()
+
+
+class FinanceBankFactMatch(FinanceAppendOnly):
+    """Reviewed identity between two representations of one bank movement."""
+    fact = models.OneToOneField(FinanceFact, on_delete=models.PROTECT, related_name="bank_event_match")
+    event = models.OneToOneField("RmbCashEvent", on_delete=models.PROTECT, related_name="account_fact_match")
+    reason = models.TextField()
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class FinanceReview(FinanceAppendOnly):

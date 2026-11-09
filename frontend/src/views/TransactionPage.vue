@@ -25,6 +25,8 @@ const settlementOpen = ref(false), savedReceipt = ref(null), settlementSnapshot 
 const customers = ref([]), suppliers = ref([]), purchases = ref([]), plans = ref([]), saving = ref(false), loading = ref(false)
 const referenceErrors = ref([]), referencesLoaded = ref(false), referencesLoading = ref(true), orderSearchError = ref(''), orderSearchLoading = ref(false)
 const allocation = ref(null), allocationPlan = ref(''), allocationAmount = ref('')
+const allocationAttempt = ref(null)
+const receiptAttempt = ref(null), pendingReceiptAttempts = ref([])
 const writeoffPlan = ref(''), writeoffAmount = ref(''), writeoffReason = ref(''), writeoffRequestKey = ref(''), writeoffSaving = ref(false)
 const correctionTarget = ref(null), correctionAmount = ref(''), correctionReason = ref(''), correctionRequestKey = ref(''), correctionSaving = ref(false)
 const voidTarget = ref(null), voidReason = ref(''), voidSaving = ref(false)
@@ -104,6 +106,25 @@ const form = reactive({
   remittance_amount: '', bank_fee_amount: '0', fee_responsibility: '', fee_reason: '', fee_evidence: null,
 })
 const saveOutcome = ref('not-submitted')
+function refreshReceiptAttempts() {
+  try {
+    pendingReceiptAttempts.value = Object.keys(window.sessionStorage).filter(key => key.startsWith('finance-receipt-')).map(key => {
+      const saved = JSON.parse(window.sessionStorage.getItem(key) || 'null')
+      return saved?.payload?.transaction_no ? saved : null
+    }).filter(Boolean)
+  } catch { pendingReceiptAttempts.value = [] }
+}
+function recoverReceipt(attempt) {
+  openForm()
+  if (!showForm.value) return
+  Object.assign(form, attempt.payload)
+  selectedOrder.value = attempt.selectedOrder || null
+  orderQuery.value = selectedOrder.value?.order_no || ''
+  settlementOpen.value = Boolean(attempt.settlementOpen)
+  receiptAttempt.value = attempt
+  saveOutcome.value = 'unknown'
+  formGuard.markClean()
+}
 const formGuard = useUnsavedChangesGuard({
   data: () => ({ ...form, orderQuery: orderQuery.value, selectedOrder: selectedOrder.value, settlementOpen: settlementOpen.value, savedReceipt: savedReceipt.value?.id || null, settlement: settlementSnapshot.value }),
   enabled: () => showForm.value,
@@ -240,6 +261,7 @@ function openForm() {
   error.value = ''
   notice.value = ''
   saveOutcome.value = 'not-submitted'
+  receiptAttempt.value = null
   showForm.value = true
   formGuard.markClean()
 }
@@ -258,6 +280,16 @@ function onDetailSettlementStateChange(value) { detailSettlementSnapshot.value =
 async function onDetailSettlementCreated() { detailSettlementSnapshot.value = { ...detailSettlementSnapshot.value, busy: false }; settlementGuard.markClean(); await load() }
 async function onDetailSettlementUpdated() { detailSettlementSnapshot.value = { ...detailSettlementSnapshot.value, busy: false }; settlementGuard.markClean(); await load() }
 function unallocatedAmount(row) { return Number(row.unallocated_amount ?? (Number(row.amount) - Number(row.allocated_amount))) }
+function hasPendingAllocation(row) {
+  try {
+    const value = JSON.parse(window.sessionStorage.getItem(`finance-allocation-${row.id}`) || 'null')
+    return Boolean(value?.key && value?.plan && value?.amount)
+  } catch { return false }
+}
+function canAllocateReceipt(row) {
+  const flexible = ['unallocated_advance', 'unallocated_payment'].includes(row.kind) || (row.kind === 'customer_receipt' && !row.plan && !row.order)
+  return flexible && (hasPendingAllocation(row) || Number(row.allocation_capacity ?? row.amount) > Number(row.allocated_amount || 0))
+}
 function appliedAmount(row) { return (row.allocations || []).filter(item => item.is_active).reduce((sum, item) => sum + Number(item.amount || 0), 0) }
 function confirmerDisplay(actor) { return actor?.kind === 'development_superadmin' ? '开发身份' : actor?.kind === 'authenticated_user' ? `账号 #${actor.user_id}` : '—' }
 async function uploadReceiptProof() {
@@ -311,9 +343,8 @@ async function save() {
   if (!referencesLoaded.value) { error.value = '客户、供应商或采购单资料尚未加载完成，请重试后再保存。'; return }
   if (form.kind === 'customer_receipt' && (orderSearchLoading.value || orderSearchError.value)) { error.value = '订单选项尚未成功加载，请重试后再保存。'; return }
   if ((form.kind === 'customer_receipt' || form.kind === 'unallocated_advance') && form.direction === 'income') {
-    if (!String(form.remittance_amount || '').trim()) form.remittance_amount = form.amount
     form.bank_fee_amount = receiptFee.value.toFixed(4)
-    if (Number(form.remittance_amount) < Number(form.amount)) { error.value = '客户汇款金额不能低于银行实际到账金额。'; return }
+    if (String(form.remittance_amount || '').trim() && Number(form.remittance_amount) < Number(form.amount)) { error.value = '客户汇款金额不能低于银行实际到账金额。'; return }
     if (receiptFee.value > 0 && !form.fee_responsibility) { error.value = '请选择银行扣费承担方；尚未查清时可选“待查”。'; return }
     if (receiptFee.value > 0 && !String(form.fee_reason || '').trim()) { error.value = '请填写扣费原因或核实说明。'; return }
     if (Number(form.bank_fee_amount || 0) > 0 && !form.fee_evidence) { error.value = '请先上传银行收款凭证。'; return }
@@ -351,10 +382,19 @@ async function save() {
   error.value = ''; notice.value = ''
   try {
     if (!form.transaction_no) form.transaction_no = `FIN-${Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('').toUpperCase()}`
-    const payload = { ...form }
+    const payload = receiptAttempt.value?.payload || { ...form }
     if (!payload.transaction_no) delete payload.transaction_no
+    if (!String(payload.remittance_amount || '').trim()) payload.remittance_amount = payload.amount
+    const existingAttempt = receiptAttempt.value
+    const savedAttempt = existingAttempt || { payload, selectedOrder: selectedOrder.value, settlementOpen: settlementOpen.value }
+    const storageKey = `finance-receipt-${payload.transaction_no}`
+    try { window.sessionStorage.setItem(storageKey, JSON.stringify(savedAttempt)) }
+    catch { saveOutcome.value = 'rejected'; error.value = '浏览器无法保存本次收款标识，请检查浏览器存储后重试。'; return }
+    receiptAttempt.value = savedAttempt
+    refreshReceiptAttempts()
     const attempt = await saveOrVerifyCustomerReceipt({
       outcome: outcomeBeforeSubmit,
+      safeReplay: Boolean(existingAttempt),
       lookup: async () => {
         const matches = await listAll('/transactions/', { params: { search: form.transaction_no, status: 'confirmed' } })
         return matches.find(row => row.transaction_no === form.transaction_no && row.kind === 'customer_receipt') || null
@@ -372,11 +412,16 @@ async function save() {
       return
     }
     if (attempt.status === 'unknown' || attempt.status === 'rejected') {
-      saveOutcome.value = attempt.status
-      error.value = apiErrorMessage(attempt.error) || (attempt.status === 'unknown' ? '收款结果尚未确认。请先核对原流水。' : '收款保存失败，请核对输入后重试。')
+      if (attempt.status === 'rejected' && !existingAttempt) {
+        window.sessionStorage.removeItem(storageKey); receiptAttempt.value = null; refreshReceiptAttempts()
+      }
+      saveOutcome.value = existingAttempt ? 'unknown' : attempt.status
+      const duplicateNumber = Boolean(attempt.error?.response?.data?.transaction_no)
+      error.value = duplicateNumber ? '编号重复不代表本次保存成功，请核对原流水。' : apiErrorMessage(attempt.error) || (attempt.status === 'unknown' ? '收款结果尚未确认。请先核对原流水。' : '收款保存失败，请核对输入后重试。')
       return
     }
     const receipt = attempt.receipt
+    window.sessionStorage.removeItem(storageKey); receiptAttempt.value = null; refreshReceiptAttempts()
     saveOutcome.value = 'confirmed'
     if (form.kind === 'customer_receipt' && settlementOpen.value && form.currency !== 'CNY') {
       savedReceipt.value = { ...receipt, order_no: receipt.order_no || selectedOrder.value?.order_no, order: receipt.order || form.order, currency: receipt.currency || form.currency }
@@ -394,6 +439,7 @@ async function save() {
     error.value = apiErrorMessage(err) || (saveOutcome.value === 'unknown' ? '无法核对原收款流水，请稍后重试。' : '收款保存失败，请核对输入后重试。')
   } finally { saving.value = false; receiptLookupLoading.value = false }
 }
+refreshReceiptAttempts()
 function onSettlementStateChange(value) { settlementSnapshot.value = value }
 async function onSettlementCreated(row) {
   settlementSnapshot.value = { ...settlementSnapshot.value, busy: false }
@@ -437,13 +483,40 @@ async function submitVoid() {
 async function openAllocate(row) {
   if (!can('transactions', 'update')) return
   notice.value = ''; error.value = ''
-  try { plans.value = await listAll('/payment-plans/', { params: { status: 'open' } }); allocation.value = row; allocationPlan.value = ''; allocationAmount.value = String(unallocatedAmount(row)); allocationGuard.markClean() } catch (err) { error.value = apiErrorMessage(err) || '收付款计划加载失败，请重试。' }
+  try {
+    plans.value = await listAll('/payment-plans/', { params: { status: 'open' } })
+    allocation.value = row
+    let pending = null
+    try { pending = JSON.parse(window.sessionStorage.getItem(`finance-allocation-${row.id}`) || 'null') } catch { /* unavailable storage is checked before submission */ }
+    allocationAttempt.value = pending?.key && pending?.plan && pending?.amount ? pending : null
+    allocationPlan.value = allocationAttempt.value?.plan || ''
+    allocationAmount.value = allocationAttempt.value?.amount || String(unallocatedAmount(row))
+    if (allocationAttempt.value) notice.value = '上次核销结果待确认，请按原内容重试。'
+    allocationGuard.markClean()
+  } catch (err) { error.value = apiErrorMessage(err) || '收付款计划加载失败，请重试。' }
 }
 async function allocate() {
   if (saving.value || !can('transactions', 'update')) return
+  const existing = allocationAttempt.value
+  const selected = eligiblePlans.value.find(item => String(item.id) === String(allocationPlan.value))
+  const attempt = existing || { key: `ALLOC-${crypto.randomUUID()}`, plan: allocationPlan.value, amount: String(allocationAmount.value), planLabel: selected?.contract_no || '所选计划' }
+  const storageKey = `finance-allocation-${allocation.value.id}`
+  try { window.sessionStorage.setItem(storageKey, JSON.stringify(attempt)) }
+  catch { error.value = '浏览器无法保存本次核销标识，请检查浏览器存储后重试。'; return }
+  allocationAttempt.value = attempt
   saving.value = true
   error.value = ''; notice.value = ''
-  try { await api.post(`/transactions/${allocation.value.id}/allocate/`, { plan: allocationPlan.value, amount: allocationAmount.value }); allocationGuard.markClean(); allocation.value = null; await load(); notice.value = '核销已保存。' } catch (err) { error.value = apiErrorMessage(err) || '核销失败，请检查金额和计划后重试。' } finally { saving.value = false }
+  try {
+    await api.post(`/transactions/${allocation.value.id}/allocate/`, { plan: attempt.plan, amount: attempt.amount }, { headers: { 'Idempotency-Key': attempt.key } })
+    window.sessionStorage.removeItem(storageKey)
+    allocationAttempt.value = null; allocationGuard.markClean(); allocation.value = null
+    await load(); notice.value = '核销已保存。'
+  } catch (err) {
+    if (!existing && err.response?.status === 400) {
+      window.sessionStorage.removeItem(storageKey); allocationAttempt.value = null
+      error.value = apiErrorMessage(err) || '核销未保存，请检查金额和计划。'
+    } else error.value = apiErrorMessage(err) || '核销结果待确认，请按原内容重试。'
+  } finally { saving.value = false }
 }
 function openWriteoff(row) {
   if (!can('transactions', 'update') || row.status !== 'confirmed' || row.direction !== 'income') return
@@ -526,6 +599,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     <p class="page-lede">{{ BOOK_RMB_NOTE }}</p>
     <p class="page-lede">流水记录实际收付；核销、退款与结汇保留各自业务关系。银行退回和更正须关联原凭证。</p>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
+    <div v-if="pendingReceiptAttempts.length" class="notice" role="status">有 {{ pendingReceiptAttempts.length }} 笔收款结果待确认。<button v-for="item in pendingReceiptAttempts" :key="item.payload.transaction_no" type="button" :disabled="!referencesLoaded || showForm" @click="recoverReceipt(item)">按原内容核对</button></div>
     <div v-if="referenceErrorText" class="option-load-error" role="alert"><span>新增记账所需的关联资料未能全部加载，暂不能新增。{{ referenceErrorText }}</span><button type="button" @click="loadReferenceOptions">重试加载</button></div>
     <p v-else-if="referencesLoading" class="option-loading-note" role="status">正在加载客户、供应商和采购单资料…</p>
     <SummaryCards v-if="hasLoaded" :items="transactionMetrics" />
@@ -543,7 +617,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     <template v-if="hasLoaded">
     <table>
       <thead><tr><th>流水发生日期 / 流水号</th><th>收支 / 类型</th><th>往来方 / 合同</th><th>实际收付（原币）</th><th>人民币折算参考</th><th>状态 / 核销</th><th>操作</th></tr></thead>
-      <tbody><tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ transactionKindLabel(row) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}<small v-if="row.remitted_amount_display && Number(row.remitted_amount_display) !== Number(row.amount)">客户汇款 {{ row.currency }} {{ formatMoney(row.remitted_amount_display) }}</small><small v-if="Number(row.bank_fee_amount) > 0">银行扣费 {{ row.currency }} {{ formatMoney(row.bank_fee_amount) }} · {{ row.fee_responsibility === 'company' ? '我方承担' : row.fee_responsibility === 'customer' ? '客户承担' : '待查' }}</small></td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind)">未分配 {{ row.currency }} {{ formatMoney(unallocatedAmount(row)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button type="button" @click="openDetail(row)">详情</button><button v-if="can('transactions', 'create') && row.status === 'confirmed' && row.direction === 'income' && row.currency !== 'CNY'" type="button" @click="openSettlement(row)">登记结汇到账</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && ['unallocated_advance', 'unallocated_payment'].includes(row.kind) && unallocatedAmount(row) > 0" @click="openAllocate(row)">核销</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
+      <tbody><tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ transactionKindLabel(row) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}<small v-if="row.remitted_amount_display && Number(row.remitted_amount_display) !== Number(row.amount)">客户汇款 {{ row.currency }} {{ formatMoney(row.remitted_amount_display) }}</small><small v-if="Number(row.bank_fee_amount) > 0">银行扣费 {{ row.currency }} {{ formatMoney(row.bank_fee_amount) }} · {{ row.fee_responsibility === 'company' ? '我方承担' : row.fee_responsibility === 'customer' ? '客户承担' : '待查' }}</small></td><td>¥{{ formatMoney(row.rmb_amount) }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind) || (row.kind === 'customer_receipt' && !row.plan && !row.order)">未分配 {{ row.currency }} {{ formatMoney(unallocatedAmount(row)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button type="button" @click="openDetail(row)">详情</button><button v-if="can('transactions', 'create') && row.status === 'confirmed' && row.direction === 'income' && row.currency !== 'CNY'" type="button" @click="openSettlement(row)">登记结汇到账</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && canAllocateReceipt(row)" @click="openAllocate(row)">核销</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
     </table>
     </template>
 
@@ -621,8 +695,8 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     <div v-if="showForm && can('transactions', 'create')" class="mask">
       <form class="dialog" role="dialog" aria-modal="true" aria-labelledby="transaction-form-title" @submit.prevent="save">
         <header class="dialog-head"><div><h3 id="transaction-form-title">新增记账</h3><p>保存后只更新系统流水及可核销计划，不代表银行资金已到账。</p></div><button type="button" class="close" aria-label="关闭" @click="closeForm" :disabled="saving">×</button></header>
-        <div v-if="saveOutcome === 'unknown'" class="error" role="alert"><strong>记账结果尚未确认</strong><p>请先按下方流水号核对实际记录，再决定是否重试。重试沿用原编号；不要另建同笔记账。</p></div>
-        <fieldset :disabled="saving || !!savedReceipt"><legend>流水信息（业务记账）</legend>
+        <div v-if="saveOutcome === 'unknown'" class="error" role="alert"><strong>记账结果尚未确认</strong><p>请按原内容重试；系统会核对原操作，避免重复登记。</p></div>
+        <fieldset :disabled="saving || !!savedReceipt || saveOutcome === 'unknown'"><legend>流水信息（业务记账）</legend>
         <label>类型
           <select v-model="form.kind" required @change="syncKind">
             <optgroup v-for="group in kindGroups" :key="group.direction" :label="group.label"><option v-for="option in group.options" :key="option.value" :value="option.value">{{ option.displayLabel || option.label }}</option></optgroup>
@@ -637,7 +711,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <label>币种<select v-model="form.currency" required @change="onCurrencyChange"><option v-for="currency in currencies" :key="currency.value" :value="currency.value">{{ currency.label }}</option></select></label>
         <label>参考折算汇率 <small>1 原币对应人民币，仅用于账面折算</small><input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label>
         </fieldset>
-        <fieldset :disabled="saving || !!savedReceipt"><legend>业务关联</legend>
+        <fieldset :disabled="saving || !!savedReceipt || saveOutcome === 'unknown'"><legend>业务关联</legend>
         <div v-if="contractKinds.includes(form.kind)" class="order-picker">
           <label>关联订单（客户收款必选，费用可选）<input v-model="orderQuery" placeholder="客户或订单号" @input="searchOrders"></label><small v-if="orderSearchLoading">正在加载订单…</small><p v-if="orderSearchError" class="option-load-error-text" role="alert">{{ orderSearchError }} <button type="button" @click="searchOrders">重试</button></p>
           <button v-for="row in orders" :key="row.id" type="button" class="order" @click="chooseOrder(row)">{{ row.customer_name }}｜{{ row.customer_country || '—' }}｜{{ row.order_no }}｜{{ row.currency }} {{ formatMoney(row.total_amount) }}</button>
@@ -647,7 +721,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <label v-if="form.kind === 'unallocated_advance'">客户<select v-model="form.customer" required><option :value="null">请选择客户</option><option v-for="row in customers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
         <label v-if="form.kind === 'unallocated_payment'">供应商<select v-model="form.supplier" required><option :value="null">请选择供应商</option><option v-for="row in suppliers" :key="row.id" :value="row.id">{{ row.name }}</option></select></label>
         </fieldset>
-        <fieldset v-if="['customer_receipt', 'unallocated_advance'].includes(form.kind) && form.direction === 'income'" :disabled="saving || !!savedReceipt"><legend>客户汇款与银行扣费</legend>
+        <fieldset v-if="['customer_receipt', 'unallocated_advance'].includes(form.kind) && form.direction === 'income'" :disabled="saving || !!savedReceipt || saveOutcome === 'unknown'"><legend>客户汇款与银行扣费</legend>
           <label>客户汇款金额（{{ form.currency }}）<input v-model="form.remittance_amount" type="number" min="0.0001" step="0.0001" placeholder="与实际到账相同则无需修改"></label>
           <p class="category-hint">客户汇款 {{ form.currency }} {{ formatMoney(form.remittance_amount || form.amount) }} · 银行扣费 {{ form.currency }} {{ formatMoney(receiptFee) }} · 实际到账 {{ form.currency }} {{ formatMoney(form.amount) }}</p>
           <template v-if="receiptFee > 0">
@@ -658,7 +732,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
             <small v-if="form.fee_evidence">收款凭证已上传并关联。</small>
           </template>
         </fieldset>
-        <fieldset :disabled="saving || !!savedReceipt"><legend>收付款信息</legend>
+        <fieldset :disabled="saving || !!savedReceipt || saveOutcome === 'unknown'"><legend>收付款信息</legend>
         <label>支付方式<input v-model="form.payment_method" placeholder="银行转账、现金等"></label><label>银行参考号<input v-model="form.reference"></label><label>备注<input v-model="form.notes"></label>
         </fieldset>
         <p v-if="['customer_receipt', 'supplier_payment'].includes(form.kind)">款项将按合同计划顺序在系统内核销；超出计划的部分转为未分配预收预付，不等于银行资金已确认。</p>
@@ -673,11 +747,11 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
         <p v-if="error" class="error">{{ error }}</p>
         <footer>
           <button type="button" @click="closeForm" :disabled="saving || receiptLookupLoading || settlementSnapshot?.busy">{{ savedReceipt ? '关闭' : '取消' }}</button>
-          <button v-if="!savedReceipt" :disabled="saving || receiptLookupLoading || !referencesLoaded || (form.kind === 'customer_receipt' && (orderSearchLoading || !!orderSearchError))">{{ saving ? '保存中…' : receiptLookupLoading ? '核对中…' : saveOutcome === 'unknown' && form.kind === 'customer_receipt' ? '核对收款流水' : saveOutcome === 'unknown' ? '按原编号重试' : saveOutcome === 'rejected' && settlementOpen ? '按原编号重试保存' : settlementOpen && form.kind === 'customer_receipt' && form.currency !== 'CNY' ? '保存收款并继续' : '保存' }}</button>
+          <button v-if="!savedReceipt" :disabled="saving || receiptLookupLoading || !referencesLoaded || (form.kind === 'customer_receipt' && (orderSearchLoading || !!orderSearchError))">{{ saving ? '保存中…' : receiptLookupLoading ? '核对中…' : saveOutcome === 'unknown' && form.kind === 'customer_receipt' ? '按原内容重试' : saveOutcome === 'unknown' ? '按原编号重试' : saveOutcome === 'rejected' && settlementOpen ? '按原编号重试保存' : settlementOpen && form.kind === 'customer_receipt' && form.currency !== 'CNY' ? '保存收款并继续' : '保存' }}</button>
         </footer>
       </form>
     </div>
-    <div v-if="allocation && can('transactions', 'update')" class="mask"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="allocation-title" @submit.prevent="allocate"><header class="dialog-head"><div><h3 id="allocation-title">核销预收预付款</h3><p>仅分配现有余额，不会新增现金流水。</p></div><button type="button" class="close" aria-label="关闭" :disabled="saving" @click="closeAllocation">×</button></header><p class="dialog-context">{{ allocation.customer_name || allocation.supplier_name }} · {{ allocation.currency }} 可分配 {{ formatMoney(Number(allocation.amount) - Number(allocation.allocated_amount)) }}</p><label>待结计划<select v-model="allocationPlan" required><option value="">请选择</option><option v-for="plan in eligiblePlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.notes || '无备注' }} · 待结 {{ formatMoney(plan.remaining_amount) }}</option></select></label><p v-if="!eligiblePlans.length" class="empty-note">暂无币种与往来方匹配的待结计划。</p><label>核销金额（{{ allocation.currency }}）<input v-model="allocationAmount" type="number" min="0.0001" step="0.0001" required></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" :disabled="saving" @click="closeAllocation">取消</button><button :disabled="saving || !allocationPlan">{{ saving ? '保存中…' : '确认核销' }}</button></footer></form></div>
+    <div v-if="allocation && can('transactions', 'update')" class="mask"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="allocation-title" @submit.prevent="allocate"><header class="dialog-head"><div><h3 id="allocation-title">核销预收预付款</h3><p>仅分配现有余额，不会新增现金流水。</p></div><button type="button" class="close" aria-label="关闭" :disabled="saving" @click="closeAllocation">×</button></header><p class="dialog-context">{{ allocation.customer_name || allocation.supplier_name }} · {{ allocation.currency }} 未分配现金 {{ formatMoney(unallocatedAmount(allocation)) }}</p><p v-if="allocationAttempt" class="field-hint" role="status">上次核销结果待确认，请按原内容重试。</p><label>待结计划<select v-model="allocationPlan" :disabled="Boolean(allocationAttempt)" required><option value="">请选择</option><option v-if="allocationAttempt && !eligiblePlans.some(plan => String(plan.id) === String(allocationAttempt.plan))" :value="allocationAttempt.plan">{{ allocationAttempt.planLabel }}（结果待确认）</option><option v-for="plan in eligiblePlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.notes || '无备注' }} · 待结 {{ formatMoney(plan.remaining_amount) }}</option></select></label><p v-if="!eligiblePlans.length" class="empty-note">暂无币种与往来方匹配的待结计划。</p><label>核销金额（{{ allocation.currency }}）<input v-model="allocationAmount" type="text" inputmode="decimal" :disabled="Boolean(allocationAttempt)" required></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" :disabled="saving" @click="closeAllocation">取消</button><button :disabled="saving || !allocationPlan">{{ saving ? '保存中…' : allocationAttempt ? '按原内容重试' : '确认核销' }}</button></footer></form></div>
     <div v-if="voidTarget && can('transactions', 'update')" class="mask"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="void-title" @submit.prevent="submitVoid"><header class="dialog-head"><div><h3 id="void-title">作废财务流水</h3><p>此操作会同步作废拆分流水，并恢复关联收付款计划。</p></div><button type="button" class="close" aria-label="关闭" :disabled="voidSaving" @click="closeVoid">×</button></header><dl class="void-summary"><dt>流水号</dt><dd>{{ voidTarget.transaction_no }}</dd><dt>金额</dt><dd>{{ voidTarget.currency }} {{ formatMoney(voidTarget.amount) }}</dd><dt>往来方 / 合同</dt><dd>{{ voidTarget.customer_name || voidTarget.supplier_name || '—' }} / {{ voidTarget.order_no || voidTarget.purchase_no || '未关联合同' }}</dd></dl><label>作废原因<textarea v-model="voidReason" maxlength="500" rows="4" required /></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" :disabled="voidSaving" @click="closeVoid">取消</button><button :disabled="voidSaving || !voidReason.trim()">{{ voidSaving ? '保存中…' : '确认作废' }}</button></footer></form></div>
   </section>
 </template>

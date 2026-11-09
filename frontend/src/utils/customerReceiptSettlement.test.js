@@ -45,3 +45,15 @@ test('transport failure is ambiguous and requires a later lookup', async () => {
   })
   assert.equal(result.status, 'unknown')
 })
+
+test('a server-protected retry sends the same receipt instead of assuming a number match', async () => {
+  const original = { transaction_no: 'FIN-ORIGINAL', amount: '50', currency: 'USD' }
+  let sent
+  const result = await saveOrVerifyCustomerReceipt({
+    outcome: 'unknown', safeReplay: true,
+    lookup: async () => { throw new Error('lookup must not be used') },
+    save: async () => { sent = { ...original }; return { id: 24, ...original } },
+  })
+  assert.equal(result.status, 'saved')
+  assert.deepEqual(sent, original)
+})

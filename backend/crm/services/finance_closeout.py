@@ -12,7 +12,7 @@ from django.db.models import Q, Sum
 from django.utils import timezone
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 
-from crm.models import (FinanceAccount, FinanceAccountMapping, FinanceClassification,
+from crm.models import (FinanceAccount, FinanceAccountMapping, FinanceBankFactMatch, FinanceClassification,
     FinanceFact, FinanceInstruction, FinanceReview, FinanceTransferMatch, FinanceVoucher,
     FinanceHistoricalTransfer, OperationLog, Order, RmbCashEvent)
 from crm.sales_scope import effective_data_scope
@@ -216,7 +216,7 @@ def map_account(data, user):
 
 def normalize(data, user=None):
     allowed = {"request_key", "kind", "account", "voucher", "actual_date", "amount", "direction", "nature", "truth",
-        "source_system", "source_key", "reason", "parent", "legacy_parent", "approval", "allocations", "excess_reason", "replaces", "duplicate_review_token", "duplicate_review_reason"}
+        "source_system", "source_key", "reason", "parent", "legacy_parent", "approval", "allocations", "excess_reason", "replaces", "duplicate_review_token", "duplicate_review_reason", "same_legacy_event"}
     if not isinstance(data, dict) or set(data) - allowed:
         raise ValidationError("资金承接字段无效。")
     p = dict(data)
@@ -238,11 +238,13 @@ def normalize(data, user=None):
         raise ValidationError("真实性状态无效。")
     p["source_system"] = text(p.get("source_system"), 80)
     p["source_key"] = text(p.get("source_key"), 128)
-    for key in ("parent", "legacy_parent", "approval", "replaces"):
+    for key in ("parent", "legacy_parent", "approval", "replaces", "same_legacy_event"):
         if p.get(key) is not None:
             p[key] = pk(p[key])
     if p.get("parent") and p.get("legacy_parent"):
         raise ValidationError("原事实只可选择一个来源。")
+    if p.get("same_legacy_event") and p["kind"] != "cash":
+        raise ValidationError("只有普通银行资金事实可核实为既有银行事件。")
     allocations = p.setdefault("allocations", [])
     if not isinstance(allocations, list) or len(allocations) > 100:
         raise ValidationError("订单分配格式无效。")
@@ -356,6 +358,9 @@ def post(value, user, voucher_checked=False):
     # for refunds, account reconciliation and opening baselines.
     initial = FinanceInstruction.objects.get(pk=pk(value))
     own = account(initial.payload["account"], lock=True)
+    for code in FinanceAccountMapping.objects.filter(account=own).order_by("legacy_code").values_list("legacy_code", flat=True):
+        cash.lock_bank_fact({"rmb_account": code, "bank_date": initial.payload["actual_date"],
+            "direction": initial.payload["direction"], "bank_net_amount": initial.payload["amount"]})
     obj = FinanceInstruction.objects.select_for_update().get(pk=initial.pk)
     if obj.status == "posted":
         return FinanceFact.objects.get(instruction=obj)
@@ -452,10 +457,15 @@ def post(value, user, voucher_checked=False):
         raise cash.CashConflict("存在无权核实的既有银行候选，不能记账。")
     if obj.kind == "cash" and candidates["ids"] and (p.get("duplicate_review_token") != candidates["token"] or not p.get("duplicate_review_reason")):
         raise cash.CashConflict("存在疑似重复事实，须获取当前候选并填写人工核实说明。")
+    if p.get("same_legacy_event") and -p["same_legacy_event"] not in candidates["ids"]:
+        raise cash.CashConflict("所选银行记录已变化，请重新获取候选并核对。")
     fact = FinanceFact.objects.create(instruction=obj, account=own, voucher=proof,
         actual_date=p["actual_date"], amount=value, direction=p["direction"], kind=obj.kind,
         nature=p["nature"], truth=p["truth"], source_system=p["source_system"], source_key=p["source_key"],
         parent=parent, legacy_parent=legacy_parent, excess_amount=excess, actor=identity(user, "post"))
+    if p.get("same_legacy_event"):
+        event = RmbCashEvent.objects.get(pk=p["same_legacy_event"])
+        match_bank_fact(fact, event, user, p["duplicate_review_reason"])
     obj.status = "posted"
     obj.save(update_fields=["status", "updated_at"])
     audit(fact, user, "记入实际资金事实")
@@ -463,14 +473,51 @@ def post(value, user, voucher_checked=False):
 
 
 def duplicate_candidates(p, user=None):
-    ids = list(FinanceFact.objects.filter(account_id=p["account"], actual_date=p["actual_date"], direction=p["direction"], amount=p["amount"]).order_by("pk").values_list("pk", flat=True))
+    facts = list(FinanceFact.objects.filter(account_id=p["account"], actual_date=p["actual_date"], direction=p["direction"], amount=p["amount"]).order_by("pk"))
+    ids = [fact.pk for fact in facts]
     codes = FinanceAccountMapping.objects.filter(account_id=p["account"]).values_list("legacy_code", flat=True)
     legacy = list(RmbCashEvent.objects.filter(rmb_account__in=codes, status="confirmed", bank_date=p["actual_date"], direction=p["direction"], bank_net_amount=p["amount"]).order_by("pk"))
     restricted = user is not None and any(not cash.visible(event, user) for event in legacy)
     if restricted:
         return {"ids": [], "token": "", "restricted": True}
     ids.extend(-event.pk for event in legacy)
-    return {"ids": ids, "token": digest(ids), "restricted": False}
+    items = [{"id": fact.pk, "type": "account_fact", "label": f"账户资金 {fact.source_key} · {fact.actual_date} · {fact.amount}"} for fact in facts]
+    items += [{"id": -event.pk, "type": "bank_event", "label": f"{event.event_no} · {event.bank_date} · {event.bank_net_amount} · {event.bank_reference or '银行参考号未提供'}"} for event in legacy]
+    return {"ids": ids, "items": items, "token": digest(ids), "restricted": False}
+
+
+def matched_legacy_ids(user=None):
+    """Exclude matched event only when the caller can see the canonical account fact."""
+    if user is not None:
+        try:
+            access(user)
+        except PermissionDenied:
+            return set()
+    return set(FinanceBankFactMatch.objects.values_list("event_id", flat=True))
+
+
+def match_bank_fact(fact, event, user, reason):
+    """Append a reviewed identity link; caller holds the common bank-fact lock."""
+    access(user, "update")
+    reason = text(reason)
+    fact = FinanceFact.objects.select_for_update().get(pk=fact.pk)
+    event = RmbCashEvent.objects.select_for_update().get(pk=event.pk)
+    if (fact.kind != "cash" or event.status != "confirmed" or not cash.visible(event, user)
+            or not FinanceAccountMapping.objects.filter(account=fact.account, legacy_code=event.rmb_account).exists()
+            or fact.actual_date != event.bank_date or fact.direction != event.direction or fact.amount != event.bank_net_amount):
+        raise ValidationError("两条记录的账户、银行日期、方向或实际净额不一致，不能确认是同一笔。")
+    if FinanceBankFactMatch.objects.filter(Q(fact=fact) | Q(event=event)).exists():
+        raise ValidationError("其中一条资金记录已关联其他银行事实。")
+    if (fact.pk in corrected_ids()[0] or event.pk in corrected_ids()[1] or event.pk in historical_transfer_ids()
+            or FinanceTransferMatch.objects.filter(Q(outgoing=fact) | Q(incoming=fact)).exists()
+            or FinanceHistoricalTransfer.objects.filter(Q(outgoing_fact=fact) | Q(incoming_fact=fact)).exists()):
+        raise ValidationError("记录已有更正或内部转账核实，请先核对其后续关系。")
+    voucher(fact.voucher_id)
+    from .bank_vouchers import require_verified_file
+    require_verified_file(event, user)
+    match = FinanceBankFactMatch.objects.create(fact=fact, event=event, reason=reason, actor=identity(user, "match_bank_fact"))
+    audit(match, user, "核实同一银行资金事实")
+    return match
 
 
 @transaction.atomic
@@ -523,6 +570,8 @@ def account_rows(own, end, user=None):
     legacy = list(RmbCashEvent.objects.filter(rmb_account__in=codes, status="confirmed", bank_date__lte=end).order_by("bank_date", "pk"))
     if user is not None and any(not cash.visible(event, user) for event in legacy):
         raise PermissionDenied("账户包含无权核实的历史来源，不能返回部分余额。")
+    linked = set(FinanceBankFactMatch.objects.filter(fact__account=own, fact__actual_date__lte=end).values_list("event_id", flat=True))
+    legacy = [event for event in legacy if event.pk not in linked]
     return facts, legacy
 
 
@@ -588,14 +637,17 @@ def reporting_events(user, start, end):
     for out, inc in FinanceHistoricalTransfer.objects.values_list("outgoing_fact_id", "incoming_fact_id"):
         matched.update(value for value in (out, inc) if value is not None)
     result = []
+    linked = {row.fact_id: row.event for row in FinanceBankFactMatch.objects.select_related("event").filter(fact__actual_date__range=(start, end))}
     for f in FinanceFact.objects.select_related("account").filter(actual_date__range=(start, end)).exclude(kind="opening").exclude(pk__in=matched).exclude(kind="correction", amount=0):
         nature = effective_nature(f)
-        result.append(SimpleNamespace(pk=-f.pk, id=-f.pk, event_no=f"ACCOUNT-{f.pk}", kind=nature,
-            currency="CNY", amount=f.amount, direction=f.direction, bank_date=f.actual_date,
-            bank_net_amount=f.amount, fee_mode="none", fee_amount=Decimal("0"),
-            bank_reference=f.source_key, status="confirmed", account_type=f.account.account_type,
+        event = linked.get(f.pk)
+        display_kind = event.kind if event and event.kind == "fx_settlement" else nature
+        result.append(SimpleNamespace(pk=-f.pk, id=-f.pk, event_no=event.event_no if event else f"ACCOUNT-{f.pk}", kind=display_kind,
+            currency=event.currency if event else "CNY", amount=event.amount if event else f.amount, direction=f.direction, bank_date=f.actual_date,
+            bank_net_amount=f.amount, fee_mode=event.fee_mode if event else "none", fee_amount=event.fee_amount if event else Decimal("0"),
+            bank_reference=event.bank_reference if event else f.source_key, status="confirmed", account_type=f.account.account_type,
             excess_amount=f.excess_amount,
-            detail_url=f"/finance-ledger?fact={f.pk}", get_kind_display=lambda n=nature: n))
+            detail_url=f"/rmb-cash-events?detail={event.pk}" if event else f"/finance-ledger?fact={f.pk}", get_kind_display=lambda n=display_kind: n))
     return result
 
 

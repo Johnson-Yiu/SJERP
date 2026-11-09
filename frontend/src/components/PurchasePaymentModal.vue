@@ -1,5 +1,6 @@
 <script setup>
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 const { api } = useWorkspaceApi()
 import { ref } from 'vue'
 import { X, CircleDollarSign } from 'lucide-vue-next'
@@ -7,38 +8,60 @@ import { X, CircleDollarSign } from 'lucide-vue-next'
 const props = defineProps({ purchase: Object })
 const emit = defineEmits(['close', 'saved'])
 const saving = ref(false), error = ref('')
-const form = ref({ transaction_date: new Date().toLocaleDateString('en-CA'), amount: '', payment_method: '', reference: '', notes: '', exchange_rate: props.purchase.currency === 'CNY' ? '1' : props.purchase.exchange_rate })
+const form = ref({ transaction_date: new Date().toLocaleDateString('en-CA'), amount: '', payment_method: '', reference: '', notes: '', exchange_rate: props.purchase.currency === 'CNY' ? '1' : '' })
+const storageKey = `finance-purchase-payment-${props.purchase.id}`
+const pending = ref(null)
+try {
+  const saved = JSON.parse(window.sessionStorage.getItem(storageKey) || 'null')
+  if (saved?.key && saved?.payload) { pending.value = saved; form.value = { ...form.value, ...saved.payload } }
+} catch { /* a failed write is reported before submission */ }
+const formGuard = useUnsavedChangesGuard({
+  data: () => ({ ...form.value, pending: pending.value?.key || '' }), busy: () => saving.value,
+  confirmOptions: () => pending.value ? { title: '付款结果待确认', message: '关闭后可在本标签页重新打开并按原内容核对；已登记的付款不会撤销。', cancelText: '继续核对', confirmText: '关闭并保留' } : {},
+})
+formGuard.markClean()
+function close() { return formGuard.requestClose(() => emit('close')) }
 const money = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 async function submit() {
   if (saving.value) return
   error.value = ''
-  if (!Number.isFinite(Number(form.value.amount)) || Number(form.value.amount) <= 0 || Number(form.value.amount) > Number(props.purchase.unpaid_amount)) {
+  if (!Number.isFinite(Number(form.value.amount)) || Number(form.value.amount) <= 0 || (!pending.value && Number(form.value.amount) > Number(props.purchase.unpaid_amount))) {
     error.value = '付款金额须大于零，且不能超过当前未付金额。'; return
   }
   if (!Number.isFinite(Number(form.value.exchange_rate)) || Number(form.value.exchange_rate) <= 0) { error.value = '本次实际汇率必须大于 0。'; return }
+  const existing = pending.value
+  const attempt = existing || { key: `PURCHASE-PAY-${crypto.randomUUID()}`, payload: { ...form.value, currency: props.purchase.currency, exchange_rate: props.purchase.currency === 'CNY' ? 1 : form.value.exchange_rate } }
+  try { window.sessionStorage.setItem(storageKey, JSON.stringify(attempt)) }
+  catch { error.value = '浏览器无法保存本次付款标识，请检查浏览器存储后重试。'; return }
+  pending.value = attempt
   saving.value = true
   try {
-    await api.post(`/purchase-orders/${props.purchase.id}/pay/`, { ...form.value, currency: props.purchase.currency, exchange_rate: props.purchase.currency === 'CNY' ? 1 : form.value.exchange_rate })
+    await api.post(`/purchase-orders/${props.purchase.id}/pay/`, attempt.payload, { headers: { 'Idempotency-Key': attempt.key } })
+    window.sessionStorage.removeItem(storageKey)
+    pending.value = null
+    formGuard.markClean()
     emit('saved')
   } catch (e) {
+    if (!existing && e.response?.status === 400) { window.sessionStorage.removeItem(storageKey); pending.value = null }
     const data = e.response?.data
-    error.value = data?.detail || (data ? Object.values(data).flat().join(' ') : e.message) || '付款登记失败，请重试。'
+    error.value = data?.detail || (data ? Object.values(data).flat().join(' ') : '') || '付款结果待确认，请按原内容重试。'
   } finally { saving.value = false }
 }
 </script>
 
 <template>
-  <div class="payment-mask" @keydown.esc="!saving && emit('close')">
+  <div class="payment-mask" @keydown.esc="!saving && close()">
     <section class="payment-modal" role="dialog" aria-modal="true" aria-labelledby="payment-title">
-      <header><div><span class="payment-eyebrow">供应商付款</span><h3 id="payment-title"><CircleDollarSign :size="20" /> 登记付款</h3><p>{{ purchase.purchase_no }} · {{ purchase.supplier_name }}</p></div><button class="icon-btn" aria-label="关闭付款登记" :disabled="saving" @click="emit('close')"><X :size="18" /></button></header>
+      <header><div><span class="payment-eyebrow">供应商付款</span><h3 id="payment-title"><CircleDollarSign :size="20" /> 登记付款</h3><p>{{ purchase.purchase_no }} · {{ purchase.supplier_name }}</p></div><button class="icon-btn" aria-label="关闭付款登记" :disabled="saving" @click="close"><X :size="18" /></button></header>
       <div class="payment-balance"><span>当前未付金额</span><strong>{{ purchase.currency }} {{ money(purchase.unpaid_amount) }}</strong><small>已付 {{ purchase.currency }} {{ money(purchase.paid_amount) }}</small></div>
       <form @submit.prevent="submit">
-        <fieldset :disabled="saving">
+        <p v-if="pending" class="payment-error" role="status">上次付款结果待确认，请按原内容重试。</p>
+        <fieldset :disabled="saving || Boolean(pending)">
           <div class="payment-grid"><label>本次付款金额（{{ purchase.currency }}） *<input v-model="form.amount" type="number" min="0.01" :max="purchase.unpaid_amount" step="0.01" placeholder="请输入付款金额" required autofocus /></label><label>付款日期 *<input v-model="form.transaction_date" type="date" required /></label><label>本次实际汇率 *<input v-model="form.exchange_rate" aria-label="本次实际汇率" :readonly="purchase.currency === 'CNY'" type="number" min="0.000001" step="0.000001" required /></label><label>付款方式<select v-model="form.payment_method"><option value="">请选择（可选）</option><option>银行转账</option><option>支付宝</option><option>微信支付</option><option>现金</option><option>其他</option></select></label><label>凭证 / 参考号<input v-model="form.reference" maxlength="100" placeholder="填写转账流水号（可选）" /></label></div>
           <label class="payment-notes">备注<textarea v-model="form.notes" rows="2" placeholder="补充本次付款说明（可选）" /></label>
         </fieldset>
         <p v-if="error" class="payment-error" role="alert">{{ error }}</p>
-        <footer><small>保存后生成供应商支出流水，并更新未付余额。</small><div><button type="button" class="btn btn-secondary" :disabled="saving" @click="emit('close')">取消</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : '确认登记付款' }}</button></div></footer>
+        <footer><small>保存后生成供应商支出流水，并更新未付余额。</small><div><button type="button" class="btn btn-secondary" :disabled="saving" @click="close">关闭</button><button class="btn btn-primary" :disabled="saving">{{ saving ? '保存中…' : pending ? '按原内容重试' : '确认登记付款' }}</button></div></footer>
       </form>
     </section>
   </div>

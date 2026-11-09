@@ -218,10 +218,11 @@ class RmbCashEventViewSet(viewsets.ViewSet):
 
     @action(detail=True, methods=["post"])
     def confirm(self, request, pk=None, format=None):
-        if not isinstance(request.data, dict) or set(request.data) - {"voucher_checked", "duplicate_token", "duplicate_reason"} or "voucher_checked" not in request.data:
+        if not isinstance(request.data, dict) or set(request.data) - {"voucher_checked", "duplicate_token", "duplicate_reason", "same_fact"} or "voucher_checked" not in request.data:
             raise ValidationError("确认不可覆盖草稿金额或凭证。")
         return Response(event_data(cash.confirm_event(pk, request.user, voucher_checked=request.data.get("voucher_checked"),
-            duplicate_token=request.data.get("duplicate_token"), duplicate_reason=request.data.get("duplicate_reason")), request.user))
+            duplicate_token=request.data.get("duplicate_token"), duplicate_reason=request.data.get("duplicate_reason"),
+            same_fact=request.data.get("same_fact")), request.user))
 
     @action(detail=True, methods=["get"], url_path="duplicate-candidates")
     def duplicate_candidates(self, request, pk=None, format=None):

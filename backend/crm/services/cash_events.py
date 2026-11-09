@@ -9,7 +9,7 @@ from django.conf import settings
 from django.db import IntegrityError, connection, transaction
 from django.db.models import Sum, Q
 from django.utils import timezone
-from rest_framework.exceptions import APIException, NotFound, ValidationError
+from rest_framework.exceptions import APIException, NotFound, PermissionDenied, ValidationError
 
 from crm.finance_scope import require_finance_permission, scope_transaction_queryset, validate_finance_relations
 from crm.audit import snapshot
@@ -363,13 +363,25 @@ def duplicate_candidates(p, user, *, exclude_id=None):
         qs = qs.exclude(pk=exclude_id)
     events = list(qs.order_by("pk"))
     hidden = any(not visible(event, user) for event in events)
-    ids = [event.pk for event in events]
+    from crm.models import FinanceAccountMapping, FinanceFact
+    from . import finance_closeout as ledger
+    accounts = FinanceAccountMapping.objects.filter(legacy_code=p["rmb_account"]).values_list("account_id", flat=True)
+    facts = list(FinanceFact.objects.filter(account_id__in=accounts, actual_date=p["bank_date"],
+        direction=p["direction"], amount=p["bank_net_amount"]).exclude(kind="opening").order_by("pk"))
+    if facts:
+        try:
+            ledger.access(user)
+        except PermissionDenied:
+            hidden = True
+    ids = [event.pk for event in events] + [-fact.pk for fact in facts]
     token = hashlib.sha256(json.dumps(ids, separators=(",", ":")).encode()).hexdigest()
-    return {"token": token, "restricted": hidden, "count": len(events),
-            "items": [] if hidden else [{"id": event.pk, "event_no": event.event_no,
+    return {"token": token, "restricted": hidden, "count": len(events) + len(facts),
+            "items": [] if hidden else [{"id": event.pk, "record_type": "bank_event", "event_no": event.event_no,
                 "bank_reference": event.bank_reference, "bank_counterparty": event.bank_counterparty,
                 "bank_summary": event.bank_summary, "bank_transaction_id": event.bank_transaction_id}
-                for event in events]}
+                for event in events] + [{"id": -fact.pk, "record_type": "account_fact", "event_no": f"账户资金 {fact.source_key}",
+                    "bank_reference": fact.source_key, "bank_counterparty": "", "bank_summary": fact.nature,
+                    "bank_transaction_id": ""} for fact in facts]}
 
 
 def lock_bank_fact(p):
@@ -427,7 +439,7 @@ def register_event(payload, user):
 
 
 @transaction.atomic
-def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None, duplicate_reason=None):
+def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None, duplicate_reason=None, same_fact=None):
     access(user, "update")
     event = get_event(user, pk=event_id)
     p = event.request_payload
@@ -447,6 +459,12 @@ def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None
     if not visible(event, user):
         raise NotFound("资金记录不存在或不可访问。")
     if event.status == "confirmed":
+        if same_fact is not None:
+            from crm.models import FinanceBankFactMatch
+            from .finance_closeout import pk
+            match = FinanceBankFactMatch.objects.filter(event=event, fact_id=pk(same_fact)).first()
+            if match is None or not isinstance(duplicate_reason, str) or match.reason != duplicate_reason.strip():
+                raise CashConflict("此银行事件已确认，不能以不同关联重放。")
         return event
     if event.status != "pending" or voucher_checked is not True:
         raise ValidationError("只有待确认事件可由人工核实银行凭证后确认。")
@@ -456,6 +474,11 @@ def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None
     candidates = duplicate_candidates(p, user, exclude_id=event.pk)
     if candidates["restricted"]:
         raise CashConflict("存在无权查看的疑似重复资金记录，请联系有权人员核对。")
+    if same_fact is not None:
+        from .finance_closeout import pk
+        same_fact = pk(same_fact)
+        if not any(item["id"] == -same_fact and item["record_type"] == "account_fact" for item in candidates["items"]):
+            raise CashConflict("所选账户资金记录已变化，请重新获取候选并核对。")
     if candidates["count"]:
         if duplicate_token != candidates["token"] or not isinstance(duplicate_reason, str) or not 1 <= len(duplicate_reason.strip()) <= 500:
             raise CashConflict("存在疑似重复资金记录，请重新核对并填写放行说明。")
@@ -469,6 +492,10 @@ def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None
     event.confirmed_at = timezone.now()
     event.confirmed_actor = actor(user, "confirm_bank_voucher")
     event.save(update_fields=["status", "confirmed_at", "confirmed_actor", "updated_at"])
+    if same_fact is not None:
+        from crm.models import FinanceFact
+        from .finance_closeout import match_bank_fact
+        match_bank_fact(FinanceFact.objects.get(pk=same_fact), event, user, duplicate_reason)
     audit_cash_event(event, user, "确认银行资金事件", before=before)
     return event
 

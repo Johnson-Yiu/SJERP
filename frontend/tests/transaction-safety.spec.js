@@ -23,6 +23,7 @@ async function fill() {
 }
 beforeEach(async () => {
   vi.clearAllMocks()
+  window.sessionStorage.clear()
   mocks.post.mockResolvedValue({ data: {} })
   mocks.listAll.mockImplementation(async url => url === '/orders/' ? [{ id: 7, order_no: 'SO-FUP', customer_name: '合成客户', currency: 'USD', exchange_rate: '7.1', status: 'confirmed', total_amount: '500' }] : [])
   router = createRouter({ history: createMemoryHistory(), routes: ['/transactions', '/orders'].map(path => ({ path, component: { template: '<div />' } })) })
@@ -38,7 +39,7 @@ describe('FUP-01 transaction editor protection', () => {
     expect(wrapper.find('form.dialog').exists()).toBe(false)
     expect(dialogState.current).toBeNull()
   })
-  it.each(['cancel', 'close', 'mask', 'route'])('B: dirty %s requires confirmation, cancellation preserves all fields', async entry => {
+  it.each(['cancel', 'close', 'route'])('B: dirty %s requires confirmation, cancellation preserves all fields', async entry => {
     await open(); await fill()
     let navigation
     if (entry === 'route') navigation = router.push('/orders')
@@ -52,6 +53,13 @@ describe('FUP-01 transaction editor protection', () => {
     expect(dialog().text()).toContain('SO-FUP')
     const event = new Event('beforeunload', { cancelable: true })
     window.dispatchEvent(event); expect(event.defaultPrevented).toBe(true)
+  })
+  it('B: clicking the backdrop leaves the dirty form open without prompting', async () => {
+    await open(); await fill()
+    await wrapper.get('.mask').trigger('click'); await flushPromises()
+    expect(dialogState.current).toBeNull()
+    expect(dialog().find('input[type="number"]').element.value).toBe('12.34')
+    expect(dialog().text()).toContain('SO-FUP')
   })
   it('C: submitting blocks close, mask, new form, route and browser unload', async () => {
     await open(); await fill()
@@ -80,10 +88,11 @@ describe('FUP-01 transaction editor protection', () => {
     await dialog().get('button[aria-label="关闭"]').trigger('click'); await flushPromises(); resolveDialog(false); await flushPromises()
     expect(dialog().text()).toContain('未写入，金额无效')
     await dialog().find('input[type="number"]').setValue('20'); await submit()
-    expect(mocks.post.mock.calls[1][1]).toMatchObject({ ...payload, amount: 20 })
+    expect(mocks.post.mock.calls[1][1]).toMatchObject({ ...payload, amount: 20, remittance_amount: 20 })
     expect(wrapper.find('form.dialog').exists()).toBe(false)
     const unload = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(unload); expect(unload.defaultPrevented).toBe(false)
     await open(); await dialog().find('input[type="number"]').setValue('20'); await submit()
+    expect(mocks.post.mock.calls.length, wrapper.text()).toBe(3)
     expect(mocks.post.mock.calls[2][1].transaction_no).not.toBe(payload.transaction_no)
   })
   it.each(['close', 'route'])('E/F/G/H: lost response and duplicate rejection remain unknown; %s warns with original number', async entry => {
@@ -104,11 +113,11 @@ describe('FUP-01 transaction editor protection', () => {
     expect(dialogState.current.message).toContain(payload.transaction_no)
     expect(dialogState.current.message).toContain('重新新建可能重复记账')
     resolveDialog(false); await flushPromises(); await navigation
-    expect(dialog().get('input[readonly]').element.value).toBe(payload.transaction_no)
+    expect(dialog().get('fieldset').attributes('disabled')).toBeDefined()
     expect(dialog().find('input[type="number"]').element.value).toBe('12.34')
     expect(dialog().text()).toContain('编号重复不代表本次保存成功')
     await button('新增记账').trigger('click')
-    expect(dialog().get('input[readonly]').element.value).toBe(payload.transaction_no)
+    expect(dialog().get('fieldset').attributes('disabled')).toBeDefined()
   })
   it('explicit abandonment of an ambiguous request needs the risk acknowledgement', async () => {
     await open(); await fill(); mocks.post.mockRejectedValueOnce({ response: { status: 503, data: { detail: '连接中断' } } }); await submit()
@@ -117,5 +126,21 @@ describe('FUP-01 transaction editor protection', () => {
     resolveDialog(true); await flushPromises()
     expect(wrapper.find('form.dialog').exists()).toBe(false)
     expect(mocks.post).toHaveBeenCalledTimes(1)
+  })
+  it('recovers an unknown receipt after a page reopen and replays the original content', async () => {
+    await open(); await fill()
+    mocks.post.mockRejectedValueOnce(new Error('connection lost after save'))
+    await submit()
+    const original = mocks.post.mock.calls[0][1]
+    wrapper.unmount()
+    wrapper = mount(TransactionPage, { global: { plugins: [router], directives: { 'money-input': {} } } })
+    await flushPromises()
+    expect(wrapper.text()).toContain('收款结果待确认')
+    await button('按原内容核对').trigger('click'); await flushPromises()
+    expect(dialog().get('fieldset').attributes('disabled')).toBeDefined()
+    mocks.post.mockResolvedValueOnce({ data: { id: 99, transaction_no: original.transaction_no, kind: 'customer_receipt' } })
+    await submit()
+    expect(mocks.post.mock.calls[1][1]).toEqual(original)
+    expect(window.sessionStorage.getItem(`finance-receipt-${original.transaction_no}`)).toBeNull()
   })
 })

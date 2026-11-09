@@ -1,5 +1,5 @@
-export async function saveOrVerifyCustomerReceipt({ outcome, lookup, save }) {
-  if (outcome === 'unknown') {
+export async function saveOrVerifyCustomerReceipt({ outcome, lookup, save, safeReplay = false }) {
+  if (outcome === 'unknown' && !safeReplay) {
     try {
       const receipt = await lookup()
       return receipt ? { status: 'found', receipt } : { status: 'missing' }

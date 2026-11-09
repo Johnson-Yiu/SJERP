@@ -15,7 +15,7 @@ from urllib.request import urlopen
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError
 from django.db.models import Case, CharField, Count, DecimalField, ExpressionWrapper, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
@@ -47,6 +47,8 @@ from .serializers import FinancePlanWriteoffInputSerializer
 from .serializers import FinancePlanWriteoffCorrectionInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
 from .services.finance import allocate_advance, approve_contract_change, correct_receivable_writeoff, reject_contract_change, record_contract_payment, record_customer_receipt, record_transaction, void_transaction, writeoff_receivable
+from .services.finance_request import finance_request_value, require_finance_request_key
+from .services.cash_events import CashConflict
 from .services.attachments import delete_follow_up_attachment, upload_follow_up_attachments
 from .services.fulfillment import (
     begin_fulfillment_idempotency,
@@ -556,14 +558,38 @@ class PurchaseOrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         input_serializer = SupplierPaymentInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
         purchase = self.get_object()
-        before = snapshot(purchase)
         try:
-            payment = record_contract_payment(purchase, {**input_serializer.validated_data, "category": "供应商付款"})
+            key = require_finance_request_key(request)
+            with transaction.atomic():
+                identity, replay = begin_fulfillment_idempotency(
+                    key=key, operation="purchase_pay", target_id=purchase.pk,
+                    payload=input_serializer.validated_data,
+                    operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None,
+                )
+                if replay:
+                    prior = identity.response_payload
+                    payment = get_object_or_404(scope_transaction_queryset(Transaction.objects.all(), request.user), pk=prior.get("id"))
+                    current = TransactionSerializer(payment, context={"request": request}).data
+                    result = dict(prior)
+                    for field in ("customer", "customer_name", "order", "order_no", "supplier", "supplier_name", "purchase_order", "purchase_no", "plan", "allocations", "allocated_amount", "cash_settlements", "receipt_adjustment_rows"):
+                        if current.get(field) in (None, "", []):
+                            result[field] = current.get(field)
+                    response = Response(result, status=identity.response_status)
+                    response["Idempotent-Replay"] = "true"
+                    return response
+                if purchase.currency != "CNY" and input_serializer.validated_data.get("exchange_rate") is None:
+                    raise DjangoValidationError("请填写本次付款使用的实际汇率。")
+                before = snapshot(purchase)
+                payment = record_contract_payment(purchase, {**input_serializer.validated_data, "category": "供应商付款"})
+                record_operation(request=request, instance=payment, action="create", action_label="登记供应商付款", metadata={"purchase_order_id": purchase.id, "purchase_no": purchase.purchase_no})
+                record_operation(request=request, instance=purchase, action="custom", action_label="采购单付款", before=before, metadata={"transaction_id": payment.id})
+                result = json_safe_fulfillment_response(TransactionSerializer(payment, context={"request": request}).data)
+                complete_fulfillment_idempotency(identity, result)
+        except FulfillmentIdempotencyConflict:
+            return Response({"detail": "本次付款标识已用于其他内容，请核对原操作。"}, status=status.HTTP_409_CONFLICT)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=payment, action="create", action_label="登记供应商付款", metadata={"purchase_order_id": purchase.id, "purchase_no": purchase.purchase_no})
-        record_operation(request=request, instance=purchase, action="custom", action_label="采购单付款", before=before, metadata={"transaction_id": payment.id})
-        return Response(TransactionSerializer(payment, context={"request": request}).data, status=status.HTTP_201_CREATED)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 class AccessRoleViewSet(AuditTrailMixin, viewsets.ModelViewSet):
@@ -2890,6 +2916,10 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
+        structured_input = ("receipt_adjustments" in request.data or "plan_allocations" in request.data
+            or (not request.data.get("order") and not request.data.get("plan")))
+        if request.data.get("kind") == "customer_receipt" and not structured_input:
+            return self._create_legacy_receipt(request)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         if serializer.validated_data.get("plan") or serializer.validated_data.get("kind") in {"customer_receipt", "supplier_payment", "refund", "supplier_refund", "unallocated_advance", "unallocated_payment"}:
@@ -2918,6 +2948,50 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                             metadata={"transaction_id": row.pk, "plan_id": adjustment.plan_id, "amount": str(adjustment.amount),
                                 "nature": adjustment.writeoff.nature, "confirmed_actor": adjustment.writeoff.confirmed_actor})
         return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+    def _create_legacy_receipt(self, request):
+        """Retain direct-plan receipts while making their original request replayable."""
+        require_finance_permission(request.user, "finance", "update")
+        key = str(request.headers.get("Idempotency-Key") or request.data.get("transaction_no") or "").strip()
+        if not key or len(key) > 128 or any(ord(char) < 32 or ord(char) == 127 for char in key):
+            return Response({"detail": "本次收款缺少有效的请求标识，请重新打开登记窗口。"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data=request.data, context={**self.get_serializer_context(), "idempotent_legacy_receipt": True})
+        try:
+            with transaction.atomic():
+                identity, replay = begin_fulfillment_idempotency(
+                    key=key, operation="receipt_create", target_id=0,
+                    payload=finance_request_value(request.data),
+                    operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None,
+                )
+                if replay:
+                    prior = identity.response_payload
+                    row = get_object_or_404(scope_transaction_queryset(Transaction.objects.all(), request.user), pk=prior.get("id"))
+                    current = self.get_serializer(row).data
+                    result = dict(prior)
+                    for field in ("customer", "customer_name", "order", "order_no", "supplier", "supplier_name", "purchase_order", "purchase_no", "plan", "allocations", "allocated_amount", "cash_settlements", "receipt_adjustment_rows"):
+                        if current.get(field) in (None, "", []):
+                            result[field] = current.get(field)
+                    response = Response(result, status=identity.response_status)
+                    response["Idempotent-Replay"] = "true"
+                    return response
+                serializer.is_valid(raise_exception=True)
+                number = serializer.validated_data.get("transaction_no")
+                if number and Transaction.objects.filter(transaction_no=number).exists():
+                    raise CashConflict("该流水编号已被使用，请核对原收款。")
+                row = record_transaction(serializer.validated_data.copy())
+                record_operation(request=request, instance=row, action="create", action_label="登记财务流水")
+                result = json_safe_fulfillment_response(self.get_serializer(row).data)
+                complete_fulfillment_idempotency(identity, result)
+        except FulfillmentIdempotencyConflict:
+            return Response({"detail": "本次收款标识已用于其他内容，请核对原操作。"}, status=status.HTTP_409_CONFLICT)
+        except IntegrityError:
+            number = request.data.get("transaction_no")
+            if number and Transaction.objects.filter(transaction_no=number).exists():
+                raise CashConflict("该流水编号已被使用，请核对原收款。")
+            raise
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(result, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=["post"], url_path="voucher-upload", parser_classes=[MultiPartParser, FormParser])
     def voucher_upload(self, request):
@@ -2986,13 +3060,36 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         amount = drf_serializers.DecimalField(max_digits=14, decimal_places=4, min_value=Decimal("0.0001")).run_validation(request.data.get("amount"))
         require_finance_permission(request.user, "finance", "update")
         plan = get_object_or_404(scope_plan_queryset(PaymentPlan.objects.all(), request.user), pk=plan_id)
+        source = self.get_object()
         try:
-            source = self.get_object()
-            plan = allocate_advance(source, plan, amount)
+            key = require_finance_request_key(request)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=plan, action="custom", action_label="核销预收预付", metadata={"transaction_id": source.id, "amount": str(request.data.get("amount") or "")})
-        return Response(PaymentPlanSerializer(plan, context={"request": request}).data)
+        try:
+            with transaction.atomic():
+                identity, replay = begin_fulfillment_idempotency(
+                    key=key, operation="finance_allocate", target_id=source.pk,
+                    payload={"plan": plan.pk, "amount": amount},
+                    operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None,
+                )
+                if replay:
+                    replay_payload = dict(identity.response_payload)
+                    current_scope = PaymentPlanSerializer(plan, context={"request": request}).data
+                    for field in ("customer_id", "supplier_id", "counterparty_name", "contract_no"):
+                        if current_scope.get(field) in (None, ""):
+                            replay_payload[field] = current_scope.get(field)
+                    response = Response(replay_payload, status=identity.response_status)
+                    response["Idempotent-Replay"] = "true"
+                    return response
+                plan = allocate_advance(source, plan, amount)
+                record_operation(request=request, instance=plan, action="custom", action_label="核销预收预付", metadata={"transaction_id": source.id, "amount": str(amount)})
+                result = json_safe_fulfillment_response(PaymentPlanSerializer(plan, context={"request": request}).data)
+                complete_fulfillment_idempotency(identity, result, response_status=200)
+        except FulfillmentIdempotencyConflict:
+            return Response({"detail": "本次核销标识已用于其他内容，请核对原操作。"}, status=status.HTTP_409_CONFLICT)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(result)
 
     @action(detail=True, methods=["post"], url_path="writeoff")
     @transaction.atomic
@@ -3085,10 +3182,35 @@ class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         payload = request.data.copy()
         payload["source_type"] = "manual"
         payload["is_automatic"] = False
-        serializer = self.get_serializer(data=payload)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            key = require_finance_request_key(request)
+            with transaction.atomic():
+                identity, replay = begin_fulfillment_idempotency(
+                    key=key, operation="inventory_single", target_id=0,
+                    payload=finance_request_value(request.data),
+                    operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None,
+                )
+                if replay:
+                    prior = identity.response_payload
+                    row = get_object_or_404(self.get_queryset(), pk=prior.get("id"))
+                    current = self.get_serializer(row).data
+                    result = dict(prior)
+                    for field in ("supplier_sku", "unit_cost", "order", "order_no", "related_orders", "related_order_nos"):
+                        if current.get(field) in (None, "", []):
+                            result[field] = current.get(field)
+                    response = Response(result, status=identity.response_status)
+                    response["Idempotent-Replay"] = "true"
+                    return response
+                serializer = self.get_serializer(data=payload)
+                serializer.is_valid(raise_exception=True)
+                self.perform_create(serializer)
+                result = json_safe_fulfillment_response(serializer.data)
+                complete_fulfillment_idempotency(identity, result)
+        except FulfillmentIdempotencyConflict:
+            return Response({"detail": "本次库存登记标识已用于其他内容，请核对原操作。"}, status=status.HTTP_409_CONFLICT)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(result, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=["post"])
     def batch(self, request):
@@ -3097,20 +3219,53 @@ class InventoryMovementViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             return Response({"detail": "请至少选择一个 SKU 并填写数量。"}, status=status.HTTP_400_BAD_REQUEST)
         if request.data.get("type") not in self.manual_types:
             return Response({"detail": "手工库存流水类型不受支持，请选择入库或出库类型。"}, status=status.HTTP_400_BAD_REQUEST)
-        common = {key: value for key, value in request.data.items() if key != "items"}
-        serializers_to_save = []
-        for item in items:
-            payload = {**common, **item, "source_type": "manual", "is_automatic": False}
-            if payload.get("type") not in self.manual_types:
-                return Response({"detail": "批量明细包含不支持的库存类型。"}, status=status.HTTP_400_BAD_REQUEST)
-            serializer = self.get_serializer(data=payload)
-            serializer.is_valid(raise_exception=True)
-            serializers_to_save.append(serializer)
-        with transaction.atomic():
-            records = [serializer.save() for serializer in serializers_to_save]
-        for row in records:
-            record_operation(request=request, instance=row, action="create", action_label="批量登记库存流水")
-        return Response(self.get_serializer(records, many=True).data, status=status.HTTP_201_CREATED)
+        try:
+            key = require_finance_request_key(request)
+            with transaction.atomic():
+                identity, replay = begin_fulfillment_idempotency(
+                    key=key, operation="inventory_batch", target_id=0,
+                    payload=finance_request_value(request.data),
+                    operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None,
+                )
+                if replay:
+                    prior = identity.response_payload
+                    if not isinstance(prior, list):
+                        raise FulfillmentIdempotencyConflict("库存请求结果不完整。")
+                    result = []
+                    for stored in prior:
+                        row = get_object_or_404(self.get_queryset(), pk=stored.get("id"))
+                        current = self.get_serializer(row).data
+                        item = dict(stored)
+                        for field in ("supplier_sku", "unit_cost", "order", "order_no", "related_orders", "related_order_nos"):
+                            if current.get(field) in (None, "", []):
+                                item[field] = current.get(field)
+                        result.append(item)
+                    response = Response(result, status=identity.response_status)
+                    response["Idempotent-Replay"] = "true"
+                    return response
+                common = {name: value for name, value in request.data.items() if name != "items"}
+                serializers_to_save = []
+                for item in items:
+                    if not isinstance(item, dict):
+                        raise DRFValidationError("库存明细格式无效。")
+                    payload = {**common, **item, "source_type": "manual", "is_automatic": False}
+                    if payload.get("type") not in self.manual_types:
+                        raise DRFValidationError("批量明细包含不支持的库存类型。")
+                    serializer = self.get_serializer(data=payload)
+                    serializer.is_valid(raise_exception=True)
+                    serializers_to_save.append(serializer)
+                sku_ids = sorted({serializer.validated_data["sku"].pk for serializer in serializers_to_save})
+                list(SKU.objects.select_for_update().filter(pk__in=sku_ids).order_by("pk"))
+                records = [serializer.save() for serializer in serializers_to_save]
+                for row in records:
+                    record_operation(request=request, instance=row, action="create", action_label="批量登记库存流水")
+                result = json_safe_fulfillment_response(self.get_serializer(records, many=True).data)
+                complete_fulfillment_idempotency(identity, result)
+        except FulfillmentIdempotencyConflict:
+            return Response({"detail": "本次库存登记标识已用于其他内容，请核对原操作。"}, status=status.HTTP_409_CONFLICT)
+        except DjangoValidationError as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(result, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         movement = self.get_object()
@@ -3210,14 +3365,44 @@ class PaymentPlanViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "direction": "income" if plan.order_id else "expense",
             "kind": "customer_receipt" if plan.order_id else "supplier_payment",
             "category": request.data.get("category") or ("客户收款" if plan.order_id else "供应商付款")}
-        input_serializer = TransactionSerializer(data=payload, context={"request": request})
-        input_serializer.is_valid(raise_exception=True)
+        input_serializer = TransactionSerializer(data=payload, context={"request": request, "idempotent_plan_settlement": True})
         try:
-            row = record_transaction(input_serializer.validated_data)
+            key = require_finance_request_key(request)
+            with transaction.atomic():
+                identity, replay = begin_fulfillment_idempotency(
+                    key=key, operation="plan_settle", target_id=plan.pk,
+                    payload=finance_request_value(request.data),
+                    operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None,
+                )
+                if replay:
+                    prior = identity.response_payload
+                    row = get_object_or_404(scope_transaction_queryset(Transaction.objects.all(), request.user), pk=prior.get("id"))
+                    current = TransactionSerializer(row, context={"request": request}).data
+                    result = dict(prior)
+                    for field in ("customer", "customer_name", "order", "order_no", "supplier", "supplier_name", "purchase_order", "purchase_no", "plan", "allocations", "allocated_amount", "cash_settlements", "receipt_adjustment_rows"):
+                        if current.get(field) in (None, "", []):
+                            result[field] = current.get(field)
+                    response = Response(result, status=identity.response_status)
+                    response["Idempotent-Replay"] = "true"
+                    return response
+                input_serializer.is_valid(raise_exception=True)
+                number = input_serializer.validated_data.get("transaction_no")
+                if number and Transaction.objects.filter(transaction_no=number).exists():
+                    raise CashConflict("该流水编号已被使用，请核对原收付款。")
+                row = record_transaction(input_serializer.validated_data)
+                record_operation(request=request, instance=row, action="create", action_label="结算付款计划", metadata={"payment_plan_id": plan.id})
+                result = json_safe_fulfillment_response(TransactionSerializer(row, context={"request": request}).data)
+                complete_fulfillment_idempotency(identity, result)
+        except FulfillmentIdempotencyConflict:
+            return Response({"detail": "本次收付款标识已用于其他内容，请核对原操作。"}, status=status.HTTP_409_CONFLICT)
+        except IntegrityError:
+            number = input_serializer.validated_data.get("transaction_no")
+            if number and Transaction.objects.filter(transaction_no=number).exists():
+                raise CashConflict("该流水编号已被使用，请核对原收付款。")
+            raise
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=row, action="create", action_label="结算付款计划", metadata={"payment_plan_id": plan.id})
-        return Response(TransactionSerializer(row, context={"request": request}).data, status=status.HTTP_201_CREATED)
+        return Response(result, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         return Response({"detail": "收付款计划保留合同依据，可修改未核销计划的金额、日期和备注，不支持直接删除。"}, status=status.HTTP_400_BAD_REQUEST)

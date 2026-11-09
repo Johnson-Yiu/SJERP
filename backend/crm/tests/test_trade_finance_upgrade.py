@@ -500,10 +500,10 @@ class TradeFinanceUpgradeTests(TestCase):
 
     def test_manual_batch_cannot_overdraw_same_sku_or_spoof_automatic_movement(self):
         self.stock(5)
-        response = self.client.post("/api/inventory-movements/batch/", {"type": "sample_out", "movement_date": self.day.isoformat(), "items": [{"sku": self.sku.pk, "quantity": 3}, {"sku": self.sku.pk, "quantity": 3}]}, format="json")
+        response = self.client.post("/api/inventory-movements/batch/", {"type": "sample_out", "movement_date": self.day.isoformat(), "items": [{"sku": self.sku.pk, "quantity": 3}, {"sku": self.sku.pk, "quantity": 3}]}, format="json", HTTP_IDEMPOTENCY_KEY="trade-batch-insufficient")
         self.assertEqual(response.status_code, 400, response.data)
         self.assertEqual(sku_metrics(self.sku)["actual_quantity"], 5)
-        response = self.client.post("/api/inventory-movements/batch/", {"type": "adjust_in", "movement_date": self.day.isoformat(), "items": [{"sku": self.sku.pk, "quantity": 1, "type": "sale_out"}]}, format="json")
+        response = self.client.post("/api/inventory-movements/batch/", {"type": "adjust_in", "movement_date": self.day.isoformat(), "items": [{"sku": self.sku.pk, "quantity": 1, "type": "sale_out"}]}, format="json", HTTP_IDEMPOTENCY_KEY="trade-batch-invalid")
         self.assertEqual(response.status_code, 400)
 
     def test_consumed_manual_inbound_cannot_be_deleted(self):
@@ -520,7 +520,7 @@ class TradeFinanceUpgradeTests(TestCase):
         ]
         self.purchase.save(update_fields=["payment_terms_snapshot"])
         ensure_default_payment_plans(self.purchase)
-        response = self.client.post(f"/api/purchase-orders/{self.purchase.pk}/pay/", {"transaction_date": self.day.isoformat(), "amount": "50", "currency": "USD", "exchange_rate": "7"}, format="json")
+        response = self.client.post(f"/api/purchase-orders/{self.purchase.pk}/pay/", {"transaction_date": self.day.isoformat(), "amount": "50", "currency": "USD", "exchange_rate": "7"}, format="json", HTTP_IDEMPOTENCY_KEY="trade-purchase-payment")
         self.assertEqual(response.status_code, 201, response.data)
         self.assertFalse(self.purchase.payment_plans.filter(status="open").exists())
         self.assertEqual(self.purchase.paid_amount, 50)
@@ -598,7 +598,7 @@ class TradeFinanceUpgradeTests(TestCase):
         plan = self.plan()
         url = f"/api/payment-plans/{plan.pk}/settle/"
         for payload in ({}, {"amount": "NaN"}, {"amount": "1", "exchange_rate": "0"}, {"amount": "1", "transaction_date": "invalid"}, {"amount": "1", "purchase_order": self.purchase.pk}):
-            response = self.client.post(url, payload, format="json")
+            response = self.client.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="invalid-plan-settle")
             self.assertEqual(response.status_code, 400, response.data)
         self.assertFalse(Transaction.objects.exists())
 
@@ -682,7 +682,7 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertEqual(order_item_metrics(self.item)['in_transit_quantity'], 4)
 
     def test_manual_replenishment_reserves_stock_for_existing_demand(self):
-        response = self.client.post("/api/inventory-movements/", {"movement_date": self.day.isoformat(), "type": "adjust_in", "sku": self.sku.pk, "quantity": 4}, format="json")
+        response = self.client.post("/api/inventory-movements/", {"movement_date": self.day.isoformat(), "type": "adjust_in", "sku": self.sku.pk, "quantity": 4}, format="json", HTTP_IDEMPOTENCY_KEY="trade-inventory-in")
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(sku_metrics(self.sku)["reserved_quantity"], 4)
 
@@ -735,7 +735,7 @@ class TradeFinanceUpgradeTests(TestCase):
     def test_allocate_api_returns_updated_plan_and_trace(self):
         plan = self.plan()
         advance = record_transaction({'direction': 'income', 'kind': 'unallocated_advance', 'category': 'advance', 'amount': 10, 'currency': 'USD', 'customer': self.customer})
-        response = self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '10'}, format='json')
+        response = self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '10'}, format='json', HTTP_IDEMPOTENCY_KEY='allocation-api')
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data['settled_amount'], '10.0000')
         response = self.client.get(f'/api/transactions/{advance.pk}/')
@@ -746,13 +746,13 @@ class TradeFinanceUpgradeTests(TestCase):
         advance = record_transaction({'direction': 'income', 'kind': 'unallocated_advance', 'category': 'advance', 'amount': 50, 'currency': 'USD', 'customer': self.customer})
         with patch('crm.views.record_operation', side_effect=RuntimeError('audit unavailable')):
             with self.assertRaises(RuntimeError):
-                self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '50'}, format='json')
+                self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '50'}, format='json', HTTP_IDEMPOTENCY_KEY='allocation-audit')
         plan.refresh_from_db()
         advance.refresh_from_db()
         self.assertEqual(plan.settled_amount, 0)
         self.assertEqual(advance.allocated_amount, 0)
         self.assertFalse(AdvanceAllocation.objects.filter(advance=advance).exists())
-        response = self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '50'}, format='json')
+        response = self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '50'}, format='json', HTTP_IDEMPOTENCY_KEY='allocation-audit')
         self.assertEqual(response.status_code, 200, response.data)
         plan.refresh_from_db()
         self.assertEqual(plan.settled_amount, 50)
@@ -762,11 +762,11 @@ class TradeFinanceUpgradeTests(TestCase):
         payload = {'plan': plan.pk, 'transaction_date': self.day.isoformat(), 'direction': 'income', 'kind': 'customer_receipt', 'category': '客户收款', 'amount': '50', 'currency': 'USD', 'exchange_rate': '7'}
         with patch('crm.views.record_operation', side_effect=RuntimeError('audit unavailable')):
             with self.assertRaises(RuntimeError):
-                self.client.post('/api/transactions/', payload, format='json')
+                self.client.post('/api/transactions/', payload, format='json', HTTP_IDEMPOTENCY_KEY='receipt-audit')
         plan.refresh_from_db()
         self.assertEqual(plan.settled_amount, 0)
         self.assertFalse(Transaction.objects.exists())
-        response = self.client.post('/api/transactions/', payload, format='json')
+        response = self.client.post('/api/transactions/', payload, format='json', HTTP_IDEMPOTENCY_KEY='receipt-audit')
         self.assertEqual(response.status_code, 201, response.data)
         plan.refresh_from_db()
         self.assertEqual(plan.settled_amount, 50)

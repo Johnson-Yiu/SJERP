@@ -19,6 +19,7 @@ const router = useRouter()
 const { can } = useAccessControl()
 const rows = ref([]), loading = ref(false), error = ref(''), notice = ref(''), loadError = ref(''), hasLoaded = ref(false), allPlansExist = ref(false), selected = ref(null)
 const saving = ref(false)
+const settleAttempt = ref(null), pendingSettlements = ref([])
 const editing = ref(null), editForm = reactive({ due_date: '', planned_amount: '', notes: '' })
 const contextOrder = ref(null), contextLoading = ref(false), contextError = ref('')
 let contextRequestVersion = 0
@@ -43,7 +44,22 @@ const filters = reactive({ status: 'open', overdue: false, dueFrom: '', dueTo: '
 const searchInput = ref(''), searchTerm = ref('')
 const form = reactive({ amount: '', transaction_date: new Date().toISOString().slice(0, 10), exchange_rate: '1', payment_method: '', reference: '', notes: '' })
 const planGuard = useUnsavedChangesGuard({ data: () => editForm, enabled: () => Boolean(editing.value), busy: () => saving.value })
-const settleGuard = useUnsavedChangesGuard({ data: () => form, enabled: () => Boolean(selected.value), busy: () => saving.value })
+const settleGuard = useUnsavedChangesGuard({ data: () => ({ ...form, pending: settleAttempt.value?.key || '' }), enabled: () => Boolean(selected.value), busy: () => saving.value,
+  confirmOptions: () => settleAttempt.value ? { title: '收付款结果待确认', message: '关闭后可在本标签页重新打开并按原内容核对，已登记的流水不会撤销。', cancelText: '继续核对', confirmText: '关闭并保留' } : {} })
+function closeSettle() { return settleGuard.requestClose(() => { selected.value = null }) }
+function refreshPendingSettlements() {
+  try {
+    pendingSettlements.value = Object.keys(window.sessionStorage).filter(key => key.startsWith('finance-plan-settle-')).map(key => {
+      const saved = JSON.parse(window.sessionStorage.getItem(key) || 'null')
+      return saved?.key && saved?.plan && saved?.payload && saved.direction === props.direction ? saved : null
+    }).filter(Boolean)
+  } catch { pendingSettlements.value = [] }
+}
+async function recoverSettlement(attempt) {
+  try { const { data } = await api.get(`/payment-plans/${attempt.plan}/`); openSettle(data) }
+  catch (err) { error.value = apiErrorMessage(err) || '无法核对原收付款计划，请稍后重试。' }
+}
+function hasPendingSettlement(row) { return pendingSettlements.value.some(item => String(item.plan) === String(row.id)) }
 const title = computed(() => props.direction === 'receivable' ? '应收计划' : '应付计划')
 const searchPlaceholder = computed(() => props.direction === 'receivable' ? '搜索客户或销售订单号…' : '搜索供应商或采购单号…')
 const rangeError = computed(() => filters.dueFrom && filters.dueTo && filters.dueFrom > filters.dueTo ? '到期日开始日期不能晚于结束日期。' : '')
@@ -182,27 +198,45 @@ function openSettle(row) {
   form.payment_method = ''
   form.reference = row.contract_no
   form.notes = ''
+  let saved = null
+  try { saved = JSON.parse(window.sessionStorage.getItem(`finance-plan-settle-${row.id}`) || 'null') } catch { /* checked before submit */ }
+  settleAttempt.value = saved?.key && saved?.payload ? saved : null
+  if (settleAttempt.value) Object.assign(form, settleAttempt.value.payload)
   settleGuard.markClean()
 }
 async function settle() {
   if (saving.value || !can('finance', 'update')) return
+  const existing = settleAttempt.value
+  const attempt = existing || { key: `PLAN-${crypto.randomUUID()}`, plan: selected.value.id, direction: props.direction,
+    payload: { ...form, currency: selected.value.currency, category: category.value } }
+  const storageKey = `finance-plan-settle-${selected.value.id}`
+  try { window.sessionStorage.setItem(storageKey, JSON.stringify(attempt)) }
+  catch { error.value = '浏览器无法保存本次收付款标识，请检查浏览器存储后重试。'; return }
+  settleAttempt.value = attempt
+  refreshPendingSettlements()
   saving.value = true
   error.value = ''; notice.value = ''
   try {
-    await api.post(`/payment-plans/${selected.value.id}/settle/`, { ...form, currency: selected.value.currency, category: category.value })
+    await api.post(`/payment-plans/${selected.value.id}/settle/`, attempt.payload, { headers: { 'Idempotency-Key': attempt.key } })
+    window.sessionStorage.removeItem(storageKey); settleAttempt.value = null; refreshPendingSettlements(); settleGuard.markClean()
     selected.value = null
     await load(); notice.value = props.direction === 'receivable' ? '收款登记成功' : '付款登记成功'
-  } catch (err) { error.value = apiErrorMessage(err) || `${actionLabel.value}失败，请检查金额后重试。` } finally { saving.value = false }
+  } catch (err) {
+    if (!existing && err.response?.status === 400) { window.sessionStorage.removeItem(storageKey); settleAttempt.value = null; refreshPendingSettlements() }
+    error.value = apiErrorMessage(err) || `${actionLabel.value}结果待确认，请按原内容重试。`
+  } finally { saving.value = false }
 }
+refreshPendingSettlements()
 syncFiltersFromRoute()
 watch(routeFilterKey, () => { syncFiltersFromRoute(); void load() })
-watch([() => props.direction, () => route.query.order], () => { void loadOrderContext() }, { immediate: true })
+watch([() => props.direction, () => route.query.order], () => { refreshPendingSettlements(); void loadOrderContext() }, { immediate: true })
 </script>
 
 <template>
   <section class="plan-page">
     <header><div><p class="page-lede">按合同原币跟踪计划、已核销与待结清金额；人民币汇总仅作折算参考。</p></div><button @click="load">刷新</button></header>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
+    <div v-if="pendingSettlements.length" class="notice" role="status">有 {{ pendingSettlements.length }} 笔{{ actionLabel }}结果待确认。<button v-for="item in pendingSettlements" :key="item.key" type="button" @click="recoverSettlement(item)">按原内容核对</button></div>
     <SummaryCards v-if="hasLoaded" :items="planMetrics" />
     <section v-if="hasOrderContext" class="order-context-banner" aria-label="订单应收筛选上下文">
       <div>
@@ -225,8 +259,8 @@ watch([() => props.direction, () => route.query.order], () => { void loadOrderCo
       <p v-if="rangeError" class="error filter-error" role="alert">{{ rangeError }}</p>
     </form>
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
-    <div v-if="hasLoaded" class="table-wrap"><ListEmptyState v-if="!rows.length" :entity="direction === 'receivable' ? '应收计划' : '应付计划'" :filtered="filtersActive && allPlansExist" @clear="clearListFilters"><template #action>暂时没有收付款计划。</template></ListEmptyState><table v-else><thead><tr><th>计划到期日</th><th>合同</th><th>往来方</th><th>原币计划</th><th>已核销</th><th>待结</th><th>状态</th><th /></tr></thead><tbody><tr v-for="row in rows" :key="row.id"><td>{{ row.due_date || '—' }}</td><td><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.contract_no }}</RouterLink><span v-else>{{ row.contract_no }}</span></td><td>{{ row.counterparty_name }}</td><td>{{ row.currency }} {{ formatMoney(row.planned_amount) }}</td><td>{{ formatMoney(row.settled_amount) }}</td><td><strong>{{ formatMoney(row.remaining_amount) }}</strong></td><td><span :class="row.is_overdue ? 'overdue' : 'tag'">{{ row.is_overdue ? '已逾期' : row.status === 'settled' ? '已结清' : row.status === 'cancelled' ? '已取消' : '待结清' }}</span></td><td><button v-if="can('finance', 'update') && row.status !== 'cancelled'" class="link" @click="openEdit(row)">调整计划</button><button v-if="can('finance', 'update') && row.status === 'open'" class="link" @click="openSettle(row)">{{ actionLabel }}</button></td></tr></tbody></table></div>
-    <div v-if="selected && can('finance', 'update')" class="mask"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="settle-title" @submit.prevent="settle"><header><div><h3 id="settle-title">{{ actionLabel }}</h3><p>{{ selected.contract_no }} · {{ selected.counterparty_name }} · 待结 {{ selected.currency }} {{ formatMoney(selected.remaining_amount) }}</p></div><button type="button" aria-label="关闭" @click="selected = null">×</button></header><label>原币金额（{{ selected.currency }}）<input v-model="form.amount" v-money-input type="number" min="0.01" step="any" required></label><label>流水发生日期<input v-model="form.transaction_date" type="date" required></label><p class="empty-note">汇率仅用于账面折算，不表示已完成银行结汇或实际到账。</p><label>参考折算汇率<input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label><label>支付方式<input v-model="form.payment_method"></label><label>参考号<input v-model="form.reference"></label><label>备注<textarea v-model="form.notes" /></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" @click="selected = null">取消</button><button class="primary" :disabled="saving">{{ saving ? '保存中…' : `确认${actionLabel}` }}</button></footer></form></div>
+    <div v-if="hasLoaded" class="table-wrap"><ListEmptyState v-if="!rows.length" :entity="direction === 'receivable' ? '应收计划' : '应付计划'" :filtered="filtersActive && allPlansExist" @clear="clearListFilters"><template #action>暂时没有收付款计划。</template></ListEmptyState><table v-else><thead><tr><th>计划到期日</th><th>合同</th><th>往来方</th><th>原币计划</th><th>已核销</th><th>待结</th><th>状态</th><th /></tr></thead><tbody><tr v-for="row in rows" :key="row.id"><td>{{ row.due_date || '—' }}</td><td><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.contract_no }}</RouterLink><span v-else>{{ row.contract_no }}</span></td><td>{{ row.counterparty_name }}</td><td>{{ row.currency }} {{ formatMoney(row.planned_amount) }}</td><td>{{ formatMoney(row.settled_amount) }}</td><td><strong>{{ formatMoney(row.remaining_amount) }}</strong></td><td><span :class="row.is_overdue ? 'overdue' : 'tag'">{{ row.is_overdue ? '已逾期' : row.status === 'settled' ? '已结清' : row.status === 'cancelled' ? '已取消' : '待结清' }}</span></td><td><button v-if="can('finance', 'update') && row.status !== 'cancelled'" class="link" @click="openEdit(row)">调整计划</button><button v-if="can('finance', 'update') && (row.status === 'open' || hasPendingSettlement(row))" class="link" @click="openSettle(row)">{{ hasPendingSettlement(row) ? '核对上次登记' : actionLabel }}</button></td></tr></tbody></table></div>
+    <div v-if="selected && can('finance', 'update')" class="mask"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="settle-title" @submit.prevent="settle"><header><div><h3 id="settle-title">{{ actionLabel }}</h3><p>{{ selected.contract_no }} · {{ selected.counterparty_name }} · 待结 {{ selected.currency }} {{ formatMoney(selected.remaining_amount) }}</p></div><button type="button" aria-label="关闭" @click="closeSettle">×</button></header><p v-if="settleAttempt" class="empty-note" role="status">上次登记结果待确认，请按原内容重试。</p><fieldset :disabled="saving || Boolean(settleAttempt)"><label>原币金额（{{ selected.currency }}）<input v-model="form.amount" v-money-input type="number" min="0.01" step="any" required></label><label>流水发生日期<input v-model="form.transaction_date" type="date" required></label><p class="empty-note">汇率仅用于账面折算，不表示已完成银行结汇或实际到账。</p><label>参考折算汇率<input v-model="form.exchange_rate" type="number" min="0.000001" step="0.000001" required></label><label>支付方式<input v-model="form.payment_method"></label><label>参考号<input v-model="form.reference"></label><label>备注<textarea v-model="form.notes" /></label></fieldset><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" @click="closeSettle">取消</button><button class="primary" :disabled="saving">{{ saving ? '保存中…' : settleAttempt ? '按原内容重试' : `确认${actionLabel}` }}</button></footer></form></div>
     <div v-if="editing && can('finance', 'update')" class="mask"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="edit-plan-title" @submit.prevent="savePlan"><header><div><h3 id="edit-plan-title">调整收付款计划</h3><p>{{ editing.contract_no }} · {{ editing.currency }}；已有收付款时只能调整日期和备注。</p></div><button type="button" aria-label="关闭" @click="editing = null">×</button></header><label>计划到期日<input v-model="editForm.due_date" type="date"></label><label>计划原币金额<input v-model="editForm.planned_amount" :disabled="Number(editing.settled_amount) > 0" type="number" min="0.0001" step="0.0001" required></label><label>备注<textarea v-model="editForm.notes" /></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" @click="editing = null">取消</button><button :disabled="saving">{{ saving ? '保存中…' : '保存计划' }}</button></footer></form></div>
   </section>
 </template>

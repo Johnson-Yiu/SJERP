@@ -27,7 +27,7 @@ const ownership = reactive({ account: '', ownership: 'own', reason: '' })
 const file = ref(null)
 const draft = reactive({ request_key: '', kind: 'cash', account: '', voucher: '', actual_date: '', amount: '', direction: 'income', nature: 'unclassified', truth: 'needs_verification', source_system: '', source_key: '', reason: '', parent: '', legacy_parent: '', approval: '', excess_reason: '', replaces: '' })
 const allocations = reactive([{ order: '', amount: '' }])
-const preview = ref(null), duplicateReason = ref(''), checked = ref(false)
+const preview = ref(null), duplicateReason = ref(''), sameLegacyEvent = ref(''), checked = ref(false)
 const storageKey = workspaceNavigation.storageKey('sunjack:finance-ledger:pending-request:v1')
 const attempted = ref(false), storageError = ref(false), recoveredKey = ref('')
 const forms = [accountForm, review, transfer, classification, mapping, ownership, draft, allocations]
@@ -44,7 +44,7 @@ function storeIdentity() {
 }
 function newDraft() {
   if (attempted.value && !state.instructions.some(i => i.payload.request_key === draft.request_key)) { error.value = '上次请求结果未知，请先刷新核查，暂不能更换请求标识。'; return }
-  attempted.value = false; recoveredKey.value = ''; preview.value = null
+  attempted.value = false; recoveredKey.value = ''; preview.value = null; sameLegacyEvent.value = ''; duplicateReason.value = ''
   draft.request_key = crypto.randomUUID(); storeIdentity()
 }
 async function load() {
@@ -65,6 +65,7 @@ function payload() {
   if (preview.value?.duplicate_candidates.ids.length && duplicateReason.value.trim()) {
     result.duplicate_review_token = preview.value.duplicate_candidates.token
     result.duplicate_review_reason = duplicateReason.value.trim()
+    if (sameLegacyEvent.value) result.same_legacy_event = Number(sameLegacyEvent.value)
   }
   return result
 }
@@ -142,7 +143,7 @@ onMounted(async () => {
       <form class="ledger-form" @submit.prevent="submit"><label>请求标识<input :value="draft.request_key" readonly></label><button type="button" :disabled="busy" @click="newDraft">开始独立新操作</button><label>操作类型<select aria-label="操作类型" v-model="draft.kind"><option v-for="(label, key) in kinds" :key="key" :value="key">{{ label }}</option></select></label><label>自有账户<select aria-label="自有账户" v-model="draft.account" required><option value="">请选择</option><option v-for="a in ownAccounts" :key="a.id" :value="a.id">{{ a.name }}</option></select></label><label>实际日期<input v-model="draft.actual_date" type="date" required></label><label>人民币金额<input v-model="draft.amount" inputmode="decimal" required></label><label>方向<select aria-label="方向" v-model="draft.direction"><option value="income">流入</option><option value="expense">流出</option></select></label><label>资金性质<select aria-label="资金性质" v-model="draft.nature"><option v-for="(label, key) in natures" :key="key" :value="key">{{ label }}</option></select></label><label>真实性<select aria-label="真实性" v-model="draft.truth"><option value="needs_verification">待核实</option><option value="verified">已核实真实资料</option><option value="simulated">模拟资料（不记实际资金）</option></select></label><label>文件凭证<select aria-label="文件凭证" v-model="draft.voucher" required><option value="">请选择</option><option v-for="v in state.vouchers" :key="v.id" :value="v.id">#{{ v.id }} {{ v.name }}</option></select></label><label>来源系统<input v-model="draft.source_system" required></label><label>来源编号<input v-model="draft.source_key" required></label><label>原资金事实编号<input v-model="draft.parent" inputmode="numeric"></label><label>退款批准指令编号<input v-model="draft.approval" inputmode="numeric"></label><label>替代的已取消指令编号<input v-model="draft.replaces" inputmode="numeric"></label><label>原因及凭证依据<input v-model="draft.reason" required></label><label>退款批准及超额性质依据<input v-model="draft.excess_reason"></label>
         <label>既有银行事件编号（需明确账户映射）<input v-model="draft.legacy_parent" inputmode="numeric"></label>
         <fieldset><legend>订单分配（不明确时留空，保留待分配）</legend><div v-for="(a, i) in allocations" :key="i" class="ledger-form"><label>订单编号<input v-model="a.order" inputmode="numeric"></label><label>分配人民币金额<input v-model="a.amount" inputmode="decimal"></label></div><button type="button" @click="allocations.push({ order: '', amount: '' })">增加分配</button></fieldset>
-        <button type="button" :disabled="busy" @click="run(async () => { preview = (await api.post('/finance-ledger/preview/', payload())).data }, '只读预检完成，尚未写入。')">只读预检</button><label v-if="preview?.duplicate_candidates.ids.length">疑似重复核实说明<input v-model="duplicateReason"></label><p v-if="preview?.duplicate_candidates.ids.length">疑似重复事实：{{ preview.duplicate_candidates.ids.join('、') }}。请核查后再提交。</p><button :disabled="busy || storageError || !can('finance', 'create')">保存指令</button>
+        <button type="button" :disabled="busy" @click="run(async () => { preview = (await api.post('/finance-ledger/preview/', payload())).data }, '只读预检完成，尚未写入。')">只读预检</button><label v-if="preview?.duplicate_candidates.ids.length">疑似重复核实说明<input v-model="duplicateReason"></label><div v-if="preview?.duplicate_candidates.ids.length"><p>请核对账户、日期、方向、金额及银行凭证，确认是否为同一笔。</p><ul><li v-for="item in preview.duplicate_candidates.items" :key="item.type + item.id">{{ item.label }}</li></ul><label v-if="preview.duplicate_candidates.items?.some(item => item.type === 'bank_event')">与既有银行记录的关系<select v-model="sameLegacyEvent"><option value="">经核实为不同交易</option><option v-for="item in preview.duplicate_candidates.items.filter(item => item.type === 'bank_event')" :key="item.id" :value="String(-item.id)">同一笔：{{ item.label }}</option></select></label></div><button :disabled="busy || storageError || !can('finance', 'create')">保存指令</button>
       </form>
       <label class="ledger-check"><input v-model="checked" type="checkbox">已核对实际日期、人民币金额及文件凭证</label>
       <div class="ledger-cards"><article v-for="i in state.instructions" :key="i.id"><strong>指令 #{{ i.id }} · {{ kinds[i.kind] }} · {{ statuses[i.status] }}</strong><p>{{ i.payload.actual_date }} · ¥{{ i.payload.amount }} · {{ i.payload.reason }}</p><p>请求 {{ i.payload.request_key }}</p><p>发起：{{ i.created_actor.kind === 'authenticated_user' ? `用户 #${i.created_actor.user_id}` : '开发身份（非正式审批人）' }}；复核：{{ i.approved_actor.user_id ? `用户 #${i.approved_actor.user_id}` : '尚未复核' }}</p><div class="ledger-actions"><button v-if="i.status === 'pending'" :disabled="busy || !can('finance', 'update')" @click="instructionAction('approve', i)">另一人复核</button><button v-if="['pending', 'approved'].includes(i.status) && i.kind !== 'refund_approval'" :disabled="busy || !can('finance', 'update')" @click="instructionAction('post', i)">确认实际记账</button><button v-if="['pending', 'approved'].includes(i.status)" :disabled="busy || !can('finance', 'update')" @click="instructionAction('cancel', i)">取消并留痕</button><button v-if="['pending', 'approved'].includes(i.status)" :disabled="busy || !can('finance', 'update')" @click="instructionAction('fail', i)">记录失败（未扣款）</button></div></article></div>

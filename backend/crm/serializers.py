@@ -2466,10 +2466,10 @@ class TransactionSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         initial = getattr(self, "initial_data", {})
-        if initial.get("kind") == "customer_receipt" and (
+        if self.context.get("idempotent_plan_settlement") or self.context.get("idempotent_legacy_receipt") or (initial.get("kind") == "customer_receipt" and (
             "receipt_adjustments" in initial or "plan_allocations" in initial
             or (not initial.get("order") and not initial.get("plan"))
-        ):
+        )):
             self.fields["transaction_no"].validators = []
 
     class Meta:

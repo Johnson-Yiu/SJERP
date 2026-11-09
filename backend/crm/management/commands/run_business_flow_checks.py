@@ -144,7 +144,7 @@ class Command(BaseCommand):
         expected_error("收货：超到无原因被拦截", over_receipt, status.HTTP_400_BAD_REQUEST, "超到必须")
         approved_over_receipt = post(f"/api/purchase-orders/{purchase_id}/receive/", {"purchase_item": purchase_item_id, "receipt_date": today, "quantity": "7", "unit_cost": "4", "is_overage": True, "overage_reason": "gift"})
         check("收货：超到有原因可登记", approved_over_receipt.status_code == status.HTTP_201_CREATED and approved_over_receipt.data["is_overage"], str(approved_over_receipt.data))
-        payment = post(f"/api/purchase-orders/{purchase_id}/pay/", {"transaction_date": today, "amount": "12", "currency": "USD", "exchange_rate": "7.2"})
+        payment = client.post(f"/api/purchase-orders/{purchase_id}/pay/", {"transaction_date": today, "amount": "12", "currency": "USD", "exchange_rate": "7.2"}, format="json", HTTP_IDEMPOTENCY_KEY=f"{tag}-payment")
         check("采购：供应商付款形成支出流水", payment.status_code == status.HTTP_201_CREATED and payment.data["direction"] == "expense", str(payment.data))
         po = Order.objects.get(pk=order_id).purchase_orders.get(pk=purchase_id)
         try:
@@ -168,12 +168,12 @@ class Command(BaseCommand):
         expected_error("库存：自动流水禁止修改", protected_movement, status.HTTP_400_BAD_REQUEST, "不能修改")
 
         receivable = PaymentPlan.objects.filter(order_id=order_id, status="open").order_by("id").first()
-        settlement = post(f"/api/payment-plans/{receivable.id}/settle/", {"transaction_date": today, "amount": str(receivable.planned_amount + Decimal('5')), "currency": "USD", "exchange_rate": "7.2", "category": "客户收款"})
+        settlement = client.post(f"/api/payment-plans/{receivable.id}/settle/", {"transaction_date": today, "amount": str(receivable.planned_amount + Decimal('5')), "currency": "USD", "exchange_rate": "7.2", "category": "客户收款"}, format="json", HTTP_IDEMPOTENCY_KEY=f"{tag}-plan-settle")
         check("财务：超额收款自动拆分预收款", settlement.status_code == status.HTTP_201_CREATED and Transaction.objects.filter(kind="unallocated_advance", customer_id=customer_id).exists(), str(settlement.data))
         advance = Transaction.objects.filter(kind="unallocated_advance", customer_id=customer_id).latest("id")
         another_order = post("/api/orders/", {"order_no": f"{tag}-SO-ADV", "customer": customer_id, "order_date": today, "expected_ship_date": due, "status": "confirmed", "currency": "USD", "exchange_rate": "7.2", "items": [{"sku": sku_id, "quantity": "1", "unit_price": "10"}]})
         target_plan = PaymentPlan.objects.filter(order_id=another_order.data["id"], status="open").order_by("-planned_amount").first()
-        allocation = post(f"/api/transactions/{advance.id}/allocate/", {"plan": target_plan.id, "amount": "5"})
+        allocation = client.post(f"/api/transactions/{advance.id}/allocate/", {"plan": target_plan.id, "amount": "5"}, format="json", HTTP_IDEMPOTENCY_KEY=f"{tag}-allocation")
         allocation_body = str(getattr(allocation, "data", getattr(allocation, "content", b"")))[:300]
         allocation_settled = getattr(allocation, "data", {}).get("settled_amount", "0")
         check("财务：预收款可核销同客户计划", allocation.status_code == status.HTTP_200_OK and Decimal(str(allocation_settled)) == Decimal("5"), allocation_body)

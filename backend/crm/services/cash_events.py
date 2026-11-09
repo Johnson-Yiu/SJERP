@@ -80,6 +80,25 @@ def source_snapshot(row):
             for k in ("id", "transaction_no", "amount", "currency", "direction", "kind", "split_from_id", "customer_id", "supplier_id", "order_id", "purchase_order_id", "plan_id", "exchange_rate", "rmb_amount")}
 
 
+def source_snapshot_matches(row, saved):
+    current = source_snapshot(row)
+    if not isinstance(saved, dict):
+        return False
+    if saved.keys() == current.keys():
+        return saved == current
+    # c978 recorded a larger snapshot, including fee and missing-rate fields.
+    # Compare the exact known shape, never accept a partial or unknown snapshot.
+    extra = {"remittance_amount", "bank_fee_amount", "fee_responsibility", "settlement_amount", "reference_rate_missing"}
+    if saved.keys() != current.keys() | extra:
+        return False
+    for key in extra:
+        value = getattr(row, key)
+        current[key] = str(value) if key in {"remittance_amount", "bank_fee_amount", "settlement_amount"} and value is not None else value
+    if row.exchange_rate is None:
+        current["exchange_rate"] = None
+    return saved == current
+
+
 def visible(event, user):
     if event.fee_for_id and not visible(event.fee_for, user):
         return False
@@ -443,7 +462,7 @@ def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None
         CashDuplicateReview.objects.create(event=event, candidate_ids=[c["id"] for c in candidates["items"]],
                                            reason=duplicate_reason.strip(), actor=actor(user, "release_duplicate_candidate"))
     for a in event.sources.select_related("source"):
-        if a.source_snapshot != source_snapshot(a.source):
+        if not source_snapshot_matches(a.source, a.source_snapshot):
             raise ValidationError("来源快照已变化，请核查原流水；不能覆盖旧证据。")
     before = snapshot(event)
     event.status = "confirmed"

@@ -2044,15 +2044,17 @@ class Transaction(TimestampedModel):
     category = models.CharField("收支分类", max_length=100)
     amount = models.DecimalField("金额", max_digits=14, decimal_places=4)
     currency = models.CharField("币种", max_length=10, default="USD")
-    exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
+    exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1, null=True, blank=True)
     rmb_amount = models.DecimalField("账面人民币折算参考", max_digits=14, decimal_places=4, default=0)
     allocated_amount = models.DecimalField("已分配原币金额", max_digits=14, decimal_places=4, default=0)
     remittance_amount = models.DecimalField("客户汇款原币金额", max_digits=14, decimal_places=4, null=True, blank=True)
     bank_fee_amount = models.DecimalField("收款扣费原币金额", max_digits=14, decimal_places=4, default=0)
-    fee_responsibility = models.CharField("收款扣费承担方", max_length=10, choices=[("", "未涉及"), ("company", "我方承担"), ("customer", "客户承担"), ("unknown", "待查")], blank=True)
+    fee_responsibility = models.CharField("收款扣费承担方", max_length=10, choices=[("", "未涉及"), ("company", "我方承担"), ("customer", "客户承担"), ("unknown", "待查"), ("mixed", "按明细区分")], blank=True)
     fee_reason = models.TextField("收款扣费依据", blank=True)
     fee_evidence = models.ForeignKey("FinanceVoucher", on_delete=models.PROTECT, null=True, blank=True, related_name="transactions")
     settlement_amount = models.DecimalField("本笔核销原币金额", max_digits=14, decimal_places=4, default=0)
+    request_hash = models.CharField(max_length=64, blank=True, default="")
+    reference_rate_missing = models.BooleanField(default=False)
     kind = models.CharField("业务类型", max_length=30, choices=KIND_CHOICES, default="other")
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
@@ -2075,6 +2077,12 @@ class Transaction(TimestampedModel):
 
     class Meta:
         ordering = ["-transaction_date", "-id"]
+
+    @property
+    def rmb_reference_amount(self):
+        if self.reference_rate_missing or self.exchange_rate is None:
+            return None
+        return self.rmb_amount or self.amount * self.exchange_rate
 
     @property
     def allocation_capacity(self):
@@ -2427,6 +2435,9 @@ class FinancePlanWriteoff(TimestampedModel):
     request_key = models.CharField(max_length=128, unique=True)
     request_hash = models.CharField(max_length=64)
     confirmed_actor = models.JSONField()
+    nature = models.CharField(max_length=16, choices=[("rounding", "授权抹零"), ("discount", "优惠减免"), ("other", "其他有依据扣减")], default="rounding")
+    evidence = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT, null=True, blank=True, related_name="plan_writeoffs")
+    contract_change = models.ForeignKey(ContractChangeRequest, on_delete=models.PROTECT, null=True, blank=True, related_name="finance_writeoffs")
 
     class Meta:
         constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="finance_plan_writeoff_positive")]
@@ -2459,6 +2470,27 @@ class FinancePlanWriteoffCorrection(TimestampedModel):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("抹零更正不可删除。")
+
+
+class FinanceReceiptAdjustment(FinanceAppendOnly):
+    NATURE_CHOICES = [("discount", "优惠/减免"), ("bank_fee", "银行手续费"), ("pending_difference", "待核实差额"), ("other", "其他扣减")]
+    HANDLING_CHOICES = [("company", "我方承担"), ("customer", "客户承担"), ("pending", "待核实"), ("applied", "已核准抵减应收"), ("already_in_order", "已计入订单金额")]
+    transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="receipt_adjustments")
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustments")
+    plan = models.ForeignKey(PaymentPlan, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustments")
+    nature = models.CharField(max_length=24, choices=NATURE_CHOICES)
+    handling = models.CharField(max_length=20, choices=HANDLING_CHOICES)
+    amount = models.DecimalField(max_digits=14, decimal_places=4)
+    currency = models.CharField(max_length=10)
+    reason = models.TextField()
+    evidence = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustments")
+    contract_change = models.ForeignKey(ContractChangeRequest, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustments")
+    writeoff = models.OneToOneField(FinancePlanWriteoff, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustment")
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="finance_receipt_adjustment_positive")]
 
 
 class SalesRule(TimestampedModel):

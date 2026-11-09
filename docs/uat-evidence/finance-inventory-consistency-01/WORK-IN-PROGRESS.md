@@ -8,6 +8,10 @@
 
 必须继续：两条分支的收款优化能力逐项合流；全链路稳定请求身份及并发；跨模块银行事实关联和防重；原收款退款完整闭环；财务页面；三个 PostgreSQL 迁移起点；真实页面验收及所有其他用户指定的验收场景。当前不应合并或部署。
 
-迁移风险：c978 的 `crm.0120_advanceallocation_cash_amount_and_more` 依赖 `crm.0119_merge_20261108_1834`，c90 的 `crm.0120_finance_actual_receipt_and_writeoff_correction` 依赖 `crm.0119_merge_finance_and_party`。两条 0120 均添加 `AdvanceAllocation.cash_amount` 和 `fee_credit_amount`；仅追加 merge 不能修复前面的重复 DDL。兼容迁移尚未实现或验证，请 A 暂勿据此实施全局汇合。
+迁移原型：c978 的 `crm.0120_advanceallocation_cash_amount_and_more` 依赖 `crm.0119_merge_20261108_1834`，c90 的 `crm.0120_finance_actual_receipt_and_writeoff_correction` 依赖 `crm.0119_merge_finance_and_party`。两条 0120 均添加 `AdvanceAllocation.cash_amount` 和 `fee_credit_amount`；仅追加 merge 不能修复前面的重复 DDL。当前原型保留两条迁移身份，以受控的结构检查避免重复添加并保留现有现金拆分，再由 `crm.0123_merge_finance_receipt_histories` 合流。共享字段迁移不允许逆向删除。
+
+隔离 PostgreSQL 17 已分别从空库、使用原 c978 代码迁移至 `crm.0120_advanceallocation_cash_amount_and_more`、使用原 c90 代码迁移至 `crm.0122_merge_sales_and_finance_review` 三个入口升级。后两个入口插入合成数据后，核对了现金拆分、抹零、优惠明细及其凭证、缺失汇率、抹零更正和三项拆分约束；三条路径均成功。可重复检查脚本为 `backend/test_support/finance_inventory_migration_probe.py`，仅允许运行于本机 `fic_*` PostgreSQL 库。此验证尚未覆盖 A/D 新模型、全面历史样本、并发升级及所有读取场景，请 A 暂勿据此实施全局汇合。
+
+迁移回退回归尚有一项失败：既有 `DuplicateMigrationTests.test_reverse_refuses_existing_audit_and_preserves_row` 期望更早历史迁移的具体拒绝信息，而当前共享字段保护更早抛出不可逆异常。不得把该项记为通过；需明确回退顺序和对已有审计的保护后重新验证。
 
 给 A/D 的接口契约尚未完成。公共台账尚未改动；建议在最终通过独立验收后再按项目审查协议记录。

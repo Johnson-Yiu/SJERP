@@ -77,6 +77,29 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertEqual(selected.settled_amount, Decimal("20"))
         self.assertEqual(first.settled_amount, Decimal("0"))
 
+    def test_historical_receipt_without_reference_rate_is_not_converted(self):
+        from crm.serializers import TransactionSerializer
+        receipt = Transaction.objects.create(transaction_no="UP-MISSING-RATE", transaction_date=self.day,
+            direction="income", kind="unallocated_advance", category="客户收款", amount=80,
+            currency="USD", exchange_rate=None, reference_rate_missing=True, customer=self.customer,
+            status="confirmed")
+        data = TransactionSerializer(receipt).data
+        self.assertIsNone(data["exchange_rate"])
+        self.assertIsNone(data["rmb_amount"])
+        self.assertTrue(data["reference_rate_missing"])
+        response = self.client.get("/api/finance-dashboard/", {"date_from": "2026-09-01", "date_to": "2026-09-30"})
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["cash_basis"]["missing_reference_count"], 1)
+        self.assertIn("未录入参考汇率", response.data["cash_basis"]["note"])
+        self.assertEqual(response.data["metrics"]["income_rmb"], 0)
+        from crm.services.cash_events import source_snapshot, source_snapshot_matches
+        receipt.refresh_from_db()
+        old_snapshot = source_snapshot(receipt)
+        old_snapshot.update(remittance_amount=None, bank_fee_amount="0.0000", fee_responsibility="", settlement_amount="0.0000", reference_rate_missing=True, exchange_rate=None)
+        self.assertTrue(source_snapshot_matches(receipt, old_snapshot))
+        old_snapshot["bank_fee_amount"] = "1.0000"
+        self.assertFalse(source_snapshot_matches(receipt, old_snapshot))
+
     def test_effective_writeoff_updates_order_state_and_profit(self):
         plan = self.plan()
         receipt = record_transaction({"plan": plan, "kind": "customer_receipt", "amount": Decimal("90"), "category": "客户收款"})

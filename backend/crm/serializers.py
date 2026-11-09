@@ -2530,7 +2530,8 @@ class TransactionSerializer(serializers.ModelSerializer):
         return max(obj.allocation_capacity - obj.allocated_amount, Decimal("0"))
 
     def get_rmb_amount(self, obj):
-        return obj.rmb_amount or (obj.amount * obj.exchange_rate).quantize(Decimal("0.0001"))
+        value = obj.rmb_reference_amount
+        return value.quantize(Decimal("0.0001")) if value is not None else None
 
     def get_remitted_amount_display(self, obj):
         return obj.remittance_amount if obj.remittance_amount is not None else obj.amount
@@ -2555,9 +2556,15 @@ class TransactionSerializer(serializers.ModelSerializer):
             if not visible(event, user):
                 continue
             source_allocations = event.sources.select_related("source").all()
-            reference_amount = sum(
-                (item.amount * Decimal(item.source_snapshot["exchange_rate"]) for item in source_allocations), Decimal("0"),
-            ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            reference_amount = Decimal("0")
+            for item in source_allocations:
+                rate = item.source_snapshot.get("exchange_rate")
+                if rate in (None, "", "None") or item.source_snapshot.get("reference_rate_missing"):
+                    reference_amount = None
+                    break
+                reference_amount += item.amount * Decimal(rate)
+            if reference_amount is not None:
+                reference_amount = reference_amount.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
             gross = event.gross_rmb_amount or event.bank_net_amount + event.fee_amount
             quoted_reference = (event.amount * event.quoted_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if event.quoted_rate is not None else None
             result.append({
@@ -2572,7 +2579,7 @@ class TransactionSerializer(serializers.ModelSerializer):
                 "actual_rate": str(event.actual_rate),
                 "quoted_rate": str(event.quoted_rate) if event.quoted_rate is not None else None,
                 "quoted_reference_delta": str((gross - quoted_reference).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if quoted_reference is not None else None,
-                "pre_fee_reference_delta": str((gross - reference_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
+                "pre_fee_reference_delta": str((gross - reference_amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)) if reference_amount is not None else None,
                 "status": event.status,
             })
         return result
@@ -2601,7 +2608,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             validate_finance_relations(attrs, request.user, self.instance)
         for field in ("amount", "exchange_rate"):
             value = attrs.get(field, getattr(self.instance, field, Decimal("1")))
-            if value <= 0:
+            if value is None or value <= 0:
                 raise serializers.ValidationError({field: "必须大于零。"})
         kind = attrs.get("kind", getattr(self.instance, "kind", "other"))
         direction = attrs.get("direction", getattr(self.instance, "direction", None))

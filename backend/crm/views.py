@@ -2571,7 +2571,9 @@ def finance_dashboard(request):
     purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
     order_expense_rmb = sum((row["expense_rmb"] for row in profits), Decimal("0"))
     estimated_profit_rmb = sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
-    cash = _finance_cash(request.user, start, end)
+    cash_all = _finance_cash(request.user, start, end)
+    missing_cash_rates = cash_all.filter(Q(reference_rate_missing=True) | Q(exchange_rate__isnull=True)).count()
+    cash = cash_all.filter(reference_rate_missing=False, exchange_rate__isnull=False)
     income, expense = Decimal("0"), Decimal("0")
     categories, monthly = {}, {}
     for row in cash:
@@ -2585,7 +2587,9 @@ def finance_dashboard(request):
         month = row.transaction_date.strftime("%Y-%m")
         bucket = monthly.setdefault(month, {"month": month, "income": Decimal("0"), "expense": Decimal("0")})
         bucket[row.direction] += value
-    advances = _finance_advances(request.user)
+    all_advances = _finance_advances(request.user)
+    missing_advance_rates = all_advances.filter(Q(reference_rate_missing=True) | Q(exchange_rate__isnull=True)).count()
+    advances = all_advances.filter(reference_rate_missing=False, exchange_rate__isnull=False)
     unallocated = lambda direction: sum(((row.allocation_capacity - row.allocated_amount) * row.exchange_rate for row in advances if row.direction == direction), Decimal("0"))
     due_items = [
         {
@@ -2609,6 +2613,10 @@ def finance_dashboard(request):
 
     from .finance_basis import book_rmb_metadata
     payload["cash_basis"] = book_rmb_metadata()
+    payload["cash_basis"]["missing_reference_count"] = missing_cash_rates
+    payload["cash_basis"]["missing_advance_reference_count"] = missing_advance_rates
+    if missing_cash_rates or missing_advance_rates:
+        payload["cash_basis"]["note"] += f" 有 {missing_cash_rates} 笔期间流水及 {missing_advance_rates} 笔预收预付未录入参考汇率，相关人民币汇总暂不包含这些金额。"
 
     if exporting:
         from .reporting import safe_csv
@@ -2719,7 +2727,7 @@ def finance_dashboard_details(request):
             total_amount += amount
             rows.append(order_row(order, amount, note))
     elif metric in {"income_rmb", "expense_rmb", "net_cash_rmb"}:
-        cash = _finance_cash(request.user, start, end).select_related("customer", "supplier", "order", "purchase_order")
+        cash = _finance_cash(request.user, start, end).filter(reference_rate_missing=False, exchange_rate__isnull=False).select_related("customer", "supplier", "order", "purchase_order")
         for row in cash:
             value = _finance_row_rmb(row)
             if metric == "income_rmb" and row.direction != "income":
@@ -2777,10 +2785,10 @@ def finance_dashboard_details(request):
             })
     else:
         direction = "income" if metric == "advance_receipt_rmb" else "expense"
-        advances = _finance_advances(request.user).filter(direction=direction)
+        advances = _finance_advances(request.user).filter(direction=direction, reference_rate_missing=False, exchange_rate__isnull=False)
         advances = advances.select_related("customer", "supplier", "order", "purchase_order")
         for row in advances:
-            amount = (row.amount - row.allocated_amount) * row.exchange_rate
+            amount = (row.allocation_capacity - row.allocated_amount) * row.exchange_rate
             total_amount += amount
             relation = "客户" if row.customer_id and not user_can(request.user, "customers", "view") else (row.customer.name if row.customer_id else "供应商")
             if row.supplier_id and user_can(request.user, "suppliers", "view"):
@@ -3299,7 +3307,7 @@ def dashboard(request):
         for customer_id, values in sorted(customer_rows.items(), key=lambda row: row[1]["sales"], reverse=True)[:6]
     ]
     cash = scope_transaction_queryset(
-        Transaction.objects.filter(status="confirmed", transaction_date__range=(year_start, today)), request.user,
+        Transaction.objects.filter(status="confirmed", transaction_date__range=(year_start, today), reference_rate_missing=False, exchange_rate__isnull=False), request.user,
     )
     if not user_can(request.user, "transactions", "view"):
         cash = cash.none()

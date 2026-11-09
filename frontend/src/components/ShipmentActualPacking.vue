@@ -1,4 +1,6 @@
 <script setup>
+import { useWorkspaceTeleportDisabled } from "../composables/useWorkspaceTeleport"
+const workspaceTeleportDisabled = useWorkspaceTeleportDisabled()
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, downloadPackingListExport } = useWorkspaceApi()
 import { computed, ref, watch } from 'vue'
@@ -139,7 +141,7 @@ const skuLabel = (shipment, id) => shippedSkus(shipment).find(row => String(row.
         <div class="actual-carton-list"><article v-for="row in packages(shipment)" :key="row.id" class="actual-carton-card"><header><strong>第 {{ row.carton_no }} 箱</strong><div v-if="mutable(shipment)"><button type="button" class="text-btn" :disabled="busy[shipment.id]" @click="openEditor(shipment, row)">编辑</button><button type="button" class="text-btn danger" :disabled="busy[shipment.id]" @click="remove(shipment, row)">删除</button></div></header><p>尺寸：{{ row.length ?? '—' }} × {{ row.width ?? '—' }} × {{ row.height ?? '—' }} cm</p><p>净重：{{ row.actual_net_weight }} kg · 毛重：{{ row.actual_gross_weight }} kg · CBM：{{ row.actual_cbm }} m³</p><p v-for="item in row.items" :key="item.id || item.sku">{{ skuLabel(shipment, item.sku) }} × {{ item.quantity }}</p><p v-if="row.notes">备注：{{ row.notes }}</p></article></div>
       </template>
     </article>
-    <Teleport to="body"><div v-if="editor" class="actual-packing-mask"><form class="actual-packing-editor" role="dialog" aria-modal="true" aria-labelledby="actual-packing-title" @submit.prevent="save">
+    <Teleport to="body" :disabled="workspaceTeleportDisabled"><div v-if="editor" class="actual-packing-mask"><form class="actual-packing-editor" role="dialog" aria-modal="true" aria-labelledby="actual-packing-title" @submit.prevent="save">
       <h3 id="actual-packing-title">{{ editor.id ? '编辑实际装箱记录' : '新增实际装箱记录' }} · {{ target?.shipment_no }}</h3><p>数量采用本次发货的基础单位；CBM 由箱长、宽、高自动计算。</p>
       <div class="packing-editor-fields"><label>箱号<input v-model="editor.carton_no" type="number" min="1" step="1" required /></label><label>长 cm<input :value="editor.length" @input="editor.length = $event.target.value" type="number" min="0.01" step="0.01" /></label><label>宽 cm<input :value="editor.width" @input="editor.width = $event.target.value" type="number" min="0.01" step="0.01" /></label><label>高 cm<input :value="editor.height" @input="editor.height = $event.target.value" type="number" min="0.01" step="0.01" /></label><label>实际净重 kg<input :value="editor.actual_net_weight" @input="editor.actual_net_weight = $event.target.value" type="number" min="0" step="0.001" required /></label><label>实际毛重 kg<input :value="editor.actual_gross_weight" @input="editor.actual_gross_weight = $event.target.value" type="number" min="0" step="0.001" required /></label></div>
       <label>备注<textarea v-model="editor.notes" /></label><h4>箱内 SKU 明细</h4>

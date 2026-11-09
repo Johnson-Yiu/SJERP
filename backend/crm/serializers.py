@@ -33,6 +33,7 @@ from .services.sku_schema import (
     unfrozen_products_using_category_scope,
     unfrozen_schema_error,
 )
+from .services.sku_costs import verification_state
 
 
 def customer_sequence_suffix(value):
@@ -189,10 +190,19 @@ class SupplierSKUSerializer(serializers.ModelSerializer):
     purchase_price = serializers.DecimalField(max_digits=14, decimal_places=4, min_value=Decimal("0"))
     moq = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=Decimal("0"))
     lead_time_days = serializers.IntegerField(min_value=0)
+    purchase_price_verified_by_name = serializers.SerializerMethodField()
+    purchase_price_verification_state = serializers.SerializerMethodField()
 
     class Meta:
         model = SupplierSKU
         fields = "__all__"
+        read_only_fields = ["purchase_price_verified_at", "purchase_price_verified_by"]
+
+    def get_purchase_price_verified_by_name(self, instance):
+        return instance.purchase_price_verified_by.get_username() if instance.purchase_price_verified_by else ""
+
+    def get_purchase_price_verification_state(self, instance):
+        return verification_state(instance.purchase_price, instance.currency, instance.purchase_price_verified_at)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -203,6 +213,10 @@ class SupplierSKUSerializer(serializers.ModelSerializer):
             data["product_name"] = ""
         if not user_can(user, "purchases", "view"):
             data["purchase_price"] = None
+            data["currency"] = None
+            data["purchase_price_verified_at"] = None
+            data["purchase_price_verified_by"] = None
+            data["purchase_price_verified_by_name"] = ""
         return data
 
     def validate(self, attrs):
@@ -214,6 +228,10 @@ class SupplierSKUSerializer(serializers.ModelSerializer):
             current_price = self.instance.purchase_price if self.instance else Decimal("0")
             if attrs["purchase_price"] != current_price:
                 raise PermissionDenied("修改供应商采购价需要采购修改权限。")
+        if user is not None and "currency" in attrs and not user_can(user, "purchases", "update"):
+            current_currency = self.instance.currency if self.instance else "USD"
+            if attrs["currency"] != current_currency:
+                raise PermissionDenied("修改供应商采购币种需要采购修改权限。")
         if self.instance:
             for field in ("sku", "supplier"):
                 if field in attrs and attrs[field].pk != getattr(self.instance, f"{field}_id"):
@@ -1407,10 +1425,13 @@ class SKUSerializer(serializers.ModelSerializer):
     packaging = serializers.SerializerMethodField()
     packaging_profile_input = serializers.DictField(write_only=True, required=False, allow_null=True)
     historical_matches = serializers.SerializerMethodField()
+    cost_verified_by_name = serializers.SerializerMethodField()
+    cost_verification_state = serializers.SerializerMethodField()
 
     class Meta:
         model = SKU
         fields = "__all__"
+        read_only_fields = ["cost_verified_at", "cost_verified_by"]
         extra_kwargs = {"sku": {"required": False, "read_only": True}, "identity_signature": {"read_only": True}, "schema_version": {"read_only": True}}
 
     def to_representation(self, instance):
@@ -1432,7 +1453,17 @@ class SKUSerializer(serializers.ModelSerializer):
             data["packaging"] = None
         if not user_can(user, "purchases", "view"):
             data["cost_price"] = None
+            data["cost_currency"] = None
+            data["cost_verified_at"] = None
+            data["cost_verified_by"] = None
+            data["cost_verified_by_name"] = ""
         return data
+
+    def get_cost_verified_by_name(self, instance):
+        return instance.cost_verified_by.get_username() if instance.cost_verified_by else ""
+
+    def get_cost_verification_state(self, instance):
+        return verification_state(instance.cost_price, instance.cost_currency, instance.cost_verified_at)
 
     def _packaging_serializer(self, data, sku=None):
         profile = SKUPackagingProfile.objects.filter(sku=sku).first() if sku else None
@@ -1496,6 +1527,10 @@ class SKUSerializer(serializers.ModelSerializer):
             current_cost = self.instance.cost_price if self.instance else Decimal("0")
             if attrs["cost_price"] != current_cost:
                 raise PermissionDenied("修改 SKU 成本需要采购修改权限。")
+        if "cost_currency" in attrs and user is not None and not user_can(user, "purchases", "update"):
+            current_currency = self.instance.cost_currency if self.instance else None
+            if attrs["cost_currency"] != current_currency:
+                raise PermissionDenied("修改 SKU 成本币种需要采购修改权限。")
         if self.instance:
             if attrs.get("active") and self.instance.successors.exists():
                 raise serializers.ValidationError({"active": "已拆分或合并的历史 SKU 不可重新启用。"})
@@ -1912,6 +1947,14 @@ class QuoteAvailabilityPreviewInputSerializer(serializers.Serializer):
     )
 
 
+class QuoteRiskPreviewInputSerializer(serializers.Serializer):
+    sku_ids = serializers.ListField(
+        child=serializers.IntegerField(min_value=1),
+        allow_empty=False,
+        max_length=200,
+    )
+
+
 class QuoteItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer):
     sku_code = serializers.CharField(source="sku_code_snapshot", read_only=True)
     model = serializers.CharField(source="sales_model_snapshot", read_only=True)
@@ -2089,7 +2132,8 @@ class OrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer)
 
     class Meta:
         model = OrderItem
-        fields = ["id", "sku", "sku_code", "sales_model", "model", "product_name", "display_name", "description", "unit", "quantity", "unit_price", "cost_price", "amount", "notes", "supplier_sku", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_allocation"] + TRADE_FIELDS
+        fields = ["id", "sku", "sku_code", "sales_model", "model", "product_name", "display_name", "description", "unit", "quantity", "unit_price", "cost_price", "cost_currency_snapshot", "amount", "notes", "supplier_sku", "supplier_name", "supplier_model", "supplier_sku_code", "supplier_barcode", "supplier_allocation"] + TRADE_FIELDS
+        read_only_fields = ["cost_currency_snapshot"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -2099,6 +2143,7 @@ class OrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer)
                 data[field] = None if field == "sku" else ""
         if not user_can(user, "purchases", "view"):
             data["cost_price"] = None
+            data["cost_currency_snapshot"] = ""
         if self.context.get("mask_quantity_adjustment_financial"):
             data["unit_price"] = None
             data["amount"] = None
@@ -2274,6 +2319,8 @@ class OrderSerializer(serializers.ModelSerializer):
                 "display_name_snapshot": getattr(source, "product_name_snapshot", getattr(source, "display_name_snapshot", "")),
                 "description_snapshot": getattr(source, "description", getattr(source, "description_snapshot", "")),
                 "unit_snapshot": source.unit_snapshot,
+                "cost_currency_snapshot": source.cost_currency_snapshot,
+                "cost_verification_snapshot": source.cost_verification_snapshot,
             }
         return {
             "sku_code_snapshot": sku.sku,
@@ -2281,6 +2328,8 @@ class OrderSerializer(serializers.ModelSerializer):
             "display_name_snapshot": sku.display_name_cn or sku.product.name,
             "description_snapshot": sku.description_en or sku.description_cn or sku.display_name_cn or sku.product.name,
             "unit_snapshot": sku.unit,
+            "cost_currency_snapshot": sku.cost_currency or "",
+            "cost_verification_snapshot": verification_state(sku.cost_price, sku.cost_currency, sku.cost_verified_at),
         }
 
     @staticmethod
@@ -2410,10 +2459,13 @@ class OrderSerializer(serializers.ModelSerializer):
             # cost.  Keep the model's neutral default instead of silently
             # copying today's SKU cost into a past order.  Historical reports
             # already keep profit unavailable for this scope.
-            if not historical_mode and not item.get("cost_price"):
-                item["cost_price"] = item["sku"].cost_price
             source = source_items[index] if index < len(source_items) and source_items[index].sku_id == item["sku"].pk else None
-            rows.append(OrderItem(order=order, **item, **self._item_snapshots(item["sku"], source)))
+            if not historical_mode and not item.get("cost_price"):
+                item["cost_price"] = (source.cost_price_snapshot or Decimal("0")) if source else item["sku"].cost_price
+            snapshots = self._item_snapshots(item["sku"], source)
+            if historical_mode or (order.quote_id and source is None):
+                snapshots.update(cost_currency_snapshot="", cost_verification_snapshot="")
+            rows.append(OrderItem(order=order, **item, **snapshots))
         OrderItem.objects.bulk_create(rows)
         return order
 
@@ -2434,10 +2486,14 @@ class OrderSerializer(serializers.ModelSerializer):
             instance.items.all().delete()
             rows = []
             for index, item in enumerate(items):
-                if not (instance.historical_only or instance.status == "historical") and not item.get("cost_price"):
-                    item["cost_price"] = item["sku"].cost_price
                 source = previous_items[index] if index < len(previous_items) and previous_items[index].sku_id == item["sku"].pk else None
-                rows.append(OrderItem(order=instance, **item, **self._item_snapshots(item["sku"], source), **self._supplier_snapshots(source)))
+                historical = instance.historical_only or instance.status == "historical"
+                if not historical and not item.get("cost_price"):
+                    item["cost_price"] = source.cost_price if source else item["sku"].cost_price
+                snapshots = self._item_snapshots(item["sku"], source)
+                if historical and source is None:
+                    snapshots.update(cost_currency_snapshot="", cost_verification_snapshot="")
+                rows.append(OrderItem(order=instance, **item, **snapshots, **self._supplier_snapshots(source)))
             OrderItem.objects.bulk_create(rows)
         return instance
 

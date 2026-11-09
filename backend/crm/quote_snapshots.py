@@ -19,6 +19,7 @@ def _copy_sku_image(item, sku_image):
 def create_quote_items(quote, item_rows, source_items=None):
     """Create quote lines with immutable commercial/internal display snapshots."""
     from .sales_rules import check_rows
+    from .services.sku_costs import verification_state
     item_rows = list(item_rows)
     checks = check_rows(quote.quote_date, item_rows, enforce=True)
     sources = list(source_items or [])
@@ -47,6 +48,18 @@ def create_quote_items(quote, item_rows, source_items=None):
                 "product_name_snapshot": source.product_name_snapshot,
                 "unit_snapshot": source.unit_snapshot,
             }
+        if source is None:
+            snapshots.update(
+                cost_price_snapshot=sku.cost_price,
+                cost_currency_snapshot=sku.cost_currency or "",
+                cost_verification_snapshot=verification_state(sku.cost_price, sku.cost_currency, sku.cost_verified_at),
+            )
+        else:
+            snapshots.update(
+                cost_price_snapshot=source.cost_price_snapshot,
+                cost_currency_snapshot=source.cost_currency_snapshot,
+                cost_verification_snapshot=source.cost_verification_snapshot,
+            )
         if manual_sales_model is not None:
             snapshots["sales_model_snapshot"] = manual_sales_model
         if not values.get("description") and source is None:

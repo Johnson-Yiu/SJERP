@@ -1,4 +1,6 @@
 <script setup>
+import { useWorkspaceTeleportDisabled } from "../composables/useWorkspaceTeleport"
+const workspaceTeleportDisabled = useWorkspaceTeleportDisabled()
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
@@ -344,7 +346,7 @@ onMounted(init)
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport to="body" :disabled="workspaceTeleportDisabled">
     <QuoteEditorModal v-if="isQuote && can('quotes', 'create') && !loading && !error" class="related-quote-editor" :quote="quoteSeed" :customers="customers" :skus="visibleDocumentSkus" mode="create" @saved="savedQuote = $event" @close="closeQuote" />
     <div v-else-if="can(accessModule, 'create')" class="modal-backdrop related-create-backdrop">
       <form class="modal related-create-modal" @submit.prevent="save">

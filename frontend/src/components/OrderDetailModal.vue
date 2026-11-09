@@ -1,4 +1,6 @@
 <script setup>
+import { useWorkspaceTeleportDisabled } from "../composables/useWorkspaceTeleport"
+const workspaceTeleportDisabled = useWorkspaceTeleportDisabled()
 import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
 const { workspace } = useWorkspaceNavigation()
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
@@ -484,7 +486,7 @@ watch(() => order.value?.order_no, title => { if (workspace && title) { workspac
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport to="body" :disabled="workspaceTeleportDisabled">
     <div v-if="quantityAdjustmentOpen && can('orders', 'update')" class="trade-shipment-mask">
       <form class="trade-shipment-dialog quantity-adjustment-dialog" role="dialog" aria-modal="true" aria-labelledby="quantity-adjustment-title" @submit.prevent="quantityAdjustmentPreview ? submitQuantityAdjustment() : previewQuantityAdjustment()">
         <h3 id="quantity-adjustment-title">调整订单数量</h3>

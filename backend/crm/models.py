@@ -670,6 +670,19 @@ class SKU(TimestampedModel):
     description_en = models.TextField("英文描述", blank=True)
     unit = models.CharField("单位", max_length=30, default="pcs")
     cost_price = models.DecimalField("成本价", max_digits=14, decimal_places=4, default=0)
+    # The legacy ``currency`` field is the default sales currency.  Existing
+    # rows intentionally remain NULL here because their historical cost
+    # currency cannot be inferred safely.
+    cost_currency = models.CharField("成本币种", max_length=10, null=True, blank=True, default=None)
+    cost_verified_at = models.DateTimeField("成本最后核实时间", null=True, blank=True)
+    cost_verified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="verified_sku_costs",
+        verbose_name="成本最后核实人",
+    )
     default_price = models.DecimalField("默认售价", max_digits=14, decimal_places=4, default=0)
     currency = models.CharField("币种", max_length=10, default="USD")
     active = models.BooleanField("启用", default=True)
@@ -685,6 +698,21 @@ class SKU(TimestampedModel):
         ]
 
     def save(self, *args, **kwargs):
+        update_fields = kwargs.get("update_fields")
+        if self._state.adding and not self.cost_currency:
+            # New SKUs get the agreed default; migrated/history rows are not
+            # backfilled because their original currency is unknown.
+            self.cost_currency = "CNY"
+        if self.pk:
+            previous = SKU.objects.filter(pk=self.pk).values("cost_price", "cost_currency").first()
+            if previous and (
+                previous["cost_price"] != self.cost_price
+                or previous["cost_currency"] != self.cost_currency
+            ):
+                self.cost_verified_at = None
+                self.cost_verified_by = None
+                if update_fields is not None:
+                    kwargs["update_fields"] = set(update_fields) | {"cost_verified_at", "cost_verified_by", "updated_at"}
         if not self.sku:
             from .sku_numbers import allocate_sku_code
 
@@ -1145,6 +1173,9 @@ class QuoteItem(TradeUnitLine):
     sales_model_snapshot = models.CharField("销售型号快照", max_length=80, blank=True)
     product_name_snapshot = models.CharField("产品名称快照", max_length=200, blank=True)
     unit_snapshot = models.CharField("单位快照", max_length=30, blank=True)
+    cost_price_snapshot = models.DecimalField(max_digits=14, decimal_places=4, null=True, blank=True)
+    cost_currency_snapshot = models.CharField(max_length=10, blank=True)
+    cost_verification_snapshot = models.CharField(max_length=12, blank=True)
     sales_rules_snapshot = models.JSONField(default=list, blank=True)
     image_snapshot = models.ImageField("产品图片快照", upload_to="quote-item-images/%Y/%m/", blank=True)
     quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
@@ -1294,6 +1325,8 @@ class OrderItem(TradeUnitLine):
     quantity = models.DecimalField("数量", max_digits=14, decimal_places=2)
     unit_price = models.DecimalField("单价", max_digits=24, decimal_places=12)
     cost_price = models.DecimalField("成交时成本", max_digits=14, decimal_places=4, default=0)
+    cost_currency_snapshot = models.CharField(max_length=10, blank=True)
+    cost_verification_snapshot = models.CharField(max_length=12, blank=True)
     notes = models.CharField("备注", max_length=200, blank=True)
     supplier_sku = models.ForeignKey(
         "SupplierSKU",
@@ -1326,6 +1359,10 @@ class OrderItem(TradeUnitLine):
             self.display_name_snapshot = self.display_name_snapshot or sku.display_name_cn or sku.product.name
             self.description_snapshot = self.description_snapshot or sku.description_en or sku.description_cn or self.display_name_snapshot
             self.unit_snapshot = self.unit_snapshot or sku.unit
+            if not self.order.historical_only and self.order.status != "historical" and not self.order.quote_id:
+                from .services.sku_costs import verification_state
+                self.cost_currency_snapshot = sku.cost_currency or ""
+                self.cost_verification_snapshot = verification_state(sku.cost_price, sku.cost_currency, sku.cost_verified_at)
         if self._state.adding and self.supplier_sku_id:
             source = self.supplier_sku
             self.supplier_name_snapshot = self.supplier_name_snapshot or source.supplier.name
@@ -1429,6 +1466,15 @@ class SupplierSKU(TimestampedModel):
     supplier_barcode = models.CharField("供应商条码", max_length=100, blank=True)
     purchase_price = models.DecimalField("参考采购价", max_digits=14, decimal_places=4, default=0)
     currency = models.CharField("采购币种", max_length=10, default="USD")
+    purchase_price_verified_at = models.DateTimeField("采购参考价最后核实时间", null=True, blank=True)
+    purchase_price_verified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="verified_supplier_sku_prices",
+        verbose_name="采购参考价最后核实人",
+    )
     moq = models.DecimalField("最小起订量", max_digits=14, decimal_places=2, default=0)
     lead_time_days = models.PositiveIntegerField("交期（天）", default=0)
     is_active = models.BooleanField("启用", default=True)
@@ -1460,6 +1506,24 @@ class SupplierSKU(TimestampedModel):
 
     def __str__(self):
         return f"{self.supplier.name} / {self.supplier_sku_code}"
+
+    def save(self, *args, **kwargs):
+        update_fields = kwargs.get("update_fields")
+        if self.pk:
+            previous = SupplierSKU.objects.filter(pk=self.pk).values("purchase_price", "currency").first()
+            if previous and (
+                previous["purchase_price"] != self.purchase_price
+                or previous["currency"] != self.currency
+            ):
+                self.purchase_price_verified_at = None
+                self.purchase_price_verified_by = None
+                if update_fields is not None:
+                    kwargs["update_fields"] = set(update_fields) | {
+                        "purchase_price_verified_at",
+                        "purchase_price_verified_by",
+                        "updated_at",
+                    }
+        super().save(*args, **kwargs)
 
 
 class CustomerSupplierPreference(TimestampedModel):

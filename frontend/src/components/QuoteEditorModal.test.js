@@ -26,7 +26,7 @@ test('quote editor lets users save without exporting the Excel file', async () =
   const source = await readFile(componentUrl, 'utf8')
 
   assert.match(source, /async function save\(shouldExport = false\)/)
-  assert.match(source, /if \(!shouldExport\) \{ emit\('close'\); return \}/)
+  assert.match(source, /if \(!shouldExport\) \{ finishSavedQuote\(\); return \}/)
   assert.match(source, /@click="save\(false\)"/)
   assert.match(source, /保存报价/)
   assert.match(source, /@click="save\(true\)"/)

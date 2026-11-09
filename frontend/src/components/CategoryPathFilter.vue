@@ -1,4 +1,6 @@
 <script setup>
+import { useWorkspaceTeleportDisabled } from "../composables/useWorkspaceTeleport"
+const workspaceTeleportDisabled = useWorkspaceTeleportDisabled()
 import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
 const { workspace } = useWorkspaceNavigation()
 import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
@@ -62,7 +64,7 @@ onBeforeUnmount(detach)
 </script>
 <template>
   <button ref="trigger" type="button" class="category-select" aria-label="按产品分类筛选" aria-haspopup="dialog" :aria-expanded="open" :title="modelValue || '全部分类'" @click="toggle"><span>{{ label }}</span><ChevronDown :size="16" /></button>
-  <Teleport to="body"><section v-if="open" ref="panel" class="category-picker" :style="position" role="dialog" aria-label="选择产品分类">
+  <Teleport to="body" :disabled="workspaceTeleportDisabled"><section v-if="open" ref="panel" class="category-picker" :style="position" role="dialog" aria-label="选择产品分类">
     <button type="button" class="all-categories" :class="{ selected: !modelValue }" @click="all">全部分类</button>
     <div class="cascade-columns"><div v-for="(column, level) in columns" :key="level" class="cascade-column" :style="{ width: `${columnWidths[level]}px` }"><button v-for="node in column" :key="node.value" type="button" class="cascade-option" :class="{ active: browsing[level] === node.name, selected: modelValue === node.value }" :aria-pressed="modelValue === node.value" @click="choose(node, level)"><span>{{ node.name }}</span><ChevronRight v-if="node.children.length" :size="15" /></button></div></div>
   </section></Teleport>

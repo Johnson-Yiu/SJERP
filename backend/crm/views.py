@@ -26,7 +26,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.decorators import action, api_view, parser_classes, permission_classes
-from rest_framework.exceptions import NotFound, ValidationError as DRFValidationError
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError as DRFValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
@@ -41,7 +41,7 @@ from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
 from .quotation_export_dto import QuotationExportValidationError, build_quotation_export_dto
 from .quote_snapshots import create_quote_items
-from .serializers import protected_media_url, certificate_expiry, AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
+from .serializers import protected_media_url, certificate_expiry, AccessRoleSerializer, CancellationInputSerializer, CategoryAttributeSerializer, ContactSerializer, ContractChangeRequestSerializer, CustomerSerializer, EmployeeProfileSerializer, FollowUpAttachmentSerializer, FollowUpSerializer, GoodsReceiptSerializer, HSCodeSerializer, InventoryMovementReversalInputSerializer, InventoryMovementSerializer, OperationLogSerializer, OrderItemSerializer, OrderSerializer, OrganizationUnitSerializer, PackagingTemplateSerializer, PackingPlanSerializer, PaymentPlanSerializer, PositionSerializer, ProductCategorySerializer, ProductCertificateSerializer, ProductParameterSerializer, ProductSerializer, PurchaseOrderSerializer, ReceiptInputSerializer, ReceiptReversalInputSerializer, QuoteAvailabilityPreviewInputSerializer, QuoteImportantNoteSerializer, QuoteRiskPreviewInputSerializer, QuoteSerializer, RolePermissionSerializer, ShipmentInputSerializer, ShipmentPackageSerializer, ShipmentReversalInputSerializer, TransactionVoidInputSerializer, SKUPackagingProfileSerializer, SKUSerializer, SKUVersionSerializer, SupplierPaymentInputSerializer, SupplierSerializer, SupplierSKUSerializer, TransactionSerializer, next_product_code
 from .serializers import ProcurementDraftInputSerializer
 from .serializers import FinancePlanWriteoffInputSerializer
 from .serializers import FinancePlanWriteoffCorrectionInputSerializer
@@ -76,6 +76,7 @@ from .services.purchase_lifecycle import PurchaseMOQExceptionRequired, cancel_pu
 from .services.procurement import build_procurement_plan, create_purchase_drafts, draft_procurement_quantities
 from .services.order_quantity_adjustments import QuantityAdjustmentConflict, apply_quantity_adjustment, preview_quantity_adjustment, redact_quantity_adjustment_response, serialize_adjustment
 from .services.sku_plans import apply_category_attribute_reorder, preview_category_attribute_reorder
+from .services.sku_costs import quote_risk_rows, verification_state
 from .services.sku_schema import (
     UNFROZEN_CATEGORY_HIERARCHY_MESSAGE,
     UNFROZEN_SCHEMA_MESSAGE,
@@ -284,6 +285,30 @@ class SupplierSKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         instance = set_preferred_supplier_sku(source)
         record_operation(request=request, instance=instance, action="custom", action_label="设为首选供应商来源", before=before, metadata={"supplier_id": instance.supplier_id, "sku_id": instance.sku_id})
         return Response(self.get_serializer(instance).data)
+
+    @action(detail=True, methods=["post"], url_path="verify-price")
+    @transaction.atomic
+    def verify_price(self, request, pk=None):
+        if not getattr(request.user, "is_authenticated", False):
+            raise PermissionDenied("核实操作需要已登录员工。")
+        require_finance_permission(request.user, "purchases", "update")
+        source = SupplierSKU.objects.select_for_update().get(pk=self.get_object().pk)
+        if verification_state(source.purchase_price, source.currency, source.purchase_price_verified_at) == "missing":
+            raise DRFValidationError("采购参考价必须大于 0 且采购币种已维护后才能核实。")
+        before = snapshot(source)
+        verified_at = timezone.now()
+        source.purchase_price_verified_at = verified_at
+        source.purchase_price_verified_by = request.user
+        source.save(update_fields=["purchase_price_verified_at", "purchase_price_verified_by", "updated_at"])
+        record_operation(
+            request=request,
+            instance=source,
+            action="custom",
+            action_label="重新核实供应商参考采购价",
+            before=before,
+            metadata={"verified_at": verified_at.isoformat()},
+        )
+        return Response(self.get_serializer(source).data)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -1289,6 +1314,30 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         rows = self.get_object().supplier_skus.select_related("supplier", "sku", "sku__product")
         return Response(SupplierSKUSerializer(rows, many=True, context={"request": request}).data)
 
+    @action(detail=True, methods=["post"], url_path="verify-cost")
+    @transaction.atomic
+    def verify_cost(self, request, pk=None):
+        if not getattr(request.user, "is_authenticated", False):
+            raise PermissionDenied("核实操作需要已登录员工。")
+        require_finance_permission(request.user, "purchases", "update")
+        sku = SKU.objects.select_for_update().get(pk=self.get_object().pk)
+        if verification_state(sku.cost_price, sku.cost_currency, sku.cost_verified_at) == "missing":
+            raise DRFValidationError("SKU 内部成本必须大于 0 且成本币种已维护后才能核实。")
+        before = snapshot(sku)
+        verified_at = timezone.now()
+        sku.cost_verified_at = verified_at
+        sku.cost_verified_by = request.user
+        sku.save(update_fields=["cost_verified_at", "cost_verified_by", "updated_at"])
+        record_operation(
+            request=request,
+            instance=sku,
+            action="custom",
+            action_label="重新核实 SKU 内部成本",
+            before=before,
+            metadata={"verified_at": verified_at.isoformat()},
+        )
+        return Response(self.get_serializer(sku).data)
+
     @action(detail=False, methods=["get"], url_path="sales-model-abbreviations")
     def sales_model_abbreviations(self, request):
         """Return saved parameter abbreviations, scoped strictly to one category."""
@@ -1330,24 +1379,58 @@ class SKUViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             scoped_orders.select_related("customer")
             .prefetch_related("items", "items__shipment_items").distinct()
         )
-        movements = InventoryMovement.objects.filter(sku=sku).select_related("order").order_by("-movement_date", "-created_at")
+        movements = InventoryMovement.objects.filter(sku=sku).select_related("order", "supplier_sku__supplier").order_by("-movement_date", "-created_at")
         can_view_orders = user_can(request.user, "orders", "view")
         can_view_customers = user_can(request.user, "customers", "view")
         can_view_purchases = user_can(request.user, "purchases", "view")
+        can_view_suppliers = user_can(request.user, "suppliers", "view")
         purchase_order_ids = purchases.exclude(order_id=None).values_list("order_id", flat=True)
         visible_purchase_order_ids = set(scope_customer_related_queryset(
             Order.objects.filter(pk__in=purchase_order_ids), request.user,
         ).values_list("pk", flat=True)) if can_view_orders else set()
-        return Response({
-            "sku": {"id": sku.id, "sku": sku.sku, "display_name_cn": sku.display_name_cn, "unit": sku.unit},
-            "movements": InventoryMovementSerializer(movements, many=True, context={"request": request}).data,
-            "purchases": [{
-                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": purchase.supplier.name if user_can(request.user, "suppliers", "view") else "",
+        movement_rows = InventoryMovementSerializer(movements, many=True, context={"request": request}).data
+        for movement, row in zip(movements, movement_rows):
+            source = movement.supplier_sku if can_view_suppliers else None
+            row.update({
+                "source_label": "当前供应来源档案" if source else "供应来源未记录",
+                "supplier_name": source.supplier.name if source else "",
+                "supplier_model": source.supplier_model if source else "",
+                "supplier_sku_code": source.supplier_sku_code if source else "",
+                "supplier_characteristics": source.characteristics if source else {},
+            })
+        purchase_rows = []
+        for purchase in purchases:
+            item_rows = list(purchase.items.filter(sku=sku).select_related("supplier_sku", "supplier_sku__supplier"))
+            source_rows = []
+            if can_view_suppliers:
+                for item in item_rows:
+                    characteristics = item.supplier_characteristics_snapshot if isinstance(item.supplier_characteristics_snapshot, dict) else {}
+                    has_snapshot = any((
+                        item.supplier_name_snapshot,
+                        item.supplier_model_snapshot,
+                        item.supplier_sku_code_snapshot,
+                        characteristics,
+                    ))
+                    source_rows.append({
+                        "source_label": "历史采购来源快照" if has_snapshot else "历史采购来源未记录",
+                        "supplier_name": item.supplier_name_snapshot or "",
+                        "supplier_model": item.supplier_model_snapshot or "",
+                        "supplier_sku_code": item.supplier_sku_code_snapshot or "",
+                        "characteristics": characteristics,
+                    })
+            historical_supplier_name = next((item.supplier_name_snapshot for item in item_rows if item.supplier_name_snapshot), "")
+            purchase_rows.append({
+                "id": purchase.id, "purchase_no": purchase.purchase_no, "supplier_name": historical_supplier_name if can_view_suppliers else "",
                 "order_no": purchase.order.order_no if purchase.order_id in visible_purchase_order_ids else "", "order_date": purchase.order_date,
                 "status": purchase.status, "status_display": purchase.get_status_display(),
-                "quantity": sum((item.quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
-                "received_quantity": sum((item.received_quantity for item in purchase.items.filter(sku=sku)), Decimal("0")),
-            } for purchase in purchases] if can_view_purchases else [],
+                "quantity": sum((item.quantity for item in item_rows), Decimal("0")),
+                "received_quantity": sum((item.received_quantity for item in item_rows), Decimal("0")),
+                "supplier_sources": source_rows,
+            })
+        return Response({
+            "sku": {"id": sku.id, "sku": sku.sku, "display_name_cn": sku.display_name_cn, "unit": sku.unit},
+            "movements": movement_rows,
+            "purchases": purchase_rows if can_view_purchases else [],
             "shipments": [{
                 "id": shipment.id, "shipment_no": shipment.shipment_no, "shipment_date": shipment.shipment_date,
                 "order": shipment.order_id if can_view_orders else None,
@@ -1665,6 +1748,25 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         if self.request.query_params.get("status"):
             qs = qs.filter(status=self.request.query_params["status"])
         return qs.order_by("-updated_at", "-id")
+
+    @action(detail=False, methods=["get"], url_path="risk-preview")
+    def risk_preview(self, request):
+        require_finance_permission(request.user, "quotes", "view")
+        require_finance_permission(request.user, "skus", "view")
+        raw_ids = [value.strip() for value in str(request.query_params.get("sku_ids", "")).split(",") if value.strip()]
+        serializer = QuoteRiskPreviewInputSerializer(data={"sku_ids": raw_ids})
+        serializer.is_valid(raise_exception=True)
+        sku_ids = list(dict.fromkeys(serializer.validated_data["sku_ids"]))
+        skus = list(SKU.objects.filter(pk__in=sku_ids).prefetch_related("supplier_skus"))
+        found_ids = {sku.pk for sku in skus}
+        unknown_ids = [sku_id for sku_id in sku_ids if sku_id not in found_ids]
+        if unknown_ids:
+            return Response(
+                {"sku_ids": [f"未知 SKU ID：{', '.join(str(sku_id) for sku_id in unknown_ids)}"]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        by_id = {sku.pk: sku for sku in skus}
+        return Response({"items": quote_risk_rows([by_id[sku_id] for sku_id in sku_ids])})
 
     @action(detail=False, methods=["post"], url_path="availability-preview")
     def availability_preview(self, request):

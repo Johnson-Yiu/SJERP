@@ -29,6 +29,7 @@ import PageLoadState from '../components/PageLoadState.vue'
 import ListEmptyState from '../components/ListEmptyState.vue'
 import SkuContextBanner from '../components/SkuContextBanner.vue'
 import SkuPickerPanel from '../components/SkuPickerPanel.vue'
+import PurchaseSkuReference from '../components/PurchaseSkuReference.vue'
 import { clearModalRoute } from '../utils/modalNavigation'
 import { orderDetailLocation, workbenchCloseLocation } from '../utils/detailNavigation'
 import { withoutDocumentDetailQuery } from '../utils/documentDetailRoute'
@@ -403,6 +404,7 @@ function applySupplierSkuPrice(item) {
   if (source.purchase_price !== null && source.purchase_price !== undefined) item.unit_price = Number(source.purchase_price) * Number(item.trade_unit ? item.trade_snapshot?.factor || 1 : 1)
 }
 const activeSkuId = ref('')
+const activeSku = computed(() => skus.value.find(sku => String(sku.id) === String(activeSkuId.value)) || null)
 const selectedSkuIds = computed({
   get: () => [...new Set((draft.value.items || []).map(item => String(item.sku || '')).filter(Boolean))],
   set: syncSelectedSkus,
@@ -539,6 +541,7 @@ watch(() => route.query.detail, id => {
             <div class="draft-section-heading"><h4>采购商品</h4><small v-if="selectedOrder">关联：{{ selectedOrder.order_no }}</small></div>
             <p class="section-help">选择 SKU 后填写规格、数量和单价。</p>
             <SkuPickerPanel v-model="selectedSkuIds" v-model:active-id="activeSkuId" :skus="skus" :show-price="false" />
+            <PurchaseSkuReference :sku="activeSku" />
             <div v-if="moqCheckUnavailable.length || moqWarnings.length" class="moq-editor-feedback" aria-live="polite">
               <p v-for="item in moqCheckUnavailable" :key="item.key" class="moq-check-unavailable" role="status">{{ item.message }}</p>
               <p v-for="warning in moqWarnings" :key="warning.source_id" class="moq-editor-warning" data-testid="draft-moq-warning" role="alert">{{ warning.sku_code }}：实际 {{ quantity(warning.actual_quantity) }} {{ warning.base_unit }}，MOQ {{ quantity(warning.moq) }} {{ warning.base_unit }}，差额 {{ quantity(warning.shortage) }} {{ warning.base_unit }}。可保存草稿；确认采购下单时需填写例外原因。</p>

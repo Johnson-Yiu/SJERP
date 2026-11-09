@@ -1,7 +1,10 @@
 <script setup>
+import { useWorkspaceTeleportDisabled } from "../composables/useWorkspaceTeleport"
+const workspaceTeleportDisabled = useWorkspaceTeleportDisabled()
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
 import { useAccessControl } from '../accessControl'
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import TradeUnitPicker from './TradeUnitPicker.vue'
 import { tradePayload } from '../utils/tradeUnits'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
@@ -13,12 +16,18 @@ import SegmentedDateInput from './SegmentedDateInput.vue'
 
 const { can } = useAccessControl()
 const ready = ref(false)
-function close() { if (!saving.value) emit('close') }
+function close() { if (!saving.value) guard.requestClose(() => emit('close')) }
 const emit = defineEmits(['close', 'saved'])
 const loading = ref(true), saving = ref(false), error = ref('')
 const skus = ref([]), orders = ref([]), selectedSkuIds = ref([]), selectedOrderIds = ref('')
 const form = reactive({ movement_date: new Date().toLocaleDateString('en-CA'), type: 'adjust_in' })
 const lines = reactive({})
+let submission = null
+const guard = useUnsavedChangesGuard({
+  data: () => ({ form, selectedSkuIds: selectedSkuIds.value, selectedOrderIds: selectedOrderIds.value, lines }),
+  busy: () => saving.value,
+})
+guard.markClean()
 const inboundTypes = [
   { value: 'adjust_in', label: '盘盈入库' },
   { value: 'return_in', label: '客户退回' },
@@ -73,17 +82,29 @@ async function save() {
       const { warehouse_type, lot_reference, ...line } = lineFor(sku)
       return tradePayload({ sku: sku.id, ...line, ...(warehouse_type ? { warehouse_type, lot_reference } : {}), quantity: String(line.quantity), unit_cost: line.unit_cost === '' ? 0 : line.unit_cost }, 'unit_cost')
     })
-    const response = await api.post('/inventory-movements/batch/', { ...form, related_orders: selectedOrders.value, items })
+    const payload = { ...form, related_orders: selectedOrders.value, items }
+    const snapshot = JSON.stringify(payload)
+    if (submission && submission.snapshot !== null && submission.snapshot !== snapshot) {
+      error.value = '上次提交的结果尚未确认。请恢复上次填写的内容后重试，或先核对库存流水，再关闭表单开始新的调整。'
+      return
+    }
+    if (!submission) submission = { snapshot, key: crypto.randomUUID() }
+    else if (submission.snapshot === null) submission.snapshot = snapshot
+    const response = await api.post('/inventory-movements/batch/', payload, { headers: { 'Idempotency-Key': submission.key } })
+    guard.markClean()
     emit('saved', response.data)
   } catch (requestError) {
-    error.value = requestError.response?.data?.detail || requestError.message || '保存库存流水失败。'
+    // A validation response confirms the transaction rolled back. Keep the
+    // identity, but allow correcting the input before the next attempt.
+    if (requestError.response?.status === 400 && submission) submission.snapshot = null
+    error.value = requestError.response?.data?.detail || '保存结果尚未确认，请保持表单内容并重试；也可先核对库存流水。'
   } finally { saving.value = false }
 }
 onMounted(init)
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport to="body" :disabled="workspaceTeleportDisabled">
     <div class="modal-backdrop inventory-movement-backdrop">
       <form role="dialog" aria-label="新建手工库存流水" class="modal inventory-movement-modal" @submit.prevent="save">
         <div class="modal-head"><div><h3>库存调整</h3><p>每个 SKU 生成独立库存流水。</p></div><button type="button" class="mini-btn" aria-label="关闭手工库存流水" :disabled="saving" @click="close"><X :size="17" /></button></div>

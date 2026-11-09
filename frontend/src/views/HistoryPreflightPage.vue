@@ -96,6 +96,9 @@ async function downloadCsv() {
 function statusClass(status) {
   return ({ 通过: 'passed', 警告: 'warning', 待人工核实: 'review', 阻断: 'blocked' })[status] || 'unknown'
 }
+function statusLabel(status) {
+  return ({ 通过: '通过', 警告: '警告', 待人工核实: '待人工核实', 阻断: '阻断' })[status] || '待核实'
+}
 </script>
 
 <template>
@@ -139,7 +142,7 @@ function statusClass(status) {
           </button>
         </div>
         <div class="preflight-summary-grid">
-          <div class="preflight-overall"><span>总体结果</span><strong :class="`status-${statusClass(summary.overall_status)}`">{{ summary.overall_status || '—' }}</strong></div>
+          <div class="preflight-overall"><span>总体结果</span><strong :class="`status-${statusClass(summary.overall_status)}`">{{ statusLabel(summary.overall_status) }}</strong></div>
           <div><span>数据行</span><strong>{{ summary.total_rows ?? 0 }}</strong></div>
           <div><span>通过</span><strong>{{ summary.passed ?? 0 }}</strong></div>
           <div><span>警告</span><strong>{{ summary.warnings ?? 0 }}</strong></div>
@@ -151,7 +154,7 @@ function statusClass(status) {
 
       <section class="preflight-results panel" aria-labelledby="preflight-results-title">
         <div class="preflight-section-title">
-          <div><h3 id="preflight-results-title">行级问题</h3><p>显示 {{ showPassedRows ? visibleRows.length : issueRows.length }} 行{{ showPassedRows ? '' : '问题记录' }} / 共 {{ summary.total_rows ?? 0 }} 行</p></div>
+          <div><h3 id="preflight-results-title">行级问题</h3><p>显示 {{ showPassedRows ? visibleRows.length : issueRows.length }} 行{{ showPassedRows ? '' : '问题记录' }} / 共 {{ summary.total_rows ?? 0 }} 行</p><small class="preflight-id-help">原系统记录编号和来源关联组编号用于回查原资料、核对同组记录。</small></div>
           <button class="preflight-text-button" type="button" @click="showPassedRows = !showPassedRows">
             {{ showPassedRows ? '仅看问题行' : '查看全部行' }}
           </button>
@@ -165,7 +168,7 @@ function statusClass(status) {
                 <td>{{ row.sheet }}</td><td>{{ row.row }}</td>
                 <td class="preflight-source-id">{{ row.source_record_id || '—' }}</td>
                 <td>{{ row.group_id || '—' }}</td>
-                <td><span class="preflight-status" :class="`status-${statusClass(row.status)}`">{{ row.status }}</span></td>
+                <td><span class="preflight-status" :class="`status-${statusClass(row.status)}`">{{ statusLabel(row.status) }}</span></td>
                 <td><ul v-if="row.reasons?.length"><li v-for="(reason, reasonIndex) in row.reasons" :key="reasonIndex">{{ reason.message }}</li></ul><span v-else>—</span></td>
                 <td><ul v-if="row.suggested_actions?.length"><li v-for="(action, actionIndex) in row.suggested_actions" :key="actionIndex">{{ action }}</li></ul><span v-else>—</span></td>
               </tr>
@@ -194,7 +197,7 @@ function statusClass(status) {
 .preflight-notice{display:flex;align-items:flex-start;gap:7px;margin:12px 0 0;padding:10px 12px;border-radius:8px;background:#f1f6f3;color:#4c6d5b;font-size:13px;line-height:1.6}.preflight-notice svg{flex:none;margin-top:2px}
 .preflight-error{display:flex;align-items:flex-start;gap:8px;padding:11px 13px;border:1px solid #e8c2b9;border-radius:8px;background:#fff7f5;color:#8b3b30;overflow-wrap:anywhere}.preflight-error svg{flex:none;margin-top:2px}
 .preflight-summary-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:16px}.preflight-summary-grid>div{padding:10px 11px;border:1px solid #e7ede9;border-radius:8px;color:#708078;font-size:12px}.preflight-summary-grid strong{display:block;margin-top:3px;color:#244c3a;font-size:18px}.preflight-summary-grid .preflight-overall strong{font-size:15px}.preflight-summary-grid .status-blocked{color:#a33c35}.preflight-summary-grid .status-review{color:#9a641c}.preflight-summary-grid .status-warning{color:#7b651b}.preflight-preview-notice{margin:12px 0 0;color:#728279;font-size:12px;line-height:1.6}
-.preflight-results .preflight-section-title{margin-bottom:12px}.preflight-empty{padding:20px;border-radius:8px;background:#f7faf8;color:#718078;text-align:center}.preflight-table-wrap{max-height:70vh;overflow:auto;border:1px solid #e7ede9;border-radius:8px}.preflight-table{width:100%;min-width:980px;border-collapse:collapse}.preflight-table th{position:sticky;top:0;z-index:1;padding:10px 12px;background:#f6f9f7;color:#64766d;text-align:left;font-size:12px;white-space:nowrap}.preflight-table td{max-width:380px;padding:10px 12px;border-top:1px solid #edf0ed;color:#43504c;font-size:13px;vertical-align:top;overflow-wrap:anywhere}.preflight-table ul{display:grid;gap:4px;margin:0;padding-left:17px}.preflight-source-id{font-weight:600;color:#2e4c3d}.preflight-status{display:inline-flex;padding:3px 7px;border-radius:999px;background:#edf5ef;color:#37604b;font-size:12px;white-space:nowrap}.preflight-status.status-warning{background:#fff8e8;color:#846314}.preflight-status.status-review{background:#fff3df;color:#8b5815}.preflight-status.status-blocked{background:#fff0ed;color:#9a3e34}
+.preflight-results .preflight-section-title{margin-bottom:12px}.preflight-id-help{display:block;margin-top:4px;color:#78877f;font-size:11px;line-height:1.5}.preflight-empty{padding:20px;border-radius:8px;background:#f7faf8;color:#718078;text-align:center}.preflight-table-wrap{max-height:70vh;overflow:auto;border:1px solid #e7ede9;border-radius:8px}.preflight-table{width:100%;min-width:980px;border-collapse:collapse}.preflight-table th{position:sticky;top:0;z-index:1;padding:10px 12px;background:#f6f9f7;color:#64766d;text-align:left;font-size:12px;white-space:nowrap}.preflight-table td{max-width:380px;padding:10px 12px;border-top:1px solid #edf0ed;color:#43504c;font-size:13px;vertical-align:top;overflow-wrap:anywhere}.preflight-table ul{display:grid;gap:4px;margin:0;padding-left:17px}.preflight-source-id{font-weight:600;color:#2e4c3d;overflow-wrap:anywhere}.preflight-status{display:inline-flex;padding:3px 7px;border-radius:999px;background:#edf5ef;color:#37604b;font-size:12px;white-space:nowrap}.preflight-status.status-warning{background:#fff8e8;color:#846314}.preflight-status.status-review{background:#fff3df;color:#8b5815}.preflight-status.status-blocked{background:#fff0ed;color:#9a3e34}
 @media(max-width:1000px){.preflight-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:600px){.preflight-intro,.preflight-upload,.preflight-summary,.preflight-results{padding:15px}.preflight-intro{display:grid}.preflight-takeover-link{width:100%}.preflight-upload-row{display:grid}.preflight-primary{min-height:42px}.preflight-section-title{align-items:flex-start}.preflight-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.preflight-summary-grid .preflight-overall{grid-column:1/-1}.preflight-results .preflight-section-title{flex-wrap:wrap}.preflight-table-wrap{max-height:65vh}}
+@media(max-width:600px){.preflight-intro,.preflight-upload,.preflight-summary,.preflight-results{padding:15px}.preflight-intro{display:grid}.preflight-takeover-link{width:100%}.preflight-upload-row{display:grid}.preflight-primary{min-height:42px}.preflight-section-title{align-items:flex-start}.preflight-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.preflight-summary-grid .preflight-overall{grid-column:1/-1}.preflight-results .preflight-section-title{flex-wrap:wrap}.preflight-table-wrap{max-height:65vh}.preflight-id-help{max-width:100%}}
 </style>

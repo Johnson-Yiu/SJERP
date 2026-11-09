@@ -146,10 +146,11 @@ class HistoryTakeoverTemplateView(APIView):
         workbook = Workbook()
         instructions = workbook.active
         instructions.title = "使用说明"
-        instructions.append(["历史资料承接模板 · v1"])
+        instructions.append(["历史资料承接模板 · v2"])
         instructions.append(["每行注明真实/模拟/待核实；只有真实且凭证、依赖核实通过的关联组可申请执行。"])
         instructions.append(["预检通过不等于审批或执行；历史收付款、履约和盘点只进入待交接区，不生成正式资金或库存流水。"])
         instructions.append(["不得按名称猜测主体，不得自动创建客户、供应商或 SKU。请填写历史快照及原系统编号。"])
+        instructions.append(["历史国家/地区和产品主分类须填写发生/确认时的原始快照；缺少证据时留空，统计显示待核实，不从当前主档回填。"])
         for sheet_name, schema in SHEET_SCHEMAS.items():
             sheet = workbook.create_sheet(sheet_name)
             sheet.append([column["label"] for column in schema])
@@ -161,7 +162,7 @@ class HistoryTakeoverTemplateView(APIView):
         workbook.save(buffer)
         workbook.close()
         response = HttpResponse(buffer.getvalue(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        response["Content-Disposition"] = 'attachment; filename="history-takeover-template-v1.xlsx"'
+        response["Content-Disposition"] = 'attachment; filename="history-takeover-template-v2.xlsx"'
         return response
 
 

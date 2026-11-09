@@ -94,6 +94,7 @@ SHEET_SCHEMAS = {
         _column("source_line_id", "原销售明细编号", required=True),
         _column("sku_code", "SKU编码"),
         _column("sku_name_snapshot", "历史SKU名称快照", required=True),
+        _column("product_category_snapshot", "历史产品主分类快照"),
         _column("sales_model_snapshot", "历史销售型号快照"),
         _column("description_snapshot", "历史商品描述快照"),
         _column("unit_snapshot", "历史单位快照", required=True),
@@ -117,6 +118,7 @@ SHEET_SCHEMAS = {
         _column("lifecycle_state", "原业务状态", "enum:open,partial,completed,cancelled,unknown", True),
         _column("supplier_code", "供应商编码"),
         _column("supplier_name_snapshot", "历史供应商名称快照", required=True),
+        _column("supplier_country_snapshot", "历史供应商国家/地区快照"),
         _column("supplier_address_snapshot", "历史供应商地址快照"),
         _column("supplier_contact_name_snapshot", "历史供应商联系人快照"),
         _column("supplier_phone_snapshot", "历史供应商电话快照"),
@@ -133,6 +135,7 @@ SHEET_SCHEMAS = {
         _column("source_line_id", "原采购明细编号", required=True),
         _column("sku_code", "SKU编码"),
         _column("sku_name_snapshot", "历史SKU名称快照", required=True),
+        _column("product_category_snapshot", "历史产品主分类快照"),
         _column("sales_model_snapshot", "历史销售型号快照"),
         _column("description_snapshot", "历史商品描述快照"),
         _column("unit_snapshot", "历史单位快照", required=True),
@@ -229,6 +232,15 @@ SHEET_SCHEMAS = {
 
 REQUIRED_WORKSHEETS = {"使用说明", *SHEET_SCHEMAS.keys()}
 LEGACY_INVENTORY_SCHEMA = [column for column in SHEET_SCHEMAS["库存盘点"] if column["key"] not in {"warehouse_type", "lot_reference"}]
+HISTORY_V1_OPTIONAL_SNAPSHOT_KEYS = {
+    "销售明细": {"product_category_snapshot"},
+    "采购订单": {"supplier_country_snapshot"},
+    "采购明细": {"product_category_snapshot"},
+}
+HISTORY_V1_SCHEMAS = {
+    sheet: [column for column in schema if column["key"] not in HISTORY_V1_OPTIONAL_SNAPSHOT_KEYS.get(sheet, set())]
+    for sheet, schema in SHEET_SCHEMAS.items()
+}
 DOMAIN_VIEW_PERMISSIONS = (
     "customers", "suppliers", "skus", "trade_units", "orders", "purchases",
     "transactions", "finance", "inventory",
@@ -381,8 +393,11 @@ def _read_workbook(data):
             expected = [column["label"] for column in schema]
             selected_schema = schema
             legacy_inventory = sheet_name == "库存盘点" and headers == [column["label"] for column in LEGACY_INVENTORY_SCHEMA]
+            legacy_v1 = headers == [column["label"] for column in HISTORY_V1_SCHEMAS[sheet_name]]
             if legacy_inventory:
                 selected_schema = LEGACY_INVENTORY_SCHEMA
+            elif legacy_v1:
+                selected_schema = HISTORY_V1_SCHEMAS[sheet_name]
             elif headers != expected:
                 raise PreflightInputError(f"工作表“{sheet_name}”表头与模板不一致。")
             if max_col != len(selected_schema):
@@ -399,10 +414,14 @@ def _read_workbook(data):
                 row_total += 1
                 if row_total > MAX_ROWS:
                     raise PreflightInputError(f"工作簿最多允许 {MAX_ROWS} 条数据行。", status_code=413)
-                parsed.append({
-                    "row": row_number,
-                    "data": {**{column["key"]: value for column, value in zip(selected_schema, values)}, **({"warehouse_type": None, "lot_reference": None} if legacy_inventory else {})},
-                })
+                record_data = {column["key"]: value for column, value in zip(selected_schema, values)}
+                # Only legacy layouts omit these frozen fields. Preserve values
+                # supplied by the current template rather than replacing them.
+                record_data.setdefault("product_category_snapshot", "")
+                record_data.setdefault("supplier_country_snapshot", "")
+                if legacy_inventory:
+                    record_data.update({"warehouse_type": None, "lot_reference": None})
+                parsed.append({"row": row_number, "data": record_data})
             all_rows[sheet_name] = parsed
     finally:
         workbook.close()
@@ -830,7 +849,8 @@ def _check_master_and_documents(rows, results, user):
             else:
                 instance = _check_master(sheet, record, result, kind="供应商", model=Supplier, code_key="supplier_code", name_key="supplier_name_snapshot", name_field="name")
                 _check_snapshot_fields(result, data, [
-                    ("supplier_name_snapshot", "供应商名称"), ("supplier_address_snapshot", "地址"),
+                    ("supplier_name_snapshot", "供应商名称"), ("supplier_country_snapshot", "国家/地区"),
+                    ("supplier_address_snapshot", "地址"),
                     ("supplier_contact_name_snapshot", "联系人"), ("supplier_phone_snapshot", "电话"),
                     ("supplier_email_snapshot", "邮箱"),
                 ], "供应商")
@@ -844,6 +864,13 @@ def _check_master_and_documents(rows, results, user):
             sku = _check_master(sheet, record, result, kind="SKU", model=SKU, code_key="sku_code", name_key="sku_name_snapshot", name_field="display_name_cn", queryset=sku_queryset)
             if sku and sheet in {"销售明细", "采购明细", "履约记录"}:
                 _validate_unit_snapshot(record, result, sku)
+            if sheet in {"销售明细", "采购明细"} and not str(data.get("product_category_snapshot") or "").strip():
+                _issue(
+                    result,
+                    "待人工核实",
+                    "历史产品主分类快照缺失，分类统计将保留为“待核实”。",
+                    "仅依据原历史单据补充；不要从当前产品分类回填。",
+                )
             if sheet == "库存盘点" and sku and data.get("unit_snapshot") and data["unit_snapshot"] != sku.unit:
                 _issue(result, "警告", "盘点基础单位与当前 SKU 基础单位不同。", "保留历史实盘单位并核对单位变更，不应用订单预留替代实盘数量。")
             if sheet == "采购明细":
@@ -1177,11 +1204,20 @@ def _csv_response(payload):
     writer = csv.writer(output)
     writer.writerow(["工作表", "原行号", "原系统记录编号", "来源关联组编号", "结果", "原因", "关联记录", "建议动作"])
     for item in payload["results"]:
+        related_records = [
+            {
+                key: value
+                for key, value in related.items()
+                if key not in {"database_id", "request_id", "request_identity", "source_sha256", "sha256"}
+            }
+            for related in item["related_records"]
+            if isinstance(related, dict)
+        ]
         writer.writerow([
             _csv_safe(item["sheet"]), item["row"], _csv_safe(item["source_record_id"]),
             _csv_safe(item["group_id"]), _csv_safe(item["status"]),
             _csv_safe("；".join(reason["message"] for reason in item["reasons"])),
-            _csv_safe(item["related_records"]), _csv_safe("；".join(item["suggested_actions"])),
+            _csv_safe(related_records), _csv_safe("；".join(item["suggested_actions"])),
         ])
     response = HttpResponse("\ufeff" + output.getvalue(), content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = 'attachment; filename="history-preflight.csv"'

@@ -64,14 +64,47 @@ def identity(obj, label):
     return (str(obj.pk), str(label)) if obj else ("", "未填写")
 
 
-def customer_dims(customer):
-    return {"customer": identity(customer, customer.name if customer else ""), **{key: (getattr(customer, key, ""), getattr(customer, key, "") or "未填写") for key in ["country", "region", "owner", "source"]}}
+_CURRENT_COUNTRY = object()
+_CURRENT_CUSTOMER_NAME = object()
 
 
-def product_dims(sku):
+def customer_dims(customer, *, country_snapshot=_CURRENT_COUNTRY, name_snapshot=_CURRENT_CUSTOMER_NAME):
+    country = getattr(customer, "country", "") if country_snapshot is _CURRENT_COUNTRY else str(country_snapshot or "")
+    country_label = country or ("未填写" if country_snapshot is _CURRENT_COUNTRY else "待核实")
+    name = getattr(customer, "name", "") if name_snapshot is _CURRENT_CUSTOMER_NAME else str(name_snapshot or "")
+    name_label = name or ("未填写" if name_snapshot is _CURRENT_CUSTOMER_NAME else "待核实")
+    return {
+        "customer": identity(customer, name_label),
+        "country": (country, country_label),
+        **{key: (getattr(customer, key, ""), getattr(customer, key, "") or "未填写") for key in ["region", "owner", "source"]},
+    }
+
+
+def category_snapshot_dimension(reference, name, *, current_name=None):
+    name = str(name or "").strip()
+    if not name:
+        return "__unknown__", "待核实"
+    reference = str(reference or "").strip()
+    if not reference:
+        return f"source:{name.casefold()}", name
+    if current_name is not None and str(current_name).strip() == name:
+        return reference, name
+    return f"snapshot:{json.dumps([reference, name], ensure_ascii=False, separators=(',', ':'))}", name
+
+
+def product_dims(sku, *, category_reference_snapshot="", category_name_snapshot="", use_category_snapshot=False):
     if not sku:
         return {key: ("__adjustment__", "订单金额调整") for key in ["product", "sku", "category"]}
-    return {"sku": identity(sku, f"{sku.sku} · {sku.display_name_cn or sku.product.name}"), "product": identity(sku.product, f"{sku.product.code} · {sku.product.name}"), "category": identity(sku.product.category, sku.product.category.name if sku.product.category else "")}
+    category = (
+        category_snapshot_dimension(
+            category_reference_snapshot,
+            category_name_snapshot,
+            current_name=(sku.product.category.name if sku.product.category else None),
+        )
+        if use_category_snapshot else
+        identity(sku.product.category, sku.product.category.name if sku.product.category else "")
+    )
+    return {"sku": identity(sku, f"{sku.sku} · {sku.display_name_cn or sku.product.name}"), "product": identity(sku.product, f"{sku.product.code} · {sku.product.name}"), "category": category}
 
 
 def records(source, date_field, start, end, user=None):
@@ -112,19 +145,27 @@ def records(source, date_field, start, end, user=None):
             if source == "customers" and key == "status":
                 display = customer_status_display(value)
             dims[key] = (value, display or "未填写")
-        if source in ["sales", "profit", "customers", "cash"]:
+        if source in ["sales", "profit"]:
+            dims.update(customer_dims(
+                obj.customer, country_snapshot=obj.customer_country_snapshot,
+                name_snapshot=obj.customer_name_snapshot,
+            ))
+        elif source in ["customers", "cash"]:
             dims.update(customer_dims(obj if source == "customers" else obj.customer))
         if source in ["purchase", "cash"]:
             supplier = obj.supplier
             dims["supplier"] = identity(supplier, supplier.name if supplier else "")
             if source == "purchase":
-                dims["country"] = (getattr(supplier, "country", ""), getattr(supplier, "country", "") or "未填写")
+                country = obj.supplier_country_snapshot or ""
+                dims["country"] = (country, country or "待核实")
         if source == "profit":
             yield day, obj.pk, dims, order_profit_summary(obj)["estimated_profit_rmb"], Decimal(0), ""
         elif source in ["sales", "purchase"]:
             items = list(obj.items.all())
             for item in items:
-                yield day, obj.pk, {**dims, **product_dims(item.sku)}, item.amount * obj.exchange_rate, item.quantity, getattr(item, "unit_snapshot", "") or item.sku.unit
+                yield day, obj.pk, {**dims, **product_dims(item.sku,
+                    category_reference_snapshot=item.product_category_reference_snapshot,
+                    category_name_snapshot=item.product_category_name_snapshot, use_category_snapshot=True)}, item.amount * obj.exchange_rate, item.quantity, getattr(item, "unit_snapshot", "") or item.sku.unit
             contract_changes = sum(obj.contract_changes.filter(status="approved").values_list("amount_delta", flat=True), Decimal("0"))
             adjustment = ((obj.shipping_fee - obj.discount + contract_changes) if source == "sales" else contract_changes) * obj.exchange_rate
             if adjustment or not items:
@@ -242,7 +283,7 @@ def historical_analysis(request):
                 historical_only=True,
                 status="historical",
                 order_date__range=(start, end),
-            ).select_related("customer").prefetch_related("items__sku__product"),
+            ).select_related("customer").prefetch_related("items__sku__product__category"),
             request.user,
         )
         customer_rows = {}
@@ -257,11 +298,11 @@ def historical_analysis(request):
             total += order_amount
             if can_sales_customer:
                 customer_key = str(order.customer_id)
-                customer_rows.setdefault(customer_key, {"id": order.customer_id, "label": order.customer.name, "amount": Decimal("0"), "count": 0})
+                customer_rows.setdefault(customer_key, {"id": order.customer_id, "label": order.customer_name_snapshot or "待核实", "amount": Decimal("0"), "count": 0})
                 customer_rows[customer_key]["amount"] += order_amount
                 customer_order_ids.setdefault(customer_key, set()).add(order.pk)
-                country_key = order.customer.country or ""
-                country_rows.setdefault(country_key, {"id": country_key, "label": country_key or "未填写", "amount": Decimal("0"), "count": 0})
+                country_key = order.customer_country_snapshot or ""
+                country_rows.setdefault(country_key, {"id": country_key, "label": country_key or "待核实", "amount": Decimal("0"), "count": 0})
                 country_rows[country_key]["amount"] += order_amount
                 country_rows[country_key]["count"] += 1
             for item in order.items.all():
@@ -271,10 +312,12 @@ def historical_analysis(request):
                     sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
                     sku_rows[sku_key]["amount"] += item.amount * order.exchange_rate
                     sku_rows[sku_key]["quantity"] += item.quantity
-                if can_category_dimension and item.sku.product.category_id:
-                    category = item.sku.product.category
-                    category_key = str(category.pk)
-                    category_rows.setdefault(category_key, {"id": category.pk, "label": category.name, "amount": Decimal("0"), "quantity": Decimal("0")})
+                if can_category_dimension:
+                    category_key, category_label = category_snapshot_dimension(
+                        item.product_category_reference_snapshot, item.product_category_name_snapshot,
+                        current_name=(item.sku.product.category.name if item.sku.product.category else None),
+                    )
+                    category_rows.setdefault(category_key, {"id": category_key, "label": category_label, "amount": Decimal("0"), "quantity": Decimal("0")})
                     category_rows[category_key]["amount"] += item.amount * order.exchange_rate
                     category_rows[category_key]["quantity"] += item.quantity
         for key, row in customer_rows.items():
@@ -291,7 +334,7 @@ def historical_analysis(request):
             historical_only=True,
             status="historical",
             order_date__range=(start, end),
-        ).select_related("supplier").prefetch_related("items__sku__product")
+        ).select_related("supplier").prefetch_related("items__sku__product__category")
         supplier_rows = {}
         supplier_order_ids = {}
         country_rows = {}
@@ -307,8 +350,8 @@ def historical_analysis(request):
                 supplier_rows.setdefault(supplier_key, {"id": purchase.supplier_id, "label": purchase.supplier.name, "amount": Decimal("0"), "count": 0})
                 supplier_rows[supplier_key]["amount"] += purchase_amount
                 supplier_order_ids.setdefault(supplier_key, set()).add(purchase.pk)
-                country_key = purchase.supplier.country or ""
-                country_rows.setdefault(country_key, {"id": country_key, "label": country_key or "未填写", "amount": Decimal("0"), "count": 0})
+                country_key = purchase.supplier_country_snapshot or ""
+                country_rows.setdefault(country_key, {"id": country_key, "label": country_key or "待核实", "amount": Decimal("0"), "count": 0})
                 country_rows[country_key]["amount"] += purchase_amount
                 country_rows[country_key]["count"] += 1
             for item in purchase.items.all():
@@ -318,10 +361,12 @@ def historical_analysis(request):
                     sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
                     sku_rows[sku_key]["amount"] += item.amount * purchase.exchange_rate
                     sku_rows[sku_key]["quantity"] += item.quantity
-                if can_category_dimension and item.sku.product.category_id:
-                    category = item.sku.product.category
-                    category_key = str(category.pk)
-                    category_rows.setdefault(category_key, {"id": category.pk, "label": category.name, "amount": Decimal("0"), "quantity": Decimal("0")})
+                if can_category_dimension:
+                    category_key, category_label = category_snapshot_dimension(
+                        item.product_category_reference_snapshot, item.product_category_name_snapshot,
+                        current_name=(item.sku.product.category.name if item.sku.product.category else None),
+                    )
+                    category_rows.setdefault(category_key, {"id": category_key, "label": category_label, "amount": Decimal("0"), "quantity": Decimal("0")})
                     category_rows[category_key]["amount"] += item.amount * purchase.exchange_rate
                     category_rows[category_key]["quantity"] += item.quantity
         for key, row in supplier_rows.items():
@@ -346,7 +391,14 @@ def filter_summary(source, filters, user=None):
     result = []
     for key, value in filters.items():
         label = value or "未填写"
-        if value == "__adjustment__": label = "订单金额调整"
+        if key == "category" and value == "__unknown__": label = "待核实"
+        elif key == "category" and value.startswith("source:"): label = value[len("source:"):]
+        elif key == "category" and value.startswith("snapshot:"):
+            try:
+                label = json.loads(value[len("snapshot:"):])[1]
+            except (IndexError, TypeError, ValueError, json.JSONDecodeError):
+                label = "待核实"
+        elif value == "__adjustment__": label = "订单金额调整"
         elif key in entities and not (source == "cash" and key == "category") and value.isdigit() and len(value) <= 18:
             model, field = entities[key]
             queryset = model.objects.all()
@@ -427,8 +479,11 @@ def _detail_rows(source, date_field, start, end, group, group_2, grain, filters,
             display = getattr(document, f"get_{key}_display", lambda: value)()
             base_dims[key] = (value, display or "未填写")
         if source == "sales":
-            base_dims.update(customer_dims(document.customer))
-            party_name = document.customer.name if document.customer else "未填写"
+            base_dims.update(customer_dims(
+                document.customer, country_snapshot=document.customer_country_snapshot,
+                name_snapshot=document.customer_name_snapshot,
+            ))
+            party_name = document.customer_name_snapshot or "待核实"
             party_id = document.customer_id
             document_no = document.order_no
             document_date = document.order_date
@@ -436,8 +491,9 @@ def _detail_rows(source, date_field, start, end, group, group_2, grain, filters,
         else:
             supplier = document.supplier
             base_dims["supplier"] = identity(supplier, supplier.name if supplier else "")
-            base_dims["country"] = (getattr(supplier, "country", ""), getattr(supplier, "country", "") or "未填写")
-            party_name = supplier.name if supplier else "未填写"
+            country = document.supplier_country_snapshot or ""
+            base_dims["country"] = (country, country or "待核实")
+            party_name = document.supplier_name_snapshot or "待核实"
             party_id = document.supplier_id
             document_no = document.purchase_no
             document_date = document.order_date
@@ -445,7 +501,9 @@ def _detail_rows(source, date_field, start, end, group, group_2, grain, filters,
 
         items = list(document.items.all())
         for item in items:
-            dims = {**base_dims, **product_dims(item.sku)}
+            dims = {**base_dims, **product_dims(item.sku,
+                category_reference_snapshot=item.product_category_reference_snapshot,
+                category_name_snapshot=item.product_category_name_snapshot, use_category_snapshot=True)}
             if any(str(dims.get(key, ("", ""))[0]) != str(expected) for key, expected in filters.items()):
                 continue
             if not _detail_group_matches(day, dims, group, group_2, group_value, group_2_value, grain):

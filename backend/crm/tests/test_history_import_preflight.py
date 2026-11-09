@@ -11,7 +11,7 @@ from django.test.utils import CaptureQueriesContext
 from openpyxl import Workbook, load_workbook
 from rest_framework.test import APIClient
 
-from crm.history_import_preflight import HistoryPreflightPermission, SHEET_SCHEMAS
+from crm.history_import_preflight import HISTORY_V1_SCHEMAS, HistoryPreflightPermission, SHEET_SCHEMAS
 from crm.models import (
     CSVImportBatch,
     CSVImportPreviewAudit,
@@ -25,6 +25,7 @@ from crm.models import (
     OrderItem,
     PaymentPlan,
     Product,
+    ProductCategory,
     PurchaseOrder,
     PurchaseOrderItem,
     Shipment,
@@ -65,7 +66,8 @@ class HistoryImportPreflightTests(TestCase):
             code="ISS121-C1", name="合成历史客户", country="US", address="Synthetic address",
         )
         supplier = Supplier.objects.create(code="S1", name="合成历史供应商")
-        product = Product.objects.create(code="ISS121-P1", name="合成历史产品", sales_model_prefix="I121")
+        category = ProductCategory.objects.create(name="合成历史分类")
+        product = Product.objects.create(code="ISS121-P1", name="合成历史产品", sales_model_prefix="I121", category=category)
         sku = SKU.objects.create(
             sku="ISS121-S1", product=product, display_name_cn="合成历史 SKU", unit="pcs",
         )
@@ -75,12 +77,14 @@ class HistoryImportPreflightTests(TestCase):
         counts = {model.__name__: model.objects.count() for model in BUSINESS_MODELS}
         customer = Customer.objects.order_by("pk").values("id", "code", "name", "country", "address").first()
         sku = SKU.objects.order_by("pk").values("id", "sku", "unit", "cost_price").first()
-        orders = list(Order.objects.order_by("pk").values("id", "order_no", "status", "currency"))
-        purchase_items = list(PurchaseOrderItem.objects.order_by("pk").values("id", "quantity"))
+        orders = list(Order.objects.order_by("pk").values("id", "order_no", "status", "currency", "customer_country_snapshot"))
+        order_items = list(OrderItem.objects.order_by("pk").values("id", "quantity", "product_category_reference_snapshot", "product_category_name_snapshot"))
+        purchases = list(PurchaseOrder.objects.order_by("pk").values("id", "purchase_no", "supplier_country_snapshot"))
+        purchase_items = list(PurchaseOrderItem.objects.order_by("pk").values("id", "quantity", "product_category_reference_snapshot", "product_category_name_snapshot"))
         plans = list(PaymentPlan.objects.order_by("pk").values("id", "planned_amount", "settled_amount", "status"))
         transactions = list(Transaction.objects.order_by("pk").values("id", "amount", "status", "kind"))
         movements = list(InventoryMovement.objects.order_by("pk").values("id", "sku_id", "quantity", "type"))
-        return counts, customer, sku, orders, purchase_items, plans, transactions, movements
+        return counts, customer, sku, orders, order_items, purchases, purchase_items, plans, transactions, movements
 
     def group_row(self, group_id="G-1", **overrides):
         return {
@@ -123,6 +127,9 @@ class HistoryImportPreflightTests(TestCase):
             "source_line_id": line_id,
             "sku_code": sku.sku,
             "sku_name_snapshot": sku.display_name_cn,
+            # Synthetic fixture evidence is explicit; never derive a historical
+            # category from today's product master during preflight testing.
+            "product_category_snapshot": "合成历史分类",
             "sales_model_snapshot": "HIST-MODEL",
             "description_snapshot": "Historical description",
             "unit_snapshot": "pcs",
@@ -192,7 +199,7 @@ class HistoryImportPreflightTests(TestCase):
         self.assertFalse(response.data["approval_or_migration"])
         self.assertFalse(response.data["business_write_performed"])
         line = next(item for item in response.data["results"] if item["sheet"] == "销售明细")
-        self.assertEqual(line["status"], "通过")
+        self.assertEqual(line["status"], "通过", line)
         order = next(item for item in response.data["results"] if item["sheet"] == "销售订单")
         self.assertEqual(order["status"], "警告")
         self.assertTrue(any("未结" in reason["message"] for reason in order["reasons"]))
@@ -211,13 +218,23 @@ class HistoryImportPreflightTests(TestCase):
             self.assertEqual(workbook.sheetnames, ["使用说明", *SHEET_SCHEMAS.keys()])
             for sheet_name, columns in SHEET_SCHEMAS.items():
                 header = next(workbook[sheet_name].iter_rows(min_row=1, max_row=1, values_only=True))
-                if sheet_name == "库存盘点":
-                    legacy = [column["label"] for column in columns if column["key"] not in {"warehouse_type", "lot_reference"}]
-                    self.assertIn(list(header), [[column["label"] for column in columns], legacy], sheet_name)
-                else:
-                    self.assertEqual(list(header), [column["label"] for column in columns], sheet_name)
+                current = [column["label"] for column in columns]
+                v1 = [column["label"] for column in HISTORY_V1_SCHEMAS[sheet_name]]
+                legacy_inventory = [column["label"] for column in columns if column["key"] not in {"warehouse_type", "lot_reference"}]
+                self.assertIn(list(header), [current, v1, legacy_inventory], sheet_name)
         finally:
             workbook.close()
+
+        current_template = self.client.get("/api/import/history-takeovers/template/")
+        self.assertEqual(current_template.status_code, 200, current_template.content[:200])
+        self.assertIn('history-takeover-template-v2.xlsx', current_template["Content-Disposition"])
+        current_book = load_workbook(io.BytesIO(current_template.content), read_only=True, data_only=False)
+        try:
+            self.assertEqual(current_book.sheetnames, ["使用说明", *SHEET_SCHEMAS.keys()])
+            self.assertIn("历史产品主分类快照", list(next(current_book["销售明细"].iter_rows(min_row=1, max_row=1, values_only=True))))
+            self.assertIn("历史供应商国家/地区快照", list(next(current_book["采购订单"].iter_rows(min_row=1, max_row=1, values_only=True))))
+        finally:
+            current_book.close()
 
         customer, _supplier, sku = self.create_masters()
         before = self.business_snapshot()
@@ -233,7 +250,12 @@ class HistoryImportPreflightTests(TestCase):
         }
         filled = load_workbook(io.BytesIO(data), data_only=False)
         for sheet_name, records in sample_rows.items():
-            columns = SHEET_SCHEMAS[sheet_name]
+            header = list(next(filled[sheet_name].iter_rows(min_row=1, max_row=1, values_only=True)))
+            current_schema = SHEET_SCHEMAS[sheet_name]
+            candidates = [current_schema, HISTORY_V1_SCHEMAS[sheet_name]]
+            if sheet_name == "库存盘点":
+                candidates.append([column for column in current_schema if column["key"] not in {"warehouse_type", "lot_reference"}])
+            columns = next(schema for schema in candidates if header == [column["label"] for column in schema])
             for row_number, record in enumerate(records, start=2):
                 for column_number, column in enumerate(columns, start=1):
                     filled[sheet_name].cell(row=row_number, column=column_number, value=record.get(column["key"]))
@@ -244,7 +266,24 @@ class HistoryImportPreflightTests(TestCase):
 
         self.assertEqual(response.status_code, 200, response.data)
         self.assertTrue(response.data["preflight_only"])
-        self.assertEqual(response.data["summary"]["overall_status"], "警告")
+        # The delivered v1 workbook predates this frozen field. Its missing
+        # historical category must remain unknown and require manual review.
+        self.assertEqual(response.data["summary"]["overall_status"], "待人工核实")
+        self.assertEqual(self.business_snapshot(), before)
+        self.assertEqual(list(Path(self.media.name).iterdir()), [])
+
+    def test_missing_historical_category_snapshot_stays_unknown_without_writing(self):
+        customer, _supplier, sku = self.create_masters()
+        data = self.basic_sales_workbook(customer, sku, line_overrides={"product_category_snapshot": ""})
+        before = self.business_snapshot()
+
+        response = self.upload(data)
+
+        self.assertEqual(response.status_code, 200, response.data)
+        line = next(item for item in response.data["results"] if item["sheet"] == "销售明细")
+        self.assertEqual(line["status"], "待人工核实")
+        self.assertTrue(any("历史产品主分类快照缺失" in reason["message"] for reason in line["reasons"]))
+        self.assertTrue(any("不要从当前产品分类回填" in action for action in line["suggested_actions"]))
         self.assertEqual(self.business_snapshot(), before)
         self.assertEqual(list(Path(self.media.name).iterdir()), [])
 
@@ -455,14 +494,15 @@ class HistoryImportPreflightTests(TestCase):
         purchase = {
             "group_id": "G-1", "source_record_id": "PO-SRC-1", "purchase_no": "OLD-PO-1",
             "order_date": date(2024, 7, 1), "lifecycle_state": "partial", "supplier_code": supplier.code,
-            "supplier_name_snapshot": supplier.name, "supplier_address_snapshot": "Old address",
+            "supplier_name_snapshot": supplier.name, "supplier_country_snapshot": "US", "supplier_address_snapshot": "Old address",
             "supplier_contact_name_snapshot": "Old contact", "supplier_phone_snapshot": "555-0111",
             "supplier_email_snapshot": "supplier@example.test", "currency": "USD", "exchange_rate": "1.000000",
             "truth_status": "真实", "voucher_reference": "synthetic://purchase-order",
         }
         purchase_line = {
             "group_id": "G-1", "source_purchase_id": "PO-SRC-1", "source_line_id": "1",
-            "sku_code": sku.sku, "sku_name_snapshot": sku.display_name_cn, "unit_snapshot": "pcs",
+            "sku_code": sku.sku, "sku_name_snapshot": sku.display_name_cn,
+            "product_category_snapshot": "合成历史分类", "unit_snapshot": "pcs",
             "base_unit_snapshot": "pcs", "quantity_base": "5.00", "unit_price": "3.000000000000",
             "truth_status": "真实", "voucher_reference": "synthetic://purchase-line",
         }
@@ -490,14 +530,15 @@ class HistoryImportPreflightTests(TestCase):
         purchase = {
             "group_id": "G-1", "source_record_id": "PO-SRC-1", "purchase_no": "OLD-PO-1",
             "order_date": date(2024, 7, 1), "lifecycle_state": "partial", "supplier_code": supplier.code,
-            "supplier_name_snapshot": supplier.name, "supplier_address_snapshot": "Old address",
+            "supplier_name_snapshot": supplier.name, "supplier_country_snapshot": "US", "supplier_address_snapshot": "Old address",
             "supplier_contact_name_snapshot": "Old contact", "supplier_phone_snapshot": "555-0111",
             "supplier_email_snapshot": "supplier@example.test", "currency": "USD", "exchange_rate": "1.000000",
             "truth_status": "真实", "voucher_reference": "synthetic://purchase-order",
         }
         purchase_line = {
             "group_id": "G-1", "source_purchase_id": "PO-SRC-1", "source_line_id": "1",
-            "sku_code": sku.sku, "sku_name_snapshot": sku.display_name_cn, "unit_snapshot": "pcs",
+            "sku_code": sku.sku, "sku_name_snapshot": sku.display_name_cn,
+            "product_category_snapshot": "合成历史分类", "unit_snapshot": "pcs",
             "base_unit_snapshot": "pcs", "quantity_base": "5.00", "unit_price": "3.000000000000",
             "truth_status": "真实", "voucher_reference": "synthetic://purchase-line",
         }
@@ -588,6 +629,7 @@ class HistoryImportPreflightTests(TestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(csv_response.status_code, 200)
         self.assertIn("'+SUM(1,1)", csv_response.content.decode("utf-8-sig"))
+        self.assertNotIn("database_id", csv_response.content.decode("utf-8-sig"))
 
     def test_oversized_file_gets_http_413_and_unauthorized_user_is_denied(self):
         from django.core.files.uploadedfile import SimpleUploadedFile
@@ -634,14 +676,15 @@ class HistoryImportPreflightTests(TestCase):
             parent = {
                 "group_id": "G-1", "source_record_id": parent_id, "purchase_no": "OLD-PO-1",
                 "order_date": date(2024, 7, 1), "lifecycle_state": "partial", "supplier_code": supplier.code,
-                "supplier_name_snapshot": supplier.name, "supplier_address_snapshot": "Old address",
+                "supplier_name_snapshot": supplier.name, "supplier_country_snapshot": "US", "supplier_address_snapshot": "Old address",
                 "supplier_contact_name_snapshot": "Old contact", "supplier_phone_snapshot": "555-0111",
                 "supplier_email_snapshot": "supplier@example.test", "currency": "USD", "exchange_rate": "1.000000",
                 "truth_status": "真实", "voucher_reference": "synthetic://purchase",
             }
             lines = [{
                 "group_id": "G-1", "source_purchase_id": parent_id, "source_line_id": str(i),
-                "sku_code": sku.sku, "sku_name_snapshot": sku.display_name_cn, "unit_snapshot": sku.unit,
+                "sku_code": sku.sku, "sku_name_snapshot": sku.display_name_cn,
+                "product_category_snapshot": "合成历史分类", "unit_snapshot": sku.unit,
                 "base_unit_snapshot": sku.unit, "quantity_base": "10.00", "unit_price": "3.000000000000",
                 "supplier_name_snapshot": supplier.name, "truth_status": "真实", "voucher_reference": "synthetic://line",
             } for i, sku in enumerate(skus, 1)]

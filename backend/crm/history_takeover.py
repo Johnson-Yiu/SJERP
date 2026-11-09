@@ -409,6 +409,7 @@ def _create_history_documents(group, rows):
         }
         sales_item_rows.append(OrderItem(
             order=parent, sku=sku, sku_code_snapshot=str(data.get("sku_code") or ""),
+            product_category_name_snapshot=str(data.get("product_category_snapshot") or ""),
             sales_model_snapshot=str(data.get("sales_model_snapshot") or ""),
             display_name_snapshot=str(data["sku_name_snapshot"]),
             description_snapshot=str(data.get("description_snapshot") or ""),
@@ -427,6 +428,7 @@ def _create_history_documents(group, rows):
         po = PurchaseOrder.objects.create(
             purchase_no=str(data["purchase_no"]).strip(), supplier=supplier,
             supplier_name_snapshot=str(data["supplier_name_snapshot"] or ""),
+            supplier_country_snapshot=str(data.get("supplier_country_snapshot") or ""),
             supplier_address_snapshot=str(data.get("supplier_address_snapshot") or ""),
             supplier_contact_name_snapshot=str(data.get("supplier_contact_name_snapshot") or ""),
             supplier_phone_snapshot=str(data.get("supplier_phone_snapshot") or ""),
@@ -452,6 +454,7 @@ def _create_history_documents(group, rows):
         purchase_item_rows.append(PurchaseOrderItem(
             purchase_order=parent, sku=sku, supplier_sku=None,
             sku_code_snapshot=str(data.get("sku_code") or ""),
+            product_category_name_snapshot=str(data.get("product_category_snapshot") or ""),
             sales_model_snapshot=str(data.get("sales_model_snapshot") or ""),
             display_name_snapshot=str(data["sku_name_snapshot"]),
             description_snapshot=str(data.get("description_snapshot") or ""),

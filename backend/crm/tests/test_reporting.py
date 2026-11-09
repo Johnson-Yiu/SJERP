@@ -18,13 +18,13 @@ class ReportingTests(TestCase):
         self.client = APIClient()
         self.customer = Customer.objects.create(code="REPORT", name="Buyer", country="China", region="亚洲", owner="Alice")
         self.supplier = Supplier.objects.create(name="Factory", code="RP", country="China", main_products="LED驱动电源")
-        category = ProductCategory.objects.create(name="照明")
-        product = Product.objects.create(code="REPORT", name="Lamp", category=category)
+        self.category = ProductCategory.objects.create(name="照明")
+        product = Product.objects.create(code="REPORT", name="Lamp", category=self.category)
         self.sku = SKU.objects.create(sku="REPORT-1", product=product, unit="pcs", specification="a")
         self.sku2 = SKU.objects.create(sku="REPORT-2", product=product, unit="box", specification="b")
-        self.order = Order.objects.create(order_no="REPORT-O", customer=self.customer, order_date=date(2026, 9, 1), currency="USD", exchange_rate=7, shipping_fee=3, discount=1, status="confirmed")
-        self.order.items.create(sku=self.sku, quantity=2, unit_price=10)
-        self.order.items.create(sku=self.sku2, quantity=1, unit_price=5)
+        self.order = Order.objects.create(order_no="REPORT-O", customer=self.customer, customer_name_snapshot="Buyer", customer_country_snapshot="China", order_date=date(2026, 9, 1), currency="USD", exchange_rate=7, shipping_fee=3, discount=1, status="confirmed")
+        self.order.items.create(sku=self.sku, quantity=2, unit_price=10, product_category_reference_snapshot=str(self.category.pk), product_category_name_snapshot=self.category.name)
+        self.order.items.create(sku=self.sku2, quantity=1, unit_price=5, product_category_reference_snapshot=str(self.category.pk), product_category_name_snapshot=self.category.name)
 
     def query(self, **kwargs):
         response = self.client.get('/api/reports/data/', {"date_from": "2026-09-01", "date_to": "2026-09-30", **kwargs})
@@ -85,8 +85,8 @@ class ReportingTests(TestCase):
         self.assertEqual(self.query(date_field="created_at", date_to="2026-09-01")['totals']['count'], 1)
 
     def test_purchase_without_sales_order_and_supplier_country(self):
-        purchase = PurchaseOrder.objects.create(purchase_no="REPORT-P", supplier=self.supplier, order_date=date(2026, 9, 2), status="ordered", exchange_rate=7)
-        purchase.items.create(sku=self.sku, quantity=3, unit_price=4)
+        purchase = PurchaseOrder.objects.create(purchase_no="REPORT-P", supplier=self.supplier, supplier_country_snapshot="China", order_date=date(2026, 9, 2), status="ordered", exchange_rate=7)
+        purchase.items.create(sku=self.sku, quantity=3, unit_price=4, product_category_reference_snapshot=str(self.category.pk), product_category_name_snapshot=self.category.name)
         data = self.query(source="purchase", group_by="country")
         self.assertEqual(data['rows'][0]['label'], 'China')
         self.assertEqual(data['totals']['amount'], Decimal(84))
@@ -167,8 +167,8 @@ class ReportingTests(TestCase):
 
     def test_country_and_customer_cross_group_preserves_totals_and_distinct_documents(self):
         other = Customer.objects.create(code="REPORT-2", name="Second buyer", country="China", region="亚洲")
-        order = Order.objects.create(order_no="REPORT-O-2", customer=other, order_date=date(2026, 9, 2), currency="CNY", exchange_rate=1, status="confirmed")
-        order.items.create(sku=self.sku, quantity=3, unit_price=10)
+        order = Order.objects.create(order_no="REPORT-O-2", customer=other, customer_name_snapshot=other.name, customer_country_snapshot="China", order_date=date(2026, 9, 2), currency="CNY", exchange_rate=1, status="confirmed")
+        order.items.create(sku=self.sku, quantity=3, unit_price=10, product_category_reference_snapshot=str(self.category.pk), product_category_name_snapshot=self.category.name)
         data = self.query(group_by="country", group_by_2="customer")
         self.assertEqual(data["group_by_2"], "customer")
         self.assertEqual(data["totals"]["amount"], Decimal("219"))
@@ -240,6 +240,62 @@ class ReportingTests(TestCase):
         self.assertEqual({row["unit"] for row in item_rows}, {"pcs", "box"})
         self.assertTrue(all(row["document_id"] == self.order.pk for row in data["rows"]))
 
+    def test_historical_dimensions_remain_frozen_after_customer_and_product_master_changes(self):
+        new_category = ProductCategory.objects.create(name="新分类")
+        self.customer.country = "France"
+        self.customer.save(update_fields=["country"])
+        product = self.sku.product
+        product.category = new_category
+        product.save(update_fields=["category"])
+        later_order = Order.objects.create(
+            order_no="REPORT-O-LATER", customer=self.customer, customer_name_snapshot="Buyer",
+            customer_country_snapshot="France", order_date=date(2026, 9, 3), currency="USD",
+            exchange_rate=7, status="confirmed",
+        )
+        later_order.items.create(
+            sku=self.sku, quantity=1, unit_price=2,
+            product_category_reference_snapshot=str(new_category.pk),
+            product_category_name_snapshot=new_category.name,
+        )
+
+        country = self.query(group_by="country")
+        categories = self.query(group_by="category")
+        self.assertIn("China", {row["label"] for row in country["rows"]})
+        self.assertIn("France", {row["label"] for row in country["rows"]})
+        self.assertIn("照明", {row["label"] for row in categories["rows"]})
+        self.assertIn("新分类", {row["label"] for row in categories["rows"]})
+        historical_category = next(row for row in categories["rows"] if row["label"] == "照明")
+        current_category = next(row for row in categories["rows"] if row["label"] == "新分类")
+
+        detail = self.client.get("/api/reports/details/", {
+            "source": "sales", "date_from": "2026-09-01", "date_to": "2026-09-30",
+            "group_by": "category", "group_value": historical_category["key"], "page_size": 50,
+        })
+        self.assertEqual(detail.status_code, 200, detail.data)
+        self.assertEqual(detail.data["totals"]["amount"], Decimal("175"))
+        self.assertEqual(len(detail.data["rows"]), 2)
+        current_detail = self.client.get("/api/reports/details/", {
+            "source": "sales", "date_from": "2026-09-01", "date_to": "2026-09-30",
+            "group_by": "category", "group_value": current_category["key"], "page_size": 50,
+        })
+        self.assertEqual(current_detail.status_code, 200, current_detail.data)
+        self.assertEqual(current_detail.data["totals"]["amount"], Decimal("14"))
+
+        exported = self.client.get("/api/reports/data/", {
+            "source": "sales", "group_by": "country", "date_from": "2026-09-01",
+            "date_to": "2026-09-30", "export": "csv",
+        })
+        self.assertEqual(exported.status_code, 200)
+        csv_text = exported.content.decode("utf-8-sig")
+        self.assertIn("China", csv_text)
+        self.assertIn("France", csv_text)
+        category_export = self.client.get("/api/reports/data/", {
+            "source": "sales", "group_by": "category", "date_from": "2026-09-01",
+            "date_to": "2026-09-30", "export": "csv",
+        })
+        self.assertIn("照明", category_export.content.decode("utf-8-sig"))
+        self.assertIn("新分类", category_export.content.decode("utf-8-sig"))
+
     def test_sales_details_follow_sku_group_without_repeating_order_amount(self):
         response = self.client.get('/api/reports/details/', {
             "source": "sales", "date_from": "2026-09-01", "date_to": "2026-09-30",
@@ -300,8 +356,7 @@ class ReportingTests(TestCase):
                 self.query(source=source, group_by=dimension)
 
     def test_export_has_full_rows_and_formula_protection(self):
-        self.customer.name = '=HYPERLINK("example")'
-        self.customer.save()
+        Order.objects.filter(pk=self.order.pk).update(customer_name_snapshot='=HYPERLINK("example")')
         response = self.client.get('/api/reports/data/', {"source": "sales", "group_by": "customer", "date_from": "2026-09-01", "date_to": "2026-09-30", "export": "csv"})
         self.assertEqual(response.status_code, 200)
         content = response.content.decode('utf-8-sig')

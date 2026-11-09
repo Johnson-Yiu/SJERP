@@ -46,7 +46,7 @@ from .serializers import ProcurementDraftInputSerializer
 from .serializers import FinancePlanWriteoffInputSerializer
 from .serializers import FinancePlanWriteoffCorrectionInputSerializer
 from .audit import AuditTrailMixin, record_operation, snapshot
-from .services.finance import allocate_advance, approve_contract_change, correct_receivable_writeoff, reject_contract_change, record_contract_payment, record_transaction, void_transaction, writeoff_receivable
+from .services.finance import allocate_advance, approve_contract_change, correct_receivable_writeoff, reject_contract_change, record_contract_payment, record_customer_receipt, record_transaction, void_transaction, writeoff_receivable
 from .services.attachments import delete_follow_up_attachment, upload_follow_up_attachments
 from .services.fulfillment import (
     begin_fulfillment_idempotency,
@@ -2534,7 +2534,8 @@ def _finance_cash(user, start, end):
 
 def _finance_advances(user):
     return scope_transaction_queryset(Transaction.objects.all(), user).filter(
-        status="confirmed", kind__in=["unallocated_advance", "unallocated_payment"]
+        Q(kind__in=["unallocated_advance", "unallocated_payment"]) |
+        Q(kind="customer_receipt", order__isnull=True, plan__isnull=True), status="confirmed"
     )
 
 
@@ -2570,6 +2571,7 @@ def finance_dashboard(request):
     profits = [order_profit_summary(order) for order in period_orders] if can_view_orders and can_view_purchases else []
     purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
     order_expense_rmb = sum((row["expense_rmb"] for row in profits), Decimal("0"))
+    receivable_reduction_rmb = sum((row["receivable_reduction_rmb"] for row in profits), Decimal("0"))
     estimated_profit_rmb = sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
     cash_all = _finance_cash(request.user, start, end)
     missing_cash_rates = cash_all.filter(Q(reference_rate_missing=True) | Q(exchange_rate__isnull=True)).count()
@@ -2590,7 +2592,7 @@ def finance_dashboard(request):
     all_advances = _finance_advances(request.user)
     missing_advance_rates = all_advances.filter(Q(reference_rate_missing=True) | Q(exchange_rate__isnull=True)).count()
     advances = all_advances.filter(reference_rate_missing=False, exchange_rate__isnull=False)
-    unallocated = lambda direction: sum(((row.allocation_capacity - row.allocated_amount) * row.exchange_rate for row in advances if row.direction == direction), Decimal("0"))
+    unallocated = lambda direction: sum((row.unallocated_cash_amount * row.exchange_rate for row in advances if row.direction == direction), Decimal("0"))
     due_items = [
         {
             "id": row.id, "direction": row.direction, "contract_no": row.order.order_no if row.order_id else row.purchase_order.purchase_no,
@@ -2603,7 +2605,7 @@ def finance_dashboard(request):
     payload = {"metrics": {
         "receivable_count": receivables.count(), "receivable_rmb": remaining(receivables),
         "payable_count": payables.count(), "payable_rmb": remaining(payables), "sales_rmb": sales_rmb, "monthly_sales_rmb": sales_rmb,
-        "purchase_cost_rmb": purchase_cost_rmb, "order_expense_rmb": order_expense_rmb, "estimated_profit_rmb": estimated_profit_rmb,
+        "purchase_cost_rmb": purchase_cost_rmb, "order_expense_rmb": order_expense_rmb, "receivable_reduction_rmb": receivable_reduction_rmb, "estimated_profit_rmb": estimated_profit_rmb,
         "income_rmb": income, "expense_rmb": expense, "net_cash_rmb": income - expense,
         "advance_receipt_rmb": unallocated("income"), "advance_payment_rmb": unallocated("expense"),
     }, "period": {"date_from": start, "date_to": end}, "due_items": due_items,
@@ -2615,8 +2617,11 @@ def finance_dashboard(request):
     payload["cash_basis"] = book_rmb_metadata()
     payload["cash_basis"]["missing_reference_count"] = missing_cash_rates
     payload["cash_basis"]["missing_advance_reference_count"] = missing_advance_rates
+    payload["cash_basis"]["incomplete_profit_count"] = sum(1 for item in profits if item["reference_incomplete"])
     if missing_cash_rates or missing_advance_rates:
         payload["cash_basis"]["note"] += f" 有 {missing_cash_rates} 笔期间流水及 {missing_advance_rates} 笔预收预付未录入参考汇率，相关人民币汇总暂不包含这些金额。"
+    if payload["cash_basis"]["incomplete_profit_count"]:
+        payload["cash_basis"]["note"] += f" 有 {payload['cash_basis']['incomplete_profit_count']} 个订单的费用缺少参考汇率，预计利润暂未包含这些费用。"
 
     if exporting:
         from .reporting import safe_csv
@@ -2650,7 +2655,8 @@ def finance_dashboard_details(request):
         "sales_rmb": ("合同销售额", "order_date", "人民币", "订单日期范围内的正式销售订单；包含已批准合同变更，变更不分配至商品行。"),
         "purchase_cost_rmb": ("订单采购归属成本", "order_date", "人民币", "沿用现有订单采购归属成本服务，按订单日期统计。"),
         "order_expense_rmb": ("订单费用", "order_date", "人民币", "沿用现有订单利润服务中的已确认订单费用，按订单日期统计。"),
-        "estimated_profit_rmb": ("预计订单利润", "order_date", "人民币", "经营估算：合同销售额 − 采购归属成本 − 订单费用，不代表会计利润。"),
+        "receivable_reduction_rmb": ("核准非现金抵减", "order_date", "人民币折算参考", "按订单日期统计有效非现金抵减，已计入订单金额的优惠不重复计算。"),
+        "estimated_profit_rmb": ("预计订单利润", "order_date", "人民币", "经营估算：合同销售额减采购归属成本、订单费用及有效非现金抵减，不代表会计利润。"),
         "income_rmb": ("账面收入（折算参考）", "transaction_date", "人民币折算参考", "仅统计已确认财务流水，按流水发生日期和既有人民币折算参考口径。"),
         "expense_rmb": ("账面支出（折算参考）", "transaction_date", "人民币折算参考", "仅统计已确认财务流水，按流水发生日期和既有人民币折算参考口径。"),
         "net_cash_rmb": ("账面净收支（折算参考）", "transaction_date", "人民币折算参考", "已确认账面收入减已确认账面支出；不代表银行实际到账或银行账户余额。"),
@@ -2680,7 +2686,7 @@ def finance_dashboard_details(request):
     can_view_purchases = user_can(request.user, "purchases", "view")
     if metric in {"sales_rmb", "receivable_count", "receivable_rmb"} and not can_view_orders:
         require_finance_permission(request.user, "orders", "view")
-    if metric in {"purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb"} and not (can_view_orders and can_view_purchases):
+    if metric in {"purchase_cost_rmb", "order_expense_rmb", "receivable_reduction_rmb", "estimated_profit_rmb"} and not (can_view_orders and can_view_purchases):
         require_finance_permission(request.user, "purchases", "view")
         require_finance_permission(request.user, "orders", "view")
     if metric in {"payable_count", "payable_rmb"} and not can_view_purchases:
@@ -2706,7 +2712,7 @@ def finance_dashboard_details(request):
             "detail_label": "查看订单",
         }
 
-    if metric in {"sales_rmb", "purchase_cost_rmb", "order_expense_rmb", "estimated_profit_rmb"}:
+    if metric in {"sales_rmb", "purchase_cost_rmb", "order_expense_rmb", "receivable_reduction_rmb", "estimated_profit_rmb"}:
         orders = _finance_period_orders(request.user, start, end, can_view_orders)
         for order in orders:
             sales = order.total_amount * order.exchange_rate
@@ -2718,12 +2724,15 @@ def finance_dashboard_details(request):
                 amount = {
                     "purchase_cost_rmb": profit["purchase_cost_rmb"],
                     "order_expense_rmb": profit["expense_rmb"],
+                    "receivable_reduction_rmb": profit["receivable_reduction_rmb"],
                     "estimated_profit_rmb": profit["estimated_profit_rmb"],
                 }[metric]
                 note = (
                     f"销售额 ¥{sales}；采购归属成本 ¥{profit['purchase_cost_rmb']}；"
-                    f"订单费用 ¥{profit['expense_rmb']}。"
+                    f"订单费用 ¥{profit['expense_rmb']}；有效非现金抵减 ¥{profit['receivable_reduction_rmb']}。"
                 )
+                if profit["reference_incomplete"]:
+                    note += "部分费用未录入参考汇率，预计利润暂未包含这些费用。"
             total_amount += amount
             rows.append(order_row(order, amount, note))
     elif metric in {"income_rmb", "expense_rmb", "net_cash_rmb"}:
@@ -2788,7 +2797,7 @@ def finance_dashboard_details(request):
         advances = _finance_advances(request.user).filter(direction=direction, reference_rate_missing=False, exchange_rate__isnull=False)
         advances = advances.select_related("customer", "supplier", "order", "purchase_order")
         for row in advances:
-            amount = (row.allocation_capacity - row.allocated_amount) * row.exchange_rate
+            amount = row.unallocated_cash_amount * row.exchange_rate
             total_amount += amount
             relation = "客户" if row.customer_id and not user_can(request.user, "customers", "view") else (row.customer.name if row.customer_id else "供应商")
             if row.supplier_id and user_can(request.user, "suppliers", "view"):
@@ -2886,11 +2895,29 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         if serializer.validated_data.get("plan") or serializer.validated_data.get("kind") in {"customer_receipt", "supplier_payment", "refund", "supplier_refund", "unallocated_advance", "unallocated_payment"}:
             require_finance_permission(request.user, "finance", "update")
         try:
-            row = record_transaction(serializer.validated_data.copy())
+            structured = serializer.validated_data.get("kind") == "customer_receipt" and (
+                "receipt_adjustments" in request.data or "plan_allocations" in request.data
+                or (not request.data.get("order") and not request.data.get("plan")))
+            if structured:
+                row, created = record_customer_receipt(serializer.validated_data.copy(), request.user)
+            else:
+                row = record_transaction(serializer.validated_data.copy())
+                created = True
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=row, action="create", action_label="登记财务流水")
-        return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED)
+        if created:
+            record_operation(request=request, instance=row, action="create", action_label="登记财务流水")
+            if structured:
+                for adjustment in row.receipt_adjustments.select_related("writeoff").order_by("pk"):
+                    record_operation(request=request, instance=adjustment, action="create", action_label="登记客户收款扣减",
+                        metadata={"transaction_id": row.pk, "nature": adjustment.nature, "handling": adjustment.handling,
+                            "amount": str(adjustment.amount), "currency": adjustment.currency, "plan_id": adjustment.plan_id,
+                            "evidence_id": adjustment.evidence_id, "contract_change_id": adjustment.contract_change_id})
+                    if adjustment.writeoff_id:
+                        record_operation(request=request, instance=adjustment.writeoff, action="create", action_label="登记应收非现金抵减",
+                            metadata={"transaction_id": row.pk, "plan_id": adjustment.plan_id, "amount": str(adjustment.amount),
+                                "nature": adjustment.writeoff.nature, "confirmed_actor": adjustment.writeoff.confirmed_actor})
+        return Response(self.get_serializer(row).data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path="voucher-upload", parser_classes=[MultiPartParser, FormParser])
     def voucher_upload(self, request):

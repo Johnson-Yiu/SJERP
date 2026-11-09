@@ -108,12 +108,6 @@ function directionLabel(value) { return value === 'income' ? '流入' : value ==
 function sourceLabel(row) { return `${row.transaction_no || `流水 #${row.id}`} · ${row.currency} ${money(row.amount, row.currency)}` }
 function allocationFor(id) { return allocations.value.find(item => item.id === id) }
 function needsExplicitPrecision(value, currency) { const digits = currency === 'JPY' ? 0 : 2; return String(value).split('.')[1]?.length > digits }
-function exactCashAmount(value, currency) {
-  const digits = currency === 'JPY' ? 0 : 2
-  const [whole, fraction = ''] = String(value ?? '').split('.')
-  if (/[^0]/.test(fraction.slice(digits))) return ''
-  return digits ? `${whole}.${fraction.slice(0, digits).padEnd(digits, '0')}` : whole
-}
 function sourceTotal() { return allocations.value.reduce((total, item) => total + (Number(item.amount) || 0), 0) }
 function grossRmbAmount() { return form.kind === 'fx_settlement' ? Number(form.gross_rmb_amount) || 0 : Number(form.bank_net_amount) || 0 }
 function bankNetAmount() {
@@ -174,7 +168,7 @@ async function loadSources() {
     sourceRows.value = response.data.results || []
     if (linked.value && props.receipt?.id) {
       allocations.value = sourceRows.value.filter(row => Number(row.remaining_candidate_amount) > 0 && !row.blocked_reason)
-        .map(row => { const amount = exactCashAmount(row.remaining_candidate_amount, currency); return { id: row.id, amount, verified: Boolean(amount) } })
+        .map(row => ({ id: row.id, amount: '', verified: false }))
       allocationAmountBaseline.clear()
       allocations.value.forEach(item => allocationAmountBaseline.set(item.id, String(item.amount)))
     }
@@ -211,8 +205,10 @@ function clientError() {
   } else if (!form.bank_net_amount || Number(form.bank_net_amount) <= 0) return '请填写大于0的银行净额。'
   if (linked.value && !props.receipt?.id) return '请先保存本笔收款，再继续登记结汇。'
   if (!allocations.value.length) return linked.value ? '本笔收款没有可用的结汇来源额度。' : '请至少选择一条来源流水。'
-  if (allocations.value.some(item => !item.amount || Number(item.amount) <= 0)) return '每条来源都要填写大于0的分配金额。'
-  if (allocations.value.some(item => item.verified !== true)) return '请逐条核实来源流水后再预览。'
+  const selectedSources = allocations.value.filter(item => String(item.amount ?? '').trim() !== '')
+  if (!selectedSources.length || selectedSources.some(item => !Number.isFinite(Number(item.amount)) || Number(item.amount) <= 0)) return '请填写大于0的本次兑换金额。'
+  if (selectedSources.some(item => Number(item.amount) > Number(sourceRows.value.find(row => row.id === item.id)?.remaining_candidate_amount))) return '本次兑换金额不能超过该笔收款的可用金额。'
+  if (selectedSources.some(item => item.verified !== true)) return '请逐条核实本次使用的来源流水后再预览。'
   if (form.kind === 'fx_settlement' && form.currency === 'CNY') return '结汇来源必须是外币；人民币直接收付请选择对应类型。'
   if (form.kind === 'fx_settlement' && form.direction !== 'income') return '结汇只支持人民币资金流入。'
   if (form.fee_for !== '' && form.fee_for !== null && optionalSettlementId(form.fee_for) === null) return '请选择有效的结汇事件，或选择“不关联结汇”。'
@@ -240,7 +236,7 @@ function closeForm() {
 }
 async function uploadPrivateVoucher() {
   const existing = formStep.value === 'review' ? selected.value : null
-  const ids = existing ? existing.sources.map(s => s.transaction_id) : allocations.value.map(s => s.id)
+  const ids = existing ? existing.sources.map(s => s.transaction_id) : allocations.value.filter(s => Number(s.amount) > 0).map(s => s.id)
   if (!voucherFile.value || !ids.length) { error.value = '请先选择来源流水，再选择实际凭证文件。'; return }
   voucherUploading.value = true; error.value = ''
   try {
@@ -331,6 +327,15 @@ watch(() => props.receipt, receipt => {
   if (receipt?.id) { if (receipt.currency) form.currency = receipt.currency; void loadSources(); if (!events.value.length) void loadEvents() }
   else { sourceRows.value = []; allocations.value = []; sourceLoading.value = false }
 }, { immediate: true, deep: false })
+watch(() => allocations.value.filter(item => Number(item.amount) > 0).map(item => item.id).sort((a, b) => a - b).join(','), (next, previous) => {
+  if (next !== previous && form.private_voucher && formStep.value === 'form') {
+    form.private_voucher = null
+    form.evidence_sha256 = ''
+    if (form.evidence_reference.startsWith('PRIVATE-')) form.evidence_reference = ''
+    voucherFile.value = null
+    notice.value = '结汇来源已变化，请重新上传银行凭证。'
+  }
+})
 watch([form, allocations], () => {
   if (formStep.value === 'form') {
     const presentIds = new Set()
@@ -428,9 +433,9 @@ onMounted(() => { if (!props.initialEvent) { if (!linked.value) { clearLegacyDra
         <p v-if="form.private_voucher" class="wide field-hint">实际凭证已绑定，确认时系统会再次校验文件。</p>
         <label class="wide">核对说明<textarea v-model="form.evidence_note" maxlength="500" rows="2" placeholder="记录银行凭证核对结果"></textarea></label>
       </div><p v-if="!sourceAccountOptions.length || !rmbAccountOptions.length || accountError" class="field-hint" role="status">{{ accountError || '暂无匹配的资金账户。请先在财务台账登记对应币种账户，并联系系统管理员完成账户配置。' }}</p></fieldset>
-      <div class="linked-receipt-summary"><p>关联订单：<strong>{{ props.receipt?.order_no || props.receipt?.orders?.[0]?.order_no || props.order?.order_no || '保存后读取' }}</strong></p><p>财务流水：<strong>{{ props.receipt?.transaction_no || '收款保存后读取' }}</strong></p><p class="field-hint">结汇来源只取本笔已保存收款及其拆分流水；未分配预收单独列示，不计作订单计划核销。</p></div>
+      <div class="linked-receipt-summary"><p>关联订单：<strong>{{ [...new Set([props.receipt?.order_no, ...(props.receipt?.orders || []).map(order => order.order_no), ...(props.receipt?.allocations || []).filter(item => item.is_active).map(item => item.contract_no), props.order?.order_no].filter(Boolean))].join('、') || '未关联订单' }}</strong></p><p>财务流水：<strong>{{ props.receipt?.transaction_no || '收款保存后读取' }}</strong></p><p class="field-hint">填写本次兑换金额；未填写的来源本次不兑换，剩余金额可继续结汇。</p></div>
       <p v-if="sourceError" class="error" role="alert">{{ sourceError }}</p><p v-else-if="sourceLoading" class="field-hint" role="status">正在读取已保存收款流水…</p>
-      <div v-if="allocations.length" class="allocation-table"><table><thead><tr><th>来源流水</th><th>类型</th><th>可用金额</th><th>本次结汇</th><th>核实</th></tr></thead><tbody><tr v-for="item in allocations" :key="item.id"><td>{{ sourceRows.find(row => row.id === item.id)?.transaction_no }}</td><td>{{ sourceRows.find(row => row.id === item.id)?.kind === 'unallocated_advance' ? '未分配预收款' : '客户收款' }}</td><td>{{ form.currency }} {{ money(sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount, form.currency) }}</td><td>{{ form.currency }} {{ money(item.amount, form.currency) }}</td><td>已核实</td></tr></tbody></table><p class="allocation-total">本次结汇来源合计 {{ form.currency }} {{ money(sourceTotal(), form.currency) }}</p></div>
+      <div v-if="allocations.length" class="allocation-table"><table><thead><tr><th>来源流水</th><th>类型</th><th>可用金额</th><th>本次兑换</th><th>核实</th></tr></thead><tbody><tr v-for="item in allocations" :key="item.id"><td>{{ sourceRows.find(row => row.id === item.id)?.transaction_no }}</td><td>{{ sourceRows.find(row => row.id === item.id)?.kind === 'unallocated_advance' ? '未分配预收款' : '客户收款' }}</td><td>{{ form.currency }} {{ money(sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount, form.currency) }}</td><td><input v-model="item.amount" type="text" inputmode="decimal" aria-label="本次兑换金额" @input="markAllocationEdited(item)"></td><td><label class="verification-toggle"><input v-model="item.verified" type="checkbox" :disabled="!item.amount"><span>{{ item.verified ? '已核实' : '待核实' }}</span></label></td></tr></tbody></table><p class="allocation-total">本次结汇来源合计 {{ form.currency }} {{ money(sourceTotal(), form.currency) }}</p></div>
       <p v-if="preview" class="preview-box" role="status"><strong>结汇信息已核对</strong>：来源合计 {{ form.currency }} {{ money(preview.source_total, form.currency) }}，银行净额 CNY {{ money(preview.bank_net_amount) }}。来源额度尚未占用。</p>
       <p v-if="error" class="error" role="alert">{{ error }}</p>
       <footer class="dialog-actions"><button v-if="!preview" type="button" class="primary" :disabled="saving || !props.receipt?.id" @click="previewEvent">{{ saving ? '核对中…' : '预览结汇信息' }}</button><button v-else type="button" class="primary" :disabled="saving" @click="registerDraft">{{ saving ? '登记中…' : '登记待确认结汇' }}</button></footer>

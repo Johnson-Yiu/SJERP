@@ -2085,7 +2085,29 @@ class Transaction(TimestampedModel):
         return self.rmb_amount or self.amount * self.exchange_rate
 
     @property
+    def unallocated_cash_amount(self):
+        used = sum((row.cash_amount if row.cash_amount is not None else row.amount
+                    for row in self.allocations.filter(is_active=True)), Decimal("0"))
+        return max(self.amount - used, Decimal("0"))
+
+    @property
     def allocation_capacity(self):
+        if self.kind == "customer_receipt" and self.direction == "income" and not self.order_id and not self.plan_id:
+            fees = self.receipt_adjustments.filter(nature="bank_fee", handling="company").select_related("evidence")
+            from .services.finance_closeout import voucher
+            from .services.cash_events import family
+            family_ids = [row.pk for row in family(self)]
+            total = Decimal("0")
+            for item in fees:
+                try:
+                    proof = voucher(item.evidence_id, scope="transaction")
+                    if (proof.bank_sources or proof.transactions.exclude(pk__in=family_ids).exists()
+                            or proof.receipt_adjustments.exclude(transaction_id__in=family_ids).exists()):
+                        continue
+                except Exception:
+                    continue
+                total += item.amount
+            return self.amount + total
         if (self.kind == "unallocated_advance" and self.direction == "income" and self.fee_responsibility == "company"
                 and self.fee_evidence_id and self.bank_fee_amount > 0
                 and self.remittance_amount is not None and self.remittance_amount - self.amount == self.bank_fee_amount

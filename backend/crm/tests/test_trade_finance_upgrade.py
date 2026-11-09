@@ -108,13 +108,13 @@ class TradeFinanceUpgradeTests(TestCase):
         plan.status = "settled"
         plan.save(update_fields=["status"])
         self.assertEqual(order_receivable_state(self.order, [plan])["state"], "settled")
-        self.assertEqual(order_profit_summary(self.order)["sales_rmb"], Decimal("630"))
+        self.assertEqual(order_profit_summary(self.order)["receivable_reduction_rmb"], Decimal("70"))
         FinancePlanWriteoffCorrection.objects.create(writeoff=writeoff, amount=4, reason="更正抹零金额", request_key="read-correction", request_hash="b", actor={})
         plan.status = "open"
         plan.save(update_fields=["status"])
         self.assertEqual(order_receivable_state(self.order, [plan])["state"], "partial")
         self.assertEqual(plan.remaining_amount, Decimal("4"))
-        self.assertEqual(order_profit_summary(self.order)["sales_rmb"], Decimal("658"))
+        self.assertEqual(order_profit_summary(self.order)["receivable_reduction_rmb"], Decimal("42"))
 
     def test_completed_receipts_do_not_reduce_another_open_purchase_in_transit(self):
         self.receive("10")

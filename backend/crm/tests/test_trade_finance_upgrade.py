@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
 from django.db import connection
@@ -7,8 +8,9 @@ from django.test.utils import CaptureQueriesContext
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from crm.models import AdvanceAllocation, Customer, GoodsReceipt, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseOrder, Shipment, SKU, Supplier, Transaction
-from crm.services.finance import allocate_advance, ensure_default_payment_plans, record_contract_payment, record_transaction, void_transaction
+from crm.models import AdvanceAllocation, Customer, FinancePlanWriteoff, FinancePlanWriteoffCorrection, GoodsReceipt, InventoryMovement, InventoryReservation, Order, PaymentPlan, Product, PurchaseOrder, Shipment, SKU, Supplier, Transaction
+from crm.services.finance import allocate_advance, ensure_default_payment_plans, order_receivable_state, record_contract_payment, record_transaction, void_transaction
+from crm.services.profit import order_profit_summary
 from crm.services.fulfillment import allocate_order, confirm_shipment, order_item_metrics, record_receipt, reverse_receipt, reverse_shipment, sku_metrics
 from crm.services.purchase_costs import rebuild_default_cost_allocations
 
@@ -64,6 +66,55 @@ class TradeFinanceUpgradeTests(TestCase):
 
     def plan(self):
         return PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=100)
+
+    def test_customer_receipt_settles_selected_plan_first(self):
+        first = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=50, due_date=self.day)
+        selected = PaymentPlan.objects.create(order=self.order, direction="receivable", currency="USD", planned_amount=50, due_date=self.day + timedelta(days=1))
+        row = record_transaction({"plan": selected, "kind": "customer_receipt", "amount": Decimal("20"), "category": "客户收款"})
+        first.refresh_from_db()
+        selected.refresh_from_db()
+        self.assertEqual(row.plan_id, selected.pk)
+        self.assertEqual(selected.settled_amount, Decimal("20"))
+        self.assertEqual(first.settled_amount, Decimal("0"))
+
+    def test_historical_receipt_without_reference_rate_is_not_converted(self):
+        from crm.serializers import TransactionSerializer
+        receipt = Transaction.objects.create(transaction_no="UP-MISSING-RATE", transaction_date=self.day,
+            direction="income", kind="unallocated_advance", category="客户收款", amount=80,
+            currency="USD", exchange_rate=None, reference_rate_missing=True, customer=self.customer,
+            status="confirmed")
+        data = TransactionSerializer(receipt).data
+        self.assertIsNone(data["exchange_rate"])
+        self.assertIsNone(data["rmb_amount"])
+        self.assertTrue(data["reference_rate_missing"])
+        response = self.client.get("/api/finance-dashboard/", {"date_from": "2026-09-01", "date_to": "2026-09-30"})
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["cash_basis"]["missing_reference_count"], 1)
+        self.assertIn("未录入参考汇率", response.data["cash_basis"]["note"])
+        self.assertEqual(response.data["metrics"]["income_rmb"], 0)
+        from crm.services.cash_events import source_snapshot, source_snapshot_matches
+        receipt.refresh_from_db()
+        old_snapshot = source_snapshot(receipt)
+        old_snapshot.update(remittance_amount=None, bank_fee_amount="0.0000", fee_responsibility="", settlement_amount="0.0000", reference_rate_missing=True, exchange_rate=None)
+        self.assertTrue(source_snapshot_matches(receipt, old_snapshot))
+        old_snapshot["bank_fee_amount"] = "1.0000"
+        self.assertFalse(source_snapshot_matches(receipt, old_snapshot))
+
+    def test_effective_writeoff_updates_order_state_and_profit(self):
+        plan = self.plan()
+        receipt = record_transaction({"plan": plan, "kind": "customer_receipt", "amount": Decimal("90"), "category": "客户收款"})
+        writeoff = FinancePlanWriteoff.objects.create(plan=plan, source_transaction=receipt, amount=10, reason="已授权抹零", request_key="read-writeoff", request_hash="a", confirmed_actor={})
+        plan.refresh_from_db()
+        plan.status = "settled"
+        plan.save(update_fields=["status"])
+        self.assertEqual(order_receivable_state(self.order, [plan])["state"], "settled")
+        self.assertEqual(order_profit_summary(self.order)["receivable_reduction_rmb"], Decimal("70"))
+        FinancePlanWriteoffCorrection.objects.create(writeoff=writeoff, amount=4, reason="更正抹零金额", request_key="read-correction", request_hash="b", actor={})
+        plan.status = "open"
+        plan.save(update_fields=["status"])
+        self.assertEqual(order_receivable_state(self.order, [plan])["state"], "partial")
+        self.assertEqual(plan.remaining_amount, Decimal("4"))
+        self.assertEqual(order_profit_summary(self.order)["receivable_reduction_rmb"], Decimal("42"))
 
     def test_completed_receipts_do_not_reduce_another_open_purchase_in_transit(self):
         self.receive("10")
@@ -449,10 +500,10 @@ class TradeFinanceUpgradeTests(TestCase):
 
     def test_manual_batch_cannot_overdraw_same_sku_or_spoof_automatic_movement(self):
         self.stock(5)
-        response = self.client.post("/api/inventory-movements/batch/", {"type": "sample_out", "movement_date": self.day.isoformat(), "items": [{"sku": self.sku.pk, "quantity": 3}, {"sku": self.sku.pk, "quantity": 3}]}, format="json")
+        response = self.client.post("/api/inventory-movements/batch/", {"type": "sample_out", "movement_date": self.day.isoformat(), "items": [{"sku": self.sku.pk, "quantity": 3}, {"sku": self.sku.pk, "quantity": 3}]}, format="json", HTTP_IDEMPOTENCY_KEY="trade-batch-insufficient")
         self.assertEqual(response.status_code, 400, response.data)
         self.assertEqual(sku_metrics(self.sku)["actual_quantity"], 5)
-        response = self.client.post("/api/inventory-movements/batch/", {"type": "adjust_in", "movement_date": self.day.isoformat(), "items": [{"sku": self.sku.pk, "quantity": 1, "type": "sale_out"}]}, format="json")
+        response = self.client.post("/api/inventory-movements/batch/", {"type": "adjust_in", "movement_date": self.day.isoformat(), "items": [{"sku": self.sku.pk, "quantity": 1, "type": "sale_out"}]}, format="json", HTTP_IDEMPOTENCY_KEY="trade-batch-invalid")
         self.assertEqual(response.status_code, 400)
 
     def test_consumed_manual_inbound_cannot_be_deleted(self):
@@ -469,7 +520,7 @@ class TradeFinanceUpgradeTests(TestCase):
         ]
         self.purchase.save(update_fields=["payment_terms_snapshot"])
         ensure_default_payment_plans(self.purchase)
-        response = self.client.post(f"/api/purchase-orders/{self.purchase.pk}/pay/", {"transaction_date": self.day.isoformat(), "amount": "50", "currency": "USD", "exchange_rate": "7"}, format="json")
+        response = self.client.post(f"/api/purchase-orders/{self.purchase.pk}/pay/", {"transaction_date": self.day.isoformat(), "amount": "50", "currency": "USD", "exchange_rate": "7"}, format="json", HTTP_IDEMPOTENCY_KEY="trade-purchase-payment")
         self.assertEqual(response.status_code, 201, response.data)
         self.assertFalse(self.purchase.payment_plans.filter(status="open").exists())
         self.assertEqual(self.purchase.paid_amount, 50)
@@ -547,7 +598,7 @@ class TradeFinanceUpgradeTests(TestCase):
         plan = self.plan()
         url = f"/api/payment-plans/{plan.pk}/settle/"
         for payload in ({}, {"amount": "NaN"}, {"amount": "1", "exchange_rate": "0"}, {"amount": "1", "transaction_date": "invalid"}, {"amount": "1", "purchase_order": self.purchase.pk}):
-            response = self.client.post(url, payload, format="json")
+            response = self.client.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="invalid-plan-settle")
             self.assertEqual(response.status_code, 400, response.data)
         self.assertFalse(Transaction.objects.exists())
 
@@ -631,7 +682,7 @@ class TradeFinanceUpgradeTests(TestCase):
         self.assertEqual(order_item_metrics(self.item)['in_transit_quantity'], 4)
 
     def test_manual_replenishment_reserves_stock_for_existing_demand(self):
-        response = self.client.post("/api/inventory-movements/", {"movement_date": self.day.isoformat(), "type": "adjust_in", "sku": self.sku.pk, "quantity": 4}, format="json")
+        response = self.client.post("/api/inventory-movements/", {"movement_date": self.day.isoformat(), "type": "adjust_in", "sku": self.sku.pk, "quantity": 4}, format="json", HTTP_IDEMPOTENCY_KEY="trade-inventory-in")
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(sku_metrics(self.sku)["reserved_quantity"], 4)
 
@@ -684,11 +735,41 @@ class TradeFinanceUpgradeTests(TestCase):
     def test_allocate_api_returns_updated_plan_and_trace(self):
         plan = self.plan()
         advance = record_transaction({'direction': 'income', 'kind': 'unallocated_advance', 'category': 'advance', 'amount': 10, 'currency': 'USD', 'customer': self.customer})
-        response = self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '10'}, format='json')
+        response = self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '10'}, format='json', HTTP_IDEMPOTENCY_KEY='allocation-api')
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data['settled_amount'], '10.0000')
         response = self.client.get(f'/api/transactions/{advance.pk}/')
         self.assertEqual(response.data['allocations'][0]['plan'], plan.pk)
+
+    def test_allocate_audit_failure_rolls_back_business_write(self):
+        plan = self.plan()
+        advance = record_transaction({'direction': 'income', 'kind': 'unallocated_advance', 'category': 'advance', 'amount': 50, 'currency': 'USD', 'customer': self.customer})
+        with patch('crm.views.record_operation', side_effect=RuntimeError('audit unavailable')):
+            with self.assertRaises(RuntimeError):
+                self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '50'}, format='json', HTTP_IDEMPOTENCY_KEY='allocation-audit')
+        plan.refresh_from_db()
+        advance.refresh_from_db()
+        self.assertEqual(plan.settled_amount, 0)
+        self.assertEqual(advance.allocated_amount, 0)
+        self.assertFalse(AdvanceAllocation.objects.filter(advance=advance).exists())
+        response = self.client.post(f'/api/transactions/{advance.pk}/allocate/', {'plan': plan.pk, 'amount': '50'}, format='json', HTTP_IDEMPOTENCY_KEY='allocation-audit')
+        self.assertEqual(response.status_code, 200, response.data)
+        plan.refresh_from_db()
+        self.assertEqual(plan.settled_amount, 50)
+
+    def test_receipt_audit_failure_rolls_back_business_write(self):
+        plan = self.plan()
+        payload = {'plan': plan.pk, 'transaction_date': self.day.isoformat(), 'direction': 'income', 'kind': 'customer_receipt', 'category': '客户收款', 'amount': '50', 'currency': 'USD', 'exchange_rate': '7'}
+        with patch('crm.views.record_operation', side_effect=RuntimeError('audit unavailable')):
+            with self.assertRaises(RuntimeError):
+                self.client.post('/api/transactions/', payload, format='json', HTTP_IDEMPOTENCY_KEY='receipt-audit')
+        plan.refresh_from_db()
+        self.assertEqual(plan.settled_amount, 0)
+        self.assertFalse(Transaction.objects.exists())
+        response = self.client.post('/api/transactions/', payload, format='json', HTTP_IDEMPOTENCY_KEY='receipt-audit')
+        self.assertEqual(response.status_code, 201, response.data)
+        plan.refresh_from_db()
+        self.assertEqual(plan.settled_amount, 50)
 
     def _advance(self, number, *, purchase=False, amount=Decimal("50")):
         return Transaction.objects.create(

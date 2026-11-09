@@ -26,14 +26,20 @@ const currencies = [
   { value: 'JPY', label: 'JPY · 日元' },
 ]
 const events = ref([]), accounts = ref([]), accountError = ref('')
+const extraSources = ref([]), mergeOpen = ref(false), mergeLoading = ref(false), mergeQuery = ref('')
+const pendingAttempt = ref(null)
+const pendingStorageBlocked = ref(false)
+let receiptSourceIds = new Set()
 const error = ref(''), notice = ref(''), saving = ref(false), confirming = ref(false), cancelling = ref(false)
 const lookupLoading = ref(false), sourceLoading = ref(false), sourceError = ref(''), sourceSearch = ref('')
 const selected = ref(props.initialEvent), formStep = ref(props.initialEvent ? 'review' : 'form')
 const saveOutcome = ref(props.initialEvent ? 'saved' : 'not-submitted')
 const preview = ref(null), previewFingerprint = ref(''), previewRequestId = ref(0)
 const sourceRows = ref([]), allocations = ref([]), reviewConfirmed = ref(false)
-const duplicateCandidates = ref(null), duplicateReason = ref(''), cancelReason = ref(''), showCancelReason = ref(false)
+const duplicateCandidates = ref(null), duplicateReason = ref(''), sameFact = ref(''), cancelReason = ref(''), showCancelReason = ref(false)
+const confirmationAttempt = ref(null)
 const voucherFile = ref(null), voucherUploading = ref(false)
+const voucherName = ref('')
 const draftRestoredRequiresEvidence = ref(false)
 const draftStorageKey = 'sunjack:r1-fin-p2-b:cash-event-draft:v1'
 const identityStorageKey = storageKey('sunjack:cash-event:request-identity:v1')
@@ -51,11 +57,51 @@ function makeKey(prefix) {
   const uuid = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`
   return `P2B-${prefix}-${uuid}`.replace(/[^A-Za-z0-9_-]/g, '-')
 }
+function pendingStorageKey() { return linked.value ? (props.receipt?.id ? storageKey(`sunjack:cash-event:pending-receipt:${props.receipt.id}`) : '') : storageKey('sunjack:cash-event:pending-standalone') }
+function restorePendingAttempt() {
+  const key = pendingStorageKey()
+  if (!key) return
+  try {
+    const raw = window.sessionStorage.getItem(key)
+    const saved = JSON.parse(raw || 'null')
+    if (saved?.payload?.request_key && saved.payload.event_no && Array.isArray(saved.payload.sources)) { pendingAttempt.value = saved; saveOutcome.value = 'unknown'; notice.value = '上次结汇登记结果待确认，请按原内容核对。' }
+    else if (raw) { pendingStorageBlocked.value = true; error.value = '待核对记录不完整，请先核查资金登记结果，再处理浏览器中的异常记录。' }
+  } catch { pendingStorageBlocked.value = true; error.value = '无法读取待核对的结汇记录，请先检查浏览器存储。' }
+}
+function clearPendingAttempt() {
+  const key = pendingStorageKey()
+  if (key) window.sessionStorage.removeItem(key)
+  pendingAttempt.value = null
+}
+function persistPendingAttempt(payload) {
+  const key = pendingStorageKey()
+  if (!key) return false
+  try { const attempt = { payload }; window.sessionStorage.setItem(key, JSON.stringify(attempt)); pendingAttempt.value = attempt; return true }
+  catch { error.value = '无法保存本次结汇身份，请恢复浏览器存储后重试。'; return false }
+}
+function acceptRegistered(response) {
+  selected.value = response.data; formStep.value = 'review'; showCancelReason.value = false; preview.value = null; previewFingerprint.value = ''; reviewConfirmed.value = false
+  confirmationAttempt.value = null
+  try { clearPendingAttempt() } catch { /* Retrying the same stored identity remains safe. */ }
+  clearDraftSnapshot(); formGuard.markClean(); saveOutcome.value = 'saved'; emit('created', selected.value)
+}
+async function retryPendingAttempt() {
+  if (!pendingAttempt.value || saving.value) return
+  saving.value = true; error.value = ''; notice.value = ''
+  try { acceptRegistered(await api.post('/rmb-cash-events/', pendingAttempt.value.payload)); await loadEvents() }
+  catch (err) {
+    const status = err?.status || err?.response?.status
+    if ([400, 422].includes(status)) { try { clearPendingAttempt(); saveOutcome.value = 'failed' } catch { saveOutcome.value = 'unknown' } }
+    else saveOutcome.value = 'unknown'
+    error.value = apiErrorMessage(err) || (saveOutcome.value === 'failed' ? '登记未保存，请核对输入后重试。' : '登记结果仍待确认，请按原内容重试。')
+  }
+  finally { saving.value = false }
+}
 function snapshotForParent() {
   return { ...form, allocations: allocations.value, step: formStep.value, selected: selected.value?.id || null, voucherFile: voucherFile.value?.name || '', busy: saving.value || confirming.value || cancelling.value }
 }
 function resetForm() {
-  form.private_voucher = null; voucherFile.value = null
+  form.private_voucher = null; voucherFile.value = null; voucherName.value = ''
   Object.assign(form, {
     event_no: makeKey('EVENT'), request_key: makeKey('REQUEST'), kind: 'fx_settlement', currency: 'USD', direction: 'income',
     bank_date: today, bank_net_amount: '', gross_rmb_amount: '', actual_rate: '', fee_mode: 'none', fee_amount: '0', source_account: '', rmb_account: '',
@@ -63,7 +109,8 @@ function resetForm() {
     evidence_sha256: '', evidence_note: '', quoted_rate: '', fee_for: '',
   })
   allocations.value = []; preview.value = null; previewFingerprint.value = ''
-  reviewConfirmed.value = false; duplicateCandidates.value = null; duplicateReason.value = ''
+  extraSources.value = []; mergeOpen.value = false; mergeQuery.value = ''; receiptSourceIds = new Set(); pendingAttempt.value = null; pendingStorageBlocked.value = false
+  reviewConfirmed.value = false; duplicateCandidates.value = null; duplicateReason.value = ''; sameFact.value = ''
   draftRestoredRequiresEvidence.value = false; allocationAmountBaseline.clear()
   formStep.value = 'form'; saveOutcome.value = 'not-submitted'; showCancelReason.value = false
   cancelReason.value = ''; error.value = ''; sourceError.value = ''; sourceSearch.value = ''; notice.value = ''
@@ -106,24 +153,40 @@ function statusLabel(value) { return ({ pending: '待确认', confirmed: '已确
 function kindLabel(value) { return ({ fx_settlement: '外币结汇流入', cny_direct: '人民币直接收付', bank_fee: '独立银行扣费' })[value] || value || '—' }
 function directionLabel(value) { return value === 'income' ? '流入' : value === 'expense' ? '流出' : '—' }
 function sourceLabel(row) { return `${row.transaction_no || `流水 #${row.id}`} · ${row.currency} ${money(row.amount, row.currency)}` }
+const linkedOrderSummary = computed(() => {
+  const names = [...(props.receipt?.orders || []).map(row => row.order_no), ...(props.receipt?.allocations || []).filter(row => row.is_active && row.order).map(row => row.contract_no), props.receipt?.order_no, props.order?.order_no].filter(Boolean)
+  return [...new Set(names)].join('、') || '未关联订单'
+})
 function allocationFor(id) { return allocations.value.find(item => item.id === id) }
 function needsExplicitPrecision(value, currency) { const digits = currency === 'JPY' ? 0 : 2; return String(value).split('.')[1]?.length > digits }
-function exactCashAmount(value, currency) {
-  const digits = currency === 'JPY' ? 0 : 2
-  const [whole, fraction = ''] = String(value ?? '').split('.')
-  if (/[^0]/.test(fraction.slice(digits))) return ''
-  return digits ? `${whole}.${fraction.slice(0, digits).padEnd(digits, '0')}` : whole
+function decimalUnits(value, places) {
+  const text = String(value ?? '').trim()
+  if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(text)) return null
+  const [whole, fraction = ''] = text.split('.')
+  if (fraction.length > places) return null
+  return BigInt(whole || '0') * (10n ** BigInt(places)) + BigInt((fraction + '0'.repeat(places)).slice(0, places) || '0')
 }
-function sourceTotal() { return allocations.value.reduce((total, item) => total + (Number(item.amount) || 0), 0) }
+function unitText(value, places) {
+  const digits = value.toString().padStart(places + 1, '0')
+  return places ? `${digits.slice(0, -places)}.${digits.slice(-places)}` : digits
+}
+function sourceUnits() {
+  const places = form.currency === 'JPY' ? 0 : 2
+  return allocations.value.reduce((total, item) => total + (decimalUnits(item.amount, places) ?? 0n), 0n)
+}
+function sourceTotal() { return unitText(sourceUnits(), form.currency === 'JPY' ? 0 : 2) }
 function grossRmbAmount() { return form.kind === 'fx_settlement' ? Number(form.gross_rmb_amount) || 0 : Number(form.bank_net_amount) || 0 }
 function bankNetAmount() {
   if (form.kind !== 'fx_settlement') return String(form.bank_net_amount ?? '').trim()
-  const fee = form.fee_mode === 'included' ? Number(form.fee_amount) || 0 : 0
-  return Math.max(0, grossRmbAmount() - fee).toFixed(2)
+  const gross = decimalUnits(form.gross_rmb_amount, 2), fee = form.fee_mode === 'included' ? decimalUnits(form.fee_amount, 2) : 0n
+  return gross === null || fee === null || fee > gross ? '' : unitText(gross - fee, 2)
 }
 function actualRate() {
-  const total = sourceTotal()
-  return total > 0 ? (grossRmbAmount() / total).toFixed(6) : ''
+  const total = sourceUnits(), gross = decimalUnits(form.gross_rmb_amount, 2)
+  if (!total || gross === null) return ''
+  const scale = 10n ** BigInt(form.currency === 'JPY' ? 0 : 2)
+  const numerator = gross * scale * 1000000n, denominator = 100n * total
+  return unitText((numerator * 2n + denominator) / (2n * denominator), 6)
 }
 function filteredSources() {
   const keyword = sourceSearch.value.trim().toLowerCase()
@@ -142,7 +205,7 @@ function eventPayload() {
     ...(form.private_voucher ? { private_voucher: form.private_voucher } : {}),
     event_no: form.event_no.trim(), request_key: form.request_key.trim(), kind: form.kind, currency: form.currency,
     direction: form.direction, bank_date: form.bank_date, bank_net_amount: bankNetAmount(),
-    ...(form.kind === 'fx_settlement' ? { gross_rmb_amount: String(form.gross_rmb_amount ?? '').trim(), actual_rate: actualRate() } : {}), fee_mode: form.fee_mode,
+    ...(form.kind === 'fx_settlement' ? { gross_rmb_amount: String(form.gross_rmb_amount ?? '').trim() } : {}), fee_mode: form.fee_mode,
     fee_amount: form.fee_mode === 'included' ? String(form.fee_amount ?? '').trim() : '0', source_account: form.source_account.trim(), rmb_account: form.rmb_account.trim(),
     bank_reference: form.bank_reference.trim(), bank_counterparty: form.bank_counterparty.trim(), bank_summary: form.bank_summary.trim(), bank_transaction_id: form.bank_transaction_id.trim(),
     evidence_reference: form.evidence_reference.trim(), evidence_sha256: form.evidence_sha256.trim(), evidence_note: String(form.evidence_note || '').trim(),
@@ -173,8 +236,9 @@ async function loadSources() {
     if (requestId !== sourceRequestId || form.currency !== currency) return
     sourceRows.value = response.data.results || []
     if (linked.value && props.receipt?.id) {
+      receiptSourceIds = new Set(sourceRows.value.map(row => row.id))
       allocations.value = sourceRows.value.filter(row => Number(row.remaining_candidate_amount) > 0 && !row.blocked_reason)
-        .map(row => { const amount = exactCashAmount(row.remaining_candidate_amount, currency); return { id: row.id, amount, verified: Boolean(amount) } })
+        .map(row => ({ id: row.id, amount: '', verified: false }))
       allocationAmountBaseline.clear()
       allocations.value.forEach(item => allocationAmountBaseline.set(item.id, String(item.amount)))
     }
@@ -183,11 +247,25 @@ async function loadSources() {
     sourceRows.value = []; sourceError.value = apiErrorMessage(err) || '来源流水加载失败，请重试。'
   } finally { if (requestId === sourceRequestId) sourceLoading.value = false }
 }
+async function openMergeSources() {
+  if (mergeLoading.value || pendingAttempt.value) return
+  mergeOpen.value = true; mergeLoading.value = true; error.value = ''
+  try {
+    const response = await api.get('/rmb-cash-events/sources/', { params: { currency: form.currency } })
+    extraSources.value = (response.data.results || []).filter(row => ['customer_receipt', 'unallocated_advance'].includes(row.kind) && row.direction === 'income' && !row.blocked_reason && Number(row.remaining_candidate_amount) > 0 && !receiptSourceIds.has(row.id))
+  } catch (err) { error.value = apiErrorMessage(err) || '其他收款加载失败，请重试。' }
+  finally { mergeLoading.value = false }
+}
+function addMergeSource(row) {
+  if (allocationFor(row.id) || pendingAttempt.value) return
+  if (!sourceRows.value.some(item => item.id === row.id)) sourceRows.value.push(row)
+  allocations.value.push({ id: row.id, amount: '', verified: false })
+}
 function addSource(row) {
   if (linked.value || row.blocked_reason || row.remaining_candidate_amount === null || allocationFor(row.id)) return
   allocations.value.push({ id: row.id, amount: needsExplicitPrecision(row.remaining_candidate_amount, form.currency) ? '' : row.remaining_candidate_amount, verified: false })
 }
-function removeSource(id) { if (linked.value) return; allocations.value = allocations.value.filter(item => item.id !== id); allocationAmountBaseline.delete(id) }
+function removeSource(id) { if (linked.value && receiptSourceIds.has(id)) return; allocations.value = allocations.value.filter(item => item.id !== id); allocationAmountBaseline.delete(id) }
 function markAllocationEdited(item) { item.verified = false }
 function onKindChange() {
   if (form.kind === 'fx_settlement') { form.currency = form.currency === 'CNY' ? 'USD' : form.currency; form.direction = 'income'; form.fee_for = '' }
@@ -206,13 +284,18 @@ function clientError() {
   if (!form.source_account || !form.rmb_account) return sourceAccountOptions.value.length && rmbAccountOptions.value.length ? '请选择资金账户。' : '暂无匹配的资金账户；请先在财务台账登记对应币种账户，并联系系统管理员完成账户配置。'
   if (form.kind === 'fx_settlement') {
     if (!form.gross_rmb_amount || grossRmbAmount() <= 0) return '请填写大于0的扣费前人民币兑换额。'
+    if (decimalUnits(form.gross_rmb_amount, 2) === null || (form.fee_mode === 'included' && decimalUnits(form.fee_amount, 2) === null)) return '人民币兑换额和手续费最多填写两位小数。'
     if (form.fee_mode === 'included' && Number(form.fee_amount) > grossRmbAmount()) return '含扣手续费不能超过扣费前兑换额。'
     if (Number(bankNetAmount()) <= 0) return '银行净到账必须大于0。'
   } else if (!form.bank_net_amount || Number(form.bank_net_amount) <= 0) return '请填写大于0的银行净额。'
   if (linked.value && !props.receipt?.id) return '请先保存本笔收款，再继续登记结汇。'
   if (!allocations.value.length) return linked.value ? '本笔收款没有可用的结汇来源额度。' : '请至少选择一条来源流水。'
-  if (allocations.value.some(item => !item.amount || Number(item.amount) <= 0)) return '每条来源都要填写大于0的分配金额。'
-  if (allocations.value.some(item => item.verified !== true)) return '请逐条核实来源流水后再预览。'
+  const selectedSources = allocations.value.filter(item => String(item.amount ?? '').trim() !== '')
+  if (!selectedSources.length || selectedSources.some(item => !Number.isFinite(Number(item.amount)) || Number(item.amount) <= 0)) return '请填写大于0的本次兑换金额。'
+  if (selectedSources.some(item => decimalUnits(item.amount, form.currency === 'JPY' ? 0 : 2) === null)) return '本次兑换金额的小数位数与币种不符。'
+  if (selectedSources.some(item => Number(item.amount) > Number(sourceRows.value.find(row => row.id === item.id)?.remaining_candidate_amount))) return '本次兑换金额不能超过该笔收款的可用金额。'
+  if (selectedSources.some(item => item.verified !== true)) return '请逐条核实本次使用的来源流水后再预览。'
+  if (linked.value && !selectedSources.some(item => receiptSourceIds.has(item.id))) return '本次结汇须包含发起登记的原收款。'
   if (form.kind === 'fx_settlement' && form.currency === 'CNY') return '结汇来源必须是外币；人民币直接收付请选择对应类型。'
   if (form.kind === 'fx_settlement' && form.direction !== 'income') return '结汇只支持人民币资金流入。'
   if (form.fee_for !== '' && form.fee_for !== null && optionalSettlementId(form.fee_for) === null) return '请选择有效的结汇事件，或选择“不关联结汇”。'
@@ -232,6 +315,7 @@ function openCreate() {
   formGuard.markClean()
   const restored = restoreDraftSnapshot()
   if (restored) notice.value = '已恢复未完成的资金登记。请重新核对内容并上传实际凭证。'
+  restorePendingAttempt()
   void loadSources()
 }
 function closeForm() {
@@ -240,7 +324,7 @@ function closeForm() {
 }
 async function uploadPrivateVoucher() {
   const existing = formStep.value === 'review' ? selected.value : null
-  const ids = existing ? existing.sources.map(s => s.transaction_id) : allocations.value.map(s => s.id)
+  const ids = existing ? existing.sources.map(s => s.transaction_id) : allocations.value.filter(s => Number(s.amount) > 0).map(s => s.id)
   if (!voucherFile.value || !ids.length) { error.value = '请先选择来源流水，再选择实际凭证文件。'; return }
   voucherUploading.value = true; error.value = ''
   try {
@@ -248,11 +332,13 @@ async function uploadPrivateVoucher() {
     const proof = (await api.post('/rmb-cash-events/voucher-upload/', body)).data
     if (existing) selected.value = (await api.post(`/rmb-cash-events/${existing.id}/bind-voucher/`, { private_voucher: proof.id })).data
     else { form.private_voucher = proof.id; form.evidence_sha256 = proof.sha256; if (!form.evidence_reference) form.evidence_reference = `PRIVATE-${proof.id}`; preview.value = null }
-    notice.value = '实际凭证已保存，系统已完成文件校验。'
+    voucherName.value = proof.name || voucherFile.value?.name || ''
+    notice.value = `凭证上传成功：${voucherName.value}`
   } catch (err) { error.value = apiErrorMessage(err) }
   finally { voucherUploading.value = false }
 }
 async function previewEvent() {
+  if (pendingAttempt.value || pendingStorageBlocked.value) return
   error.value = ''; notice.value = ''; saveOutcome.value = 'submitting'
   const localError = clientError(); if (localError) { error.value = localError; saveOutcome.value = 'not-submitted'; return }
   saving.value = true
@@ -268,23 +354,27 @@ async function previewEvent() {
   finally { saving.value = false }
 }
 async function registerDraft() {
+  if (pendingAttempt.value || pendingStorageBlocked.value) return
   error.value = ''; notice.value = ''
   const localError = clientError(); if (localError) { error.value = localError; return }
   if (!preview.value || !previewFingerprint.value || payloadFingerprint(eventPayload()) !== previewFingerprint.value) { preview.value = null; previewFingerprint.value = ''; saveOutcome.value = 'not-submitted'; error.value = '预览已失效，请重新预览后再登记。'; return }
+  const payload = eventPayload()
+  if (!persistPendingAttempt(payload)) return
   saving.value = true; saveOutcome.value = 'submitting'; persistDraftSnapshot()
   try {
-    const response = await api.post('/rmb-cash-events/', eventPayload())
-    selected.value = response.data; formStep.value = 'review'; showCancelReason.value = false; preview.value = null; previewFingerprint.value = ''; reviewConfirmed.value = false
-    clearDraftSnapshot(); saveOutcome.value = 'saved'; notice.value = '结汇信息已登记，等待核对银行凭证。'
-    emit('created', response.data)
+    const response = await api.post('/rmb-cash-events/', payload)
+    acceptRegistered(response); notice.value = '结汇信息已登记，等待核对银行凭证。'
     await loadEvents()
   } catch (err) {
     const status = err?.status || err?.response?.status
-    saveOutcome.value = status && status < 500 && status !== 408 ? 'failed' : 'unknown'
+    const definiteFailure = status && status < 500 && ![408, 409].includes(status)
+    if (definiteFailure) { try { clearPendingAttempt() } catch { /* Preserve the identity if storage is unavailable. */ } }
+    saveOutcome.value = definiteFailure ? 'failed' : 'unknown'
     error.value = apiErrorMessage(err) || (saveOutcome.value === 'unknown' ? '登记结果尚未确认。请先核对资金记录，再决定是否重试。' : '登记失败，输入仍已保留。')
   } finally { saving.value = false }
 }
 async function lookupRequest() {
+  if (pendingAttempt.value) { await retryPendingAttempt(); return }
   if (!form.request_key || lookupLoading.value) return
   lookupLoading.value = true; error.value = ''
   try { selected.value = (await api.get('/rmb-cash-events/by-request-key/', { params: { request_key: form.request_key } })).data; formStep.value = 'review'; reviewConfirmed.value = false; clearDraftSnapshot(); formGuard.markClean(); notice.value = '已找到原资金事件。'; emit('created', selected.value); await loadEvents() }
@@ -296,22 +386,34 @@ async function lookupRequest() {
   finally { lookupLoading.value = false }
 }
 async function confirmEvent() {
-  if (!selected.value || confirming.value || !reviewConfirmed.value || !selected.value.private_voucher) return
+  if (!selected.value || confirming.value || (!confirmationAttempt.value && (!reviewConfirmed.value || !selected.value.private_voucher))) return
+  const wasRetry = Boolean(confirmationAttempt.value)
   confirming.value = true; error.value = ''; notice.value = ''
   try {
-    if (!duplicateCandidates.value) {
+    if (!confirmationAttempt.value && !duplicateCandidates.value) {
       duplicateCandidates.value = (await api.get(`/rmb-cash-events/${selected.value.id}/duplicate-candidates/`)).data
       if (duplicateCandidates.value.count) { error.value = '请核对疑似重复记录并填写放行说明，再次确认。'; return }
     }
-    const body = { voucher_checked: true }
-    if (duplicateCandidates.value.count) { body.duplicate_token = duplicateCandidates.value.token; body.duplicate_reason = duplicateReason.value.trim() }
+    const body = confirmationAttempt.value?.body || { voucher_checked: true }
+    if (!confirmationAttempt.value && duplicateCandidates.value.count) { body.duplicate_token = duplicateCandidates.value.token; body.duplicate_reason = duplicateReason.value.trim(); if (sameFact.value) body.same_fact = Number(sameFact.value) }
+    const storage = storageKey(`sunjack:cash-confirm:${selected.value.id}`)
+    try { window.sessionStorage.setItem(storage, JSON.stringify({ body })) }
+    catch { error.value = '无法保存本次核对身份，请恢复浏览器存储后重试。'; return }
+    confirmationAttempt.value = { body }
     selected.value = (await api.post(`/rmb-cash-events/${selected.value.id}/confirm/`, body)).data
+    try { window.sessionStorage.removeItem(storage); confirmationAttempt.value = null } catch { /* Exact replay remains safe. */ }
     notice.value = '资金事件已确认。'; reviewConfirmed.value = false; clearDraftSnapshot(); formGuard.markClean(); emit('updated', selected.value); await loadEvents()
-  } catch (err) { duplicateCandidates.value = null; error.value = apiErrorMessage(err) || '确认失败；记录仍保留为待确认。' }
+  } catch (err) {
+    const status = err?.status || err?.response?.status
+    if (!wasRetry && status && status < 500 && status !== 408) {
+      try { window.sessionStorage.removeItem(storageKey(`sunjack:cash-confirm:${selected.value.id}`)); confirmationAttempt.value = null } catch { /* Keep the original intent if storage is unavailable. */ }
+    }
+    duplicateCandidates.value = null; error.value = apiErrorMessage(err) || (confirmationAttempt.value ? '确认结果待核对，请按原内容重试。' : '确认失败；记录仍保留为待确认。')
+  }
   finally { confirming.value = false }
 }
 async function cancelDraft() {
-  if (!selected.value || cancelling.value || !cancelReason.value.trim()) return
+  if (!selected.value || cancelling.value || confirmationAttempt.value || !cancelReason.value.trim()) return
   cancelling.value = true; error.value = ''; notice.value = ''
   try {
     selected.value = (await api.post(`/rmb-cash-events/${selected.value.id}/cancel/`, { reason: cancelReason.value.trim() })).data
@@ -320,7 +422,7 @@ async function cancelDraft() {
   } catch (err) { error.value = apiErrorMessage(err) || '草稿放弃失败，原记录仍保留。' }
   finally { cancelling.value = false }
 }
-function openReview(row) { selected.value = row; reviewConfirmed.value = false; showCancelReason.value = false; duplicateCandidates.value = null; error.value = ''; notice.value = '' }
+function openReview(row) { selected.value = row; reviewConfirmed.value = false; showCancelReason.value = false; duplicateCandidates.value = null; duplicateReason.value = ''; sameFact.value = ''; confirmationAttempt.value = null; error.value = ''; notice.value = ''; try { confirmationAttempt.value = JSON.parse(window.sessionStorage.getItem(storageKey(`sunjack:cash-confirm:${row.id}`)) || 'null') } catch { error.value = '无法读取待核对的银行确认记录。' } }
 function beginCancel() { showCancelReason.value = true; cancelReason.value = '' }
 watch(() => props.initialEvent, value => { if (value) { openReview(value); formStep.value = 'review'; saveOutcome.value = 'saved' } else if (!linked.value) openCreate() }, { immediate: true })
 watch(() => props.order?.currency, value => {
@@ -328,10 +430,21 @@ watch(() => props.order?.currency, value => {
 }, { immediate: true })
 watch(() => props.receipt, receipt => {
   if (!linked.value) return
-  if (receipt?.id) { if (receipt.currency) form.currency = receipt.currency; void loadSources(); if (!events.value.length) void loadEvents() }
+  if (receipt?.id) { pendingAttempt.value = null; pendingStorageBlocked.value = false; if (receipt.currency) form.currency = receipt.currency; restorePendingAttempt(); void loadSources(); if (!events.value.length) void loadEvents() }
   else { sourceRows.value = []; allocations.value = []; sourceLoading.value = false }
 }, { immediate: true, deep: false })
+watch(() => allocations.value.filter(item => Number(item.amount) > 0).map(item => item.id).sort((a, b) => a - b).join(','), (next, previous) => {
+  if (next !== previous && form.private_voucher && formStep.value === 'form') {
+    form.private_voucher = null
+    voucherName.value = ''
+    form.evidence_sha256 = ''
+    if (form.evidence_reference.startsWith('PRIVATE-')) form.evidence_reference = ''
+    voucherFile.value = null
+    notice.value = '结汇来源已变化，请重新上传银行凭证。'
+  }
+})
 watch([form, allocations], () => {
+  if (pendingAttempt.value) return
   if (formStep.value === 'form') {
     const presentIds = new Set()
     allocations.value.forEach(item => {
@@ -357,7 +470,7 @@ onMounted(() => { if (!props.initialEvent) { if (!linked.value) { clearLegacyDra
       <header class="dialog-head"><div><p class="eyebrow">人民币资金</p><h3 :id="formStep === 'form' ? 'cash-entry-title' : 'cash-review-title'">{{ formStep === 'form' ? '新增资金事件' : '资金事件详情' }}</h3><p v-if="formStep === 'form'">核对银行实际到账信息后预览并登记。</p></div><button type="button" class="close-button" aria-label="关闭资金表单" :disabled="saving || confirming || cancelling" @click="closeForm">×</button></header>
       <div v-if="saveOutcome === 'unknown'" class="warning-box" role="alert"><strong>登记结果尚未确认</strong><p>请先核对原资金记录，再决定是否重试。</p><button type="button" class="secondary" :disabled="lookupLoading" @click="lookupRequest">{{ lookupLoading ? '核对中…' : '核对登记结果' }}</button></div>
       <template v-if="formStep === 'form'">
-        <fieldset :disabled="saving"><legend>银行到账信息</legend><div class="form-grid">
+        <fieldset :disabled="saving || !!pendingAttempt || pendingStorageBlocked"><legend>银行到账信息</legend><div class="form-grid">
           <label>事件类型<select v-model="form.kind" @change="onKindChange"><option value="fx_settlement">外币结汇流入</option><option value="cny_direct">人民币直接收付</option><option value="bank_fee">独立银行扣费</option></select></label>
           <label>来源币种<select v-model="form.currency" @change="onCurrencyChange"><option v-for="item in currencies" :key="item.value" :value="item.value">{{ item.label }}</option></select></label>
           <label v-if="form.kind !== 'fx_settlement'">资金方向<select v-model="form.direction"><option value="income">流入</option><option value="expense">流出</option></select></label>
@@ -374,44 +487,45 @@ onMounted(() => { if (!props.initialEvent) { if (!linked.value) { clearLegacyDra
           <label v-if="form.kind === 'bank_fee'">关联结汇事件（可选）<select v-model="form.fee_for"><option value="">不关联结汇</option><option v-for="event in confirmedSettlementEvents" :key="event.id" :value="event.id">{{ event.event_no }} · {{ event.bank_reference }} · CNY {{ money(event.bank_net_amount) }}</option></select></label>
           <label v-if="form.kind === 'fx_settlement'">参考折算汇率（可选）<input v-model="form.quoted_rate" inputmode="decimal" placeholder="仅用于金额对照"></label>
         </div><p v-if="!sourceAccountOptions.length || !rmbAccountOptions.length || accountError" class="field-hint" role="status">{{ accountError || '暂无匹配的资金账户。请先在财务台账登记对应币种账户，并联系系统管理员完成账户配置。' }}</p></fieldset>
-        <fieldset :disabled="saving"><legend>银行凭证与核对说明</legend><div class="form-grid">
+        <fieldset :disabled="saving || !!pendingAttempt || pendingStorageBlocked"><legend>银行凭证与核对说明</legend><div class="form-grid">
           <label class="wide">银行凭证文件<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="voucherFile = $event.target.files[0]"></label>
           <button type="button" class="secondary wide" :disabled="voucherUploading || saving || !voucherFile" @click="uploadPrivateVoucher">{{ voucherUploading ? '上传中…' : '上传并校验凭证' }}</button>
-          <p v-if="form.private_voucher" class="wide field-hint">实际凭证已绑定，确认时系统会再次校验文件。</p>
+          <p v-if="form.private_voucher" class="wide field-hint">凭证已上传：{{ voucherName || '已关联凭证' }}。确认时将再次校验。</p>
           <label class="wide">核对说明<textarea v-model="form.evidence_note" maxlength="500" rows="2" placeholder="记录银行凭证核对结果"></textarea></label>
           <details class="wide"><summary>更多银行信息（可选）</summary><div class="form-grid"><label>交易对手<input v-model="form.bank_counterparty" maxlength="200"></label><label>银行交易标识<input v-model="form.bank_transaction_id" maxlength="120"></label><label class="wide">银行摘要<textarea v-model="form.bank_summary" maxlength="500" rows="2"></textarea></label></div></details>
         </div><p class="field-hint">未配置资金账户时，请先维护账户名称并完成系统账户配置，再确认资金事件。</p></fieldset>
-        <fieldset :disabled="saving"><legend>{{ linked ? '本笔收款来源' : '结汇来源' }}</legend>
-          <div v-if="linked" class="linked-receipt-summary"><p>关联订单：<strong>{{ props.receipt?.orders?.[0]?.order_no || props.receipt?.order_no || props.order?.order_no || '保存后读取' }}</strong></p><p>财务流水：<strong>{{ props.receipt?.transaction_no || '收款保存后读取' }}</strong></p><p class="field-hint">按已保存收款及其拆分流水取用结汇额度；未分配预收仍显示为单独来源，不计作订单计划核销。</p></div>
+        <fieldset :disabled="saving || !!pendingAttempt || pendingStorageBlocked"><legend>{{ linked ? '本笔收款来源' : '结汇来源' }}</legend>
+          <div v-if="linked" class="linked-receipt-summary"><p>关联订单：<strong>{{ linkedOrderSummary }}</strong></p><p>财务流水：<strong>{{ props.receipt?.transaction_no || '收款保存后读取' }}</strong></p><p class="field-hint">按已保存收款及其拆分流水取用结汇额度；未分配预收仍显示为单独来源，不计作订单计划核销。</p></div>
           <template v-else><div class="source-toolbar"><input v-model="sourceSearch" type="search" placeholder="搜索流水号"><button type="button" class="secondary" @click="loadSources">刷新来源</button></div><p v-if="sourceError" class="error" role="alert">{{ sourceError }} <button type="button" class="secondary" @click="loadSources">重试</button></p><p v-else-if="sourceLoading" class="field-hint" role="status">正在加载来源…</p><div v-else class="source-list"><div v-for="row in filteredSources()" :key="row.id" class="source-option"><div><strong>{{ sourceLabel(row) }}</strong><small>{{ row.kind === 'unallocated_advance' ? '未分配预收款' : row.order_no ? `订单 ${row.order_no}` : '财务流水' }} · 可用 {{ row.remaining_candidate_amount === null ? '待核对' : `${row.currency} ${money(row.remaining_candidate_amount, row.currency)}` }}</small><small v-if="row.blocked_reason" class="blocked">{{ row.blocked_reason }}</small></div><button type="button" :disabled="Boolean(row.blocked_reason) || row.remaining_candidate_amount === null || Boolean(allocationFor(row.id))" @click="addSource(row)">{{ allocationFor(row.id) ? '已选择' : row.remaining_candidate_amount === null ? '待核对' : '选择' }}</button></div><p v-if="!filteredSources().length" class="empty-note">没有可选择的来源流水。</p></div></template>
           <p v-if="sourceError && linked" class="error" role="alert">{{ sourceError }}</p><p v-else-if="sourceLoading && linked" class="field-hint" role="status">正在读取已保存收款流水…</p>
           <div v-if="allocations.length" class="allocation-table"><table><thead><tr><th>来源流水</th><th>可用金额</th><th>本次结汇</th><th>核实</th><th v-if="!linked"></th></tr></thead><tbody><tr v-for="item in allocations" :key="item.id"><td>{{ sourceRows.find(row => row.id === item.id)?.transaction_no || `流水 #${item.id}` }}<small v-if="sourceRows.find(row => row.id === item.id)?.kind === 'unallocated_advance'"> · 未分配预收款</small></td><td>{{ form.currency }} {{ money(sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount, form.currency) }}</td><td><input v-model="item.amount" type="number" min="0.01" :max="sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount" :step="form.currency === 'JPY' ? '1' : '0.01'" required @input="markAllocationEdited(item)"></td><td><label class="verification-toggle"><input v-model="item.verified" type="checkbox"><span>{{ item.verified ? '已核实' : '待核实' }}</span></label></td><td v-if="!linked"><button type="button" class="text-button" @click="removeSource(item.id)">移除</button></td></tr></tbody></table><p class="allocation-total">本次结汇来源合计 {{ form.currency }} {{ money(sourceTotal(), form.currency) }}</p></div>
         </fieldset>
-        <p v-if="preview" class="preview-box" role="status"><strong>结汇信息已核对</strong>：来源合计 {{ form.currency }} {{ money(preview.source_total, form.currency) }}，银行净额 CNY {{ money(preview.bank_net_amount) }}。来源额度尚未占用。</p>
+      <p v-if="preview" class="preview-box" role="status"><strong>结汇信息已核对</strong>：来源合计 {{ form.currency }} {{ money(preview.source_total, form.currency) }}，银行净额 CNY {{ money(preview.bank_net_amount) }}。来源额度尚未占用。</p>
         <p v-if="notice" class="notice" role="status">{{ notice }}</p><p v-if="error" class="error" role="alert">{{ error }}</p>
-        <footer class="dialog-actions"><button v-if="!linked" type="button" class="secondary" :disabled="saving" @click="closeForm">取消</button><button v-if="!preview" type="button" class="primary" :disabled="saving || (linked && !props.receipt?.id)" @click="previewEvent">{{ saving ? '核对中…' : '预览结汇信息' }}</button><button v-else type="button" class="primary" :disabled="saving" @click="registerDraft">{{ saving ? '登记中…' : '登记待确认结汇' }}</button></footer>
+        <footer class="dialog-actions"><button v-if="!linked" type="button" class="secondary" :disabled="saving" @click="closeForm">取消</button><button v-if="!preview && !pendingAttempt" type="button" class="primary" :disabled="saving || pendingStorageBlocked || (linked && !props.receipt?.id)" @click="previewEvent">{{ saving ? '核对中…' : '预览结汇信息' }}</button><button v-else-if="!pendingAttempt" type="button" class="primary" :disabled="saving" @click="registerDraft">{{ saving ? '登记中…' : '登记待确认结汇' }}</button></footer>
       </template>
       <section v-else class="review-step">
-        <section class="private-bank-proof"><p v-if="selected?.private_voucher">银行凭证已保存并完成系统校验。<a :href="`/api/rmb-cash-events/${selected.id}/voucher-download/`">下载凭证</a></p><template v-else><p>这条历史记录缺少实际凭证，请补传原始文件后再确认。</p><label>补传银行凭证<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="voucherFile = $event.target.files[0]"></label><button type="button" :disabled="voucherUploading || !voucherFile" @click="uploadPrivateVoucher">{{ voucherUploading ? '上传中…' : '补传并校验凭证' }}</button></template></section>
+        <section class="private-bank-proof"><p v-if="selected?.private_voucher">银行凭证已保存：{{ selected?.private_voucher_name || '已关联凭证' }}。<a :href="`/api/rmb-cash-events/${selected.id}/voucher-download/`">下载凭证</a></p><template v-else><p>这条历史记录缺少实际凭证，请补传原始文件后再确认。</p><label>补传银行凭证<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="voucherFile = $event.target.files[0]"></label><button type="button" :disabled="voucherUploading || !voucherFile" @click="uploadPrivateVoucher">{{ voucherUploading ? '上传中…' : '补传并校验凭证' }}</button></template></section>
         <div class="review-banner"><span class="status" :class="selected?.status">{{ statusLabel(selected?.status) }}</span><strong>{{ selected?.event_no }}</strong></div>
         <div class="detail-grid"><div><span>实际到账日期</span><strong>{{ selected?.bank_date }}</strong></div><div><span>银行参考号</span><strong>{{ selected?.bank_reference }}</strong></div><div><span>类型 / 方向</span><strong>{{ kindLabel(selected?.kind) }} · {{ directionLabel(selected?.direction) }}</strong></div><div><span>来源金额</span><strong>{{ selected?.currency }} {{ money(selected?.amount, selected?.currency) }}</strong></div><div><span>银行净额</span><strong>CNY {{ money(selected?.bank_net_amount) }}</strong></div><div><span>手续费</span><strong>{{ selected?.fee_mode === 'included' ? '含扣 CNY ' + money(selected?.fee_amount) : '无' }}</strong></div><div><span>来源账户</span><strong>{{ selected?.source_account_name || '账户名称待配置' }}</strong></div><div><span>人民币账户</span><strong>{{ selected?.rmb_account_name || '账户名称待配置' }}</strong></div><div><span>关联订单</span><strong>{{ selected?.orders?.map(item => item.order_no).filter(Boolean).join('、') || '—' }}</strong></div><div><span>来源流水</span><strong>{{ selected?.sources?.map(source => source.snapshot?.transaction_no || `流水 #${source.transaction_id}`).join('、') }}</strong></div></div>
         <p v-if="selected?.evidence_note" class="definition-note">{{ selected.evidence_note }}</p>
         <section v-if="selected?.sources?.length" class="review-sources"><h4>来源分配</h4><table class="source-detail"><thead><tr><th>流水</th><th>本次结汇</th><th>核实</th></tr></thead><tbody><tr v-for="source in selected.sources" :key="source.transaction_id"><td>{{ source.snapshot?.transaction_no || `流水 #${source.transaction_id}` }}</td><td>{{ source.currency }} {{ money(source.amount, source.currency) }}</td><td>已通过登记校验</td></tr></tbody></table></section>
         <p v-if="selected?.status === 'pending'" class="field-hint">请核对实际到账日期、银行参考号、凭证、账户、净额、手续费和来源分配。账户未配置或凭证无效时，系统不会确认该事件。</p>
         <p v-if="selected?.status === 'pending' && !selected?.private_voucher" class="error" role="alert">请先补传并校验实际银行凭证。</p>
-        <label v-if="selected?.status === 'pending'" class="review-confirm"><input v-model="reviewConfirmed" type="checkbox">我已核对银行凭证和来源分配，确认提交核实结果。</label>
-        <div v-if="duplicateCandidates?.count" class="warning-box" role="alert"><strong>发现 {{ duplicateCandidates.count }} 条疑似重复银行记录</strong><p>请核对同一账户、日期、方向和银行净额相同的记录。</p><p v-if="duplicateCandidates.restricted">部分记录无权查看，请联系有权人员核对。</p><ul v-else><li v-for="item in duplicateCandidates.items" :key="item.id">{{ item.event_no }}；{{ item.bank_reference || '未提供银行参考号' }}</li></ul><label v-if="!duplicateCandidates.restricted">核实放行说明<textarea v-model="duplicateReason" maxlength="500" rows="3" placeholder="说明为何属于不同银行交易"></textarea></label></div>
+        <div v-if="confirmationAttempt" class="warning-box" role="alert">银行确认结果待核对。<button type="button" :disabled="confirming" @click="confirmEvent">{{ confirming ? '核对中…' : '按原内容核对确认' }}</button></div><label v-if="selected?.status === 'pending'" class="review-confirm"><input v-model="reviewConfirmed" type="checkbox" :disabled="!!confirmationAttempt">我已核对银行凭证和来源分配，确认提交核实结果。</label>
+        <div v-if="duplicateCandidates?.count" class="warning-box" role="alert"><strong>发现 {{ duplicateCandidates.count }} 条疑似重复银行记录</strong><p>请核对同一账户、日期、方向和银行净额相同的记录。</p><p v-if="duplicateCandidates.restricted">部分记录无权查看，请联系有权人员核对。</p><ul v-else><li v-for="item in duplicateCandidates.items" :key="item.id">{{ item.event_no }}；{{ item.bank_reference || '未提供银行参考号' }}</li></ul><label v-if="duplicateCandidates.items?.some(item => item.record_type === 'account_fact')">是否与账户资金中的记录为同一笔<select v-model="sameFact"><option value="">经核实为不同交易</option><option v-for="item in duplicateCandidates.items.filter(item => item.record_type === 'account_fact')" :key="item.id" :value="String(-item.id)">{{ item.event_no }}；{{ item.bank_reference }}</option></select></label><label v-if="!duplicateCandidates.restricted">核实说明<textarea v-model="duplicateReason" maxlength="500" rows="3" placeholder="说明凭证核对结果"></textarea></label></div>
         <div v-if="selected?.status === 'pending' && showCancelReason" class="cancel-box"><label>放弃原因<textarea v-model="cancelReason" maxlength="500" rows="3" required placeholder="说明放弃原因"></textarea></label><div class="dialog-actions"><button type="button" class="secondary" @click="showCancelReason = false">继续核对</button><button type="button" class="danger" :disabled="cancelling || !cancelReason.trim()" @click="cancelDraft">{{ cancelling ? '保存中…' : '确认放弃草稿' }}</button></div></div>
         <p v-if="notice" class="notice" role="status">{{ notice }}</p><p v-if="error" class="error" role="alert">{{ error }}</p>
-        <footer class="dialog-actions"><button type="button" class="secondary" @click="closeForm">关闭</button><button v-if="selected?.status === 'pending' && !showCancelReason" type="button" class="secondary" @click="beginCancel">放弃草稿</button><button v-if="selected?.status === 'pending'" type="button" class="primary" :disabled="confirming || showCancelReason || !reviewConfirmed || !selected?.private_voucher || duplicateCandidates?.restricted" @click="confirmEvent">{{ confirming ? '确认中…' : '确认银行凭证' }}</button></footer>
+        <footer class="dialog-actions"><button type="button" class="secondary" @click="closeForm">关闭</button><button v-if="selected?.status === 'pending' && !showCancelReason && !confirmationAttempt" type="button" class="secondary" @click="beginCancel">放弃草稿</button><button v-if="selected?.status === 'pending'" type="button" class="primary" :disabled="confirming || !!confirmationAttempt || showCancelReason || !reviewConfirmed || !selected?.private_voucher || duplicateCandidates?.restricted" @click="confirmEvent">{{ confirming ? '确认中…' : '确认银行凭证' }}</button></footer>
       </section>
     </section>
   </div>
   <section v-else class="inline-cash-entry" aria-labelledby="linked-settlement-title">
     <header><div><p class="eyebrow">外币收款结汇</p><h4 id="linked-settlement-title">结汇信息</h4></div></header>
     <p v-if="!props.receipt?.id" class="field-hint">先保存收款，再填写并核对结汇信息。</p>
+    <div v-if="pendingAttempt" class="warning-box" role="alert"><strong>结汇登记结果待确认</strong><p>银行日期 {{ pendingAttempt.payload.bank_date }} · 兑换原币 {{ pendingAttempt.payload.currency }} {{ pendingAttempt.payload.sources.map(item => item.amount).join(' + ') }} · 扣费前 ¥{{ pendingAttempt.payload.gross_rmb_amount }} · 手续费 ¥{{ pendingAttempt.payload.fee_amount }} · 净到账 ¥{{ pendingAttempt.payload.bank_net_amount }} · {{ pendingAttempt.payload.bank_reference }}</p><button type="button" :disabled="saving" @click="retryPendingAttempt">{{ saving ? '核对中…' : '按原内容核对' }}</button></div>
     <template v-if="formStep === 'form'">
-      <fieldset :disabled="saving || !props.receipt?.id"><div class="form-grid">
+      <fieldset :disabled="saving || !props.receipt?.id || !!pendingAttempt || pendingStorageBlocked"><div class="form-grid">
         <label>实际到账日期<input v-model="form.bank_date" type="date" required></label>
         <label>来源币种<input :value="form.currency" readonly></label>
           <label>扣费前兑换额（CNY）<input v-model="form.gross_rmb_amount" type="number" min="0.01" step="0.01" required></label>
@@ -425,17 +539,18 @@ onMounted(() => { if (!props.initialEvent) { if (!linked.value) { clearLegacyDra
         <label>参考折算汇率（可选）<input v-model="form.quoted_rate" inputmode="decimal" placeholder="仅用于金额对照"></label>
         <label class="wide">银行凭证文件<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="voucherFile = $event.target.files[0]"></label>
         <button type="button" class="secondary wide" :disabled="voucherUploading || saving || !voucherFile || !allocations.length" @click="uploadPrivateVoucher">{{ voucherUploading ? '上传中…' : '上传并校验凭证' }}</button>
-        <p v-if="form.private_voucher" class="wide field-hint">实际凭证已绑定，确认时系统会再次校验文件。</p>
+        <p v-if="form.private_voucher" class="wide field-hint">凭证已上传：{{ voucherName || '已关联凭证' }}。确认时将再次校验。</p>
         <label class="wide">核对说明<textarea v-model="form.evidence_note" maxlength="500" rows="2" placeholder="记录银行凭证核对结果"></textarea></label>
       </div><p v-if="!sourceAccountOptions.length || !rmbAccountOptions.length || accountError" class="field-hint" role="status">{{ accountError || '暂无匹配的资金账户。请先在财务台账登记对应币种账户，并联系系统管理员完成账户配置。' }}</p></fieldset>
-      <div class="linked-receipt-summary"><p>关联订单：<strong>{{ props.receipt?.order_no || props.receipt?.orders?.[0]?.order_no || props.order?.order_no || '保存后读取' }}</strong></p><p>财务流水：<strong>{{ props.receipt?.transaction_no || '收款保存后读取' }}</strong></p><p class="field-hint">结汇来源只取本笔已保存收款及其拆分流水；未分配预收单独列示，不计作订单计划核销。</p></div>
+      <div class="linked-receipt-summary"><p>关联订单：<strong>{{ [...new Set([props.receipt?.order_no, ...(props.receipt?.orders || []).map(order => order.order_no), ...(props.receipt?.allocations || []).filter(item => item.is_active).map(item => item.contract_no), props.order?.order_no].filter(Boolean))].join('、') || '未关联订单' }}</strong></p><p>财务流水：<strong>{{ props.receipt?.transaction_no || '收款保存后读取' }}</strong></p><p class="field-hint">填写本次兑换金额；未填写的来源本次不兑换，剩余金额可继续结汇。</p></div>
       <p v-if="sourceError" class="error" role="alert">{{ sourceError }}</p><p v-else-if="sourceLoading" class="field-hint" role="status">正在读取已保存收款流水…</p>
-      <div v-if="allocations.length" class="allocation-table"><table><thead><tr><th>来源流水</th><th>类型</th><th>可用金额</th><th>本次结汇</th><th>核实</th></tr></thead><tbody><tr v-for="item in allocations" :key="item.id"><td>{{ sourceRows.find(row => row.id === item.id)?.transaction_no }}</td><td>{{ sourceRows.find(row => row.id === item.id)?.kind === 'unallocated_advance' ? '未分配预收款' : '客户收款' }}</td><td>{{ form.currency }} {{ money(sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount, form.currency) }}</td><td>{{ form.currency }} {{ money(item.amount, form.currency) }}</td><td>已核实</td></tr></tbody></table><p class="allocation-total">本次结汇来源合计 {{ form.currency }} {{ money(sourceTotal(), form.currency) }}</p></div>
+      <div v-if="allocations.length" class="allocation-table"><table><thead><tr><th>来源流水</th><th>类型</th><th>可用金额</th><th>本次兑换</th><th>核实</th></tr></thead><tbody><tr v-for="item in allocations" :key="item.id"><td>{{ sourceRows.find(row => row.id === item.id)?.transaction_no }}</td><td>{{ sourceRows.find(row => row.id === item.id)?.kind === 'unallocated_advance' ? '未分配预收款' : '客户收款' }}</td><td>{{ form.currency }} {{ money(sourceRows.find(row => row.id === item.id)?.remaining_candidate_amount, form.currency) }}</td><td><input v-model="item.amount" type="text" inputmode="decimal" aria-label="本次兑换金额" :disabled="saving || !!pendingAttempt || pendingStorageBlocked" @input="markAllocationEdited(item)"></td><td><label class="verification-toggle"><input v-model="item.verified" type="checkbox" :disabled="!item.amount || saving || !!pendingAttempt || pendingStorageBlocked"><span>{{ item.verified ? '已核实' : '待核实' }}</span></label></td></tr></tbody></table><p class="allocation-total">本次结汇来源合计 {{ form.currency }} {{ money(sourceTotal(), form.currency) }}</p></div>
+        <div class="merge-receipts"><button type="button" class="secondary" :disabled="saving || !props.receipt?.id || !!pendingAttempt || pendingStorageBlocked" @click="openMergeSources">{{ mergeLoading ? '加载中…' : '合并其他收款' }}</button><div v-if="mergeOpen"><label>搜索其他收款<input v-model="mergeQuery" placeholder="流水号、客户或订单"></label><p v-if="!extraSources.length && !mergeLoading" class="field-hint">暂无其他可用收款。</p><ul><li v-for="row in extraSources.filter(row => `${row.transaction_no} ${row.customer_name || ''} ${row.order_no || ''}`.toLowerCase().includes(mergeQuery.toLowerCase()))" :key="row.id">{{ row.transaction_no }} · {{ row.customer_name || '往来方未显示' }} · {{ row.order_no || '未关联订单' }} · {{ row.currency }} {{ money(row.remaining_candidate_amount, row.currency) }} <button type="button" :disabled="!!allocationFor(row.id) || !!pendingAttempt" @click="addMergeSource(row)">添加</button><button v-if="allocationFor(row.id)" type="button" :disabled="!!pendingAttempt" @click="removeSource(row.id)">移除</button></li></ul></div></div>
       <p v-if="preview" class="preview-box" role="status"><strong>结汇信息已核对</strong>：来源合计 {{ form.currency }} {{ money(preview.source_total, form.currency) }}，银行净额 CNY {{ money(preview.bank_net_amount) }}。来源额度尚未占用。</p>
       <p v-if="error" class="error" role="alert">{{ error }}</p>
-      <footer class="dialog-actions"><button v-if="!preview" type="button" class="primary" :disabled="saving || !props.receipt?.id" @click="previewEvent">{{ saving ? '核对中…' : '预览结汇信息' }}</button><button v-else type="button" class="primary" :disabled="saving" @click="registerDraft">{{ saving ? '登记中…' : '登记待确认结汇' }}</button></footer>
+      <footer class="dialog-actions"><button v-if="!preview && !pendingAttempt" type="button" class="primary" :disabled="saving || pendingStorageBlocked || !props.receipt?.id" @click="previewEvent">{{ saving ? '核对中…' : '预览结汇信息' }}</button><button v-else-if="!pendingAttempt" type="button" class="primary" :disabled="saving" @click="registerDraft">{{ saving ? '登记中…' : '登记待确认结汇' }}</button></footer>
     </template>
-    <section v-else class="inline-review"><p class="review-banner"><span class="status" :class="selected?.status">{{ statusLabel(selected?.status) }}</span> <strong>{{ selected?.event_no }}</strong></p><div class="detail-grid"><div><span>关联订单</span><strong>{{ selected?.orders?.map(item => item.order_no).filter(Boolean).join('、') || '—' }}</strong></div><div><span>收款流水</span><strong>{{ selected?.source_receipt?.transaction_no || '—' }}</strong></div><div><span>实际到账日期</span><strong>{{ selected?.bank_date }}</strong></div><div><span>银行参考号</span><strong>{{ selected?.bank_reference }}</strong></div><div><span>银行净额</span><strong>CNY {{ money(selected?.bank_net_amount) }}</strong></div><div><span>手续费</span><strong>{{ selected?.fee_mode === 'included' ? '含扣 CNY ' + money(selected?.fee_amount) : '无' }}</strong></div><div><span>来源账户</span><strong>{{ selected?.source_account_name || '账户名称待配置' }}</strong></div><div><span>人民币账户</span><strong>{{ selected?.rmb_account_name || '账户名称待配置' }}</strong></div></div><p>来源流水：{{ selected?.sources?.map(source => source.snapshot?.transaction_no).filter(Boolean).join('、') || '—' }}</p><div v-if="!selected?.private_voucher" class="private-bank-proof"><p>这条结汇记录缺少实际凭证，请补传原始文件后再确认。</p><label>补传银行凭证<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="voucherFile = $event.target.files[0]"></label><button type="button" :disabled="voucherUploading || !voucherFile" @click="uploadPrivateVoucher">{{ voucherUploading ? '上传中…' : '补传并校验凭证' }}</button></div><p v-if="selected?.private_voucher">银行凭证已保存并完成系统校验。</p><p v-if="selected?.evidence_note" class="definition-note">{{ selected.evidence_note }}</p><label v-if="selected?.status === 'pending'" class="review-confirm"><input v-model="reviewConfirmed" type="checkbox">我已核对银行凭证和来源分配，确认提交核实结果。</label><p v-if="duplicateCandidates?.count" class="warning-box">发现 {{ duplicateCandidates.count }} 条疑似重复记录，请核对并填写放行说明。</p><label v-if="duplicateCandidates?.count && !duplicateCandidates.restricted">核实放行说明<textarea v-model="duplicateReason" maxlength="500" rows="2"></textarea></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer class="dialog-actions"><button v-if="selected?.status === 'pending'" type="button" class="primary" :disabled="confirming || !reviewConfirmed || !selected?.private_voucher || duplicateCandidates?.restricted" @click="confirmEvent">{{ confirming ? '确认中…' : '确认银行凭证' }}</button></footer></section>
+    <section v-else class="inline-review"><p class="review-banner"><span class="status" :class="selected?.status">{{ statusLabel(selected?.status) }}</span> <strong>{{ selected?.event_no }}</strong></p><div class="detail-grid"><div><span>关联订单</span><strong>{{ selected?.orders?.map(item => item.order_no).filter(Boolean).join('、') || '—' }}</strong></div><div><span>收款流水</span><strong>{{ selected?.source_receipt?.transaction_no || '—' }}</strong></div><div><span>实际到账日期</span><strong>{{ selected?.bank_date }}</strong></div><div><span>银行参考号</span><strong>{{ selected?.bank_reference }}</strong></div><div><span>银行净额</span><strong>CNY {{ money(selected?.bank_net_amount) }}</strong></div><div><span>手续费</span><strong>{{ selected?.fee_mode === 'included' ? '含扣 CNY ' + money(selected?.fee_amount) : '无' }}</strong></div><div><span>来源账户</span><strong>{{ selected?.source_account_name || '账户名称待配置' }}</strong></div><div><span>人民币账户</span><strong>{{ selected?.rmb_account_name || '账户名称待配置' }}</strong></div></div><p>来源流水：{{ selected?.sources?.map(source => source.snapshot?.transaction_no).filter(Boolean).join('、') || '—' }}</p><div v-if="!selected?.private_voucher" class="private-bank-proof"><p>这条结汇记录缺少实际凭证，请补传原始文件后再确认。</p><label>补传银行凭证<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="voucherFile = $event.target.files[0]"></label><button type="button" :disabled="voucherUploading || !voucherFile" @click="uploadPrivateVoucher">{{ voucherUploading ? '上传中…' : '补传并校验凭证' }}</button></div><p v-if="selected?.private_voucher">银行凭证已保存：{{ selected?.private_voucher_name || '已关联凭证' }}。</p><p v-if="selected?.evidence_note" class="definition-note">{{ selected.evidence_note }}</p><div v-if="confirmationAttempt" class="warning-box" role="alert">银行确认结果待核对。<button type="button" :disabled="confirming" @click="confirmEvent">{{ confirming ? '核对中…' : '按原内容核对确认' }}</button></div><label v-if="selected?.status === 'pending'" class="review-confirm"><input v-model="reviewConfirmed" type="checkbox" :disabled="!!confirmationAttempt">我已核对银行凭证和来源分配，确认提交核实结果。</label><p v-if="duplicateCandidates?.count" class="warning-box">发现 {{ duplicateCandidates.count }} 条疑似重复记录，请核对并填写放行说明。</p><label v-if="duplicateCandidates?.items?.some(item => item.record_type === 'account_fact')">是否为同一笔<select v-model="sameFact"><option value="">经核实为不同交易</option><option v-for="item in duplicateCandidates.items.filter(item => item.record_type === 'account_fact')" :key="item.id" :value="String(-item.id)">{{ item.event_no }}；{{ item.bank_reference }}</option></select></label><label v-if="duplicateCandidates?.count && !duplicateCandidates.restricted">核实说明<textarea v-model="duplicateReason" maxlength="500" rows="2"></textarea></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer class="dialog-actions"><button v-if="selected?.status === 'pending'" type="button" class="primary" :disabled="confirming || !!confirmationAttempt || !reviewConfirmed || !selected?.private_voucher || duplicateCandidates?.restricted" @click="confirmEvent">{{ confirming ? '确认中…' : '确认银行凭证' }}</button></footer></section>
   </section>
 </template>
 

@@ -503,7 +503,7 @@ class ReviewCoreHttpTests(LiveServerTestCase):
         settled, _ = self._expect("POST", f"/api/payment-plans/{plan.pk}/settle/", 201, {
             "amount": "10.00",
             "transaction_date": self.request_date.isoformat(),
-        })
+        }, headers={"Idempotency-Key": "review-sale-plan"})
         self.assertEqual(settled["direction"], "income")
         plan.refresh_from_db()
         self.assertEqual(plan.settled_amount, Decimal("10.00"))
@@ -514,7 +514,7 @@ class ReviewCoreHttpTests(LiveServerTestCase):
             "POST", f"/api/payment-plans/{plan.pk}/settle/", 400, {
                 "amount": "0.00",
                 "transaction_date": self.request_date.isoformat(),
-            },
+            }, headers={"Idempotency-Key": "review-invalid-plan"},
         )
         self.assertEqual(rejected_settlement.get("amount"), ["必须大于零。"])
         self.assertEqual(self._snapshot(order_id=saved_order["id"]), before_rejected_settlement)
@@ -607,7 +607,7 @@ class ReviewCoreHttpTests(LiveServerTestCase):
             "POST", f"/api/payment-plans/{payable_plan.pk}/settle/", 201, {
                 "amount": "1.00",
                 "transaction_date": self.request_date.isoformat(),
-            },
+            }, headers={"Idempotency-Key": "review-purchase-plan"},
         )
         self.assertEqual(payable_payment["direction"], "expense")
         payable_plan.refresh_from_db()

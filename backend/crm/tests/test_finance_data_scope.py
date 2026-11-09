@@ -75,14 +75,26 @@ class FinanceDataScopeTests(TestCase):
         self.receipts[1].refresh_from_db(); self.assertEqual(self.receipts[1].status, 'confirmed')
 
     def test_normal_settle_refund_void_and_purchase_payment(self):
-        settled = self.client.post(f'/api/payment-plans/{self.plans[0].pk}/settle/', {'amount': '20', 'transaction_date': '2026-10-12'}, format='json')
+        import tempfile
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        media = tempfile.TemporaryDirectory(prefix='scope-refund-proof-')
+        self.addCleanup(media.cleanup)
+        media_settings = override_settings(MEDIA_ROOT=media.name)
+        media_settings.enable(); self.addCleanup(media_settings.disable)
+        settled = self.client.post(f'/api/payment-plans/{self.plans[0].pk}/settle/', {'amount': '20', 'transaction_date': '2026-10-12'}, format='json', HTTP_IDEMPOTENCY_KEY='scoped-plan-receipt')
         self.assertEqual(settled.status_code, 201, settled.data)
-        refund = self.client.post('/api/transactions/', {**self.payload(order=self.orders[0].pk), 'direction': 'expense', 'kind': 'refund', 'amount': '5'}, format='json')
+        proof = self.client.post('/api/transactions/voucher-upload/', {'file': SimpleUploadedFile('synthetic.pdf', b'%PDF-1.4\nrefund\n%%EOF')}, format='multipart')
+        self.assertEqual(proof.status_code, 201, proof.data)
+        refund = self.client.post(f"/api/transactions/{settled.data['id']}/refund-cash/", {'order': self.orders[0].pk, 'amount': '5', 'reason': '合成退款凭证已核实', 'voucher': proof.data['id']}, format='json', HTTP_IDEMPOTENCY_KEY='scoped-refund')
         self.assertEqual(refund.status_code, 201, refund.data)
-        self.assertEqual(self.client.post(f"/api/transactions/{refund.data['id']}/void/", {'reason': '重记'}, format='json').status_code, 200)
-        self.assertEqual(self.client.post(f"/api/transactions/{settled.data['id']}/void/", {'reason': '重记'}, format='json').status_code, 200)
-        self.plans[0].refresh_from_db(); self.assertEqual(self.plans[0].settled_amount, 0)
-        paid = self.client.post(f'/api/payment-plans/{self.purchase_plan.pk}/settle/', {'amount': '10', 'transaction_date': '2026-10-12'}, format='json')
+        self.assertEqual(self.client.post(f"/api/transactions/{refund.data['refunds'][0]['id']}/void/", {'reason': '重记'}, format='json').status_code, 400)
+        self.assertEqual(self.client.post(f"/api/transactions/{settled.data['id']}/void/", {'reason': '重记'}, format='json').status_code, 400)
+        self.plans[0].refresh_from_db(); self.assertEqual(self.plans[0].settled_amount, 15)
+        separate = self.client.post(f'/api/payment-plans/{self.plans[0].pk}/settle/', {'amount': '10', 'transaction_date': '2026-10-12'}, format='json', HTTP_IDEMPOTENCY_KEY='scoped-separate-receipt')
+        self.assertEqual(separate.status_code, 201, separate.data)
+        self.assertEqual(self.client.post(f"/api/transactions/{separate.data['id']}/void/", {'reason': '重记'}, format='json').status_code, 200)
+        self.plans[0].refresh_from_db(); self.assertEqual(self.plans[0].settled_amount, 15)
+        paid = self.client.post(f'/api/payment-plans/{self.purchase_plan.pk}/settle/', {'amount': '10', 'transaction_date': '2026-10-12'}, format='json', HTTP_IDEMPOTENCY_KEY='scoped-plan-payment')
         self.assertEqual(paid.status_code, 201, paid.data)
 
     def test_void_requires_finance_update_even_without_plan_or_allocations(self):
@@ -113,7 +125,7 @@ class FinanceDataScopeTests(TestCase):
         self.assertEqual(advance.status_code, 201, advance.data)
         url = f"/api/transactions/{advance.data['id']}/allocate/"
         self.assertEqual(self.client.post(url, {'plan': self.plans[1].pk, 'amount': '5'}, format='json').status_code, 404)
-        self.assertEqual(self.client.post(url, {'plan': self.plans[0].pk, 'amount': '5'}, format='json').status_code, 200)
+        self.assertEqual(self.client.post(url, {'plan': self.plans[0].pk, 'amount': '5'}, format='json', HTTP_IDEMPOTENCY_KEY='scoped-allocation').status_code, 200)
         root = Transaction.objects.get(pk=advance.data['id'])
         child = Transaction.objects.create(transaction_no='F-LEGACY', split_from=root, customer=self.customer_b, direction='income', amount=1, currency='CNY', exchange_rate=1, transaction_date=date(2026, 10, 12))
         self.assertEqual(self.client.post(f'/api/transactions/{root.pk}/void/', {'reason': '不可跨范围'}, format='json').status_code, 404)
@@ -122,6 +134,20 @@ class FinanceDataScopeTests(TestCase):
     def test_allocation_history_cannot_disclose_or_modify_foreign_plan(self):
         AdvanceAllocation.objects.create(advance=self.public, plan=self.plans[1], amount=1, is_active=False)
         self.assertEqual(self.client.get(f'/api/transactions/{self.public.pk}/').status_code, 404)
+
+    def test_allocation_replay_respects_current_customer_visibility(self):
+        advance = self.client.post('/api/transactions/', {**self.payload(customer=self.customer_a.pk), 'kind': 'unallocated_advance'}, format='json')
+        self.assertEqual(advance.status_code, 201, advance.data)
+        url = f"/api/transactions/{advance.data['id']}/allocate/"
+        payload = {'plan': self.plans[0].pk, 'amount': '5'}
+        first = self.client.post(url, payload, format='json', HTTP_IDEMPOTENCY_KEY='scope-replay')
+        self.assertEqual(first.status_code, 200, first.data)
+        self.assertEqual(first.data['customer_id'], self.customer_a.pk)
+        RolePermission.objects.filter(role=self.roles['self'], module='customers').update(can_view=False)
+        replay = self.client.post(url, payload, format='json', HTTP_IDEMPOTENCY_KEY='scope-replay')
+        self.assertEqual(replay.status_code, 200, replay.data)
+        self.assertIsNone(replay.data['customer_id'])
+        self.assertEqual(replay.data['counterparty_name'], '')
 
     def test_contract_sales_and_shared_purchase_changes(self):
         bad = self.client.post('/api/contract-changes/', {'order': self.orders[1].pk, 'amount_delta': '5', 'notes': '测试合同变更'}, format='json')
@@ -201,7 +227,7 @@ class FinanceDataScopeTests(TestCase):
     def test_advance_payment_cross_purchase_and_void_restores_balances(self):
         advance = self.client.post('/api/transactions/', {**self.payload(supplier=self.supplier.pk), 'kind': 'unallocated_payment', 'direction': 'expense'}, format='json')
         self.assertEqual(advance.status_code, 201, advance.data)
-        response = self.client.post(f"/api/transactions/{advance.data['id']}/allocate/", {'plan': self.purchase_plan.pk, 'amount': '10'}, format='json')
+        response = self.client.post(f"/api/transactions/{advance.data['id']}/allocate/", {'plan': self.purchase_plan.pk, 'amount': '10'}, format='json', HTTP_IDEMPOTENCY_KEY='purchase-allocation')
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(self.client.post(f"/api/transactions/{advance.data['id']}/void/", {'reason': '恢复预付'}, format='json').status_code, 200)
         self.purchase_plan.refresh_from_db(); self.assertEqual(self.purchase_plan.settled_amount, 0)

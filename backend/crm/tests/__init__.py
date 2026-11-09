@@ -169,7 +169,7 @@ class BusinessFlowTests(APITestCase):
                 {"sku": self.sku.id, "quantity": "2", "warehouse": "成品仓", "reference": "盘点"},
                 {"sku": second_sku.id, "quantity": "3", "warehouse": "成品仓", "notes": "补录"},
             ],
-        }, format="json")
+        }, format="json", HTTP_IDEMPOTENCY_KEY="manual-batch-context")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(len(response.data), 2)
@@ -289,7 +289,7 @@ class BusinessFlowTests(APITestCase):
         payment = self.client.post(
             f"/api/purchase-orders/{purchases[0].id}/pay/",
             {"transaction_date": timezone.localdate().isoformat(), "amount": "5", "currency": "USD", "exchange_rate": "7"},
-            format="json",
+            format="json", HTTP_IDEMPOTENCY_KEY="supplier-context-payment",
         )
         self.assertEqual(payment.status_code, status.HTTP_201_CREATED, payment.data)
 

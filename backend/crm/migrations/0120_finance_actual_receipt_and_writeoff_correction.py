@@ -3,6 +3,22 @@
 import django.db.models.deletion
 import django.db.models.expressions
 from django.db import migrations, models
+from django.db.migrations.exceptions import IrreversibleError
+
+
+class AddSharedAllocationField(migrations.AddField):
+    """The receipt-optimization branch may already have created this column."""
+
+    def database_forwards(self, app_label, schema_editor, from_state, to_state):
+        model = to_state.apps.get_model(app_label, self.model_name)
+        field = model._meta.get_field(self.name)
+        with schema_editor.connection.cursor() as cursor:
+            columns = {column.name for column in schema_editor.connection.introspection.get_table_description(cursor, model._meta.db_table)}
+        if field.column not in columns:
+            super().database_forwards(app_label, schema_editor, from_state, to_state)
+
+    def database_backwards(self, app_label, schema_editor, from_state, to_state):
+        raise IrreversibleError("Shared allocation columns cannot safely be removed from a branched history.")
 
 
 def backfill_actual_cash_allocations(apps, schema_editor):
@@ -32,12 +48,12 @@ class Migration(migrations.Migration):
                 ('actor', models.JSONField()),
             ],
         ),
-        migrations.AddField(
+        AddSharedAllocationField(
             model_name='advanceallocation',
             name='cash_amount',
             field=models.DecimalField(blank=True, decimal_places=4, default=None, max_digits=14, null=True),
         ),
-        migrations.AddField(
+        AddSharedAllocationField(
             model_name='advanceallocation',
             name='fee_credit_amount',
             field=models.DecimalField(decimal_places=4, default=0, max_digits=14),

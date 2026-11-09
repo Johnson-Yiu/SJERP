@@ -1285,7 +1285,8 @@ class Order(TimestampedModel):
         receipts = sum(self.transactions.filter(status="confirmed", kind="customer_receipt").values_list("amount", flat=True), Decimal("0"))
         refunds = sum((t.amount for t in self.transactions.filter(direction="expense", status="confirmed", kind="refund")), Decimal("0"))
         allocations = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.filter(plan__order=self, is_active=True, advance__status="confirmed")), Decimal("0"))
-        return receipts + allocations - refunds
+        returns = FinanceBankReturnAllocation.objects.filter(plan__order=self).aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+        return receipts + allocations - refunds - returns
 
     @property
     def outstanding_amount(self):
@@ -1638,7 +1639,8 @@ class PurchaseOrder(TimestampedModel):
         paid = sum(self.transactions.filter(status="confirmed", kind="supplier_payment").values_list("amount", flat=True), Decimal("0"))
         allocations = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.filter(plan__purchase_order=self, is_active=True, advance__status="confirmed")), Decimal("0"))
         refunds = sum(self.transactions.filter(direction="income", status="confirmed", kind="supplier_refund").values_list("amount", flat=True), Decimal("0"))
-        return paid + allocations - refunds
+        returns = FinanceBankReturnAllocation.objects.filter(plan__purchase_order=self).aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+        return paid + allocations - refunds - returns
 
     @property
     def unpaid_amount(self):
@@ -1800,6 +1802,11 @@ class PaymentPlan(TimestampedModel):
 
     @property
     def remaining_amount(self):
+        prefetched = getattr(self, "_prefetched_objects_cache", {}).get("finance_writeoffs")
+        if prefetched is not None and all("corrections" in getattr(row, "_prefetched_objects_cache", {}) for row in prefetched):
+            written_off = sum((row.amount for row in prefetched), Decimal("0"))
+            corrected = sum((entry.amount for row in prefetched for entry in row.corrections.all()), Decimal("0"))
+            return max(self.planned_amount - self.settled_amount - written_off + corrected, Decimal("0"))
         written_off = self.finance_writeoffs.aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
         corrected = FinancePlanWriteoffCorrection.objects.filter(writeoff__plan=self).aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
         return max(self.planned_amount - self.settled_amount - written_off + corrected, Decimal("0"))
@@ -2130,15 +2137,17 @@ class Transaction(TimestampedModel):
     category = models.CharField("收支分类", max_length=100)
     amount = models.DecimalField("金额", max_digits=14, decimal_places=4)
     currency = models.CharField("币种", max_length=10, default="USD")
-    exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1)
+    exchange_rate = models.DecimalField("对人民币汇率", max_digits=12, decimal_places=6, default=1, null=True, blank=True)
     rmb_amount = models.DecimalField("账面人民币折算参考", max_digits=14, decimal_places=4, default=0)
     allocated_amount = models.DecimalField("已分配原币金额", max_digits=14, decimal_places=4, default=0)
     remittance_amount = models.DecimalField("客户汇款原币金额", max_digits=14, decimal_places=4, null=True, blank=True)
     bank_fee_amount = models.DecimalField("收款扣费原币金额", max_digits=14, decimal_places=4, default=0)
-    fee_responsibility = models.CharField("收款扣费承担方", max_length=10, choices=[("", "未涉及"), ("company", "我方承担"), ("customer", "客户承担"), ("unknown", "待查")], blank=True)
+    fee_responsibility = models.CharField("收款扣费承担方", max_length=10, choices=[("", "未涉及"), ("company", "我方承担"), ("customer", "客户承担"), ("unknown", "待查"), ("mixed", "按明细区分")], blank=True)
     fee_reason = models.TextField("收款扣费依据", blank=True)
     fee_evidence = models.ForeignKey("FinanceVoucher", on_delete=models.PROTECT, null=True, blank=True, related_name="transactions")
     settlement_amount = models.DecimalField("本笔核销原币金额", max_digits=14, decimal_places=4, default=0)
+    request_hash = models.CharField(max_length=64, blank=True, default="")
+    reference_rate_missing = models.BooleanField(default=False)
     kind = models.CharField("业务类型", max_length=30, choices=KIND_CHOICES, default="other")
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name="transactions")
@@ -2163,13 +2172,68 @@ class Transaction(TimestampedModel):
         ordering = ["-transaction_date", "-id"]
 
     @property
+    def rmb_reference_amount(self):
+        if self.reference_rate_missing or self.exchange_rate is None:
+            return None
+        return self.rmb_amount or self.amount * self.exchange_rate
+
+    @property
+    def unallocated_cash_amount(self):
+        rows = getattr(self, "_prefetched_objects_cache", {}).get("allocations")
+        if rows is None:
+            rows = self.allocations.filter(is_active=True)
+        used = sum((row.cash_amount if row.cash_amount is not None else row.amount
+                    for row in rows if row.is_active), Decimal("0"))
+        refunded = self.refunded_cash_amount(unallocated_only=True)
+        returned = self.returned_cash_amount(unallocated_only=True)
+        return max(self.amount - used - refunded - returned, Decimal("0"))
+
+    def refunded_cash_amount(self, *, unallocated_only=False):
+        rows = getattr(self, "_prefetched_objects_cache", {}).get("attributed_refunds")
+        if rows is not None:
+            return sum((row.refund.amount for row in rows if row.refund.status == "confirmed" and (not unallocated_only or row.refund.plan_id is None)), Decimal("0"))
+        rows = self.attributed_refunds.filter(refund__status="confirmed")
+        if unallocated_only:
+            rows = rows.filter(refund__plan__isnull=True)
+        return rows.aggregate(total=models.Sum("refund__amount"))["total"] or Decimal("0")
+
+    def returned_cash_amount(self, *, unallocated_only=False):
+        rows = getattr(self, "_prefetched_objects_cache", {}).get("bank_return_allocations")
+        if rows is not None:
+            return sum((row.amount for row in rows if not unallocated_only or row.plan_id is None), Decimal("0"))
+        rows = self.bank_return_allocations.all()
+        if unallocated_only:
+            rows = rows.filter(plan__isnull=True)
+        return rows.aggregate(total=models.Sum("amount"))["total"] or Decimal("0")
+
+    @property
     def allocation_capacity(self):
+        refunded = self.refunded_cash_amount(unallocated_only=True) + self.returned_cash_amount(unallocated_only=True)
+        if self.kind == "customer_receipt" and self.direction == "income" and not self.order_id and not self.plan_id:
+            adjustments = getattr(self, "_prefetched_objects_cache", {}).get("receipt_adjustments")
+            fees = [item for item in adjustments if item.nature == "bank_fee" and item.handling == "company"] if adjustments is not None else self.receipt_adjustments.filter(nature="bank_fee", handling="company").select_related("evidence")
+            if not fees:
+                return self.amount - refunded
+            from .services.finance_closeout import voucher
+            from .services.cash_events import family
+            family_ids = [row.pk for row in family(self)]
+            total = Decimal("0")
+            for item in fees:
+                try:
+                    proof = voucher(item.evidence_id, scope="transaction")
+                    if (proof.bank_sources or proof.receipt_refunds.exists() or proof.transactions.exclude(pk__in=family_ids).exists()
+                            or proof.receipt_adjustments.exclude(transaction_id__in=family_ids).exists()):
+                        continue
+                except Exception:
+                    continue
+                total += item.amount
+            return self.amount + total - refunded
         if (self.kind == "unallocated_advance" and self.direction == "income" and self.fee_responsibility == "company"
                 and self.fee_evidence_id and self.bank_fee_amount > 0
                 and self.remittance_amount is not None and self.remittance_amount - self.amount == self.bank_fee_amount
                 and self._has_valid_fee_evidence()):
-            return self.amount + self.bank_fee_amount
-        return self.amount
+            return self.amount + self.bank_fee_amount - refunded
+        return self.amount - refunded
 
     def _has_valid_fee_evidence(self):
         cached = getattr(self, "_fee_evidence_valid_cache", None)
@@ -2183,6 +2247,7 @@ class Transaction(TimestampedModel):
             valid = (
                 proof.pk == self.fee_evidence_id
                 and not proof.bank_sources
+                and not proof.receipt_refunds.exists()
                 and not proof.transactions.exclude(pk__in=family_ids).exists()
             )
         except Exception:
@@ -2241,6 +2306,36 @@ class FinanceVoucher(FinanceAppendOnly):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("凭证不可删除。")
+
+
+class FinanceReceiptRefund(FinanceAppendOnly):
+    """Immutable attribution of a real refund to the cash actually received."""
+    source = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="attributed_refunds")
+    refund = models.OneToOneField(Transaction, on_delete=models.PROTECT, related_name="receipt_refund_link")
+    voucher = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT, related_name="receipt_refunds")
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class FinanceCashConfirmation(FinanceAppendOnly):
+    """Original confirmation intent, used to distinguish retries from changes."""
+    event = models.OneToOneField("RmbCashEvent", on_delete=models.PROTECT, related_name="confirmation_identity")
+    request_hash = models.CharField(max_length=64)
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class FinanceBankReturnAllocation(FinanceAppendOnly):
+    """A verified CNY bank return traced to the original cash and plan."""
+    fact = models.ForeignKey("FinanceFact", on_delete=models.PROTECT, related_name="return_allocations")
+    source = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="bank_return_allocations")
+    plan = models.ForeignKey(PaymentPlan, on_delete=models.PROTECT, null=True, blank=True, related_name="bank_return_allocations")
+    amount = models.DecimalField(max_digits=14, decimal_places=4)
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="finance_bank_return_alloc_positive")]
 
 
 class FinanceBankVoucherBinding(FinanceAppendOnly):
@@ -2319,6 +2414,15 @@ class FinanceAccountMapping(FinanceAppendOnly):
     actor = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
     objects = OperationLogQuerySet.as_manager()
+
+
+class FinanceBankFactMatch(FinanceAppendOnly):
+    """Reviewed identity between two representations of one bank movement."""
+    fact = models.OneToOneField(FinanceFact, on_delete=models.PROTECT, related_name="bank_event_match")
+    event = models.OneToOneField("RmbCashEvent", on_delete=models.PROTECT, related_name="account_fact_match")
+    reason = models.TextField()
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class FinanceReview(FinanceAppendOnly):
@@ -2513,6 +2617,9 @@ class FinancePlanWriteoff(TimestampedModel):
     request_key = models.CharField(max_length=128, unique=True)
     request_hash = models.CharField(max_length=64)
     confirmed_actor = models.JSONField()
+    nature = models.CharField(max_length=16, choices=[("rounding", "授权抹零"), ("discount", "优惠减免"), ("other", "其他有依据扣减")], default="rounding")
+    evidence = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT, null=True, blank=True, related_name="plan_writeoffs")
+    contract_change = models.ForeignKey(ContractChangeRequest, on_delete=models.PROTECT, null=True, blank=True, related_name="finance_writeoffs")
 
     class Meta:
         constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="finance_plan_writeoff_positive")]
@@ -2545,6 +2652,27 @@ class FinancePlanWriteoffCorrection(TimestampedModel):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("抹零更正不可删除。")
+
+
+class FinanceReceiptAdjustment(FinanceAppendOnly):
+    NATURE_CHOICES = [("discount", "优惠/减免"), ("bank_fee", "银行手续费"), ("pending_difference", "待核实差额"), ("other", "其他扣减")]
+    HANDLING_CHOICES = [("company", "我方承担"), ("customer", "客户承担"), ("pending", "待核实"), ("applied", "已核准抵减应收"), ("already_in_order", "已计入订单金额")]
+    transaction = models.ForeignKey(Transaction, on_delete=models.PROTECT, related_name="receipt_adjustments")
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustments")
+    plan = models.ForeignKey(PaymentPlan, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustments")
+    nature = models.CharField(max_length=24, choices=NATURE_CHOICES)
+    handling = models.CharField(max_length=20, choices=HANDLING_CHOICES)
+    amount = models.DecimalField(max_digits=14, decimal_places=4)
+    currency = models.CharField(max_length=10)
+    reason = models.TextField()
+    evidence = models.ForeignKey(FinanceVoucher, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustments")
+    contract_change = models.ForeignKey(ContractChangeRequest, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustments")
+    writeoff = models.OneToOneField(FinancePlanWriteoff, on_delete=models.PROTECT, null=True, blank=True, related_name="receipt_adjustment")
+    actor = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="finance_receipt_adjustment_positive")]
 
 
 class SalesRule(TimestampedModel):

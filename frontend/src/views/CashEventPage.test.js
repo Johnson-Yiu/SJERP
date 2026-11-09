@@ -41,7 +41,7 @@ test('cash event form keeps system identifiers and file hashes out of visible co
   assert.match(template, /历史记录缺少实际凭证，请补传原始文件/)
   assert.doesNotMatch(template, /请求键|SHA256|后端预览|SYNTH|事件编号<input/)
   assert.match(source, /gross_rmb_amount: String\(form\.gross_rmb_amount/)
-  assert.match(source, /actual_rate: actualRate\(\)/)
+  assert.doesNotMatch(source, /actual_rate: actualRate\(\)/)
   assert.match(source, /function bankNetAmount\(\)/)
   assert.match(template, /扣费前兑换额（CNY）/)
   assert.match(template, /银行净到账（CNY）/)

@@ -44,7 +44,7 @@ class CoreBusinessFixture:
             (root / (hashlib.sha256(self.id().encode()).hexdigest()[:16] + ".json")).write_text(json.dumps({"test": self.id(), "http": self.records}, ensure_ascii=False, default=str, indent=2), encoding="utf-8", newline="\n")
 
     def post(self, path, body, expected=200, key=None):
-        headers = {"HTTP_IDEMPOTENCY_KEY": key or "CORE-" + uuid.uuid4().hex} if path.endswith(("/ship/", "/receive/")) else {}
+        headers = {"HTTP_IDEMPOTENCY_KEY": key or "CORE-" + uuid.uuid4().hex} if path.endswith(("/ship/", "/receive/", "/pay/")) or path in {"/api/inventory-movements/", "/api/inventory-movements/batch/"} else {}
         r = self.client.post(path, body, format="json", **headers)
         self.records.append({"path": path, "request": body, "status": r.status_code, "body": getattr(r, "data", None)})
         self.assertEqual(r.status_code, expected, getattr(r, "data", None))
@@ -284,10 +284,10 @@ class CoreBusinessFlowTests(CoreBusinessFixture, TestCase):
         payload={'transaction_date':str(DAY),'amount':'6','currency':'CNY','exchange_rate':'1','reference':'CORE-SYNTHETIC-PAYMENT'}
         with patch('crm.views.record_operation',side_effect=fail_second):
             with self.assertRaisesRegex(RuntimeError,'synthetic second payment audit failure'):
-                self.post(f'/api/purchase-orders/{po.pk}/pay/',payload,201)
+                self.post(f'/api/purchase-orders/{po.pk}/pay/',payload,201,key='CORE-PAY-AUDIT')
         self.assertEqual(labels,['登记供应商付款','采购单付款'])
         self.assertEqual(self.snapshot(),before)
-        self.post(f'/api/purchase-orders/{po.pk}/pay/',payload,201)
+        self.post(f'/api/purchase-orders/{po.pk}/pay/',payload,201,key='CORE-PAY-AUDIT')
         self.assertEqual(sum((p.remaining_amount for p in po.payment_plans.all()),D(0)),D(12))
         self.assertEqual(Transaction.objects.count(),1)
         self.assertEqual(OperationLog.objects.count(),2)

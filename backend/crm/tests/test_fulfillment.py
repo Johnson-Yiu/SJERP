@@ -321,7 +321,7 @@ class ReservationRebalanceTests(TestCase):
     def test_manual_inventory_create_and_reversal_rebalance_reservations(self):
         response = self.client.post("/api/inventory-movements/", {
             "movement_date": "2026-01-03", "type": "adjust_in", "sku": self.sku.id, "quantity": "10",
-        }, format="json")
+        }, format="json", HTTP_IDEMPOTENCY_KEY="manual-rebalance-in")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(self.reserved(self.b), Decimal("10"))
 
@@ -464,7 +464,7 @@ class FulfillmentApiTests(TestCase):
         purchase.items.create(sku=self.sku, quantity="4", unit_price="3")
         response = self.client.post("/api/purchase-orders/{}/pay/".format(purchase.id), {
             "transaction_date": "2026-08-21", "amount": "12", "currency": "USD", "exchange_rate": "1",
-        }, format="json")
+        }, format="json", HTTP_IDEMPOTENCY_KEY="fulfillment-pay-api")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, getattr(response, "data", None))
         self.assertEqual(response.data["direction"], "expense")
 

@@ -41,7 +41,12 @@ const partySnapshotRows = computed(() => formal.value ? [
   ['邮箱', row.value.supplier_email_snapshot],
 ] : [])
 const hasPaymentSummary = computed(() => row.value?.paid_amount != null && row.value?.unpaid_amount != null)
-const canPay = computed(() => can('purchases', 'update') && formal.value && Number(row.value.unpaid_amount) > 0)
+const canPay = computed(() => {
+  if (!row.value) return false
+  let pending = false
+  try { pending = Boolean(JSON.parse(window.sessionStorage.getItem(`finance-purchase-payment-${row.value.id}`) || 'null')?.key) } catch { /* no saved request */ }
+  return can('purchases', 'update') && formal.value && (Number(row.value.unpaid_amount) > 0 || pending)
+})
 const paymentPercent = computed(() => Number(row.value?.total_amount) > 0 ? Math.min(100, Math.round(Number(row.value.paid_amount || 0) / Number(row.value.total_amount) * 100)) : 0)
 const money = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 function dateTime(value) {

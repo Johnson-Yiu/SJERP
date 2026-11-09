@@ -26,12 +26,42 @@ async function mountPage(direction = 'receivable') {
 beforeEach(() => {
   vi.useRealTimers()
   vi.clearAllMocks()
+  window.sessionStorage.clear()
   mocks.listAll.mockResolvedValue([])
   mocks.post.mockResolvedValue({ data: {} })
   mocks.patch.mockResolvedValue({ data: {} })
 })
 
 describe('payment plan list filters', () => {
+  it('recovers a possibly saved plan receipt with its original request identity', async () => {
+    mocks.listAll.mockResolvedValue([receivable])
+    mocks.post.mockRejectedValueOnce(new Error('connection lost')).mockResolvedValueOnce({ data: { id: 10 } })
+    const first = await mountPage('receivable')
+    await flushPromises()
+    const action = first.wrapper.findAll('button').find(button => button.text() === '登记收款')
+    await action.trigger('click')
+    await first.wrapper.get('.dialog input[type="number"]').setValue('20')
+    await first.wrapper.get('.dialog').trigger('submit.prevent')
+    await flushPromises()
+    const original = mocks.post.mock.calls[0]
+    expect(original[2].headers['Idempotency-Key']).toMatch(/^PLAN-/)
+    first.wrapper.unmount()
+
+    mocks.listAll.mockResolvedValue([])
+    mocks.get.mockResolvedValue({ data: { ...receivable, status: 'settled', remaining_amount: '0' } })
+    const reopened = await mountPage('receivable')
+    await flushPromises()
+    expect(reopened.wrapper.text()).toContain('结果待确认')
+    const recover = reopened.wrapper.findAll('button').find(button => button.text() === '按原内容核对')
+    await recover.trigger('click')
+    await flushPromises()
+    await reopened.wrapper.get('.dialog').trigger('submit.prevent')
+    await flushPromises()
+    expect(mocks.post.mock.calls[1]).toEqual(original)
+    expect(window.sessionStorage.getItem('finance-plan-settle-1')).toBeNull()
+    reopened.wrapper.unmount()
+  })
+
   it('always requests the active direction and reloads when direction changes', async () => {
     mocks.listAll.mockResolvedValue([receivable])
     const { wrapper } = await mountPage('receivable')

@@ -9,7 +9,7 @@ from django.conf import settings
 from django.db import IntegrityError, connection, transaction
 from django.db.models import Sum, Q
 from django.utils import timezone
-from rest_framework.exceptions import APIException, NotFound, ValidationError
+from rest_framework.exceptions import APIException, NotFound, PermissionDenied, ValidationError
 
 from crm.finance_scope import require_finance_permission, scope_transaction_queryset, validate_finance_relations
 from crm.audit import snapshot
@@ -80,17 +80,39 @@ def source_snapshot(row):
             for k in ("id", "transaction_no", "amount", "currency", "direction", "kind", "split_from_id", "customer_id", "supplier_id", "order_id", "purchase_order_id", "plan_id", "exchange_rate", "rmb_amount")}
 
 
+def source_snapshot_matches(row, saved):
+    current = source_snapshot(row)
+    if not isinstance(saved, dict):
+        return False
+    if saved.keys() == current.keys():
+        return saved == current
+    # c978 recorded a larger snapshot, including fee and missing-rate fields.
+    # Compare the exact known shape, never accept a partial or unknown snapshot.
+    extra = {"remittance_amount", "bank_fee_amount", "fee_responsibility", "settlement_amount", "reference_rate_missing"}
+    if saved.keys() != current.keys() | extra:
+        return False
+    for key in extra:
+        value = getattr(row, key)
+        current[key] = str(value) if key in {"remittance_amount", "bank_fee_amount", "settlement_amount"} and value is not None else value
+    if row.exchange_rate is None:
+        current["exchange_rate"] = None
+    return saved == current
+
+
 def visible(event, user):
     if event.fee_for_id and not visible(event.fee_for, user):
         return False
-    for a in event.sources.select_related("source"):
+    sources = getattr(event, "_prefetched_objects_cache", {}).get("sources")
+    if sources is None:
+        sources = list(event.sources.select_related("source"))
+    for a in sources:
         if not source_visible(a.source, user):
             return False
         # Nulling/reassigning historical ownership must not expose the snapshot.
         for key in ("customer_id", "supplier_id", "order_id", "purchase_order_id", "plan_id"):
             if a.source_snapshot[key] != getattr(a.source, key):
                 return False
-    return event.sources.exists()
+    return bool(sources)
 
 
 def get_event(user, **lookup):
@@ -140,8 +162,11 @@ def parties(row):
 
 
 def uncertainty(row):
-    if row.kind in {"refund", "supplier_refund", "exchange_difference"}:
+    attributed_refund = row.kind == "refund" and hasattr(row, "receipt_refund_link")
+    if row.kind in {"refund", "supplier_refund", "exchange_difference"} and not attributed_refund:
         return "退款/汇兑差额来源尚未明确，不能自动确认资金事实。"
+    if attributed_refund:
+        return None
     related = Q(pk__in=[])
     customers, suppliers = parties(row)
     if len(customers) > 1 or len(suppliers) > 1:
@@ -150,7 +175,10 @@ def uncertainty(row):
         related |= (Q(customer_id__in=customers) | Q(order__customer_id__in=customers) | Q(plan__order__customer_id__in=customers)) & Q(kind="refund")
     if suppliers:
         related |= (Q(supplier_id__in=suppliers) | Q(purchase_order__supplier_id__in=suppliers) | Q(plan__purchase_order__supplier_id__in=suppliers)) & Q(kind="supplier_refund")
-    if Transaction.objects.filter(related, currency=row.currency).exists():
+    ambiguous_refund = Transaction.objects.filter(related, currency=row.currency, receipt_refund_link__isnull=True).exists()
+    if ambiguous_refund and row.customer_id and row.direction == "income" and row.kind in {"customer_receipt", "unallocated_advance"}:
+        ambiguous_refund = refund_source_uncertainty(row)
+    if ambiguous_refund:
         return "同往来方同币种存在来源未明确的退款，资金可用量待核对。"
     members = family(row)
     if any(r.replaces_id for r in members) or Transaction.objects.filter(replaces_id__in=[r.pk for r in members]).exists():
@@ -159,8 +187,37 @@ def uncertainty(row):
 
 
 def available(row):
-    used = row.cash_source_allocations.filter(event__status="confirmed").aggregate(n=Sum("amount"))["n"] or Decimal("0")
-    return row.amount - used
+    allocations = getattr(row, "_prefetched_objects_cache", {}).get("cash_source_allocations")
+    used = sum((item.amount for item in allocations if item.event.status == "confirmed"), Decimal("0")) if allocations is not None else row.cash_source_allocations.filter(event__status="confirmed").aggregate(n=Sum("amount"))["n"] or Decimal("0")
+    refunded = row.refunded_cash_amount()
+    return max(row.amount - used - refunded, Decimal("0"))
+
+
+def refundable_cash(row):
+    """A CNY bank confirmation proves receipt; only FX conversion uses original cash."""
+    allocations = getattr(row, "_prefetched_objects_cache", {}).get("cash_source_allocations")
+    converted = sum((item.amount for item in allocations if item.event.status == "confirmed" and item.event.kind == "fx_settlement"), Decimal("0")) if allocations is not None else row.cash_source_allocations.filter(event__status="confirmed", event__kind="fx_settlement").aggregate(n=Sum("amount"))["n"] or Decimal("0")
+    refunded = row.refunded_cash_amount()
+    # FX bank returns draw from cash already included in confirmed conversions.
+    direct_returns = row.returned_cash_amount() if row.currency == "CNY" else Decimal("0")
+    return row.amount - converted - refunded - direct_returns
+
+
+def refund_source_uncertainty(row):
+    """Unbound historical refunds only affect overlapping or unknown orders."""
+    members = family(row)
+    member_ids = [member.pk for member in members]
+    if any(member.replaces_id for member in members) or Transaction.objects.filter(replaces_id__in=member_ids).exists():
+        return True
+    order_ids = set(Transaction.objects.filter(pk__in=member_ids, order_id__isnull=False).values_list("order_id", flat=True))
+    order_ids.update(Transaction.objects.filter(pk__in=member_ids, plan__order_id__isnull=False).values_list("plan__order_id", flat=True))
+    from crm.models import AdvanceAllocation
+    order_ids.update(AdvanceAllocation.objects.filter(advance_id__in=member_ids, is_active=True, plan__order_id__isnull=False).values_list("plan__order_id", flat=True))
+    if not row.customer_id:
+        return True
+    return Transaction.objects.filter(kind="refund", currency=row.currency, receipt_refund_link__isnull=True).filter(
+        Q(customer_id=row.customer_id) | Q(order__customer_id=row.customer_id) | Q(plan__order__customer_id=row.customer_id)
+    ).filter(Q(order_id__in=order_ids) | Q(plan__order_id__in=order_ids) | Q(order__isnull=True, plan__isnull=True)).exists()
 
 
 def normalize(payload):
@@ -294,8 +351,8 @@ def validate_sources(p, user, *, confirmation=False):
         if receipt is None or not source_visible(receipt, user):
             raise NotFound("关联收款不存在或不可访问。")
         if (receipt.split_from_id or receipt.kind != "customer_receipt" or receipt.status != "confirmed"
-                or receipt.direction != "income" or not receipt.order_id or receipt.currency != p["currency"]):
-            raise ValidationError("关联收款必须是已保存、已确认且关联订单的同币种客户收款。")
+                or receipt.direction != "income" or receipt.currency != p["currency"]):
+            raise ValidationError("关联收款必须是已保存、已确认的同币种客户收款。")
         allowed_receipt_sources = {row.pk for row in family(receipt)}
     rows = []
     for s in p["sources"]:
@@ -304,8 +361,8 @@ def validate_sources(p, user, *, confirmation=False):
             raise NotFound("资金来源不存在或不可访问。")
         if row.status != "confirmed" or row.currency != p["currency"] or row.direction != p["direction"]:
             raise ValidationError("来源状态、币种或方向不一致。")
-        if allowed_receipt_sources is not None and row.pk not in allowed_receipt_sources:
-            raise ValidationError("结汇来源必须来自指定的已保存客户收款及其拆分流水。")
+        if allowed_receipt_sources is not None and row.pk not in allowed_receipt_sources and row.kind not in {"customer_receipt", "unallocated_advance"}:
+            raise ValidationError("合并结汇只能选择已确认的客户收款或预收款。")
         error = uncertainty(row)
         if error:
             raise ValidationError(error)
@@ -319,6 +376,8 @@ def validate_sources(p, user, *, confirmation=False):
         if Decimal(s["amount"]) > available(row):
             raise CashConflict("来源额度不足或已确认，不能重复结汇。")
         rows.append(row)
+    if allowed_receipt_sources is not None and not any(row.pk in allowed_receipt_sources for row in rows):
+        raise ValidationError("本次结汇须包含发起登记的原收款来源。")
     if p["fee_for"]:
         parent = get_event(user, pk=p["fee_for"])
         if parent.status != "confirmed" or parent.kind != "fx_settlement" or parent.fee_mode != "none" or parent.rmb_account != p["rmb_account"]:
@@ -344,13 +403,25 @@ def duplicate_candidates(p, user, *, exclude_id=None):
         qs = qs.exclude(pk=exclude_id)
     events = list(qs.order_by("pk"))
     hidden = any(not visible(event, user) for event in events)
-    ids = [event.pk for event in events]
+    from crm.models import FinanceAccountMapping, FinanceFact
+    from . import finance_closeout as ledger
+    accounts = FinanceAccountMapping.objects.filter(legacy_code=p["rmb_account"]).values_list("account_id", flat=True)
+    facts = list(FinanceFact.objects.filter(account_id__in=accounts, actual_date=p["bank_date"],
+        direction=p["direction"], amount=p["bank_net_amount"]).exclude(kind="opening").order_by("pk"))
+    if facts:
+        try:
+            ledger.access(user)
+        except PermissionDenied:
+            hidden = True
+    ids = [event.pk for event in events] + [-fact.pk for fact in facts]
     token = hashlib.sha256(json.dumps(ids, separators=(",", ":")).encode()).hexdigest()
-    return {"token": token, "restricted": hidden, "count": len(events),
-            "items": [] if hidden else [{"id": event.pk, "event_no": event.event_no,
+    return {"token": token, "restricted": hidden, "count": len(events) + len(facts),
+            "items": [] if hidden else [{"id": event.pk, "record_type": "bank_event", "event_no": event.event_no,
                 "bank_reference": event.bank_reference, "bank_counterparty": event.bank_counterparty,
                 "bank_summary": event.bank_summary, "bank_transaction_id": event.bank_transaction_id}
-                for event in events]}
+                for event in events] + [{"id": -fact.pk, "record_type": "account_fact", "event_no": f"账户资金 {fact.source_key}",
+                    "bank_reference": fact.source_key, "bank_counterparty": "", "bank_summary": fact.nature,
+                    "bank_transaction_id": ""} for fact in facts]}
 
 
 def lock_bank_fact(p):
@@ -408,8 +479,19 @@ def register_event(payload, user):
 
 
 @transaction.atomic
-def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None, duplicate_reason=None):
+def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None, duplicate_reason=None, same_fact=None):
     access(user, "update")
+    from crm.models import FinanceCashConfirmation
+    if duplicate_token is not None and not isinstance(duplicate_token, str):
+        raise ValidationError("重复候选核对信息无效。")
+    if duplicate_reason is not None and not isinstance(duplicate_reason, str):
+        raise ValidationError("重复候选核对说明无效。")
+    if same_fact is not None:
+        from .finance_closeout import pk
+        same_fact = pk(same_fact)
+    confirmation_hash = hashlib.sha256(json.dumps({"voucher_checked": voucher_checked,
+        "duplicate_token": duplicate_token or None, "duplicate_reason": duplicate_reason.strip() if duplicate_reason else None,
+        "same_fact": same_fact}, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
     event = get_event(user, pk=event_id)
     p = event.request_payload
     lock_bank_fact(p)
@@ -428,6 +510,16 @@ def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None
     if not visible(event, user):
         raise NotFound("资金记录不存在或不可访问。")
     if event.status == "confirmed":
+        identity = FinanceCashConfirmation.objects.filter(event=event).first()
+        if identity and identity.request_hash != confirmation_hash:
+            raise CashConflict("该银行记录已确认；本次核对内容与原确认不一致。")
+        if identity is None and (voucher_checked is not True or duplicate_token or duplicate_reason or same_fact is not None):
+            raise CashConflict("历史确认缺少原请求身份；请查看原记录，不可追加或推测核对内容。")
+        if same_fact is not None:
+            from crm.models import FinanceBankFactMatch
+            match = FinanceBankFactMatch.objects.filter(event=event, fact_id=pk(same_fact)).first()
+            if match is None or not isinstance(duplicate_reason, str) or match.reason != duplicate_reason.strip():
+                raise CashConflict("此银行事件已确认，不能以不同关联重放。")
         return event
     if event.status != "pending" or voucher_checked is not True:
         raise ValidationError("只有待确认事件可由人工核实银行凭证后确认。")
@@ -437,19 +529,27 @@ def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None
     candidates = duplicate_candidates(p, user, exclude_id=event.pk)
     if candidates["restricted"]:
         raise CashConflict("存在无权查看的疑似重复资金记录，请联系有权人员核对。")
+    if same_fact is not None:
+        if not any(item["id"] == -same_fact and item["record_type"] == "account_fact" for item in candidates["items"]):
+            raise CashConflict("所选账户资金记录已变化，请重新获取候选并核对。")
     if candidates["count"]:
         if duplicate_token != candidates["token"] or not isinstance(duplicate_reason, str) or not 1 <= len(duplicate_reason.strip()) <= 500:
             raise CashConflict("存在疑似重复资金记录，请重新核对并填写放行说明。")
         CashDuplicateReview.objects.create(event=event, candidate_ids=[c["id"] for c in candidates["items"]],
                                            reason=duplicate_reason.strip(), actor=actor(user, "release_duplicate_candidate"))
     for a in event.sources.select_related("source"):
-        if a.source_snapshot != source_snapshot(a.source):
+        if not source_snapshot_matches(a.source, a.source_snapshot):
             raise ValidationError("来源快照已变化，请核查原流水；不能覆盖旧证据。")
     before = snapshot(event)
     event.status = "confirmed"
     event.confirmed_at = timezone.now()
     event.confirmed_actor = actor(user, "confirm_bank_voucher")
     event.save(update_fields=["status", "confirmed_at", "confirmed_actor", "updated_at"])
+    if same_fact is not None:
+        from crm.models import FinanceFact
+        from .finance_closeout import match_bank_fact
+        match_bank_fact(FinanceFact.objects.get(pk=same_fact), event, user, duplicate_reason)
+    FinanceCashConfirmation.objects.create(event=event, request_hash=confirmation_hash, actor=actor(user, "confirm_bank_voucher"))
     audit_cash_event(event, user, "确认银行资金事件", before=before)
     return event
 
@@ -471,6 +571,8 @@ def cancel_pending(event_id, user, reason):
 
 
 def guard_void(rows, operation="作废"):
+    if any(row.attributed_refunds.exists() or row.bank_return_allocations.exists() or hasattr(row, "receipt_refund_link") for row in rows):
+        raise ValidationError("流水已关联退款或银行退回，须通过受控更正保留原记录，不能直接作废。")
     if CashSourceAllocation.objects.filter(source_id__in=[r.pk for r in rows], event__status__in=ACTIVE).exists():
         raise ValidationError(f"来源有关联待确认/已确认银行资金事件，不能直接{operation}。未确认草稿可留痕放弃；已确认事实请走账户资金更正，不能自动释放来源。")
 

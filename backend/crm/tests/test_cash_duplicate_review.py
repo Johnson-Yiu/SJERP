@@ -42,7 +42,8 @@ class DuplicateReviewTests(CashFixture, TestCase):
         self.assertEqual(review.actor["kind"], "development_superadmin")
         self.assertEqual(RmbCashEvent.objects.get(pk=second).bank_counterparty, "")
         self.assertEqual(RmbCashEvent.objects.filter(status="confirmed").count(), 2)
-        self.confirm(second)
+        self.assertEqual(self.client.post(f"{URL}{second}/confirm/", {"voucher_checked": True, "duplicate_token": candidates["token"], "duplicate_reason": "核对银行凭证为另一笔交易"}, format="json").status_code, 200)
+        self.confirm(second, 409)
         self.assertEqual(CashDuplicateReview.objects.count(), 1)
 
     def test_release_failure_rolls_back_confirmation(self):
@@ -126,8 +127,14 @@ class DuplicateMigrationTests(CashFixture, TransactionTestCase):
         original_guard = import_module("crm.migrations.0096_rmbcashevent_bank_counterparty_and_more").refuse_reverse_with_review_history
         with self.assertRaisesRegex(RuntimeError, "Refusing to remove duplicate review audit history"):
             original_guard(apps, SimpleNamespace(connection=connection))
+        private_guard = import_module("crm.migrations.0102_bank_private_voucher_binding").preserve_bank_proofs
+        with self.assertRaisesRegex(RuntimeError, "银行私有凭证历史"):
+            private_guard(apps, SimpleNamespace(connection=connection))
         try:
-            with self.assertRaisesRegex(RuntimeError, "银行私有凭证历史"):
+            # The shared allocation fields now intentionally stop the full
+            # reverse path before it can remove either branch's data.
+            from django.db.migrations.exceptions import IrreversibleError
+            with self.assertRaisesRegex(IrreversibleError, "Shared allocation columns"):
                 executor.migrate([("crm", "0095_merge_fulfillment_idempotency")])
         finally:
             executor = MigrationExecutor(connection)

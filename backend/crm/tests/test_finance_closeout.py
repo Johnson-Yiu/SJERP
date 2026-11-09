@@ -8,7 +8,7 @@ from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
 from rest_framework.test import APIClient
 
@@ -49,6 +49,19 @@ class CloseoutFixture:
 class FinanceCloseoutTests(CloseoutFixture, TestCase):
     def setUp(self):
         self.setup_ledger()
+
+    def test_business_choices_use_searchable_labels_and_internal_values(self):
+        data = self.data(source_system="manual", request_key="a-private-request-key", source_key="a-private-request-key")
+        instruction, _ = ledger.submit(data, self.maker)
+        fact = ledger.post(instruction.pk, self.maker, voucher_checked=True)
+        client = APIClient()
+        client.force_authenticate(self.maker)
+        response = client.get("/api/finance-ledger/choices/", {"type": "fact", "q": self.account.name})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["items"][0]["value"], fact.pk)
+        self.assertIn(self.account.name, response.data["items"][0]["label"])
+        self.assertNotIn("a-private-request-key", response.data["items"][0]["label"])
+        self.assertEqual(client.get("/api/finance-ledger/choices/", {"type": "unknown"}).status_code, 400)
 
     def test_persistent_identity_and_conflicting_payload(self):
         data = self.data()
@@ -280,6 +293,59 @@ class FinanceCloseoutTests(CloseoutFixture, TestCase):
         with self.assertRaises(APIException):
             self.fact(kind="bank_return", legacy_parent=original.pk, direction="expense", amount="605.01", actual_date="2026-10-19")
 
+    @override_settings(RMB_CASH_ACCOUNT_IDS=("SYNTH_CNY",))
+    def test_cny_bank_return_restores_receivable_atomically(self):
+        self.assert_cny_bank_return_restores_plan("receivable")
+
+    @override_settings(RMB_CASH_ACCOUNT_IDS=("SYNTH_CNY",))
+    def test_cny_bank_return_restores_payable_atomically(self):
+        self.assert_cny_bank_return_restores_plan("payable")
+
+    def assert_cny_bank_return_restores_plan(self, direction):
+        from crm.models import Customer, FinanceBankReturnAllocation, Order, PaymentPlan, PurchaseOrder, Supplier
+        from crm.services import cash_events
+        from crm.services.finance import record_transaction
+        from crm.tests.test_cash_events import payload
+
+        if direction == "receivable":
+            customer = Customer.objects.create(code="RETURN-CNY", name="合成退回客户")
+            order = Order.objects.create(order_no="RETURN-CNY", customer=customer, currency="CNY", status="confirmed", order_date=date(2026, 1, 2))
+            relation = {"order": order}
+            bank_direction, return_direction = "income", "expense"
+        else:
+            supplier = Supplier.objects.create(code="BR", name="合成退回供应商")
+            order = PurchaseOrder.objects.create(purchase_no="RETURN-CNY", supplier=supplier, currency="CNY", status="ordered", order_date=date(2026, 1, 2))
+            relation = {"purchase_order": order}
+            bank_direction, return_direction = "expense", "income"
+        plan = PaymentPlan.objects.create(direction=direction, currency="CNY", planned_amount=100, **relation)
+        source = record_transaction({"transaction_no": "RETURN-SOURCE", "plan": plan, "direction": bank_direction, "amount": "100", "currency": "CNY", "exchange_rate": "1"})
+        event, _ = cash_events.register_event(payload([source], currency="CNY", direction=bank_direction, key="RETURN-BANK", kind="cny_direct", source_account="SYNTH_CNY", rmb_account="SYNTH_CNY", bank_net_amount="100", fee_mode="none", fee_amount="0", quoted_rate=None), self.maker)
+        cash_events.confirm_event(event.pk, self.maker, voucher_checked=True)
+        ledger.map_account({"account": self.account.pk, "legacy_code": "SYNTH_CNY", "reason": "合成银行开户映射凭证"}, self.maker)
+        client = APIClient()
+        client.force_authenticate(self.maker)
+        options = client.get("/api/finance-ledger/bank-return-options/", {"event": event.pk})
+        self.assertEqual(options.status_code, 200)
+        self.assertEqual(options.data["items"][0]["plan"], plan.pk)
+        data = self.data(kind="bank_return", legacy_parent=event.pk, direction=return_direction, amount="40.00",
+                         actual_date="2026-10-19", return_allocations=[{"source": source.pk, "plan": plan.pk, "amount": "40.00"}])
+        instruction, _ = ledger.submit(data, self.maker)
+        with patch.object(ledger, "audit", side_effect=RuntimeError("audit unavailable")):
+            with self.assertRaisesRegex(RuntimeError, "audit unavailable"):
+                ledger.post(instruction.pk, self.maker, voucher_checked=True)
+        plan.refresh_from_db()
+        self.assertEqual(plan.settled_amount, Decimal("100"))
+        self.assertFalse(FinanceBankReturnAllocation.objects.exists())
+        fact = ledger.post(instruction.pk, self.maker, voucher_checked=True)
+        self.assertEqual(ledger.post(instruction.pk, self.maker, voucher_checked=True).pk, fact.pk)
+        plan.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, Decimal("40"))
+        self.assertEqual(order.paid_amount, Decimal("60"))
+        self.assertEqual(source.returned_cash_amount(), Decimal("40"))
+        self.assertEqual(FinanceBankReturnAllocation.objects.count(), 1)
+        with self.assertRaises(APIException):
+            self.fact(kind="bank_return", legacy_parent=event.pk, direction=return_direction, amount="60.01", actual_date="2026-10-20")
+
     def test_separate_refund_approvals_still_identify_cumulative_excess(self):
         receipt = self.fact()
         payments = []
@@ -358,3 +424,71 @@ class FinanceCloseoutTests(CloseoutFixture, TestCase):
         self.assertIn("123.45", csv.content.decode("utf-8-sig"))
         detail = client.get("/api/finance-ledger/facts/", period)
         self.assertEqual(detail.data["facts"][0]["amount"], "123.45")
+
+
+class FinanceBankReturnConcurrencyTests(CloseoutFixture, TransactionTestCase):
+    @override_settings(RMB_CASH_ACCOUNT_IDS=("SYNTH_CNY", "SYNTH_FX"))
+    def test_fx_return_uses_verified_original_amount_and_serializes_competing_returns(self):
+        from concurrent.futures import ThreadPoolExecutor
+        from threading import Barrier
+
+        from django.db import close_old_connections, connection
+        from crm.models import Customer, FinanceBankReturnAllocation, Order, PaymentPlan
+        from crm.services import cash_events
+        from crm.services.finance import record_transaction
+        from crm.tests.test_cash_events import payload
+
+        if connection.vendor != "postgresql":
+            self.skipTest("Requires real PostgreSQL row locks")
+        self.setup_ledger()
+        customer = Customer.objects.create(code="RETURN-FX", name="合成外币退回客户")
+        order = Order.objects.create(order_no="RETURN-FX", customer=customer, currency="USD", status="confirmed", order_date=date(2026, 1, 2))
+        plan = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=100)
+        source = record_transaction({"transaction_no": "RETURN-FX-SOURCE", "plan": plan, "amount": "100", "currency": "USD", "exchange_rate": "7"})
+        event, _ = cash_events.register_event(payload([source], key="RETURN-FX-BANK"), self.maker)
+        cash_events.confirm_event(event.pk, self.maker, voucher_checked=True)
+        ledger.map_account({"account": self.account.pk, "legacy_code": "SYNTH_CNY", "reason": "合成银行开户映射凭证"}, self.maker)
+        self.fact(kind="bank_return", legacy_parent=event.pk, direction="expense", amount="100", actual_date="2026-10-19")
+        plan.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, Decimal("0"))
+
+        client = APIClient()
+        client.force_authenticate(self.maker)
+        options = client.get("/api/finance-ledger/bank-return-options/", {"event": event.pk})
+        self.assertEqual(options.status_code, 200)
+        self.assertEqual(options.data["currency"], "USD")
+        self.assertEqual(options.data["items"][0]["plan"], plan.pk)
+        instructions = []
+        for day in ("2026-10-20", "2026-10-21"):
+            data = self.data(kind="bank_return", legacy_parent=event.pk, direction="expense", amount="200",
+                             actual_date=day, return_currency="USD",
+                             return_allocations=[{"source": source.pk, "plan": plan.pk, "amount": "60"}])
+            instruction, _ = ledger.submit(data, self.maker)
+            with self.assertRaises(APIException):
+                ledger.post(instruction.pk, self.maker, voucher_checked=True)
+            ledger.approve(instruction.pk, self.reviewer)
+            instructions.append(instruction.pk)
+
+        barrier = Barrier(2)
+
+        def submit(instruction):
+            close_old_connections()
+            try:
+                barrier.wait(timeout=10)
+                return ledger.post(instruction, self.maker, voucher_checked=True).pk
+            except APIException as exc:
+                self.assertIn("实际金额", str(exc.detail))
+                return None
+            finally:
+                close_old_connections()
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            results = list(executor.map(submit, instructions))
+        self.assertEqual(results.count(None), 1)
+        fact = FinanceFact.objects.get(pk=next(value for value in results if value is not None))
+        self.assertEqual(fact.amount, Decimal("200"))
+        self.assertEqual(ledger.post(fact.instruction_id, self.maker, voucher_checked=True).pk, fact.pk)
+        self.assertEqual(FinanceBankReturnAllocation.objects.get().amount, Decimal("60"))
+        plan.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, Decimal("60"))
+        self.assertEqual(order.paid_amount, Decimal("40"))

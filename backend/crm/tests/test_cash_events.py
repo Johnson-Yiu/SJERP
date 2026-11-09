@@ -19,7 +19,7 @@ from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.exceptions import APIException
 from rest_framework.test import APIClient
 
-from crm.models import AdvanceAllocation, CashSourceAllocation, Customer, FinanceAccount, FinanceBankVoucherBinding, FinancePlanWriteoff, FinancePlanWriteoffCorrection, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
+from crm.models import AdvanceAllocation, CashSourceAllocation, Customer, FinanceAccount, FinanceBankVoucherBinding, FinanceCashConfirmation, FinancePlanWriteoff, FinancePlanWriteoffCorrection, FinanceVoucher, OperationLog, Order, PaymentPlan, Product, RmbCashEvent, SKU, Transaction
 from crm.services import cash_events as cash
 from crm.services.finance import allocate_advance, correct_receivable_writeoff, record_contract_refund, record_transaction, void_transaction, writeoff_receivable
 from crm.serializers import TransactionSerializer
@@ -33,7 +33,7 @@ URL = "/api/rmb-cash-events/"
 def legacy_hash():
     # Appended financial audit is an intended side effect; business facts still
     # remain byte-for-byte unchanged. Audit correctness is asserted separately.
-    data = {m.__name__: list(m.objects.order_by("pk").values()) for m in apps.get_app_config("crm").get_models() if m not in {RmbCashEvent, CashSourceAllocation, OperationLog, FinanceVoucher, FinanceBankVoucherBinding}}
+    data = {m.__name__: list(m.objects.order_by("pk").values()) for m in apps.get_app_config("crm").get_models() if m not in {RmbCashEvent, CashSourceAllocation, OperationLog, FinanceVoucher, FinanceBankVoucherBinding, FinanceCashConfirmation}}
     return hashlib.sha256(json.dumps(data, sort_keys=True, cls=DjangoJSONEncoder).encode()).hexdigest()
 
 
@@ -251,6 +251,33 @@ class CashEventTests(CashFixture, TestCase):
         self.assertEqual(order.paid_amount, D("0"))
         self.assertEqual(plan.settled_amount, D("20"))
         self.assertEqual(Transaction.objects.filter(order=order, direction="expense", kind="refund").count(), 2)
+
+    def test_fee_only_installment_is_non_cash_and_voidable(self):
+        content = b"%PDF-1.4\nSynthetic fee installment voucher\n%%EOF"
+        proof = FinanceVoucher(original_name="fee-installment.pdf", sha256=hashlib.sha256(content).hexdigest(), size=len(content), scope="transaction", actor={})
+        proof.file.save("fee-installment.pdf", ContentFile(content), save=False)
+        proof.save()
+        order = Order.objects.create(order_no="FEE-ONLY-O", customer=self.customer, currency="USD", exchange_rate="7.1", status="confirmed", order_date=date(2026, 10, 18))
+        order.items.create(sku=self.sku, quantity=1, unit_price=1000)
+        first = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=980)
+        second = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=20)
+        receipt = record_transaction(dict(kind="customer_receipt", direction="income", order=order, customer=self.customer,
+            amount="980", remittance_amount="1000", bank_fee_amount="20", fee_responsibility="company",
+            fee_reason="银行凭证确认我方承担手续费", fee_evidence=proof, currency="USD", exchange_rate="7.1"))
+        first.refresh_from_db(); second.refresh_from_db(); order.refresh_from_db()
+        self.assertEqual((first.remaining_amount, second.remaining_amount), (0, 0))
+        self.assertEqual(order.paid_amount, D("980"))
+        self.assertEqual(order_profit_summary(order)["order_expense_rmb"], D("142"))
+        allocation = receipt.allocations.get(plan=second)
+        self.assertEqual((allocation.cash_amount, allocation.fee_credit_amount), (0, 20))
+        self.assertEqual(Transaction.objects.filter(order=order).count(), 1)
+        refund = record_contract_refund(order, {"amount": "20", "currency": "USD"})
+        first.refresh_from_db(); second.refresh_from_db()
+        self.assertEqual((first.remaining_amount, second.remaining_amount), (20, 0))
+        void_transaction(refund, "退款登记错误需重新核实")
+        void_transaction(receipt, "凭证登记错误需重新核实")
+        first.refresh_from_db(); second.refresh_from_db()
+        self.assertEqual((first.remaining_amount, second.remaining_amount), (980, 20))
 
     def test_customer_and_unknown_fee_keep_unreceived_amount_open_and_void_restores_full_settlement(self):
         def receipt_proof(name):
@@ -772,10 +799,20 @@ class CashConcurrencyTests(CashFixture, TransactionTestCase):
 class CashMigrationTests(TransactionTestCase):
     def test_additive_migration_preserves_historical_rows_and_decimal_fields(self):
         from django.db.migrations.executor import MigrationExecutor
-        executor = MigrationExecutor(connection)
-        latest_targets = tuple(executor.loader.graph.leaf_nodes())
-        executor.migrate([("crm", "0076_customer_owner_profile")])
+        if connection.vendor != "postgresql":
+            self.skipTest("Historical forward migration requires an isolated PostgreSQL schema")
+        from uuid import uuid4
+
+        schema = connection.ops.quote_name("cash_migration_" + uuid4().hex)
+        with connection.cursor() as cursor:
+            cursor.execute("SHOW search_path")
+            original_path = cursor.fetchone()[0]
+            cursor.execute(f"CREATE SCHEMA {schema}")
         try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT set_config('search_path', %s, false)", [schema])
+            executor = MigrationExecutor(connection)
+            executor.migrate([("crm", "0076_customer_owner_profile")])
             state_0076 = executor.loader.project_state([("crm", "0076_customer_owner_profile")]).apps
             old = state_0076.get_model("crm", "Transaction")
             old.objects.create(transaction_no="LEGACY-FOUR", transaction_date=date(2026, 10, 1), direction="income", kind="other_income", category="Synthetic", amount=D("12.3401"), currency="USD", exchange_rate=D("7.123456"), rmb_amount=D("87.9034"), allocated_amount=D("0.0001"))
@@ -793,4 +830,6 @@ class CashMigrationTests(TransactionTestCase):
             self.assertEqual(state_0077.get_model("crm", "CashSourceAllocation").objects.count(), 0)
             print("P2A_MIGRATION_VERIFICATION", json.dumps({"vendor": connection.vendor, "all_legacy_rows_equal": True, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}))
         finally:
-            MigrationExecutor(connection).migrate(latest_targets)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT set_config('search_path', %s, false)", [original_path])
+                cursor.execute(f"DROP SCHEMA {schema} CASCADE")

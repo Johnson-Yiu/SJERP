@@ -77,7 +77,7 @@ class HistoricalOrderIsolationTests(TestCase):
         self.assertEqual(self.client.get("/api/purchase-orders/").data["count"], 0)
         self.assertEqual(self.client.get("/api/purchase-orders/", {"status": "historical"}).data["count"], 1)
         self.assertEqual(self.client.post(f"/api/purchase-orders/{purchase.pk}/place/", {}, format="json").status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(self.client.post(f"/api/purchase-orders/{purchase.pk}/pay/", {"amount": "1", "transaction_date": "2019-05-20"}, format="json").status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(self.client.post(f"/api/purchase-orders/{purchase.pk}/pay/", {"amount": "1", "transaction_date": "2019-05-20"}, format="json", HTTP_IDEMPOTENCY_KEY="historical-payment").status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_historical_mode_cannot_be_smuggled_through_formal_create_endpoints(self):
         self.assertEqual(self.client.post("/api/orders/", {**self.sales_payload(), "is_historical": True}, format="json").status_code, status.HTTP_400_BAD_REQUEST)

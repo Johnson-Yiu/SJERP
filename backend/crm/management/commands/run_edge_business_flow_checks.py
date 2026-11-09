@@ -146,7 +146,7 @@ class Command(BaseCommand):
         check("订单：重新草稿后无预留", order_draft_update.status_code == 200 and not InventoryReservation.objects.filter(order_item__order_id=order_id).exists(), str(order_draft_update.data))
 
         plan = Order.objects.get(pk=order_id).payment_plans.first()
-        currency_mismatch = post(f"/api/payment-plans/{plan.id}/settle/", {"transaction_date": today, "amount": "1", "currency": "EUR", "exchange_rate": "7.2", "category": "测试收款"})
+        currency_mismatch = client.post(f"/api/payment-plans/{plan.id}/settle/", {"transaction_date": today, "amount": "1", "currency": "EUR", "exchange_rate": "7.2", "category": "测试收款"}, format="json", HTTP_IDEMPOTENCY_KEY=f"{tag}-invalid-plan")
         error("财务：计划收款币种不一致被拦截", currency_mismatch, "币种")
         direct_transaction = post("/api/transactions/", {"transaction_date": today, "direction": "expense", "kind": "period_expense", "category": "测试费用", "amount": "3", "currency": "USD", "exchange_rate": "7.2"})
         check("财务：非合同费用流水可登记", direct_transaction.status_code == 201 and direct_transaction.data["kind"] == "period_expense", str(direct_transaction.data))

@@ -70,8 +70,8 @@ def _event_row(event):
 
 def _visible_events(request, start, end):
     candidates = RmbCashEvent.objects.filter(status="confirmed", bank_date__range=(start, end)).order_by("bank_date", "pk")
-    from .services.finance_closeout import corrected_ids, historical_transfer_ids, reporting_events
-    matched = historical_transfer_ids() | corrected_ids()[1]
+    from .services.finance_closeout import corrected_ids, historical_transfer_ids, matched_legacy_ids, reporting_events
+    matched = historical_transfer_ids() | corrected_ids()[1] | matched_legacy_ids(request.user)
     return [event for event in candidates if event.pk not in matched and cash.visible(event, request.user)] + reporting_events(request.user, start, end)
 
 

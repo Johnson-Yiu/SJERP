@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 from decimal import Decimal
+from uuid import uuid4
 
 from django.test import TestCase
 from django.utils import timezone
@@ -127,7 +128,7 @@ class InventoryMovementReversalApiTests(TestCase):
     def create_manual(self, movement_type, quantity):
         response = self.client.post("/api/inventory-movements/", {
             "movement_date": self.day, "type": movement_type, "sku": self.sku.id, "quantity": str(quantity),
-        }, format="json")
+        }, format="json", HTTP_IDEMPOTENCY_KEY=f"reversal-fixture-{uuid4()}")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         return InventoryMovement.objects.get(pk=response.data["id"])
 

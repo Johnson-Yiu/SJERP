@@ -32,7 +32,7 @@ class PurchaseSafetyTests(TestCase):
                 pk = result.data["id"]
                 placed = self.client.post(f"/api/purchase-orders/{pk}/place/")
                 self.assertEqual(placed.status_code, 200, placed.data)
-                paid = self.client.post(f"/api/purchase-orders/{pk}/pay/", {"transaction_date": date.today().isoformat(), "amount": "1", "currency": currency, "exchange_rate": actual_rate}, format="json")
+                paid = self.client.post(f"/api/purchase-orders/{pk}/pay/", {"transaction_date": date.today().isoformat(), "amount": "1", "currency": currency, "exchange_rate": actual_rate}, format="json", HTTP_IDEMPOTENCY_KEY=f"payment-{pk}")
                 self.assertEqual(paid.status_code, 201, paid.data)
                 self.assertEqual(Transaction.objects.get(pk=paid.data["id"]).exchange_rate, Decimal(actual_rate))
                 self.assertEqual(PurchaseOrder.objects.get(pk=pk).exchange_rate, Decimal(contract_rate))

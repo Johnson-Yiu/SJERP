@@ -130,8 +130,8 @@ def records(source, date_field, start, end, user=None):
             qs = scope_transaction_queryset(qs, user)
     elif source == "actual_cash":
         # This source is intentionally independent from the legacy book cash source.
-        from .services.finance_closeout import corrected_ids, historical_transfer_ids
-        qs = qs.filter(status="confirmed").exclude(pk__in=historical_transfer_ids() | corrected_ids()[1])
+        from .services.finance_closeout import corrected_ids, historical_transfer_ids, matched_legacy_ids
+        qs = qs.filter(status="confirmed").exclude(pk__in=historical_transfer_ids() | corrected_ids()[1] | matched_legacy_ids(user))
     elif source == "customers" and user is not None:
         qs = scope_customer_queryset(qs, user)
     elif source == "inventory": qs = qs.select_related("sku__product__category")

@@ -111,6 +111,67 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       })
     })
 
+    if (process.env.E1_R2_EXTRA === '1') await scenario('quote-editor-recovery', async () => {
+      const editor = page.getByRole('form', { name: '报价编辑器' })
+      await editor.getByRole('button', { name: '保存报价', exact: true }).click()
+      const requiredCustomer = editor.getByText('请选择客户。', { exact: true })
+      await expect(requiredCustomer).toBeVisible()
+      await collect('quote-selected-validation', async result => {
+        noPageOverflow(result)
+        await expect(requiredCustomer).toBeVisible()
+      })
+
+      const availability = '**/api/quotes/availability-preview/'
+      let abort
+      const release = new Promise(resolve => { abort = resolve })
+      await page.route(availability, async route => { await release; await route.abort('failed') })
+      try {
+        await button('刷新库存').click()
+        const loading = editor.getByText('正在读取库存参考…', { exact: true })
+        await expect(loading).toBeVisible()
+        await collect('quote-stock-loading', async result => {
+          noPageOverflow(result)
+          await expect(loading).toBeVisible()
+        })
+      } finally { abort() }
+      const failure = editor.getByText('库存参考暂时无法读取，可继续报价。', { exact: true })
+      await expect(failure).toBeVisible()
+      await page.unroute(availability)
+      await collect('quote-stock-failed', async result => {
+        noPageOverflow(result)
+        await expect(failure).toBeVisible()
+      })
+      const recovered = page.waitForResponse(r => r.url().endsWith('/availability-preview/'))
+      await button('刷新库存').click()
+      expect((await recovered).status()).toBe(200)
+      await expect(editor.getByText('库存可覆盖', { exact: true })).toBeVisible()
+
+      await button('生成预计装箱方案').click()
+      await editor.getByRole('button', { name: /补充默认包装/ }).click()
+      const packaging = page.locator('.packaging-config-modal')
+      await expect(packaging.getByRole('heading', { name: '补充 SKU 默认包装' })).toBeVisible()
+      await collect('quote-packaging-child', async result => {
+        noPageOverflow(result)
+        await packaging.getByRole('button', { name: '取消' }).click({ trial: true })
+      })
+      await packaging.getByRole('button', { name: '取消' }).click()
+      await expect(packaging).toHaveCount(0)
+      await expect(editor.locator('.quote-line-row')).toHaveCount(1)
+      await expect(editor.getByRole('button', { name: /补充默认包装/ })).toBeVisible()
+
+      await editor.getByRole('button', { name: '取消', exact: true }).click()
+      await collect('quote-unsaved-close', async result => {
+        noPageOverflow(result)
+        await expect(button('继续编辑')).toBeVisible()
+        await expect(button('放弃修改')).toBeVisible()
+      })
+      await button('继续编辑').click()
+      await expect(editor.locator('.quote-line-row')).toHaveCount(1)
+      await editor.getByRole('button', { name: '取消', exact: true }).click()
+      await button('放弃修改').click()
+      await expect(editor).toHaveCount(0)
+    })
+
     await scenario('quote-revision', async () => {
       await go('/quotes?detail=' + fixture.quote)
       await button('创建修订版').click()

@@ -1,0 +1,849 @@
+{
+  "source": "f2b9e9a869bb003169057cf1550022326dc2eb04",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "key": "quote-new-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-new-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ]
+    },
+    {
+      "key": "quote-new-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-new-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ]
+    },
+    {
+      "key": "quote-selected-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-selected-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ],
+      "lineTable": {
+        "width": 344,
+        "scrollWidth": 820,
+        "moved": 476
+      }
+    },
+    {
+      "key": "quote-selected-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-selected-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ],
+      "lineTable": {
+        "width": 266,
+        "scrollWidth": 820,
+        "moved": 553.5999755859375
+      }
+    },
+    {
+      "key": "quote-selected-validation-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-selected-validation-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ]
+    },
+    {
+      "key": "quote-selected-validation-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-selected-validation-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ]
+    },
+    {
+      "key": "quote-stock-loading-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-stock-loading-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ]
+    },
+    {
+      "key": "quote-stock-loading-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-stock-loading-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ]
+    },
+    {
+      "key": "quote-stock-failed-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-stock-failed-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ]
+    },
+    {
+      "key": "quote-stock-failed-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-stock-failed-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ]
+    },
+    {
+      "key": "quote-packaging-child-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-packaging-child-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ]
+    },
+    {
+      "key": "quote-packaging-child-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-packaging-child-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ]
+    },
+    {
+      "key": "quote-unsaved-close-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-unsaved-close-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ]
+    },
+    {
+      "key": "quote-unsaved-close-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-unsaved-close-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ]
+    },
+    {
+      "key": "quote-revision-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-revision-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ]
+    },
+    {
+      "key": "quote-revision-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-revision-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ]
+    },
+    {
+      "key": "quote-pi-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-pi-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ],
+      "snapshot": {
+        "imageOrigin": "http://127.0.0.1:11018",
+        "frameOrigin": "http://127.0.0.1:11018",
+        "width": 48
+      }
+    },
+    {
+      "key": "quote-pi-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-pi-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ],
+      "snapshot": {
+        "imageOrigin": "http://127.0.0.1:11018",
+        "frameOrigin": "http://127.0.0.1:11018",
+        "width": 48
+      }
+    },
+    {
+      "key": "order-badge-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "order-badge-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1253.703125
+        },
+        {
+          "className": null,
+          "right": 1253.703125
+        },
+        {
+          "className": null,
+          "right": 1253.703125
+        },
+        {
+          "className": null,
+          "right": 1253.703125
+        },
+        {
+          "className": null,
+          "right": 1253.703125
+        },
+        {
+          "className": "clickable-row",
+          "right": 1253.703125
+        }
+      ],
+      "badgeLines": 1
+    },
+    {
+      "key": "order-badge-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "order-badge-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1252.6875734329224
+        },
+        {
+          "className": null,
+          "right": 1252.6875734329224
+        },
+        {
+          "className": null,
+          "right": 1252.6875734329224
+        },
+        {
+          "className": null,
+          "right": 1252.6875734329224
+        },
+        {
+          "className": "clickable-row",
+          "right": 1252.6875734329224
+        },
+        {
+          "className": null,
+          "right": 1252.6875534057617
+        }
+      ],
+      "badgeLines": 1
+    },
+    {
+      "key": "follow-up-upload-error-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "follow-up-upload-error-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table follow-up-list-table",
+          "right": 1348
+        },
+        {
+          "className": null,
+          "right": 1348
+        },
+        {
+          "className": null,
+          "right": 1348
+        },
+        {
+          "className": null,
+          "right": 1348
+        },
+        {
+          "className": "clickable-row",
+          "right": 1348
+        },
+        {
+          "className": null,
+          "right": 1238
+        }
+      ]
+    },
+    {
+      "key": "follow-up-upload-error-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "follow-up-upload-error-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table follow-up-list-table",
+          "right": 1347.8000001907349
+        },
+        {
+          "className": null,
+          "right": 1347.8000001907349
+        },
+        {
+          "className": null,
+          "right": 1347.8000001907349
+        },
+        {
+          "className": null,
+          "right": 1347.8000001907349
+        },
+        {
+          "className": "clickable-row",
+          "right": 1347.8000001907349
+        },
+        {
+          "className": null,
+          "right": 1237.7999877929688
+        }
+      ]
+    },
+    {
+      "key": "follow-up-reopened-http",
+      "status": 200,
+      "bytes": 24,
+      "attachmentCount": 1
+    }
+  ],
+  "failures": []
+}

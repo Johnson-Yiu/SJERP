@@ -11,9 +11,17 @@ const evidence = process.env.R1_REPAIR_EVIDENCE_DIR
 
 test('real Django: recipient A/B, empty/invalid email, master changes, saved PI and XLSX', async ({ page }) => {
   const fixture = JSON.parse(await fs.readFile(path.join(evidence, 'fixture.json'), 'utf8'))
+  test.setTimeout(150_000)
   const records = []
+  const csrf = (await page.context().cookies()).find(cookie => cookie.name === 'csrftoken')
+  const headers = csrf ? { 'X-CSRFToken': csrf.value } : {}
+  async function acknowledgeCostRisk() {
+    const notice = page.getByRole('dialog', { name: '导出前风险提示' })
+    await expect(notice).toContainText('ISS029-SKU')
+    await notice.getByRole('button', { name: '了解风险，继续导出', exact: true }).click()
+  }
   const api = async (method, url, data) => {
-    const response = await page.request[method](`/api${url}`, data === undefined ? {} : { data })
+    const response = await page.request[method](`/api${url}`, { headers, data })
     const body = await response.json()
     records.push({ method, url, status: response.status(), body })
     expect(response.ok(), JSON.stringify(body)).toBeTruthy()
@@ -39,6 +47,7 @@ test('real Django: recipient A/B, empty/invalid email, master changes, saved PI 
   const a = await createdResponse.json()
   records.push({ method: 'POST', url: '/quotes/', status: 201, body: a })
   const invalidResponse = await page.request.post('/api/quotes/', {
+    headers,
     data: { ...submittedPayload, buyer_email: 'invalid-email' },
   })
   expect(invalidResponse.status()).toBe(400)
@@ -69,6 +78,7 @@ test('real Django: recipient A/B, empty/invalid email, master changes, saved PI 
   const b = await revisionResponse.json()
   expect(b.buyer_email).toBe('')
   records.push({ method: 'POST', url: `/quotes/${a.id}/revise/`, status: 201, body: b })
+  await acknowledgeCostRisk()
   await (await downloadedB).saveAs(path.join(evidence, 'version-b-empty-email.xlsx'))
   await expect(editor).toHaveCount(0)
 
@@ -101,6 +111,7 @@ test('real Django: recipient A/B, empty/invalid email, master changes, saved PI 
     await preview.getByRole('button', { name: '关闭预览', exact: true }).click()
     const download = page.waitForEvent('download')
     await page.getByRole('button', { name: '导出 Excel', exact: true }).click()
+    await acknowledgeCostRisk()
     await (await download).saveAs(path.join(evidence, quote.id === a.id ? 'version-a.xlsx' : 'version-b-empty-email.xlsx'))
   }
   // Reopen the saved draft as the starting point of a revision; a dirty input

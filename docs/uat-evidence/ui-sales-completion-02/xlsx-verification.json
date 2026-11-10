@@ -1,0 +1,50 @@
+{
+  "source": "f2b9e9a869bb003169057cf1550022326dc2eb04",
+  "browser": "Chrome/156.0.8078.80",
+  "workbooks": [
+    {
+      "file": "version-a.xlsx",
+      "acquisition": "Chrome download",
+      "quote_no": "SJ20261110DE001",
+      "recipient_address_phone_match_saved_quote": true,
+      "email": "version-a@example.com",
+      "currency": "USD",
+      "total": "10.00",
+      "bytes": 10171,
+      "sha256": "0d5fd5fab20664a8740c0df33650c669126ae9a9eb1ae03637ed4498772ef733"
+    },
+    {
+      "file": "version-b-empty-email.xlsx",
+      "acquisition": "Chrome download",
+      "quote_no": "SJ20261110DE001-1",
+      "recipient_address_phone_match_saved_quote": true,
+      "email": "",
+      "currency": "USD",
+      "total": "10.00",
+      "bytes": 10151,
+      "sha256": "282521e3db4c89320fd9adef703219f134ec6e5d765c6151963c7665816cd080"
+    },
+    {
+      "file": "version-b-with-unsaved-input.xlsx",
+      "acquisition": "authenticated HTTP response",
+      "quote_no": "SJ20261110DE001-1",
+      "recipient_address_phone_match_saved_quote": true,
+      "email": "",
+      "currency": "USD",
+      "total": "10.00",
+      "bytes": 10151,
+      "sha256": "183445ae92ebe4cd7ef1f521c7125adc5cda5e0fd9a5c46109981940ca844676"
+    }
+  ],
+  "image_snapshot": {
+    "file": "iss007-formal-quote-pi.xlsx",
+    "acquisition": "Chrome download",
+    "original_image_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2",
+    "replacement_image_sha256": "4991af95c7f5acaed2e13ea94ebf0733dd077d7e0f14cac519c3e97e798f3e1a",
+    "history_image_after_replacement_sha256": "905113a2c9f67b724fa4789e9b419f02982ca7ba916473f9972f3ffaeb426fb2",
+    "missing_media_status": 404,
+    "page_errors": [],
+    "bytes": 11570,
+    "sha256": "35711a80357c9e006c3f257faf20f08acc41bd288341992ac1cea22b3641ad33"
+  }
+}

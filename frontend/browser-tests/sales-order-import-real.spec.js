@@ -489,37 +489,43 @@ test('historical finance reviews a duplicate and posts only after second-user ap
 })
 
 test('Chrome native page zoom keeps long finance and history records usable', async ({ page, baseURL }) => {
-  test.setTimeout(180000)
+  test.setTimeout(300000)
   const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8')).long_content
   test.skip(!fixture, 'Requires the follow-up evidence fixture')
-  const profile = path.join(process.env.ISOLATED_TEST_ROOT, 'chrome-native-zoom')
-  const context = await chromium.launchPersistentContext(profile, {
-    channel: 'chrome', viewport: { width: 1366, height: 768 }, timeout: 30000,
-  })
-  context.setDefaultTimeout(15000)
-  context.setDefaultNavigationTimeout(20000)
   const results = []
-  try {
-    await context.addCookies(await page.context().cookies())
-    const browserSettings = context.pages()[0]
-    const app = await context.newPage()
-    const history = await context.newPage()
-    const takeover = await context.newPage()
-    const completion = evidenceDir.includes('release-completion-acceptance-02')
-    const receipt = completion ? await context.newPage() : null
-    const cdp = new Map([[app, await context.newCDPSession(app)], [history, await context.newCDPSession(history)], [takeover, await context.newCDPSession(takeover)]])
-    if (receipt) cdp.set(receipt, await context.newCDPSession(receipt))
-    async function capture(candidate, screenshot) {
-      const { data } = await cdp.get(candidate).send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
-      await writeFile(path.join(evidenceDir, screenshot), Buffer.from(data, 'base64'))
-    }
-    for (const zoom of [1, 1.25]) {
-      await browserSettings.goto('chrome://settings/appearance', { waitUntil: 'domcontentloaded' })
-      const zoomControl = browserSettings.locator('settings-appearance-page select').filter({
-        has: browserSettings.locator('option[value="1.25"]'),
-      })
-      await zoomControl.selectOption(String(zoom))
+  const completion = evidenceDir.includes('release-completion-acceptance-02')
+  const cookies = await page.context().cookies()
+  for (const zoom of [1, 1.25]) {
+    const profile = path.join(process.env.ISOLATED_TEST_ROOT, `chrome-native-zoom-${zoom}`)
+    const context = await chromium.launchPersistentContext(profile, {
+      channel: 'chrome', viewport: { width: 1366, height: 768 }, timeout: 30000,
+    })
+    context.setDefaultTimeout(15000)
+    context.setDefaultNavigationTimeout(20000)
+    try {
+      if (zoom !== 1) {
+        const settings = context.pages()[0]
+        await settings.goto('chrome://settings/appearance', { waitUntil: 'commit' })
+        const control = settings.locator('settings-appearance-page select').filter({
+          has: settings.locator('option[value="1.25"]'),
+        })
+        await control.selectOption(String(zoom))
+      }
       console.log(`Chrome native page zoom set to ${zoom * 100}%`)
+      await context.addCookies(cookies)
+      const app = await context.newPage()
+      const history = await context.newPage()
+      const takeover = await context.newPage()
+      const receipt = completion ? await context.newPage() : null
+      async function capture(candidate, screenshot) {
+        const session = await context.newCDPSession(candidate)
+        try {
+          const { data } = await session.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+          await writeFile(path.join(evidenceDir, screenshot), Buffer.from(data, 'base64'))
+        } finally {
+          await session.detach()
+        }
+      }
       await app.goto(new URL('/finance?date_from=2026-11-01&date_to=2026-11-30', baseURL).href)
       const sales = app.locator('article').filter({ hasText: '合同销售额' }).first()
       await sales.getByRole('button', { name: '查看构成明细' }).click()
@@ -623,11 +629,11 @@ test('Chrome native page zoom keeps long finance and history records usable', as
           })
         }
       }
+    } finally {
+      await context.close()
     }
-    await writeFile(path.join(evidenceDir, 'native-zoom-results.json'), JSON.stringify(results, null, 2))
-  } finally {
-    await context.close()
   }
+  await writeFile(path.join(evidenceDir, 'native-zoom-results.json'), JSON.stringify(results, null, 2))
 })
 
 test('certificate validation identifies the business field without closing the draft', async ({ page }) => {
@@ -704,9 +710,10 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   await source.getByRole('button', { name: '选择', exact: true }).click()
   await page.screenshot({ path: path.join(evidenceDir, 'funds-business-search.png') })
   await cash.getByLabel('扣费前兑换额（CNY）', { exact: true }).fill('71')
-  await cash.getByLabel('来源账户', { exact: true }).selectOption('SYNTH_FX')
-  await cash.getByLabel('人民币账户', { exact: true }).selectOption('SYNTH_CNY')
-  await cash.getByLabel('本次兑换金额', { exact: true }).fill('10')
+  await cash.getByRole('combobox', { name: '来源账户', exact: true }).selectOption('SYNTH_FX')
+  await cash.getByRole('combobox', { name: '人民币账户', exact: true }).selectOption('SYNTH_CNY')
+  await cash.getByLabel('本次结汇金额', { exact: true }).fill('10')
+  await cash.locator('.allocation-table input[type="checkbox"]').check()
   await cash.getByLabel('银行参考号', { exact: true }).fill('SYNTH-COMPLETION-REVIEW-01')
   await cash.getByLabel('核对说明', { exact: true }).fill('已核对银行回单和收款来源')
   await cash.getByLabel('银行凭证文件', { exact: true }).setInputFiles(proof)

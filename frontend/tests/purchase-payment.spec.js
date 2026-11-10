@@ -1,5 +1,6 @@
 import { beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
+import { setAccessOperator } from '../src/accessControl'
 import PurchasePaymentModal from '../src/components/PurchasePaymentModal.vue'
 import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
 const mocks = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), listAll: vi.fn() }))
@@ -11,7 +12,14 @@ async function purchaseRouter() {
   return router
 }
 const purchase = { id: 2, purchase_no: 'PO-2', supplier_name: 'Supplier', currency: 'USD', exchange_rate: '7', total_amount: '100', paid_amount: '20', unpaid_amount: '80', status: 'ordered', items: [] }
-beforeEach(() => { window.sessionStorage.clear(); vi.clearAllMocks(); mocks.listAll.mockImplementation(async url => url === '/purchase-orders/' ? [purchase] : []); mocks.post.mockResolvedValue({ data: {} }) })
+beforeEach(() => {
+  window.sessionStorage.clear()
+  window.localStorage.clear()
+  setAccessOperator({ authenticated: true, user_id: 101, has_all_permissions: true })
+  vi.clearAllMocks()
+  mocks.listAll.mockImplementation(async url => url === '/purchase-orders/' ? [purchase] : [])
+  mocks.post.mockResolvedValue({ data: {} })
+})
 const paymentIdentity = expect.objectContaining({ headers: expect.objectContaining({ 'Idempotency-Key': expect.stringMatching(/^PURCHASE-PAY-/) }) })
 it('opens payment from the purchase row and submits the verified actual rate', async () => {
   const wrapper = mount(PurchaseOrderPage, { global: { plugins: [await purchaseRouter()], directives: { 'money-input': {} }, stubs: { ContractAmountAdjustments: true } } })

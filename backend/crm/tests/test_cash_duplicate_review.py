@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from crm.models import CashDuplicateReview, RmbCashEvent
 from crm.services.finance import record_transaction
 from crm.services.cash_events import actor
@@ -113,14 +114,15 @@ class DuplicatePermissionTests(CashPermissionsTests):
 
 
 @override_settings(RMB_CASH_ACCOUNT_IDS=ACCOUNTS)
-class DuplicateMigrationTests(CashFixture, TransactionTestCase):
+class DuplicateMigrationTests(CashFixture, HistoricalMigrationTestCase):
     def test_reverse_refuses_existing_audit_and_preserves_row(self):
+        executor = MigrationExecutor(connection)
+        executor.migrate(executor.loader.graph.leaf_nodes())
         self.setup_cash()
         pk = self.register(payload([self.receipt], key="MIGRATION-REVIEW"))
         review = CashDuplicateReview.objects.create(event_id=pk, candidate_ids=[123], reason="合成核实", actor={"kind": "development_superadmin"})
         executor = MigrationExecutor(connection)
-        # The new private-file guard is encountered before 0096 on the full
-        # reverse path. Keep the original guard's exact assertion independently.
+        # Check both domain guards and the shared-column guard on this disposable database.
         from importlib import import_module
         from types import SimpleNamespace
         from django.apps import apps

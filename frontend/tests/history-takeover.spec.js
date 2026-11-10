@@ -32,9 +32,11 @@ function summary(value) {
 }
 
 async function mountPage(value) {
-  mocks.get.mockImplementation(async url => url === '/import/history-takeovers/'
-    ? { data: { results: [summary(value)] } }
-    : { data: value })
+  mocks.get.mockImplementation(async url => {
+    if (url === '/import/history-takeovers/') return { data: { results: [summary(value)] } }
+    if (url === '/import/history-products/') return { data: { results: [], count: 0 } }
+    return { data: value }
+  })
   const wrapper = mount(HistoryTakeoverPage)
   await flushPromises()
   return wrapper

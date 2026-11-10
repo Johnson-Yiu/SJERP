@@ -170,6 +170,10 @@ describe('controlled history takeover UI', () => {
     await wrapper.findAll('button').find(item => item.text().includes('读取盘点来源')).trigger('click')
     await flushPromises()
     expect(wrapper.text()).toContain('SKU 合成灯具样本 · SYN-SKU-1')
+    await wrapper.findAll('button').find(item => item.text() === '打开历史商品关联').trigger('click')
+    await flushPromises()
+    expect(wrapper.get('details').element.open).toBe(true)
+    expect(wrapper.get('details .history-products').exists()).toBe(true)
     wrapper.unmount()
   })
 

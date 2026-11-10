@@ -12,9 +12,9 @@ from decimal import Decimal
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
-from .history_import_preflight import SHEET_SCHEMAS, _read_workbook, _storage_limit_errors, preflight_rows
+from .history_import_preflight import SHEET_SCHEMAS, _read_workbook, _related_master, _storage_limit_errors, preflight_rows
 from .history_product_models import ArchivedHistoryLine, HistoryProductLink
-from .history_products import specification_matches
+from .history_products import sku_summary, specification_matches
 from .models import (
     Customer,
     HistoryTakeoverApplication,
@@ -140,6 +140,9 @@ def _group_preflight(group, user):
         target = next((item for item in rows[sheet] if item["row"] == row_number), None)
         if target is None:
             raise TakeoverRuleError("主档关联修正行不存在。")
+        if field == "sku_code":
+            target["original_sku_code"] = target["data"].get(field)
+            target["confirmed_sku_code"] = str(target_code).strip()
         if sheet not in {"销售明细", "采购明细"} or field != "sku_code":
             target["data"][field] = str(target_code).strip()
     payload, rows = preflight_rows(rows, user)
@@ -153,6 +156,7 @@ def _group_preflight(group, user):
             raise TakeoverRuleError("已选 SKU 不可用或与历史基础单位、规格不一致，请重新核实。")
         result["product_link_status"] = "已确认"
         result["confirmed_sku_id"] = sku.pk
+        result["related_records"].append(_related_master("SKU", sku, "导入前人工确认"))
     return payload, rows
 
 
@@ -300,7 +304,7 @@ def _refresh_application_status(application):
     application.save(update_fields=["status", "updated_at"])
 
 
-def resolve_master(group, user, *, sheet, row_number, field, target_code, note):
+def resolve_master(group, user, *, sheet, row_number, field, target_code, note, clear=False):
     if sheet not in {"销售订单", "采购订单", "销售明细", "采购明细", "履约记录", "库存盘点", "收付款流水"}:
         raise TakeoverRuleError("该工作表不支持主档关联修正。")
     expected = {
@@ -316,7 +320,14 @@ def resolve_master(group, user, *, sheet, row_number, field, target_code, note):
     if not model or not str(note or "").strip():
         raise TakeoverRuleError("请提供允许的目标主档字段和关联依据。")
     lookup = "sku" if model is SKU else "code"
-    if model.objects.filter(**{lookup: str(target_code).strip()}).count() != 1:
+    target_code = str(target_code or "").strip()
+    try:
+        row_number = int(row_number)
+    except (TypeError, ValueError) as exc:
+        raise TakeoverRuleError("请输入有效的来源行号。") from exc
+    if clear == bool(target_code):
+        raise TakeoverRuleError("请选择目标编码，或明确清除当前映射。")
+    if target_code and model.objects.filter(**{lookup: target_code}).count() != 1:
         raise TakeoverRuleError("目标编码不存在或不唯一；本流程不会自动创建主档。")
     with transaction.atomic():
         group = HistoryTakeoverGroup.objects.select_for_update().select_related("application").get(pk=group.pk)
@@ -328,7 +339,12 @@ def resolve_master(group, user, *, sheet, row_number, field, target_code, note):
         key = f"{sheet}:{int(row_number)}:{field}"
         mapping = dict(group.resolution_map or {})
         before = mapping.get(key) or rows["data"].get(field)
-        mapping[key] = str(target_code).strip()
+        if target_code:
+            mapping[key] = target_code
+        elif key in mapping:
+            mapping.pop(key)
+        else:
+            raise TakeoverRuleError("该来源行没有可清除的主档映射。")
         group.resolution_map = mapping
         payload, _rows = _group_preflight(group, user)
         preflight_status, result_rows = _status_for_group(payload, group.source_group_id)
@@ -338,7 +354,7 @@ def resolve_master(group, user, *, sheet, row_number, field, target_code, note):
         group.preflight_result = _json_safe({"status": preflight_status, "results": result_rows})
         group.source_fingerprint = _fingerprint(group.source_rows, payload)
         group.save(update_fields=["resolution_map", "status", "approved_fingerprint", "review_note", "preflight_result", "source_fingerprint", "updated_at"])
-        _event(group.application, group, "master_resolution_added", user, {"sheet": sheet, "row": int(row_number), "field": field, "before": before, "target_code": str(target_code).strip(), "note": str(note).strip()})
+        _event(group.application, group, "master_resolution_added" if target_code else "master_resolution_cleared", user, {"sheet": sheet, "row": int(row_number), "field": field, "before": before, "target_code": str(target_code).strip(), "note": str(note).strip()})
         _refresh_application_status(group.application)
     return group
 
@@ -577,6 +593,10 @@ def execute_group(group, user):
             ))
     HistoryTakeoverSourceRecord.objects.bulk_create(source_records)
 
+    resolution_notes = {
+        (details["sheet"], details["row"], details["field"]): details["note"]
+        for details in group.events.filter(event_type="master_resolution_added").order_by("pk").values_list("details", flat=True)
+    }
     for record in source_records:
         if record.target_model != "crm.ArchivedHistoryLine":
             continue
@@ -591,13 +611,12 @@ def execute_group(group, user):
         if not sku or not specification_matches(sku, original.get("base_unit_snapshot"), original.get("specification_snapshot")):
             raise TakeoverRuleError("已选 SKU 停用或基础单位与历史资料不一致，请重新核实。")
         HistoryProductLink.objects.create(source=record, sku=sku)
-        HistoryTakeoverEvent.objects.create(
-            application=group.application, group=group, event_type="history_product_linked", actor=user,
-            actor_label=user.get_full_name() or user.get_username(),
-            details={"source_id": record.pk, "source_system": record.source_system,
-                     "source_number": record.source_record_id, "before": None, "after": sku.pk, "version": 1,
-                     "operation": "archive", "request": _json_hash([group.pk, group.approved_fingerprint])},
-        )
+        _event(group.application, group, "history_product_linked", user, {
+            "source_id": record.pk, "source_system": record.source_system, "source_number": record.source_record_id,
+            "before": None, "after": sku.pk, "after_sku": sku_summary(sku), "version": 1,
+            "operation": "archive", "reason": resolution_notes.get((record.record_type, entry["row"], "sku_code"), ""),
+            "original_specification": original.get("specification_snapshot"), "request": _json_hash([group.pk, group.approved_fingerprint]),
+        })
 
     execution_result = {
         "pending_product_links": sum(

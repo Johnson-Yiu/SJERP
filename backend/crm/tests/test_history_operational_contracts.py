@@ -27,6 +27,8 @@ from crm.tests.test_history_takeover import HistoryTakeoverFixtureMixin
 class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
     def setUp(self):
         super().setUp()
+        self.sku.specification = "24W"
+        self.sku.save(update_fields=["specification"])
         self.application, self.group, _ = self.application_and_group()
         self.base = f"/api/import/history-takeovers/{self.application.pk}/groups/{self.group.pk}/"
         result = self.client.post(self.base + "review/", {"decision": "approve", "note": "核对合成来源", "confirm_manual": True}, format="json")
@@ -44,6 +46,7 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         ids = [item.pk for item in self.sources.values() if item.record_type in {"销售明细", "采购明细"}]
         preview = self.client.post("/api/import/history-products/preview/", {
             "ids": ids, "target": self.sku.pk, "operation": "link",
+            "verified_specification": "24 W", "reason": "合成旧检验单上的规格",
         }, format="json")
         self.assertEqual(preview.status_code, 200, preview.data)
         saved = self.client.post("/api/import/history-products/apply/", {"token": preview.data["token"]}, format="json")
@@ -345,6 +348,8 @@ class HistoricalContractLifecycleTests(HistoryTakeoverFixtureMixin, TestCase):
 @override_settings(FILE_UPLOAD_TEMP_DIR=tempfile.gettempdir())
 class HistoricalContractsPostgresTests(HistoryTakeoverFixtureMixin, TransactionTestCase):
     def test_concurrent_execute_creates_each_contract_once(self):
+        self.sku.specification = "24W"
+        self.sku.save(update_fields=["specification"])
         application, group, _ = self.application_and_group()
         base = f"/api/import/history-takeovers/{application.pk}/groups/{group.pk}/"
         self.assertEqual(self.client.post(base + "review/", {"decision": "approve", "note": "核对合成资料", "confirm_manual": True}, format="json").status_code, 200)
@@ -361,6 +366,7 @@ class HistoricalContractsPostgresTests(HistoryTakeoverFixtureMixin, TransactionT
         line_ids = list(group.source_records.filter(record_type__in=["销售明细", "采购明细"]).values_list("pk", flat=True))
         preview = self.client.post("/api/import/history-products/preview/", {
             "ids": line_ids, "target": self.sku.pk, "operation": "link",
+            "verified_specification": "24 W", "reason": "合成旧检验单上的规格",
         }, format="json")
         self.assertEqual(preview.status_code, 200, preview.data)
         saved = self.client.post("/api/import/history-products/apply/", {"token": preview.data["token"]}, format="json")

@@ -2,7 +2,7 @@
 import HistoryProductLinking from "../components/HistoryProductLinking.vue"
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api } = useWorkspaceApi()
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 import { AlertTriangle, Check, CircleHelp, FileUp, History, RotateCcw, ShieldCheck } from 'lucide-vue-next'
@@ -14,6 +14,12 @@ const canApply = computed(() => can('imports', 'import'))
 const canReview = computed(() => Boolean(accessState.operator?.can_manage_permissions || accessState.operator?.development_superadmin || accessState.operator?.has_all_permissions))
 const applications = ref([])
 const showProducts = ref(false)
+const productsPanel = ref(null)
+async function openInventoryProductLinking() {
+  showProducts.value = true
+  await nextTick()
+  productsPanel.value?.querySelector('summary')?.focus()
+}
 async function openProductSource(id, group) {
   await loadApplication(id)
   if (selected.value?.id === id && selected.value.groups?.some(row => row.id === group)) selectedGroupId.value = group
@@ -33,6 +39,7 @@ const mappingKind = ref('customer')
 const masterSearch = ref('')
 const masterOptions = ref([])
 const masterLoading = ref(false)
+const mappingPanel = ref(null)
 let masterSearchVersion = 0
 const newCorrection = () => ({
   kind: 'late_fact', occurred_at: '', reason: '', source_record_id: '',
@@ -113,7 +120,14 @@ function truthLabel(value) { return truthLabels[value] || '待核实' }
 function lifecycleLabel(value) { return lifecycleLabels[value] || '待核实' }
 function directionLabel(value) { return directionLabels[value] || '待核实' }
 function reviewStatusLabel(value) { return ({ '通过': '通过', '警告': '警告', '待人工核实': '待人工核实', '阻断': '阻断' })[value] || '待核实' }
-function eventLabel(value) { return eventNames[value] || '待核实操作' }
+const linkEventNames = { link: '已关联 SKU', change: '已修改 SKU 关联', unlink: '已解除 SKU 关联', review: '已标记待核实', archive: '归档时已确认 SKU' }
+function eventLabel(event) {
+  return event.event_type === 'history_product_linked' ? linkEventNames[event.details?.operation] || '已记录商品关联' : eventNames[event.event_type] || '待核实操作'
+}
+function auditedSku(snapshot, id) {
+  if (snapshot) return masterLabel(snapshot)
+  return id ? '旧记录未保存 SKU 业务资料' : '未关联'
+}
 function auditActorLabel(event) { return event.actor_kind === 'development' ? '开发操作（非实名）' : event.actor_label || '待核实操作人' }
 function formatSubmittedAt(value) { return value ? new Date(value).toLocaleString('zh-CN') : '未记录' }
 function masterLabel(item) {
@@ -129,7 +143,7 @@ function skuBusinessLabel(source) {
 const eventNames = {
   application_submitted: '已提交申请', group_submitted: '关联组已提交', group_approved: '管理员已批准',
   group_rejected: '管理员已拒绝', group_executed: '已承接历史记录', group_withdrawn: '申请已撤回',
-  master_resolution_added: '已登记主档关联', execution_stopped_reapproval_required: '执行前发现资料变化',
+  master_resolution_added: '已登记主档关联', master_resolution_cleared: '已清除导入前主档关联', execution_stopped_reapproval_required: '执行前发现资料变化',
   late_fact_submitted: '已提交迟到记录', correction_submitted: '已提交追溯更正', voucher_added_submitted: '已补交凭证',
   correction_reviewed: '更正审核完成', duplicate_submission_reused: '重复提交已复用原申请',
   finance_instruction_submitted: '已保存历史资金指令', finance_instruction_approve: '已复核历史资金指令',
@@ -415,8 +429,22 @@ function review(group, decision) {
   groupAction(group, 'review', { decision, note: note.value, confirm_manual: confirmManual.value })
 }
 
-function addMasterResolution() {
-  groupAction(selectedGroup.value, 'resolve-master', { ...mapping.value, row: Number(mapping.value.row) })
+function addMasterResolution(clear = false) {
+  groupAction(selectedGroup.value, 'resolve-master', {
+    ...mapping.value, row: Number(mapping.value.row), ...(clear === true ? { target_code: '', clear: true } : {}),
+  })
+}
+function chooseProductCandidate(result, candidate) {
+  masterSearchVersion += 1
+  masterLoading.value = false
+  mappingKind.value = 'sku'
+  masterOptions.value = [candidate]
+  masterSearch.value = candidate.code
+  mapping.value = { sheet: result.sheet, row: result.row, field: 'sku_code', target_code: candidate.code, note: '' }
+  if (mappingPanel.value) {
+    mappingPanel.value.open = true
+    mappingPanel.value.scrollIntoView({ block: 'nearest' })
+  }
 }
 
 async function submitCorrection() {
@@ -465,7 +493,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
       </div>
     </header>
 
-    <details v-if="canReview && canApply" @toggle="showProducts = $event.target.open">
+    <details v-if="canReview && canApply" ref="productsPanel" :open="showProducts" @toggle="showProducts = $event.target.open">
       <summary>历史商品关联</summary>
       <HistoryProductLinking v-if="showProducts" @open-source="openProductSource" @saved="selected && loadApplication(selected.id)" />
     </details>
@@ -517,9 +545,14 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
           <div v-for="result in reviewResults" :key="`${result.sheet}-${result.row}`" class="takeover-result-row" :class="`state-${result.status}`">
               <strong>{{ result.sheet }} · 第 {{ result.row }} 行 · {{ reviewStatusLabel(result.status) }}</strong>
             <ul v-if="result.reasons?.length"><li v-for="reason in result.reasons" :key="reason.message">{{ reason.message }} {{ reason.status === '阻断' ? '请核实来源或主档关联。' : '' }}</li></ul>
+            <div v-for="candidate in result.product_candidates || []" :key="candidate.id">
+              <p>{{ masterLabel(candidate) }} · {{ candidate.specification || Object.values(candidate.parameters || {}).join(' · ') || '未记录规格' }} · {{ candidate.unit }}</p>
+              <p>{{ candidate.source_system }} · {{ candidate.record_type }} · {{ candidate.basis }}</p>
+              <button v-if="canReview && !['executed', 'rejected', 'withdrawn'].includes(selectedGroup.status)" type="button" class="takeover-secondary" @click="chooseProductCandidate(result, candidate)">选用此候选</button>
+            </div>
           </div>
 
-          <details class="takeover-resolution" v-if="canReview && selectedGroup.status !== 'executed'">
+          <details ref="mappingPanel" class="takeover-resolution" v-if="canReview && !['executed', 'rejected', 'withdrawn'].includes(selectedGroup.status)">
             <summary><span class="takeover-step-number">03</span>修正问题 · 关联现有主档</summary>
             <p>仅选择已存在的客户、供应商或 SKU；不会自动新建主档。修正后需重新审核。</p>
             <div class="takeover-form-grid">
@@ -531,7 +564,8 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
               <label class="wide">选择现有对象<select v-model="mapping.target_code" :disabled="masterLoading || !masterOptions.length"><option value="">{{ masterLoading ? '正在查找…' : masterOptions.length ? '请选择匹配对象' : '先搜索现有对象' }}</option><option v-for="item in masterOptions" :key="item.id" :value="item.code || item.sku">{{ masterLabel(item) }}</option></select></label>
               <label class="wide">关联依据<input v-model="mapping.note" /></label>
             </div>
-            <button class="takeover-secondary" :disabled="saving || !mapping.row || !mapping.target_code || !mapping.note" @click="addMasterResolution">保存关联并重新预检</button>
+            <button class="takeover-secondary" :disabled="saving || !mapping.row || !mapping.target_code || !mapping.note" @click="addMasterResolution()">保存关联并重新预检</button>
+            <button class="takeover-secondary" :disabled="saving || !mapping.row || !mapping.note || !selectedGroup.resolution_map?.[`${mapping.sheet}:${Number(mapping.row)}:${mapping.field}`]" @click="addMasterResolution(true)">清除关联并重新预检</button>
           </details>
 
           <div v-if="selectedGroup.remainder_snapshot?.sales_orders?.length || selectedGroup.remainder_snapshot?.purchase_orders?.length" class="takeover-remainder">
@@ -599,9 +633,11 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
               <summary>库存盘点基准</summary>
               <p>盘点基准不会重放历史出入库。仓库归属和货物所有权分别核实；只有自有货物计入可用库存。已有库存流水或预留的 SKU 需先人工核对。</p>
               <button class="takeover-secondary" :disabled="saving" @click="loadInventory">读取盘点来源</button>
+              <button v-if="inventoryRows.length && can('skus', 'view')" type="button" class="takeover-secondary" @click="openInventoryProductLinking">打开历史商品关联</button>
               <p v-if="inventoryStatus">当前状态：{{ handoffLabel(inventoryStatus.status) }}；基准记录 {{ inventoryStatus.baselines?.length || 0 }} 条。</p>
               <div v-for="row in inventoryRows" :key="row.source_id" class="takeover-remainder-item">
                 <strong>SKU {{ skuBusinessLabel(row.source) }} · {{ row.source.counted_quantity }} {{ row.source.unit_snapshot }}</strong>
+                <p v-if="row.linked_sku">正式 SKU {{ masterLabel(row.linked_sku) }}{{ row.link_needs_review ? ' · 待核实' : '' }}</p>
                 <span>{{ row.source.warehouse_type }} · {{ row.source.warehouse }} · {{ row.source.lot_reference || '无批次/货位' }}</span>
                 <div class="takeover-form-grid wide">
                   <label>货物所有权<select v-model="row.goods_ownership"><option value="">请选择</option><option value="own">自有货物</option><option value="third_party">第三方货物</option></select></label>
@@ -715,8 +751,14 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
           <h4>申请与操作记录</h4>
           <ol>
             <li v-for="event in selected.events" :key="event.id">
-              <span>{{ eventLabel(event.event_type) }}</span>
+              <span>{{ eventLabel(event) }}</span>
               <small>{{ auditActorLabel(event) }} · {{ new Date(event.created_at).toLocaleString('zh-CN') }}</small>
+              <template v-if="event.event_type === 'history_product_linked'">
+                <p>来源 {{ event.details?.source_system }} · {{ event.details?.source_number }}</p>
+                <p>正式 SKU {{ auditedSku(event.details?.before_sku, event.details?.before) }} → {{ auditedSku(event.details?.after_sku, event.details?.after) }}</p>
+                <p v-if="event.details?.verified_specification">补核规格 {{ event.details.verified_specification }}</p>
+                <p>原因 {{ event.details?.reason || '未记录' }}</p>
+              </template>
               <template v-if="correctionEventTypes.includes(event.event_type)">
                 <p>发生日期：{{ event.details?.occurred_at || '未提供' }} · {{ event.details?.reason }}</p>
                 <dl>

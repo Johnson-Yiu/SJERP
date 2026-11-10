@@ -94,7 +94,10 @@ class HistoricalProductLinkingTests(HistoryProductFixture, TestCase):
         self.assertEqual(batch.data["amounts"], {"CNY": Decimal("100")})
         self.assertEqual(self.submit(batch).data, {"updated": 2})
         self.assertEqual(self.submit(batch).data, {"updated": 2})
-        self.assertEqual(HistoryTakeoverEvent.objects.filter(event_type="history_product_linked", actor=self.admin).count(), 3)
+        events = HistoryTakeoverEvent.objects.filter(event_type="history_product_linked")
+        from crm.permissions import development_superadmin_enabled
+        actor, kind = (None, "development") if development_superadmin_enabled() else (self.admin, "identified")
+        self.assertEqual(events.filter(actor=actor, actor_kind=kind).count(), 3)
         self.assertEqual(SKU.objects.count(), 1)
 
         detail = self.client.get(f"/api/orders/{order.pk}/")
@@ -153,11 +156,118 @@ class HistoricalProductLinkingTests(HistoryProductFixture, TestCase):
                 raise RuntimeError("synthetic audit failure")
             return create_event(**values)
 
-        with patch("crm.history_products.HistoryTakeoverEvent.objects.create", side_effect=fail_second):
+        with patch("crm.history_takeover.HistoryTakeoverEvent.objects.create", side_effect=fail_second):
             with self.assertRaisesRegex(RuntimeError, "synthetic audit failure"):
                 apply_links(HistoryTakeoverSourceRecord.objects.all(), self.admin, batch.data["token"])
         self.assertEqual(list(HistoryProductLink.objects.values()), before)
         self.assertEqual(self.submit(batch).data, {"updated": 3})
+
+    def test_missing_specification_needs_evidence_and_audits_development_identity(self):
+        source = self.sources.get(pk=self.sales_ids[0])
+        line = ArchivedHistoryLine.objects.get(pk=source.target_id)
+        line.facts = {**line.facts, "specification_snapshot": ""}
+        line.save(update_fields=["facts"])
+        b = self.target()
+        self.assertEqual(self.preview([source.pk], b).status_code, 409)
+        self.assertEqual(self.preview([source.pk], b, verified_specification="24 W").status_code, 400)
+        self.assertEqual(self.preview([source.pk], b, reason="旧检验单", verified_specification="24 kW").status_code, 409)
+        blank = self.target("NO-SPEC")
+        blank.specification = ""
+        blank.save(update_fields=["specification"])
+        self.assertEqual(self.preview([source.pk], blank, reason="旧检验单", verified_specification="24W").status_code, 409)
+        with override_settings(DEBUG=True, APP_STAGE="development", DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False):
+            preview = self.preview([source.pk], b, reason="旧检验单 REF-24", verified_specification="24 W")
+            self.assertEqual(preview.status_code, 200, preview.data)
+            self.assertEqual(self.submit(preview).data, {"updated": 1})
+        event = self.group.events.get(event_type="history_product_linked")
+        self.assertEqual((event.actor_id, event.actor_kind), (None, "development"))
+        self.assertEqual(event.details["after_sku"]["code"], "B")
+        self.assertEqual(event.details["verified_specification"], "24 W")
+        self.assertEqual(event.details["reason"], "旧检验单 REF-24")
+        line.refresh_from_db()
+        self.assertEqual(line.facts["specification_snapshot"], "")
+
+    def test_candidate_rule_is_visible_without_binding_and_respects_current_specification(self):
+        b = self.target()
+        self.assertEqual(self.submit(self.preview(self.sales_ids[:1], b, save_rule=True)).data, {"updated": 1})
+        rows = deepcopy(self.rows)
+        rows["销售订单"][0].update(order_no="H2-SECOND-ORDER")
+        rows["采购订单"][0].update(purchase_no="H2-SECOND-PURCHASE")
+        _, group, _ = self.application_and_group(rows)
+        row = next(item for item in group.preflight_result["results"] if item.get("product_candidates"))
+        candidate, = row["product_candidates"]
+        self.assertEqual((candidate["code"], candidate["specification"], candidate["unit"]), ("B", "24W", "pcs"))
+        self.assertTrue(candidate["basis"])
+        self.assertEqual(group.resolution_map, {})
+        self.assertEqual(row["product_link_status"], "待关联")
+        from crm.history_takeover import _group_preflight
+        b.specification = "18W"
+        b.save(update_fields=["specification"])
+        payload, _ = _group_preflight(group, self.admin)
+        self.assertFalse(any(item.get("product_candidates") for item in payload["results"]))
+
+    def test_fifty_rounded_lines_match_preview_export_analysis_and_order(self):
+        rows = deepcopy(self.rows)
+        self.group.source_records.all().delete()
+        ArchivedHistoryLine.objects.all().delete()
+        Order.objects.all().delete()
+        PurchaseOrder.objects.all().delete()
+        template = rows["销售明细"][0]
+        rows["销售明细"] = [
+            {**template, "source_line_id": str(number), "quantity_base": "1", "unit_price": "0.335"}
+            for number in range(1, 51)
+        ]
+        rows["分组"][0]["notes"] = "H2 50 × 0.335"
+        app, group, _ = self.application_and_group(rows)
+        url = f"/api/import/history-takeovers/{app.pk}/groups/{group.pk}/"
+        response = self.client.post(url + "review/", {"decision": "approve", "note": "核对运费10，折扣5", "confirm_manual": True}, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        response = self.client.post(url + "execute/", {}, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        ids = list(group.source_records.filter(record_type="销售明细").values_list("pk", flat=True))
+        preview = self.preview(ids, self.target())
+        self.assertEqual(preview.status_code, 200, preview.data)
+        self.assertEqual(preview.data["amounts"], {"CNY": Decimal("17.00")})
+        self.assertEqual(self.submit(preview).data, {"updated": 50})
+        export = self.client.get(ROOT + "export/", {"target": "B"})
+        items = list(csv.DictReader(io.StringIO(export.content.decode("utf-8-sig"))))
+        self.assertEqual(len(items), 50)
+        self.assertEqual(sum(Decimal(item["商品金额"]) for item in items), Decimal("17.00"))
+        self.assertEqual(self.report("linked")["by_sku"][0]["amount"], Decimal("17.00"))
+        order = Order.objects.get()
+        self.assertEqual((order.total_amount, order.shipping_fee, order.discount), (Decimal("22"), Decimal("10"), Decimal("5")))
+        self.assertEqual({line.unit_price for line in order.archived_lines.all()}, {Decimal("0.335")})
+
+    def test_list_query_count_is_bounded_and_export_uses_same_filters(self):
+        from django.test.utils import CaptureQueriesContext
+
+        template = self.sources.get(pk=self.sales_ids[0])
+        def add(start, stop):
+            HistoryTakeoverSourceRecord.objects.bulk_create([
+                HistoryTakeoverSourceRecord(
+                    group=self.group, record_type=template.record_type, source_system=template.source_system,
+                    source_record_id=f"H2-BULK-{number}", target_model=template.target_model, target_id=template.target_id,
+                    source_snapshot=template.source_snapshot,
+                ) for number in range(start, stop)
+            ])
+        filters = {"q": "H2-BULK", "status": "pending", "date_from": "2024-01-01", "date_to": "2024-12-31"}
+        add(0, 50)
+        with CaptureQueriesContext(connection) as small:
+            first = self.client.get(ROOT, filters)
+        self.assertEqual(first.status_code, 200, first.data)
+        self.assertEqual(first.data["count"], 50)
+        add(50, 500)
+        with CaptureQueriesContext(connection) as large:
+            first = self.client.get(ROOT, filters)
+        self.assertEqual(first.status_code, 200, first.data)
+        self.assertEqual(first.data["count"], 500)
+        self.assertEqual(len(first.data["results"]), 50)
+        self.assertLessEqual(len(large), 8)
+        self.assertEqual(len(large), len(small))
+        export = self.client.get(ROOT + "export/", filters)
+        items = list(csv.DictReader(io.StringIO(export.content.decode("utf-8-sig"))))
+        self.assertEqual(len(items), first.data["count"])
+        self.assertEqual([item["原明细"] for item in items[:50]], [row["source_number"] for row in first.data["results"]])
 
     def test_repeat_source_cannot_create_duplicate_detail(self):
         rows = deepcopy(self.rows)

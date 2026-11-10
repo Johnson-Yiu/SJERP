@@ -11,6 +11,7 @@ from rest_framework.exceptions import ValidationError
 from crm.finance_scope import require_finance_permission
 from crm.history_takeover import _event, _json_hash, actor_snapshot
 from crm.history_operational_common import verified_source
+from crm.history_products import link_specification_is_current, sku_summary
 from crm.models import (HistoryInventoryBaseline, HistoryInventoryBaselineReversal,
     HistoryTakeoverGroup, HistoryTakeoverHandoff, InventoryMovement, InventoryReservation, SKU)
 
@@ -42,11 +43,33 @@ def _cost(value):
 
 
 def _sources(group):
-    return list(group.source_records.filter(record_type="库存盘点").order_by("pk"))
+    return list(group.source_records.filter(record_type="库存盘点").select_related("product_link__sku__product").order_by("pk"))
+
+
+def _source_identity(source):
+    link = getattr(source, "product_link", None)
+    return {"version": link.version, "sku_id": link.sku_id, "needs_review": link.needs_review} if link else None
 
 
 def _fingerprint(group, rows):
-    return _json_hash({"rows": rows, "sources": [{"id": s.pk, "snapshot": s.source_snapshot} for s in _sources(group)]})
+    sources = []
+    for source in _sources(group):
+        entry = {"id": source.pk, "snapshot": source.source_snapshot}
+        if identity := _source_identity(source):
+            entry["product_link"] = identity
+        sources.append(entry)
+    return _json_hash({"rows": rows, "sources": sources})
+
+
+def _resolved_sku(source, row):
+    link = getattr(source, "product_link", None)
+    if link:
+        if link.sku_id and not link.needs_review and link.sku.active and link_specification_is_current(
+            source, link.sku, row.get("unit_snapshot"), row.get("specification_snapshot"), link.version,
+        ):
+            return link.sku
+        return None
+    return SKU.objects.filter(sku=row.get("sku_code"), active=True).first()
 
 
 def status(group, user):
@@ -58,7 +81,10 @@ def status(group, user):
         "proposal": handoff.payload.get("baseline_proposal"),
         "approval": handoff.payload.get("baseline_approval"),
         "sources": [{"source_id": source.pk, "source_record_id": source.source_record_id,
-                     "source": source.source_snapshot.get("resolved", {})} for source in _sources(group)],
+                     "source": source.source_snapshot.get("source", {}),
+                     "linked_sku": sku_summary(getattr(getattr(source, "product_link", None), "sku", None)),
+                     "link_needs_review": bool(getattr(getattr(source, "product_link", None), "needs_review", False))}
+                    for source in _sources(group)],
         "baselines": list(group.inventory_baselines.values("id", "source_id", "sku_id", "quantity", "goods_ownership", "warehouse_type", "warehouse", "lot_reference", "unit_cost", "cost_currency", "reversal__id"))}
 
 
@@ -84,7 +110,7 @@ def propose(group_id, rows, reason, complete_sku_inventory, user):
             raise ValidationError("盘点来源不存在或重复。")
         seen.add(ident)
         row = verified_source(group, handoff, source, "库存盘点", "count_baselines")
-        sku = SKU.objects.filter(sku=row.get("sku_code")).first()
+        sku = _resolved_sku(source, row)
         if (row.get("truth_status") != "真实" or row.get("coverage_complete") != "yes" or not row.get("voucher_reference")
                 or row.get("warehouse_type") not in {"自有仓", "第三方仓"} or not row.get("warehouse") or not sku
                 or row.get("unit_snapshot") != sku.unit):
@@ -182,10 +208,11 @@ def execute(group_id, user):
     created = []
     for row in proposal["rows"]:
         sku, source = skus[row["sku_id"]], sources.get(row["source_id"])
-        if not source or sku.unit != row["sku_unit"]:
+        if not source or not sku.active or sku.unit != row["sku_unit"]:
             raise ValidationError("SKU 或盘点来源已变化，请重新审核。")
         data = verified_source(group, handoff, source, "库存盘点", "count_baselines")
-        if data.get("sku_code") != sku.sku:
+        resolved = _resolved_sku(source, data)
+        if resolved is None or resolved.pk != sku.pk:
             raise ValidationError("SKU 或盘点来源已变化，请重新审核。")
         obj = HistoryInventoryBaseline.objects.create(group=group, source=source, sku=sku,
             count_date=row["count_date"], warehouse_type=data["warehouse_type"], warehouse=data["warehouse"],

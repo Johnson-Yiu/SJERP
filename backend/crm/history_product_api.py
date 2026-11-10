@@ -7,7 +7,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .history_products import SOURCE_MODELS, apply_links, line_summary, preview_links, sku_summary, source_line
+from .history_products import SOURCE_MODELS, apply_links, filter_source_lines, line_summary, load_source_lines, preview_links, sku_summary
 from .history_takeover_api import HistoryTakeoverPermission, _visible_applications
 from .models import HistoryTakeoverSourceRecord, SKU
 from .permissions import user_can
@@ -19,6 +19,7 @@ class PreviewInput(serializers.Serializer):
     operation = serializers.ChoiceField(choices=["link", "change", "unlink", "review"])
     target = serializers.IntegerField(min_value=1, required=False, allow_null=True)
     reason = serializers.CharField(max_length=1000, required=False, allow_blank=True)
+    verified_specification = serializers.CharField(max_length=1000, required=False, allow_blank=True)
     save_rule = serializers.BooleanField(default=False)
 
 
@@ -43,11 +44,13 @@ class HistoryProductsView(APIView):
     def sources(self, request):
         if not user_can(request.user, "skus", "view"):
             raise PermissionDenied("你没有查看 SKU 的权限。")
+        source_types = Q(target_model__in=SOURCE_MODELS)
+        if user_can(request.user, "inventory", "view"):
+            source_types |= Q(record_type="库存盘点", target_model="")
         return HistoryTakeoverSourceRecord.objects.filter(
             group__application__in=_visible_applications(request),
             group__status="executed",
-            target_model__in=SOURCE_MODELS,
-        ).select_related("group", "product_link__sku__product")
+        ).filter(source_types).select_related("group", "product_link__sku__product")
 
     def get(self, request, operation="list"):
         sources = self.sources(request)
@@ -64,25 +67,18 @@ class HistoryProductsView(APIView):
             sources = sources.filter(source_system__icontains=filters["source"])
         if filters.get("batch"):
             sources = sources.filter(group__source_group_id__icontains=filters["batch"])
-        start, end = filters.get("date_from"), filters.get("date_to")
-        target, status = filters.get("target"), filters.get("status")
-        rows = []
-        for source in sources.order_by("-pk").iterator(chunk_size=100):
-            line = source_line(source)
-            if line is None:
-                continue
-            row = line_summary(source, line)
-            if term and not any(term.casefold() in row[key].casefold() for key in ("code", "name", "source_number", "order_number")):
-                continue
-            if (start and row["date"] < start.isoformat()) or (end and row["date"] > end.isoformat()):
-                continue
-            if (status and row["status"] != status) or (target and (row["sku"] or {}).get("code", "").casefold() != target.casefold()):
-                continue
-            rows.append(row)
+        sources = filter_source_lines(sources, filters).order_by("-pk")
+        count = None
+        if operation != "export":
+            count = sources.count()
+            offset = (filters["page"] - 1) * 50
+            sources = sources[offset:offset + 50]
+        sources = list(sources)
+        lines = load_source_lines(sources)
+        rows = [line_summary(source, lines.get((source.target_model, source.target_id))) for source in sources]
         if operation == "export":
             return self.export(rows)
-        offset = (filters["page"] - 1) * 50
-        return Response({"count": len(rows), "results": rows[offset:offset + 50]})
+        return Response({"count": count, "results": rows})
 
     def export(self, rows):
         response = HttpResponse(content_type="text/csv; charset=utf-8")
@@ -110,7 +106,7 @@ class HistoryProductsView(APIView):
             payload = PreviewInput(data=request.data)
             payload.is_valid(raise_exception=True)
             data = payload.validated_data
-            result = preview_links(sources, request.user, sorted(set(data["ids"])), data["operation"], data.get("target"), data.get("reason", ""), data["save_rule"])
+            result = preview_links(sources, request.user, sorted(set(data["ids"])), data["operation"], data.get("target"), data.get("reason", ""), data["save_rule"], data.get("verified_specification", ""))
         elif operation == "apply":
             payload = SubmitInput(data=request.data)
             payload.is_valid(raise_exception=True)

@@ -2,7 +2,7 @@
 import HistoryDocumentProducts from "../components/HistoryDocumentProducts.vue"
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 
 import { apiErrorMessage } from '../utils/apiErrors.js'
 import { useAccessControl } from '../accessControl'
@@ -15,15 +15,17 @@ const skus = ref([])
 const salesRows = ref([])
 const purchaseRows = ref([])
 const analysis = ref(null)
+const analysisLoading = ref(false)
+const analysisError = ref('')
+const acceptedGrouping = ref('original')
+let analysisRequest = 0
 const grouping = ref('original')
 const currentYear = new Date().getFullYear()
 const analysisFrom = ref(`${currentYear - 9}-01-01`)
 const analysisTo = ref(`${currentYear}-12-31`)
-const loading = ref(true)
 const saving = ref(false)
 const error = ref('')
 const notice = ref('')
-const loadWarnings = ref([])
 
 const salesForm = reactive({ customer: '', order_date: '', currency: 'CNY', exchange_rate: '1', notes: '', items: [{ sku: '', quantity: '', unit_price: '', notes: '' }] })
 const purchaseForm = reactive({ supplier: '', order_date: '', currency: 'CNY', exchange_rate: '1', notes: '', items: [{ sku: '', quantity: '', unit_price: '', notes: '' }] })
@@ -51,13 +53,13 @@ const analysisSections = computed(() => {
   addSection('sales', '历史销售明细', analysis.value?.sales, [
     { key: 'by_customer', label: '客户', metric: 'count', metricLabel: '订单数' },
     { key: 'by_country', label: '国家/地区', metric: 'count', metricLabel: '订单数' },
-    { key: 'by_sku', label: grouping.value === 'linked' ? '按关联 SKU 归集' : '历史原文', metric: 'quantity', metricLabel: '数量' },
+    { key: 'by_sku', label: acceptedGrouping.value === 'linked' ? '按关联 SKU 归集' : '历史原文', metric: 'quantity', metricLabel: '数量' },
     { key: 'by_category', label: '产品分类', metric: 'quantity', metricLabel: '数量' },
   ])
   addSection('purchase', '历史采购明细', analysis.value?.purchase, [
     { key: 'by_supplier', label: '供应商', metric: 'count', metricLabel: '订单数' },
     { key: 'by_country', label: '国家/地区', metric: 'count', metricLabel: '订单数' },
-    { key: 'by_sku', label: grouping.value === 'linked' ? '按关联 SKU 归集' : '历史原文', metric: 'quantity', metricLabel: '数量' },
+    { key: 'by_sku', label: acceptedGrouping.value === 'linked' ? '按关联 SKU 归集' : '历史原文', metric: 'quantity', metricLabel: '数量' },
     { key: 'by_category', label: '产品分类', metric: 'quantity', metricLabel: '数量' },
   ])
   return sections
@@ -91,7 +93,6 @@ async function loadOptional(label, task, fallback, warnings) {
   }
 }
 async function load() {
-  loading.value = true
   error.value = ''
   const warnings = []
   if (!availableTabs.value.includes(tab.value)) tab.value = availableTabs.value[0] || 'sales'
@@ -101,18 +102,27 @@ async function load() {
   if (can('skus', 'view')) requests.push(loadOptional('SKU资料', () => listAll('/skus/'), [], warnings).then(value => { skus.value = value }))
   if (canSalesView.value) requests.push(loadOptional('历史销售订单', () => listAll('/orders/', { params: { status: 'historical' } }), [], warnings).then(value => { salesRows.value = value }))
   if (canPurchaseView.value) requests.push(loadOptional('历史采购订单', () => listAll('/purchase-orders/', { params: { status: 'historical' } }), [], warnings).then(value => { purchaseRows.value = value }))
-  if (canSalesView.value || canPurchaseView.value) requests.push(loadOptional('历史分析', () => api.get('/reports/historical/', { params: { date_from: analysisFrom.value, date_to: analysisTo.value, grouping: grouping.value } }), null, warnings).then(value => { analysis.value = value?.data || null }))
+  requests.push(refreshAnalysis())
   await Promise.all(requests)
-  loadWarnings.value = warnings
   if (warnings.length) error.value = warnings.join('；')
-  loading.value = false
 }
 async function refreshAnalysis() {
   if (!canSalesView.value && !canPurchaseView.value) return
+  const id = ++analysisRequest
+  const params = { date_from: analysisFrom.value, date_to: analysisTo.value, grouping: grouping.value }
+  analysisLoading.value = true
+  analysisError.value = ''
+  analysis.value = null
   try {
-    analysis.value = (await api.get('/reports/historical/', { params: { date_from: analysisFrom.value, date_to: analysisTo.value, grouping: grouping.value } })).data
-    error.value = loadWarnings.value.join('；')
-  } catch (err) { error.value = apiErrorMessage(err) || '历史分析加载失败。' }
+    const { data } = await api.get('/reports/historical/', { params })
+    if (id !== analysisRequest) return
+    acceptedGrouping.value = params.grouping
+    analysis.value = data
+  } catch (err) {
+    if (id === analysisRequest) analysisError.value = apiErrorMessage(err) || '历史分析加载失败。'
+  } finally {
+    if (id === analysisRequest) analysisLoading.value = false
+  }
 }
 async function save() {
   const message = validateForm()
@@ -133,6 +143,7 @@ async function save() {
   } catch (err) { error.value = apiErrorMessage(err) || '历史订单保存失败。' } finally { saving.value = false }
 }
 onMounted(load)
+onBeforeUnmount(() => { analysisRequest += 1 })
 </script>
 
 <template>
@@ -161,7 +172,7 @@ onMounted(load)
       </template>
       <div v-else class="history-empty">当前账号没有完整的{{ tab === 'sales' ? '历史销售订单录入' : '历史采购订单录入' }}权限；可继续查看已授权的历史资料。</div>
     </section>
-    <section class="history-card analysis-card"><div class="card-heading"><div><h3>历史经营分析</h3><p>与正式启用后的经营指标分开显示；没有可靠成本时不计算利润。</p></div><div class="analysis-filter"><label>从<input v-model="analysisFrom" type="date" /></label><label>至<input v-model="analysisTo" type="date" /></label><label>商品口径<select v-model="grouping" @change="refreshAnalysis"><option value="original">历史原文</option><option value="linked">按关联 SKU 归集</option></select></label><button class="secondary" @click="refreshAnalysis">刷新分析</button></div></div><div v-if="loading" class="history-empty">加载中…</div><template v-else><div class="analysis-grid"><div v-if="analysis?.sales"><small>历史销售额（人民币折算）</small><strong>¥ {{ formatAnalysisAmount(analysis.sales.amount_rmb) }}</strong><span>{{ analysis.sales.order_count }} 张订单</span><span>商品 ¥ {{ formatAnalysisAmount(analysis.sales.merchandise_rmb) }} · 调整 ¥ {{ formatAnalysisAmount(analysis.sales.adjustments_rmb) }}</span><span v-if="analysis.sales.pending_count">待关联或待核实 {{ analysis.sales.pending_count }} 条</span></div><div v-if="analysis?.purchase"><small>历史采购额（人民币折算）</small><strong>¥ {{ formatAnalysisAmount(analysis.purchase.amount_rmb) }}</strong><span>{{ analysis.purchase.order_count }} 张订单</span><span>商品 ¥ {{ formatAnalysisAmount(analysis.purchase.merchandise_rmb) }} · 调整 ¥ {{ formatAnalysisAmount(analysis.purchase.adjustments_rmb) }}</span><span v-if="analysis.purchase.pending_count">待关联或待核实 {{ analysis.purchase.pending_count }} 条</span></div><div><small>利润</small><strong>不计算</strong><span>历史成本未必完整，避免虚构利润</span></div></div><div v-if="analysisSections.length" class="analysis-detail-grid"><section v-for="section in analysisSections" :key="section.key" class="analysis-detail-section"><h4>{{ section.title }}</h4><div class="analysis-dimension-grid"><article v-for="dimension in section.dimensions" :key="dimension.key" class="analysis-detail-card"><h5>{{ dimension.label }}</h5><div class="analysis-table-wrap"><table class="analysis-table"><thead><tr><th>名称</th><th>人民币折算</th><th>{{ dimension.metricLabel }}</th></tr></thead><tbody><tr v-for="row in dimension.rows" :key="`${dimension.key}-${row.key || row.id || row.label}`"><td>{{ row.label || '未填写' }}</td><td>¥ {{ formatAnalysisAmount(row.amount) }}</td><td><template v-if="row.quantities"><div v-for="(quantity, unit) in row.quantities" :key="unit">{{ quantity }} {{ unit }}</div></template><template v-else>{{ row[dimension.metric] ?? '—' }} {{ row.unit }}</template></td></tr></tbody></table></div></article></div></section></div><p v-else-if="analysisDetailEmpty" class="history-empty">当前权限下暂无可展示的历史明细。</p></template></section>
+    <section class="history-card analysis-card"><div class="card-heading"><div><h3>历史经营分析</h3><p>与正式启用后的经营指标分开显示；没有可靠成本时不计算利润。</p></div><div class="analysis-filter"><label>从<input v-model="analysisFrom" type="date" @change="refreshAnalysis" /></label><label>至<input v-model="analysisTo" type="date" @change="refreshAnalysis" /></label><label>商品口径<select v-model="grouping" @change="refreshAnalysis"><option value="original">历史原文</option><option value="linked">按关联 SKU 归集</option></select></label><button class="secondary" @click="refreshAnalysis">刷新分析</button></div></div><div v-if="analysisLoading" class="history-empty">加载中…</div><p v-else-if="analysisError" class="history-alert error" role="alert">{{ analysisError }}</p><template v-else><div class="analysis-grid"><div v-if="analysis?.sales"><small>历史销售额（人民币折算）</small><strong>¥ {{ formatAnalysisAmount(analysis.sales.amount_rmb) }}</strong><span>{{ analysis.sales.order_count }} 张订单</span><span>商品 ¥ {{ formatAnalysisAmount(analysis.sales.merchandise_rmb) }} · 调整 ¥ {{ formatAnalysisAmount(analysis.sales.adjustments_rmb) }}</span><span v-if="analysis.sales.pending_count">待关联或待核实 {{ analysis.sales.pending_count }} 条</span></div><div v-if="analysis?.purchase"><small>历史采购额（人民币折算）</small><strong>¥ {{ formatAnalysisAmount(analysis.purchase.amount_rmb) }}</strong><span>{{ analysis.purchase.order_count }} 张订单</span><span>商品 ¥ {{ formatAnalysisAmount(analysis.purchase.merchandise_rmb) }} · 调整 ¥ {{ formatAnalysisAmount(analysis.purchase.adjustments_rmb) }}</span><span v-if="analysis.purchase.pending_count">待关联或待核实 {{ analysis.purchase.pending_count }} 条</span></div><div><small>利润</small><strong>不计算</strong><span>历史成本未必完整，避免虚构利润</span></div></div><div v-if="analysisSections.length" class="analysis-detail-grid"><section v-for="section in analysisSections" :key="section.key" class="analysis-detail-section"><h4>{{ section.title }}</h4><div class="analysis-dimension-grid"><article v-for="dimension in section.dimensions" :key="dimension.key" class="analysis-detail-card"><h5>{{ dimension.label }}</h5><div class="analysis-table-wrap"><table class="analysis-table"><thead><tr><th>名称</th><th>人民币折算</th><th>{{ dimension.metricLabel }}</th></tr></thead><tbody><tr v-for="row in dimension.rows" :key="`${dimension.key}-${row.key || row.id || row.label}`"><td>{{ row.label || '未填写' }}</td><td>¥ {{ formatAnalysisAmount(row.amount) }}</td><td><template v-if="row.quantities"><div v-for="(quantity, unit) in row.quantities" :key="unit">{{ quantity }} {{ unit }}</div></template><template v-else>{{ row[dimension.metric] ?? '—' }} {{ row.unit }}</template></td></tr></tbody></table></div></article></div></section></div><p v-else-if="analysisDetailEmpty" class="history-empty">当前权限下暂无可展示的历史明细。</p></template></section>
     <section class="history-card"><div class="card-heading"><div><h3>已录入历史{{ tab === 'sales' ? '销售' : '采购' }}订单</h3><p>当前共 {{ rows.length }} 张；历史记录不会出现在待收、待付、采购待办或库存预留中。</p></div></div><div v-if="!rows.length" class="history-empty">暂无历史订单</div><div v-else class="history-list"><article v-for="row in rows" :key="row.id"><div><strong>{{ tab === 'sales' ? row.order_no : row.purchase_no }}</strong><span>{{ tab === 'sales' ? row.customer_name : row.supplier_name }}</span></div><div><span>{{ row.order_date }}</span><b>{{ row.currency }} {{ Number(row.total_amount || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2 }) }}</b><em>历史订单 · 仅用于经营分析</em></div>
       <details v-if="row.historical_products?.length" class="history-document-products">
         <summary>查看商品明细</summary>

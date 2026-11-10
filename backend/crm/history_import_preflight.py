@@ -880,7 +880,7 @@ def _check_master_and_documents(rows, results, user):
                 ], "供应商")
             _db_duplicate_checks(sheet, record, result, rows=rows)
 
-    from .history_products import rule_key
+    from .history_products import rule_key, sku_summary, specification_matches
     from .history_product_models import HistoryProductRule
     source_systems = {row["data"]["group_id"]: row["data"].get("source_system") for row in rows["分组"]}
     sku_queryset = SKU.objects.select_related("product")
@@ -894,16 +894,22 @@ def _check_master_and_documents(rows, results, user):
             )
             if sheet in {"销售明细", "采购明细"}:
                 result["product_link_status"] = "待关联"
-                key = rule_key(source_systems.get(data["group_id"]), sheet, data.get("sku_code"),
-                               data.get("specification_snapshot"), data.get("base_unit_snapshot"))
-                if key:
-                    rule = HistoryProductRule.objects.filter(
-                        pk=key, sku__active=True, confirmed_source__product_link__sku_id=F("sku_id"),
-                        confirmed_source__product_link__needs_review=False,
-                    ).select_related("sku__product").first()
-                    if rule and rule.sku_id not in {item.pk for item in candidates}:
-                        result["related_records"].append(_related_master("SKU", rule.sku, "本来源已核实的候选规则；仍需人工确认"))
-                result["related_records"].extend(_related_master("SKU", item, "候选；需人工确认") for item in candidates)
+                if user_can(user, "skus", "view"):
+                    source_system = source_systems.get(data["group_id"])
+                    key = rule_key(source_system, sheet, data.get("sku_code"),
+                                   data.get("specification_snapshot"), data.get("base_unit_snapshot"))
+                    if key:
+                        rule = HistoryProductRule.objects.filter(
+                            pk=key, sku__active=True, confirmed_source__product_link__sku_id=F("sku_id"),
+                            confirmed_source__product_link__needs_review=False,
+                        ).select_related("sku__product").first()
+                        if rule and specification_matches(rule.sku, data.get("base_unit_snapshot"), data.get("specification_snapshot")):
+                            result["product_candidates"] = [{
+                                **sku_summary(rule.sku), "source_system": source_system, "record_type": sheet,
+                                "basis": "同来源、同原编码、规格及单位的已核实规则",
+                            }]
+                            result["related_records"].append(_related_master("SKU", rule.sku, "本来源已核实的候选规则；仍需人工确认"))
+                    result["related_records"].extend(_related_master("SKU", item, "候选；需人工确认") for item in candidates)
                 if match != "exact":
                     _issue(result, "警告", "历史商品可先归档，归档后可关联正式 SKU。", "保留原商品编码、名称及规格。")
             elif match != "exact":
@@ -1103,7 +1109,13 @@ def _check_dependencies(rows, results, groups):
         else:
             line = line_records[0]
             line_data = line["data"]
-            if line_data.get("sku_code") and data.get("sku_code") and str(line_data["sku_code"]) != str(data["sku_code"]):
+            line_original = line.get("original_sku_code", line_data.get("sku_code"))
+            event_original = record.get("original_sku_code", data.get("sku_code"))
+            line_target = line.get("confirmed_sku_code")
+            event_target = record.get("confirmed_sku_code")
+            original_mismatch = line_original and event_original and line_original != event_original
+            confirmed_mismatch = line_target and event_target and line_target != event_target
+            if original_mismatch or confirmed_mismatch:
                 _issue(result, "阻断", "履约 SKU 与原订单行 SKU 不一致。", "核对原发货/收货单和订单行编号。", [_row_relation(line_sheet, line)])
             if data.get("group_id") != line_data.get("group_id"):
                 _issue(result, "阻断", "履约记录与订单行不属于同一来源关联组。", "依据原始履约单据修正关联组。", [_row_relation(line_sheet, line)])

@@ -169,7 +169,7 @@ function statusLabel(status) {
                 <td class="preflight-source-id">{{ row.source_record_id || '—' }}</td>
                 <td>{{ row.group_id || '—' }}</td>
                 <td><span class="preflight-status" :class="`status-${statusClass(row.status)}`">{{ statusLabel(row.status) }}</span></td>
-                <td><ul v-if="row.reasons?.length"><li v-for="(reason, reasonIndex) in row.reasons" :key="reasonIndex">{{ reason.message }}</li></ul><span v-else>—</span></td>
+                <td><ul v-if="row.product_candidates?.length"><li v-for="candidate in row.product_candidates" :key="candidate.id">{{ candidate.code }} · {{ candidate.name }} · {{ candidate.specification || Object.values(candidate.parameters || {}).join(' · ') || '未记录规格' }} · {{ candidate.unit }} · {{ candidate.source_system }} · {{ candidate.record_type }} · {{ candidate.basis }}。请在历史承接中选择确认。</li></ul><ul v-if="row.reasons?.length"><li v-for="(reason, reasonIndex) in row.reasons" :key="reasonIndex">{{ reason.message }}</li></ul><span v-else>—</span></td>
                 <td><ul v-if="row.suggested_actions?.length"><li v-for="(action, actionIndex) in row.suggested_actions" :key="actionIndex">{{ action }}</li></ul><span v-else>—</span></td>
               </tr>
             </tbody>

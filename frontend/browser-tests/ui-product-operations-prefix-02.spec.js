@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { chromium, expect, test } from '@playwright/test'
 
 test('prefix preview, cancellation, server refusal and apply preserve SKU identity', async ({ baseURL }) => {
@@ -8,9 +9,9 @@ test('prefix preview, cancellation, server refusal and apply preserve SKU identi
   const root = process.env.ISOLATED_TEST_ROOT
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
   const evidence = path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT)
-  const output = path.join(evidence, 'chrome-prefix')
+  const output = path.join(evidence, 'chrome-prefix-verified')
   await mkdir(output, { recursive: true })
-  const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [path.join(evidence, 'seed.py')], {
+  const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [fileURLToPath(new URL('../../docs/uat-evidence/ui-product-operations-completion-02/seed.py', import.meta.url))], {
     cwd: path.resolve('../backend'), encoding: 'utf8', env: { ...process.env, PRODUCT_OPS_PREFIX: '1' },
   }))
   const context = await chromium.launchPersistentContext(path.join(root, 'product-prefix-chrome'), {

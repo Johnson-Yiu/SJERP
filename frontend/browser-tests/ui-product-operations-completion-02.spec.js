@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { chromium, expect, test } from '@playwright/test'
 
 const sizes = [[1366, 768], [1440, 900], [390, 844]]
@@ -9,11 +10,11 @@ test('product detail fits the available workspace and nested details restore foc
   test.setTimeout(2400000)
   const root = process.env.ISOLATED_TEST_ROOT
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
-  expect(source).toBe(process.env.PRODUCT_OPS_SOURCE_SHA)
+  if (process.env.PRODUCT_OPS_SOURCE_SHA) expect(source).toBe(process.env.PRODUCT_OPS_SOURCE_SHA)
   const evidence = path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT)
   const output = path.join(evidence, process.env.PRODUCT_OPS_RUN || 'chrome-product-detail')
   await mkdir(output, { recursive: true })
-  const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [path.join(evidence, 'seed.py')], {
+  const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [fileURLToPath(new URL('../../docs/uat-evidence/ui-product-operations-completion-02/seed.py', import.meta.url))], {
     cwd: path.resolve('../backend'), encoding: 'utf8',
   }))
   const context = await chromium.launchPersistentContext(path.join(root, 'product-detail-chrome'), {

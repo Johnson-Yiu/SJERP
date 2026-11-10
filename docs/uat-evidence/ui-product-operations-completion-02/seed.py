@@ -23,11 +23,11 @@ root = ProductCategory.objects.create(name="合成灯具")
 category = ProductCategory.objects.create(name="轨道灯与安装配件", parent=root)
 for index, name in enumerate(("色温", "发光角度", "外壳颜色")):
     CategoryAttribute.objects.create(
-        category=category, name=name, key=name, include_in_sku=True, sort_order=index
+        category=category, name=name, key=name, include_in_sku=True, include_in_sales_model=index == 0, sort_order=index
     )
 product = Product.objects.create(
     code="EVID-P001", name="合成长名称｜商业展厅用低眩光可调角度模块化轨道灯及其多场景安装配件组合",
-    category=category,
+    category=category, sales_model_prefix="EVIDOLD",
 )
 product.suppliers.add(supplier)
 if os.environ.get("PRODUCT_OPS_PREFIX") == "1":
@@ -45,6 +45,8 @@ skus = [
     SKU.objects.create(
         product=product, sku=f"EVID-TRACK-LONG-SKU-3000K-BEAM24-BLACK-{index:02}",
         unit=unit, default_price="10", cost_price="4", sales_model=f"EVIDOLD-{index:02}",
+        parameter_values={f"{category.pk}:色温": str(3000 + index * 100)},
+        sales_model_abbreviations={f"{category.pk}:色温:{3000 + index * 100}": f"C{index}"},
     )
     for index, unit in enumerate(("pcs", "m", "set", "pcs"), 1)
 ]

@@ -13,7 +13,7 @@ test('synthetic quote replacement uses independent approval and synthetic saved 
   const evidence = path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'replacement-quote')
   fs.mkdirSync(evidence, { recursive: true })
   const apiBase = process.env.ISOLATED_PLAYWRIGHT_API_BASE_URL
-  const a = await browser.newContext({ viewport: { width: 1440, height: 900 } }), b = await browser.newContext({ viewport: { width: 390, height: 844 } })
+  const a = await browser.newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 1440, height: 900 } }), b = await browser.newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 390, height: 844 } })
   async function login(context, username) {
     const p = await context.newPage(); await p.goto(`${apiBase}/admin/login/`)
     await p.locator('[name="username"]').fill(username); await p.locator('[name="password"]').fill('synthetic-only-password')

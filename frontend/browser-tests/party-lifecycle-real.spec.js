@@ -5,7 +5,7 @@ import path from 'node:path'
 
 test.use({ channel: 'chrome' })
 
-test('two authenticated staff reject, reapply and withdraw with saved history', async ({ browser, page, baseURL }) => {
+test('two authenticated staff reject, reapply and withdraw with saved history', async ({ browser, baseURL }) => {
   test.setTimeout(90000)
   expect(process.env.ISOLATED_TEST_RUN_ID).toBeTruthy()
   const root = path.resolve('../docs/uat-evidence/party-version-closeout-20261105')
@@ -16,7 +16,6 @@ test('two authenticated staff reject, reapply and withdraw with saved history', 
   const fixture = JSON.parse(seed.stdout.trim().split('\n').at(-1))
   const evidence = path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'lifecycle')
   fs.mkdirSync(evidence, { recursive: true })
-  expect((await page.request.post(`/api/quotes/${fixture.id}/mark-sent/`)).status()).toBe(200)
   const apiBase = process.env.ISOLATED_PLAYWRIGHT_API_BASE_URL
   async function login(context, username) {
     const auth = await context.newPage()
@@ -27,14 +26,18 @@ test('two authenticated staff reject, reapply and withdraw with saved history', 
     await expect(auth).not.toHaveURL(/\/admin\/login/)
     await auth.close()
   }
-  const requester = await browser.newContext({ viewport: { width: 1440, height: 900 } })
-  const reviewer = await browser.newContext({ viewport: { width: 390, height: 844 } })
+  const requester = await browser.newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 1440, height: 900 } })
+  const reviewer = await browser.newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 390, height: 844 } })
   try {
     await login(requester, fixture.first_username)
     await login(reviewer, fixture.second_username)
     const first = await requester.newPage()
     const second = await reviewer.newPage()
     const url = new URL(`/quotes?detail=${fixture.id}`, baseURL).toString()
+    await first.goto(url)
+    const markedSent = first.waitForResponse(r => r.url().endsWith('/mark-sent/') && r.request().method() === 'POST')
+    await first.getByRole('button', { name: '标记为已发送', exact: true }).click()
+    expect((await markedSent).status()).toBe(200)
     async function open(p) {
       await p.goto(url)
       await p.getByRole('button', { name: '主体更正' }).click()

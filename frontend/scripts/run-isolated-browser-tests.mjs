@@ -700,7 +700,8 @@ async function runProfile(selection) {
         mediaRoot,
         rbacEnforcement: rbacTestMode,
       }
-      const apiIdentity = await waitForIdentity(apiServer, apiIdentityUrl, { runId, token }, 'Django API')
+      const identityOptions = env.A3_STRICT_BROWSER_EVIDENCE === '1' ? { timeoutMs: 150000 } : undefined
+      const apiIdentity = await waitForIdentity(apiServer, apiIdentityUrl, { runId, token }, 'Django API', identityOptions)
       assertApiIdentity(apiIdentity, expectedApiIdentity, 'Direct Django API')
       console.log('[isolation] Direct Django API identity, SQLite path, and MEDIA_ROOT: passed')
 
@@ -710,9 +711,9 @@ async function runProfile(selection) {
         '--config', path.join(frontendRoot, 'vite.isolated.config.js'),
         '--host', '127.0.0.1', '--port', String(vitePort),
       ], { cwd: frontendRoot, env, label: 'isolated Vite', capture: true })
-      await waitForIdentity(viteServer, viteIdentityUrl, { runId, token }, 'Vite')
+      await waitForIdentity(viteServer, viteIdentityUrl, { runId, token }, 'Vite', identityOptions)
       console.log('[isolation] Vite identity: passed')
-      await verifyProxiedApiIdentity(viteServer, baseURL, apiIdentity, expectedApiIdentity)
+      await verifyProxiedApiIdentity(viteServer, baseURL, apiIdentity, expectedApiIdentity, identityOptions)
       console.log('[isolation] Vite /api proxy identity, SQLite path, and MEDIA_ROOT: passed')
 
       const testOutputDir = env.ISOLATED_PLAYWRIGHT_OUTPUT_DIR

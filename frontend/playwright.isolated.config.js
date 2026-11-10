@@ -29,6 +29,7 @@ export default defineConfig({
   forbidOnly: true,
   retries: 0,
   workers: 1,
+  ...(process.env.A3_STRICT_BROWSER_EVIDENCE === '1' ? { timeout: 150000, expect: { timeout: 15000 } } : {}),
   reporter: process.env.ISOLATED_PLAYWRIGHT_JSON_REPORT
     ? [['list'], ['json', { outputFile: process.env.ISOLATED_PLAYWRIGHT_JSON_REPORT }]]
     : 'list',

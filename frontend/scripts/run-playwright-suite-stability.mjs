@@ -14,6 +14,7 @@ const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
+  { name: 'history-product-linking-h2-isolated', file: 'history-product-linking-h2-real.spec.js', codex: true },
   { name: 'sales-evidence-01-isolated', file: 'ui-sales-state-evidence-01.spec.js', codex: true },
   { name: 'sales-evidence-01-party-isolated', file: 'ui-sales-state-evidence-01-party.spec.js', codex: true },
   { name: 'product-operations-evidence-01-isolated', file: 'ui-product-operations-state-evidence-01.spec.js', codex: true },

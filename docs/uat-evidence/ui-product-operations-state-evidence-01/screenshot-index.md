@@ -221,4 +221,7 @@ HTTP 记录以对应 JSON 为准。早期留档只有截图，可能包含缩放
 | [verification-purchase-partial-receipt-saved-390-125.png](screenshots/verification-purchase-partial-receipt-saved-390-125.png) | [browser-verification.json](browser-verification.json) |
 | [verification-purchase-place-confirmation-390-125.png](screenshots/verification-purchase-place-confirmation-390-125.png) | [browser-verification.json](browser-verification.json) |
 
+| [产品刷新失败，390px／125%](screenshots/verification-product-load-failure-390-125.png) | [产品刷新补验](browser-product-refresh.json) |
+| [产品刷新恢复，390px／125%](screenshots/verification-product-load-recovered-390-125.png) | [产品刷新补验](browser-product-refresh.json) |
+
 两张问题图另见 [复现记录](reproductions.md)。

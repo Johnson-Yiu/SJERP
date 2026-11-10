@@ -27,9 +27,10 @@ test('product operations evidence with real Chrome and the isolated API', async 
   test.setTimeout(900000)
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repository, encoding: 'utf8' }).trim()
   const root = process.env.ISOLATED_TEST_ROOT
-  const verify = process.env.PRODUCT_OPS_FOLLOWUP === 'verify'
+  const refreshOnly = process.env.PRODUCT_OPS_FOLLOWUP === 'refresh'
+  const verify = refreshOnly || process.env.PRODUCT_OPS_FOLLOWUP === 'verify'
   const followup = verify || process.env.PRODUCT_OPS_FOLLOWUP === '1'
-  const indexName = verify ? 'browser-verification.json' : followup ? 'browser-followup.json' : 'browser-results.json'
+  const indexName = refreshOnly ? 'browser-product-refresh.json' : verify ? 'browser-verification.json' : followup ? 'browser-followup.json' : 'browser-results.json'
   if (!root || process.env.ISOLATED_CODEX_TEST_SUPERADMIN !== '1') throw new Error('Run through the isolated codex profile.')
   const screenshots = path.join(evidence, 'screenshots')
   await mkdir(screenshots, { recursive: true })
@@ -160,7 +161,7 @@ test('product operations evidence with real Chrome and the isolated API', async 
     }
     await zoomTo(1.25)
     await page.setViewportSize({ width: 390, height: 844 })
-    await attempt('product-search-no-match', async () => {
+    if (!refreshOnly) await attempt('product-search-no-match', async () => {
       await open('/products', 'products', '?search=EVID-NO-SUCH-PRODUCT')
       await expect(page.getByText('没有符合当前条件的记录', { exact: true })).toBeVisible()
       await capture('product-search-no-match', 1.25, 390, 844)
@@ -169,17 +170,37 @@ test('product operations evidence with real Chrome and the isolated API', async 
       await open('/products', 'products')
       const endpoint = url => url.pathname === '/api/products/'
       await page.route(endpoint, route => route.fulfill({ status: 500, json: { detail: 'EVID controlled server failure' } }))
+      const pane = page.locator('.workspace-pane:not([aria-hidden=true])')
+      const reload = pane.getByRole('button', { name: '重新加载', exact: true })
       try {
         responses = []
         const failed = page.waitForResponse(response => endpoint(new URL(response.url())) && response.status() === 500)
         await page.getByRole('button', { name: '刷新', exact: true }).click()
         await failed
-        await expect(page.getByRole('button', { name: '重新加载', exact: true }).first()).toBeVisible()
+        await expect(reload).toBeVisible({ timeout: 20000 })
+        await expect(pane.locator('.page-load-state-warning')).toContainText('当前显示上一次成功加载的数据')
+        await expect(pane.getByText('EVID-P001', { exact: true })).toBeVisible()
         await capture('product-load-failure', 1.25, 390, 844, 'simulated products GET 500')
+        if (refreshOnly) {
+          await writeFile(path.join(evidence, 'product-refresh-visible-state.json'), JSON.stringify({
+            alerts: await pane.getByRole('alert').allTextContents(),
+            buttons: await pane.getByRole('button').allTextContents(),
+          }, null, 2) + '\n')
+        }
       } finally {
         await page.unroute(endpoint)
       }
+      await expect(reload).toBeVisible()
+      responses = []
+      const recovered = page.waitForResponse(response => endpoint(new URL(response.url())) && response.ok())
+      await reload.click()
+      await recovered
+      await expect(pane.locator('.page-load-state-refreshing')).toHaveCount(0)
+      await expect(pane.getByText('刷新失败，当前显示上一次成功加载的数据。', { exact: false })).toHaveCount(0)
+      await expect(pane.getByText('EVID-P001', { exact: true })).toBeVisible()
+      await capture('product-load-recovered', 1.25, 390, 844)
     })
+    if (refreshOnly) return
     await attempt('product-category-and-unsaved', async () => {
       await open('/products', 'products')
       await page.getByRole('button', { name: '新建产品', exact: true }).click()

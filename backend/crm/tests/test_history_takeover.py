@@ -438,10 +438,12 @@ class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual(result.status_code, 200, result.data)
         group.refresh_from_db()
         before = group.source_rows
+        transaction_count = Transaction.objects.count()
         late = self.client.post(
             f"/api/import/history-takeovers/{application.pk}/groups/{group.pk}/correction/",
             {"kind": "late_fact", "occurred_at": "2024-08-12", "reason": "Synthetic late shipment document.",
-             "details": {"source_event_id": "LATE-SHIP-1", "quantity": "1", "voucher_reference": "VCH-LATE-1"}}, format="json",
+             "details": {"source_record_id": "LATE-SHIP-1", "source_document_no": "SHIP-1",
+                         "description": "补录发货 1 件", "voucher_reference": "VCH-LATE-1"}}, format="json",
         )
         self.assertEqual(late.status_code, 200, late.data)
         event = HistoryTakeoverEvent.objects.get(group=group, event_type="late_fact_submitted")
@@ -462,6 +464,14 @@ class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
         group.refresh_from_db()
         self.assertIn(event.pk, group.verified_correction_ids)
         self.assertEqual(group.source_rows, before)
+        event.refresh_from_db()
+        self.assertEqual(event.details["details"], {
+            "source_record_id": "LATE-SHIP-1", "source_document_no": "SHIP-1",
+            "description": "补录发货 1 件", "voucher_reference": "VCH-LATE-1",
+        })
+        audit = group.events.get(event_type="correction_reviewed")
+        self.assertEqual(audit.details["source_event_id"], event.pk)
+        self.assertEqual(Transaction.objects.count(), transaction_count)
         self.assertEqual(Order.objects.get(order_no="HIST-SO-HT-1").items.get().quantity, Decimal("10.00"))
         self.assertEqual(InventoryMovement.objects.count(), 0)
 

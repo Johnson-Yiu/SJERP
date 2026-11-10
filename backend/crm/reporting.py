@@ -80,15 +80,13 @@ def customer_dims(customer, *, country_snapshot=_CURRENT_COUNTRY, name_snapshot=
     }
 
 
-def category_snapshot_dimension(reference, name, *, current_name=None):
+def category_snapshot_dimension(reference, name):
     name = str(name or "").strip()
     if not name:
         return "__unknown__", "待核实"
     reference = str(reference or "").strip()
     if not reference:
         return f"source:{name.casefold()}", name
-    if current_name is not None and str(current_name).strip() == name:
-        return reference, name
     return f"snapshot:{json.dumps([reference, name], ensure_ascii=False, separators=(',', ':'))}", name
 
 
@@ -99,7 +97,6 @@ def product_dims(sku, *, category_reference_snapshot="", category_name_snapshot=
         category_snapshot_dimension(
             category_reference_snapshot,
             category_name_snapshot,
-            current_name=(sku.product.category.name if sku.product.category else None),
         )
         if use_category_snapshot else
         identity(sku.product.category, sku.product.category.name if sku.product.category else "")
@@ -315,7 +312,6 @@ def historical_analysis(request):
                 if can_category_dimension:
                     category_key, category_label = category_snapshot_dimension(
                         item.product_category_reference_snapshot, item.product_category_name_snapshot,
-                        current_name=(item.sku.product.category.name if item.sku.product.category else None),
                     )
                     category_rows.setdefault(category_key, {"id": category_key, "label": category_label, "amount": Decimal("0"), "quantity": Decimal("0")})
                     category_rows[category_key]["amount"] += item.amount * order.exchange_rate
@@ -364,7 +360,6 @@ def historical_analysis(request):
                 if can_category_dimension:
                     category_key, category_label = category_snapshot_dimension(
                         item.product_category_reference_snapshot, item.product_category_name_snapshot,
-                        current_name=(item.sku.product.category.name if item.sku.product.category else None),
                     )
                     category_rows.setdefault(category_key, {"id": category_key, "label": category_label, "amount": Decimal("0"), "quantity": Decimal("0")})
                     category_rows[category_key]["amount"] += item.amount * purchase.exchange_rate
@@ -384,6 +379,12 @@ def historical_analysis(request):
 def safe_csv(value):
     value = str(value)
     return "'" + value if value.lstrip().startswith(("=", "+", "-", "@", "\t", "\r")) else value
+
+
+def validate_category_selection(source, dimension, value):
+    if source in {"sales", "purchase"} and dimension == "category" and value is not None:
+        if not value.startswith(("snapshot:", "source:")) and value not in {"__unknown__", "__adjustment__"}:
+            raise ValidationError("此产品主分类筛选使用旧版编号，请清除筛选并从报表结果重新选择分类。")
 
 
 def filter_summary(source, filters, user=None):
@@ -604,7 +605,10 @@ def report_details(request):
             dimension = key[7:]
             if dimension not in spec["dimensions"] or dimension == "time":
                 raise ValidationError("该模块不支持此筛选维度。")
+            validate_category_selection(source, dimension, value)
             filters[dimension] = value
+    validate_category_selection(source, group, group_value)
+    validate_category_selection(source, group_2, group_2_value)
     _detail_permissions(request, source, group, group_2, filters)
 
     rows = _detail_rows(source, date_field, start, end, group, group_2, grain, filters, group_value, group_2_value, request.user)
@@ -684,6 +688,7 @@ def report_data(request):
         if key.startswith("filter_"):
             dimension = key[7:]
             if dimension not in spec["dimensions"] or dimension == "time": raise ValidationError("该模块不支持此筛选维度。")
+            validate_category_selection(source, dimension, value)
             filters[dimension] = value
     for dimension in {group, *(dimension for dimension in [group_2] if dimension), *filters.keys()}:
         module = DIMENSION_MODULES.get(dimension)

@@ -25,7 +25,18 @@ const masterSearch = ref('')
 const masterOptions = ref([])
 const masterLoading = ref(false)
 let masterSearchVersion = 0
-const correction = ref({ kind: 'late_fact', occurred_at: '', reason: '', details: '' })
+const newCorrection = () => ({
+  kind: 'late_fact', occurred_at: '', reason: '', source_record_id: '',
+  source_document_no: '', voucher_reference: '', description: '',
+})
+const correction = ref(newCorrection())
+const correctionErrors = ref({})
+const correctionReviewNotes = ref({})
+const correctionEventTypes = ['late_fact_submitted', 'correction_submitted', 'voucher_added_submitted']
+const correctionDetailLabels = {
+  source_record_id: '原系统记录号', source_document_no: '原系统业务单据号',
+  voucher_reference: '凭证编号或存放位置', description: '业务明细',
+}
 const financeSources = ref([])
 const financeAccounts = ref([])
 const financeVouchers = ref([])
@@ -100,6 +111,7 @@ const sourceRows = computed(() => selected.value?.groups?.find(group => group.id
 const selectedGroupId = ref(null)
 const selectedGroup = computed(() => groups.value.find(group => group.id === selectedGroupId.value) || groups.value[0] || null)
 watch(selectedGroupId, () => {
+  correction.value = newCorrection(); correctionErrors.value = {}; correctionReviewNotes.value = {}
   financeSources.value = []; financeAccounts.value = []; financeVouchers.value = []
   financeMapping.value = { source_id: '', account: '', voucher: '', actual_date: '', amount: '', reason: '' }
   financeChangeReason.value = ''; financeNoDebit.value = false
@@ -202,6 +214,7 @@ async function groupAction(group, action, payload = {}) {
   try {
     await api.post(`/import/history-takeovers/${selected.value.id}/groups/${group.id}/${action}/`, payload)
     await loadApplications(selected.value.id)
+    return true
   } catch (e) { error.value = e.message }
   finally { saving.value = false }
 }
@@ -364,15 +377,29 @@ function addMasterResolution() {
   groupAction(selectedGroup.value, 'resolve-master', { ...mapping.value, row: Number(mapping.value.row) })
 }
 
-function submitCorrection() {
-  let details
-  try { details = JSON.parse(correction.value.details) }
-  catch { error.value = '请用有效 JSON 填写更正内容。'; return }
-  groupAction(selectedGroup.value, 'correction', { ...correction.value, details })
+async function submitCorrection() {
+  const form = correction.value
+  const group = selectedGroup.value
+  if (!group || saving.value) return
+  const { kind, occurred_at, reason, ...fields } = form
+  const details = Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, value.trim()]).filter(([, value]) => value))
+  const errors = {}
+  if (!details.source_record_id && !details.source_document_no) errors.source_record_id = '请填写原系统记录号或业务单据号。'
+  if (kind === 'late_fact' && !occurred_at) errors.occurred_at = '请选择迟到记录的实际发生日期。'
+  if (kind === 'voucher_added' && !details.voucher_reference) errors.voucher_reference = '请填写补交凭证的编号或存放位置。'
+  if (kind !== 'voucher_added' && !details.description) errors.description = kind === 'late_fact' ? '请说明迟到记录的业务明细。' : '请写明原值、更正值及涉及的字段。'
+  if (!reason.trim()) errors.reason = '请填写提交原因。'
+  correctionErrors.value = errors
+  if (Object.keys(errors).length) return
+  if (await groupAction(group, 'correction', { kind, occurred_at, reason: reason.trim(), details }) && correction.value === form) {
+    correction.value = { ...newCorrection(), kind }
+  }
 }
 
 function reviewCorrection(event, decision) {
-  groupAction(selectedGroup.value, 'correction-review', { event_id: event.id, decision, note: note.value })
+  const reviewNote = correctionReviewNotes.value[event.id]?.trim()
+  if (!reviewNote || event.group_id !== selectedGroup.value?.id) return
+  groupAction(selectedGroup.value, 'correction-review', { event_id: event.id, decision, note: reviewNote })
 }
 
 function downloadReport() {
@@ -614,14 +641,55 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                 <button v-if="operationalStatus.status === 'drafts_created'" class="takeover-secondary" :disabled="saving || !operationalReviewNote.trim()" @click="operationalAction('operational-reverse')">撤销未使用的接续草稿</button>
               </template>
             </details>
-            <div class="takeover-actions"><label>追溯类型<select v-model="correction.kind"><option value="late_fact">迟到记录</option><option value="correction">审计更正</option><option value="voucher_added">补交凭证</option></select></label><label>实际发生日期<input v-model="correction.occurred_at" type="date" /></label></div>
-            <label>更正原因<textarea v-model="correction.reason" rows="2" /></label>
-            <label>新增资料（JSON）<textarea v-model="correction.details" rows="3" placeholder='例如：{"source_record_id":"LATE-1","voucher_reference":"VCH-1"}' /></label>
-            <button class="takeover-secondary" :disabled="saving || !correction.reason || !correction.details" @click="submitCorrection">提交追溯更正申请</button>
+            <form class="takeover-fields" novalidate @submit.prevent="submitCorrection">
+              <label>追溯类型<select v-model="correction.kind" @change="correctionErrors = {}"><option value="late_fact">迟到记录</option><option value="correction">审计更正</option><option value="voucher_added">补交凭证</option></select></label>
+              <label>原系统记录号<input v-model="correction.source_record_id" list="correction-source-records" aria-describedby="correction-source-error" />
+                <datalist id="correction-source-records"><option v-for="record in [...new Set(sourceItems.map(item => item.data?.source_record_id).filter(Boolean))]" :key="record" :value="record" /></datalist>
+              </label>
+              <label>原系统业务单据号<input v-model="correction.source_document_no" aria-describedby="correction-source-error" /></label>
+              <small v-if="correctionErrors.source_record_id" id="correction-source-error" role="alert">{{ correctionErrors.source_record_id }}</small>
+              <label>实际发生日期{{ correction.kind === 'late_fact' ? '（必填）' : '（选填）' }}<input v-model="correction.occurred_at" type="date" />
+                <small v-if="correctionErrors.occurred_at" role="alert">{{ correctionErrors.occurred_at }}</small>
+              </label>
+              <label>凭证编号或存放位置{{ correction.kind === 'voucher_added' ? '（必填）' : '（选填）' }}<input v-model="correction.voucher_reference" />
+                <small v-if="correctionErrors.voucher_reference" role="alert">{{ correctionErrors.voucher_reference }}</small>
+              </label>
+              <label>{{ { late_fact: '迟到记录明细', correction: '更正明细（原值、更正值）', voucher_added: '补充说明（选填）' }[correction.kind] }}<textarea v-model="correction.description" rows="3" />
+                <small v-if="correctionErrors.description" role="alert">{{ correctionErrors.description }}</small>
+              </label>
+              <label>提交原因（必填）<textarea v-model="correction.reason" rows="2" />
+                <small v-if="correctionErrors.reason" role="alert">{{ correctionErrors.reason }}</small>
+              </label>
+              <button type="submit" class="takeover-secondary" :disabled="saving">提交追溯更正申请</button>
+            </form>
           </div>
         </article>
 
-        <section class="takeover-audit"><h4>申请与操作记录</h4><ol><li v-for="event in selected.events" :key="event.id"><span>{{ eventLabel(event.event_type) }}</span><small>{{ auditActorLabel(event) }} · {{ new Date(event.created_at).toLocaleString('zh-CN') }}</small><p v-if="['late_fact_submitted','correction_submitted','voucher_added_submitted'].includes(event.event_type)">发生日期：{{ event.details?.occurred_at || '未提供' }} · {{ event.details?.reason }}</p><div v-if="canReview && ['late_fact_submitted','correction_submitted','voucher_added_submitted'].includes(event.event_type) && !selectedGroup.verified_correction_ids?.includes(event.id)" class="takeover-actions"><button class="takeover-secondary" :disabled="saving || !note.trim()" @click="reviewCorrection(event,'reject')">退回更正</button><button class="takeover-primary" :disabled="saving || !note.trim()" @click="reviewCorrection(event,'approve')">核实并保留更正轨迹</button></div></li></ol></section>
+        <section class="takeover-audit">
+          <h4>申请与操作记录</h4>
+          <ol>
+            <li v-for="event in selected.events" :key="event.id">
+              <span>{{ eventLabel(event.event_type) }}</span>
+              <small>{{ auditActorLabel(event) }} · {{ new Date(event.created_at).toLocaleString('zh-CN') }}</small>
+              <template v-if="correctionEventTypes.includes(event.event_type)">
+                <p>发生日期：{{ event.details?.occurred_at || '未提供' }} · {{ event.details?.reason }}</p>
+                <dl>
+                  <template v-for="(label, key) in correctionDetailLabels" :key="key">
+                    <template v-if="event.details?.details?.[key]"><dt>{{ label }}</dt><dd>{{ event.details.details[key] }}</dd></template>
+                  </template>
+                </dl>
+                <div v-if="canReview && event.group_id === selectedGroup?.id && !selectedGroup.verified_correction_ids?.includes(event.id) && !selected.events.some(review => review.event_type === 'correction_reviewed' && review.details?.source_event_id === event.id)" class="takeover-fields">
+                  <label>更正审核依据<textarea v-model="correctionReviewNotes[event.id]" rows="2" /></label>
+                  <div class="takeover-actions">
+                    <button class="takeover-secondary" :disabled="saving || !correctionReviewNotes[event.id]?.trim()" @click="reviewCorrection(event, 'reject')">退回更正</button>
+                    <button class="takeover-primary" :disabled="saving || !correctionReviewNotes[event.id]?.trim()" @click="reviewCorrection(event, 'approve')">核实并保留更正轨迹</button>
+                  </div>
+                </div>
+              </template>
+              <p v-if="event.event_type === 'correction_reviewed'">{{ event.details?.decision === 'approve' ? '已核实' : '已退回' }} · {{ event.details?.note }}</p>
+            </li>
+          </ol>
+        </section>
       </section>
       <section v-else class="takeover-detail panel takeover-empty">选择一条申请，查看分组核验结果。</section>
     </div>
@@ -670,4 +738,6 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 @media(max-width:900px){.takeover-columns{grid-template-columns:1fr}.takeover-list{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-list-head,.takeover-empty{grid-column:1/-1}}
 .takeover-step-number{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-right:5px;border-radius:50%;background:#e7f1eb;color:#285c49;font-size:11px;vertical-align:middle}.takeover-group-head,.takeover-remainder-item,.takeover-result-row,.takeover-audit{min-width:0}.takeover-result-row,.takeover-result-row li,.takeover-remainder-item,.takeover-group-tab,.takeover-audit li{overflow-wrap:anywhere;word-break:break-word}.takeover-form-grid input,.takeover-form-grid select{min-width:0;max-width:100%}.takeover-resolution summary{cursor:pointer;font-weight:700}.takeover-resolution p{line-height:1.6}
 @media(max-width:600px){.takeover-intro{display:grid;padding:16px}.takeover-intro-actions{justify-items:start;width:100%}.takeover-lock{white-space:normal;width:max-content;max-width:100%}.takeover-upload,.takeover-list,.takeover-detail{padding:14px}.takeover-upload-row{display:grid}.takeover-file{align-items:flex-start;flex-direction:column}.takeover-file input{max-width:100%;width:100%}.takeover-list{grid-template-columns:1fr}.takeover-detail-head{display:grid}.takeover-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-form-grid{grid-template-columns:minmax(0,1fr)}.takeover-actions>*{flex:1}.takeover-actions button{min-height:40px}.takeover-group-tab{max-width:100%;flex-wrap:wrap}.takeover-step-number{flex:none}}
+.takeover-fields { display: grid; gap: .75rem; }
+.takeover-audit dd { overflow-wrap: anywhere; white-space: pre-wrap; }
 </style>

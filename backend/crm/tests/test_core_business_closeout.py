@@ -198,7 +198,7 @@ class CoreBusinessFlowTests(CoreBusinessFixture, TestCase):
             "voucher": voucher.data["id"],
         }, 201, key="CORE-REFUND-10")
         self.assertEqual(refund["refunds"][0]["actual_date"], str(DAY))
-        self.assertEqual(Decimal(refund["refunds"][0]["amount"]), D("10"))
+        self.assertEqual(D(refund["refunds"][0]["amount"]), D("10"))
         self.assertEqual(balance(), D("10"))
         order.refresh_from_db()
         self.assertEqual(order.status, "completed")

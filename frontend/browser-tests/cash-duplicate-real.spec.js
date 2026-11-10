@@ -48,8 +48,8 @@ for (const [index, width] of [1440, 390].entries()) {
       try { results.push({ width, method: response.request().method(), path: new URL(response.url()).pathname, status: response.status(), response: await response.json() }) } catch {}
     })
     await page.goto('/rmb-cash-events', { waitUntil: 'domcontentloaded' })
-    await expect(page.getByRole('button', { name: '新建资金事件' })).toBeVisible()
-    await page.getByRole('button', { name: '新建资金事件' }).click()
+    await expect(page.getByRole('button', { name: '新增资金事件' })).toBeVisible()
+    await page.getByRole('button', { name: '新增资金事件' }).click()
     await page.getByLabel('事件类型').selectOption('bank_fee')
     await page.getByLabel('银行净额（CNY）').fill('5.00')
     await page.getByLabel('银行实际日期').fill(date)

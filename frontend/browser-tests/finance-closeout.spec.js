@@ -19,7 +19,7 @@ for (const width of [1440, 390]) test(`real account ledger at ${width}px`, async
   const suffix = `${width}-${Date.now()}`
   await page.setViewportSize({ width, height: 1050 })
   await page.goto('/finance-ledger')
-  await expect(page.locator('.ledger-page').getByRole('heading', { name: '账户资金', exact: true })).toBeVisible()
+  await expect(page.locator('.ledger-page').getByRole('heading', { name: '账户余额与对账', exact: true })).toBeVisible()
   await page.getByRole('button', { name: '账户与映射', exact: true }).click()
   await page.getByLabel('受控标识', { exact: true }).fill(`SYNTH-${suffix}`)
   await page.getByLabel('显示名称', { exact: true }).fill(`合成验收银行-${suffix}`)

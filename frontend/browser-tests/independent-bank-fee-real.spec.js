@@ -49,7 +49,7 @@ for (const [index, width] of [1440, 390].entries()) {
         status: response.status(), request: response.request().postDataJSON(), result })
     })
     await page.goto('/rmb-cash-events')
-    await page.getByRole('button', { name: '新建资金事件' }).click()
+    await page.getByRole('button', { name: '新增资金事件' }).click()
     const parent = page.getByLabel('关联结汇事件（可选）')
     const fillBankInputs = async () => {
       await page.getByLabel('事件类型').selectOption('bank_fee')
@@ -64,7 +64,7 @@ for (const [index, width] of [1440, 390].entries()) {
     await fillBankInputs()
     const key = await page.getByLabel('稳定请求键').inputValue()
     await page.reload()
-    await page.getByRole('button', { name: '新建资金事件' }).click()
+    await page.getByRole('button', { name: '新增资金事件' }).click()
     await expect(page.getByLabel('稳定请求键')).toHaveValue(key)
     await expect(page.getByLabel('银行参考号')).toHaveValue('')
     await fillBankInputs()

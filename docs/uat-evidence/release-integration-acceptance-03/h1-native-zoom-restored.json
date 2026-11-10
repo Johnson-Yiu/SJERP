@@ -1,0 +1,103 @@
+{
+  "productSha": "fb2e973c06c55d685744cc97e3dc0bfd8d755253",
+  "source": "H1 original local run in release-completion-acceptance-02/browser/sales-order-import-real.spec",
+  "proof": "All 12 parsed records agree with the committed H1 index; existing image hash matches original; original timestamps match H1 run log window.",
+  "files": [
+    {
+      "file": "receipt-edit-1366-zoom-100.png",
+      "restored": true,
+      "sha256": "2a5072a002f101f1a66426afcdb043cd14d05c0412d98fc770d4ffbc3e510c9b",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1
+    },
+    {
+      "file": "history-correction-1366-zoom-100.png",
+      "restored": true,
+      "sha256": "fa0b39cac1b7385f5c8e20cd548ef2b47145ceef60b1d932bd8c1ca8cdfbd94e",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1
+    },
+    {
+      "file": "receipt-edit-1440-zoom-100.png",
+      "restored": true,
+      "sha256": "340082974f2437f7df9617cdddd7caf3626a52b44609012d586592bd10534647",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1
+    },
+    {
+      "file": "history-correction-1440-zoom-100.png",
+      "restored": true,
+      "sha256": "a89f30df117cb8cba4d942102a780ffd904a4e24e9e104bd8543edcbe331710b",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1
+    },
+    {
+      "file": "receipt-edit-390-zoom-100.png",
+      "restored": true,
+      "sha256": "22e186024efe29b97f7da30f8d3efd8dee94f0b38edecbc88c176ef52644191a",
+      "width": 390,
+      "height": 844,
+      "zoom": 1
+    },
+    {
+      "file": "history-correction-390-zoom-100.png",
+      "restored": true,
+      "sha256": "6bfea9e9776158bb039d32cf0dc54ea087f0840c536009bf739b39e23571a248",
+      "width": 390,
+      "height": 844,
+      "zoom": 1
+    },
+    {
+      "file": "receipt-edit-1366-zoom-125.png",
+      "restored": true,
+      "sha256": "b139c70071dbed13445665f2a6da1084cebabc4c8b25b568138d04b171bd67e5",
+      "width": 1093,
+      "height": 768,
+      "zoom": 1.25
+    },
+    {
+      "file": "history-correction-1366-zoom-125.png",
+      "restored": true,
+      "sha256": "6d9919f12e4266691262e4e65f84f652e1311b0c13e052abd221cdce143a30e1",
+      "width": 1093,
+      "height": 768,
+      "zoom": 1.25
+    },
+    {
+      "file": "receipt-edit-1440-zoom-125.png",
+      "restored": true,
+      "sha256": "827d2bb1867798daa2f01039c489e5244be4a8cc8a8591046ab2d52d960bec4d",
+      "width": 1152,
+      "height": 900,
+      "zoom": 1.25
+    },
+    {
+      "file": "history-correction-1440-zoom-125.png",
+      "restored": true,
+      "sha256": "2bae7027b0517d82ba9490ab2e3a72e8246737b4b3eecc1485076e2ee06f84ba",
+      "width": 1152,
+      "height": 900,
+      "zoom": 1.25
+    },
+    {
+      "file": "receipt-edit-390-zoom-125.png",
+      "restored": true,
+      "sha256": "a3181992687d8879615cf9466b44cde7aedaefc2c9c69f74c4deec8fd0216e43",
+      "width": 312,
+      "height": 844,
+      "zoom": 1.25
+    },
+    {
+      "file": "history-correction-390-zoom-125.png",
+      "restored": false,
+      "sha256": "7eabddcc70237e7774562801397085b57f55d0cfdaf1d3927cbeb1dccead7aed",
+      "width": 312,
+      "height": 844,
+      "zoom": 1.25
+    }
+  ]
+}

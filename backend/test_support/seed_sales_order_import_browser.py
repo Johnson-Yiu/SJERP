@@ -29,7 +29,8 @@ review_evidence_dir = (repo_root / "docs" / "uat-evidence" / "first-release-inde
 release_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-integration-repair-01" / "browser" / "sales-order-import-real.spec").resolve()
 followup_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-integration-repair-01-followup" / "browser" / "sales-order-import-real.spec").resolve()
 completion_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-completion-acceptance-02" / "browser" / "sales-order-import-real.spec").resolve()
-if evidence_dir not in {completion_evidence_dir, expected_evidence_dir, review_evidence_dir, release_evidence_dir, followup_evidence_dir} or evidence_dir.is_symlink():
+integration_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-integration-acceptance-03" / "browser" / "sales-order-import-real.spec").resolve()
+if evidence_dir not in {integration_evidence_dir, completion_evidence_dir, expected_evidence_dir, review_evidence_dir, release_evidence_dir, followup_evidence_dir} or evidence_dir.is_symlink():
     raise SystemExit("The sales import browser fixture must use its allowlisted evidence directory.")
 evidence_dir.mkdir(parents=True, exist_ok=True)
 

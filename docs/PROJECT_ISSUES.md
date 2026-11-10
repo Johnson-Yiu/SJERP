@@ -1,5 +1,9 @@
 # SUNJACK-ERP 项目问题台账
 
+## 2026-11-11 A2 与 H1 集成核对
+
+H1 独立分支已接收远端 A2 冻结源码与交付证据。SQLite 全量通过，PostgreSQL 全量的上传夹具错误及定向复跑的连接清理已修正，最终定向 5/5。Node、Vitest、构建及 A2、H1、E1/E2 定向证据已归档。通用浏览器主组 231 通过、54 失败、1 跳过、3 未运行。关联 ISS-006、ISS-007、ISS-105、ISS-121 的复跑和未验边界见[集成记录](uat-evidence/history-product-sku-linking-01/A2-INTEGRATION.md)。ISS-007 的报价 PI 图片快照仍待核实。保留现有问题状态和计数，等待独立复审。
+
 ## 2026-11-10 RELEASE-INTEGRATION-REPAIR-01 补验
 
 追加库存重开重放、长内容与 125% 缩放、历史资金重复核对和双人复核、证书业务字段提示及恢复演练证据。后端全量测试未通过，需隔离旧迁移回退测试并核对其他失败；未改变迁移保护或关闭旧问题。原证据保留，后续结果见[补验记录](uat-evidence/release-integration-repair-01-followup/README.md)。

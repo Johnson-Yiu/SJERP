@@ -12,6 +12,8 @@ from pathlib import Path
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--postgres-bin", type=Path, required=True)
+    parser.add_argument('--full', action='store_true')
+    parser.add_argument('--test-label', action='append', default=[])
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[3]
     root = Path(tempfile.mkdtemp(prefix="sunjack-h1-pg-"))
@@ -33,7 +35,7 @@ def main():
                               check=check, env=os.environ)
 
     def django(*options):
-        subprocess.run([sys.executable, "backend/manage.py", *options], cwd=repo, env=env, check=True)
+        subprocess.run([sys.executable, "manage.py", *options], cwd=repo / "backend", env=env, check=True)
 
     verify = Path(__file__).with_name("verify-migration.py")
     migration_check = f"exec(compile(open({str(verify)!r}, 'rb').read(), {str(verify)!r}, 'exec'))"
@@ -43,6 +45,9 @@ def main():
            "--encoding=UTF8", "--no-locale")
         secret.unlink()
         pg("pg_ctl", "-D", cluster, "-l", root / "server.log", "-o", f"-h 127.0.0.1 -p {port}", "-w", "start")
+        if args.test_label:
+            django('test', *args.test_label, '--noinput', '-v', '2')
+            return
         print("H1 forward migration from D2", flush=True)
         django("migrate", "crm", "0128", "--noinput", "--verbosity", "0")
         env["H1_MIGRATION_PHASE"] = "seed"
@@ -51,6 +56,10 @@ def main():
         env["H1_MIGRATION_PHASE"] = "verify"
         django("shell", "--no-imports", "-c", migration_check)
         print("H1 new test database, transactional and concurrency checks", flush=True)
+        if args.full:
+            django('makemigrations', '--check', '--dry-run')
+            django('test', '--noinput', '-v', '2')
+            return
         django("test", "crm.tests.test_history_products", "crm.tests.test_history_takeover",
                "crm.tests.test_history_operational_contracts", "--noinput")
     finally:

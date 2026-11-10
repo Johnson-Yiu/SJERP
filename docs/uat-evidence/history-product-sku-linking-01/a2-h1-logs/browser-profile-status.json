@@ -1,0 +1,47 @@
+[
+  {
+    "name": "business-suite",
+    "exitCode": 1,
+    "signal": null
+  },
+  {
+    "name": "shared-report-templates-isolated",
+    "exitCode": 1,
+    "signal": null
+  },
+  {
+    "name": "quote-editor-isolated",
+    "exitCode": 0,
+    "signal": null
+  },
+  {
+    "name": "iss006-storage-isolated",
+    "exitCode": 1,
+    "signal": null
+  },
+  {
+    "name": "iss007-attachment-isolated",
+    "exitCode": 0,
+    "signal": null
+  },
+  {
+    "name": "iss007-image-snapshot-isolated",
+    "exitCode": 1,
+    "signal": null
+  },
+  {
+    "name": "iss022-isolated",
+    "exitCode": 0,
+    "signal": null
+  },
+  {
+    "name": "iss028-035-isolated",
+    "exitCode": 0,
+    "signal": null
+  },
+  {
+    "name": "iss055-rbac",
+    "exitCode": 0,
+    "signal": null
+  }
+]

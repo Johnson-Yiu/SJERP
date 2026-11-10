@@ -1,0 +1,15 @@
+> senju-crm-erp@1.0.0 test:unit
+> node --test
+
+✔ transaction entry exposes bank-fee responsibility and original receipt settlement detail (1.7995ms)
+✔ transaction detail records authorized rounding without creating a cash receipt (1.208ms)
+✔ transaction summary includes rows attributed through receipt allocations (1.1597ms)
+✔ allocated advances display as receipts or supplier payments while retaining their unallocated balance (1.0453ms)
+ℹ tests 197
+ℹ suites 0
+ℹ pass 197
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 240550.9323

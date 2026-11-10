@@ -1,0 +1,14 @@
+RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/history-product-sku-linking-01/frontend
+
+stderr | tests/second-review-foundation.spec.js > Customer quotes route restores, click updates root tab, and nested drill does not overwrite it
+ ✓ tests/pi-amount-words.spec.js > PI amount in words > uses the EUR currency name 0ms
+ ✓ tests/pi-amount-words.spec.js > PI amount in words > uses the GBP currency name 0ms
+ ✓ tests/pi-amount-words.spec.js > PI amount in words > uses the CNY currency name 0ms
+ ✓ tests/pi-amount-words.spec.js > PI amount in words > uses the RMB currency name 1ms
+ ✓ tests/pi-amount-words.spec.js > PI amount in words > renders zero totals and rejects invalid amount or currency data without placeholder text 1ms
+ ✓ tests/supplier-terms-display.spec.js > keeps supplier notes visible while removing fixed payment rules from regular UI config 4ms
+
+ Test Files  90 passed (90)
+      Tests  837 passed (837)
+   Start at  23:35:19
+   Duration  883.44s (transform 8.95s, setup 75.06s, import 74.62s, tests 52.14s, environment 625.84s)

@@ -1,0 +1,98 @@
+{
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.80",
+    "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.27"
+  },
+  "customerCreate": 201,
+  "results": [
+    {
+      "id": "O06-quantity",
+      "outcome": "incomplete",
+      "reason": "locator.click: Timeout 150000ms exceeded."
+    },
+    {
+      "id": "C08-unsaved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "C08-unsaved-390-100.png"
+    },
+    {
+      "id": "C08-unsaved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "C08-unsaved-390-125.png"
+    },
+    {
+      "id": "C08-save-http",
+      "method": "PUT",
+      "path": "/api/customers/1/",
+      "httpStatus": 200
+    },
+    {
+      "id": "C08-edit",
+      "outcome": "incomplete",
+      "reason": "locator.scrollIntoViewIfNeeded: Timeout 25000ms exceeded."
+    },
+    {
+      "id": "C11-method",
+      "method": "Playwright route.abort on customer list GET only"
+    },
+    {
+      "id": "C11-network-failed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "C11-network-failed-390-100.png"
+    },
+    {
+      "id": "C11-network-failed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "C11-network-failed-390-125.png"
+    },
+    {
+      "id": "C11-retry",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "C11-retry-390-100.png"
+    },
+    {
+      "id": "C11-retry",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "C11-retry-390-125.png"
+    }
+  ]
+}

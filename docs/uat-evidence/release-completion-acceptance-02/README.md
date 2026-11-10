@@ -113,3 +113,10 @@ Vitest 全量 89 文件、834 项通过，0 失败、0 跳过。复跑的 worker
 - 隔离运行器清理服务、数据库与媒体目录。此记录仅追加本次已观测结果，原有待复审项仍可在本报告中核对。
 
 [脱敏隔离运行及 HTTP 日志](logs/a2-iab-download-recheck.txt)
+
+### 导出文件内容补验
+
+业务提交 `d836ba21a657a3a61b770a1d124a5b1fb62a9f46`。Windows 上沿用隔离运行器与合成业务种子，使用独立 SQLite、媒体目录和真实 `codex` 登录。临时运行器将 Playwright 阶段替换为等待内置浏览器。使用 Python 标准库 `urllib.request` 和 CookieJar，经 Vite 本机代理登录并将两个 HTTP 附件响应写入文件。XLSX 用 `zipfile.ZipFile.testzip()` 检验完整性并确认工作簿结构，CSV 以 UTF-8 BOM 兼容解码后由 `csv.reader` 解析。
+
+- 历史承接 XLSX 返回 200，14338 字节。财务概览 CSV 返回 200，592 字节，SHA256 与此前 Chrome 实际下载样本一致。[文件与校验清单](http-downloads/manifest.json)
+- 内置浏览器导航仍超时，运行器随后因 Vite 代理身份校验超时退出并清理环境。本轮文件来自认证 HTTP 请求。最终候选的浏览器落盘、退款凭证上传后的登记与回读，以及此前列明的浏览器场景继续待验。[脱敏运行日志](logs/a2-gap-http.txt)

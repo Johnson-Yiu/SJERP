@@ -1,0 +1,14 @@
+[
+  {
+    "path": "http-downloads/a2-gap-history-template.xlsx",
+    "bytes": 14338,
+    "sha256": "1634f890a3352f5411eb10cead9329ddda30462d5e896d25c052da9933ec0dd0",
+    "status": 200
+  },
+  {
+    "path": "http-downloads/a2-gap-finance-overview.csv",
+    "bytes": 592,
+    "sha256": "f0f4deadf2e6c15db7312c6ad5ae181a3e6c91d5f6645d2cb9293ef0fcf6b1a5",
+    "status": 200
+  }
+]

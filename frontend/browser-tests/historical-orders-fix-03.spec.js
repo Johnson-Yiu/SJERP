@@ -19,18 +19,18 @@ async function layoutMetrics(page) {
 
 async function assertSkuQuantitiesAreVisible(page) {
   const result = await page.locator('.analysis-detail-card').evaluateAll(cards => cards
-    .filter(card => card.querySelector('h5')?.textContent.trim() === 'SKU')
+    .filter(card => card.querySelector('h5')?.textContent.trim() === '按关联 SKU 归集')
     .map(card => {
     const wrapper = card.querySelector('.analysis-table-wrap')
     const table = wrapper.querySelector('.analysis-table')
     const wrapperRect = wrapper.getBoundingClientRect()
     const tableRect = table.getBoundingClientRect()
     const quantityCells = [...table.querySelectorAll('tbody td:nth-child(3)')]
-      .filter(cell => ['17', '27'].includes(cell.textContent.trim()))
+      .filter(cell => ['17', '27'].includes(cell.textContent.trim().split(/\s+/)[0]))
       .map(cell => {
         const rect = cell.getBoundingClientRect()
         return {
-          text: cell.textContent.trim(),
+          text: cell.textContent.trim().split(/\s+/)[0],
           fullyVisible: rect.left >= wrapperRect.left && rect.right <= wrapperRect.right,
         }
       })
@@ -50,8 +50,10 @@ async function assertSkuQuantitiesAreVisible(page) {
 
 test('current historical analysis detail tables match the API at desktop and 700px CSS viewport', async ({ page }) => {
   await page.setViewportSize({ width: 700, height: 900 })
-  const apiResponsePromise = page.waitForResponse(response => response.url().includes('/api/reports/historical/') && response.request().method() === 'GET')
-  await page.goto('/historical-orders')
+  await page.goto('/historical-orders', { waitUntil: 'domcontentloaded' })
+  await expect(page.getByRole('heading', { name: '历史原文', exact: true }).first()).toBeVisible()
+  const apiResponsePromise = page.waitForResponse(response => response.url().includes('/api/reports/historical/') && new URL(response.url()).searchParams.get('grouping') === 'linked')
+  await page.getByLabel('商品口径').selectOption('linked')
   const apiPayload = await (await apiResponsePromise).json()
   const salesSkuQuantities = apiPayload.sales.by_sku.map(row => Number(row.quantity))
   const purchaseSkuQuantities = apiPayload.purchase.by_sku.map(row => Number(row.quantity))
@@ -72,7 +74,6 @@ test('current historical analysis detail tables match the API at desktop and 700
   await page.screenshot({ path: path.join(evidenceDir, 'playwright-700px.png'), fullPage: true })
 
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.reload()
   await expect(page.locator('.analysis-detail-grid')).toBeVisible()
   const desktopMetrics = await layoutMetrics(page)
   expect(desktopMetrics.viewport).toBe(1440)
@@ -87,7 +88,7 @@ test('current historical analysis hides unauthorized detail dimensions without b
     status: 200,
     contentType: 'application/json',
     body: JSON.stringify({
-      name: '销售只读测试员', role: '销售只读', development_superadmin: false,
+      authenticated: true, user_id: 42, name: '销售只读测试员', role: '销售只读', development_superadmin: false,
       has_all_permissions: false, rbac_enforcement: true,
       permissions: { orders: { view: true, create: false }, purchases: { view: false } },
     }),

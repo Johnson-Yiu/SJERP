@@ -48,7 +48,7 @@ test('history analysis hides unauthorized detail dimensions without blanking the
     status: 200,
     contentType: 'application/json',
     body: JSON.stringify({
-      name: '销售只读测试员', role: '销售只读', development_superadmin: false,
+      authenticated: true, user_id: 42, name: '销售只读测试员', role: '销售只读', development_superadmin: false,
       has_all_permissions: false, rbac_enforcement: true,
       permissions: { orders: { view: true, create: false }, purchases: { view: false } },
     }),

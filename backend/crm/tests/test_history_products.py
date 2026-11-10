@@ -8,7 +8,7 @@ from decimal import Decimal
 from unittest.mock import patch
 
 from django.db import close_old_connections, connection
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase, TransactionTestCase, override_settings
 
 from crm.history_product_models import ArchivedHistoryLine, HistoryProductLink, HistoryProductRule
 from crm.history_products import apply_links
@@ -174,6 +174,7 @@ class HistoricalProductLinkingTests(HistoryProductFixture, TestCase):
 
 
 @skipUnless(connection.vendor == "postgresql", "Requires PostgreSQL row locks")
+@override_settings(FILE_UPLOAD_MAX_MEMORY_SIZE=1024 * 1024, FILE_UPLOAD_TEMP_DIR=None)
 class HistoryProductPostgresTests(HistoryProductFixture, TransactionTestCase):
     def test_overlapping_operators_cannot_split_or_overwrite_a_batch(self):
         from django.contrib.auth import get_user_model

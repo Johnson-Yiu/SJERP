@@ -1,0 +1,22 @@
+git diff --exit-code eb316cfa815db7d930bcbfa2b3979f9c6c06adc2 d4f90b9233c509f1fc6ad282376ce512fb1a2fbc -- backend
+exit 0
+
+git diff --exit-code 019367baa389c2a73ea2d8c58162313e4868fcca d4f90b9233c509f1fc6ad282376ce512fb1a2fbc -- backend/crm/models.py backend/crm/migrations backend/config/settings.py .github
+exit 0
+
+git diff --exit-code 6460141d22974b5ef1038fe1601d2a8e622eca73 d4f90b9233c509f1fc6ad282376ce512fb1a2fbc -- backend
+exit 0
+
+git diff --exit-code 019367baa389c2a73ea2d8c58162313e4868fcca d836ba21a657a3a61b770a1d124a5b1fb62a9f46 -- backend/crm/models.py backend/crm/migrations backend/config/settings.py .github
+exit 0
+
+git diff --name-only d4f90b92 d836ba21
+backend/crm/tests/test_finance_integration_lock_order.py
+frontend/src/components/CashEventEntryForm.vue
+frontend/src/components/PurchasePaymentModal.spec.js
+frontend/src/components/PurchasePaymentModal.vue
+frontend/src/composables/useFinanceAttempts.js
+frontend/src/views/HistoryTakeoverPage.vue
+frontend/src/views/PaymentPlanPage.vue
+frontend/src/views/TransactionPage.vue
+frontend/tests/history-takeover.spec.js

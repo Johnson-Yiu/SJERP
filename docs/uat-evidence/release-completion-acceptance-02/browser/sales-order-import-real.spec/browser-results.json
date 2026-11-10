@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "username": "codex",
+    "role": "超级管理员",
+    "authenticated": true,
+    "development_superadmin": false,
+    "rbac_enforcement": false
+  },
+  "template": {
+    "filename": "sales-order-import-template.xlsx",
+    "bytes": 10116
+  },
+  "import": {
+    "rows": 3,
+    "orders": 2,
+    "created": 1,
+    "failed": 1,
+    "order_no": "SO-2026-00001",
+    "status": "draft"
+  },
+  "csv": {
+    "filename": "sales-order-import-errors.csv",
+    "bytes": 109,
+    "sha256": "69c1008b26050dd5943d2a0fa8885aaee8ef0efc7eace10d1e9e17955d41b0db",
+    "hasUtf8Bom": true,
+    "includesInvalidSourceAndSku": true
+  },
+  "desktopScreenshot": "sales-order-import-1600.png",
+  "mobileScreenshot": "sales-order-import-390.png",
+  "mobileDimensions": {
+    "viewportWidth": 390,
+    "documentWidth": 390
+  }
+}

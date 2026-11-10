@@ -44,7 +44,7 @@ class CoreBusinessFixture:
             (root / (hashlib.sha256(self.id().encode()).hexdigest()[:16] + ".json")).write_text(json.dumps({"test": self.id(), "http": self.records}, ensure_ascii=False, default=str, indent=2), encoding="utf-8", newline="\n")
 
     def post(self, path, body, expected=200, key=None):
-        headers = {"HTTP_IDEMPOTENCY_KEY": key or "CORE-" + uuid.uuid4().hex} if path.endswith(("/ship/", "/receive/", "/pay/")) or path in {"/api/inventory-movements/", "/api/inventory-movements/batch/"} else {}
+        headers = {"HTTP_IDEMPOTENCY_KEY": key or "CORE-" + uuid.uuid4().hex} if key or path.endswith(("/ship/", "/receive/", "/pay/")) or path in {"/api/inventory-movements/", "/api/inventory-movements/batch/"} else {}
         r = self.client.post(path, body, format="json", **headers)
         self.records.append({"path": path, "request": body, "status": r.status_code, "body": getattr(r, "data", None)})
         self.assertEqual(r.status_code, expected, getattr(r, "data", None))
@@ -178,11 +178,30 @@ class CoreBusinessFlowTests(CoreBusinessFixture, TestCase):
             self.records.append({'path':f'/api/orders/{oid}/workbench/','status':r.status_code,'body':r.data})
             return D(str(r.data['payment_summary']['balance_amount']))
         self.assertEqual(balance(), D('60'))
-        for amount,kind,expected in [('20','customer_receipt','40'),('40','customer_receipt','0'),('10','refund','10')]:
-            self.post('/api/transactions/',{'transaction_date':str(DAY),'order':oid,'kind':kind,'direction':'expense' if kind=='refund' else 'income','category':'合成退款' if kind=='refund' else '客户收款','amount':amount,'currency':'CNY','exchange_rate':'1'},201)
-            self.assertEqual(balance(),D(expected))
+        for amount, expected in (("20", "40"), ("40", "0")):
+            receipt = self.post("/api/transactions/", {
+                "transaction_no": f"CORE-RECEIPT-{amount}", "transaction_date": str(DAY),
+                "order": oid, "kind": "customer_receipt", "direction": "income",
+                "category": "客户收款", "amount": amount, "currency": "CNY", "exchange_rate": "1",
+            }, 201)
+            self.assertEqual(balance(), D(expected))
             order.refresh_from_db()
-            self.assertEqual(order.status,'completed')
+            self.assertEqual(order.status, "completed")
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        voucher = self.client.post("/api/transactions/voucher-upload/", {
+            "file": SimpleUploadedFile("core-refund.pdf", b"%PDF-1.4\nSynthetic refund\n%%EOF", "application/pdf"),
+        }, format="multipart")
+        self.assertEqual(voucher.status_code, 201, voucher.data)
+        refund = self.post(f"/api/transactions/{receipt['id']}/refund-cash/", {
+            "order": oid, "amount": "10", "actual_date": str(DAY), "reason": "合成退款凭证",
+            "voucher": voucher.data["id"],
+        }, 201, key="CORE-REFUND-10")
+        self.assertEqual(refund["refunds"][0]["actual_date"], str(DAY))
+        self.assertEqual(D(refund["refunds"][0]["amount"]), D("10"))
+        self.assertEqual(balance(), D("10"))
+        order.refresh_from_db()
+        self.assertEqual(order.status, "completed")
         self.assertEqual(stock.sku_metrics(self.sku)['actual_quantity'],D('0'))
         self.assertEqual(stock.sku_metrics(self.sku)['reserved_quantity'],D('0'))
 

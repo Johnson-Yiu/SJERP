@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase, TransactionTestCase, override_settings
+from django.test import TestCase, override_settings
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from rest_framework.test import APIClient
@@ -8,6 +9,8 @@ from crm.views import _import_row
 
 
 @override_settings(APP_STAGE='development', DEBUG=True, DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False)
+
+
 class HSCodeTests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -87,7 +90,7 @@ class HSCodeTests(TestCase):
         self.assertTrue(self.client.get('/api/session/current-operator/').data['can_manage_hs_codes'])
 
 
-class HSMigrationTests(TransactionTestCase):
+class HSMigrationTests(HistoricalMigrationTestCase):
     def test_existing_codes_are_deduplicated_and_reversible(self):
         old = [('crm', '0052_alter_packingplancarton_partial_carton_policy_snapshot')]
         new = [('crm', '0053_hs_code_catalog')]

@@ -1,0 +1,1675 @@
+{
+  "orders": {
+    "count": 8,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": 9,
+        "items": [
+          {
+            "id": 12,
+            "sku": 1,
+            "sku_code": "UAT-IMP-SKU-001",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具",
+            "display_name": "导入验收合成灯具",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "20.00",
+            "unit_price": "3.0000",
+            "cost_price": "4.2500",
+            "cost_currency_snapshot": "CNY",
+            "amount": "60.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": 1,
+            "trade_quantity": "2.00",
+            "trade_unit_price": "30.0000",
+            "trade_snapshot": {
+              "name": "10 件/箱",
+              "unit": "箱",
+              "factor": "10.00",
+              "base_unit": "个",
+              "allow_fraction": false
+            }
+          },
+          {
+            "id": 13,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "3.00",
+            "unit_price": "12.0000",
+            "cost_price": "2.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "36.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "base_unit": "个",
+              "unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "导入验收合成客户",
+        "customer_country": "",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "草稿",
+        "total_amount": "96.00",
+        "base_amount": "96.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "balance_amount": 0,
+        "receivable_state": "draft",
+        "created_at": "2026-11-10T11:54:44.469432+08:00",
+        "updated_at": "2026-11-10T11:54:44.469454+08:00",
+        "order_no": "SO-2026-00001",
+        "customer_name_snapshot": "",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-06",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "draft",
+        "historical_only": false,
+        "currency": "CNY",
+        "exchange_rate": "1.000000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": null,
+        "effective_party": null
+      },
+      {
+        "id": 7,
+        "items": [
+          {
+            "id": 10,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "1.00",
+            "unit_price": "500.0000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "500.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "North-West International Lighting and Architectural Project Procurement Services, Distribution and Customer Care Group",
+        "customer_country": "",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已确认",
+        "total_amount": "500.00",
+        "base_amount": "500.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "balance_amount": 500,
+        "receivable_state": "pending",
+        "created_at": "2026-11-10T11:54:09.790963+08:00",
+        "updated_at": "2026-11-10T11:54:09.790985+08:00",
+        "order_no": "UAT-FIN-2026-INTERNATIONAL-00000000002",
+        "customer_name_snapshot": "",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-06",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "confirmed",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 0,
+        "customer": 2,
+        "quote": null,
+        "effective_party": {
+          "name": "",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      },
+      {
+        "id": 6,
+        "items": [
+          {
+            "id": 6,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "1.00",
+            "unit_price": "1000.5000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "1000.50",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          },
+          {
+            "id": 7,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "2.00",
+            "unit_price": "1000.5000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "2001.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          },
+          {
+            "id": 8,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "3.00",
+            "unit_price": "1000.5000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "3001.50",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          },
+          {
+            "id": 9,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "4.00",
+            "unit_price": "1000.5000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "4002.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "North-West International Lighting and Architectural Project Procurement Services, Distribution and Customer Care Group",
+        "customer_country": "",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已确认",
+        "total_amount": "10005.00",
+        "base_amount": "10005.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "balance_amount": 10005,
+        "receivable_state": "pending",
+        "created_at": "2026-11-10T11:54:08.794142+08:00",
+        "updated_at": "2026-11-10T11:54:08.794191+08:00",
+        "order_no": "UAT-FIN-2026-INTERNATIONAL-00000000001",
+        "customer_name_snapshot": "North-West International Lighting and Architectural Project Procurement Services, Distribution and Customer Care Group",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-06",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "confirmed",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 0,
+        "customer": 2,
+        "quote": null,
+        "effective_party": {
+          "name": "North-West International Lighting and Architectural Project Procurement Services, Distribution and Customer Care Group",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      },
+      {
+        "id": 5,
+        "items": [
+          {
+            "id": 5,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "1.00",
+            "unit_price": "1000.0000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "1000.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "导入验收合成客户",
+        "customer_country": "",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已确认",
+        "total_amount": "1000.00",
+        "base_amount": "1000.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "balance_amount": 1000,
+        "receivable_state": "pending",
+        "created_at": "2026-11-10T11:54:07.391138+08:00",
+        "updated_at": "2026-11-10T11:54:07.391158+08:00",
+        "order_no": "SYN-FIN-REFUND",
+        "customer_name_snapshot": "",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-06",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "confirmed",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": null,
+        "effective_party": {
+          "name": "",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      },
+      {
+        "id": 4,
+        "items": [
+          {
+            "id": 4,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "1.00",
+            "unit_price": "90.0000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "90.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "导入验收合成客户",
+        "customer_country": "",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已确认",
+        "total_amount": "90.00",
+        "base_amount": "90.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "balance_amount": 90,
+        "receivable_state": "pending",
+        "created_at": "2026-11-10T11:54:06.758382+08:00",
+        "updated_at": "2026-11-10T11:54:06.758404+08:00",
+        "order_no": "SYN-FIN-WRITEOFF",
+        "customer_name_snapshot": "",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-06",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "confirmed",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": null,
+        "effective_party": {
+          "name": "",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      },
+      {
+        "id": 3,
+        "items": [
+          {
+            "id": 3,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "1.00",
+            "unit_price": "1000.0000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "1000.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "导入验收合成客户",
+        "customer_country": "",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已确认",
+        "total_amount": "1000.00",
+        "base_amount": "1000.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "balance_amount": 1000,
+        "receivable_state": "pending",
+        "created_at": "2026-11-10T11:54:06.178455+08:00",
+        "updated_at": "2026-11-10T11:54:06.178482+08:00",
+        "order_no": "SYN-FIN-UNKNOWN",
+        "customer_name_snapshot": "",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-06",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "confirmed",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": null,
+        "effective_party": {
+          "name": "",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      },
+      {
+        "id": 2,
+        "items": [
+          {
+            "id": 2,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "1.00",
+            "unit_price": "1000.0000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "1000.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "导入验收合成客户",
+        "customer_country": "",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已确认",
+        "total_amount": "1000.00",
+        "base_amount": "1000.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "balance_amount": 1000,
+        "receivable_state": "pending",
+        "created_at": "2026-11-10T11:54:05.731616+08:00",
+        "updated_at": "2026-11-10T11:54:05.731638+08:00",
+        "order_no": "SYN-FIN-CUSTOMER",
+        "customer_name_snapshot": "",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-06",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "confirmed",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": null,
+        "effective_party": {
+          "name": "",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      },
+      {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 2,
+            "sku_code": "UAT-IMP-SKU-002",
+            "sales_model": "",
+            "model": "",
+            "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+            "description": "导入验收合成灯具",
+            "unit": "个",
+            "quantity": "1.00",
+            "unit_price": "1000.0000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "CNY",
+            "amount": "1000.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "个",
+              "base_unit": "个",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "导入验收合成客户",
+        "customer_country": "",
+        "quote_no": "",
+        "source_quote_no": "",
+        "status_display": "已确认",
+        "total_amount": "1000.00",
+        "base_amount": "1000.00",
+        "approved_change_amount": "0.00",
+        "paid_amount": "0.00",
+        "balance_amount": 1000,
+        "receivable_state": "pending",
+        "created_at": "2026-11-10T11:54:05.435827+08:00",
+        "updated_at": "2026-11-10T11:54:05.435855+08:00",
+        "order_no": "SYN-FIN-COMPANY",
+        "customer_name_snapshot": "",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-06",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "confirmed",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "7.100000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": null,
+        "cancellation_reason": "",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": null,
+        "effective_party": {
+          "name": "",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      }
+    ]
+  },
+  "transactions": {
+    "count": 0,
+    "next": null,
+    "previous": null,
+    "results": []
+  },
+  "payment-plans": {
+    "count": 7,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": 1,
+        "customer_id": 1,
+        "supplier_id": null,
+        "exchange_rate": 7.1,
+        "remaining_rmb": 7100,
+        "remaining_amount": "1000.0000",
+        "contract_no": "SYN-FIN-COMPANY",
+        "counterparty_name": "导入验收合成客户",
+        "is_overdue": false,
+        "writeoff_amount": 0,
+        "created_at": "2026-11-10T11:54:05.616605+08:00",
+        "updated_at": "2026-11-10T11:54:05.616756+08:00",
+        "direction": "receivable",
+        "due_date": null,
+        "planned_amount": "1000.0000",
+        "settled_amount": "0.0000",
+        "currency": "USD",
+        "status": "open",
+        "notes": "",
+        "order": 1,
+        "purchase_order": null
+      },
+      {
+        "id": 2,
+        "customer_id": 1,
+        "supplier_id": null,
+        "exchange_rate": 7.1,
+        "remaining_rmb": 7100,
+        "remaining_amount": "1000.0000",
+        "contract_no": "SYN-FIN-CUSTOMER",
+        "counterparty_name": "导入验收合成客户",
+        "is_overdue": false,
+        "writeoff_amount": 0,
+        "created_at": "2026-11-10T11:54:06.025390+08:00",
+        "updated_at": "2026-11-10T11:54:06.025418+08:00",
+        "direction": "receivable",
+        "due_date": null,
+        "planned_amount": "1000.0000",
+        "settled_amount": "0.0000",
+        "currency": "USD",
+        "status": "open",
+        "notes": "",
+        "order": 2,
+        "purchase_order": null
+      },
+      {
+        "id": 3,
+        "customer_id": 1,
+        "supplier_id": null,
+        "exchange_rate": 7.1,
+        "remaining_rmb": 7100,
+        "remaining_amount": "1000.0000",
+        "contract_no": "SYN-FIN-UNKNOWN",
+        "counterparty_name": "导入验收合成客户",
+        "is_overdue": false,
+        "writeoff_amount": 0,
+        "created_at": "2026-11-10T11:54:06.589450+08:00",
+        "updated_at": "2026-11-10T11:54:06.589473+08:00",
+        "direction": "receivable",
+        "due_date": null,
+        "planned_amount": "1000.0000",
+        "settled_amount": "0.0000",
+        "currency": "USD",
+        "status": "open",
+        "notes": "",
+        "order": 3,
+        "purchase_order": null
+      },
+      {
+        "id": 4,
+        "customer_id": 1,
+        "supplier_id": null,
+        "exchange_rate": 7.1,
+        "remaining_rmb": 639,
+        "remaining_amount": "90.0000",
+        "contract_no": "SYN-FIN-WRITEOFF",
+        "counterparty_name": "导入验收合成客户",
+        "is_overdue": false,
+        "writeoff_amount": 0,
+        "created_at": "2026-11-10T11:54:07.207845+08:00",
+        "updated_at": "2026-11-10T11:54:07.207868+08:00",
+        "direction": "receivable",
+        "due_date": null,
+        "planned_amount": "90.0000",
+        "settled_amount": "0.0000",
+        "currency": "USD",
+        "status": "open",
+        "notes": "",
+        "order": 4,
+        "purchase_order": null
+      },
+      {
+        "id": 5,
+        "customer_id": 1,
+        "supplier_id": null,
+        "exchange_rate": 7.1,
+        "remaining_rmb": 7100,
+        "remaining_amount": "1000.0000",
+        "contract_no": "SYN-FIN-REFUND",
+        "counterparty_name": "导入验收合成客户",
+        "is_overdue": false,
+        "writeoff_amount": 0,
+        "created_at": "2026-11-10T11:54:07.955217+08:00",
+        "updated_at": "2026-11-10T11:54:07.955242+08:00",
+        "direction": "receivable",
+        "due_date": null,
+        "planned_amount": "1000.0000",
+        "settled_amount": "0.0000",
+        "currency": "USD",
+        "status": "open",
+        "notes": "",
+        "order": 5,
+        "purchase_order": null
+      },
+      {
+        "id": 6,
+        "customer_id": 2,
+        "supplier_id": null,
+        "exchange_rate": 7.1,
+        "remaining_rmb": 71035.5,
+        "remaining_amount": "10005.0000",
+        "contract_no": "UAT-FIN-2026-INTERNATIONAL-00000000001",
+        "counterparty_name": "North-West International Lighting and Architectural Project Procurement Services, Distribution and Customer Care Group",
+        "is_overdue": false,
+        "writeoff_amount": 0,
+        "created_at": "2026-11-10T11:54:10.638579+08:00",
+        "updated_at": "2026-11-10T11:54:10.638639+08:00",
+        "direction": "receivable",
+        "due_date": null,
+        "planned_amount": "10005.0000",
+        "settled_amount": "0.0000",
+        "currency": "USD",
+        "status": "open",
+        "notes": "",
+        "order": 6,
+        "purchase_order": null
+      },
+      {
+        "id": 7,
+        "customer_id": 2,
+        "supplier_id": null,
+        "exchange_rate": 7.1,
+        "remaining_rmb": 3550,
+        "remaining_amount": "500.0000",
+        "contract_no": "UAT-FIN-2026-INTERNATIONAL-00000000002",
+        "counterparty_name": "North-West International Lighting and Architectural Project Procurement Services, Distribution and Customer Care Group",
+        "is_overdue": false,
+        "writeoff_amount": 0,
+        "created_at": "2026-11-10T11:54:11.052093+08:00",
+        "updated_at": "2026-11-10T11:54:11.052117+08:00",
+        "direction": "receivable",
+        "due_date": null,
+        "planned_amount": "500.0000",
+        "settled_amount": "0.0000",
+        "currency": "USD",
+        "status": "open",
+        "notes": "",
+        "order": 7,
+        "purchase_order": null
+      }
+    ]
+  },
+  "inventory-movements": {
+    "count": 0,
+    "next": null,
+    "previous": null,
+    "results": []
+  },
+  "import/history-takeovers": {
+    "results": [
+      {
+        "id": 1,
+        "source_file_name": "synthetic-history.xlsx",
+        "source_sha256": "5d8c21e56881fc13b23729ef52f0ed4b1f662c9e747f81e87e45ff707f3e8860",
+        "status": "executed",
+        "preflight_summary": {
+          "total_rows": 12,
+          "passed": 4,
+          "warnings": 3,
+          "blocked": 0,
+          "manual_review": 5,
+          "overall_status": "待人工核实"
+        },
+        "created_by_label": "takeover-synthetic-admin",
+        "created_actor_kind": "identified",
+        "reviewed_by_label": "takeover-synthetic-admin",
+        "reviewed_actor_kind": "identified",
+        "submitted_at": "2026-11-10T03:54:13.807406Z",
+        "reviewed_at": "2026-11-10T03:54:13.950392Z",
+        "groups": [
+          {
+            "id": 1,
+            "source_group_id": "HT-G1",
+            "source_system": "Legacy synthetic system",
+            "exported_at": "2024-12-31",
+            "coverage_status": "complete",
+            "truth_status": "真实",
+            "evidence_reference": "synthetic://manifest/HT-G1",
+            "notes": "isolated synthetic evidence",
+            "status": "executed",
+            "review_note": "合成资料复核",
+            "preflight_result": {
+              "status": "待人工核实",
+              "results": [
+                {
+                  "sheet": "分组",
+                  "row": 2,
+                  "source_record_id": "HT-G1",
+                  "group_id": "HT-G1",
+                  "status": "待人工核实",
+                  "reasons": [
+                    {
+                      "status": "待人工核实",
+                      "message": "关联组内至少一条记录需人工核实。"
+                    }
+                  ],
+                  "related_records": [
+                    {
+                      "sheet": "销售订单",
+                      "row": 2,
+                      "source_record_id": "SO-HT-1"
+                    },
+                    {
+                      "sheet": "销售明细",
+                      "row": 2,
+                      "source_record_id": "1"
+                    },
+                    {
+                      "sheet": "采购订单",
+                      "row": 2,
+                      "source_record_id": "PO-HT-1"
+                    },
+                    {
+                      "sheet": "采购明细",
+                      "row": 2,
+                      "source_record_id": "1"
+                    },
+                    {
+                      "sheet": "收付款计划",
+                      "row": 2,
+                      "source_record_id": "PLAN-SO-1"
+                    },
+                    {
+                      "sheet": "收付款计划",
+                      "row": 3,
+                      "source_record_id": "PLAN-PO-1"
+                    },
+                    {
+                      "sheet": "收付款流水",
+                      "row": 2,
+                      "source_record_id": "SYNTH-HISTORY-RECEIPT-ARCHIVE-2024-000000001"
+                    },
+                    {
+                      "sheet": "收付款流水",
+                      "row": 3,
+                      "source_record_id": "TX-PO-1"
+                    },
+                    {
+                      "sheet": "履约记录",
+                      "row": 2,
+                      "source_record_id": "SHIP-HT-1"
+                    },
+                    {
+                      "sheet": "履约记录",
+                      "row": 3,
+                      "source_record_id": "GR-HT-1"
+                    },
+                    {
+                      "sheet": "库存盘点",
+                      "row": 2,
+                      "source_record_id": "COUNT-HT-1"
+                    }
+                  ],
+                  "suggested_actions": [
+                    "按关联记录逐项核实后再评估整体迁移依赖。"
+                  ]
+                },
+                {
+                  "sheet": "销售订单",
+                  "row": 2,
+                  "source_record_id": "SO-HT-1",
+                  "group_id": "HT-G1",
+                  "status": "待人工核实",
+                  "reasons": [
+                    {
+                      "status": "待人工核实",
+                      "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+                    },
+                    {
+                      "status": "警告",
+                      "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+                    },
+                    {
+                      "status": "待人工核实",
+                      "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+                    }
+                  ],
+                  "related_records": [
+                    {
+                      "type": "客户",
+                      "database_id": 3,
+                      "match": "编码精确匹配"
+                    }
+                  ],
+                  "suggested_actions": [
+                    "补齐全部收付、履约及冲销依赖后再评估。",
+                    "保留输入的历史快照，不用当前主档覆盖。",
+                    "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+                  ]
+                },
+                {
+                  "sheet": "销售明细",
+                  "row": 2,
+                  "source_record_id": "1",
+                  "group_id": "HT-G1",
+                  "status": "待人工核实",
+                  "reasons": [
+                    {
+                      "status": "警告",
+                      "message": "SKU当前主档名称与历史快照不同；两者须分别保留。"
+                    },
+                    {
+                      "status": "待人工核实",
+                      "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+                    }
+                  ],
+                  "related_records": [
+                    {
+                      "type": "SKU",
+                      "database_id": 3,
+                      "match": "编码精确匹配"
+                    }
+                  ],
+                  "suggested_actions": [
+                    "保留输入的历史快照，不用当前主档覆盖。",
+                    "仅依据原历史单据补充；不要从当前产品分类回填。"
+                  ]
+                },
+                {
+                  "sheet": "采购订单",
+                  "row": 2,
+                  "source_record_id": "PO-HT-1",
+                  "group_id": "HT-G1",
+                  "status": "待人工核实",
+                  "reasons": [
+                    {
+                      "status": "待人工核实",
+                      "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+                    },
+                    {
+                      "status": "警告",
+                      "message": "供应商当前主档名称与历史快照不同；两者须分别保留。"
+                    },
+                    {
+                      "status": "待人工核实",
+                      "message": "缺少历史供应商快照字段：国家/地区。"
+                    },
+                    {
+                      "status": "待人工核实",
+                      "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+                    }
+                  ],
+                  "related_records": [
+                    {
+                      "type": "供应商",
+                      "database_id": 1,
+                      "match": "编码精确匹配"
+                    }
+                  ],
+                  "suggested_actions": [
+                    "补齐全部收付、履约及冲销依赖后再评估。",
+                    "保留输入的历史快照，不用当前主档覆盖。",
+                    "仅依据原始历史合同/凭证补充；不得以当前主档回填。",
+                    "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+                  ]
+                },
+                {
+                  "sheet": "采购明细",
+                  "row": 2,
+                  "source_record_id": "1",
+                  "group_id": "HT-G1",
+                  "status": "待人工核实",
+                  "reasons": [
+                    {
+                      "status": "警告",
+                      "message": "SKU当前主档名称与历史快照不同；两者须分别保留。"
+                    },
+                    {
+                      "status": "待人工核实",
+                      "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+                    }
+                  ],
+                  "related_records": [
+                    {
+                      "type": "SKU",
+                      "database_id": 3,
+                      "match": "编码精确匹配"
+                    }
+                  ],
+                  "suggested_actions": [
+                    "保留输入的历史快照，不用当前主档覆盖。",
+                    "仅依据原历史单据补充；不要从当前产品分类回填。"
+                  ]
+                },
+                {
+                  "sheet": "收付款计划",
+                  "row": 2,
+                  "source_record_id": "PLAN-SO-1",
+                  "group_id": "HT-G1",
+                  "status": "通过",
+                  "reasons": [],
+                  "related_records": [],
+                  "suggested_actions": []
+                },
+                {
+                  "sheet": "收付款计划",
+                  "row": 3,
+                  "source_record_id": "PLAN-PO-1",
+                  "group_id": "HT-G1",
+                  "status": "通过",
+                  "reasons": [],
+                  "related_records": [],
+                  "suggested_actions": []
+                },
+                {
+                  "sheet": "收付款流水",
+                  "row": 2,
+                  "source_record_id": "SYNTH-HISTORY-RECEIPT-ARCHIVE-2024-000000001",
+                  "group_id": "HT-G1",
+                  "status": "通过",
+                  "reasons": [],
+                  "related_records": [],
+                  "suggested_actions": []
+                },
+                {
+                  "sheet": "收付款流水",
+                  "row": 3,
+                  "source_record_id": "TX-PO-1",
+                  "group_id": "HT-G1",
+                  "status": "通过",
+                  "reasons": [],
+                  "related_records": [],
+                  "suggested_actions": []
+                },
+                {
+                  "sheet": "履约记录",
+                  "row": 2,
+                  "source_record_id": "SHIP-HT-1",
+                  "group_id": "HT-G1",
+                  "status": "警告",
+                  "reasons": [
+                    {
+                      "status": "警告",
+                      "message": "SKU当前主档名称与历史快照不同；两者须分别保留。"
+                    }
+                  ],
+                  "related_records": [
+                    {
+                      "type": "SKU",
+                      "database_id": 3,
+                      "match": "编码精确匹配"
+                    }
+                  ],
+                  "suggested_actions": [
+                    "保留输入的历史快照，不用当前主档覆盖。"
+                  ]
+                },
+                {
+                  "sheet": "履约记录",
+                  "row": 3,
+                  "source_record_id": "GR-HT-1",
+                  "group_id": "HT-G1",
+                  "status": "警告",
+                  "reasons": [
+                    {
+                      "status": "警告",
+                      "message": "SKU当前主档名称与历史快照不同；两者须分别保留。"
+                    }
+                  ],
+                  "related_records": [
+                    {
+                      "type": "SKU",
+                      "database_id": 3,
+                      "match": "编码精确匹配"
+                    }
+                  ],
+                  "suggested_actions": [
+                    "保留输入的历史快照，不用当前主档覆盖。"
+                  ]
+                },
+                {
+                  "sheet": "库存盘点",
+                  "row": 2,
+                  "source_record_id": "COUNT-HT-1",
+                  "group_id": "HT-G1",
+                  "status": "警告",
+                  "reasons": [
+                    {
+                      "status": "警告",
+                      "message": "SKU当前主档名称与历史快照不同；两者须分别保留。"
+                    }
+                  ],
+                  "related_records": [
+                    {
+                      "type": "SKU",
+                      "database_id": 3,
+                      "match": "编码精确匹配"
+                    }
+                  ],
+                  "suggested_actions": [
+                    "保留输入的历史快照，不用当前主档覆盖。"
+                  ]
+                }
+              ]
+            },
+            "remainder_snapshot": {
+              "sales_orders": [
+                {
+                  "source_record_id": "SO-HT-1",
+                  "source_document_no": "SYNTH-HISTORY-SALES-ARCHIVE-2024-0001",
+                  "source_lifecycle_state": "partial",
+                  "lines": [
+                    {
+                      "source_line_id": "1",
+                      "sku_code": "HT-S1",
+                      "ordered_quantity_base": "10.00",
+                      "verified_net_fulfilled_quantity_base": "4.00",
+                      "remaining_quantity_base": "6.00",
+                      "unit_snapshot": "pcs"
+                    }
+                  ]
+                }
+              ],
+              "purchase_orders": [
+                {
+                  "source_record_id": "PO-HT-1",
+                  "source_document_no": "HIST-PO-HT-1",
+                  "source_lifecycle_state": "partial",
+                  "lines": [
+                    {
+                      "source_line_id": "1",
+                      "sku_code": "HT-S1",
+                      "ordered_quantity_base": "5.00",
+                      "verified_net_fulfilled_quantity_base": "2.00",
+                      "remaining_quantity_base": "3.00",
+                      "unit_snapshot": "pcs"
+                    }
+                  ]
+                }
+              ],
+              "source_event_count": 2
+            },
+            "execution_result": {
+              "orders": [
+                {
+                  "source_record_id": "SO-HT-1",
+                  "id": 8,
+                  "order_no": "SYNTH-HISTORY-SALES-ARCHIVE-2024-0001",
+                  "status": "historical"
+                }
+              ],
+              "purchase_orders": [
+                {
+                  "source_record_id": "PO-HT-1",
+                  "id": 1,
+                  "purchase_no": "HIST-PO-HT-1",
+                  "status": "historical"
+                }
+              ],
+              "finance_records_posted": 0,
+              "inventory_movements_posted": 0,
+              "fulfillment_records_posted": 0,
+              "purchase_cost_allocations_created": 0,
+              "handoff_status": {
+                "finance": "not_connected",
+                "inventory": "not_connected",
+                "fulfillment": "not_connected"
+              },
+              "source_record_count": 12
+            },
+            "verified_correction_ids": [],
+            "handoffs": {
+              "finance": {
+                "status": "not_connected",
+                "payload": {
+                  "contract_version": "1",
+                  "status": "not_connected",
+                  "reason": "归档不会自动记账；须另行映射凭证和账户、复核并通过正式财务服务办理。",
+                  "payment_plans": [
+                    {
+                      "group_id": "HT-G1",
+                      "source_plan_id": "PLAN-SO-1",
+                      "source_order_id": "SO-HT-1",
+                      "source_purchase_id": "",
+                      "direction": "receivable",
+                      "due_date": "2024-09-01",
+                      "planned_amount": "100.0000",
+                      "settled_amount": "40.0000",
+                      "currency": "USD",
+                      "lifecycle_state": "open",
+                      "settlement_detail_complete": "yes",
+                      "truth_status": "真实",
+                      "voucher_reference": "synthetic://receivable-plan",
+                      "notes": "preserve source plan",
+                      "product_category_snapshot": "",
+                      "supplier_country_snapshot": ""
+                    },
+                    {
+                      "group_id": "HT-G1",
+                      "source_plan_id": "PLAN-PO-1",
+                      "source_order_id": "",
+                      "source_purchase_id": "PO-HT-1",
+                      "direction": "payable",
+                      "due_date": "2024-09-02",
+                      "planned_amount": "15.0000",
+                      "settled_amount": "5.0000",
+                      "currency": "USD",
+                      "lifecycle_state": "open",
+                      "settlement_detail_complete": "yes",
+                      "truth_status": "真实",
+                      "voucher_reference": "synthetic://payable-plan",
+                      "notes": "preserve source plan",
+                      "product_category_snapshot": "",
+                      "supplier_country_snapshot": ""
+                    }
+                  ],
+                  "source_transactions": [
+                    {
+                      "group_id": "HT-G1",
+                      "source_record_id": "SYNTH-HISTORY-RECEIPT-ARCHIVE-2024-000000001",
+                      "transaction_no": "HIST-TX-SO-1",
+                      "transaction_date": "2024-09-03",
+                      "direction": "income",
+                      "kind": "customer_receipt",
+                      "amount": "40.0000",
+                      "currency": "USD",
+                      "exchange_rate": "1.000000",
+                      "source_status": "confirmed",
+                      "customer_code": "HT-C1",
+                      "supplier_code": "",
+                      "source_order_id": "SO-HT-1",
+                      "source_purchase_id": "",
+                      "source_plan_id": "PLAN-SO-1",
+                      "truth_status": "真实",
+                      "voucher_reference": "synthetic://bank/receipt",
+                      "notes": "source-only payment",
+                      "product_category_snapshot": "",
+                      "supplier_country_snapshot": ""
+                    },
+                    {
+                      "group_id": "HT-G1",
+                      "source_record_id": "TX-PO-1",
+                      "transaction_no": "HIST-TX-PO-1",
+                      "transaction_date": "2024-09-04",
+                      "direction": "expense",
+                      "kind": "supplier_payment",
+                      "amount": "5.0000",
+                      "currency": "USD",
+                      "exchange_rate": "1.000000",
+                      "source_status": "confirmed",
+                      "customer_code": "",
+                      "supplier_code": "H1",
+                      "source_order_id": "",
+                      "source_purchase_id": "PO-HT-1",
+                      "source_plan_id": "PLAN-PO-1",
+                      "truth_status": "真实",
+                      "voucher_reference": "synthetic://bank/payment",
+                      "notes": "source-only payment",
+                      "product_category_snapshot": "",
+                      "supplier_country_snapshot": ""
+                    }
+                  ]
+                }
+              },
+              "inventory": {
+                "status": "not_connected",
+                "payload": {
+                  "contract_version": "1",
+                  "status": "not_connected",
+                  "reason": "归档不会自动启用库存；须另行核对盘点范围、所有权及成本并复核启用。",
+                  "count_baselines": [
+                    {
+                      "group_id": "HT-G1",
+                      "source_record_id": "COUNT-HT-1",
+                      "count_date": "2024-12-30",
+                      "warehouse_type": "自有仓",
+                      "warehouse": "SYN-WH-01",
+                      "lot_reference": "LOT-HT-01",
+                      "sku_code": "HT-S1",
+                      "sku_name_snapshot": "Counted historical SKU",
+                      "unit_snapshot": "pcs",
+                      "counted_quantity": "18.00",
+                      "coverage_complete": "yes",
+                      "truth_status": "真实",
+                      "voucher_reference": "synthetic://stocktake/HT-1",
+                      "notes": "baseline; do not post movement",
+                      "product_category_snapshot": "",
+                      "supplier_country_snapshot": ""
+                    }
+                  ]
+                }
+              },
+              "fulfillment": {
+                "status": "not_connected",
+                "payload": {
+                  "contract_version": "1",
+                  "status": "not_connected",
+                  "reason": "历史履约事实仅归档；剩余业务须另行核对、复核并建立接续单。",
+                  "source_events": [
+                    {
+                      "group_id": "HT-G1",
+                      "source_event_id": "SHIP-HT-1",
+                      "event_type": "shipment",
+                      "parent_source_id": "SO-HT-1",
+                      "source_line_id": "1",
+                      "event_date": "2024-08-10",
+                      "sku_code": "HT-S1",
+                      "sku_name_snapshot": "Historical SKU Name",
+                      "unit_snapshot": "pcs",
+                      "base_unit_snapshot": "pcs",
+                      "quantity_base": "4.00",
+                      "trade_quantity": "",
+                      "trade_unit_snapshot": "",
+                      "trade_factor_snapshot": "",
+                      "allow_fraction_snapshot": "",
+                      "lifecycle_state": "effective",
+                      "reversal_of_source_event_id": "",
+                      "truth_status": "真实",
+                      "voucher_reference": "synthetic://shipment",
+                      "notes": "source only",
+                      "product_category_snapshot": "",
+                      "supplier_country_snapshot": ""
+                    },
+                    {
+                      "group_id": "HT-G1",
+                      "source_event_id": "GR-HT-1",
+                      "event_type": "goods_receipt",
+                      "parent_source_id": "PO-HT-1",
+                      "source_line_id": "1",
+                      "event_date": "2024-07-05",
+                      "sku_code": "HT-S1",
+                      "sku_name_snapshot": "Historical Purchase SKU",
+                      "unit_snapshot": "pcs",
+                      "base_unit_snapshot": "pcs",
+                      "quantity_base": "2.00",
+                      "trade_quantity": "",
+                      "trade_unit_snapshot": "",
+                      "trade_factor_snapshot": "",
+                      "allow_fraction_snapshot": "",
+                      "lifecycle_state": "effective",
+                      "reversal_of_source_event_id": "",
+                      "truth_status": "真实",
+                      "voucher_reference": "synthetic://goods-receipt",
+                      "notes": "source only",
+                      "product_category_snapshot": "",
+                      "supplier_country_snapshot": ""
+                    }
+                  ],
+                  "remainder_snapshot": {
+                    "sales_orders": [
+                      {
+                        "source_record_id": "SO-HT-1",
+                        "source_document_no": "SYNTH-HISTORY-SALES-ARCHIVE-2024-0001",
+                        "source_lifecycle_state": "partial",
+                        "lines": [
+                          {
+                            "source_line_id": "1",
+                            "sku_code": "HT-S1",
+                            "ordered_quantity_base": "10.00",
+                            "verified_net_fulfilled_quantity_base": "4.00",
+                            "remaining_quantity_base": "6.00",
+                            "unit_snapshot": "pcs"
+                          }
+                        ]
+                      }
+                    ],
+                    "purchase_orders": [
+                      {
+                        "source_record_id": "PO-HT-1",
+                        "source_document_no": "HIST-PO-HT-1",
+                        "source_lifecycle_state": "partial",
+                        "lines": [
+                          {
+                            "source_line_id": "1",
+                            "sku_code": "HT-S1",
+                            "ordered_quantity_base": "5.00",
+                            "verified_net_fulfilled_quantity_base": "2.00",
+                            "remaining_quantity_base": "3.00",
+                            "unit_snapshot": "pcs"
+                          }
+                        ]
+                      }
+                    ],
+                    "source_event_count": 2
+                  }
+                }
+              }
+            },
+            "source_record_count": 12,
+            "finance_handoff_status": "not_connected",
+            "inventory_handoff_status": "not_connected",
+            "fulfillment_handoff_status": "not_connected",
+            "operational_overall": {
+              "state": "archived",
+              "components": {
+                "finance": "missing",
+                "inventory": "missing",
+                "fulfillment": "missing"
+              }
+            }
+          }
+        ],
+        "events": [
+          {
+            "id": 1,
+            "group_id": 1,
+            "event_type": "group_submitted",
+            "actor_label": "takeover-synthetic-admin",
+            "actor_kind": "identified",
+            "details": {
+              "status": "待人工核实",
+              "records": 12
+            },
+            "created_at": "2026-11-10T03:54:13.816581Z"
+          },
+          {
+            "id": 2,
+            "group_id": null,
+            "event_type": "application_submitted",
+            "actor_label": "takeover-synthetic-admin",
+            "actor_kind": "identified",
+            "details": {
+              "source_sha256": "5d8c21e56881fc13b23729ef52f0ed4b1f662c9e747f81e87e45ff707f3e8860",
+              "groups": [
+                "HT-G1"
+              ]
+            },
+            "created_at": "2026-11-10T03:54:13.817816Z"
+          },
+          {
+            "id": 3,
+            "group_id": 1,
+            "event_type": "group_approved",
+            "actor_label": "takeover-synthetic-admin",
+            "actor_kind": "identified",
+            "details": {
+              "status": "待人工核实",
+              "note": "合成资料复核",
+              "confirm_manual": true
+            },
+            "created_at": "2026-11-10T03:54:13.972194Z"
+          },
+          {
+            "id": 4,
+            "group_id": 1,
+            "event_type": "group_executed",
+            "actor_label": "takeover-synthetic-admin",
+            "actor_kind": "identified",
+            "details": {
+              "orders": [
+                {
+                  "source_record_id": "SO-HT-1",
+                  "id": 8,
+                  "order_no": "SYNTH-HISTORY-SALES-ARCHIVE-2024-0001",
+                  "status": "historical"
+                }
+              ],
+              "purchase_orders": [
+                {
+                  "source_record_id": "PO-HT-1",
+                  "id": 1,
+                  "purchase_no": "HIST-PO-HT-1",
+                  "status": "historical"
+                }
+              ],
+              "finance_records_posted": 0,
+              "inventory_movements_posted": 0,
+              "fulfillment_records_posted": 0,
+              "purchase_cost_allocations_created": 0,
+              "handoff_status": {
+                "finance": "not_connected",
+                "inventory": "not_connected",
+                "fulfillment": "not_connected"
+              },
+              "source_record_count": 12
+            },
+            "created_at": "2026-11-10T03:54:14.163995Z"
+          }
+        ]
+      }
+    ]
+  }
+}

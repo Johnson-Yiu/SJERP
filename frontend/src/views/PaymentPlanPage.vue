@@ -1,4 +1,6 @@
 <script setup>
+import { financeAttemptError, useFinanceAttempts } from '../composables/useFinanceAttempts'
+const financeAttempts = useFinanceAttempts()
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
@@ -49,8 +51,8 @@ const settleGuard = useUnsavedChangesGuard({ data: () => ({ ...form, pending: se
 function closeSettle() { return settleGuard.requestClose(() => { selected.value = null }) }
 function refreshPendingSettlements() {
   try {
-    pendingSettlements.value = Object.keys(window.sessionStorage).filter(key => key.startsWith('finance-plan-settle-')).map(key => {
-      const saved = JSON.parse(window.sessionStorage.getItem(key) || 'null')
+    pendingSettlements.value = financeAttempts.list('finance-plan-settle-').map(key => {
+      const saved = JSON.parse(financeAttempts.get(key) || 'null')
       return saved?.key && saved?.plan && saved?.payload && saved.direction === props.direction ? saved : null
     }).filter(Boolean)
   } catch { pendingSettlements.value = [] }
@@ -199,7 +201,7 @@ function openSettle(row) {
   form.reference = row.contract_no
   form.notes = ''
   let saved = null
-  try { saved = JSON.parse(window.sessionStorage.getItem(`finance-plan-settle-${row.id}`) || 'null') } catch { /* checked before submit */ }
+  try { saved = JSON.parse(financeAttempts.get(`finance-plan-settle-${row.id}`) || 'null') } catch { /* checked before submit */ }
   settleAttempt.value = saved?.key && saved?.payload ? saved : null
   if (settleAttempt.value) Object.assign(form, settleAttempt.value.payload)
   settleGuard.markClean()
@@ -210,23 +212,23 @@ async function settle() {
   const attempt = existing || { key: `PLAN-${crypto.randomUUID()}`, plan: selected.value.id, direction: props.direction,
     payload: { ...form, currency: selected.value.currency, category: category.value } }
   const storageKey = `finance-plan-settle-${selected.value.id}`
-  try { window.sessionStorage.setItem(storageKey, JSON.stringify(attempt)) }
-  catch { error.value = '浏览器无法保存本次收付款标识，请检查浏览器存储后重试。'; return }
+  try { financeAttempts.save(storageKey, JSON.stringify(attempt)) }
+  catch (err) { error.value = financeAttemptError(err, '浏览器无法保存本次收付款标识，请检查浏览器存储后重试。'); return }
   settleAttempt.value = attempt
   refreshPendingSettlements()
   saving.value = true
   error.value = ''; notice.value = ''
   try {
     await api.post(`/payment-plans/${selected.value.id}/settle/`, attempt.payload, { headers: { 'Idempotency-Key': attempt.key } })
-    window.sessionStorage.removeItem(storageKey); settleAttempt.value = null; refreshPendingSettlements(); settleGuard.markClean()
+    financeAttempts.remove(storageKey, JSON.stringify(attempt)); settleAttempt.value = null; refreshPendingSettlements(); settleGuard.markClean()
     selected.value = null
     await load(); notice.value = props.direction === 'receivable' ? '收款登记成功' : '付款登记成功'
   } catch (err) {
-    if (!existing && err.response?.status === 400) { window.sessionStorage.removeItem(storageKey); settleAttempt.value = null; refreshPendingSettlements() }
+    if (!existing && err.response?.status === 400) { financeAttempts.remove(storageKey, JSON.stringify(attempt)); settleAttempt.value = null; refreshPendingSettlements() }
     error.value = apiErrorMessage(err) || `${actionLabel.value}结果待确认，请按原内容重试。`
   } finally { saving.value = false }
 }
-refreshPendingSettlements()
+watch(() => financeAttempts.isReady(), refreshPendingSettlements, { immediate: true })
 syncFiltersFromRoute()
 watch(routeFilterKey, () => { syncFiltersFromRoute(); void load() })
 watch([() => props.direction, () => route.query.order], () => { refreshPendingSettlements(); void loadOrderContext() }, { immediate: true })
@@ -236,6 +238,7 @@ watch([() => props.direction, () => route.query.order], () => { refreshPendingSe
   <section class="plan-page">
     <header><div><p class="page-lede">按合同原币跟踪计划、已核销与待结清金额；人民币汇总仅作折算参考。</p></div><button @click="load">刷新</button></header>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
+    <p v-if="financeAttempts.hasLegacy()" role="status">此浏览器留有旧版待核对记录。请先在财务流水核对原操作结果，再决定是否另行登记。</p>
     <div v-if="pendingSettlements.length" class="notice" role="status">有 {{ pendingSettlements.length }} 笔{{ actionLabel }}结果待确认。<button v-for="item in pendingSettlements" :key="item.key" type="button" @click="recoverSettlement(item)">按原内容核对</button></div>
     <SummaryCards v-if="hasLoaded" :items="planMetrics" />
     <section v-if="hasOrderContext" class="order-context-banner" aria-label="订单应收筛选上下文">

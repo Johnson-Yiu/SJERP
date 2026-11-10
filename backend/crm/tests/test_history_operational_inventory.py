@@ -171,12 +171,33 @@ class HistoricalInventoryPostgresTests(HistoryTakeoverFixtureMixin, TransactionT
         self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("18"))
 
     def test_migration_refuses_to_remove_existing_baseline(self):
+        from crm.tests.historical_database import historical_database
+
         opening.execute(self.group.pk, self.maker)
-        executor = MigrationExecutor(connection)
-        latest = executor.loader.graph.leaf_nodes()
-        try:
+        baseline = HistoryInventoryBaseline.objects.get()
+        product = self.sku.product
+
+        with historical_database():
+            targets = [("crm", "0108_history_append_only_truncate")]
+            executor = MigrationExecutor(connection)
+            executor.migrate(targets)
+            apps = executor.loader.project_state(targets).apps
+            application = apps.get_model("crm", "HistoryTakeoverApplication").objects.create()
+            group = apps.get_model("crm", "HistoryTakeoverGroup").objects.create(
+                application=application, source_group_id=self.group.source_group_id,
+            )
+            source = apps.get_model("crm", "HistoryTakeoverSourceRecord").objects.create(
+                group=group, source_system=self.source.source_system, record_type=self.source.record_type,
+                source_record_id=self.source.source_record_id,
+            )
+            old_product = apps.get_model("crm", "Product").objects.create(code=product.code, name=product.name)
+            sku = apps.get_model("crm", "SKU").objects.create(product=old_product, sku=self.sku.sku)
+            model = apps.get_model("crm", "HistoryInventoryBaseline")
+            fields = {
+                field.name: getattr(baseline, field.name)
+                for field in model._meta.local_fields if not field.primary_key and not field.is_relation
+            }
+            saved = model.objects.create(group=group, source=source, sku=sku, **fields)
             with self.assertRaisesRegex(RuntimeError, "Refusing to remove historical append-only TRUNCATE protection"):
-                executor.migrate([("crm", "0103_merge_finance_and_history")])
-            self.assertEqual(HistoryInventoryBaseline.objects.count(), 1)
-        finally:
-            MigrationExecutor(connection).migrate(latest)
+                MigrationExecutor(connection).migrate([("crm", "0103_merge_finance_and_history")])
+            self.assertEqual(model.objects.get(pk=saved.pk).quantity, baseline.quantity)

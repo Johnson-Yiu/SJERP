@@ -4,10 +4,10 @@ from datetime import date
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.db.migrations.recorder import MigrationRecorder
-from django.test import TransactionTestCase
+from crm.tests.historical_database import HistoricalMigrationTestCase
 
 
-class PartyQuoteMigrationRollbackTests(TransactionTestCase):
+class PartyQuoteMigrationRollbackTests(HistoricalMigrationTestCase):
     def test_empty_rollback_and_each_protected_fact_blocks_before_schema_changes(self):
         old = [('crm', '0108_history_append_only_truncate')]
         current = [('crm', '0112_party_quote_application')]

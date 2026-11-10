@@ -372,6 +372,8 @@ test('finance fee scenarios refuse excess refunds and reverse writeoffs without 
   const form=page.getByRole('dialog',{name:'登记退款',exact:true})
   const refundOrder = form.getByLabel('退款对应订单')
   await refundOrder.selectOption({ label: await refundOrder.locator('option').filter({ hasText: 'SYN-FIN-REFUND' }).innerText() })
+  await form.getByLabel('实际退款日期').fill('2026-10-30')
+  await expect(form.getByLabel('实际退款日期')).toHaveValue('2026-10-30')
   await form.getByLabel('实际退款金额（USD）',{exact:true}).fill('981')
   await form.getByLabel('退款依据').fill('Synthetic refund above remaining cash')
   await form.getByLabel('实际退款凭证').setInputFiles(proof)
@@ -410,7 +412,7 @@ test('finance fee scenarios refuse excess refunds and reverse writeoffs without 
 })
 
 async function openHistoricalFinance(page, baseURL) {
-  await page.goto(new URL('/history-takeover', baseURL).href)
+  await page.goto(new URL('/history-takeover', baseURL).href, { waitUntil: 'domcontentloaded' })
   await page.locator('.takeover-list-item').first().click()
   const summary = page.getByText('历史资金接续', { exact: true })
   await summary.click()
@@ -421,7 +423,7 @@ async function openHistoricalFinance(page, baseURL) {
 }
 
 test('historical finance reviews a duplicate and posts only after second-user approval', async ({ browser, baseURL }) => {
-  test.setTimeout(90000)
+  test.setTimeout(180000)
   const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8')).history_finance
   test.skip(!fixture, 'Requires the follow-up historical finance fixture')
   const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } })
@@ -487,44 +489,129 @@ test('historical finance reviews a duplicate and posts only after second-user ap
 })
 
 test('Chrome native page zoom keeps long finance and history records usable', async ({ page, baseURL }) => {
-  test.setTimeout(180000)
+  test.setTimeout(300000)
   const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8')).long_content
   test.skip(!fixture, 'Requires the follow-up evidence fixture')
-  const profile = path.join(process.env.ISOLATED_TEST_ROOT, 'chrome-native-zoom')
-  const context = await chromium.launchPersistentContext(profile, { channel: 'chrome', viewport: { width: 1366, height: 768 } })
   const results = []
-  try {
-    await context.addCookies(await page.context().cookies())
-    const browserSettings = context.pages()[0]
-    const app = await context.newPage()
-    const history = await context.newPage()
-    const takeover = await context.newPage()
-    const cdp = new Map([[app, await context.newCDPSession(app)], [history, await context.newCDPSession(history)], [takeover, await context.newCDPSession(takeover)]])
-    async function capture(candidate, screenshot) {
-      const { data } = await cdp.get(candidate).send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
-      await writeFile(path.join(evidenceDir, screenshot), Buffer.from(data, 'base64'))
-    }
-    for (const zoom of [1, 1.25]) {
-      await browserSettings.goto('chrome://settings/appearance')
-      const zoomControl = browserSettings.locator('settings-appearance-page select').filter({
-        has: browserSettings.locator('option[value="1.25"]'),
-      })
-      await zoomControl.selectOption(String(zoom))
-      await app.goto(new URL('/finance?date_from=2026-11-01&date_to=2026-11-30', baseURL).href)
-      const sales = app.locator('article').filter({ hasText: '合同销售额' }).first()
-      await sales.getByRole('button', { name: '查看构成明细' }).click()
-      const detail = app.getByRole('region', { name: '财务金额构成明细' })
-      const orderRow = detail.getByRole('row').filter({ hasText: fixture.order })
-      await expect(orderRow).toContainText(fixture.customer)
-      await expect(orderRow).toContainText('¥71,035.50')
-      await history.goto(new URL('/history-preflight', baseURL).href)
-      await history.locator('input[type="file"]').setInputFiles(path.join(evidenceDir, fixture.workbook))
-      await history.getByRole('button', { name: '开始预检', exact: true }).click()
-      await expect(history.locator('.preflight-summary')).toContainText(fixture.workbook)
-      await expect(history.getByRole('row').filter({ hasText: fixture.historical_order })).not.toHaveCount(0)
-      await expect(history.getByRole('row').filter({ hasText: 'SYNTH-HISTORY-LONG-LINE-' })).toHaveCount(4)
+  const completion = evidenceDir.includes('release-completion-acceptance-02')
+  const cookies = await page.context().cookies()
+  for (const zoom of [1, 1.25]) {
+    const profile = path.join(process.env.ISOLATED_TEST_ROOT, `chrome-native-zoom-${zoom}`)
+    const context = zoom === 1 ? page.context() : await chromium.launchPersistentContext(profile, {
+      channel: 'chrome', viewport: { width: 1366, height: 768 }, timeout: 30000,
+    })
+    context.setDefaultTimeout(60000)
+    context.setDefaultNavigationTimeout(30000)
+    try {
+      if (zoom !== 1) {
+        const settings = context.pages()[0]
+        await settings.goto('chrome://settings/appearance', { waitUntil: 'commit' })
+        const control = settings.locator('settings-appearance-page select').filter({
+          has: settings.locator('option[value="1.25"]'),
+        })
+        await control.selectOption(String(zoom))
+      }
+      console.log(`Chrome native page zoom set to ${zoom * 100}%`)
+      if (zoom !== 1) await context.addCookies(cookies)
+      const app = completion ? null : await context.newPage()
+      const history = completion ? null : await context.newPage()
+      const takeover = zoom === 1 ? page : context.pages()[0]
+      async function capture(candidate, screenshot) {
+        const session = await context.newCDPSession(candidate)
+        try {
+          const { data } = await session.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+          await writeFile(path.join(evidenceDir, screenshot), Buffer.from(data, 'base64'))
+        } finally {
+          await session.detach()
+        }
+      }
+      let orderRow
+      if (!completion) {
+        await app.goto(new URL('/finance?date_from=2026-11-01&date_to=2026-11-30', baseURL).href)
+        const sales = app.locator('article').filter({ hasText: '合同销售额' }).first()
+        await sales.getByRole('button', { name: '查看构成明细' }).click()
+        const detail = app.getByRole('region', { name: '财务金额构成明细' })
+        orderRow = detail.getByRole('row').filter({ hasText: fixture.order })
+        await expect(orderRow).toContainText(fixture.customer)
+        await expect(orderRow).toContainText('¥71,035.50')
+        await history.goto(new URL('/history-preflight', baseURL).href)
+        await history.locator('input[type="file"]').setInputFiles(path.join(evidenceDir, fixture.workbook))
+        await history.getByRole('button', { name: '开始预检', exact: true }).click()
+        await expect(history.locator('.preflight-summary')).toContainText(fixture.workbook)
+        await expect(history.getByRole('row').filter({ hasText: fixture.historical_order })).not.toHaveCount(0)
+        await expect(history.getByRole('row').filter({ hasText: 'SYNTH-HISTORY-LONG-LINE-' })).toHaveCount(4)
+      }
       const takeoverFinance = await openHistoricalFinance(takeover, baseURL)
+      const correction = takeover.getByRole('button', { name: '提交追溯更正申请' })
+      const receipt = completion ? await context.newPage() : null
+      if (completion) {
+        await takeover.getByLabel('追溯类型').selectOption('correction')
+        await takeover.setViewportSize({ width: 390, height: 844 })
+        await correction.click()
+        const correctionError = takeover.getByText('请写明原值、更正值及涉及的字段。')
+        await expect(correctionError).toBeVisible()
+        await correctionError.evaluate(element => element.scrollIntoView({ block: 'center' }))
+        await capture(takeover, `history-correction-error-390-zoom-${zoom * 100}.png`)
+        await takeover.getByLabel('更正明细（原值、更正值）').fill('原记录数量 20 件，核对签收凭证后更正为 22 件。')
+        await takeover.getByLabel('提交原因（必填）').fill('核对签收凭证后发现数量录入错误。')
+        await expect(correctionError).toBeHidden()
+        await receipt.goto(new URL('/transactions', baseURL).href, { waitUntil: 'domcontentloaded' })
+        await receipt.getByRole('button', { name: '新增记账', exact: true }).click()
+        const editor = receipt.getByRole('dialog', { name: '新增记账', exact: true })
+        await editor.getByLabel(/^类型/).selectOption('customer_receipt')
+        await editor.getByPlaceholder('客户或订单号').fill(fixture.order)
+        await editor.getByRole('button', { name: new RegExp(fixture.order) }).click()
+        await editor.getByLabel('银行实际到账原币金额', { exact: true }).fill('980')
+        await editor.getByLabel('客户实际汇款金额（USD）', { exact: true }).fill('1000')
+        for (const amount of ['8', '12']) {
+          await editor.getByRole('button', { name: '添加扣减明细' }).click()
+          const row = editor.locator('.adjustment-card').last()
+          await row.getByLabel('性质').selectOption('bank_fee')
+          await row.getByLabel('金额（USD）', { exact: true }).fill(amount)
+          await row.getByLabel('原因', { exact: true }).fill('已核对银行收款凭证')
+        }
+        await editor.getByRole('button', { name: '分配到多张订单' }).click()
+        await editor.getByRole('button', { name: '添加订单计划' }).click()
+        const plans = editor.getByLabel('订单应收计划')
+        for (const [index, no, amount] of [[0, fixture.order, '680'], [1, fixture.order.replace(/1$/, '2'), '300']]) {
+          const select = plans.nth(index)
+          await select.selectOption({ label: await select.locator('option').filter({ hasText: no }).innerText() })
+          await editor.getByLabel('本次核销金额（USD）').nth(index).fill(amount)
+        }
+      }
       for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
+        if (completion) {
+          for (const [name, candidate, action] of [
+            ['receipt-edit', receipt, receipt.getByRole('button', { name: '保存', exact: true })],
+            ['history-correction', takeover, correction],
+          ]) {
+            await candidate.setViewportSize({ width, height })
+            if (candidate === receipt) {
+              const details = receipt.locator('.adjustment-card').first()
+              await details.evaluate(element => element.scrollIntoView({ block: 'start' }))
+              await capture(receipt, `receipt-deductions-${width}-zoom-${zoom * 100}.png`)
+            }
+            await action.evaluate(element => element.scrollIntoView({ block: 'center' }))
+            const layout = await candidate.evaluate(() => ({
+              dpr: devicePixelRatio,
+              width: innerWidth,
+              pageWidth: document.documentElement.scrollWidth,
+              topbarBottom: document.querySelector('.topbar').getBoundingClientRect().bottom,
+              tabsTop: document.querySelector('.workspace-bar').getBoundingClientRect().top,
+            }))
+            expect(layout.dpr).toBeCloseTo(zoom, 2)
+            expect(layout.pageWidth, `${name} at ${width}px and ${zoom * 100}%`).toBeLessThanOrEqual(layout.width + 1)
+            if (candidate === takeover) expect(Math.abs(layout.topbarBottom - layout.tabsTop)).toBeLessThanOrEqual(1)
+            const bounds = await action.boundingBox()
+            expect(bounds.x).toBeGreaterThanOrEqual(0)
+            expect(bounds.x + bounds.width).toBeLessThanOrEqual(layout.width + 1)
+            expect(bounds.y + bounds.height).toBeLessThanOrEqual(height / zoom + 1)
+            const screenshot = `${name}-${width}-zoom-${zoom * 100}.png`
+            await capture(candidate, screenshot)
+            results.push({ name, width, height, zoom, screenshot, ...layout })
+          }
+          continue
+        }
         for (const [name, candidate] of [['finance', app], ['history-preflight', history], ['history-takeover', takeover]]) {
           await candidate.setViewportSize({ width, height })
           const metrics = await candidate.evaluate(() => ({
@@ -553,11 +640,11 @@ test('Chrome native page zoom keeps long finance and history records usable', as
           })
         }
       }
+    } finally {
+      if (zoom !== 1) await context.close()
     }
-    await writeFile(path.join(evidenceDir, 'native-zoom-results.json'), JSON.stringify(results, null, 2))
-  } finally {
-    await context.close()
   }
+  await writeFile(path.join(evidenceDir, 'native-zoom-results.json'), JSON.stringify(results, null, 2))
 })
 
 test('certificate validation identifies the business field without closing the draft', async ({ page }) => {
@@ -574,6 +661,113 @@ test('certificate validation identifies the business field without closing the d
   await expect(form.getByRole('alert')).toContainText('证书名称：')
   await expect(name).toHaveValue(invalidName)
   await page.screenshot({ path: path.join(evidenceDir, 'certificate-field-error.png') })
+})
+
+test('completion evidence follows lost receipt, actual refund date and funds review', async ({ page }) => {
+  test.skip(!evidenceDir.includes('release-completion-acceptance-02'), 'Requires the completion fixture')
+  test.setTimeout(120000)
+  const proof = { name: 'synthetic-completion.pdf', mimeType: 'application/pdf', buffer: syntheticVoucherPdf() }
+  async function captureState(name, action) {
+    for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
+      await page.setViewportSize({ width, height })
+      if (width < 980) {
+        await expect.poll(() => page.locator('.sidebar').evaluate(element => element.getBoundingClientRect().right)).toBeLessThanOrEqual(1)
+        const reviewTable = page.locator('.cash-entry-dialog .review-sources table')
+        if (await reviewTable.count()) {
+          expect(await reviewTable.evaluate(element => element.scrollWidth)).toBeLessThanOrEqual(
+            await reviewTable.evaluate(element => element.clientWidth) + 1,
+          )
+        }
+      }
+      await action.evaluate(element => element.scrollIntoView({ block: 'center' }))
+      const box = await action.boundingBox()
+      expect(box.x).toBeGreaterThanOrEqual(0)
+      expect(box.x + box.width).toBeLessThanOrEqual(width + 1)
+      expect(box.y).toBeGreaterThanOrEqual(0)
+      expect(box.y + box.height).toBeLessThanOrEqual(height + 1)
+      await page.screenshot({ path: path.join(evidenceDir, `${name}-${width}.png`) })
+    }
+    await page.setViewportSize({ width: 1600, height: 1000 })
+  }
+  await page.goto('/transactions')
+  await page.getByRole('button', { name: '新增记账', exact: true }).click()
+  let receipt = page.getByRole('dialog', { name: '新增记账', exact: true })
+  await receipt.getByLabel(/^类型/).selectOption('customer_receipt')
+  await receipt.getByPlaceholder('客户或订单号').fill('UAT-FIN-2026-INTERNATIONAL-00000000002')
+  await receipt.getByRole('button', { name: /UAT-FIN-2026-INTERNATIONAL-00000000002/ }).click()
+  await receipt.getByLabel('银行实际到账原币金额', { exact: true }).fill('100')
+  const lost = async route => {
+    if (route.request().method() !== 'POST') return route.continue()
+    const response = await route.fetch()
+    expect(response.status()).toBe(201)
+    await route.abort('failed')
+  }
+  await page.route('**/api/transactions/', lost)
+  await receipt.getByRole('button', { name: '保存', exact: true }).click()
+  await expect(receipt).toContainText('记账结果尚未确认')
+  await page.unroute('**/api/transactions/', lost)
+  await page.goto('/transactions')
+  await page.getByRole('button', { name: '按原内容核对' }).click()
+  receipt = page.getByRole('dialog', { name: '新增记账', exact: true })
+  await expect(receipt.getByLabel('银行实际到账原币金额', { exact: true })).toHaveValue(/^100(?:\.00)?$/)
+  await page.screenshot({ path: path.join(evidenceDir, 'receipt-pending-recovered.png') })
+  await captureState('receipt-pending-recovered', receipt.getByRole('button', { name: /按原内容重试/ }))
+  const replay = page.waitForResponse(response => response.url().endsWith('/api/transactions/') && response.request().method() === 'POST')
+  await receipt.getByRole('button', { name: /按原内容重试/ }).click()
+  const original = await (await replay).json()
+  await expect(receipt).toBeHidden()
+
+  await page.getByRole('row').filter({ hasText: original.transaction_no }).getByRole('button', { name: '详情', exact: true }).click()
+  await page.getByRole('button', { name: '从本笔登记退款' }).click()
+  const refund = page.getByRole('dialog', { name: '登记退款', exact: true })
+  await refund.getByLabel('实际退款日期').fill('2026-10-30')
+  await refund.getByLabel('退款对应订单').selectOption({ index: 1 })
+  await refund.getByLabel('实际退款金额（USD）').fill('10')
+  await refund.getByLabel('退款依据').fill('已核对退款回单及实际付款日期')
+  await refund.getByLabel('实际退款凭证').setInputFiles(proof)
+  await refund.getByRole('button', { name: '上传凭证' }).click()
+  await expect(refund).toContainText('凭证已上传')
+  await page.screenshot({ path: path.join(evidenceDir, 'refund-actual-date.png') })
+  await captureState('refund-actual-date', refund.getByLabel('实际退款日期'))
+  await captureState('refund-submit', refund.getByRole('button', { name: '确认登记' }))
+  const refundPosted = page.waitForResponse(response => response.url().endsWith('/refund-cash/') && response.request().method() === 'POST')
+  await refund.getByRole('button', { name: '确认登记' }).click()
+  const posted = await refundPosted
+  expect(posted.status()).toBe(201)
+  expect((await posted.json()).refunds[0].actual_date).toBe('2026-10-30')
+  await expect(refund).toBeHidden()
+
+  await page.goto('/rmb-cash-events')
+  await page.getByRole('button', { name: '新增资金事件' }).click()
+  const cash = page.locator('.cash-entry-dialog')
+  await cash.getByPlaceholder('搜索流水号').fill(original.transaction_no)
+  const source = cash.locator('.source-option').filter({ hasText: original.transaction_no })
+  await expect(source).toContainText('UAT-FIN-2026-INTERNATIONAL-00000000002')
+  await source.getByRole('button', { name: '选择', exact: true }).click()
+  await page.screenshot({ path: path.join(evidenceDir, 'funds-business-search.png') })
+  await captureState('funds-business-search', cash.getByPlaceholder('搜索流水号'))
+  await cash.getByLabel('扣费前兑换额（CNY）', { exact: true }).fill('71')
+  await cash.getByRole('combobox', { name: '来源账户', exact: true }).selectOption('SYNTH_FX')
+  await cash.getByRole('combobox', { name: '人民币账户', exact: true }).selectOption('SYNTH_CNY')
+  await cash.getByLabel('本次结汇金额', { exact: true }).fill('10')
+  await cash.locator('.allocation-table input[type="checkbox"]').check()
+  await cash.getByLabel('银行参考号', { exact: true }).fill('SYNTH-COMPLETION-REVIEW-01')
+  await cash.getByLabel('核对说明', { exact: true }).fill('已核对银行回单和收款来源')
+  await cash.getByLabel('银行凭证文件', { exact: true }).setInputFiles(proof)
+  await cash.getByRole('button', { name: '上传并校验凭证' }).click()
+  await expect(cash).toContainText('凭证已上传')
+  await cash.getByRole('button', { name: '预览结汇信息' }).click()
+  await cash.getByRole('button', { name: '登记待确认结汇' }).click()
+  await expect(cash).toContainText('待确认')
+  await page.screenshot({ path: path.join(evidenceDir, 'funds-pending-review.png') })
+  await captureState('funds-pending-review', cash.getByRole('button', { name: '确认银行凭证' }))
+  await cash.getByRole('checkbox', { name: /我已核对银行凭证和来源分配/ }).check()
+  await cash.getByRole('button', { name: '确认银行凭证' }).click()
+  const confirmed = page.getByRole('row').filter({ hasText: 'SYNTH-COMPLETION-REVIEW-01' })
+  await expect(confirmed).toContainText('已确认')
+  await expect(cash).toContainText('已确认')
+  await page.screenshot({ path: path.join(evidenceDir, 'funds-reviewed.png') })
+  await captureState('funds-reviewed', cash.getByRole('button', { name: '关闭', exact: true }))
 })
 
 test('codex logout clears the workspaces and returns to sign-in', async ({ page }) => {

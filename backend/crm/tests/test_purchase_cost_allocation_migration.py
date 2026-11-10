@@ -1,16 +1,16 @@
 from datetime import date
 from importlib import import_module
 
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
-from django.test import TransactionTestCase
 
 
 MIGRATION_0068 = [("crm", "0068_documentnumbersequence")]
 MIGRATION_0069 = [("crm", "0069_backfill_purchase_cost_allocations")]
 
 
-class PurchaseCostAllocationMigrationTests(TransactionTestCase):
+class PurchaseCostAllocationMigrationTests(HistoricalMigrationTestCase):
     """Exercise the data migration against the actual historical app state."""
 
     reset_sequences = True

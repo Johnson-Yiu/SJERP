@@ -1,11 +1,11 @@
 from datetime import date
 
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
-from django.test import TransactionTestCase
 
 
-class QuoteTemplateMigrationTests(TransactionTestCase):
+class QuoteTemplateMigrationTests(HistoricalMigrationTestCase):
     def test_forward_and_reverse_preserve_historical_quote(self):
         executor = MigrationExecutor(connection)
         old = [("crm", "0095_merge_fulfillment_idempotency")]

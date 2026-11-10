@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import PaymentPlanPage from '../src/views/PaymentPlanPage.vue'
+import { setAccessOperator } from '../src/accessControl'
 import TransactionPage from '../src/views/TransactionPage.vue'
 import PurchaseOrderPage from '../src/views/PurchaseOrderPage.vue'
 
@@ -8,7 +9,7 @@ const mocks = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), patch: vi.fn(), l
 vi.mock('../src/api', () => ({ api: mocks, listAll: mocks.listAll, listData: response => response.data.results || response.data }))
 import { createRouter, createMemoryHistory } from 'vue-router'
 async function purchaseRouter(path = '/purchase-orders') {
-  const router = createRouter({ history: createMemoryHistory(), routes: ['/purchase-orders', '/transactions', '/orders'].map(route => ({ path: route, component: { template: '<div />' } })) })
+  const router = createRouter({ history: createMemoryHistory(), routes: ['/purchase-orders', '/transactions', '/orders', '/rmb-cash-events'].map(route => ({ path: route, component: { template: '<div />' } })) })
   await router.push(path)
   return router
 }
@@ -16,6 +17,8 @@ const plan = { id: 1, direction: 'receivable', customer_id: 4, order: 3, contrac
 const options = { global: { directives: { 'money-input': {} } } }
 
 beforeEach(() => {
+  localStorage.clear()
+  setAccessOperator({ authenticated: true, user_id: 101, has_all_permissions: true })
   vi.clearAllMocks()
   mocks.post.mockResolvedValue({ data: {} })
   mocks.patch.mockResolvedValue({ data: {} })
@@ -131,7 +134,7 @@ describe('trade finance interactions', () => {
     await dialog.find('textarea').setValue('收款金额录入错误')
     await dialog.trigger('submit')
     await flushPromises()
-    expect(mocks.post).toHaveBeenCalledWith('/transactions/11/void/', { reason: '收款金额录入错误' })
+    expect(mocks.post).toHaveBeenCalledWith('/transactions/11/void/', { reason: '收款金额录入错误' }, { headers: { 'Idempotency-Key': expect.stringMatching(/^VOID-/) } })
     wrapper.unmount()
   })
 

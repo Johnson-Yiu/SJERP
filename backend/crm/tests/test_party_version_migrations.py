@@ -1,11 +1,11 @@
 from datetime import date
 
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
-from django.test import TransactionTestCase
 
 
-class PartyVersionMigrationProtectionTests(TransactionTestCase):
+class PartyVersionMigrationProtectionTests(HistoricalMigrationTestCase):
     def test_country_snapshot_blocks_cross_migration_partial_downgrade(self):
         before_version = [('crm', '0109_quote_buyer_country_snapshot')]
         current_version = [('crm', '0110_party_version')]

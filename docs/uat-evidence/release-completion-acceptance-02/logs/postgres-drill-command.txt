@@ -1,0 +1,25 @@
+test_checksum (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_checksum) ... ok
+test_corrupt_archive (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_corrupt_archive) ... ok
+test_failed_restore_tool (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_failed_restore_tool) ... ok
+test_incompatible_version (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_incompatible_version) ... ok
+test_missing_media (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_missing_media) ... ok
+test_production_stage_rejected_before_cluster_creation (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_production_stage_rejected_before_cluster_creation) ... ok
+test_success (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_success) ... ok
+test_wrong_environment (crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_wrong_environment) ... ok
+test_symlink_is_rejected_in_private_media_inventory (crm.tests.test_iss047_private_storage.ISS047PrivateMediaStorageTests.test_symlink_is_rejected_in_private_media_inventory) ... skipped 'symlink creation is not available in this environment'
+
+----------------------------------------------------------------------
+Ran 9 tests in 764.277s
+
+OK (skipped=1)
+Found 9 test(s).
+Skipping setup of unused database(s): default.
+System check identified no issues (0 silenced).
+COMMAND_CASE {"case": "checksum", "exit": 1, "result": {"cleanup": "complete", "error": "BackupRecoveryError: Archive SHA256 mismatch", "source_unchanged": true, "status": "FAILED"}}
+COMMAND_CASE {"case": "corrupt", "exit": 1, "result": {"cleanup": "complete", "error": "BadZipFile: File is not a zip file", "source_unchanged": true, "status": "FAILED"}}
+COMMAND_CASE {"case": "tool", "exit": 1, "result": {"cleanup": "complete", "error": "BackupRecoveryError: pg_restore failed (1): pg_restore: error: input file does not appear to be a valid archive (too short?)", "source_unchanged": true, "status": "FAILED"}}
+COMMAND_CASE {"case": "version", "exit": 1, "result": {"cleanup": "complete", "error": "BackupRecoveryError: Archive source, application or PostgreSQL version mismatch", "source_unchanged": true, "status": "FAILED"}}
+COMMAND_CASE {"case": "missing-media", "exit": 1, "result": {"cleanup": "complete", "error": "BackupRecoveryError: Media manifest mismatch: missing: finance-vouchers/2026/11/synthetic-bank-voucher.pdf; file_count differs; total_bytes differs", "source_unchanged": true, "status": "FAILED"}}
+COMMAND_CASE {"case": "production-stage", "exit": 1, "result": {"cleanup": "not-started", "error": "isolated drill requires development stage", "status": "FAILED"}}
+COMMAND_CASE {"case": "success", "exit": 0, "result": {"cleanup": "complete", "media": {"algorithm": "sha256", "directories": ["finance-vouchers", "finance-vouchers/2026", "finance-vouchers/2026/11", "follow-up-attachments", "follow-up-attachments/2026", "follow-up-attachments/2026/11", "quote-item-images", "quote-item-images/2026", "quote-item-images/2026/11"], "directory_count": 9, "file_count": 3, "files": [{"path": "finance-vouchers/2026/11/synthetic-bank-voucher.pdf", "sha256": "2dacd022391e76d16b84a09b3a0132610b9ede0e40435d0e6ee6acf9e232cc9d", "size": 37}, {"path": "follow-up-attachments/2026/11/synthetic.txt", "sha256": "64e20fdf0f55d33193d299a7109e6e6b45ad1b31622bea93341c60330b2a0200", "size": 23}, {"path": "quote-item-images/2026/11/history.gif", "sha256": "ff95b99e6cd933dc1ce0dfc57ce7d4f78577e094ba87381f2edfba2a4690a7c6", "size": 43}], "manifest_sha256": "ce67d297d9ac1d886d706d0ef112ab0a8a1d347d82d330da7b979a075d8bb2dd", "root": "MEDIA_ROOT", "schema_version": 2, "storage_backend": "filesystem", "total_bytes": 103}, "migrations": 163, "row_count": 1146, "sha256": "4af7f8ec20652ad3e7d6db587b8bf929cbb94286f563dd340300b543401e01de", "source": "iss018_src_866dd823ec1446fe", "source_media_unchanged": true, "status": "PASS", "table_count": 120, "target": "iss018_dst_fa7a1f22a09b4bb0", "versions": {"django": "6.0.9", "pg_dump": "pg_dump (PostgreSQL) 17.11", "pg_restore": "pg_restore (PostgreSQL) 17.11", "server_version_num": 170011}}}
+COMMAND_CASE {"case": "environment", "exit": 1, "result": {"cleanup": "complete", "error": "BackupRecoveryError: Django may only use a database created by this drill", "source_unchanged": true, "status": "FAILED"}}

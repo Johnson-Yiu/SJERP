@@ -1,0 +1,20 @@
+{
+  "database_vendor": "sqlite",
+  "customer_code": "UAT-IMP-C001",
+  "valid_source_order": "UAT-EXT-ORDER-001",
+  "valid_lines": 2,
+  "invalid_source_order": "UAT-EXT-ORDER-BAD",
+  "invalid_sku": "UAT-UNKNOWN-SKU",
+  "workbook": "sales-order-import-input.xlsx",
+  "long_content": {
+    "customer": "North-West International Lighting and Architectural Project Procurement Services, Distribution and Customer Care Group",
+    "order": "UAT-FIN-2026-INTERNATIONAL-00000000001",
+    "historical_order": "SYNTH-HISTORY-ORDER-ARCHIVE-2024-00000000123",
+    "workbook": "long-history-preflight.xlsx"
+  },
+  "history_finance": {
+    "source": "SYNTH-HISTORY-RECEIPT-ARCHIVE-2024-000000001",
+    "account": 3,
+    "voucher": 1
+  }
+}

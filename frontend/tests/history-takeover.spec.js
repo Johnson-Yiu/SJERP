@@ -86,11 +86,16 @@ describe('controlled history takeover UI', () => {
   it('lets the reviewer enter an audit note on the executed group', async () => {
     const value = detail('executed')
     value.events = [{ id: 51, group_id: 41, event_type: 'voucher_added_submitted',
-      created_at: '2026-11-09T00:00:00Z', details: { details: { voucher_reference: 'VCH-1' } } }]
+      created_at: '2026-11-09T00:00:00Z', details: { details: { voucher_reference: 'VCH-1', fact_id: 720, lines: [{ old_value: 0, new_value: '12.50' }] } } }]
     mocks.post.mockResolvedValue({ data: {} })
     const wrapper = await mountPage(value)
     const audit = wrapper.get('.takeover-audit')
     expect(audit.text()).toContain('VCH-1')
+    const legacy = audit.get('details')
+    expect(legacy.get('summary').text()).toBe('旧版申请补充资料')
+    expect(legacy.text()).toContain('历史事实编号720')
+    expect(legacy.text()).toContain('lines / 第 1 项 / 原值0')
+    expect(legacy.text()).toContain('lines / 第 1 项 / 更正值12.50')
     const approve = audit.findAll('button').find(button => button.text() === '核实并保留更正轨迹')
     expect(approve.element.disabled).toBe(true)
     await audit.get('textarea').setValue('原凭证已核实')

@@ -1,0 +1,22 @@
+[
+  {
+    "path": "browser/sales-order-import-real.spec/sales-order-import-template.xlsx",
+    "bytes": 10116,
+    "sha256": "dd0572f06038eee11c139380780e0bb9b33a2ddfac7f65d3c954f3a718409d2c"
+  },
+  {
+    "path": "browser/sales-order-import-real.spec/sales-order-import-errors.csv",
+    "bytes": 109,
+    "sha256": "69c1008b26050dd5943d2a0fa8885aaee8ef0efc7eace10d1e9e17955d41b0db"
+  },
+  {
+    "path": "browser/sales-order-import-real.spec/integrated-history-preflight.csv",
+    "bytes": 2134,
+    "sha256": "a0c8365ab463a70a971b9f5b001c68ebf9c01fd092db24a3828bf218be7b3cff"
+  },
+  {
+    "path": "browser/sales-order-import-real.spec/finance-overview.csv",
+    "bytes": 592,
+    "sha256": "f0f4deadf2e6c15db7312c6ad5ae181a3e6c91d5f6645d2cb9293ef0fcf6b1a5"
+  }
+]

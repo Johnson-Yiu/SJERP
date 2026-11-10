@@ -46,6 +46,30 @@ const correctionDetailLabels = {
   source_record_id: '原系统记录号', source_document_no: '原系统业务单据号',
   voucher_reference: '凭证编号或存放位置', description: '业务明细',
 }
+const legacyCorrectionLabels = {
+  source_id: '来源记录编号', fact_id: '历史事实编号', amount: '金额', currency: '币种',
+  old_value: '原值', new_value: '更正值', note: '备注',
+}
+
+function legacyCorrectionRows(details) {
+  function rows(value, labels) {
+    if (value === null) return [{ label: labels.join(' / '), value: '未填写' }]
+    if (typeof value === 'object') {
+      const entries = Object.entries(value)
+      if (!entries.length) return [{ label: labels.join(' / '), value: '无明细' }]
+      return entries.flatMap(([key, item]) => rows(item, [
+        ...labels,
+        Array.isArray(value) ? `第 ${Number(key) + 1} 项` : (legacyCorrectionLabels[key] ?? key.replaceAll('_', ' ')),
+      ]))
+    }
+    return [{ label: labels.join(' / '), value: typeof value === 'boolean' ? (value ? '是' : '否') : String(value) }]
+  }
+
+  return Object.entries(details ?? {})
+    .filter(([key]) => !Object.hasOwn(correctionDetailLabels, key))
+    .flatMap(([key, value]) => rows(value, [legacyCorrectionLabels[key] ?? key.replaceAll('_', ' ')]))
+}
+
 const financeSources = ref([])
 const financeAccounts = ref([])
 const financeVouchers = ref([])
@@ -665,21 +689,21 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             </details>
             <form class="takeover-fields" novalidate @submit.prevent="submitCorrection">
               <label>追溯类型<select v-model="correction.kind" @change="correctionErrors = {}"><option value="late_fact">迟到记录</option><option value="correction">审计更正</option><option value="voucher_added">补交凭证</option></select></label>
-              <label>原系统记录号<input v-model="correction.source_record_id" list="correction-source-records" aria-describedby="correction-source-error" />
+              <label>原系统记录号<input v-model="correction.source_record_id" @input="correctionErrors.source_record_id = ''" list="correction-source-records" aria-describedby="correction-source-error" />
                 <datalist id="correction-source-records"><option v-for="record in [...new Set(sourceItems.map(item => item.data?.source_record_id).filter(Boolean))]" :key="record" :value="record" /></datalist>
               </label>
-              <label>原系统业务单据号<input v-model="correction.source_document_no" aria-describedby="correction-source-error" /></label>
+              <label>原系统业务单据号<input v-model="correction.source_document_no" @input="correctionErrors.source_record_id = ''" aria-describedby="correction-source-error" /></label>
               <small v-if="correctionErrors.source_record_id" id="correction-source-error" role="alert">{{ correctionErrors.source_record_id }}</small>
-              <label>实际发生日期{{ correction.kind === 'late_fact' ? '（必填）' : '（选填）' }}<input v-model="correction.occurred_at" type="date" />
+              <label>实际发生日期{{ correction.kind === 'late_fact' ? '（必填）' : '（选填）' }}<input v-model="correction.occurred_at" @input="correctionErrors.occurred_at = ''" type="date" />
                 <small v-if="correctionErrors.occurred_at" role="alert">{{ correctionErrors.occurred_at }}</small>
               </label>
-              <label>凭证编号或存放位置{{ correction.kind === 'voucher_added' ? '（必填）' : '（选填）' }}<input v-model="correction.voucher_reference" />
+              <label>凭证编号或存放位置{{ correction.kind === 'voucher_added' ? '（必填）' : '（选填）' }}<input v-model="correction.voucher_reference" @input="correctionErrors.voucher_reference = ''" />
                 <small v-if="correctionErrors.voucher_reference" role="alert">{{ correctionErrors.voucher_reference }}</small>
               </label>
-              <label>{{ { late_fact: '迟到记录明细', correction: '更正明细（原值、更正值）', voucher_added: '补充说明（选填）' }[correction.kind] }}<textarea v-model="correction.description" rows="3" />
+              <label>{{ { late_fact: '迟到记录明细', correction: '更正明细（原值、更正值）', voucher_added: '补充说明（选填）' }[correction.kind] }}<textarea v-model="correction.description" @input="correctionErrors.description = ''" rows="3" />
                 <small v-if="correctionErrors.description" role="alert">{{ correctionErrors.description }}</small>
               </label>
-              <label>提交原因（必填）<textarea v-model="correction.reason" rows="2" />
+              <label>提交原因（必填）<textarea v-model="correction.reason" @input="correctionErrors.reason = ''" rows="2" />
                 <small v-if="correctionErrors.reason" role="alert">{{ correctionErrors.reason }}</small>
               </label>
               <button type="submit" class="takeover-secondary" :disabled="saving">提交追溯更正申请</button>
@@ -700,6 +724,14 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                     <template v-if="event.details?.details?.[key]"><dt>{{ label }}</dt><dd>{{ event.details.details[key] }}</dd></template>
                   </template>
                 </dl>
+                <details v-if="canReview && legacyCorrectionRows(event.details?.details).length">
+                  <summary>旧版申请补充资料</summary>
+                  <dl>
+                    <template v-for="(item, index) in legacyCorrectionRows(event.details?.details)" :key="index">
+                      <dt>{{ item.label }}</dt><dd>{{ item.value }}</dd>
+                    </template>
+                  </dl>
+                </details>
                 <div v-if="canReview && event.group_id === selectedGroup?.id && !selectedGroup.verified_correction_ids?.includes(event.id) && !selected.events.some(review => review.event_type === 'correction_reviewed' && review.details?.source_event_id === event.id)" class="takeover-fields">
                   <label>更正审核依据<textarea v-model="correctionReviewNotes[event.id]" rows="2" /></label>
                   <div class="takeover-actions">
@@ -760,6 +792,13 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 @media(max-width:900px){.takeover-columns{grid-template-columns:1fr}.takeover-list{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-list-head,.takeover-empty{grid-column:1/-1}}
 .takeover-step-number{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-right:5px;border-radius:50%;background:#e7f1eb;color:#285c49;font-size:11px;vertical-align:middle}.takeover-group-head,.takeover-remainder-item,.takeover-result-row,.takeover-audit{min-width:0}.takeover-result-row,.takeover-result-row li,.takeover-remainder-item,.takeover-group-tab,.takeover-audit li{overflow-wrap:anywhere;word-break:break-word}.takeover-form-grid input,.takeover-form-grid select{min-width:0;max-width:100%}.takeover-resolution summary{cursor:pointer;font-weight:700}.takeover-resolution p{line-height:1.6}
 @media(max-width:600px){.takeover-intro{display:grid;padding:16px}.takeover-intro-actions{justify-items:start;width:100%}.takeover-lock{white-space:normal;width:max-content;max-width:100%}.takeover-upload,.takeover-list,.takeover-detail{padding:14px}.takeover-upload-row{display:grid}.takeover-file{align-items:flex-start;flex-direction:column}.takeover-file input{max-width:100%;width:100%}.takeover-list{grid-template-columns:1fr}.takeover-detail-head{display:grid}.takeover-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-form-grid{grid-template-columns:minmax(0,1fr)}.takeover-actions>*{flex:1}.takeover-actions button{min-height:40px}.takeover-group-tab{max-width:100%;flex-wrap:wrap}.takeover-step-number{flex:none}}
-.takeover-fields { display: grid; gap: .75rem; }
+.takeover-fields { display: grid; gap: .75rem; min-width: 0; }
+.takeover-fields label { display: grid; gap: 5px; min-width: 0; color: #3b5149; }
+.takeover-fields :is(input, select, textarea) {
+  box-sizing: border-box; width: 100%; min-width: 0; padding: 8px 10px;
+  border: 1px solid #d0ddd6; border-radius: 7px; background: #fff; color: inherit; font: inherit;
+}
+.takeover-fields textarea { resize: vertical; }
+.takeover-fields [role=alert] { color: #a12319; overflow-wrap: anywhere; }
 .takeover-audit dd { overflow-wrap: anywhere; white-space: pre-wrap; }
 </style>

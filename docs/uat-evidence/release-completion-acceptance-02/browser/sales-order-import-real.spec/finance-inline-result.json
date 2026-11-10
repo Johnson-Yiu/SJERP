@@ -1,0 +1,182 @@
+{
+  "cash": {
+    "basis": "bank_cash_confirmed_v1",
+    "version": 1,
+    "date_basis": "bank_date",
+    "coverage_status": "registered_confirmed_only",
+    "coverage_since": null,
+    "coverage_configured": false,
+    "period": {
+      "date_from": "2026-11-01",
+      "date_to": "2026-11-10"
+    },
+    "totals": {
+      "inflow": "6928.00",
+      "outflow": "0",
+      "net": "6928.00",
+      "count": 1
+    },
+    "monthly": [
+      {
+        "month": "2026-11",
+        "inflow": "6928.00",
+        "outflow": "0",
+        "net": "6928.00",
+        "count": 1
+      }
+    ],
+    "by_kind": [
+      {
+        "kind": "fx_settlement",
+        "label": "外币结汇到账",
+        "inflow": "6928.00",
+        "outflow": "0",
+        "net": "6928.00",
+        "count": 1
+      }
+    ],
+    "by_account_type": [
+      {
+        "account_type": "bank",
+        "label": "银行",
+        "inflow": "6928.00",
+        "outflow": "0",
+        "net": "6928.00",
+        "count": 1
+      },
+      {
+        "account_type": "cash",
+        "label": "现金",
+        "inflow": "0",
+        "outflow": "0",
+        "net": "0",
+        "count": 0
+      }
+    ],
+    "events": [
+      {
+        "id": 1,
+        "event_no": "P2B-EVENT-8bfed9fc-0dcf-4d99-8700-13f0cf40b259",
+        "kind": "fx_settlement",
+        "kind_label": "外币结汇到账",
+        "currency": "USD",
+        "source_amount": "980.0000",
+        "direction": "income",
+        "direction_label": "流入",
+        "bank_date": "2026-11-10",
+        "bank_net_amount": "6928.00",
+        "fee_mode": "included",
+        "fee_amount": "30.00",
+        "bank_reference": "SYN-INTEGRATED-FX-01",
+        "status": "confirmed",
+        "detail_url": "/rmb-cash-events?event=1",
+        "account_type": "bank",
+        "refund_excess_amount": "0"
+      }
+    ],
+    "note": "已登记实际人民币资金：含人工确认银行事件及已核实自有银行、现金账户事实，不代表公司全部实际资金，不是利润、销售收入或银行账户余额。"
+  },
+  "order": {
+    "id": 1,
+    "items": [
+      {
+        "id": 1,
+        "sku": 2,
+        "sku_code": "UAT-IMP-SKU-002",
+        "sales_model": "",
+        "model": "",
+        "product_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+        "display_name": "导入验收合成灯具 · UAT-IMP-SKU-002",
+        "description": "导入验收合成灯具",
+        "unit": "个",
+        "quantity": "1.00",
+        "unit_price": "1000.0000",
+        "cost_price": "0.0000",
+        "cost_currency_snapshot": "CNY",
+        "amount": "1000.00",
+        "notes": "",
+        "supplier_sku": null,
+        "supplier_name": "",
+        "supplier_model": "",
+        "supplier_sku_code": "",
+        "supplier_barcode": "",
+        "supplier_allocation": null,
+        "trade_unit": null,
+        "trade_quantity": null,
+        "trade_unit_price": null,
+        "trade_snapshot": {
+          "unit": "个",
+          "base_unit": "个",
+          "factor": "1",
+          "name": ""
+        }
+      }
+    ],
+    "customer_name": "导入验收合成客户",
+    "customer_country": "",
+    "quote_no": "",
+    "source_quote_no": "",
+    "status_display": "已确认",
+    "total_amount": "1000.00",
+    "base_amount": "1000.00",
+    "approved_change_amount": "0.00",
+    "paid_amount": "980.00",
+    "balance_amount": 0,
+    "receivable_state": "settled",
+    "created_at": "2026-11-10T11:54:05.435827+08:00",
+    "updated_at": "2026-11-10T11:54:05.435855+08:00",
+    "order_no": "SYN-FIN-COMPANY",
+    "customer_name_snapshot": "",
+    "customer_country_snapshot": "",
+    "customer_address_snapshot": "",
+    "customer_contact_name_snapshot": "",
+    "customer_phone_snapshot": "",
+    "customer_email_snapshot": "",
+    "order_date": "2026-11-06",
+    "expected_ship_date": null,
+    "tail_goods_policy": "SAME_CARTON",
+    "status": "confirmed",
+    "historical_only": false,
+    "currency": "USD",
+    "exchange_rate": "7.100000",
+    "shipping_fee": "0.0000",
+    "discount": "0.0000",
+    "notes": "",
+    "cancelled_at": null,
+    "cancellation_reason": "",
+    "quantity_change_version": 0,
+    "customer": 1,
+    "quote": null,
+    "effective_party": {
+      "name": "",
+      "country": "",
+      "address": "",
+      "contact": "",
+      "phone": "",
+      "email": ""
+    }
+  },
+  "plan": {
+    "id": 1,
+    "customer_id": 1,
+    "supplier_id": null,
+    "exchange_rate": 7.1,
+    "remaining_rmb": 0,
+    "remaining_amount": "0.0000",
+    "contract_no": "SYN-FIN-COMPANY",
+    "counterparty_name": "导入验收合成客户",
+    "is_overdue": false,
+    "writeoff_amount": 0,
+    "created_at": "2026-11-10T11:54:05.616605+08:00",
+    "updated_at": "2026-11-10T11:55:14.554643+08:00",
+    "direction": "receivable",
+    "due_date": null,
+    "planned_amount": "1000.0000",
+    "settled_amount": "1000.0000",
+    "currency": "USD",
+    "status": "settled",
+    "notes": "",
+    "order": 1,
+    "purchase_order": null
+  }
+}

@@ -217,7 +217,10 @@ class TradeUnitsTests(TestCase):
         draft = self.client.get(f"/api/quotes/{quote['id']}/order-draft/").data
         order = self.post('orders/', draft)
         order = self.confirm_order(order)
-        self.assertEqual([Decimal(row['quantity']) for row in order['items']], [20, 40])
+        self.assertCountEqual(
+            [(row["trade_unit"], Decimal(row["quantity"])) for row in order["items"]],
+            [(self.unit.pk, Decimal("20")), (large.pk, Decimal("40"))],
+        )
         self.assertEqual(sku_metrics(self.sku)['reserved_quantity'], 60)
         self.post(f"orders/{order['id']}/ship/", dict(shipment_date=self.today, items=[
             dict(order_item=row['id'], trade_unit=row['trade_unit'], trade_quantity=row['trade_quantity']) for row in order['items']

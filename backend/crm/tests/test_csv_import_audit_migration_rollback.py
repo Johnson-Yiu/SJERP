@@ -1,23 +1,27 @@
 from django.contrib.auth import get_user_model
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.db.migrations.recorder import MigrationRecorder
-from django.test import TransactionTestCase
 
 from crm.models import CSVImportBatch, CSVImportPreviewAudit, CSVImportRowAudit
 
 
-class CsvImportAuditMigrationRollbackTests(TransactionTestCase):
-    reset_sequences = True
+class CsvImportAuditMigrationRollbackTests(HistoricalMigrationTestCase):
     guard_migration = ("crm", "0094_csv_import_audit_truncate_guard")
     parent_migration = ("crm", "0093_csv_import_preview_audit")
+
+    def setUp(self):
+        super().setUp()
+        executor = MigrationExecutor(connection)
+        auth = executor.loader.graph.leaf_nodes("auth")
+        executor.migrate([self.guard_migration, *auth])
 
     def _migrate_to_latest(self):
         executor = MigrationExecutor(connection)
         executor.migrate(executor.loader.graph.leaf_nodes())
 
     def test_reverse_is_refused_while_any_audit_history_exists(self):
-        latest = MigrationExecutor(connection).loader.graph.leaf_nodes()
         operator = get_user_model().objects.create_user(
             username="csv-audit-rollback-operator",
             password="isolated-test-only",

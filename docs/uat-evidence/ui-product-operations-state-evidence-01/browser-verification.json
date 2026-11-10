@@ -1,0 +1,844 @@
+{
+  "source": "1e45e42cc4fa38afbf856143228dada7c8a2e86f",
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.80",
+    "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.27"
+  },
+  "results": [
+    {
+      "state": "product-search-no-match",
+      "screenshot": "verification-product-search-no-match-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "product-category-cascade",
+      "screenshot": "verification-product-category-cascade-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/next-code/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "product-unsaved",
+      "screenshot": "verification-product-unsaved-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/next-code/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-edit-draft",
+      "screenshot": "verification-purchase-edit-draft-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-edit-draft-line",
+      "screenshot": "verification-purchase-edit-draft-line-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificate-field-error",
+      "screenshot": "verification-certificate-field-error-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 400,
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "state": "certificate-upload-selected",
+      "screenshot": "verification-certificate-upload-selected-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 400,
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "state": "certificate-upload-saved",
+      "screenshot": "verification-certificate-upload-saved-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 400,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 201,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/context/product-certificates/2/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/2/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-place-confirmation",
+      "screenshot": "verification-purchase-place-confirmation-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-partial-receipt-form",
+      "screenshot": "verification-purchase-partial-receipt-form-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/place/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-partial-receipt-saved",
+      "screenshot": "verification-purchase-partial-receipt-saved-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/place/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/receive/",
+          "status": 201,
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "state": "purchase-cost-overview",
+      "screenshot": "verification-purchase-cost-overview-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/contract-changes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/cost-allocation-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-cost-multiple-orders",
+      "screenshot": "verification-purchase-cost-multiple-orders-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/contract-changes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/cost-allocation-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation-preview/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation-preview/",
+          "status": 400,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation-preview/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation-preview/",
+          "status": 200,
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "state": "purchase-cost-saved",
+      "screenshot": "verification-purchase-cost-saved-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/contract-changes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/cost-allocation-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation-preview/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation-preview/",
+          "status": 400,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation-preview/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation-preview/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation/",
+          "status": 200,
+          "method": "POST"
+        }
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "state": "product-load-failure",
+      "message": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '重新加载', exact: true }).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('button', { name: '重新加载', exact: true }).first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '重新加载', exact: true }).first()\u001b[22m\n"
+    }
+  ]
+}

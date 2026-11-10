@@ -1,0 +1,225 @@
+{
+  "source": "1e45e42cc4fa38afbf856143228dada7c8a2e86f",
+  "browser": "Chrome/156.0.8078.80",
+  "status": "partial-timeout",
+  "indexMethod": "Reconstructed from screenshots written before the 480s test timeout. Before each screenshot the script checked native DPR and CSS width. Per-case errors and numeric metrics were not persisted.",
+  "results": [
+    {
+      "id": "C04",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "C04-1366-100.png"
+    },
+    {
+      "id": "C04",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "file": "C04-1366-125.png"
+    },
+    {
+      "id": "C04",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "file": "C04-1440-100.png"
+    },
+    {
+      "id": "C04",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "C04-390-100.png"
+    },
+    {
+      "id": "C05",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "C05-1366-100.png"
+    },
+    {
+      "id": "C05",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "file": "C05-1366-125.png"
+    },
+    {
+      "id": "C05",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "file": "C05-1440-100.png"
+    },
+    {
+      "id": "C05",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "C05-390-100.png"
+    },
+    {
+      "id": "C05A",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "C05A-1366-100.png"
+    },
+    {
+      "id": "C05A",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "file": "C05A-1440-100.png"
+    },
+    {
+      "id": "C05A",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "C05A-390-100.png"
+    },
+    {
+      "id": "C07R",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "C07R-1366-100.png"
+    },
+    {
+      "id": "C07R",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "file": "C07R-1440-100.png"
+    },
+    {
+      "id": "O03",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "O03-1366-100.png"
+    },
+    {
+      "id": "O04",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "O04-1366-100.png"
+    },
+    {
+      "id": "O04",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "O04-390-100.png"
+    },
+    {
+      "id": "O05D",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "O05D-1366-100.png"
+    },
+    {
+      "id": "O05D",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "file": "O05D-1440-100.png"
+    },
+    {
+      "id": "Q02R",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "Q02R-1366-100.png"
+    },
+    {
+      "id": "Q02R",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "file": "Q02R-1440-100.png"
+    },
+    {
+      "id": "Q02R",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "Q02R-390-100.png"
+    },
+    {
+      "id": "Q02X",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "Q02X-390-100.png"
+    },
+    {
+      "id": "Q04",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "Q04-1366-100.png"
+    },
+    {
+      "id": "Q04",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "file": "Q04-1366-125.png"
+    },
+    {
+      "id": "Q04",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "file": "Q04-1440-100.png"
+    },
+    {
+      "id": "Q04",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "Q04-390-100.png"
+    },
+    {
+      "id": "Q05",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "Q05-1366-100.png"
+    },
+    {
+      "id": "Q05",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "file": "Q05-1440-100.png"
+    },
+    {
+      "id": "Q05",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "Q05-390-100.png"
+    },
+    {
+      "id": "Q06",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "Q06-1366-100.png"
+    },
+    {
+      "id": "Q06",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "file": "Q06-1366-125.png"
+    }
+  ]
+}

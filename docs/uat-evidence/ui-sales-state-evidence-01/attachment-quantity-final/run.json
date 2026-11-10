@@ -1,0 +1,79 @@
+{
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.80",
+    "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.27"
+  },
+  "customerCreate": 201,
+  "results": [
+    {
+      "id": "C05-upload-interception",
+      "method": "Paused then aborted attachment POST only"
+    },
+    {
+      "id": "C05-upload-failed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "topbarBottom": 70,
+      "workspaceTop": 82,
+      "file": "C05-upload-failed-390-100.png"
+    },
+    {
+      "id": "C05-upload-retry-http",
+      "method": "POST",
+      "path": "/api/follow-ups/1/attachments/",
+      "httpStatus": 201
+    },
+    {
+      "id": "C05-upload-retry-reopened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "topbarBottom": 70,
+      "workspaceTop": 82,
+      "file": "C05-upload-retry-reopened-390-100.png"
+    },
+    {
+      "id": "O04-confirm-http",
+      "method": "POST",
+      "path": "/api/orders/1/confirm/",
+      "httpStatus": 200
+    },
+    {
+      "id": "O06-preview-http",
+      "method": "POST",
+      "path": "/api/orders/1/quantity-adjustments/preview/",
+      "httpStatus": 200
+    },
+    {
+      "id": "O06-quantity-applied-http",
+      "method": "POST",
+      "path": "/api/orders/1/quantity-adjustments/",
+      "httpStatus": 201
+    },
+    {
+      "id": "O06-quantity-applied",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "topbarBottom": 70,
+      "workspaceTop": 82,
+      "file": "O06-quantity-applied-390-100.png"
+    }
+  ]
+}

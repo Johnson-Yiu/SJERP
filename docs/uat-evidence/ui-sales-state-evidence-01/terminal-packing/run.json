@@ -1,0 +1,563 @@
+{
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.80",
+    "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.27"
+  },
+  "customerCreate": 201,
+  "results": [
+    {
+      "id": "O04-confirm-dialog",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "O04-confirm-dialog-1366-100.png"
+    },
+    {
+      "id": "O04-confirm-dialog",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "O04-confirm-dialog-1440-100.png"
+    },
+    {
+      "id": "O04-confirm-dialog",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "O04-confirm-dialog-390-100.png"
+    },
+    {
+      "id": "O04-confirm-dialog",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "file": "O04-confirm-dialog-1366-125.png"
+    },
+    {
+      "id": "O04-confirm-dialog",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "O04-confirm-dialog-1440-125.png"
+    },
+    {
+      "id": "O04-confirm-dialog",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "O04-confirm-dialog-390-125.png"
+    },
+    {
+      "id": "O04-confirm-http",
+      "method": "POST",
+      "path": "/api/orders/1/confirm/",
+      "httpStatus": 200
+    },
+    {
+      "id": "O05-confirmed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "O05-confirmed-1366-100.png"
+    },
+    {
+      "id": "O05-confirmed",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "O05-confirmed-1440-100.png"
+    },
+    {
+      "id": "O05-confirmed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "O05-confirmed-390-100.png"
+    },
+    {
+      "id": "O05-confirmed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "file": "O05-confirmed-1366-125.png"
+    },
+    {
+      "id": "O05-confirmed",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "O05-confirmed-1440-125.png"
+    },
+    {
+      "id": "O05-confirmed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "O05-confirmed-390-125.png"
+    },
+    {
+      "id": "O07-overage-required",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "O07-overage-required-1366-100.png"
+    },
+    {
+      "id": "O07-overage-required",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "O07-overage-required-1440-100.png"
+    },
+    {
+      "id": "O07-overage-required",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "O07-overage-required-390-100.png"
+    },
+    {
+      "id": "O07-overage-required",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "file": "O07-overage-required-1366-125.png"
+    },
+    {
+      "id": "O07-overage-required",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "O07-overage-required-1440-125.png"
+    },
+    {
+      "id": "O07-overage-required",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "O07-overage-required-390-125.png"
+    },
+    {
+      "id": "O07-overage-confirm",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "O07-overage-confirm-1366-100.png"
+    },
+    {
+      "id": "O07-overage-confirm",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "O07-overage-confirm-1440-100.png"
+    },
+    {
+      "id": "O07-overage-confirm",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "O07-overage-confirm-390-100.png"
+    },
+    {
+      "id": "O07-overage-confirm",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "file": "O07-overage-confirm-1366-125.png"
+    },
+    {
+      "id": "O07-overage-confirm",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "O07-overage-confirm-1440-125.png"
+    },
+    {
+      "id": "O07-overage-confirm",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "O07-overage-confirm-390-125.png"
+    },
+    {
+      "id": "O07-overage-http",
+      "method": "POST",
+      "path": "/api/orders/1/ship/",
+      "httpStatus": 201
+    },
+    {
+      "id": "O07-all-shipped",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "O07-all-shipped-1366-100.png"
+    },
+    {
+      "id": "O07-all-shipped",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "O07-all-shipped-1440-100.png"
+    },
+    {
+      "id": "O07-all-shipped",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "O07-all-shipped-390-100.png"
+    },
+    {
+      "id": "O07-all-shipped",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "file": "O07-all-shipped-1366-125.png"
+    },
+    {
+      "id": "O07-all-shipped",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "O07-all-shipped-1440-125.png"
+    },
+    {
+      "id": "O07-all-shipped",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "O07-all-shipped-390-125.png"
+    },
+    {
+      "id": "O08-packing-empty",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "O08-packing-empty-1366-100.png"
+    },
+    {
+      "id": "O08-packing-empty",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "O08-packing-empty-1440-100.png"
+    },
+    {
+      "id": "O08-packing-empty",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "O08-packing-empty-390-100.png"
+    },
+    {
+      "id": "O08-packing-empty",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "file": "O08-packing-empty-1366-125.png"
+    },
+    {
+      "id": "O08-packing-empty",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "O08-packing-empty-1440-125.png"
+    },
+    {
+      "id": "O08-packing-empty",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "O08-packing-empty-390-125.png"
+    },
+    {
+      "id": "O08-packing-editor",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "O08-packing-editor-1366-100.png"
+    },
+    {
+      "id": "O08-packing-editor",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "O08-packing-editor-1440-100.png"
+    },
+    {
+      "id": "O08-packing-editor",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "O08-packing-editor-390-100.png"
+    },
+    {
+      "id": "O08-packing-editor",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "file": "O08-packing-editor-1366-125.png"
+    },
+    {
+      "id": "O08-packing-editor",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "O08-packing-editor-1440-125.png"
+    },
+    {
+      "id": "O08-packing-editor",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "O08-packing-editor-390-125.png"
+    },
+    {
+      "id": "O08-packing-create-http",
+      "method": "POST",
+      "path": "/api/shipments/1/packages/",
+      "httpStatus": 201
+    },
+    {
+      "id": "O08-packing-saved",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "O08-packing-saved-1366-100.png"
+    },
+    {
+      "id": "O08-packing-saved",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "O08-packing-saved-1440-100.png"
+    },
+    {
+      "id": "O08-packing-saved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "O08-packing-saved-390-100.png"
+    },
+    {
+      "id": "O08-packing-saved",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "file": "O08-packing-saved-1366-125.png"
+    },
+    {
+      "id": "O08-packing-saved",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "O08-packing-saved-1440-125.png"
+    },
+    {
+      "id": "O08-packing-saved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "O08-packing-saved-390-125.png"
+    },
+    {
+      "id": "O08-terminal",
+      "outcome": "incomplete",
+      "reason": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed"
+    }
+  ]
+}

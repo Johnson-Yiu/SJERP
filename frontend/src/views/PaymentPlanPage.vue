@@ -1,5 +1,5 @@
 <script setup>
-import { useFinanceAttempts } from '../composables/useFinanceAttempts'
+import { financeAttemptError, useFinanceAttempts } from '../composables/useFinanceAttempts'
 const financeAttempts = useFinanceAttempts()
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
@@ -213,22 +213,22 @@ async function settle() {
     payload: { ...form, currency: selected.value.currency, category: category.value } }
   const storageKey = `finance-plan-settle-${selected.value.id}`
   try { financeAttempts.save(storageKey, JSON.stringify(attempt)) }
-  catch { error.value = '浏览器无法保存本次收付款标识，请检查浏览器存储后重试。'; return }
+  catch (err) { error.value = financeAttemptError(err, '浏览器无法保存本次收付款标识，请检查浏览器存储后重试。'); return }
   settleAttempt.value = attempt
   refreshPendingSettlements()
   saving.value = true
   error.value = ''; notice.value = ''
   try {
     await api.post(`/payment-plans/${selected.value.id}/settle/`, attempt.payload, { headers: { 'Idempotency-Key': attempt.key } })
-    financeAttempts.remove(storageKey); settleAttempt.value = null; refreshPendingSettlements(); settleGuard.markClean()
+    financeAttempts.remove(storageKey, JSON.stringify(attempt)); settleAttempt.value = null; refreshPendingSettlements(); settleGuard.markClean()
     selected.value = null
     await load(); notice.value = props.direction === 'receivable' ? '收款登记成功' : '付款登记成功'
   } catch (err) {
-    if (!existing && err.response?.status === 400) { financeAttempts.remove(storageKey); settleAttempt.value = null; refreshPendingSettlements() }
+    if (!existing && err.response?.status === 400) { financeAttempts.remove(storageKey, JSON.stringify(attempt)); settleAttempt.value = null; refreshPendingSettlements() }
     error.value = apiErrorMessage(err) || `${actionLabel.value}结果待确认，请按原内容重试。`
   } finally { saving.value = false }
 }
-refreshPendingSettlements()
+watch(() => financeAttempts.isReady(), refreshPendingSettlements, { immediate: true })
 syncFiltersFromRoute()
 watch(routeFilterKey, () => { syncFiltersFromRoute(); void load() })
 watch([() => props.direction, () => route.query.order], () => { refreshPendingSettlements(); void loadOrderContext() }, { immediate: true })

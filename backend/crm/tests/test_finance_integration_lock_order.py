@@ -299,6 +299,8 @@ class FinanceIntegrationLockOrderPostgreSQLTests(FinanceLockOrderFixture, Transa
         last_observation = None
         while time.monotonic() < deadline:
             with connection.cursor() as cursor:
+                # The lock owner stays in one transaction during this poll.
+                cursor.execute("SELECT pg_stat_clear_snapshot()")
                 cursor.execute(
                     """
                     SELECT wait_event_type, state, query, pg_blocking_pids(pid)

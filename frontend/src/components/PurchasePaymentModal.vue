@@ -1,10 +1,10 @@
 <script setup>
-import { useFinanceAttempts } from '../composables/useFinanceAttempts'
+import { financeAttemptError, useFinanceAttempts } from '../composables/useFinanceAttempts'
 const financeAttempts = useFinanceAttempts()
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 const { api } = useWorkspaceApi()
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { X, CircleDollarSign } from 'lucide-vue-next'
 
 const props = defineProps({ purchase: Object })
@@ -13,14 +13,21 @@ const saving = ref(false), error = ref('')
 const form = ref({ transaction_date: new Date().toLocaleDateString('en-CA'), amount: '', payment_method: '', reference: '', notes: '', exchange_rate: props.purchase.currency === 'CNY' ? '1' : '' })
 const storageKey = `finance-purchase-payment-${props.purchase.id}`
 const pending = ref(null)
-try {
-  const saved = JSON.parse(financeAttempts.get(storageKey) || 'null')
-  if (saved?.key && saved?.payload) { pending.value = saved; form.value = { ...form.value, ...saved.payload } }
-} catch { /* a failed write is reported before submission */ }
 const formGuard = useUnsavedChangesGuard({
   data: () => ({ ...form.value, pending: pending.value?.key || '' }), busy: () => saving.value,
   confirmOptions: () => pending.value ? { title: '付款结果待确认', message: '关闭后可在本标签页重新打开并按原内容核对；已登记的付款不会撤销。', cancelText: '继续核对', confirmText: '关闭并保留' } : {},
 })
+watch(() => financeAttempts.isReady(), ready => {
+  if (!ready || pending.value) return
+  try {
+    const saved = JSON.parse(financeAttempts.get(storageKey) || 'null')
+    if (saved?.key && saved?.payload) {
+      pending.value = saved
+      form.value = { ...form.value, ...saved.payload }
+      formGuard.markClean()
+    }
+  } catch { /* A failed write is reported before submission. */ }
+}, { immediate: true })
 formGuard.markClean()
 function close() { return formGuard.requestClose(() => emit('close')) }
 const money = value => Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -34,17 +41,17 @@ async function submit() {
   const existing = pending.value
   const attempt = existing || { key: `PURCHASE-PAY-${crypto.randomUUID()}`, payload: { ...form.value, currency: props.purchase.currency, exchange_rate: props.purchase.currency === 'CNY' ? 1 : form.value.exchange_rate } }
   try { financeAttempts.save(storageKey, JSON.stringify(attempt)) }
-  catch { error.value = '浏览器无法保存本次付款标识，请检查浏览器存储后重试。'; return }
+  catch (err) { error.value = financeAttemptError(err, '浏览器无法保存本次付款标识，请检查浏览器存储后重试。'); return }
   pending.value = attempt
   saving.value = true
   try {
     await api.post(`/purchase-orders/${props.purchase.id}/pay/`, attempt.payload, { headers: { 'Idempotency-Key': attempt.key } })
-    financeAttempts.remove(storageKey)
+    financeAttempts.remove(storageKey, JSON.stringify(attempt))
     pending.value = null
     formGuard.markClean()
     emit('saved')
   } catch (e) {
-    if (!existing && e.response?.status === 400) { financeAttempts.remove(storageKey); pending.value = null }
+    if (!existing && e.response?.status === 400) { financeAttempts.remove(storageKey, JSON.stringify(attempt)); pending.value = null }
     const data = e.response?.data
     error.value = data?.detail || (data ? Object.values(data).flat().join(' ') : '') || '付款结果待确认，请按原内容重试。'
   } finally { saving.value = false }

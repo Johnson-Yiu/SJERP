@@ -37,6 +37,30 @@ const correctionDetailLabels = {
   source_record_id: '原系统记录号', source_document_no: '原系统业务单据号',
   voucher_reference: '凭证编号或存放位置', description: '业务明细',
 }
+const legacyCorrectionLabels = {
+  source_id: '来源记录编号', fact_id: '历史事实编号', amount: '金额', currency: '币种',
+  old_value: '原值', new_value: '更正值', note: '备注',
+}
+
+function legacyCorrectionRows(details) {
+  function rows(value, labels) {
+    if (value === null) return [{ label: labels.join(' / '), value: '未填写' }]
+    if (typeof value === 'object') {
+      const entries = Object.entries(value)
+      if (!entries.length) return [{ label: labels.join(' / '), value: '无明细' }]
+      return entries.flatMap(([key, item]) => rows(item, [
+        ...labels,
+        Array.isArray(value) ? `第 ${Number(key) + 1} 项` : (legacyCorrectionLabels[key] ?? key.replaceAll('_', ' ')),
+      ]))
+    }
+    return [{ label: labels.join(' / '), value: typeof value === 'boolean' ? (value ? '是' : '否') : String(value) }]
+  }
+
+  return Object.entries(details ?? {})
+    .filter(([key]) => !Object.hasOwn(correctionDetailLabels, key))
+    .flatMap(([key, value]) => rows(value, [legacyCorrectionLabels[key] ?? key.replaceAll('_', ' ')]))
+}
+
 const financeSources = ref([])
 const financeAccounts = ref([])
 const financeVouchers = ref([])
@@ -678,6 +702,14 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                     <template v-if="event.details?.details?.[key]"><dt>{{ label }}</dt><dd>{{ event.details.details[key] }}</dd></template>
                   </template>
                 </dl>
+                <details v-if="canReview && legacyCorrectionRows(event.details?.details).length">
+                  <summary>旧版申请补充资料</summary>
+                  <dl>
+                    <template v-for="(item, index) in legacyCorrectionRows(event.details?.details)" :key="index">
+                      <dt>{{ item.label }}</dt><dd>{{ item.value }}</dd>
+                    </template>
+                  </dl>
+                </details>
                 <div v-if="canReview && event.group_id === selectedGroup?.id && !selectedGroup.verified_correction_ids?.includes(event.id) && !selected.events.some(review => review.event_type === 'correction_reviewed' && review.details?.source_event_id === event.id)" class="takeover-fields">
                   <label>更正审核依据<textarea v-model="correctionReviewNotes[event.id]" rows="2" /></label>
                   <div class="takeover-actions">

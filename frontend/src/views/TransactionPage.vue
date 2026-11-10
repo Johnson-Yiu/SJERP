@@ -1,5 +1,5 @@
 <script setup>
-import { useFinanceAttempts } from '../composables/useFinanceAttempts'
+import { financeAttemptError, useFinanceAttempts } from '../composables/useFinanceAttempts'
 const financeAttempts = useFinanceAttempts()
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
@@ -394,16 +394,16 @@ async function submitRefund() {
   const attempt = existing || { key: `REF-${crypto.randomUUID()}`, payload: { ...refundForm } }
   const storageKey = `finance-refund-${refundTarget.value.id}`
   try { financeAttempts.save(storageKey, JSON.stringify(attempt)) }
-  catch { error.value = '浏览器无法保存本次退款身份，请恢复浏览器存储后重试。'; return }
+  catch (err) { error.value = financeAttemptError(err, '浏览器无法保存本次退款身份，请恢复浏览器存储后重试。'); return }
   refundAttempt.value = attempt; refundSaving.value = true; error.value = ''; notice.value = ''
   const { voucherName, ...payload } = attempt.payload
   try {
     await api.post(`/transactions/${refundTarget.value.id}/refund-cash/`, payload, { headers: { 'Idempotency-Key': attempt.key } })
-    financeAttempts.remove(storageKey); refundAttempt.value = null; refundGuard.markClean(); refundTarget.value = null
+    financeAttempts.remove(storageKey, JSON.stringify(attempt)); refundAttempt.value = null; refundGuard.markClean(); refundTarget.value = null
     await load(); notice.value = '退款已登记，原收款和凭证已保留。'
   } catch (err) {
     if (!existing && err.response?.status === 400) {
-      financeAttempts.remove(storageKey); refundAttempt.value = null
+      financeAttempts.remove(storageKey, JSON.stringify(attempt)); refundAttempt.value = null
       error.value = apiErrorMessage(err) || '退款未保存，请检查信息。'
     } else error.value = apiErrorMessage(err) || '退款结果待确认，请按原内容重试。'
   } finally { refundSaving.value = false }
@@ -545,7 +545,7 @@ async function save() {
     const savedAttempt = existingAttempt || { payload, selectedOrder: selectedOrder.value, settlementOpen: settlementOpen.value }
     const storageKey = `finance-receipt-${payload.transaction_no}`
     try { financeAttempts.save(storageKey, JSON.stringify(savedAttempt)) }
-    catch { saveOutcome.value = 'rejected'; error.value = '浏览器无法保存本次收款标识，请检查浏览器存储后重试。'; return }
+    catch (err) { saveOutcome.value = 'rejected'; error.value = financeAttemptError(err, '浏览器无法保存本次收款标识，请检查浏览器存储后重试。'); return }
     receiptAttempt.value = savedAttempt
     refreshReceiptAttempts()
     const attempt = await saveOrVerifyCustomerReceipt({
@@ -569,7 +569,7 @@ async function save() {
     }
     if (attempt.status === 'unknown' || attempt.status === 'rejected') {
       if (attempt.status === 'rejected' && !existingAttempt) {
-        financeAttempts.remove(storageKey); receiptAttempt.value = null; refreshReceiptAttempts()
+        financeAttempts.remove(storageKey, JSON.stringify(savedAttempt)); receiptAttempt.value = null; refreshReceiptAttempts()
       }
       saveOutcome.value = existingAttempt ? 'unknown' : attempt.status
       const duplicateNumber = Boolean(attempt.error?.response?.data?.transaction_no)
@@ -577,7 +577,7 @@ async function save() {
       return
     }
     const receipt = attempt.receipt
-    financeAttempts.remove(storageKey); receiptAttempt.value = null; refreshReceiptAttempts()
+    financeAttempts.remove(storageKey, JSON.stringify(savedAttempt)); receiptAttempt.value = null; refreshReceiptAttempts()
     saveOutcome.value = 'confirmed'
     if (form.kind === 'customer_receipt' && settlementOpen.value && form.currency !== 'CNY') {
       savedReceipt.value = { ...receipt, order_no: receipt.order_no || selectedOrder.value?.order_no, order: receipt.order || form.order, currency: receipt.currency || form.currency }
@@ -595,7 +595,7 @@ async function save() {
     error.value = apiErrorMessage(err) || (saveOutcome.value === 'unknown' ? '无法核对原收款流水，请稍后重试。' : '收款保存失败，请核对输入后重试。')
   } finally { saving.value = false; receiptLookupLoading.value = false }
 }
-refreshReceiptAttempts()
+watch(() => financeAttempts.isReady(), refreshReceiptAttempts, { immediate: true })
 function onSettlementStateChange(value) { settlementSnapshot.value = value }
 async function onSettlementCreated(row) {
   settlementSnapshot.value = { ...settlementSnapshot.value, busy: false }
@@ -637,17 +637,17 @@ async function submitVoid() {
     try {
       await api.post(`/transactions/${voidTarget.value.id}/void/`, attempt.payload, { headers: { 'Idempotency-Key': attempt.key } })
     } catch (err) {
-      if (!replaying && err.response?.status === 400) { financeAttempts.remove(storageKey); voidAttempt.value = null }
+      if (!replaying && err.response?.status === 400) { financeAttempts.remove(storageKey, JSON.stringify(attempt)); voidAttempt.value = null }
       throw err
     }
-    financeAttempts.remove(storageKey)
+    financeAttempts.remove(storageKey, JSON.stringify(attempt))
     voidAttempt.value = null
     voidGuard.markClean()
     voidTarget.value = null
     voidReason.value = ''
     await load()
     notice.value = '财务流水已作废，相关计划已恢复。'
-  } catch (err) { error.value = apiErrorMessage(err) || '流水作废失败，请重试。' } finally { voidSaving.value = false }
+  } catch (err) { error.value = financeAttemptError(err, apiErrorMessage(err) || '流水作废失败，请重试。') } finally { voidSaving.value = false }
 }
 async function openAllocate(row) {
   if (!can('transactions', 'update')) return
@@ -671,18 +671,18 @@ async function allocate() {
   const attempt = existing || { key: `ALLOC-${crypto.randomUUID()}`, plan: allocationPlan.value, amount: String(allocationAmount.value), planLabel: selected?.contract_no || '所选计划' }
   const storageKey = `finance-allocation-${allocation.value.id}`
   try { financeAttempts.save(storageKey, JSON.stringify(attempt)) }
-  catch { error.value = '浏览器无法保存本次核销标识，请检查浏览器存储后重试。'; return }
+  catch (err) { error.value = financeAttemptError(err, '浏览器无法保存本次核销标识，请检查浏览器存储后重试。'); return }
   allocationAttempt.value = attempt
   saving.value = true
   error.value = ''; notice.value = ''
   try {
     await api.post(`/transactions/${allocation.value.id}/allocate/`, { plan: attempt.plan, amount: attempt.amount }, { headers: { 'Idempotency-Key': attempt.key } })
-    financeAttempts.remove(storageKey)
+    financeAttempts.remove(storageKey, JSON.stringify(attempt))
     allocationAttempt.value = null; allocationGuard.markClean(); allocation.value = null
     await load(); notice.value = '核销已保存。'
   } catch (err) {
     if (!existing && err.response?.status === 400) {
-      financeAttempts.remove(storageKey); allocationAttempt.value = null
+      financeAttempts.remove(storageKey, JSON.stringify(attempt)); allocationAttempt.value = null
       error.value = apiErrorMessage(err) || '核销未保存，请检查金额和计划。'
     } else error.value = apiErrorMessage(err) || '核销结果待确认，请按原内容重试。'
   } finally { saving.value = false }

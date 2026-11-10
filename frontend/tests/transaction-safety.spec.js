@@ -1,9 +1,14 @@
+import { setAccessOperator } from '../src/accessControl'
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import TransactionPage from '../src/views/TransactionPage.vue'
 import { dialogState, resolveDialog } from '../src/dialogs'
+
+const financeAccount = id => setAccessOperator({ authenticated: true, user_id: id, has_all_permissions: true })
+const savedKey = key => `sunjack:finance-attempt:v2:user:101:${key}`
+beforeEach(() => { window.localStorage.clear(); financeAccount(101) })
 
 const mocks = vi.hoisted(() => ({ post: vi.fn(), listAll: vi.fn() }))
 vi.mock('../src/api', () => ({ api: { post: mocks.post }, listAll: mocks.listAll }))
@@ -141,24 +146,25 @@ describe('FUP-01 transaction editor protection', () => {
     mocks.post.mockResolvedValueOnce({ data: { id: 99, transaction_no: original.transaction_no, kind: 'customer_receipt' } })
     await submit()
     expect(mocks.post.mock.calls[1][1]).toEqual(original)
-    expect(window.sessionStorage.getItem(`finance-receipt-${original.transaction_no}`)).toBeNull()
+    expect(window.localStorage.getItem(savedKey(`finance-receipt-${original.transaction_no}`))).toBeNull()
   })
   it('reopens an uncertain source refund and retries its original identity and evidence', async () => {
     const row = { id: 71, transaction_no: 'FIN-SYNTH', transaction_date: '2026-10-18', direction: 'income', kind: 'customer_receipt', status: 'confirmed', customer_name: '合成客户', currency: 'USD', amount: '100', refundable_cash_amount: '80', rmb_amount: null, allocations: [{ id: 3, order: 7, contract_no: 'SO-FUP', is_active: true, amount: '100', remaining_amount: '0' }], receipt_refunds: [] }
-    const attempt = { key: 'REF-original', payload: { order: 7, amount: '20', reason: '已核实实际退款凭证', voucher: 5, voucherName: 'refund.pdf' } }
-    window.sessionStorage.setItem('finance-refund-71', JSON.stringify(attempt))
+    const attempt = { key: 'REF-original', payload: { actual_date: '2026-10-18', order: 7, amount: '20', reason: '已核实实际退款凭证', voucher: 5, voucherName: 'refund.pdf' } }
+    window.localStorage.setItem(savedKey('finance-refund-71'), JSON.stringify(attempt))
     mocks.listAll.mockImplementation(async url => url === '/transactions/' ? [row] : url === '/orders/' ? [{ id: 7, order_no: 'SO-FUP', customer_name: '合成客户', currency: 'USD', status: 'confirmed' }] : [])
     wrapper.unmount(); wrapper = mount(TransactionPage, { global: { plugins: [router], directives: { 'money-input': {} } } }); await flushPromises()
     await button('详情').trigger('click'); await button('从本笔登记退款').trigger('click'); await flushPromises()
     const form = wrapper.get('form[aria-labelledby="receipt-refund-title"]')
     expect(form.text()).toContain('上次结果待确认')
+    expect(form.get('input[type="date"]').element.value).toBe('2026-10-18')
     expect(form.get('fieldset').attributes('disabled')).toBeDefined()
     await form.trigger('submit'); await flushPromises()
     const [url, body, config] = mocks.post.mock.calls.at(-1)
     expect(url).toBe('/transactions/71/refund-cash/')
-    expect(body).toEqual({ order: 7, amount: '20', reason: '已核实实际退款凭证', voucher: 5 })
+    expect(body).toEqual({ actual_date: '2026-10-18', order: 7, amount: '20', reason: '已核实实际退款凭证', voucher: 5 })
     expect(config.headers['Idempotency-Key']).toBe('REF-original')
-    expect(window.sessionStorage.getItem('finance-refund-71')).toBeNull()
+    expect(window.localStorage.getItem(savedKey('finance-refund-71'))).toBeNull()
   })
   it('records an orderless USD receipt with separate discount, fee and plan allocation', async () => {
     mocks.listAll.mockImplementation(async url => url === '/customers/' ? [{ id: 11, name: '合成客户' }] : url === '/payment-plans/' ? [{ id: 31, order: 7, customer_id: 11, direction: 'receivable', currency: 'USD', status: 'open', contract_no: 'SO-FUP', remaining_amount: '1000' }] : [])

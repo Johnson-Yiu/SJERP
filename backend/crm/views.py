@@ -3183,31 +3183,46 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         return Response({"detail": "财务流水不能删除，请使用作废保留记录。"}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=["post"])
+    @transaction.atomic
     def void(self, request, pk=None):
         source = self.get_object()
         require_finance_permission(request.user, "finance", "update")
         input_serializer = TransactionVoidInputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
-        before = snapshot(source)
+        payload = input_serializer.validated_data
         try:
-            row = void_transaction(source, input_serializer.validated_data["reason"])
+            with transaction.atomic():
+                identity = None
+                if "Idempotency-Key" in request.headers:
+                    identity, replay = begin_fulfillment_idempotency(
+                        key=require_finance_request_key(request), operation="finance_void", target_id=source.pk,
+                        payload=payload, operator_id=request.user.pk if request.user.is_authenticated else None,
+                    )
+                    if replay:
+                        result = finance_replay_with_current_scope(identity.response_payload, self.get_serializer(source).data)
+                        response = Response(result, status=identity.response_status)
+                        response["Idempotent-Replay"] = "true"
+                        return response
+                before = snapshot(source)
+                row = void_transaction(source, payload["reason"])
+                split_ids = []
+                frontier = [row.pk]
+                while frontier:
+                    frontier = list(Transaction.objects.filter(split_from_id__in=frontier).values_list("pk", flat=True))
+                    split_ids.extend(frontier)
+                record_operation(
+                    request=request, instance=row, action="custom", action_label="作废财务流水", before=before,
+                    metadata={"transaction_id": row.id, "reason": row.void_reason, "split_transaction_ids": split_ids},
+                )
+                result = self.get_serializer(row).data
+                if identity is not None:
+                    complete_fulfillment_idempotency(identity, result, response_status=200)
+                    result = identity.response_payload
+        except FulfillmentIdempotencyConflict:
+            return Response({"detail": "本次作废标识已用于其他内容，请核对原操作。"}, status=status.HTTP_409_CONFLICT)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        split_ids = []
-        frontier = [row.pk]
-        while frontier:
-            child_ids = list(Transaction.objects.filter(split_from_id__in=frontier).values_list("pk", flat=True))
-            split_ids.extend(child_ids)
-            frontier = child_ids
-        record_operation(
-            request=request,
-            instance=row,
-            action="custom",
-            action_label="作废财务流水",
-            before=before,
-            metadata={"transaction_id": row.id, "reason": row.void_reason, "split_transaction_ids": split_ids},
-        )
-        return Response(self.get_serializer(row).data)
+        return Response(result)
 
     @action(detail=True, methods=["post"])
     @transaction.atomic
@@ -3253,7 +3268,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def refund_cash(self, request, pk=None):
         from rest_framework import serializers as drf_serializers
         from .services.finance import refund_receipt_cash
-        if not isinstance(request.data, dict) or set(request.data) - {"order", "amount", "reason", "voucher"}:
+        if not isinstance(request.data, dict) or set(request.data) - {"order", "amount", "reason", "voucher", "actual_date"}:
             raise DRFValidationError("退款登记字段无效。")
         require_finance_permission(request.user, "finance", "update")
         source = self.get_object()
@@ -3266,23 +3281,31 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             validate_finance_relations({"order": order}, request.user)
         reason = str(request.data.get("reason") or "").strip()
         evidence_id = drf_serializers.IntegerField(min_value=1).run_validation(request.data.get("voucher"))
+        actual_date = timezone.localdate()
+        fingerprint = {"order": order_id, "amount": amount, "reason": reason, "voucher": evidence_id}
+        if "actual_date" in request.data:
+            try:
+                actual_date = drf_serializers.DateField(input_formats=["%Y-%m-%d"]).run_validation(request.data["actual_date"])
+            except DRFValidationError as error:
+                raise DRFValidationError({"actual_date": error.detail}) from error
+            fingerprint["actual_date"] = actual_date.isoformat()
         try:
             key = require_finance_request_key(request)
             with transaction.atomic():
                 identity, replay = begin_fulfillment_idempotency(
                     key=key, operation="finance_refund", target_id=source.pk,
-                    payload={"order": order_id, "amount": amount, "reason": reason, "voucher": evidence_id},
+                    payload=fingerprint,
                     operator_id=request.user.pk if getattr(request.user, "is_authenticated", False) else None)
                 if replay:
                     response = Response(identity.response_payload, status=identity.response_status)
                     response["Idempotent-Replay"] = "true"
                     return response
-                rows = refund_receipt_cash(source, order, amount, reason, evidence_id, request.user)
+                rows = refund_receipt_cash(source, order, amount, reason, evidence_id, request.user, actual_date=actual_date)
                 for refund, link in rows:
                     record_operation(request=request, instance=refund, action="create", action_label="登记原收款退款",
-                        metadata={"source_transaction_id": source.pk, "link_id": link.pk, "reason": reason})
+                        metadata={"source_transaction_id": source.pk, "link_id": link.pk, "reason": reason, "actual_date": actual_date.isoformat()})
                 result = {"refunds": [{"id": refund.pk, "transaction_no": refund.transaction_no,
-                    "amount": str(refund.amount), "currency": refund.currency} for refund, _ in rows]}
+                    "amount": str(refund.amount), "currency": refund.currency, "actual_date": refund.transaction_date.isoformat()} for refund, _ in rows]}
                 complete_fulfillment_idempotency(identity, result, response_status=201)
         except FulfillmentIdempotencyConflict:
             return Response({"detail": "本次退款标识已用于其他内容，请核对原操作。"}, status=status.HTTP_409_CONFLICT)

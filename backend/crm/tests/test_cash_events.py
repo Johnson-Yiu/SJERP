@@ -596,6 +596,22 @@ class CashEventTests(CashFixture, TestCase):
         self.assertEqual(RmbCashEvent.objects.count(), 1); self.assertEqual(CashSourceAllocation.objects.count(), 1)
         for method in (self.client.patch, self.client.put, self.client.delete): self.assertEqual(method(f"{URL}{pk}/", {}, format="json").status_code, 405)
 
+    def test_bank_replays_require_the_original_operator(self):
+        from django.contrib.auth import get_user_model
+
+        first = get_user_model().objects.create_superuser("bank-first")
+        other = get_user_model().objects.create_superuser("bank-other")
+        self.client.force_authenticate(first)
+        body = payload([self.receipt])
+        pk = self.register(body)
+        self.confirm(pk)
+        self.client.force_authenticate(other)
+        self.assertEqual(self.client.post(URL, body, format="json").status_code, 409)
+        self.confirm(pk, 409)
+        self.client.force_authenticate(first)
+        self.assertEqual(self.client.post(URL, body, format="json").status_code, 200)
+        self.confirm(pk)
+
     def test_cancel_pending_retains_evidence_and_allows_original_void(self):
         pk = self.register(payload([self.receipt]))
         with self.assertRaises(APIException): void_transaction(self.receipt, "待确认关联")

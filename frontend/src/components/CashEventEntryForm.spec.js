@@ -1,6 +1,11 @@
+import { setAccessOperator } from '../accessControl'
 import { flushPromises, mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import CashEventEntryForm from './CashEventEntryForm.vue'
+
+const financeAccount = id => setAccessOperator({ authenticated: true, user_id: id, has_all_permissions: true })
+const savedKey = key => `sunjack:finance-attempt:v2:user:101:${key}`
+beforeEach(() => { window.localStorage.clear(); financeAccount(101) })
 
 const { api, requestClose, markClean } = vi.hoisted(() => ({
   api: {
@@ -12,8 +17,6 @@ const { api, requestClose, markClean } = vi.hoisted(() => ({
 }))
 
 vi.mock('../composables/useWorkspaceApi', () => ({ useWorkspaceApi: () => ({ api }) }))
-vi.mock('../composables/useWorkspaceNavigation', () => ({ useWorkspaceNavigation: () => ({ workspace: null, storageKey: key => key }) }))
-vi.mock('../accessControl', () => ({ useAccessControl: () => ({ can: () => true }) }))
 vi.mock('../composables/useUnsavedChangesGuard', () => ({ useUnsavedChangesGuard: () => ({ requestClose, markClean }) }))
 
 describe('CashEventEntryForm outside-click behavior', () => {
@@ -93,7 +96,7 @@ describe('CashEventEntryForm outside-click behavior', () => {
 
   it('replays the exact pending linked settlement after reopening', async () => {
     const payload = { event_no: 'P2B-EVENT-1', request_key: 'P2B-REQUEST-1', bank_date: '2026-10-18', currency: 'USD', gross_rmb_amount: '710.00', fee_amount: '0', bank_net_amount: '710.00', bank_reference: 'BANK-1', sources: [{ transaction_id: 11, amount: '100.00', verified: true }] }
-    window.sessionStorage.setItem('sunjack:cash-event:pending-receipt:11', JSON.stringify({ payload }))
+    window.localStorage.setItem(savedKey('sunjack:cash-event:pending-receipt:11'), JSON.stringify({ payload }))
     api.get.mockImplementation(async () => ({ data: { results: [] } }))
     api.post.mockResolvedValueOnce({ data: { id: 5, event_no: payload.event_no, status: 'pending' } })
     const wrapper = mount(CashEventEntryForm, { props: { mode: 'linked', receipt: { id: 11, currency: 'USD' } } })
@@ -102,14 +105,14 @@ describe('CashEventEntryForm outside-click behavior', () => {
     expect(wrapper.get('fieldset').attributes('disabled')).toBeDefined()
     await wrapper.findAll('button').find(b => b.text() === '按原内容核对').trigger('click'); await flushPromises()
     expect(api.post).toHaveBeenCalledWith('/rmb-cash-events/', payload)
-    expect(window.sessionStorage.getItem('sunjack:cash-event:pending-receipt:11')).toBeNull()
+    expect(window.localStorage.getItem(savedKey('sunjack:cash-event:pending-receipt:11'))).toBeNull()
     expect(wrapper.emitted('created')[0][0].id).toBe(5)
     wrapper.unmount()
   })
 
   it('replays the exact bank confirmation review after reopening', async () => {
     const body = { voucher_checked: true, duplicate_token: 'candidate-token', duplicate_reason: '已核对为同一笔', same_fact: 9 }
-    window.sessionStorage.setItem('sunjack:cash-confirm:5', JSON.stringify({ body }))
+    window.localStorage.setItem(savedKey('sunjack:cash-confirm:5'), JSON.stringify({ body }))
     api.get.mockImplementation(async () => ({ data: { results: [] } }))
     api.post.mockResolvedValueOnce({ data: { id: 5, event_no: 'P2B-5', status: 'confirmed', private_voucher: 1, sources: [] } })
     const wrapper = mount(CashEventEntryForm, { props: { initialEvent: { id: 5, event_no: 'P2B-5', status: 'pending', private_voucher: 1, sources: [] } } })
@@ -117,7 +120,7 @@ describe('CashEventEntryForm outside-click behavior', () => {
     expect(wrapper.text()).toContain('银行确认结果待核对')
     await wrapper.findAll('button').find(b => b.text() === '按原内容核对确认').trigger('click'); await flushPromises()
     expect(api.post).toHaveBeenCalledWith('/rmb-cash-events/5/confirm/', body)
-    expect(window.sessionStorage.getItem('sunjack:cash-confirm:5')).toBeNull()
+    expect(window.localStorage.getItem(savedKey('sunjack:cash-confirm:5'))).toBeNull()
     wrapper.unmount()
   })
 })

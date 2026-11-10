@@ -30,6 +30,8 @@ product = Product.objects.create(
     category=category,
 )
 product.suppliers.add(supplier)
+if os.environ.get("PRODUCT_OPS_PREFIX") == "1":
+    Product.objects.create(code="EVID-P002", name="合成前缀冲突产品", sales_model_prefix="EIVDUPE", category=category)
 if os.environ.get("PRODUCT_OPS_FOLLOWUP") == "lifecycle":
     Product.objects.create(code="EVID-P002", name="合成灯具配件", category=category)
 ProductParameter.objects.create(product=product, name="标称功率", value="24", unit="W")
@@ -42,7 +44,7 @@ HSCode.objects.create(code="8539510000", description="合成测试归类")
 skus = [
     SKU.objects.create(
         product=product, sku=f"EVID-TRACK-LONG-SKU-3000K-BEAM24-BLACK-{index:02}",
-        unit=unit, default_price="10", cost_price="4",
+        unit=unit, default_price="10", cost_price="4", sales_model=f"EVIDOLD-{index:02}",
     )
     for index, unit in enumerate(("pcs", "m", "set", "pcs"), 1)
 ]

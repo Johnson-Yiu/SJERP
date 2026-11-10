@@ -84,6 +84,8 @@ test('product detail fits the available workspace and nested details restore foc
             return { available, moved }
           })
           if (scroll.available > 0) expect(scroll.moved).toBeGreaterThan(0)
+          const activeTab = page.locator('.workspace-tab.active [role="tab"]')
+          const workspaceTitle = await activeTab.innerText()
           const tabs = product.getByRole('navigation', { name: '产品详情导航' })
           await tabs.getByRole('button', { name: /证书/ }).click()
           const trigger = product.locator('.context-drill').first()
@@ -92,8 +94,14 @@ test('product detail fits the available workspace and nested details restore foc
           await expect(dialog.getByRole('heading', { name: '合成测试证书', exact: true })).toBeVisible()
           const close = dialog.getByRole('button', { name: '关闭详情' })
           await expect(close).toBeFocused()
-          await capture('product-nested-certificate', width, height, zoom)
-          await close.press('Enter')
+          const nestedGeometry = await dialog.evaluate(element => ({
+            top: element.getBoundingClientRect().top,
+            availableTop: element.parentElement.parentElement.getBoundingClientRect().top,
+          }))
+          await capture('product-nested-certificate', width, height, zoom, nestedGeometry)
+          expect(nestedGeometry.top).toBeCloseTo(nestedGeometry.availableTop, 0)
+          await expect(activeTab).toHaveText(workspaceTitle)
+          await close.press(zoom === 1.25 ? 'Escape' : 'Enter')
           await expect(dialog).toHaveCount(0)
           await expect(trigger).toBeFocused()
           await expect(tabs.getByRole('button', { name: /证书/ })).toHaveClass(/active/)

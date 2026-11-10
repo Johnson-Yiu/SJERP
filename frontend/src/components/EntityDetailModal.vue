@@ -26,7 +26,7 @@ import ProductWorkspace from './ProductWorkspace.vue'
 import { canCreateRelated, relationWorkbenchLocation } from '../utils/detailNavigation'
 import { useAccessControl } from '../accessControl'
 
-const props = defineProps({ entity: String, id: [Number, String], refreshKey: { type: Number, default: 0 }, focusOnOpen: Boolean })
+const props = defineProps({ entity: String, id: [Number, String], refreshKey: { type: Number, default: 0 }, nestedProductDetail: Boolean })
 const emit = defineEmits(['close', 'edit', 'changed'])
 const { can } = useAccessControl()
 const data = ref(null), loading = ref(true), error = ref(''), activeTab = ref(''), stack = ref([])
@@ -67,13 +67,13 @@ async function closeProductDrawer() {
 }
 
 function closeNestedOnEscape(event) {
-  if (!props.focusOnOpen) return
+  if (!props.nestedProductDetail) return
   event.stopPropagation()
   requestClose()
 }
 
 watch(loading, isLoading => {
-  if (props.focusOnOpen && !isLoading) {
+  if (props.nestedProductDetail && !isLoading) {
     detailArticle.value?.querySelector('.detail-close, .supplier-state-close')?.focus({ preventScroll: true })
   }
 }, { flush: 'post' })
@@ -384,7 +384,7 @@ onMounted(async () => {
     api.get('/session/current-operator/').then(response => { operatorRole.value = response.data.role || ''; auditEnabled.value = Boolean(response.data.audit_log_enabled) }).catch(() => { operatorRole.value = ''; auditEnabled.value = false }),
   ])
 })
-watch(() => data.value?.title, title => { if (workspace && title) { workspace.objectTitle = String(title); workspace.title = String(title) } }, { immediate: true })
+watch(() => data.value?.title, title => { if (!props.nestedProductDetail && workspace && title) { workspace.objectTitle = String(title); workspace.title = String(title) } }, { immediate: true })
 </script>
 
 <template>
@@ -500,7 +500,7 @@ watch(() => data.value?.title, title => { if (workspace && title) { workspace.ob
         </template>
       </template>
     </article>
-    <EntityDetailModal v-if="productDrawer" class="product-context-drawer" :entity="productDrawer.entity" :id="productDrawer.id" focus-on-open @close="closeProductDrawer" @changed="refreshSkuManagement" />
+    <EntityDetailModal v-if="productDrawer" class="product-context-drawer" :entity="productDrawer.entity" :id="productDrawer.id" nested-product-detail @close="closeProductDrawer" @changed="refreshSkuManagement" />
     <RelatedCreateModal v-if="quickCreate" :entity="quickCreate.entity" :query="quickCreate.query" @close="quickCreate = null" @saved="relatedSaved" />
 
   </div>
@@ -530,7 +530,7 @@ watch(() => data.value?.title, title => { if (workspace && title) { workspace.ob
 .sku-context-search{display:flex;align-items:center;gap:8px;width:min(360px,100%);margin:13px 0 -4px;color:#82928b;border:1px solid #dce6e1;border-radius:8px;padding:0 10px;background:#fbfdfc}.sku-context-search input{min-width:0;flex:1;border:0;outline:0;padding:9px 0;background:transparent;color:#27463c;font-size:var(--text-body)}.sku-context-search span{font-size:var(--text-body);color:#6e8d82;white-space:nowrap}
 .drill-cell{width:52px!important;padding:0!important}.context-drill{width:52px;height:100%;min-height:45px;border:0;background:transparent;display:grid;place-items:center;color:#8a9d96;cursor:pointer}.context-drill:hover{background:#eaf3ef;color:#17604f}.context-drill:focus-visible{outline:3px solid #bcdace;outline-offset:-3px}
 .multi-select-active{background:#1f6657!important;color:#fff!important}.multi-select-table tbody tr{cursor:default}.multi-select-table .drill-cell{width:30px!important}
-.product-detail-modal>.detail-header{padding:20px 30px 24px}.product-context-drawer{left:0;z-index:60}.product-context-drawer :deep(.detail-modal){width:min(620px,100vw)}
+.product-detail-modal>.detail-header{padding:20px 30px 24px}.product-detail-backdrop > .product-context-drawer{inset:0!important;z-index:60}.product-context-drawer :deep(.detail-modal){width:min(620px,100%)}
 .product-detail-backdrop{inset:0;z-index:60;display:flex;justify-content:flex-end;align-items:stretch;padding:0;overflow:hidden;background:#0b221d66;backdrop-filter:blur(2px)}
 .product-detail-modal{flex:none;width:min(1800px,calc(100% - 24px));max-width:100%;min-width:0;height:100dvh;border-radius:16px 0 0 16px;border-left:1px solid #d5e3dc;box-shadow:-20px 0 60px #06191440;overflow-y:auto;overflow-x:hidden;animation:product-drawer-enter .22s ease-out}
 .product-detail-modal .detail-identity>div{min-width:0}.product-detail-modal .detail-identity h2{overflow-wrap:anywhere}.product-detail-modal .relation-top{flex-wrap:wrap;gap:12px}.product-detail-modal .relation-actions{flex-wrap:wrap}
@@ -609,7 +609,7 @@ watch(() => data.value?.title, title => { if (workspace && title) { workspace.ob
 @media(max-width:1050px){.follow-up-hero{padding-left:28px;padding-right:28px}.follow-up-detail-content{padding-left:28px;padding-right:28px;grid-template-columns:1fr}.follow-up-detail-main-column{grid-template-rows:auto auto;align-self:start;height:auto}.follow-up-detail-side-rail{grid-column:auto;grid-row:auto;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}.follow-up-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.follow-up-summary>div:nth-child(3){border-right:0}.follow-up-summary>div:nth-child(-n+3){border-bottom:1px solid #ffffff24}}
 @media(max-width:760px){.follow-up-hero{padding:17px 20px 22px}.follow-up-detail-content{grid-template-columns:1fr;padding:16px 20px 32px}.follow-up-detail-main-column{grid-template-columns:1fr;grid-template-rows:auto auto}.follow-up-attachments-card{grid-column:auto}.follow-up-detail-side-rail{grid-template-columns:1fr}.follow-up-hero-identity{align-items:flex-start;flex-direction:column}.follow-up-actions{margin-left:0;justify-content:flex-start}.follow-up-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.follow-up-summary>div:nth-child(3){border-right:1px solid #ffffff24}.follow-up-summary>div:nth-child(2n){border-right:0}.follow-up-summary>div:nth-child(4),.follow-up-summary>div:nth-child(5){border-bottom:0}.follow-up-summary>div:nth-child(3),.follow-up-summary>div:nth-child(4){border-bottom:1px solid #ffffff24}.follow-up-hero-identity h1{font-size:var(--text-page)}}
 @media(max-width:520px){.follow-up-hero{padding:15px 16px 19px}.follow-up-detail-content{padding:13px 16px 26px}.follow-up-hero-nav{align-items:flex-start;flex-wrap:wrap}.follow-up-actions{width:100%;gap:7px}.follow-up-action{flex:1;justify-content:center;padding:9px 8px}.follow-up-summary{grid-template-columns:1fr}.follow-up-summary>div,.follow-up-summary>div:nth-child(3){border-right:0;border-bottom:1px solid #ffffff24}.follow-up-summary>div:last-child{border-bottom:0}.follow-up-timeline-item{grid-template-columns:18px minmax(0,1fr)}.follow-up-timeline-item time{grid-column:2}.follow-up-card-head{padding-left:15px;padding-right:15px}}
-.product-detail-modal>.detail-header{padding:20px 30px 24px}.product-context-drawer{left:0;z-index:60}.product-context-drawer :deep(.detail-modal){width:min(620px,100vw)}
+.product-detail-modal>.detail-header{padding:20px 30px 24px}.product-detail-backdrop > .product-context-drawer{inset:0!important;z-index:60}.product-context-drawer :deep(.detail-modal){width:min(620px,100%)}
 .product-detail-backdrop{inset:0;z-index:60;display:flex;justify-content:flex-end;align-items:stretch;padding:0;overflow:hidden;background:#0b221d66;backdrop-filter:blur(2px)}
 .product-detail-modal{flex:none;width:min(1800px,calc(100% - 24px));max-width:100%;min-width:0;height:100dvh;border-radius:16px 0 0 16px;border-left:1px solid #d5e3dc;box-shadow:-20px 0 60px #06191440;overflow-y:auto;overflow-x:hidden;animation:product-drawer-enter .22s ease-out}
 .product-detail-modal .detail-identity>div{min-width:0}.product-detail-modal .detail-identity h2{overflow-wrap:anywhere}.product-detail-modal .relation-top{flex-wrap:wrap;gap:12px}.product-detail-modal .relation-actions{flex-wrap:wrap}
@@ -619,7 +619,7 @@ watch(() => data.value?.title, title => { if (workspace && title) { workspace.ob
 </style>
 <style scoped>
 .relation-actions{display:flex;align-items:center;gap:8px}.danger-link{background:#fff0f0;color:#ad4545}.inactive-toggle{background:#fff6f6;color:#ad4545}.selection-cell{width:40px;padding-left:12px!important;padding-right:4px!important;text-align:center}.selection-check{position:relative;display:inline-grid;place-items:center;cursor:pointer;color:#bdc9c4}.selection-check input{position:absolute;opacity:0}.selection-check svg{pointer-events:none}.selection-check input:checked+svg{color:#21745f}.selection-check input:focus-visible+svg{outline:3px solid #c6dfd7;outline-offset:2px;border-radius:3px}.sku-context-table tbody tr:has(.selection-check input:checked){background:#eff7f3}.sku-context-table th.selection-cell{padding-top:8px;padding-bottom:8px}.inactive-row{background:#fff7f7!important}.inactive-row td,.inactive-row td.primary{color:#b45757!important}.inactive-status{display:inline-block;border-radius:20px;padding:3px 7px;background:#ffeded;color:#ba4545;font-weight:700}.detail-back,.detail-close{min-height:38px;border-radius:9px;font-weight:700;letter-spacing:0;text-transform:none}.detail-back{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #ffffff45;background:#ffffff1a;color:#fff;font-size:var(--text-body)}.detail-close{display:flex;width:auto;gap:7px;align-items:center;padding:8px 11px;border:1px solid #ffffff45;background:#ffffff1a;color:#fff;font-size:var(--text-body)}.detail-close:hover,.detail-back:hover{background:#ffffff2b}@media(max-width:700px){.detail-close span{display:none}.detail-close{padding:8px}.detail-back{font-size:var(--text-body);padding:7px 9px}}
-.product-detail-modal>.detail-header{padding:20px 30px 24px}.product-context-drawer{left:0;z-index:60}.product-context-drawer :deep(.detail-modal){width:min(620px,100vw)}
+.product-detail-modal>.detail-header{padding:20px 30px 24px}.product-detail-backdrop > .product-context-drawer{inset:0!important;z-index:60}.product-context-drawer :deep(.detail-modal){width:min(620px,100%)}
 .product-detail-backdrop{inset:0;z-index:60;display:flex;justify-content:flex-end;align-items:stretch;padding:0;overflow:hidden;background:#0b221d66;backdrop-filter:blur(2px)}
 .product-detail-modal{flex:none;width:min(1800px,calc(100% - 24px));max-width:100%;min-width:0;height:100dvh;border-radius:16px 0 0 16px;border-left:1px solid #d5e3dc;box-shadow:-20px 0 60px #06191440;overflow-y:auto;overflow-x:hidden;animation:product-drawer-enter .22s ease-out}
 .product-detail-modal .detail-identity>div{min-width:0}.product-detail-modal .detail-identity h2{overflow-wrap:anywhere}.product-detail-modal .relation-top{flex-wrap:wrap;gap:12px}.product-detail-modal .relation-actions{flex-wrap:wrap}

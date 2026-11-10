@@ -60,8 +60,8 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: '导出 CSV' }).click()
   const csv = await download
-  expect(csv.suggestedFilename()).toBe('history-products.csv')
-  const csvPath = path.join(output, csv.suggestedFilename())
+  expect(csv.suggestedFilename()).toBe('历史商品明细.csv')
+  const csvPath = path.join(output, 'history-products.csv')
   await csv.saveAs(csvPath)
   const exported = await readFile(csvPath, 'utf8')
   expect(exported).toContain('历史原文明细')

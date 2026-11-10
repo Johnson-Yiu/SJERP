@@ -32,3 +32,13 @@ node frontend/scripts/run-isolated-browser-tests.mjs --business-test ui-product-
 ```
 
 本包源码的 Vite 生产构建通过。Vite 报告原有大包体积警告。
+
+## 补验与失败归因
+
+- **型号前缀**通过。真实后端对已占用前缀返回 400。影响预览在六组尺寸可达，取消后读回产品和 SKU 的旧值，确认请求返回 200，读回产品前缀、受影响销售型号及不变的 SKU 编码。[通过记录](chrome-prefix-verified/run.json)
+- **产品参数**通过。390×844、原生 125% 下真实 POST 返回 201。重新加载产品参数页面后，从列表打开已保存行，核对名称、参数值 48 和单位 V。[保存重开记录](chrome-parameter-cross-check/run.json)
+- **销售与历史共用界面**通过定向检查。390×844、原生 100%／125% 下分别打开客户管理与历史订单分析，确认标题、活动工作区标签及顶栏底边与工作区顶边对齐。[跨模块记录](chrome-parameter-cross-check/run.json)
+- **原始失败**保留。H1 重复运行四个桌面组合仍触发左裁断言，窄屏两个组合仍触发旧嵌套定位或焦点检查。[H1 重跑结果](chrome-baseline-repeat/run.json)
+- **中间失败**保留。型号前缀首个样本缺少旧产品前缀，随后两个样本缺少参与销售型号生成的参数或缩写。参数首轮在保存自动打开的详情后直接点被覆盖的列表按钮，第二轮关闭详情后仍未返回独立参数列表。最终分别补齐合成前缀属性和明确重开参数列表。[前缀第一轮](chrome-prefix/run.json) · [前缀第二轮](chrome-prefix-final/run.json) · [前缀第三轮](chrome-prefix-third/run.json) · [参数第一轮](chrome-parameter-first/run.json) · [参数第二轮](chrome-parameter-second/run.json)
+
+型号前缀和产品参数只修改了隔离数据库里的合成资料。参数运行记录对应 `9083414b469257cb608f5d83d67d5684579058e6`，相对最终产品源码 `df1a32e0a2631fb14ce5e370ef4c9b14444a0de8` 的差异只有本包脚本和证据。产品代码等价可以用 `git diff df1a32e0 9083414b -- frontend/src backend` 复核。

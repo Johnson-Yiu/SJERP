@@ -1,4 +1,6 @@
 <script setup>
+import { useFinanceAttempts } from '../composables/useFinanceAttempts'
+const financeAttempts = useFinanceAttempts()
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
 import { BOOK_RMB_NOTE } from '../utils/financeBasis.js'
@@ -32,10 +34,11 @@ const multiOrderMode = ref(false), adjustmentUploadBusy = ref(false), pendingRec
 let receiptPlanRequestId = 0, receiptChangeRequestId = 0
 const writeoffPlan = ref(''), writeoffAmount = ref(''), writeoffReason = ref(''), writeoffRequestKey = ref(''), writeoffSaving = ref(false)
 const correctionTarget = ref(null), correctionAmount = ref(''), correctionReason = ref(''), correctionRequestKey = ref(''), correctionSaving = ref(false)
+const voidAttempt = ref(null)
 const voidTarget = ref(null), voidReason = ref(''), voidSaving = ref(false)
 const detailTarget = ref(null), settlementTarget = ref(null), detailSettlementSnapshot = ref(null), writeoffTarget = ref(null), feeVoucherFile = ref(null), feeVoucherUploading = ref(false)
 const refundTarget = ref(null), refundFile = ref(null), refundUploading = ref(false), refundSaving = ref(false), refundAttempt = ref(null)
-const refundForm = reactive({ order: '', amount: '', reason: '', voucher: '', voucherName: '' })
+const refundForm = reactive({ actual_date: '', order: '', amount: '', reason: '', voucher: '', voucherName: '' })
 const refundOrders = computed(() => [...new Map((refundTarget.value?.allocations || []).filter(a => a.is_active && a.order).map(a => [a.order, { id: a.order, label: a.contract_no }])).values()])
 const filters = reactive({ status: 'confirmed', direction: '', date_from: '', date_to: '' })
 const filterRangeError = computed(() => filters.date_from && filters.date_to && filters.date_from > filters.date_to ? '开始日期不能晚于结束日期。' : '')
@@ -113,8 +116,8 @@ const form = reactive({
 const saveOutcome = ref('not-submitted')
 function refreshReceiptAttempts() {
   try {
-    pendingReceiptAttempts.value = Object.keys(window.sessionStorage).filter(key => key.startsWith('finance-receipt-')).map(key => {
-      const saved = JSON.parse(window.sessionStorage.getItem(key) || 'null')
+    pendingReceiptAttempts.value = financeAttempts.list('finance-receipt-').map(key => {
+      const saved = JSON.parse(financeAttempts.get(key) || 'null')
       return saved?.payload?.transaction_no ? saved : null
     }).filter(Boolean)
   } catch { pendingReceiptAttempts.value = [] }
@@ -342,7 +345,7 @@ async function onDetailSettlementUpdated() { detailSettlementSnapshot.value = { 
 function unallocatedAmount(row) { return Number(row.unallocated_amount ?? (Number(row.amount) - Number(row.allocated_amount))) }
 function hasPendingAllocation(row) {
   try {
-    const value = JSON.parse(window.sessionStorage.getItem(`finance-allocation-${row.id}`) || 'null')
+    const value = JSON.parse(financeAttempts.get(`finance-allocation-${row.id}`) || 'null')
     return Boolean(value?.key && value?.plan && value?.amount)
   } catch { return false }
 }
@@ -369,8 +372,8 @@ async function uploadReceiptProof() {
 }
 function openRefund(row) {
   refundTarget.value = row; refundFile.value = null; refundAttempt.value = null; error.value = ''; notice.value = ''
-  Object.assign(refundForm, { order: '', amount: '', reason: '', voucher: '', voucherName: '' })
-  try { refundAttempt.value = JSON.parse(window.sessionStorage.getItem(`finance-refund-${row.id}`) || 'null') } catch { /* submission checks storage */ }
+  Object.assign(refundForm, { actual_date: new Date().toLocaleDateString('en-CA'), order: '', amount: '', reason: '', voucher: '', voucherName: '' })
+  try { refundAttempt.value = JSON.parse(financeAttempts.get(`finance-refund-${row.id}`) || 'null') } catch { /* submission checks storage */ }
   if (refundAttempt.value?.key) { Object.assign(refundForm, refundAttempt.value.payload); notice.value = '上次退款结果待确认，请按原内容重试。' }
   refundGuard.markClean()
 }
@@ -390,17 +393,17 @@ async function submitRefund() {
   const existing = refundAttempt.value
   const attempt = existing || { key: `REF-${crypto.randomUUID()}`, payload: { ...refundForm } }
   const storageKey = `finance-refund-${refundTarget.value.id}`
-  try { window.sessionStorage.setItem(storageKey, JSON.stringify(attempt)) }
+  try { financeAttempts.save(storageKey, JSON.stringify(attempt)) }
   catch { error.value = '浏览器无法保存本次退款身份，请恢复浏览器存储后重试。'; return }
   refundAttempt.value = attempt; refundSaving.value = true; error.value = ''; notice.value = ''
   const { voucherName, ...payload } = attempt.payload
   try {
     await api.post(`/transactions/${refundTarget.value.id}/refund-cash/`, payload, { headers: { 'Idempotency-Key': attempt.key } })
-    window.sessionStorage.removeItem(storageKey); refundAttempt.value = null; refundGuard.markClean(); refundTarget.value = null
+    financeAttempts.remove(storageKey); refundAttempt.value = null; refundGuard.markClean(); refundTarget.value = null
     await load(); notice.value = '退款已登记，原收款和凭证已保留。'
   } catch (err) {
     if (!existing && err.response?.status === 400) {
-      window.sessionStorage.removeItem(storageKey); refundAttempt.value = null
+      financeAttempts.remove(storageKey); refundAttempt.value = null
       error.value = apiErrorMessage(err) || '退款未保存，请检查信息。'
     } else error.value = apiErrorMessage(err) || '退款结果待确认，请按原内容重试。'
   } finally { refundSaving.value = false }
@@ -541,7 +544,7 @@ async function save() {
     const existingAttempt = receiptAttempt.value
     const savedAttempt = existingAttempt || { payload, selectedOrder: selectedOrder.value, settlementOpen: settlementOpen.value }
     const storageKey = `finance-receipt-${payload.transaction_no}`
-    try { window.sessionStorage.setItem(storageKey, JSON.stringify(savedAttempt)) }
+    try { financeAttempts.save(storageKey, JSON.stringify(savedAttempt)) }
     catch { saveOutcome.value = 'rejected'; error.value = '浏览器无法保存本次收款标识，请检查浏览器存储后重试。'; return }
     receiptAttempt.value = savedAttempt
     refreshReceiptAttempts()
@@ -566,7 +569,7 @@ async function save() {
     }
     if (attempt.status === 'unknown' || attempt.status === 'rejected') {
       if (attempt.status === 'rejected' && !existingAttempt) {
-        window.sessionStorage.removeItem(storageKey); receiptAttempt.value = null; refreshReceiptAttempts()
+        financeAttempts.remove(storageKey); receiptAttempt.value = null; refreshReceiptAttempts()
       }
       saveOutcome.value = existingAttempt ? 'unknown' : attempt.status
       const duplicateNumber = Boolean(attempt.error?.response?.data?.transaction_no)
@@ -574,7 +577,7 @@ async function save() {
       return
     }
     const receipt = attempt.receipt
-    window.sessionStorage.removeItem(storageKey); receiptAttempt.value = null; refreshReceiptAttempts()
+    financeAttempts.remove(storageKey); receiptAttempt.value = null; refreshReceiptAttempts()
     saveOutcome.value = 'confirmed'
     if (form.kind === 'customer_receipt' && settlementOpen.value && form.currency !== 'CNY') {
       savedReceipt.value = { ...receipt, order_no: receipt.order_no || selectedOrder.value?.order_no, order: receipt.order || form.order, currency: receipt.currency || form.currency }
@@ -613,7 +616,8 @@ watch(() => form.currency, value => {
 function openVoid(row) {
   if (!can('transactions', 'update')) return
   voidTarget.value = row
-  voidReason.value = ''
+  try { voidAttempt.value = JSON.parse(financeAttempts.get(`finance-void-${row.id}`) || 'null') } catch { voidAttempt.value = null }
+  voidReason.value = voidAttempt.value?.payload.reason || ''
   error.value = ''
   notice.value = ''
   voidGuard.markClean()
@@ -625,7 +629,19 @@ async function submitVoid() {
   voidSaving.value = true
   error.value = ''; notice.value = ''
   try {
-    await api.post(`/transactions/${voidTarget.value.id}/void/`, { reason })
+    const storageKey = `finance-void-${voidTarget.value.id}`
+    const attempt = voidAttempt.value || { key: `VOID-${crypto.randomUUID()}`, payload: { reason } }
+    financeAttempts.save(storageKey, JSON.stringify(attempt))
+    const replaying = Boolean(voidAttempt.value)
+    voidAttempt.value = attempt
+    try {
+      await api.post(`/transactions/${voidTarget.value.id}/void/`, attempt.payload, { headers: { 'Idempotency-Key': attempt.key } })
+    } catch (err) {
+      if (!replaying && err.response?.status === 400) { financeAttempts.remove(storageKey); voidAttempt.value = null }
+      throw err
+    }
+    financeAttempts.remove(storageKey)
+    voidAttempt.value = null
     voidGuard.markClean()
     voidTarget.value = null
     voidReason.value = ''
@@ -640,7 +656,7 @@ async function openAllocate(row) {
     plans.value = await listAll('/payment-plans/', { params: { status: 'open' } })
     allocation.value = row
     let pending = null
-    try { pending = JSON.parse(window.sessionStorage.getItem(`finance-allocation-${row.id}`) || 'null') } catch { /* unavailable storage is checked before submission */ }
+    try { pending = JSON.parse(financeAttempts.get(`finance-allocation-${row.id}`) || 'null') } catch { /* unavailable storage is checked before submission */ }
     allocationAttempt.value = pending?.key && pending?.plan && pending?.amount ? pending : null
     allocationPlan.value = allocationAttempt.value?.plan || ''
     allocationAmount.value = allocationAttempt.value?.amount || String(unallocatedAmount(row))
@@ -654,19 +670,19 @@ async function allocate() {
   const selected = eligiblePlans.value.find(item => String(item.id) === String(allocationPlan.value))
   const attempt = existing || { key: `ALLOC-${crypto.randomUUID()}`, plan: allocationPlan.value, amount: String(allocationAmount.value), planLabel: selected?.contract_no || '所选计划' }
   const storageKey = `finance-allocation-${allocation.value.id}`
-  try { window.sessionStorage.setItem(storageKey, JSON.stringify(attempt)) }
+  try { financeAttempts.save(storageKey, JSON.stringify(attempt)) }
   catch { error.value = '浏览器无法保存本次核销标识，请检查浏览器存储后重试。'; return }
   allocationAttempt.value = attempt
   saving.value = true
   error.value = ''; notice.value = ''
   try {
     await api.post(`/transactions/${allocation.value.id}/allocate/`, { plan: attempt.plan, amount: attempt.amount }, { headers: { 'Idempotency-Key': attempt.key } })
-    window.sessionStorage.removeItem(storageKey)
+    financeAttempts.remove(storageKey)
     allocationAttempt.value = null; allocationGuard.markClean(); allocation.value = null
     await load(); notice.value = '核销已保存。'
   } catch (err) {
     if (!existing && err.response?.status === 400) {
-      window.sessionStorage.removeItem(storageKey); allocationAttempt.value = null
+      financeAttempts.remove(storageKey); allocationAttempt.value = null
       error.value = apiErrorMessage(err) || '核销未保存，请检查金额和计划。'
     } else error.value = apiErrorMessage(err) || '核销结果待确认，请按原内容重试。'
   } finally { saving.value = false }
@@ -752,6 +768,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     <p class="page-lede">{{ BOOK_RMB_NOTE }}</p>
     <p class="page-lede">流水记录实际收付；核销、退款与结汇保留各自业务关系。银行退回和更正须关联原凭证。</p>
     <p v-if="notice" class="notice" role="status">{{ notice }}</p>
+    <p v-if="financeAttempts.hasLegacy()" role="status">此浏览器留有旧版待核对记录。请先在财务流水核对原操作结果，再决定是否另行登记。</p>
     <div v-if="pendingReceiptAttempts.length" class="notice" role="status">有 {{ pendingReceiptAttempts.length }} 笔收款结果待确认。<button v-for="item in pendingReceiptAttempts" :key="item.payload.transaction_no" type="button" :disabled="!referencesLoaded || showForm" @click="recoverReceipt(item)">按原内容核对</button></div>
     <div v-if="referenceErrorText" class="option-load-error" role="alert"><span>新增记账所需的关联资料未能全部加载，暂不能新增。{{ referenceErrorText }}</span><button type="button" @click="loadReferenceOptions">重试加载</button></div>
     <p v-else-if="referencesLoading" class="option-loading-note" role="status">正在加载客户、供应商和采购单资料…</p>
@@ -770,7 +787,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
     <template v-if="hasLoaded">
     <table>
       <thead><tr><th>流水发生日期 / 流水号</th><th>收支 / 类型</th><th>往来方 / 合同</th><th>实际收付（原币）</th><th>人民币折算参考</th><th>状态 / 核销</th><th>操作</th></tr></thead>
-      <tbody><tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ transactionKindLabel(row) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}<small v-if="row.remitted_amount_display && Number(row.remitted_amount_display) !== Number(row.amount)">客户汇款 {{ row.currency }} {{ formatMoney(row.remitted_amount_display) }}</small><small v-if="Number(row.bank_fee_amount) > 0">银行扣费 {{ row.currency }} {{ formatMoney(row.bank_fee_amount) }} · {{ row.fee_responsibility === 'company' ? '我方承担' : row.fee_responsibility === 'customer' ? '客户承担' : row.fee_responsibility === 'mixed' ? '按明细区分' : '待查' }}</small></td><td>{{ row.rmb_amount == null ? '未录入参考汇率' : `¥${formatMoney(row.rmb_amount)}` }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind) || (row.kind === 'customer_receipt' && !row.plan && !row.order)">未分配 {{ row.currency }} {{ formatMoney(unallocatedAmount(row)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button type="button" @click="openDetail(row)">详情</button><button v-if="can('transactions', 'create') && row.status === 'confirmed' && row.direction === 'income' && row.currency !== 'CNY'" type="button" @click="openSettlement(row)">登记结汇到账</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && canAllocateReceipt(row)" @click="openAllocate(row)">核销</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
+      <tbody><tr v-if="!rows.length"><td colspan="7"><ListEmptyState entity="财务流水" :filtered="filtersActive && allTransactionsExist" @clear="clearFilters"><template #action>当前还没有财务流水。</template></ListEmptyState></td></tr><tr v-for="row in rows" :key="row.id"><td>{{ row.transaction_date }}<small>{{ row.transaction_no }}<span v-if="row.split_from"> · 拆分记录</span></small></td><td>{{ row.direction_display || directionLabel(row.direction) }}<small>{{ transactionKindLabel(row) }}</small></td><td>{{ row.customer_name || row.supplier_name || '—' }}<small><RouterLink v-if="contractLocation(row)" :to="contractLocation(row)" class="contract-link">{{ row.order ? row.order_no : row.purchase_no }}</RouterLink><span v-else>未关联合同</span></small></td><td>{{ row.currency }} {{ formatMoney(row.amount) }}<small v-if="row.remitted_amount_display && Number(row.remitted_amount_display) !== Number(row.amount)">客户汇款 {{ row.currency }} {{ formatMoney(row.remitted_amount_display) }}</small><small v-if="Number(row.bank_fee_amount) > 0">银行扣费 {{ row.currency }} {{ formatMoney(row.bank_fee_amount) }} · {{ row.fee_responsibility === 'company' ? '我方承担' : row.fee_responsibility === 'customer' ? '客户承担' : row.fee_responsibility === 'mixed' ? '按明细区分' : '待查' }}</small></td><td>{{ row.rmb_amount == null ? '未录入参考汇率' : `¥${formatMoney(row.rmb_amount)}` }}</td><td>{{ row.status_display }}<small v-if="['unallocated_advance', 'unallocated_payment'].includes(row.kind) || (row.kind === 'customer_receipt' && !row.plan && !row.order)">未分配 {{ row.currency }} {{ formatMoney(unallocatedAmount(row)) }}</small><small v-for="item in row.allocations" :key="item.id"><RouterLink v-if="allocationLocation(item)" :to="allocationLocation(item)" class="contract-link">{{ item.contract_no }}</RouterLink><span v-else>{{ item.contract_no }}</span>：{{ formatMoney(item.amount) }} {{ item.is_active ? '已核销' : '已撤回' }}</small><small v-if="row.status === 'cancelled' && row.void_reason">作废原因：{{ row.void_reason }}{{ row.voided_at ? ' · ' + row.voided_at : '' }}</small></td><td><button type="button" @click="openDetail(row)">详情</button><button v-if="can('transactions', 'create') && row.status === 'confirmed' && row.direction === 'income' && row.currency !== 'CNY'" type="button" @click="openSettlement(row)">登记结汇到账</button><button v-if="can('transactions', 'update') && row.status === 'confirmed' && canAllocateReceipt(row)" @click="openAllocate(row)">核销</button><button v-if="can('transactions', 'update') && (row.status === 'confirmed' || financeAttempts.has(`finance-void-${row.id}`)) && !row.split_from" @click="openVoid(row)">作废</button><small v-if="row.split_from">由原始流水统一作废</small><small v-else-if="row.status === 'cancelled'">已作废</small></td></tr></tbody>
     </table>
     </template>
 
@@ -819,7 +836,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
       <form class="dialog" role="dialog" aria-modal="true" aria-labelledby="receipt-refund-title" @submit.prevent="submitRefund">
         <header class="dialog-head"><div><h3 id="receipt-refund-title">登记退款</h3><p>原收款 {{ refundTarget.transaction_no }} · 尚未结汇及退款 {{ refundTarget.currency }} {{ formatMoney(refundTarget.refundable_cash_amount) }}</p></div><button type="button" class="close" aria-label="关闭退款" :disabled="refundSaving" @click="closeRefund">×</button></header>
         <p v-if="refundAttempt" class="error" role="alert">上次结果待确认，请按原内容重试。</p>
-        <fieldset :disabled="refundSaving || !!refundAttempt"><label>退款对应订单<select v-model="refundForm.order"><option value="">未分配预收款</option><option v-for="order in refundOrders" :key="order.id" :value="order.id">{{ order.label }}</option></select></label><label>实际退款金额（{{ refundTarget.currency }}）<input v-model="refundForm.amount" type="number" min="0.0001" step="0.0001" required></label><label>退款依据<textarea v-model="refundForm.reason" minlength="5" maxlength="500" rows="3" required></textarea></label><label>实际退款凭证<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="refundFile = $event.target.files[0]"></label><button type="button" :disabled="refundUploading || !refundFile" @click="uploadRefundProof">{{ refundUploading ? '上传中…' : '上传凭证' }}</button><p v-if="refundForm.voucher">凭证已上传：{{ refundForm.voucherName }}</p></fieldset>
+        <fieldset :disabled="refundSaving || !!refundAttempt"><label>实际退款日期<input v-model="refundForm.actual_date" type="date" required></label><label>退款对应订单<select v-model="refundForm.order"><option value="">未分配预收款</option><option v-for="order in refundOrders" :key="order.id" :value="order.id">{{ order.label }}</option></select></label><label>实际退款金额（{{ refundTarget.currency }}）<input v-model="refundForm.amount" type="number" min="0.0001" step="0.0001" required></label><label>退款依据<textarea v-model="refundForm.reason" minlength="5" maxlength="500" rows="3" required></textarea></label><label>实际退款凭证<input type="file" accept=".pdf,.png,.jpg,.jpeg" @change="refundFile = $event.target.files[0]"></label><button type="button" :disabled="refundUploading || !refundFile" @click="uploadRefundProof">{{ refundUploading ? '上传中…' : '上传凭证' }}</button><p v-if="refundForm.voucher">凭证已上传：{{ refundForm.voucherName }}</p></fieldset>
         <p>已结汇金额及非现金扣减不能作为本次可退原币现金；订单退款会恢复对应应收。</p><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" :disabled="refundSaving" @click="closeRefund">关闭</button><button :disabled="refundSaving || !refundForm.voucher">{{ refundSaving ? '登记中…' : refundAttempt ? '按原内容重试' : '确认登记' }}</button></footer>
       </form>
     </div>
@@ -949,7 +966,7 @@ onMounted(async () => { await Promise.all([load(), loadReferenceOptions()]) })
       </form>
     </div>
     <div v-if="allocation && can('transactions', 'update')" class="mask"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="allocation-title" @submit.prevent="allocate"><header class="dialog-head"><div><h3 id="allocation-title">核销预收预付款</h3><p>仅分配现有余额，不会新增现金流水。</p></div><button type="button" class="close" aria-label="关闭" :disabled="saving" @click="closeAllocation">×</button></header><p class="dialog-context">{{ allocation.customer_name || allocation.supplier_name }} · {{ allocation.currency }} 未分配现金 {{ formatMoney(unallocatedAmount(allocation)) }}</p><p v-if="allocationAttempt" class="field-hint" role="status">上次核销结果待确认，请按原内容重试。</p><label>待结计划<select v-model="allocationPlan" :disabled="Boolean(allocationAttempt)" required><option value="">请选择</option><option v-if="allocationAttempt && !eligiblePlans.some(plan => String(plan.id) === String(allocationAttempt.plan))" :value="allocationAttempt.plan">{{ allocationAttempt.planLabel }}（结果待确认）</option><option v-for="plan in eligiblePlans" :key="plan.id" :value="plan.id">{{ plan.contract_no }} · {{ plan.notes || '无备注' }} · 待结 {{ formatMoney(plan.remaining_amount) }}</option></select></label><p v-if="!eligiblePlans.length" class="empty-note">暂无币种与往来方匹配的待结计划。</p><label>核销金额（{{ allocation.currency }}）<input v-model="allocationAmount" type="text" inputmode="decimal" :disabled="Boolean(allocationAttempt)" required></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" :disabled="saving" @click="closeAllocation">取消</button><button :disabled="saving || !allocationPlan">{{ saving ? '保存中…' : allocationAttempt ? '按原内容重试' : '确认核销' }}</button></footer></form></div>
-    <div v-if="voidTarget && can('transactions', 'update')" class="mask"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="void-title" @submit.prevent="submitVoid"><header class="dialog-head"><div><h3 id="void-title">作废财务流水</h3><p>此操作会同步作废拆分流水，并恢复关联收付款计划。</p></div><button type="button" class="close" aria-label="关闭" :disabled="voidSaving" @click="closeVoid">×</button></header><dl class="void-summary"><dt>流水号</dt><dd>{{ voidTarget.transaction_no }}</dd><dt>金额</dt><dd>{{ voidTarget.currency }} {{ formatMoney(voidTarget.amount) }}</dd><dt>往来方 / 合同</dt><dd>{{ voidTarget.customer_name || voidTarget.supplier_name || '—' }} / {{ voidTarget.order_no || voidTarget.purchase_no || '未关联合同' }}</dd></dl><label>作废原因<textarea v-model="voidReason" maxlength="500" rows="4" required /></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" :disabled="voidSaving" @click="closeVoid">取消</button><button :disabled="voidSaving || !voidReason.trim()">{{ voidSaving ? '保存中…' : '确认作废' }}</button></footer></form></div>
+    <div v-if="voidTarget && can('transactions', 'update')" class="mask"><form class="dialog" role="dialog" aria-modal="true" aria-labelledby="void-title" @submit.prevent="submitVoid"><header class="dialog-head"><div><h3 id="void-title">作废财务流水</h3><p>此操作会同步作废拆分流水，并恢复关联收付款计划。</p></div><button type="button" class="close" aria-label="关闭" :disabled="voidSaving" @click="closeVoid">×</button></header><dl class="void-summary"><dt>流水号</dt><dd>{{ voidTarget.transaction_no }}</dd><dt>金额</dt><dd>{{ voidTarget.currency }} {{ formatMoney(voidTarget.amount) }}</dd><dt>往来方 / 合同</dt><dd>{{ voidTarget.customer_name || voidTarget.supplier_name || '—' }} / {{ voidTarget.order_no || voidTarget.purchase_no || '未关联合同' }}</dd></dl><label>作废原因<textarea v-model="voidReason" :readonly="!!voidAttempt" maxlength="500" rows="4" required /></label><p v-if="error" class="error" role="alert">{{ error }}</p><footer><button type="button" class="secondary" :disabled="voidSaving" @click="closeVoid">取消</button><button :disabled="voidSaving || !voidReason.trim()">{{ voidSaving ? '保存中…' : '确认作废' }}</button></footer></form></div>
   </section>
 </template>
 

@@ -1,7 +1,12 @@
+import { setAccessOperator } from '../src/accessControl'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import PaymentPlanPage from '../src/views/PaymentPlanPage.vue'
+
+const financeAccount = id => setAccessOperator({ authenticated: true, user_id: id, has_all_permissions: true })
+const savedKey = key => `sunjack:finance-attempt:v2:user:101:${key}`
+beforeEach(() => { window.localStorage.clear(); financeAccount(101) })
 
 const mocks = vi.hoisted(() => ({ listAll: vi.fn(), get: vi.fn(), post: vi.fn(), patch: vi.fn() }))
 vi.mock('../src/api', () => ({ api: mocks, listAll: mocks.listAll }))
@@ -58,7 +63,7 @@ describe('payment plan list filters', () => {
     await reopened.wrapper.get('.dialog').trigger('submit.prevent')
     await flushPromises()
     expect(mocks.post.mock.calls[1]).toEqual(original)
-    expect(window.sessionStorage.getItem('finance-plan-settle-1')).toBeNull()
+    expect(window.localStorage.getItem(savedKey('finance-plan-settle-1'))).toBeNull()
     reopened.wrapper.unmount()
   })
 

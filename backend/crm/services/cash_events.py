@@ -441,6 +441,11 @@ def lock_bank_fact(p):
         raise ValidationError("当前数据库不支持银行事实并发锁，不能确认。")
 
 
+def same_operator(saved, user):
+    current = actor(user, "replay")
+    return (saved.get("kind"), saved.get("user_id")) == (current["kind"], current.get("user_id"))
+
+
 @transaction.atomic
 def register_event(payload, user):
     access(user, "create")
@@ -450,7 +455,7 @@ def register_event(payload, user):
     if existing:
         if not visible(existing, user):
             raise NotFound("资金记录不存在或不可访问。")
-        if existing.request_hash != digest:
+        if existing.request_hash != digest or not same_operator(existing.created_actor, user):
             raise CashConflict()
         return existing, False
     rows = validate_sources(p, user)
@@ -467,7 +472,7 @@ def register_event(payload, user):
                 CashSourceAllocation.objects.create(event=event, source=row, amount=s["amount"], currency=p["currency"], source_snapshot=source_snapshot(row))
     except IntegrityError:
         existing = RmbCashEvent.objects.filter(request_key=p["request_key"]).first()
-        if existing and visible(existing, user) and existing.request_hash == digest:
+        if existing and visible(existing, user) and existing.request_hash == digest and same_operator(existing.created_actor, user):
             return existing, False
         raise CashConflict()
     event.refresh_from_db()
@@ -511,9 +516,9 @@ def confirm_event(event_id, user, *, voucher_checked=False, duplicate_token=None
         raise NotFound("资金记录不存在或不可访问。")
     if event.status == "confirmed":
         identity = FinanceCashConfirmation.objects.filter(event=event).first()
-        if identity and identity.request_hash != confirmation_hash:
+        if identity and (identity.request_hash != confirmation_hash or not same_operator(identity.actor, user)):
             raise CashConflict("该银行记录已确认；本次核对内容与原确认不一致。")
-        if identity is None and (voucher_checked is not True or duplicate_token or duplicate_reason or same_fact is not None):
+        if identity is None and (not same_operator(event.confirmed_actor, user) or voucher_checked is not True or duplicate_token or duplicate_reason or same_fact is not None):
             raise CashConflict("历史确认缺少原请求身份；请查看原记录，不可追加或推测核对内容。")
         if same_fact is not None:
             from crm.models import FinanceBankFactMatch

@@ -479,7 +479,7 @@ def _receipt_adjustment_input(rows, currency, *, customer, order, plans, request
     return normalized
 
 
-def _receipt_request_hash(payload, transaction_no, *, customer, order, currency, amount, exchange_rate, reference_missing):
+def _receipt_request_hash(payload, transaction_no, *, customer, order, currency, amount, exchange_rate, reference_missing, actor=None):
     """Fingerprint submitted receipt intent without depending on mutable plan state."""
     def identifier(value, label):
         if value in (None, ""):
@@ -536,6 +536,8 @@ def _receipt_request_hash(payload, transaction_no, *, customer, order, currency,
         "notes": str(payload.get("notes") or ""),
         "transaction_date": str(payload.get("transaction_date") or timezone.localdate()),
     }
+    if actor is not None:
+        fingerprint["actor"] = actor
     return hashlib.sha256(json.dumps(fingerprint, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")).hexdigest()
 
 
@@ -577,17 +579,27 @@ def record_customer_receipt(payload, user):
     exchange_rate = None if reference_missing else Decimal("1") if currency == "CNY" and exchange_rate_value in (None, "") else positive_decimal(exchange_rate_value, "账面参考汇率")
     if currency == "CNY" and exchange_rate != 1:
         raise ValidationError("人民币收款的账面参考汇率必须为1。")
-    request_hash = _receipt_request_hash(
-        payload, transaction_no, customer=customer, order=order, currency=currency,
-        amount=amount, exchange_rate=exchange_rate, reference_missing=reference_missing,
-    )
+    receipt_actor = cash.actor(user, "record_customer_receipt")
+    hash_fields = dict(customer=customer, order=order, currency=currency, amount=amount,
+                       exchange_rate=exchange_rate, reference_missing=reference_missing)
+    request_hash = _receipt_request_hash(payload, transaction_no, **hash_fields, actor=receipt_actor)
     existing = Transaction.objects.select_for_update().filter(transaction_no=transaction_no).first()
     if existing:
         visible_existing = scope_transaction_queryset(Transaction.objects.filter(pk=existing.pk), user).exists()
         if not visible_existing:
             raise cash.CashConflict("收款保存冲突，请按原流水编号核对后再试。")
-        if existing.kind == "customer_receipt" and existing.request_hash == request_hash:
-            return existing, False
+        if existing.kind == "customer_receipt":
+            if existing.request_hash == request_hash:
+                return existing, False
+            if existing.request_hash == _receipt_request_hash(payload, transaction_no, **hash_fields):
+                from crm.models import OperationLog
+                user_id = receipt_actor.get("user_id")
+                audited = user_id is not None and OperationLog.objects.filter(
+                    entity="crm.transaction", object_id=str(existing.pk), action="create",
+                    action_label="登记财务流水", operator_id=user_id,
+                ).exists()
+                if audited or existing.receipt_adjustments.filter(actor=receipt_actor).exists():
+                    return existing, False
         raise cash.CashConflict("收款流水编号已被其他内容使用，请按原编号核对。")
     plans = []
     requested_allocations = []
@@ -648,7 +660,7 @@ def record_customer_receipt(payload, user):
     fee_lines = [row for row in adjustments if row["nature"] == "bank_fee"]
     fee_reason = "；".join(row["reason"] for row in fee_lines)
     fee_evidence = fee_lines[0]["evidence"] if len(fee_lines) == 1 else None
-    actor = cash.actor(user, "record_customer_receipt")
+    actor = receipt_actor
     try:
         with transaction.atomic():
             row = Transaction.objects.create(
@@ -1183,7 +1195,7 @@ def record_contract_refund(contract, payload):
 
 
 @transaction.atomic
-def refund_receipt_cash(source, order, value, reason, evidence_id, user):
+def refund_receipt_cash(source, order, value, reason, evidence_id, user, *, actual_date):
     """Refund traceable, unconverted cash; keep source and allocations immutable."""
     from crm.models import Customer, FinanceReceiptRefund
     if not source.customer_id:
@@ -1239,7 +1251,7 @@ def refund_receipt_cash(source, order, value, reason, evidence_id, user):
         if applied <= 0:
             continue
         rate = source.exchange_rate
-        refund = Transaction.objects.create(transaction_no=_transaction_no(), transaction_date=timezone.localdate(),
+        refund = Transaction.objects.create(transaction_no=_transaction_no(), transaction_date=actual_date,
             direction="expense", kind="refund", category="客户退款", amount=applied, currency=source.currency,
             exchange_rate=rate, rmb_amount=(applied * rate).quantize(Decimal("0.0001")) if rate else Decimal("0"),
             reference_rate_missing=source.reference_rate_missing or rate is None, customer_id=source.customer_id,

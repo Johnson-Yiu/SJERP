@@ -1,6 +1,7 @@
 <script setup>
+import { useFinanceAttempts } from '../composables/useFinanceAttempts'
+const financeAttempts = useFinanceAttempts()
 import { computed, onMounted, reactive, ref, watch } from 'vue'
-import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { useAccessControl } from '../accessControl'
@@ -14,7 +15,6 @@ const props = defineProps({
   order: { type: Object, default: null },
 })
 const emit = defineEmits(['close', 'created', 'updated', 'state-change'])
-const { workspace, storageKey } = useWorkspaceNavigation()
 const { api } = useWorkspaceApi()
 const { can } = useAccessControl()
 const linked = computed(() => props.mode === 'linked')
@@ -40,9 +40,6 @@ const duplicateCandidates = ref(null), duplicateReason = ref(''), sameFact = ref
 const confirmationAttempt = ref(null)
 const voucherFile = ref(null), voucherUploading = ref(false)
 const voucherName = ref('')
-const draftRestoredRequiresEvidence = ref(false)
-const draftStorageKey = 'sunjack:r1-fin-p2-b:cash-event-draft:v1'
-const identityStorageKey = storageKey('sunjack:cash-event:request-identity:v1')
 const allocationAmountBaseline = new Map()
 let sourceRequestId = 0
 let sourceAbortController = null
@@ -57,12 +54,12 @@ function makeKey(prefix) {
   const uuid = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`
   return `P2B-${prefix}-${uuid}`.replace(/[^A-Za-z0-9_-]/g, '-')
 }
-function pendingStorageKey() { return linked.value ? (props.receipt?.id ? storageKey(`sunjack:cash-event:pending-receipt:${props.receipt.id}`) : '') : storageKey('sunjack:cash-event:pending-standalone') }
+function pendingStorageKey() { return linked.value ? (props.receipt?.id ? `sunjack:cash-event:pending-receipt:${props.receipt.id}` : '') : 'sunjack:cash-event:pending-standalone' }
 function restorePendingAttempt() {
   const key = pendingStorageKey()
   if (!key) return
   try {
-    const raw = window.sessionStorage.getItem(key)
+    const raw = financeAttempts.get(key)
     const saved = JSON.parse(raw || 'null')
     if (saved?.payload?.request_key && saved.payload.event_no && Array.isArray(saved.payload.sources)) { pendingAttempt.value = saved; saveOutcome.value = 'unknown'; notice.value = '上次结汇登记结果待确认，请按原内容核对。' }
     else if (raw) { pendingStorageBlocked.value = true; error.value = '待核对记录不完整，请先核查资金登记结果，再处理浏览器中的异常记录。' }
@@ -70,20 +67,20 @@ function restorePendingAttempt() {
 }
 function clearPendingAttempt() {
   const key = pendingStorageKey()
-  if (key) window.sessionStorage.removeItem(key)
+  if (key) financeAttempts.remove(key)
   pendingAttempt.value = null
 }
 function persistPendingAttempt(payload) {
   const key = pendingStorageKey()
   if (!key) return false
-  try { const attempt = { payload }; window.sessionStorage.setItem(key, JSON.stringify(attempt)); pendingAttempt.value = attempt; return true }
+  try { const attempt = { payload }; financeAttempts.save(key, JSON.stringify(attempt)); pendingAttempt.value = attempt; return true }
   catch { error.value = '无法保存本次结汇身份，请恢复浏览器存储后重试。'; return false }
 }
 function acceptRegistered(response) {
   selected.value = response.data; formStep.value = 'review'; showCancelReason.value = false; preview.value = null; previewFingerprint.value = ''; reviewConfirmed.value = false
   confirmationAttempt.value = null
   try { clearPendingAttempt() } catch { /* Retrying the same stored identity remains safe. */ }
-  clearDraftSnapshot(); formGuard.markClean(); saveOutcome.value = 'saved'; emit('created', selected.value)
+  formGuard.markClean(); saveOutcome.value = 'saved'; emit('created', selected.value)
 }
 async function retryPendingAttempt() {
   if (!pendingAttempt.value || saving.value) return
@@ -110,39 +107,10 @@ function resetForm() {
   })
   allocations.value = []; preview.value = null; previewFingerprint.value = ''
   extraSources.value = []; mergeOpen.value = false; mergeQuery.value = ''; receiptSourceIds = new Set(); pendingAttempt.value = null; pendingStorageBlocked.value = false
+  allocationAmountBaseline.clear()
   reviewConfirmed.value = false; duplicateCandidates.value = null; duplicateReason.value = ''; sameFact.value = ''
-  draftRestoredRequiresEvidence.value = false; allocationAmountBaseline.clear()
   formStep.value = 'form'; saveOutcome.value = 'not-submitted'; showCancelReason.value = false
   cancelReason.value = ''; error.value = ''; sourceError.value = ''; sourceSearch.value = ''; notice.value = ''
-}
-function clearDraftSnapshot() {
-  try { window.localStorage.removeItem(draftStorageKey); if (workspace) window.sessionStorage.removeItem(identityStorageKey) } catch { /* 浏览器存储可能不可用。 */ }
-}
-function persistDraftSnapshot() {
-  if (!workspace || linked.value || formStep.value !== 'form') return
-  const attempted = ['submitting', 'unknown'].includes(saveOutcome.value)
-  try { window.sessionStorage.setItem(identityStorageKey, JSON.stringify({ event_no: form.event_no, request_key: form.request_key, saved_at: Date.now(), attempted })) } catch { /* 浏览器存储可能不可用。 */ }
-}
-function clearLegacyDraftSnapshot() {
-  try {
-    if (!window.localStorage.getItem(draftStorageKey)) return
-    window.localStorage.removeItem(draftStorageKey)
-    notice.value = '旧版浏览器草稿已清理。已提交的操作请核对资金记录。'
-  } catch { /* 浏览器存储可能不可用。 */ }
-}
-function restoreDraftSnapshot() {
-  if (!workspace || linked.value) return false
-  try {
-    const saved = JSON.parse(window.sessionStorage.getItem(identityStorageKey) || 'null')
-    if (!saved?.request_key || !saved.event_no || Date.now() - saved.saved_at > 24 * 60 * 60 * 1000) {
-      window.sessionStorage.removeItem(identityStorageKey)
-      return false
-    }
-    form.request_key = saved.request_key; form.event_no = saved.event_no
-    draftRestoredRequiresEvidence.value = true
-    if (saved.attempted) saveOutcome.value = 'unknown'
-    return true
-  } catch { return false }
 }
 function money(value, currency = 'CNY') {
   if (value === null || value === undefined || value === '') return '待核对'
@@ -280,7 +248,6 @@ function syncAccountSelection() {
 function clientError() {
   if (!form.bank_date || !form.bank_reference) return '请填写银行实际日期和银行参考号。'
   if (!String(form.evidence_note || '').trim()) return '请填写银行凭证核对说明。'
-  if (draftRestoredRequiresEvidence.value && (!form.private_voucher || !form.evidence_note)) return '请重新上传实际银行凭证并填写核对说明。'
   if (!form.source_account || !form.rmb_account) return sourceAccountOptions.value.length && rmbAccountOptions.value.length ? '请选择资金账户。' : '暂无匹配的资金账户；请先在财务台账登记对应币种账户，并联系系统管理员完成账户配置。'
   if (form.kind === 'fx_settlement') {
     if (!form.gross_rmb_amount || grossRmbAmount() <= 0) return '请填写大于0的扣费前人民币兑换额。'
@@ -313,14 +280,12 @@ const formGuard = useUnsavedChangesGuard({
 function openCreate() {
   resetForm(); selected.value = null
   formGuard.markClean()
-  const restored = restoreDraftSnapshot()
-  if (restored) notice.value = '已恢复未完成的资金登记。请重新核对内容并上传实际凭证。'
   restorePendingAttempt()
   void loadSources()
 }
 function closeForm() {
   if (linked.value) return
-  return formGuard.requestClose(() => { clearDraftSnapshot(); emit('close') })
+  return formGuard.requestClose(() => { emit('close') })
 }
 async function uploadPrivateVoucher() {
   const existing = formStep.value === 'review' ? selected.value : null
@@ -360,7 +325,7 @@ async function registerDraft() {
   if (!preview.value || !previewFingerprint.value || payloadFingerprint(eventPayload()) !== previewFingerprint.value) { preview.value = null; previewFingerprint.value = ''; saveOutcome.value = 'not-submitted'; error.value = '预览已失效，请重新预览后再登记。'; return }
   const payload = eventPayload()
   if (!persistPendingAttempt(payload)) return
-  saving.value = true; saveOutcome.value = 'submitting'; persistDraftSnapshot()
+  saving.value = true; saveOutcome.value = 'submitting'
   try {
     const response = await api.post('/rmb-cash-events/', payload)
     acceptRegistered(response); notice.value = '结汇信息已登记，等待核对银行凭证。'
@@ -377,7 +342,7 @@ async function lookupRequest() {
   if (pendingAttempt.value) { await retryPendingAttempt(); return }
   if (!form.request_key || lookupLoading.value) return
   lookupLoading.value = true; error.value = ''
-  try { selected.value = (await api.get('/rmb-cash-events/by-request-key/', { params: { request_key: form.request_key } })).data; formStep.value = 'review'; reviewConfirmed.value = false; clearDraftSnapshot(); formGuard.markClean(); notice.value = '已找到原资金事件。'; emit('created', selected.value); await loadEvents() }
+  try { selected.value = (await api.get('/rmb-cash-events/by-request-key/', { params: { request_key: form.request_key } })).data; formStep.value = 'review'; reviewConfirmed.value = false; formGuard.markClean(); notice.value = '已找到原资金事件。'; emit('created', selected.value); await loadEvents() }
   catch (err) {
     const status = err?.status || err?.response?.status
     if (status === 404) saveOutcome.value = 'failed'
@@ -396,17 +361,17 @@ async function confirmEvent() {
     }
     const body = confirmationAttempt.value?.body || { voucher_checked: true }
     if (!confirmationAttempt.value && duplicateCandidates.value.count) { body.duplicate_token = duplicateCandidates.value.token; body.duplicate_reason = duplicateReason.value.trim(); if (sameFact.value) body.same_fact = Number(sameFact.value) }
-    const storage = storageKey(`sunjack:cash-confirm:${selected.value.id}`)
-    try { window.sessionStorage.setItem(storage, JSON.stringify({ body })) }
+    const storage = `sunjack:cash-confirm:${selected.value.id}`
+    try { financeAttempts.save(storage, JSON.stringify({ body })) }
     catch { error.value = '无法保存本次核对身份，请恢复浏览器存储后重试。'; return }
     confirmationAttempt.value = { body }
     selected.value = (await api.post(`/rmb-cash-events/${selected.value.id}/confirm/`, body)).data
-    try { window.sessionStorage.removeItem(storage); confirmationAttempt.value = null } catch { /* Exact replay remains safe. */ }
-    notice.value = '资金事件已确认。'; reviewConfirmed.value = false; clearDraftSnapshot(); formGuard.markClean(); emit('updated', selected.value); await loadEvents()
+    try { financeAttempts.remove(storage); confirmationAttempt.value = null } catch { /* Exact replay remains safe. */ }
+    notice.value = '资金事件已确认。'; reviewConfirmed.value = false; formGuard.markClean(); emit('updated', selected.value); await loadEvents()
   } catch (err) {
     const status = err?.status || err?.response?.status
     if (!wasRetry && status && status < 500 && status !== 408) {
-      try { window.sessionStorage.removeItem(storageKey(`sunjack:cash-confirm:${selected.value.id}`)); confirmationAttempt.value = null } catch { /* Keep the original intent if storage is unavailable. */ }
+      try { financeAttempts.remove(`sunjack:cash-confirm:${selected.value.id}`); confirmationAttempt.value = null } catch { /* Keep the original intent if storage is unavailable. */ }
     }
     duplicateCandidates.value = null; error.value = apiErrorMessage(err) || (confirmationAttempt.value ? '确认结果待核对，请按原内容重试。' : '确认失败；记录仍保留为待确认。')
   }
@@ -418,11 +383,11 @@ async function cancelDraft() {
   try {
     selected.value = (await api.post(`/rmb-cash-events/${selected.value.id}/cancel/`, { reason: cancelReason.value.trim() })).data
     showCancelReason.value = false; notice.value = '待确认草稿已放弃，来源额度未计入已确认资金。'; reviewConfirmed.value = false
-    clearDraftSnapshot(); formGuard.markClean(); emit('updated', selected.value); await loadEvents()
+    formGuard.markClean(); emit('updated', selected.value); await loadEvents()
   } catch (err) { error.value = apiErrorMessage(err) || '草稿放弃失败，原记录仍保留。' }
   finally { cancelling.value = false }
 }
-function openReview(row) { selected.value = row; reviewConfirmed.value = false; showCancelReason.value = false; duplicateCandidates.value = null; duplicateReason.value = ''; sameFact.value = ''; confirmationAttempt.value = null; error.value = ''; notice.value = ''; try { confirmationAttempt.value = JSON.parse(window.sessionStorage.getItem(storageKey(`sunjack:cash-confirm:${row.id}`)) || 'null') } catch { error.value = '无法读取待核对的银行确认记录。' } }
+function openReview(row) { selected.value = row; reviewConfirmed.value = false; showCancelReason.value = false; duplicateCandidates.value = null; duplicateReason.value = ''; sameFact.value = ''; confirmationAttempt.value = null; error.value = ''; notice.value = ''; try { confirmationAttempt.value = JSON.parse(financeAttempts.get(`sunjack:cash-confirm:${row.id}`) || 'null') } catch { error.value = '无法读取待核对的银行确认记录。' } }
 function beginCancel() { showCancelReason.value = true; cancelReason.value = '' }
 watch(() => props.initialEvent, value => { if (value) { openReview(value); formStep.value = 'review'; saveOutcome.value = 'saved' } else if (!linked.value) openCreate() }, { immediate: true })
 watch(() => props.order?.currency, value => {
@@ -454,17 +419,17 @@ watch([form, allocations], () => {
       allocationAmountBaseline.set(item.id, amount)
     })
     for (const id of allocationAmountBaseline.keys()) if (!presentIds.has(id)) allocationAmountBaseline.delete(id)
-    persistDraftSnapshot()
     if (preview.value || previewFingerprint.value) { previewRequestId.value += 1; preview.value = null; previewFingerprint.value = ''; saveOutcome.value = 'not-submitted'; notice.value = '表单已修改，请重新预览。' }
   }
   emit('state-change', snapshotForParent())
 }, { deep: true })
 watch(() => form.kind, value => { if (value === 'fx_settlement' && form.currency === 'CNY') form.currency = 'USD' })
 watch(() => form.currency, syncAccountSelection)
-onMounted(() => { if (!props.initialEvent) { if (!linked.value) { clearLegacyDraftSnapshot(); if (formStep.value !== 'form') openCreate() }; void loadAccounts(); void loadEvents(); if (!linked.value) void loadSources() } })
+onMounted(() => { if (!props.initialEvent) { if (!linked.value) { if (formStep.value !== 'form') openCreate() }; void loadAccounts(); void loadEvents(); if (!linked.value) void loadSources() } })
 </script>
 
 <template>
+  <p v-if="financeAttempts.hasLegacy()" role="status">此浏览器留有旧版待核对记录。请先核对银行资金记录，再决定是否另行登记。</p>
   <div v-if="!linked" class="cash-entry-mask" @keydown.esc="closeForm">
     <section class="cash-entry-dialog" role="dialog" aria-modal="true" :aria-labelledby="formStep === 'form' ? 'cash-entry-title' : 'cash-review-title'">
       <header class="dialog-head"><div><p class="eyebrow">人民币资金</p><h3 :id="formStep === 'form' ? 'cash-entry-title' : 'cash-review-title'">{{ formStep === 'form' ? '新增资金事件' : '资金事件详情' }}</h3><p v-if="formStep === 'form'">核对银行实际到账信息后预览并登记。</p></div><button type="button" class="close-button" aria-label="关闭资金表单" :disabled="saving || confirming || cancelling" @click="closeForm">×</button></header>

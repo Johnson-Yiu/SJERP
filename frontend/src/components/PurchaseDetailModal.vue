@@ -1,4 +1,6 @@
 <script setup>
+import { useFinanceAttempts } from '../composables/useFinanceAttempts'
+const financeAttempts = useFinanceAttempts()
 import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
 const { workspace } = useWorkspaceNavigation()
 import { computed, ref, watch } from 'vue'
@@ -44,7 +46,7 @@ const hasPaymentSummary = computed(() => row.value?.paid_amount != null && row.v
 const canPay = computed(() => {
   if (!row.value) return false
   let pending = false
-  try { pending = Boolean(JSON.parse(window.sessionStorage.getItem(`finance-purchase-payment-${row.value.id}`) || 'null')?.key) } catch { /* no saved request */ }
+  try { pending = Boolean(JSON.parse(financeAttempts.get(`finance-purchase-payment-${row.value.id}`) || 'null')?.key) } catch { /* no saved request */ }
   return can('purchases', 'update') && formal.value && (Number(row.value.unpaid_amount) > 0 || pending)
 })
 const paymentPercent = computed(() => Number(row.value?.total_amount) > 0 ? Math.min(100, Math.round(Number(row.value.paid_amount || 0) / Number(row.value.total_amount) * 100)) : 0)

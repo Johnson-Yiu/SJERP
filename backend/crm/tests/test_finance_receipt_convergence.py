@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
 from unittest import skipUnless
 
+from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.test import TestCase, TransactionTestCase, override_settings
 from django.db import close_old_connections, connection, connections
@@ -35,6 +36,61 @@ class ReceiptConvergenceTests(TestCase):
         self.proof.file.save("synthetic.pdf", ContentFile(content), save=False)
         self.proof.save()
 
+    def test_void_audit_rollback_and_replay(self):
+        from crm.models import OperationLog
+        from crm.services.finance import record_transaction
+        self.plan.planned_amount = 100
+        self.plan.save()
+        row = record_transaction({"plan": self.plan, "amount": 50, "currency": "USD", "exchange_rate": 7})
+        url = f"/api/transactions/{row.pk}/void/"
+        body = {"reason": "Synthetic duplicate receipt"}
+        self.client.force_authenticate(get_user_model().objects.create_superuser("void-reviewer"))
+        with patch("crm.views.record_operation", side_effect=RuntimeError("synthetic audit failure")):
+            self.client.raise_request_exception = False
+            self.assertEqual(self.client.post(url, body, format="json", HTTP_IDEMPOTENCY_KEY="VOID-50").status_code, 500)
+        row.refresh_from_db()
+        self.plan.refresh_from_db()
+        self.assertEqual((row.status, self.plan.remaining_amount), ("confirmed", Decimal("50")))
+        first = self.client.post(url, body, format="json", HTTP_IDEMPOTENCY_KEY="VOID-50")
+        replay = self.client.post(url, body, format="json", HTTP_IDEMPOTENCY_KEY="VOID-50")
+        self.assertEqual(first.status_code, 200, first.data)
+        self.assertEqual(replay.data, first.data)
+        self.assertEqual(replay.headers.get("Idempotent-Replay"), "true")
+        conflict = self.client.post(url, {"reason": "Different reason"}, format="json", HTTP_IDEMPOTENCY_KEY="VOID-50")
+        self.assertEqual(conflict.status_code, 409)
+        self.assertEqual(OperationLog.objects.filter(action_label="作废财务流水", object_id=str(row.pk)).count(), 1)
+
+    def test_refund_uses_actual_date_and_replays_across_days(self):
+        from crm.services.finance import record_transaction
+        row = record_transaction({"plan": self.plan, "amount": 50, "currency": "USD", "exchange_rate": 7})
+        url = f"/api/transactions/{row.pk}/refund-cash/"
+        payload = {"order": self.order.pk, "amount": "5", "reason": "Synthetic refund receipt evidence", "voucher": self.proof.pk}
+        bad = self.client.post(url, {**payload, "actual_date": "2026-02-30"}, format="json", HTTP_IDEMPOTENCY_KEY="REFUND-DATE")
+        self.assertEqual(bad.status_code, 400)
+        self.assertIn("actual_date", bad.data)
+        payload["actual_date"] = "2026-10-30"
+        first = self.client.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="REFUND-DATE")
+        self.assertEqual(first.status_code, 201, first.data)
+        with patch("crm.views.timezone.localdate", return_value=date(2026, 11, 10)):
+            retry = self.client.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="REFUND-DATE")
+        self.assertEqual(retry.data, first.data)
+        self.assertEqual(retry.headers.get("Idempotent-Replay"), "true")
+        refund = Transaction.objects.get(pk=first.data["refunds"][0]["id"])
+        self.assertEqual(refund.transaction_date, date(2026, 10, 30))
+        for start, end, expected in (("2026-10-01", "2026-10-31", True), ("2026-11-01", "2026-11-30", False)):
+            result = self.client.get("/api/transactions/", {"date_from": start, "date_to": end})
+            rows = result.data["results"] if isinstance(result.data, dict) else result.data
+            self.assertEqual(any(item["id"] == refund.pk for item in rows), expected)
+            period = {"date_from": start, "date_to": end}
+            summary = self.client.get("/api/finance-dashboard/", period)
+            self.assertEqual(Decimal(summary.data["metrics"]["expense_rmb"]), 35 if expected else 0)
+            exported = self.client.get("/api/finance-dashboard/", {**period, "export": "csv"})
+            self.assertEqual(exported.status_code, 200)
+            self.assertEqual("客户退款" in exported.content.decode("utf-8-sig"), expected)
+
+        conflict = self.client.post(url, {**payload, "actual_date": "2026-10-31"}, format="json", HTTP_IDEMPOTENCY_KEY="REFUND-DATE")
+        self.assertEqual(conflict.status_code, 409)
+
     def payload(self, number="CONVERGE-1", responsibility="company"):
         return {"transaction_no": number, "transaction_date": "2026-11-06", "direction": "income", "kind": "customer_receipt",
             "category": "客户收款", "amount": "985", "currency": "USD", "customer": self.customer.pk, "order": self.order.pk,
@@ -62,6 +118,18 @@ class ReceiptConvergenceTests(TestCase):
         payload["amount"] = "984"
         conflict = self.client.post("/api/transactions/", payload, format="json")
         self.assertEqual(conflict.status_code, 409, conflict.data)
+
+    def test_structured_receipt_replay_requires_the_original_operator(self):
+        first = get_user_model().objects.create_superuser("receipt-first")
+        other = get_user_model().objects.create_superuser("receipt-other")
+        self.client.force_authenticate(first)
+        body = self.payload()
+        created = self.client.post("/api/transactions/", body, format="json")
+        self.assertEqual(created.status_code, 201, created.data)
+        self.client.force_authenticate(other)
+        self.assertEqual(self.client.post("/api/transactions/", body, format="json").status_code, 409)
+        self.client.force_authenticate(first)
+        self.assertEqual(self.client.post("/api/transactions/", body, format="json").status_code, 200)
 
     def test_customer_fee_leaves_difference(self):
         response = self.client.post("/api/transactions/", self.payload(responsibility="customer"), format="json")
@@ -214,6 +282,35 @@ class ReceiptConvergenceTests(TestCase):
 @override_settings(APP_STAGE="development", DEBUG=True, DEVELOPMENT_SUPERADMIN=True, RBAC_ENFORCEMENT=False, AUDIT_LOG_ENABLED=True)
 @skipUnless(connection.vendor == "postgresql", "并发测试需要 PostgreSQL")
 class ReceiptReplayConcurrencyTests(TransactionTestCase):
+    def test_concurrent_void_has_one_reversal_and_one_audit(self):
+        from crm.models import OperationLog
+        from crm.services.finance import record_transaction
+
+        customer = Customer.objects.create(code="VOID-RACE", name="Synthetic void buyer")
+        order = Order.objects.create(order_no="VOID-RACE", customer=customer, order_date=date(2026, 11, 1), currency="USD", status="confirmed")
+        plan = PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=100)
+        receipt = record_transaction({"plan": plan, "amount": 50, "currency": "USD", "exchange_rate": 7})
+        user = get_user_model().objects.create_superuser("void-race")
+        barrier = Barrier(2)
+
+        def submit():
+            close_old_connections()
+            try:
+                client = APIClient()
+                client.force_authenticate(user)
+                barrier.wait(timeout=15)
+                response = client.post(f"/api/transactions/{receipt.pk}/void/", {"reason": "Synthetic concurrent void"}, format="json", HTTP_IDEMPOTENCY_KEY="VOID-RACE")
+                return response.status_code, response.headers.get("Idempotent-Replay")
+            finally:
+                connections.close_all()
+
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            results = list(executor.map(lambda _: submit(), range(2)))
+        self.assertCountEqual(results, [(200, None), (200, "true")])
+        plan.refresh_from_db()
+        self.assertEqual(plan.remaining_amount, 100)
+        self.assertEqual(OperationLog.objects.filter(action_label="作废财务流水", object_id=str(receipt.pk)).count(), 1)
+
     def test_concurrent_legacy_direct_receipt_replays_once(self):
         customer = Customer.objects.create(code="DIRECT-RACE-C", name="合成客户")
         order = Order.objects.create(order_no="DIRECT-RACE-O", customer=customer, order_date=date(2026, 11, 1), currency="USD", exchange_rate=7, status="confirmed")

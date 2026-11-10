@@ -114,6 +114,56 @@ class HistoricalInventoryBaselineTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertFalse(HistoryInventoryBaseline.objects.exists())
 
 
+
+class ArchivedUnknownInventoryLinkTests(HistoryTakeoverFixtureMixin, TestCase):
+    def test_link_and_rebind_archived_inventory_without_bypassing_approval(self):
+        rows = self.source_rows()
+        rows["库存盘点"][0]["sku_code"] = "H2-UNKNOWN"
+        app, group, _ = self.application_and_group(rows)
+        root = f"/api/import/history-takeovers/{app.pk}/groups/{group.pk}/"
+        response = self.client.post(root + "review/", {"decision": "approve", "note": "盘点原始编码已核对", "confirm_manual": True}, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        response = self.client.post(root + "execute/", {}, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        source = group.source_records.get(record_type="库存盘点")
+        original = source.source_snapshot
+        products = "/api/import/history-products/"
+        result = self.client.get(products, {"q": "H2-UNKNOWN"})
+        self.assertEqual([row["id"] for row in result.data["results"]], [source.pk])
+        self.sku.specification = "24W"
+        self.sku.save(update_fields=["specification"])
+        from crm.models import SKU
+        alternate = SKU.objects.create(product=self.product, sku="H2-STOCK", display_name_cn="合成盘点 SKU", specification="24W", unit="pcs")
+        reviewer = get_user_model().objects.create_superuser(username="inventory-h2-reviewer")
+        proposal = {"source_id": source.pk, "goods_ownership": "own", "unit_cost": "3.25", "cost_currency": "USD", "no_lot": False}
+
+        def link(sku, operation):
+            preview = self.client.post(products + "preview/", {
+                "ids": [source.pk], "operation": operation, "target": sku.pk, "verified_specification": "24 W",
+                "reason": "核对旧盘点标签与检验单",
+            }, format="json")
+            self.assertEqual(preview.status_code, 200, preview.data)
+            result = self.client.post(products + "apply/", {"token": preview.data["token"]}, format="json")
+            self.assertEqual(result.data, {"updated": 1})
+
+        link(self.sku, "link")
+        self.assertFalse(HistoryInventoryBaseline.objects.exists())
+        opening.propose(group.pk, [proposal], "原始盘点已核实", True, self.admin)
+        opening.approve(group.pk, "独立复核原始盘点", reviewer)
+        link(alternate, "change")
+        group.refresh_from_db()
+        self.assertEqual(group.inventory_handoff_status, "needs_reapproval")
+        with self.assertRaises(APIException):
+            opening.execute(group.pk, self.admin)
+        self.assertFalse(HistoryInventoryBaseline.objects.exists())
+        opening.propose(group.pk, [proposal], "重新核对盘点与 SKU", True, self.admin)
+        opening.approve(group.pk, "独立复核新的关联", reviewer)
+        opening.execute(group.pk, self.admin)
+        self.assertEqual(sku_metrics(alternate)["actual_quantity"], Decimal("18"))
+        self.assertEqual(sku_metrics(self.sku)["actual_quantity"], Decimal("0"))
+        source.refresh_from_db()
+        self.assertEqual(source.source_snapshot, original)
+
 @unittest.skipUnless(connection.vendor == "postgresql", "requires real PostgreSQL row locks")
 @override_settings(FILE_UPLOAD_TEMP_DIR=tempfile.gettempdir())
 class HistoricalInventoryPostgresTests(HistoryTakeoverFixtureMixin, TransactionTestCase):

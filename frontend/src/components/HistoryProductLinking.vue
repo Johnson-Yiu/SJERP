@@ -21,6 +21,7 @@ const targetSearch = ref('')
 const operation = ref('link')
 const target = ref('')
 const reason = ref('')
+const verifiedSpecification = ref('')
 const saveRule = ref(false)
 const preview = ref(null)
 const conflicts = ref([])
@@ -74,13 +75,14 @@ async function openDialog() {
   targetSearch.value = ''
   target.value = ''
   reason.value = ''
+  verifiedSpecification.value = ''
   saveRule.value = false
   operation.value = 'link'
   dialog.value.showModal()
   dialogOpen.value = true
   if (targetRequired.value) await searchTargets()
 }
-watch([operation, target, reason, saveRule], () => { preview.value = null; conflicts.value = [] })
+watch([operation, target, reason, saveRule, verifiedSpecification], () => { preview.value = null; conflicts.value = [] })
 
 async function run(action) {
   if (busy.value) return
@@ -90,7 +92,7 @@ async function run(action) {
   conflicts.value = []
   try {
     const payload = action === 'preview'
-      ? { ids: selected.value, operation: operation.value, target: targetRequired.value ? target.value : null, reason: reason.value, save_rule: targetRequired.value && saveRule.value }
+      ? { ids: selected.value, operation: operation.value, target: targetRequired.value ? target.value : null, reason: reason.value, save_rule: targetRequired.value && saveRule.value, ...(targetRequired.value && verifiedSpecification.value ? { verified_specification: verifiedSpecification.value } : {}) }
       : { token: preview.value.token }
     const { data } = await api.post(root + action + '/', payload)
     if (generation !== session) return
@@ -172,7 +174,7 @@ onBeforeUnmount(() => { session++; searchVersion++ })
     <ul v-else class="product-rows">
       <li v-for="row in rows" :key="row.id">
         <label class="check"><input v-model="selected" type="checkbox" :value="row.id" /><strong>{{ row.name }}</strong></label>
-        <span>{{ [row.code, row.specification, row.quantity + ' ' + row.unit, row.currency + ' ' + formatMoney(row.amount)].filter(Boolean).join(' · ') }}</span>
+        <span>{{ [row.code, row.specification, row.quantity + ' ' + row.unit, row.currency && row.currency + ' ' + formatMoney(row.amount)].filter(Boolean).join(' · ') }}</span>
         <span>{{ row.source_system }} · {{ row.order_number }} · {{ row.source_number }}</span>
         <span>{{ labels[row.status] }}<RouterLink v-if="row.sku" :to="{ path: '/skus', query: { detail: row.sku.id } }"> · {{ row.sku.code }} {{ row.sku.name }}</RouterLink></span>
         <button type="button" @click="emit('open-source', row.application, row.group)">查看原资料</button>
@@ -192,7 +194,8 @@ onBeforeUnmount(() => { session++; searchVersion++ })
         <label>正式 SKU<select v-model="target" aria-label="正式 SKU" :disabled="busy"><option value="">请选择</option><option v-for="sku in targets" :key="sku.id" :value="sku.id">{{ targetLabel(sku) }}</option></select></label>
         <label class="check"><input v-model="saveRule" type="checkbox" :disabled="busy" />保存为本来源的下次匹配候选</label>
       </template>
-      <label>原因{{ operation === 'link' ? '（选填）' : '（必填）' }}<textarea v-model.trim="reason" :disabled="busy" maxlength="1000" rows="2" /></label>
+      <label v-if="targetRequired">补核规格（仅原规格缺失时）<input v-model.trim="verifiedSpecification" maxlength="1000" :disabled="busy" /></label>
+      <label>原因{{ operation === 'link' && !verifiedSpecification ? '（选填）' : '（必填）' }}<textarea v-model.trim="reason" :disabled="busy" maxlength="1000" rows="2" /></label>
       <p v-if="error" role="alert">{{ error }}</p>
       <ul v-if="conflicts.length"><li v-for="(row, index) in conflicts" :key="index">{{ row.source_number }} {{ row.reason }}</li></ul>
       <section v-if="preview" aria-label="关联预览">
@@ -205,7 +208,7 @@ onBeforeUnmount(() => { session++; searchVersion++ })
       </div>
       <div class="actions dialog-actions">
         <button type="button" :disabled="busy" @click="dialog.close()">关闭</button>
-        <button type="button" :disabled="busy || (targetRequired && !target) || (operation !== 'link' && !reason)" @click="run('preview')">生成预览</button>
+        <button type="button" :disabled="busy || (targetRequired && !target) || ((operation !== 'link' || verifiedSpecification) && !reason)" @click="run('preview')">生成预览</button>
         <button v-if="preview" class="confirm" type="button" :disabled="busy" @click="run('apply')">{{ busy ? '处理中…' : '确认保存' }}</button>
       </div>
     </dialog>

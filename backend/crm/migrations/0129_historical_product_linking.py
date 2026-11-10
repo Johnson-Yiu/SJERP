@@ -4,6 +4,23 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+from django.db.migrations.exceptions import IrreversibleError
+
+
+def protect_history_products(apps, schema_editor):
+    alias = schema_editor.connection.alias
+    models_to_preserve = ('ArchivedHistoryLine', 'HistoryProductLink', 'HistoryProductLinkRequest')
+    has_data = any(apps.get_model("crm", name).objects.using(alias).exists() for name in models_to_preserve)
+    has_events = apps.get_model("crm", "HistoryTakeoverEvent").objects.using(alias).filter(
+        event_type="history_product_linked"
+    ).exists()
+    has_references = apps.get_model("crm", "HistoryTakeoverSourceRecord").objects.using(alias).filter(
+        target_model="crm.ArchivedHistoryLine"
+    ).exists()
+    if has_data or has_events or has_references:
+        raise IrreversibleError("历史商品归档、关联或审计引用已存在，不能降级删除历史资料。")
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -43,4 +60,5 @@ class Migration(migrations.Migration):
                 'constraints': [models.CheckConstraint(condition=models.Q(models.Q(('order__isnull', False), ('purchase_order__isnull', True)), models.Q(('order__isnull', True), ('purchase_order__isnull', False)), _connector='OR'), name='archived_history_line_one_parent')],
             },
         ),
+        migrations.RunPython(migrations.RunPython.noop, protect_history_products),
     ]

@@ -175,6 +175,42 @@ class HistoryTakeoverFixtureMixin:
 
 
 @override_settings(AUDIT_LOG_ENABLED=True)
+
+class HistoricalSourceIdentityTests(HistoryTakeoverFixtureMixin, TestCase):
+    def test_same_original_and_confirmed_sku_agree_and_mapping_can_be_cleared(self):
+        rows = self.source_rows()
+        self.sku.specification = "24W"
+        self.sku.save(update_fields=["specification"])
+        for sheet in ("销售明细", "履约记录"):
+            rows[sheet][0].update(sku_code="HIST-A", specification_snapshot="24 W")
+        rows["履约记录"] = rows["履约记录"][:1]
+        app, group, _ = self.application_and_group(rows)
+        root = f"/api/import/history-takeovers/{app.pk}/groups/{group.pk}/"
+
+        def resolve(sheet, target, clear=False):
+            return self.client.post(root + "resolve-master/", {
+                "sheet": sheet, "row": 2, "field": "sku_code", "target_code": target,
+                "clear": clear, "note": "核对历史单据上的型号和规格",
+            }, format="json")
+
+        b = self.sku
+        c = SKU.objects.create(product=self.product, sku="H2-C", display_name_cn="第三种", specification="24W", unit="pcs")
+        for sheet, target in (("销售明细", b.sku), ("履约记录", c.sku)):
+            response = resolve(sheet, target)
+            self.assertEqual(response.status_code, 200, response.data)
+        group.refresh_from_db()
+        self.assertEqual(group.status, "blocked")
+        response = resolve("履约记录", b.sku)
+        self.assertEqual(response.status_code, 200, response.data)
+        group.refresh_from_db()
+        self.assertNotEqual(group.status, "blocked", group.preflight_result)
+        self.assertEqual(resolve("履约记录", "").status_code, 400)
+        self.assertEqual(resolve("履约记录", "", clear=True).status_code, 200)
+        group.refresh_from_db()
+        self.assertNotIn("履约记录:2:sku_code", group.resolution_map)
+        self.assertEqual(group.source_rows["履约记录"][0]["data"]["sku_code"], "HIST-A")
+        self.assertTrue(group.events.filter(event_type="master_resolution_cleared").exists())
+
 class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
     def review_and_execute(self, application, group):
         review = self.client.post(

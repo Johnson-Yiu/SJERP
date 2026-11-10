@@ -670,6 +670,15 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   async function captureState(name, action) {
     for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
       await page.setViewportSize({ width, height })
+      if (width < 980) {
+        await expect.poll(() => page.locator('.sidebar').evaluate(element => element.getBoundingClientRect().right)).toBeLessThanOrEqual(1)
+        const reviewTable = page.locator('.cash-entry-dialog .review-sources table')
+        if (await reviewTable.count()) {
+          expect(await reviewTable.evaluate(element => element.scrollWidth)).toBeLessThanOrEqual(
+            await reviewTable.evaluate(element => element.clientWidth) + 1,
+          )
+        }
+      }
       await action.evaluate(element => element.scrollIntoView({ block: 'center' }))
       const box = await action.boundingBox()
       expect(box.x).toBeGreaterThanOrEqual(0)

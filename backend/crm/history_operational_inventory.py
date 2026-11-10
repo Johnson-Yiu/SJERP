@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError
 from crm.finance_scope import require_finance_permission
 from crm.history_takeover import _event, _json_hash, actor_snapshot
 from crm.history_operational_common import verified_source
-from crm.history_products import sku_summary
+from crm.history_products import link_specification_is_current, sku_summary
 from crm.models import (HistoryInventoryBaseline, HistoryInventoryBaselineReversal,
     HistoryTakeoverGroup, HistoryTakeoverHandoff, InventoryMovement, InventoryReservation, SKU)
 
@@ -64,7 +64,11 @@ def _fingerprint(group, rows):
 def _resolved_sku(source, row):
     link = getattr(source, "product_link", None)
     if link:
-        return link.sku if link.sku_id and not link.needs_review and link.sku.active else None
+        if link.sku_id and not link.needs_review and link.sku.active and link_specification_is_current(
+            source, link.sku, row.get("unit_snapshot"), row.get("specification_snapshot"), link.version,
+        ):
+            return link.sku
+        return None
     return SKU.objects.filter(sku=row.get("sku_code"), active=True).first()
 
 

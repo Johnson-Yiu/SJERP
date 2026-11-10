@@ -14,7 +14,7 @@ from django.utils import timezone
 
 from .history_import_preflight import SHEET_SCHEMAS, _read_workbook, _related_master, _storage_limit_errors, preflight_rows
 from .history_product_models import ArchivedHistoryLine, HistoryProductLink
-from .history_products import specification_matches
+from .history_products import sku_summary, specification_matches
 from .models import (
     Customer,
     HistoryTakeoverApplication,
@@ -611,7 +611,6 @@ def execute_group(group, user):
         if not sku or not specification_matches(sku, original.get("base_unit_snapshot"), original.get("specification_snapshot")):
             raise TakeoverRuleError("已选 SKU 停用或基础单位与历史资料不一致，请重新核实。")
         HistoryProductLink.objects.create(source=record, sku=sku)
-        from .history_products import sku_summary
         _event(group.application, group, "history_product_linked", user, {
             "source_id": record.pk, "source_system": record.source_system, "source_number": record.source_record_id,
             "before": None, "after": sku.pk, "after_sku": sku_summary(sku), "version": 1,

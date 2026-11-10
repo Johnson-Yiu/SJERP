@@ -12,7 +12,7 @@ from crm.document_numbers import allocate_order_no, allocate_purchase_no
 from crm.finance_scope import require_finance_permission
 from crm.history_operational_common import verified_original, verified_source
 from crm.history_takeover import _build_remainder, _event, _json_hash, _json_safe, actor_snapshot
-from crm.history_products import link_state, source_line, specification_matches
+from crm.history_products import link_specification_is_current, link_state, source_line
 from crm.models import (HistoryOperationalContract, HistoryTakeoverGroup, HistoryTakeoverHandoff,
     Order, OrderItem, PurchaseOrder, PurchaseOrderItem, SKU, Supplier, SupplierSKU)
 from crm.services.finance import install_history_opening_plans
@@ -237,7 +237,9 @@ def _snapshot(group, options, by_id, remainder):
             detail = {"source_id": line.pk, "sku_id": sku.pk, "sku_unit": sku.unit, "quantity": str(quantity), "trade_quantity": str(trade_quantity) if trade_quantity is not None else None,
                 "archived_signature": _json_hash({"sku": sku.pk, "quantity": saved.quantity, "price": saved.unit_price, "trade_quantity": saved.trade_quantity, "trade_price": saved.trade_unit_price, "trade_snapshot": saved.trade_snapshot, "name": saved.display_name_snapshot, "description": saved.description_snapshot, "sales_model": saved.sales_model_snapshot})}
             if link_version:
-                if not specification_matches(sku, row.get("base_unit_snapshot"), row.get("specification_snapshot")):
+                if not link_specification_is_current(
+                    line, sku, row.get("base_unit_snapshot"), row.get("specification_snapshot"), link_version,
+                ):
                     raise ValidationError("正式 SKU 的规格已变化，请重新核实历史商品关联。")
                 detail["link_version"] = link_version
                 detail["sku_specification"] = sku.specification

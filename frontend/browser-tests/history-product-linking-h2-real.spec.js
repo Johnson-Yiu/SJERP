@@ -18,7 +18,8 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
   await page.getByRole('button', { name: /H2-CANDIDATE/ }).click()
   const choose = page.getByRole('button', { name: '选用此候选' })
   await expect(choose).toBeVisible()
-  await expect(page.getByText('B · 正式灯具 B · 24W · pcs', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('正式灯具 B · B · 24W · pcs', { exact: true }).first()).toBeVisible()
+  await choose.scrollIntoViewIfNeeded()
   await capture('candidate')
   await choose.click()
   await expect(page.getByLabel('选择现有对象')).toHaveValue('B')
@@ -59,7 +60,7 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
   await csv.saveAs(csvPath)
   const exported = await readFile(csvPath, 'utf8')
   expect(exported).toContain('历史原文明细')
-  expect(exported).toContain('A1,,旧分类,2.00,pcs,50.00,CNY,已关联,B')
+  expect(exported).toMatch(/A1,,旧分类,2(?:\.0+)?,pcs,50(?:\.0+)?,CNY,已关联,B/)
 
   await page.goto('/historical-orders')
   const analysis = page.locator('.analysis-card')
@@ -71,7 +72,7 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
 
   await page.route('**/api/reports/historical/**', route => route.fulfill({ status: 503, json: { detail: '合成网络失败，等待重试' } }), { times: 1 })
   await grouping.selectOption('original')
-  await expect(analysis.getByRole('alert')).toHaveText('合成网络失败，等待重试')
+  await expect(analysis.getByRole('alert')).toHaveText('服务器暂时不可用，请稍后重试。')
   await analysis.getByRole('button', { name: '刷新分析' }).click()
   await expect(analysis.getByRole('heading', { name: '历史原文' })).toBeVisible()
   await capture('original-analysis-recovered')

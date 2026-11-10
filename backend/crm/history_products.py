@@ -13,7 +13,7 @@ from rest_framework.exceptions import ValidationError
 
 from .history_product_models import ArchivedHistoryLine, HistoryProductLink, HistoryProductLinkRequest, HistoryProductRule
 from .money import LEGACY_AMOUNT_CALCULATION_VERSION, money
-from .models import HistoryTakeoverGroup, HistoryTakeoverHandoff, HistoryTakeoverSourceRecord, OrderItem, PurchaseOrderItem, SKU
+from .models import HistoryTakeoverEvent, HistoryTakeoverGroup, HistoryTakeoverHandoff, HistoryTakeoverSourceRecord, OrderItem, PurchaseOrderItem, SKU
 
 ARCHIVED = "crm.ArchivedHistoryLine"
 LEGACY_MODELS = {"crm.OrderItem": OrderItem, "crm.PurchaseOrderItem": PurchaseOrderItem}
@@ -241,6 +241,17 @@ def specification_matches(sku, unit, specification, verified_specification=""):
     return bool(candidate and current and candidate == _normalize_specification(current))
 
 
+def link_specification_is_current(source, sku, unit, original_specification, version):
+    verified_specification = ""
+    if not str(original_specification or "").strip():
+        details = HistoryTakeoverEvent.objects.filter(
+            group_id=source.group_id, event_type="history_product_linked",
+            details__source_id=source.pk, details__after=sku.pk, details__version=version,
+        ).values_list("details", flat=True).first()
+        verified_specification = (details or {}).get("verified_specification", "")
+    return specification_matches(sku, unit, original_specification, verified_specification)
+
+
 def _preview_rows(sources, target, operation, verified_specification=""):
     rows, conflicts = [], []
     lines = load_source_lines(sources)
@@ -378,7 +389,7 @@ def apply_links(sources, user, token):
         _event(source.group.application, source.group, "history_product_linked", user, {
                 "source_id": source.pk, "source_system": source.source_system,
                 "source_number": source.source_record_id, "before": before, "after": after,
-                "operation": operation, "reason": preview["reason"], "version": version, "request": digest,
+                "operation": operation, "reason": preview["reason"] or "已核对原规格与基础单位", "version": version, "request": digest,
                 "saved_candidate_rule": saved_rule, "before_sku": row["sku"],
                 "after_sku": sku_summary(target) if target else row["sku"] if needs_review else None,
                 "original_specification": row["specification"], "verified_specification": verified_specification,

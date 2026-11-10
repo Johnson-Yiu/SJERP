@@ -1,5 +1,6 @@
 """Synthetic rows for the product operations evidence run."""
 import json
+import os
 from datetime import date
 
 import django
@@ -29,6 +30,8 @@ product = Product.objects.create(
     category=category,
 )
 product.suppliers.add(supplier)
+if os.environ.get("PRODUCT_OPS_FOLLOWUP") == "lifecycle":
+    Product.objects.create(code="EVID-P002", name="合成灯具配件", category=category)
 ProductParameter.objects.create(product=product, name="标称功率", value="24", unit="W")
 ProductCertificate.objects.create(product=product, name="合成测试证书", certificate_no="EVID-CERT-001")
 PackagingTemplate.objects.create(

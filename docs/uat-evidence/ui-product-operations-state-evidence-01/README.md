@@ -10,6 +10,8 @@
 - [Chrome 补验截图与 HTTP 索引](browser-followup.json)
 - [定向复验截图与 HTTP 索引](browser-verification.json)
 - [产品刷新失败与恢复](browser-product-refresh.json)
+- [采购入库、交易规格、库存调整与 HS 编码补验](browser-lifecycle.json)
+- [A2 固定候选截图与 HTTP 索引](browser-a2-candidate.json)
 - [截图目录](screenshot-index.md)
 - [合成数据脚本](seed.py)
 
@@ -41,5 +43,7 @@ Node 源码回归 35／35 通过。初次误以 Vitest 加载了使用 `node:tes
 `PRODUCT_OPS_FOLLOWUP=verify` 复验子流程。390px／125% 下，真实后端返回证书创建 201、部分收货 201、两张订单成本分配保存 200，并取得相应界面回显。各索引的 `gaps` 记录当次运行的断言缺口。部分早期截图保留了宽度切换过程。
 
 `PRODUCT_OPS_FOLLOWUP=refresh` 单独复验产品列表刷新。在 Google Chrome 156.0.8078.80、390×844、原生 125% 下，拦截产品列表 GET 并持续返回 500。应用在五次自动重试后显示刷新失败和“重新加载”，保留上次加载的产品行。解除拦截后点击“重新加载”，真实隔离后端返回 200，刷新提示消失。[失败截图](screenshots/verification-product-load-failure-390-125.png) · [恢复截图](screenshots/verification-product-load-recovered-390-125.png)
+
+`PRODUCT_OPS_FOLLOWUP=lifecycle` 在原业务基线补验四条操作链。Chrome 156.0.8078.80 使用 390×844、原生 125% 和真实隔离 API。采购入库冲销返回 200，原入库记录显示“已冲销”。交易规格新增返回 201，确认停用返回 200，行内操作变为“启用”。手工库存调整返回 201，冲销返回 201，列表同时显示原流水“已冲销”和新反向流水“冲销流水”。HS 编码批量关联两项产品返回 200，重开后两项仍保持选中。共 14 张截图，断言全部通过。[操作链索引](browser-lifecycle.json)
 
 取证运行记录。初轮完成真实 Chrome 空态后遇到合成数据唯一约束。下一轮完成部分 100% 图证，之后达到当时的六分钟用例时限，旧 Chrome 配置目录因锁文件由运行器留存，API 与 Vite 已释放。优化脚本在下一次启动时遇到 Django 身份探针超时，未进入浏览器阶段。各次均使用新隔离库与独立端口。

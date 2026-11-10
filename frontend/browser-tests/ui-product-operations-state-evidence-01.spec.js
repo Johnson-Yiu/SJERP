@@ -28,9 +28,12 @@ test('product operations evidence with real Chrome and the isolated API', async 
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repository, encoding: 'utf8' }).trim()
   const root = process.env.ISOLATED_TEST_ROOT
   const refreshOnly = process.env.PRODUCT_OPS_FOLLOWUP === 'refresh'
-  const verify = refreshOnly || process.env.PRODUCT_OPS_FOLLOWUP === 'verify'
+  const lifecycle = process.env.PRODUCT_OPS_FOLLOWUP === 'lifecycle'
+  const candidate = process.env.PRODUCT_OPS_FOLLOWUP === 'candidate'
+  if (candidate) expect(source).toBe(process.env.PRODUCT_OPS_CANDIDATE_SHA)
+  const verify = refreshOnly || lifecycle || process.env.PRODUCT_OPS_FOLLOWUP === 'verify'
   const followup = verify || process.env.PRODUCT_OPS_FOLLOWUP === '1'
-  const indexName = refreshOnly ? 'browser-product-refresh.json' : verify ? 'browser-verification.json' : followup ? 'browser-followup.json' : 'browser-results.json'
+  const indexName = candidate ? 'browser-a2-candidate.json' : lifecycle ? 'browser-lifecycle.json' : refreshOnly ? 'browser-product-refresh.json' : verify ? 'browser-verification.json' : followup ? 'browser-followup.json' : 'browser-results.json'
   if (!root || process.env.ISOLATED_CODEX_TEST_SUPERADMIN !== '1') throw new Error('Run through the isolated codex profile.')
   const screenshots = path.join(evidence, 'screenshots')
   await mkdir(screenshots, { recursive: true })
@@ -69,7 +72,7 @@ test('product operations evidence with real Chrome and the isolated API', async 
       if (metrics.cssWidth < 768) {
         await expect.poll(() => page.locator('.sidebar').evaluate(element => element.getBoundingClientRect().right)).toBeLessThanOrEqual(1)
       }
-      const screenshot = `${verify ? 'verification-' : followup ? 'followup-' : ''}${state}-${width}-${zoom * 100}.png`
+      const screenshot = `${candidate ? 'a2-' : lifecycle ? 'lifecycle-' : verify ? 'verification-' : followup ? 'followup-' : ''}${state}-${width}-${zoom * 100}.png`
       const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
       await writeFile(path.join(screenshots, screenshot), Buffer.from(data, 'base64'))
       results.push({ state, screenshot, width, height, zoom, ...metrics, api, responses: [...responses] })
@@ -101,7 +104,7 @@ test('product operations evidence with real Chrome and the isolated API', async 
         has: settings.locator('option[value="1.25"]'),
       }).selectOption(String(zoom))
     }
-    for (const [route, state, endpoint] of followup ? [] : routes) {
+    for (const [route, state, endpoint] of followup || candidate ? [] : routes) {
       await attempt(`${state}-empty`, async () => {
         await open(route, endpoint)
         await capture(`${state}-empty`, 1, 1440, 900)
@@ -114,6 +117,7 @@ test('product operations evidence with real Chrome and the isolated API', async 
     for (const zoom of verify ? [] : [1.25, 1]) {
       await zoomTo(zoom)
       for (const [route, state, endpoint, create] of routes) {
+        if (candidate && !['products', 'purchases', 'inventory'].includes(state)) continue
         if (followup && !(zoom === 1.25 && ['purchases', 'inventory', 'movements', 'packaging'].includes(state)) && !(zoom === 1 && state === 'packaging')) continue
         await attempt(`${state}-list-${zoom}`, async () => {
           await page.setViewportSize({ width: 1440, height: 900 })
@@ -121,6 +125,14 @@ test('product operations evidence with real Chrome and the isolated API', async 
           await open(route, endpoint, query)
           for (const [width, height] of sizes) {
             await page.setViewportSize({ width, height })
+            if (candidate) {
+              const shellGap = await page.evaluate(() => {
+                const header = document.querySelector('.topbar').getBoundingClientRect()
+                const tabs = document.querySelector('.workspace-bar').getBoundingClientRect()
+                return tabs.top - header.bottom
+              })
+              expect(Math.abs(shellGap)).toBeLessThanOrEqual(1)
+            }
             await capture(`${state}-list`, zoom, width, height)
           }
           if (!create) return
@@ -139,6 +151,7 @@ test('product operations evidence with real Chrome and the isolated API', async 
           ['/purchase-orders', 'purchase', 'purchase-orders', fixture.purchase],
           ['/inventory', 'stock', 'skus', fixture.sku],
       ]) {
+        if (candidate && !['product', 'purchase'].includes(state)) continue
         if (followup && !(zoom === 1 && state === 'supplier')) continue
         await attempt(`${state}-detail-${zoom}`, async () => {
           await open(route, endpoint, `?detail=${id}`)
@@ -156,17 +169,32 @@ test('product operations evidence with real Chrome and the isolated API', async 
             await page.setViewportSize({ width, height })
             await capture('purchase-detail-items', zoom, width, height)
           }
+          if (candidate) {
+            for (const [tab, state] of [['收货', 'purchase-detail-receipts'], ['关联销售订单', 'purchase-detail-orders']]) {
+              const button = detail.getByRole('button', { name: tab, exact: true })
+              await button.click()
+              await expect(button).toHaveAttribute('aria-pressed', 'true')
+              for (const [width, height] of sizes) {
+                await page.setViewportSize({ width, height })
+                await capture(state, zoom, width, height)
+              }
+            }
+          }
         })
       }
     }
+    if (candidate) {
+      expect(gaps).toEqual([])
+      return
+    }
     await zoomTo(1.25)
     await page.setViewportSize({ width: 390, height: 844 })
-    if (!refreshOnly) await attempt('product-search-no-match', async () => {
+    if (!refreshOnly && !lifecycle) await attempt('product-search-no-match', async () => {
       await open('/products', 'products', '?search=EVID-NO-SUCH-PRODUCT')
       await expect(page.getByText('没有符合当前条件的记录', { exact: true })).toBeVisible()
       await capture('product-search-no-match', 1.25, 390, 844)
     })
-    await attempt('product-load-failure', async () => {
+    if (!lifecycle) await attempt('product-load-failure', async () => {
       await open('/products', 'products')
       const endpoint = url => url.pathname === '/api/products/'
       await page.route(endpoint, route => route.fulfill({ status: 500, json: { detail: 'EVID controlled server failure' } }))
@@ -201,7 +229,7 @@ test('product operations evidence with real Chrome and the isolated API', async 
       await capture('product-load-recovered', 1.25, 390, 844)
     })
     if (refreshOnly) return
-    await attempt('product-category-and-unsaved', async () => {
+    if (!lifecycle) await attempt('product-category-and-unsaved', async () => {
       await open('/products', 'products')
       await page.getByRole('button', { name: '新建产品', exact: true }).click()
       const form = page.getByRole('dialog', { name: '新建产品', exact: true })
@@ -214,7 +242,7 @@ test('product operations evidence with real Chrome and the isolated API', async 
       await expect(page.getByText(/未保存/).last()).toBeVisible()
       await capture('product-unsaved', 1.25, 390, 844)
     })
-    await attempt('purchase-edit-draft', async () => {
+    if (!lifecycle) await attempt('purchase-edit-draft', async () => {
       await open('/purchase-orders', 'purchase-orders', `?detail=${fixture.purchase}`)
       await page.getByRole('button', { name: '编辑草稿', exact: true }).click()
       const form = page.getByRole('dialog', { name: '编辑采购草稿', exact: true })
@@ -223,7 +251,7 @@ test('product operations evidence with real Chrome and the isolated API', async 
       await form.locator('.purchase-line').first().scrollIntoViewIfNeeded()
       await capture('purchase-edit-draft-line', 1.25, 390, 844)
     })
-    await attempt('certificate-validate-and-upload', async () => {
+    if (!lifecycle) await attempt('certificate-validate-and-upload', async () => {
       await open('/product-certificates', 'product-certificates')
       await page.getByRole('button', { name: '新建产品证书', exact: true }).click()
       const form = page.getByRole('dialog', { name: '新建产品证书', exact: true })
@@ -286,7 +314,108 @@ test('product operations evidence with real Chrome and the isolated API', async 
       await expect(form).toHaveCount(0)
       await expect(page.getByText(/验货入库已完成/).first()).toBeVisible()
       await capture('purchase-partial-receipt-saved', 1.25, 390, 844)
+      if (!lifecycle) return
+      await open('/purchase-orders', 'purchase-orders', detailURL)
+      await workbench.getByText('收货', { exact: true }).click()
+      const reverse = workbench.getByRole('button', { name: '冲销', exact: true })
+      await reverse.click()
+      const reversal = page.getByRole('dialog', { name: '冲销采购入库' })
+      await expect(reversal.getByRole('button', { name: '确认冲销' })).toBeDisabled()
+      await capture('purchase-reversal-reason-required', 1.25, 390, 844)
+      await reversal.getByRole('button', { name: '取消', exact: true }).click()
+      await expect(reversal).toHaveCount(0)
+      await reverse.click()
+      await reversal.getByRole('textbox').fill('EVID 隔离验收冲销')
+      const reversed = page.waitForResponse(response => /\/receipts\/\d+\/reverse\/$/.test(new URL(response.url()).pathname) && response.request().method() === 'POST')
+      await reversal.getByRole('button', { name: '确认冲销' }).click()
+      expect((await reversed).ok()).toBeTruthy()
+      const history = workbench.locator('.receipt-history-row').filter({ hasText: '已冲销' })
+      await expect(history).toHaveCount(1)
+      await history.scrollIntoViewIfNeeded()
+      await capture('purchase-reversal-saved', 1.25, 390, 844)
     })
+    if (lifecycle) {
+      await attempt('trade-unit-create-disable', async () => {
+        await open('/sku-trade-units', 'sku-trade-units', `?sku=${fixture.sku}`)
+        const form = page.locator('.unit-form')
+        await form.getByLabel('规格名称').fill('EVID 12 件／箱')
+        await form.getByLabel('交易单位').fill('箱')
+        await form.getByLabel('换算系数').fill('12')
+        const submit = form.getByRole('button', { name: '添加规格' })
+        await submit.scrollIntoViewIfNeeded()
+        await capture('trade-unit-create-form', 1.25, 390, 844)
+        const created = page.waitForResponse(response => new URL(response.url()).pathname === '/api/sku-trade-units/' && response.request().method() === 'POST')
+        await submit.click()
+        const result = await created
+        expect(result.status()).toBe(201)
+        const unit = await result.json()
+        const row = page.getByRole('row').filter({ hasText: 'EVID 12 件／箱' })
+        await expect(row.locator('.conversion')).toContainText('12')
+        await row.scrollIntoViewIfNeeded()
+        await capture('trade-unit-created', 1.25, 390, 844)
+        await row.getByRole('button', { name: '停用', exact: true }).click()
+        await expect(page.getByRole('button', { name: '确认停用' })).toBeVisible()
+        await capture('trade-unit-disable-confirm', 1.25, 390, 844)
+        const disabled = page.waitForResponse(response => new URL(response.url()).pathname === `/api/sku-trade-units/${unit.id}/` && response.request().method() === 'PATCH')
+        await page.getByRole('button', { name: '确认停用' }).click()
+        expect((await disabled).ok()).toBeTruthy()
+        const enable = row.getByRole('button', { name: '启用', exact: true })
+        await expect(enable).toBeVisible()
+        await enable.scrollIntoViewIfNeeded()
+        await capture('trade-unit-disabled', 1.25, 390, 844)
+      })
+      await attempt('manual-inventory-adjustment-reversal', async () => {
+        await open('/inventory-movements', 'inventory-movements')
+        await page.getByRole('button', { name: '新建库存调整', exact: true }).click()
+        const form = page.getByRole('dialog', { name: '新建手工库存流水' })
+        const sku = 'EVID-TRACK-LONG-SKU-3000K-BEAM24-BLACK-01'
+        await form.locator('label').filter({ hasText: sku }).getByRole('checkbox').check()
+        await form.getByRole('spinbutton', { name: `${sku} 数量` }).fill('2')
+        const submit = form.getByRole('button', { name: '保存 1 条流水', exact: true })
+        await submit.scrollIntoViewIfNeeded()
+        await capture('inventory-adjustment-form', 1.25, 390, 844)
+        const created = page.waitForResponse(response => new URL(response.url()).pathname === '/api/inventory-movements/batch/' && response.request().method() === 'POST')
+        await submit.click()
+        const response = await created
+        expect(response.status()).toBe(201)
+        const [movement] = await response.json()
+        await open('/inventory-movements', 'inventory-movements', `?search=${encodeURIComponent(movement.movement_no)}`)
+        const rows = page.locator('.workspace-pane:not([aria-hidden=true]) tbody tr')
+        const row = rows.filter({ hasText: movement.movement_no }).filter({ hasNot: page.getByText('冲销流水', { exact: true }) })
+        await expect(row).toHaveCount(1)
+        await row.getByTitle('冲销', { exact: true }).click()
+        const confirm = page.getByRole('button', { name: '确认冲销', exact: true })
+        await expect(confirm).toBeDisabled()
+        await page.getByPlaceholder('请填写冲销原因').fill('EVID 手工调整冲销验收')
+        await capture('inventory-adjustment-reversal-form', 1.25, 390, 844)
+        const reversed = page.waitForResponse(result => new URL(result.url()).pathname === `/api/inventory-movements/${movement.id}/reverse/` && result.request().method() === 'POST')
+        await confirm.click()
+        expect((await reversed).ok()).toBeTruthy()
+        await expect(row).toContainText('已冲销')
+        await expect(rows.filter({ has: page.getByText('冲销流水', { exact: true }) })).toHaveCount(1)
+        await row.getByText('已冲销', { exact: true }).scrollIntoViewIfNeeded()
+        await capture('inventory-adjustment-reversed', 1.25, 390, 844)
+      })
+      await attempt('hs-code-batch-assignment', async () => {
+        await open('/hs-codes', 'hs-codes')
+        const row = page.getByRole('row').filter({ hasText: '8539510000' })
+        await row.getByRole('button', { name: '分配产品' }).click()
+        const assignment = page.getByRole('dialog', { name: '分配产品 · 8539510000' })
+        await assignment.getByRole('button', { name: '选择当前结果' }).click()
+        const save = assignment.getByRole('button', { name: '保存 2 项关联' })
+        await expect(assignment.getByRole('checkbox', { checked: true })).toHaveCount(2)
+        await capture('hs-code-batch-selected', 1.25, 390, 844)
+        const saved = page.waitForResponse(response => new URL(response.url()).pathname.endsWith('/assign-products/') && response.request().method() === 'PUT')
+        await save.click()
+        expect((await saved).ok()).toBeTruthy()
+        await expect(row.getByText('2 个', { exact: true })).toBeVisible()
+        await row.getByRole('button', { name: '分配产品' }).click()
+        await expect(assignment.getByRole('checkbox', { checked: true })).toHaveCount(2)
+        await capture('hs-code-batch-reopened', 1.25, 390, 844)
+      })
+      expect(gaps).toEqual([])
+      return
+    }
     await attempt('purchase-cost-allocation', async () => {
       await open('/purchase-orders', 'purchase-orders', `?detail=${fixture.purchase}`)
       const workbench = page.getByRole('dialog', { name: '采购工作台' })

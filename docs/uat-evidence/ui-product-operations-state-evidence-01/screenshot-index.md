@@ -1,6 +1,6 @@
 # 截图目录
 
-源码为 1e45e42cc4fa38afbf856143228dada7c8a2e86f。浏览器为 Google Chrome 156.0.8078.80。文件名末尾表示截图宽度和原生缩放百分比。
+基线业务源码为 1e45e42cc4fa38afbf856143228dada7c8a2e86f。A2 截图业务源码为 d836ba21a657a3a61b770a1d124a5b1fb62a9f46。浏览器为 Google Chrome 156.0.8078.80。文件名末尾表示截图宽度和原生缩放百分比。
 
 HTTP 记录以对应 JSON 为准。早期留档只有截图，可能包含缩放或侧栏过渡帧，按画面可见状态使用。
 
@@ -223,5 +223,80 @@ HTTP 记录以对应 JSON 为准。早期留档只有截图，可能包含缩放
 
 | [产品刷新失败，390px／125%](screenshots/verification-product-load-failure-390-125.png) | [产品刷新补验](browser-product-refresh.json) |
 | [产品刷新恢复，390px／125%](screenshots/verification-product-load-recovered-390-125.png) | [产品刷新补验](browser-product-refresh.json) |
+
+| [lifecycle-purchase-place-confirmation-390-125.png](screenshots/lifecycle-purchase-place-confirmation-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-purchase-partial-receipt-form-390-125.png](screenshots/lifecycle-purchase-partial-receipt-form-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-purchase-partial-receipt-saved-390-125.png](screenshots/lifecycle-purchase-partial-receipt-saved-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-purchase-reversal-reason-required-390-125.png](screenshots/lifecycle-purchase-reversal-reason-required-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-purchase-reversal-saved-390-125.png](screenshots/lifecycle-purchase-reversal-saved-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-trade-unit-create-form-390-125.png](screenshots/lifecycle-trade-unit-create-form-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-trade-unit-created-390-125.png](screenshots/lifecycle-trade-unit-created-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-trade-unit-disable-confirm-390-125.png](screenshots/lifecycle-trade-unit-disable-confirm-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-trade-unit-disabled-390-125.png](screenshots/lifecycle-trade-unit-disabled-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-inventory-adjustment-form-390-125.png](screenshots/lifecycle-inventory-adjustment-form-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-inventory-adjustment-reversal-form-390-125.png](screenshots/lifecycle-inventory-adjustment-reversal-form-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-inventory-adjustment-reversed-390-125.png](screenshots/lifecycle-inventory-adjustment-reversed-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-hs-code-batch-selected-390-125.png](screenshots/lifecycle-hs-code-batch-selected-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [lifecycle-hs-code-batch-reopened-390-125.png](screenshots/lifecycle-hs-code-batch-reopened-390-125.png) | [browser-lifecycle.json](browser-lifecycle.json) |
+| [a2-products-list-1366-125.png](screenshots/a2-products-list-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-list-1440-125.png](screenshots/a2-products-list-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-list-390-125.png](screenshots/a2-products-list-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-create-1366-125.png](screenshots/a2-products-create-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-create-1440-125.png](screenshots/a2-products-create-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-create-390-125.png](screenshots/a2-products-create-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-list-1366-125.png](screenshots/a2-purchases-list-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-list-1440-125.png](screenshots/a2-purchases-list-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-list-390-125.png](screenshots/a2-purchases-list-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-create-1366-125.png](screenshots/a2-purchases-create-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-create-1440-125.png](screenshots/a2-purchases-create-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-create-390-125.png](screenshots/a2-purchases-create-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-inventory-list-1366-125.png](screenshots/a2-inventory-list-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-inventory-list-1440-125.png](screenshots/a2-inventory-list-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-inventory-list-390-125.png](screenshots/a2-inventory-list-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-product-detail-1366-125.png](screenshots/a2-product-detail-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-product-detail-1440-125.png](screenshots/a2-product-detail-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-product-detail-390-125.png](screenshots/a2-product-detail-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-1366-125.png](screenshots/a2-purchase-detail-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-1440-125.png](screenshots/a2-purchase-detail-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-390-125.png](screenshots/a2-purchase-detail-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-items-1366-125.png](screenshots/a2-purchase-detail-items-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-items-1440-125.png](screenshots/a2-purchase-detail-items-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-items-390-125.png](screenshots/a2-purchase-detail-items-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-receipts-1366-125.png](screenshots/a2-purchase-detail-receipts-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-receipts-1440-125.png](screenshots/a2-purchase-detail-receipts-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-receipts-390-125.png](screenshots/a2-purchase-detail-receipts-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-orders-1366-125.png](screenshots/a2-purchase-detail-orders-1366-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-orders-1440-125.png](screenshots/a2-purchase-detail-orders-1440-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-orders-390-125.png](screenshots/a2-purchase-detail-orders-390-125.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-list-1366-100.png](screenshots/a2-products-list-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-list-1440-100.png](screenshots/a2-products-list-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-list-390-100.png](screenshots/a2-products-list-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-create-1366-100.png](screenshots/a2-products-create-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-create-1440-100.png](screenshots/a2-products-create-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-products-create-390-100.png](screenshots/a2-products-create-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-list-1366-100.png](screenshots/a2-purchases-list-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-list-1440-100.png](screenshots/a2-purchases-list-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-list-390-100.png](screenshots/a2-purchases-list-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-create-1366-100.png](screenshots/a2-purchases-create-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-create-1440-100.png](screenshots/a2-purchases-create-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchases-create-390-100.png](screenshots/a2-purchases-create-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-inventory-list-1366-100.png](screenshots/a2-inventory-list-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-inventory-list-1440-100.png](screenshots/a2-inventory-list-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-inventory-list-390-100.png](screenshots/a2-inventory-list-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-product-detail-1366-100.png](screenshots/a2-product-detail-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-product-detail-1440-100.png](screenshots/a2-product-detail-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-product-detail-390-100.png](screenshots/a2-product-detail-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-1366-100.png](screenshots/a2-purchase-detail-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-1440-100.png](screenshots/a2-purchase-detail-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-390-100.png](screenshots/a2-purchase-detail-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-items-1366-100.png](screenshots/a2-purchase-detail-items-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-items-1440-100.png](screenshots/a2-purchase-detail-items-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-items-390-100.png](screenshots/a2-purchase-detail-items-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-receipts-1366-100.png](screenshots/a2-purchase-detail-receipts-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-receipts-1440-100.png](screenshots/a2-purchase-detail-receipts-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-receipts-390-100.png](screenshots/a2-purchase-detail-receipts-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-orders-1366-100.png](screenshots/a2-purchase-detail-orders-1366-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-orders-1440-100.png](screenshots/a2-purchase-detail-orders-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
+| [a2-purchase-detail-orders-390-100.png](screenshots/a2-purchase-detail-orders-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
 
 两张问题图另见 [复现记录](reproductions.md)。

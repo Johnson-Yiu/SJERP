@@ -12,10 +12,10 @@
 
 ## A2 对照
 
-起始源码 `1e45e42cc4fa38afbf856143228dada7c8a2e86f`。首轮远端检查时 `codex/release-completion-acceptance-02` 仅存在本地引用。将当时本地 SHA `d4f90b9233c509f1fc6ad282376ce512fb1a2fbc` 作为预分析输入，固定候选以 A2 实际发布为准。
+已在 GitHub 核对 `codex/release-completion-acceptance-02` 发布 SHA `d836ba21a657a3a61b770a1d124a5b1fb62a9f46`。在该 SHA 的独立检出中使用 Chrome 156.0.8078.80、独立 SQLite 和媒体目录完成真实 API 复验。运行取证脚本时设置 `PRODUCT_OPS_FOLLOWUP=candidate` 和 `PRODUCT_OPS_CANDIDATE_SHA`，脚本断言检出与指定 SHA 一致。
 
-本轮再次执行 `git ls-remote --heads origin` 查询 release、acceptance 与本包分支。远端未返回 A2 分支，本地仍为上述 SHA。远端独立审查分支 `11c964897afb7558db8e3cd41c4539571aead5eb` 属于前端审查取证，不作为 A2 固定候选。本包浏览器索引对应已审基线。
+采购、产品、库存列表和共用页头与标签栏、采购与产品新建、产品详情，以及采购草稿详情的概览、采购明细、收货和关联销售订单均覆盖 1366×768、1440×900、390×844 各自的原生 100% 和 125%，共 60 张截图。采购明细显示四行合成采购数据，收货与关联销售订单按草稿样本取证。各组合中页头与标签栏间距均在 1 CSS px 内。 [A2 浏览器证据](browser-a2-candidate.json)
 
-- `PurchaseDetailModal.vue` 引入资金尝试状态，改动采购付款动作的可用性计算。即使付款流程由 A2 承担，采购抽屉的装载、概览、采购明细、收货和关联销售订单仍值得在固定候选核对。
-- `styles.css` 有全局依赖差异，应检查改动选择器是否被各商品／库存页使用，并补拍匹配界面。初查的 `crm/views.py` hunks 涉及财务流水与经营概览，没有采购、SKU 或库存端点的直接改动。
-- 使用 `git diff --name-only <baseline> <candidate>` 确认版本范围，再查对应组件的 import、Vue 模板选择器及 API 调用。运行时使用候选自身 worktree 或本包控制的独立候选 worktree。截图记录源代码 SHA，和本包归档提交 SHA 分开。
+A2 的相关差异在 `PurchaseDetailModal.vue`、`useFinanceAttempts.js` 和 `styles.css`。采购付款和资金恢复属于 A2 的验收范围。桌面产品详情左侧裁切在候选上仍可复现。[候选截图](screenshots/a2-product-detail-1440-100.png)
+
+前期取证的业务源码为 `1e45e42cc4fa38afbf856143228dada7c8a2e86f`。基线与候选的前端差异用 `git diff --name-only 1e45e42c d836ba21 -- frontend/src` 核对。各 HTTP 索引分别保留执行时的检出 SHA。

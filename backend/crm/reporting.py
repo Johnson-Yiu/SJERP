@@ -3,6 +3,7 @@ from .finance_scope import scope_transaction_queryset, require_finance_permissio
 """Read-only, reusable reporting API. Decimal amounts; no cross-currency sums."""
 import csv
 import json
+from collections import defaultdict
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
@@ -16,6 +17,7 @@ from rest_framework.response import Response
 
 from .models import Customer, InventoryMovement, Order, OrderItem, Product, ProductCategory, PurchaseOrder, PurchaseOrderItem, RmbCashEvent, SharedReportTemplate, SKU, Supplier, Transaction
 from .customer_status import customer_status_display
+from .money import LEGACY_AMOUNT_CALCULATION_VERSION, money
 from .permissions import HistoricalAnalysisPermission, user_can
 from .sales_scope import scope_customer_queryset, scope_customer_related_queryset
 from .services.profit import order_profit_summary
@@ -255,6 +257,10 @@ def historical_analysis(request):
     can_category_dimension = can_sku_dimension and user_can(request.user, "categories", "view")
     if not can_sales and not can_purchase:
         return Response({"detail": "你没有历史订单分析权限。"}, status=403)
+    from .history_products import document_product_rows
+    grouping = request.query_params.get("grouping", "linked")
+    if grouping not in {"original", "linked"}:
+        raise ValidationError("请选择历史原文或按关联 SKU 归集。")
     today = timezone.localdate()
     default_start = date(today.year - 9, 1, 1)
     default_end = date(today.year, 12, 31)
@@ -268,6 +274,7 @@ def historical_analysis(request):
 
     payload = {
         "scope": "historical_only",
+        "grouping": grouping,
         "label": "历史订单 · 仅用于经营分析",
         "period": {"date_from": start, "date_to": end},
         "sales": None,
@@ -280,7 +287,7 @@ def historical_analysis(request):
                 historical_only=True,
                 status="historical",
                 order_date__range=(start, end),
-            ).select_related("customer").prefetch_related("items__sku__product__category"),
+            ).select_related("customer").prefetch_related("items__sku__product", "archived_lines"),
             request.user,
         )
         customer_rows = {}
@@ -289,7 +296,9 @@ def historical_analysis(request):
         category_rows = {}
         sku_rows = {}
         total = Decimal("0")
-        quantity = Decimal("0")
+        units = defaultdict(Decimal)
+        pending = 0
+        merchandise = Decimal("0")
         for order in sales_qs:
             order_amount = order.total_amount * order.exchange_rate
             total += order_amount
@@ -302,24 +311,43 @@ def historical_analysis(request):
                 country_rows.setdefault(country_key, {"id": country_key, "label": country_key or "待核实", "amount": Decimal("0"), "count": 0})
                 country_rows[country_key]["amount"] += order_amount
                 country_rows[country_key]["count"] += 1
-            for item in order.items.all():
-                quantity += item.quantity
+            for item in document_product_rows(order, include_sku=can_sku_dimension):
+                units[item["unit"]] += Decimal(item["quantity"])
+                line_amount = Decimal(item["amount"])
+                if hasattr(order, "amount_calculation_version") and order.amount_calculation_version != LEGACY_AMOUNT_CALCULATION_VERSION:
+                    line_amount = money(line_amount)
+                line_amount *= order.exchange_rate
+                merchandise += line_amount
+                if item["status"] in {"pending", "review"}:
+                    pending += 1
                 if can_sku_dimension:
-                    sku_key = str(item.sku_id)
-                    sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
-                    sku_rows[sku_key]["amount"] += item.amount * order.exchange_rate
-                    sku_rows[sku_key]["quantity"] += item.quantity
+                    sku = item["sku"] if item["status"] == "linked" else None
+                    if grouping == "linked" and sku:
+                        identity = ("sku", sku["id"])
+                        label = f"{sku['code']} · {sku['name']}"
+                    else:
+                        identity = ("source", item["source_system"], item["source_number"] or item["order_number"], item["code"], item["name"], item["specification"])
+                        label = item["name"] or item["code"] or "历史商品"
+                        if grouping == "linked":
+                            label += " · 待核实" if item["status"] == "review" else " · 待关联"
+                    key = (*identity, item["unit"])
+                    row = sku_rows.setdefault(key, {"key": json.dumps(key, ensure_ascii=False), "id": sku["id"] if sku and grouping == "linked" else None, "label": label,
+                        "amount": Decimal("0"), "quantity": Decimal("0"), "unit": item["unit"]})
+                    row["amount"] += line_amount
+                    row["quantity"] += Decimal(item["quantity"])
                 if can_category_dimension:
-                    category_key, category_label = category_snapshot_dimension(
-                        item.product_category_reference_snapshot, item.product_category_name_snapshot,
-                    )
-                    category_rows.setdefault(category_key, {"id": category_key, "label": category_label, "amount": Decimal("0"), "quantity": Decimal("0")})
-                    category_rows[category_key]["amount"] += item.amount * order.exchange_rate
-                    category_rows[category_key]["quantity"] += item.quantity
+                    category_key, category_label = category_snapshot_dimension(item["category_reference"], item["category"])
+                    category_rows.setdefault(category_key, {"id": category_key, "label": category_label, "amount": Decimal("0"), "quantity": Decimal("0"), "quantities": {}})
+                    category_row = category_rows[category_key]
+                    category_row["amount"] += line_amount
+                    quantities = category_row["quantities"]
+                    quantities[item["unit"]] = quantities.get(item["unit"], Decimal("0")) + Decimal(item["quantity"])
+                    category_row["quantity"] = next(iter(quantities.values())) if len(quantities) == 1 else None
         for key, row in customer_rows.items():
             row["count"] = len(customer_order_ids.get(key, set()))
         payload["sales"] = {
-            "order_count": sales_qs.count(), "amount_rmb": total, "quantity": quantity,
+            "order_count": sales_qs.count(), "amount_rmb": total, "quantity": next(iter(units.values())) if len(units) == 1 else None,
+            "quantities": dict(units), "pending_count": pending, "merchandise_rmb": merchandise, "adjustments_rmb": total - merchandise,
             "by_customer": list(customer_rows.values()) if can_sales_customer else [],
             "by_country": list(country_rows.values()) if can_sales_customer else [],
             "by_sku": list(sku_rows.values()) if can_sku_dimension else [],
@@ -330,14 +358,16 @@ def historical_analysis(request):
             historical_only=True,
             status="historical",
             order_date__range=(start, end),
-        ).select_related("supplier").prefetch_related("items__sku__product__category")
+        ).select_related("supplier").prefetch_related("items__sku__product", "archived_lines")
         supplier_rows = {}
         supplier_order_ids = {}
         country_rows = {}
         category_rows = {}
         sku_rows = {}
         total = Decimal("0")
-        quantity = Decimal("0")
+        units = defaultdict(Decimal)
+        pending = 0
+        merchandise = Decimal("0")
         for purchase in purchase_qs:
             purchase_amount = purchase.total_amount * purchase.exchange_rate
             total += purchase_amount
@@ -350,24 +380,43 @@ def historical_analysis(request):
                 country_rows.setdefault(country_key, {"id": country_key, "label": country_key or "待核实", "amount": Decimal("0"), "count": 0})
                 country_rows[country_key]["amount"] += purchase_amount
                 country_rows[country_key]["count"] += 1
-            for item in purchase.items.all():
-                quantity += item.quantity
+            for item in document_product_rows(purchase, include_sku=can_sku_dimension):
+                units[item["unit"]] += Decimal(item["quantity"])
+                line_amount = Decimal(item["amount"])
+                if hasattr(purchase, "amount_calculation_version") and purchase.amount_calculation_version != LEGACY_AMOUNT_CALCULATION_VERSION:
+                    line_amount = money(line_amount)
+                line_amount *= purchase.exchange_rate
+                merchandise += line_amount
+                if item["status"] in {"pending", "review"}:
+                    pending += 1
                 if can_sku_dimension:
-                    sku_key = str(item.sku_id)
-                    sku_rows.setdefault(sku_key, {"id": item.sku_id, "label": f"{item.sku.sku} · {item.display_name_snapshot or item.sku.display_name_cn or item.sku.product.name}", "amount": Decimal("0"), "quantity": Decimal("0")})
-                    sku_rows[sku_key]["amount"] += item.amount * purchase.exchange_rate
-                    sku_rows[sku_key]["quantity"] += item.quantity
+                    sku = item["sku"] if item["status"] == "linked" else None
+                    if grouping == "linked" and sku:
+                        identity = ("sku", sku["id"])
+                        label = f"{sku['code']} · {sku['name']}"
+                    else:
+                        identity = ("source", item["source_system"], item["source_number"] or item["order_number"], item["code"], item["name"], item["specification"])
+                        label = item["name"] or item["code"] or "历史商品"
+                        if grouping == "linked":
+                            label += " · 待核实" if item["status"] == "review" else " · 待关联"
+                    key = (*identity, item["unit"])
+                    row = sku_rows.setdefault(key, {"key": json.dumps(key, ensure_ascii=False), "id": sku["id"] if sku and grouping == "linked" else None, "label": label,
+                        "amount": Decimal("0"), "quantity": Decimal("0"), "unit": item["unit"]})
+                    row["amount"] += line_amount
+                    row["quantity"] += Decimal(item["quantity"])
                 if can_category_dimension:
-                    category_key, category_label = category_snapshot_dimension(
-                        item.product_category_reference_snapshot, item.product_category_name_snapshot,
-                    )
-                    category_rows.setdefault(category_key, {"id": category_key, "label": category_label, "amount": Decimal("0"), "quantity": Decimal("0")})
-                    category_rows[category_key]["amount"] += item.amount * purchase.exchange_rate
-                    category_rows[category_key]["quantity"] += item.quantity
+                    category_key, category_label = category_snapshot_dimension(item["category_reference"], item["category"])
+                    category_rows.setdefault(category_key, {"id": category_key, "label": category_label, "amount": Decimal("0"), "quantity": Decimal("0"), "quantities": {}})
+                    category_row = category_rows[category_key]
+                    category_row["amount"] += line_amount
+                    quantities = category_row["quantities"]
+                    quantities[item["unit"]] = quantities.get(item["unit"], Decimal("0")) + Decimal(item["quantity"])
+                    category_row["quantity"] = next(iter(quantities.values())) if len(quantities) == 1 else None
         for key, row in supplier_rows.items():
             row["count"] = len(supplier_order_ids.get(key, set()))
         payload["purchase"] = {
-            "order_count": purchase_qs.count(), "amount_rmb": total, "quantity": quantity,
+            "order_count": purchase_qs.count(), "amount_rmb": total, "quantity": next(iter(units.values())) if len(units) == 1 else None,
+            "quantities": dict(units), "pending_count": pending, "merchandise_rmb": merchandise, "adjustments_rmb": total - merchandise,
             "by_supplier": list(supplier_rows.values()) if can_purchase_supplier else [],
             "by_country": list(country_rows.values()) if can_purchase_supplier else [],
             "by_sku": list(sku_rows.values()) if can_sku_dimension else [],

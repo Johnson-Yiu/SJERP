@@ -358,12 +358,13 @@ class HistoryImportPreflightTests(TestCase):
 
         self.assertEqual(response.status_code, 200, response.data)
         result = next(item for item in response.data["results"] if item["sheet"] == "销售明细")
-        self.assertEqual(result["status"], "待人工核实")
-        self.assertTrue(any("多个主档" in reason["message"] for reason in result["reasons"]))
+        self.assertEqual(result["status"], "警告")
+        self.assertEqual(result["product_link_status"], "待关联")
+        self.assertEqual(len(result["related_records"]), 2)
         self.assertTrue(all(item.get("match") != "编码精确匹配" for item in result["related_records"]))
         self.assertEqual(self.business_snapshot(), before)
 
-    def test_unmatched_master_is_blocked_and_unique_name_only_customer_is_manual_review(self):
+    def test_unmatched_product_can_archive_and_unique_name_only_customer_is_manual_review(self):
         customer, _supplier, sku = self.create_masters()
         rows = {
             "分组": [self.group_row()],
@@ -375,8 +376,8 @@ class HistoryImportPreflightTests(TestCase):
         line = next(item for item in response.data["results"] if item["sheet"] == "销售明细")
         self.assertEqual(order["status"], "待人工核实")
         self.assertTrue(any("仅发现一个名称候选" in reason["message"] for reason in order["reasons"]))
-        self.assertEqual(line["status"], "阻断")
-        self.assertTrue(any("未找到可关联" in reason["message"] for reason in line["reasons"]))
+        self.assertEqual(line["status"], "警告")
+        self.assertEqual(line["product_link_status"], "待关联")
 
     def test_existing_order_and_duplicate_source_rows_are_reported_not_silently_deduplicated(self):
         customer, _supplier, sku = self.create_masters()

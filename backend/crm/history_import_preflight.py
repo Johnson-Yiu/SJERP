@@ -7,6 +7,7 @@ it is not approval to migrate data.
 
 from __future__ import annotations
 
+
 import csv
 import io
 import json
@@ -16,6 +17,7 @@ from collections import defaultdict
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 
+from django.db.models import F
 from django.conf import settings
 from django.http import HttpResponse
 from openpyxl import load_workbook
@@ -92,8 +94,8 @@ SHEET_SCHEMAS = {
         _column("group_id", "来源关联组编号", required=True),
         _column("source_order_id", "原销售订单记录编号", required=True),
         _column("source_line_id", "原销售明细编号", required=True),
-        _column("sku_code", "SKU编码"),
-        _column("sku_name_snapshot", "历史SKU名称快照", required=True),
+        _column("sku_code", "原商品编码"),
+        _column("sku_name_snapshot", "历史商品名称快照", required=True),
         _column("product_category_snapshot", "历史产品主分类快照"),
         _column("sales_model_snapshot", "历史销售型号快照"),
         _column("description_snapshot", "历史商品描述快照"),
@@ -109,6 +111,10 @@ SHEET_SCHEMAS = {
         _column("truth_status", "真实性状态", "enum:真实,模拟,待核实", True),
         _column("voucher_reference", "订单明细凭证引用"),
         _column("notes", "说明"),
+        _column("specification_snapshot", "历史规格"),
+        _column("cost_price_snapshot", "历史单位成本", "decimal", False, 4, 14),
+        _column("cost_currency_snapshot", "历史成本币种"),
+        _column("cost_evidence_snapshot", "历史成本依据"),
     ],
     "采购订单": [
         _column("group_id", "来源关联组编号", required=True),
@@ -133,8 +139,8 @@ SHEET_SCHEMAS = {
         _column("group_id", "来源关联组编号", required=True),
         _column("source_purchase_id", "原采购订单记录编号", required=True),
         _column("source_line_id", "原采购明细编号", required=True),
-        _column("sku_code", "SKU编码"),
-        _column("sku_name_snapshot", "历史SKU名称快照", required=True),
+        _column("sku_code", "原商品编码"),
+        _column("sku_name_snapshot", "历史商品名称快照", required=True),
         _column("product_category_snapshot", "历史产品主分类快照"),
         _column("sales_model_snapshot", "历史销售型号快照"),
         _column("description_snapshot", "历史商品描述快照"),
@@ -153,6 +159,10 @@ SHEET_SCHEMAS = {
         _column("truth_status", "真实性状态", "enum:真实,模拟,待核实", True),
         _column("voucher_reference", "订单明细凭证引用"),
         _column("notes", "说明"),
+        _column("specification_snapshot", "历史规格"),
+        _column("cost_price_snapshot", "历史单位成本", "decimal", False, 4, 14),
+        _column("cost_currency_snapshot", "历史成本币种"),
+        _column("cost_evidence_snapshot", "历史成本依据"),
     ],
     "收付款计划": [
         _column("group_id", "来源关联组编号", required=True),
@@ -237,8 +247,18 @@ HISTORY_V1_OPTIONAL_SNAPSHOT_KEYS = {
     "采购订单": {"supplier_country_snapshot"},
     "采购明细": {"product_category_snapshot"},
 }
+LEGACY_PRODUCT_SCHEMAS = {
+    sheet: [
+        {**column, "label": {"sku_code": "SKU编码", "sku_name_snapshot": "历史SKU名称快照"}.get(column["key"], column["label"])}
+        for column in SHEET_SCHEMAS[sheet][:-4]
+    ]
+    for sheet in ("销售明细", "采购明细")
+}
 HISTORY_V1_SCHEMAS = {
-    sheet: [column for column in schema if column["key"] not in HISTORY_V1_OPTIONAL_SNAPSHOT_KEYS.get(sheet, set())]
+    sheet: [
+        column for column in LEGACY_PRODUCT_SCHEMAS.get(sheet, schema)
+        if column["key"] not in HISTORY_V1_OPTIONAL_SNAPSHOT_KEYS.get(sheet, set())
+    ]
     for sheet, schema in SHEET_SCHEMAS.items()
 }
 DOMAIN_VIEW_PERMISSIONS = (
@@ -394,7 +414,11 @@ def _read_workbook(data):
             selected_schema = schema
             legacy_inventory = sheet_name == "库存盘点" and headers == [column["label"] for column in LEGACY_INVENTORY_SCHEMA]
             legacy_v1 = headers == [column["label"] for column in HISTORY_V1_SCHEMAS[sheet_name]]
-            if legacy_inventory:
+            legacy_product = LEGACY_PRODUCT_SCHEMAS.get(sheet_name, [])
+            legacy_product_labels = [column["label"] for column in legacy_product]
+            if legacy_product and headers == legacy_product_labels:
+                selected_schema = legacy_product
+            elif legacy_inventory:
                 selected_schema = LEGACY_INVENTORY_SCHEMA
             elif legacy_v1:
                 selected_schema = HISTORY_V1_SCHEMAS[sheet_name]
@@ -856,14 +880,36 @@ def _check_master_and_documents(rows, results, user):
                 ], "供应商")
             _db_duplicate_checks(sheet, record, result, rows=rows)
 
+    from .history_products import rule_key
+    from .history_product_models import HistoryProductRule
+    source_systems = {row["data"]["group_id"]: row["data"].get("source_system") for row in rows["分组"]}
     sku_queryset = SKU.objects.select_related("product")
     for sheet in ("销售明细", "采购明细", "履约记录", "库存盘点"):
         for record in rows[sheet]:
             data = record["data"]
             result = results[(sheet, record["row"])]
-            sku = _check_master(sheet, record, result, kind="SKU", model=SKU, code_key="sku_code", name_key="sku_name_snapshot", name_field="display_name_cn", queryset=sku_queryset)
-            if sku and sheet in {"销售明细", "采购明细", "履约记录"}:
-                _validate_unit_snapshot(record, result, sku)
+            match, sku, candidates = _master_candidate(
+                SKU, key_field="sku", code=data.get("sku_code"), name=data.get("sku_name_snapshot"),
+                name_field="display_name_cn", queryset=sku_queryset.filter(active=True),
+            )
+            if sheet in {"销售明细", "采购明细"}:
+                result["product_link_status"] = "待关联"
+                key = rule_key(source_systems.get(data["group_id"]), sheet, data.get("sku_code"),
+                               data.get("specification_snapshot"), data.get("base_unit_snapshot"))
+                if key:
+                    rule = HistoryProductRule.objects.filter(
+                        pk=key, sku__active=True, confirmed_source__product_link__sku_id=F("sku_id"),
+                        confirmed_source__product_link__needs_review=False,
+                    ).select_related("sku__product").first()
+                    if rule and rule.sku_id not in {item.pk for item in candidates}:
+                        result["related_records"].append(_related_master("SKU", rule.sku, "本来源已核实的候选规则；仍需人工确认"))
+                result["related_records"].extend(_related_master("SKU", item, "候选；需人工确认") for item in candidates)
+                if match != "exact":
+                    _issue(result, "警告", "历史商品可先归档，归档后可关联正式 SKU。", "保留原商品编码、名称及规格。")
+            elif match != "exact":
+                _issue(result, "警告", "原记录可归档，库存或履约接续前须核实正式 SKU。", "接续前核对正式 SKU、单位及来源凭证。")
+            if sheet != "库存盘点":
+                _validate_unit_snapshot(record, result, sku if match == "exact" else None)
             if sheet in {"销售明细", "采购明细"} and not str(data.get("product_category_snapshot") or "").strip():
                 _issue(
                     result,
@@ -1057,7 +1103,7 @@ def _check_dependencies(rows, results, groups):
         else:
             line = line_records[0]
             line_data = line["data"]
-            if str(line_data.get("sku_code") or "") != str(data.get("sku_code") or ""):
+            if line_data.get("sku_code") and data.get("sku_code") and str(line_data["sku_code"]) != str(data["sku_code"]):
                 _issue(result, "阻断", "履约 SKU 与原订单行 SKU 不一致。", "核对原发货/收货单和订单行编号。", [_row_relation(line_sheet, line)])
             if data.get("group_id") != line_data.get("group_id"):
                 _issue(result, "阻断", "履约记录与订单行不属于同一来源关联组。", "依据原始履约单据修正关联组。", [_row_relation(line_sheet, line)])

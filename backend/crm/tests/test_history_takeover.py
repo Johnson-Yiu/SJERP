@@ -319,9 +319,9 @@ class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual(purchase.status, "historical")
         self.assertEqual(sales.customer_name_snapshot, "Historical Customer Name")
         self.assertEqual(purchase.supplier_name_snapshot, "Historical Supplier Name")
-        self.assertEqual(sales.items.get().sales_model_snapshot, "OLD-MODEL-1")
-        self.assertEqual(purchase.items.get().supplier_model_snapshot, "SUP-MODEL")
-        self.assertFalse(purchase.items.get().cost_allocations.exists())
+        self.assertEqual(sales.archived_lines.get().sales_model_snapshot, "OLD-MODEL-1")
+        self.assertEqual(purchase.archived_lines.get().facts["supplier_model_snapshot"], "SUP-MODEL")
+        self.assertFalse(purchase.items.exists())
         self.assertEqual(sales.paid_amount, Decimal("0"))
         self.assertEqual(sales.outstanding_amount, Decimal("0"))
         self.assertEqual(purchase.paid_amount, Decimal("0"))
@@ -344,9 +344,9 @@ class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
             "cost_allocations": PurchaseCostAllocation.objects.count(), "logs": OperationLog.objects.count(),
         }
         self.assertEqual(after["orders"], core_counts_before["orders"] + 1)
-        self.assertEqual(after["order_items"], core_counts_before["order_items"] + 1)
+        self.assertEqual(after["order_items"], core_counts_before["order_items"])
         self.assertEqual(after["purchase_orders"], core_counts_before["purchase_orders"] + 1)
-        self.assertEqual(after["purchase_items"], core_counts_before["purchase_items"] + 1)
+        self.assertEqual(after["purchase_items"], core_counts_before["purchase_items"])
         for key in ("plans", "transactions", "inventory", "reservations", "shipments", "receipts", "cost_allocations", "logs"):
             self.assertEqual(after[key], core_counts_before[key], key)
 
@@ -421,7 +421,16 @@ class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
             "sources": HistoryTakeoverSourceRecord.objects.count(), "handoffs": HistoryTakeoverHandoff.objects.count(),
             "events": HistoryTakeoverEvent.objects.count(),
         }
-        with patch("crm.history_takeover.PurchaseOrderItem.objects.bulk_create", side_effect=RuntimeError("synthetic failure")):
+        from crm.history_product_models import ArchivedHistoryLine
+
+        create_line = ArchivedHistoryLine.objects.create
+
+        def fail_purchase(**fields):
+            if "purchase_order" in fields:
+                raise RuntimeError("synthetic failure")
+            return create_line(**fields)
+
+        with patch("crm.history_takeover.ArchivedHistoryLine.objects.create", side_effect=fail_purchase):
             with self.assertRaises(RuntimeError):
                 execute_group(group, self.admin)
         self.assertEqual(Order.objects.count(), before["orders"])
@@ -472,7 +481,7 @@ class HistoryTakeoverWorkflowTests(HistoryTakeoverFixtureMixin, TestCase):
         audit = group.events.get(event_type="correction_reviewed")
         self.assertEqual(audit.details["source_event_id"], event.pk)
         self.assertEqual(Transaction.objects.count(), transaction_count)
-        self.assertEqual(Order.objects.get(order_no="HIST-SO-HT-1").items.get().quantity, Decimal("10.00"))
+        self.assertEqual(Order.objects.get(order_no="HIST-SO-HT-1").archived_lines.get().quantity, Decimal("10.00"))
         self.assertEqual(InventoryMovement.objects.count(), 0)
 
     def test_audit_events_are_database_append_only_and_development_identity_is_not_real_operator(self):

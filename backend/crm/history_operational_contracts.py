@@ -12,6 +12,7 @@ from crm.document_numbers import allocate_order_no, allocate_purchase_no
 from crm.finance_scope import require_finance_permission
 from crm.history_operational_common import verified_original, verified_source
 from crm.history_takeover import _build_remainder, _event, _json_hash, _json_safe, actor_snapshot
+from crm.history_products import link_state, source_line, specification_matches
 from crm.models import (HistoryOperationalContract, HistoryTakeoverGroup, HistoryTakeoverHandoff,
     Order, OrderItem, PurchaseOrder, PurchaseOrderItem, SKU, Supplier, SupplierSKU)
 from crm.services.finance import install_history_opening_plans
@@ -93,13 +94,16 @@ def status(group, user):
                  for item, data in by_id.values() if item.record_type == "收付款计划" and str(data.get(parent_key) or "") == record.source_record_id]
         lines = []
         for line, data, quantity in _line_records(record, by_id, remainder):
-            sku = SKU.objects.filter(sku=data.get("sku_code")).first()
+            archived_line = source_line(line)
+            sku, _, link_status = link_state(line, archived_line) if archived_line else (None, 0, "pending")
+            if link_status != "linked" or (sku and not sku.active):
+                sku = None
             candidates = []
             if record.record_type == "采购订单" and sku:
                 supplier_id = PurchaseOrder.objects.filter(pk=record.target_id).values_list("supplier_id", flat=True).first()
                 candidates = list(SupplierSKU.objects.filter(sku=sku, supplier_id=supplier_id, is_active=True).values("id", "supplier_sku_code", "supplier_model", "moq"))
             lines.append({"source_id": line.pk, "source_record_id": line.source_record_id, "source": data,
-                "remaining_quantity": str(quantity), "sku_currency": sku.currency if sku else "", "supplier_sources": candidates})
+                "remaining_quantity": str(quantity), "sku_link_confirmed": bool(sku), "linked_sku_id": sku.pk if sku else None, "linked_sku_code": sku.sku if sku else "", "sku_currency": sku.currency if sku else "", "supplier_sources": candidates})
         docs.append({"source_id": record.pk, "source_record_id": record.source_record_id, "record_type": record.record_type,
                      "source": row, "plans": plans, "remaining_lines": lines})
     links = []
@@ -210,9 +214,17 @@ def _snapshot(group, options, by_id, remainder):
         line_details = []
         targets = set()
         for line, row, quantity in lines:
-            saved = OrderItem.objects.filter(pk=line.target_id, order_id=archived.pk).select_related("sku").first() if source.record_type == "销售订单" else PurchaseOrderItem.objects.filter(pk=line.target_id, purchase_order_id=archived.pk).select_related("sku").first()
-            if not saved or not saved.sku.active or saved.sku.sku != row.get("sku_code") or saved.sku.unit != row.get("base_unit_snapshot") or saved.quantity != Decimal(str(row["quantity_base"])) or saved.unit_price != Decimal(str(row["unit_price"])):
+            saved = source_line(line)
+            parent_id = getattr(saved, "order_id", None) if source.record_type == "销售订单" else getattr(saved, "purchase_order_id", None)
+            if not saved or parent_id != archived.pk:
+                raise ValidationError("历史明细已变化，无法接续。")
+            sku, link_version, link_status = link_state(line, saved)
+            if not sku or link_status != "linked":
+                raise ValidationError("历史商品尚未关联已核实的正式 SKU，无法接续。")
+            if not sku.active or sku.unit != row.get("base_unit_snapshot") or saved.quantity != Decimal(str(row["quantity_base"])) or saved.unit_price != Decimal(str(row["unit_price"])):
                 raise ValidationError("历史明细、SKU、单位或价格已变化，不能自动接续。")
+            if not link_version and sku.sku != row.get("sku_code"):
+                raise ValidationError("旧历史商品的 SKU 编码已变化，请先核实关联。")
             opt = options_by_line[str(line.pk)]
             trade_quantity = None
             if row.get("trade_quantity") not in (None, ""):
@@ -222,19 +234,25 @@ def _snapshot(group, options, by_id, remainder):
                 trade_quantity = quantity / factor
                 if trade_quantity.quantize(Decimal("0.01")) != trade_quantity or (row.get("allow_fraction_snapshot") is False and trade_quantity != trade_quantity.to_integral_value()):
                     raise ValidationError("剩余数量无法按已核实的交易单位准确表达。")
-            detail = {"source_id": line.pk, "sku_id": saved.sku_id, "sku_unit": saved.sku.unit, "quantity": str(quantity), "trade_quantity": str(trade_quantity) if trade_quantity is not None else None,
-                "archived_signature": _json_hash({"sku": saved.sku_id, "quantity": saved.quantity, "price": saved.unit_price, "trade_quantity": saved.trade_quantity, "trade_price": saved.trade_unit_price, "trade_snapshot": saved.trade_snapshot, "name": saved.display_name_snapshot, "description": saved.description_snapshot, "sales_model": saved.sales_model_snapshot})}
+            detail = {"source_id": line.pk, "sku_id": sku.pk, "sku_unit": sku.unit, "quantity": str(quantity), "trade_quantity": str(trade_quantity) if trade_quantity is not None else None,
+                "archived_signature": _json_hash({"sku": sku.pk, "quantity": saved.quantity, "price": saved.unit_price, "trade_quantity": saved.trade_quantity, "trade_price": saved.trade_unit_price, "trade_snapshot": saved.trade_snapshot, "name": saved.display_name_snapshot, "description": saved.description_snapshot, "sales_model": saved.sales_model_snapshot})}
+            if link_version:
+                if not specification_matches(sku, row.get("base_unit_snapshot"), row.get("specification_snapshot")):
+                    raise ValidationError("正式 SKU 的规格已变化，请重新核实历史商品关联。")
+                detail["link_version"] = link_version
+                detail["sku_specification"] = sku.specification
+                detail["sku_parameters"] = sku.parameter_values
             if source.record_type == "销售订单":
                 cost = _amount(opt.get("unit_cost"), places=4, digits=14)
-                if not str(opt.get("cost_evidence") or "").strip() or str(opt.get("cost_currency") or "").upper() != saved.sku.currency:
+                if not str(opt.get("cost_evidence") or "").strip() or str(opt.get("cost_currency") or "").upper() != sku.currency:
                     raise ValidationError("销售接续明细须明确核实 SKU 成本、币种和依据。")
-                detail.update({"unit_cost": str(cost), "cost_currency": saved.sku.currency, "cost_evidence": str(opt["cost_evidence"]).strip()})
+                detail.update({"unit_cost": str(cost), "cost_currency": sku.currency, "cost_evidence": str(opt["cost_evidence"]).strip()})
             else:
                 supplier_id = opt.get("supplier_sku_id")
-                supplier_sku = SupplierSKU.objects.filter(pk=supplier_id, sku=saved.sku, supplier=archived.supplier, is_active=True).first() if supplier_id else None
+                supplier_sku = SupplierSKU.objects.filter(pk=supplier_id, sku=sku, supplier=archived.supplier, is_active=True).first() if supplier_id else None
                 if supplier_id and not supplier_sku:
                     raise ValidationError("采购来源必须匹配当前供应商和 SKU 且处于启用状态。")
-                if not supplier_sku and (SupplierSKU.objects.filter(sku=saved.sku, supplier=archived.supplier, is_active=True).exists() or not str(opt.get("manual_reason") or "").strip()):
+                if not supplier_sku and (SupplierSKU.objects.filter(sku=sku, supplier=archived.supplier, is_active=True).exists() or not str(opt.get("manual_reason") or "").strip()):
                     raise ValidationError("请明确选择已有供货档案；无档案时须填写手工来源依据。")
                 target = opt.get("target")
                 sales_source = opt.get("sales_source_id")
@@ -242,7 +260,12 @@ def _snapshot(group, options, by_id, remainder):
                     raise ValidationError("采购明细须明确选择库存或接续销售订单归属。")
                 if target == "order":
                     candidate = by_id.get(int(sales_source))
-                    if not candidate or candidate[0].record_type != "销售订单" or not any(row_data.get("sku_code") == saved.sku.sku for _, row_data, _ in _line_records(candidate[0], by_id, remainder)):
+                    if not candidate or candidate[0].record_type != "销售订单" or not any(
+                        linked and state == "linked" and linked.pk == sku.pk
+                        for sales_line, _, _ in _line_records(candidate[0], by_id, remainder)
+                        if (original_line := source_line(sales_line)) is not None
+                        for linked, _, state in [link_state(sales_line, original_line)]
+                    ):
                         raise ValidationError("采购归属的销售订单或 SKU 不匹配。")
                 targets.add((target, int(sales_source) if sales_source else None))
                 detail.update({"supplier_sku_id": supplier_sku.pk if supplier_sku else None,
@@ -371,9 +394,9 @@ def _create_sales_draft(original, data, lines, by_id, number, cutover, adjustmen
     links = []
     for line in lines:
         source, row = by_id[line["source_id"]]
-        old = OrderItem.objects.get(pk=source.target_id)
+        old = source_line(source)
         new = OrderItem.objects.create(order=order, sku_id=line["sku_id"], quantity=line["quantity"], unit_price=old.unit_price,
-            cost_price=line["unit_cost"], sku_code_snapshot=old.sku_code_snapshot, sales_model_snapshot=old.sales_model_snapshot,
+            cost_price=line["unit_cost"], sales_model_snapshot=old.sales_model_snapshot,
             display_name_snapshot=old.display_name_snapshot, description_snapshot=old.description_snapshot, unit_snapshot=old.unit_snapshot,
             trade_snapshot=old.trade_snapshot, trade_quantity=line["trade_quantity"], trade_unit_price=old.trade_unit_price if line["trade_quantity"] is not None else None,
             notes=f"接续历史明细 {source.source_record_id}"[:200])
@@ -396,12 +419,12 @@ def _create_purchase_draft(original, lines, by_id, number, cutover, sales_orders
     links = []
     for line in lines:
         source, _row = by_id[line["source_id"]]
-        old = PurchaseOrderItem.objects.get(pk=source.target_id)
+        old = source_line(source)
         new = PurchaseOrderItem.objects.create(purchase_order=purchase, sku_id=line["sku_id"], supplier_sku_id=line["supplier_sku_id"],
-            quantity=line["quantity"], unit_price=old.unit_price, sku_code_snapshot=old.sku_code_snapshot,
+            quantity=line["quantity"], unit_price=old.unit_price,
             sales_model_snapshot=old.sales_model_snapshot, display_name_snapshot=old.display_name_snapshot,
-            description_snapshot=old.description_snapshot, supplier_name_snapshot=old.supplier_name_snapshot,
-            supplier_model_snapshot=old.supplier_model_snapshot, supplier_sku_code_snapshot=old.supplier_sku_code_snapshot,
+            description_snapshot=old.description_snapshot, supplier_name_snapshot=_row.get("supplier_name_snapshot") or "",
+            supplier_model_snapshot=_row.get("supplier_model_snapshot") or "", supplier_sku_code_snapshot=_row.get("supplier_sku_code_snapshot") or "",
             trade_snapshot=old.trade_snapshot, trade_quantity=line["trade_quantity"], trade_unit_price=old.trade_unit_price if line["trade_quantity"] is not None else None)
         links.append({"source_id": source.pk, "archived_item_id": old.pk, "continuation_item_id": new.pk,
             "quantity": line["quantity"], "supplier_sku_id": line["supplier_sku_id"], "manual_reason": line["manual_reason"],

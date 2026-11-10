@@ -66,6 +66,8 @@ router.register("reports/templates", SharedReportTemplateViewSet, basename="shar
 from .reporting import historical_analysis, report_catalog, report_data, report_details
 from .actual_cash_api import actual_cash_report
 
+from .history_product_api import HistoryProductsView
+
 urlpatterns = [
     path("session/csrf/", csrf),
     path("session/login/", sign_in),
@@ -107,6 +109,8 @@ urlpatterns = [
     path("import/orders/execute/", SalesOrderImportExecuteView.as_view(), name="sales-order-import-execute"),
     path("import/orders/results/<int:batch_id>/", SalesOrderImportResultView.as_view(), name="sales-order-import-result"),
     path("import/history-preflight/", HistoryImportPreflightView.as_view(), name="history-import-preflight"),
+    path("import/history-products/", HistoryProductsView.as_view(), name="history-products"),
+    path("import/history-products/<str:operation>/", HistoryProductsView.as_view(), name="history-products-operation"),
     path("import/history-takeovers/", HistoryTakeoverListCreateView.as_view(), name="history-takeover-list-create"),
     path("import/history-takeovers/template/", HistoryTakeoverTemplateView.as_view(), name="history-takeover-template"),
     path("import/history-takeovers/<int:application_id>/", HistoryTakeoverDetailView.as_view(), name="history-takeover-detail"),

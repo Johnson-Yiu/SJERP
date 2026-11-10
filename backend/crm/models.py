@@ -1263,9 +1263,10 @@ class Order(TimestampedModel):
 
     @property
     def base_amount(self):
+        from .history_products import document_lines
         if self.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION:
-            return legacy_document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
-        return document_total(self.items.all(), shipping_fee=self.shipping_fee, discount=self.discount)
+            return legacy_document_total(document_lines(self), shipping_fee=self.shipping_fee, discount=self.discount)
+        return document_total(document_lines(self), shipping_fee=self.shipping_fee, discount=self.discount)
 
     @property
     def approved_change_amount(self):
@@ -1622,7 +1623,8 @@ class PurchaseOrder(TimestampedModel):
 
     @property
     def base_amount(self):
-        return sum((item.amount for item in self.items.all()), Decimal("0"))
+        from .history_products import document_lines
+        return sum((item.amount for item in document_lines(self)), Decimal("0"))
 
     @property
     def approved_change_amount(self):
@@ -2724,3 +2726,10 @@ from .party_version_models import PartyVersionRequest, PartyVersionApproval, Par
 from .party_document_models import PartyDocumentVersion  # noqa: E402,F401
 from .party_replacement_models import PartyReplacementTarget, PartyReplacementLink  # noqa: E402,F401
 from .party_document_details_models import PartyDocumentDetailsStorage  # noqa: E402,F401
+
+from .history_product_models import (  # noqa: E402,F401
+    ArchivedHistoryLine,
+    HistoryProductLink,
+    HistoryProductLinkRequest,
+    HistoryProductRule,
+)

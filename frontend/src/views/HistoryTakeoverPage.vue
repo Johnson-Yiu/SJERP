@@ -1,7 +1,10 @@
 <script setup>
+import HistoryProductLinking from "../components/HistoryProductLinking.vue"
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api } = useWorkspaceApi()
 import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 import { AlertTriangle, Check, CircleHelp, FileUp, History, RotateCcw, ShieldCheck } from 'lucide-vue-next'
 
 import { accessState, useAccessControl } from '../accessControl'
@@ -10,6 +13,12 @@ const { can } = useAccessControl()
 const canApply = computed(() => can('imports', 'import'))
 const canReview = computed(() => Boolean(accessState.operator?.can_manage_permissions || accessState.operator?.development_superadmin || accessState.operator?.has_all_permissions))
 const applications = ref([])
+const showProducts = ref(false)
+async function openProductSource(id, group) {
+  await loadApplication(id)
+  if (selected.value?.id === id && selected.value.groups?.some(row => row.id === group)) selectedGroupId.value = group
+  document.getElementById('history-source-application')?.scrollIntoView({ block: 'start' })
+}
 const selected = ref(null)
 const fileInput = ref(null)
 const file = ref(null)
@@ -71,7 +80,7 @@ const lifecycleLabels = { open: '未结', partial: '部分完成', partially_set
 const directionLabels = { income: '收入', expense: '支出' }
 const mappingFields = { customer: 'customer_code', supplier: 'supplier_code', sku: 'sku_code' }
 const masterResources = { customer: '/customers/', supplier: '/suppliers/', sku: '/skus/' }
-const handoffLabels = { not_connected: '尚未接续', pending_review: '待复核', approved: '已复核，待启用', posted: '已启用', reversed: '已撤销', sources_posted: '来源资金已记账', drafts_created: '未结余额已启用，接续草稿已生成', no_remaining: '无剩余履约', unmapped: '待映射', pending: '待复核', cancelled: '已取消', failed: '已核实失败', draft: '草稿', confirmed: '已确认', ordered: '已下单', partial: '部分到货', shipped: '已发货', completed: '已完成', production: '生产中' }
+const handoffLabels = { needs_reapproval: '关联已变化，需重新申请并复核', not_connected: '尚未接续', pending_review: '待复核', approved: '已复核，待启用', posted: '已启用', reversed: '已撤销', sources_posted: '来源资金已记账', drafts_created: '未结余额已启用，接续草稿已生成', no_remaining: '无剩余履约', unmapped: '待映射', pending: '待复核', cancelled: '已取消', failed: '已核实失败', draft: '草稿', confirmed: '已确认', ordered: '已下单', partial: '部分到货', shipped: '已发货', completed: '已完成', production: '生产中' }
 const overallLabels = { not_archived: '未归档', archived: '已归档，待准备接续', pending_review: '接续资料待复核', ready: '可接续或待确认接续单', connected: '适用项目已接续' }
 function statusLabel(value) { return statuses[value] || '待核实' }
 function handoffLabel(value) { return handoffLabels[value] || '待核实' }
@@ -125,7 +134,16 @@ const openOrders = computed(() => {
   return [...(summary?.sales_orders || []), ...(summary?.purchase_orders || [])]
 })
 
-onMounted(loadApplications)
+async function openRouteSource() {
+  const id = Number(route?.query?.application)
+  await loadApplications(id || undefined)
+  const group = Number(route?.query?.group)
+  if (id && selected.value?.id === id && selected.value.groups?.some(row => row.id === group)) selectedGroupId.value = group
+}
+onMounted(openRouteSource)
+watch(() => [route?.query?.application, route?.query?.group], ([id, group]) => {
+  if (Number(id) > 0) openProductSource(Number(id), Number(group))
+})
 
 async function loadApplications(preferredId = selected.value?.id) {
   loading.value = true; error.value = ''
@@ -423,11 +441,15 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
       </div>
     </header>
 
+    <details v-if="canReview && canApply" @toggle="showProducts = $event.target.open">
+      <summary>历史商品关联</summary>
+      <HistoryProductLinking v-if="showProducts" @open-source="openProductSource" @saved="selected && loadApplication(selected.id)" />
+    </details>
     <section v-if="!canApply" class="takeover-alert" role="alert"><AlertTriangle :size="18" />当前账号缺少历史承接申请权限或相关业务查看范围。</section>
     <section v-if="error" class="takeover-alert" role="alert"><AlertTriangle :size="18" />{{ error }}</section>
 
     <section class="takeover-upload panel">
-      <div class="takeover-section-title"><div><h3><span class="takeover-step-number">01</span><FileUp :size="18" />选择资料</h3><p>提交后会建立申请与核验记录，不会立即创建正式订单、资金或库存记录。</p></div><button class="takeover-secondary" :disabled="templateLoading" @click="downloadTemplate">{{ templateLoading ? '正在准备…' : '下载承接模板' }}</button></div>
+      <div class="takeover-section-title"><div><h3><span class="takeover-step-number">01</span><FileUp :size="18" />选择资料</h3><p>上传后先核验资料。历史商品可先归档，再关联正式 SKU。</p></div><button class="takeover-secondary" :disabled="templateLoading" @click="downloadTemplate">{{ templateLoading ? '正在准备…' : '下载承接模板' }}</button></div>
       <div class="takeover-upload-row">
         <label class="takeover-file"><span>{{ file?.name || '选择 .xlsx 文件' }}</span><input ref="fileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :disabled="!canApply || saving" @change="chooseFile" /></label>
         <button class="takeover-primary" :disabled="!canApply || !file || saving" @click="submitApplication">{{ saving ? '正在检查…' : '提交资料并检查' }}</button>
@@ -445,7 +467,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
         </button>
       </aside>
 
-      <section v-if="selected" class="takeover-detail panel">
+      <section id="history-source-application" v-if="selected" class="takeover-detail panel">
         <div class="takeover-detail-head">
           <div><p class="takeover-eyebrow"><span class="takeover-step-number">02</span>检查结果 · {{ statusLabel(selected.status) }}</p><h3>{{ selected.source_file_name }}</h3><p>提交时间：{{ formatSubmittedAt(selected.submitted_at) }}</p></div>
           <button class="takeover-secondary" @click="downloadReport">下载核验报告</button>
@@ -511,7 +533,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
           </div>
 
           <div v-if="selectedGroup.status === 'executed'" class="takeover-execution">
-            <h4>执行结果</h4><p>历史销售单 {{ selectedGroup.execution_result?.orders?.length || 0 }} 张；历史采购单 {{ selectedGroup.execution_result?.purchase_orders?.length || 0 }} 张。</p>
+            <h4>执行结果</h4><p>历史销售单 {{ selectedGroup.execution_result?.orders?.length || 0 }} 张；历史采购单 {{ selectedGroup.execution_result?.purchase_orders?.length || 0 }} 张。</p><p v-if="selectedGroup.execution_result?.pending_product_links">归档时待关联 {{ selectedGroup.execution_result.pending_product_links }} 条商品明细。</p>
             <p>整体进度：{{ overallLabels[selectedGroup.operational_overall?.state] || '待核实' }}。</p>
             <p>归档阶段未产生正式资金、库存流水或履约记录。资金交接：{{ handoffLabel(selectedGroup.finance_handoff_status) }}；库存交接：{{ handoffLabel(inventoryStatus?.status || selectedGroup.inventory_handoff_status) }}；履约交接：{{ handoffLabel(operationalStatus?.status || selectedGroup.fulfillment_handoff_status) }}。</p>
             <details v-if="canReview" class="takeover-resolution">
@@ -606,7 +628,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                       <label>供货档案<select v-model="operationalForms[doc.source_id].line_options[index].supplier_sku_id"><option value="">无档案，手工核实</option><option v-for="supplier in line.supplier_sources" :key="supplier.id" :value="supplier.id">{{ supplier.supplier_sku_code }} · MOQ {{ supplier.moq }}</option></select></label>
                       <label>手工来源依据<input v-model="operationalForms[doc.source_id].line_options[index].manual_reason" /></label>
                       <label>采购归属<select v-model="operationalForms[doc.source_id].line_options[index].target"><option value="">请选择</option><option value="inventory">库存</option><option value="order">接续销售订单</option></select></label>
-                      <label v-if="operationalForms[doc.source_id].line_options[index].target === 'order'">销售订单<select v-model="operationalForms[doc.source_id].line_options[index].sales_source_id"><option value="">请选择</option><option v-for="sales in operationalStatus.contracts.filter(item => item.record_type === '销售订单' && item.remaining_lines.some(candidate => candidate.source.sku_code === line.source.sku_code))" :key="sales.source_id" :value="sales.source_id">{{ sales.source.order_no }}</option></select></label>
+                      <label v-if="operationalForms[doc.source_id].line_options[index].target === 'order'">销售订单<select v-model="operationalForms[doc.source_id].line_options[index].sales_source_id"><option value="">请选择</option><option v-for="sales in operationalStatus.contracts.filter(item => item.record_type === '销售订单' && item.remaining_lines.some(candidate => candidate.linked_sku_id && candidate.linked_sku_id === line.linked_sku_id))" :key="sales.source_id" :value="sales.source_id">{{ sales.source.order_no }}</option></select></label>
                     </div>
                   </div>
                   <div v-if="doc.remaining_lines.length && doc.record_type === '销售订单'" class="takeover-form-grid">

@@ -13,6 +13,8 @@ from django.db import IntegrityError, transaction
 from django.utils import timezone
 
 from .history_import_preflight import SHEET_SCHEMAS, _read_workbook, _storage_limit_errors, preflight_rows
+from .history_product_models import ArchivedHistoryLine, HistoryProductLink
+from .history_products import specification_matches
 from .models import (
     Customer,
     HistoryTakeoverApplication,
@@ -21,9 +23,7 @@ from .models import (
     HistoryTakeoverHandoff,
     HistoryTakeoverSourceRecord,
     Order,
-    OrderItem,
     PurchaseOrder,
-    PurchaseOrderItem,
     SKU,
     Supplier,
 )
@@ -140,8 +140,19 @@ def _group_preflight(group, user):
         target = next((item for item in rows[sheet] if item["row"] == row_number), None)
         if target is None:
             raise TakeoverRuleError("主档关联修正行不存在。")
-        target["data"][field] = str(target_code).strip()
+        if sheet not in {"销售明细", "采购明细"} or field != "sku_code":
+            target["data"][field] = str(target_code).strip()
     payload, rows = preflight_rows(rows, user)
+    for result in payload["results"]:
+        sheet, number = result["sheet"], result["row"]
+        if sheet not in {"销售明细", "采购明细"} or f"{sheet}:{number}:sku_code" not in group.resolution_map:
+            continue
+        data = next(item["data"] for item in rows[sheet] if item["row"] == number)
+        sku = SKU.objects.filter(sku=group.resolution_map[f"{sheet}:{number}:sku_code"], active=True).first()
+        if not sku or not specification_matches(sku, data.get("base_unit_snapshot"), data.get("specification_snapshot")):
+            raise TakeoverRuleError("已选 SKU 不可用或与历史基础单位、规格不一致，请重新核实。")
+        result["product_link_status"] = "已确认"
+        result["confirmed_sku_id"] = sku.pk
     return payload, rows
 
 
@@ -220,10 +231,6 @@ def _ensure_exact_master_codes(rows):
     for sheet, field, label in (
         ("销售订单", "customer_code", "客户"),
         ("采购订单", "supplier_code", "供应商"),
-        ("销售明细", "sku_code", "SKU"),
-        ("采购明细", "sku_code", "SKU"),
-        ("履约记录", "sku_code", "履约 SKU"),
-        ("库存盘点", "sku_code", "盘点 SKU"),
     ):
         for row in rows.get(sheet, []):
             if not row["data"].get(field):
@@ -373,8 +380,6 @@ def _master_for(model, code, label):
 def _create_history_documents(group, rows):
     sales_orders = {}
     purchase_orders = {}
-    sales_lines = {}
-    purchase_lines = {}
     results = {"orders": [], "purchase_orders": [], "source_records": []}
 
     for entry in rows.get("销售订单", []):
@@ -396,32 +401,6 @@ def _create_history_documents(group, rows):
         sales_orders[str(data["source_record_id"])] = order
         results["orders"].append({"source_record_id": str(data["source_record_id"]), "id": order.pk, "order_no": order.order_no, "status": order.status})
 
-    sales_item_rows = []
-    for entry in rows.get("销售明细", []):
-        data = entry["data"]
-        parent = sales_orders[str(data["source_order_id"])]
-        sku = _master_for(SKU, data.get("sku_code"), "SKU")
-        trade_snapshot = {
-            "unit": str(data.get("trade_unit_snapshot") or data["unit_snapshot"]),
-            "base_unit": str(data["base_unit_snapshot"]),
-            "factor": str(data.get("trade_factor_snapshot") or "1"),
-            "name": str(data.get("trade_unit_snapshot") or ""),
-        }
-        sales_item_rows.append(OrderItem(
-            order=parent, sku=sku, sku_code_snapshot=str(data.get("sku_code") or ""),
-            product_category_name_snapshot=str(data.get("product_category_snapshot") or ""),
-            sales_model_snapshot=str(data.get("sales_model_snapshot") or ""),
-            display_name_snapshot=str(data["sku_name_snapshot"]),
-            description_snapshot=str(data.get("description_snapshot") or ""),
-            unit_snapshot=str(data["unit_snapshot"]), quantity=data["quantity_base"],
-            unit_price=data["unit_price"], notes=str(data.get("notes") or "")[:200],
-            trade_quantity=_decimal(data.get("trade_quantity"), optional=True),
-            trade_unit_price=_decimal(data.get("trade_unit_price"), optional=True),
-            trade_snapshot=trade_snapshot,
-        ))
-        sales_lines[(str(data["source_order_id"]), str(data["source_line_id"]))] = sales_item_rows[-1]
-    OrderItem.objects.bulk_create(sales_item_rows)
-
     for entry in rows.get("采购订单", []):
         data = entry["data"]
         supplier = _master_for(Supplier, data.get("supplier_code"), "供应商")
@@ -440,41 +419,21 @@ def _create_history_documents(group, rows):
         purchase_orders[str(data["source_record_id"])] = po
         results["purchase_orders"].append({"source_record_id": str(data["source_record_id"]), "id": po.pk, "purchase_no": po.purchase_no, "status": po.status})
 
-    purchase_item_rows = []
-    for entry in rows.get("采购明细", []):
-        data = entry["data"]
-        parent = purchase_orders[str(data["source_purchase_id"])]
-        sku = _master_for(SKU, data.get("sku_code"), "SKU")
-        trade_snapshot = {
-            "unit": str(data.get("trade_unit_snapshot") or data["unit_snapshot"]),
-            "base_unit": str(data["base_unit_snapshot"]),
-            "factor": str(data.get("trade_factor_snapshot") or "1"),
-            "name": str(data.get("trade_unit_snapshot") or ""),
-        }
-        purchase_item_rows.append(PurchaseOrderItem(
-            purchase_order=parent, sku=sku, supplier_sku=None,
-            sku_code_snapshot=str(data.get("sku_code") or ""),
-            product_category_name_snapshot=str(data.get("product_category_snapshot") or ""),
-            sales_model_snapshot=str(data.get("sales_model_snapshot") or ""),
-            display_name_snapshot=str(data["sku_name_snapshot"]),
-            description_snapshot=str(data.get("description_snapshot") or ""),
-            supplier_name_snapshot=str(data.get("supplier_name_snapshot") or ""),
-            supplier_model_snapshot=str(data.get("supplier_model_snapshot") or ""),
-            supplier_sku_code_snapshot=str(data.get("supplier_sku_code_snapshot") or ""),
-            quantity=data["quantity_base"], unit_price=data["unit_price"],
-            trade_quantity=_decimal(data.get("trade_quantity"), optional=True),
-            trade_unit_price=_decimal(data.get("trade_unit_price"), optional=True),
-            trade_snapshot=trade_snapshot,
-        ))
-        purchase_lines[(str(data["source_purchase_id"]), str(data["source_line_id"]))] = purchase_item_rows[-1]
-    # bulk_create intentionally bypasses PurchaseOrderItem.save(), which would
-    # create an ISS-039 cost allocation for a historical document.
-    PurchaseOrderItem.objects.bulk_create(purchase_item_rows)
-
-    for key, instance in sales_lines.items():
-        results["source_records"].append(("销售明细", f"{key[0]}:{key[1]}", "crm.OrderItem", instance.pk))
-    for key, instance in purchase_lines.items():
-        results["source_records"].append(("采购明细", f"{key[0]}:{key[1]}", "crm.PurchaseOrderItem", instance.pk))
+    for sheet, parents, parent_key, relation in (
+        ("销售明细", sales_orders, "source_order_id", "order"),
+        ("采购明细", purchase_orders, "source_purchase_id", "purchase_order"),
+    ):
+        for entry in rows.get(sheet, []):
+            data = entry["data"]
+            original = next(item["data"] for item in group.source_rows[sheet] if item["row"] == entry["row"])
+            line = ArchivedHistoryLine.objects.create(
+                **{relation: parents[str(data[parent_key])]},
+                quantity=data["quantity_base"], unit_price=data["unit_price"],
+                trade_quantity=_decimal(data.get("trade_quantity"), optional=True),
+                trade_unit_price=_decimal(data.get("trade_unit_price"), optional=True),
+                facts=_json_safe(original),
+            )
+            results["source_records"].append((sheet, _record_source_id(sheet, data), line.pk))
     return sales_orders, purchase_orders, results
 
 
@@ -590,11 +549,6 @@ def execute_group(group, user):
         _master_for(Customer, entry["data"].get("customer_code"), "客户")
     for entry in rows.get("采购订单", []):
         _master_for(Supplier, entry["data"].get("supplier_code"), "供应商")
-    for sheet in ("销售明细", "采购明细", "履约记录", "库存盘点"):
-        for entry in rows.get(sheet, []):
-            if entry["data"].get("sku_code"):
-                _master_for(SKU, entry["data"]["sku_code"], "SKU")
-
     sales_orders, purchase_orders, created = _create_history_documents(group, rows)
     _event_payload = _source_rows_for_handoff(group, rows, remainder)
     for kind, data in _event_payload.items():
@@ -612,10 +566,9 @@ def execute_group(group, user):
                 target_model, target_id = "crm.Order", sales_orders[str(data["source_record_id"])].pk
             elif sheet == "采购订单":
                 target_model, target_id = "crm.PurchaseOrder", purchase_orders[str(data["source_record_id"])].pk
-            elif sheet == "销售明细":
-                target_model, target_id = "crm.OrderItem", next(item[3] for item in created["source_records"] if item[0] == sheet and item[1] == source_id)
-            elif sheet == "采购明细":
-                target_model, target_id = "crm.PurchaseOrderItem", next(item[3] for item in created["source_records"] if item[0] == sheet and item[1] == source_id)
+            elif sheet in {"销售明细", "采购明细"}:
+                target_model = "crm.ArchivedHistoryLine"
+                target_id = next(item[2] for item in created["source_records"] if item[:2] == (sheet, source_id))
             original_data = next((item["data"] for item in group.source_rows.get(sheet, []) if item["row"] == entry["row"]), data)
             source_records.append(HistoryTakeoverSourceRecord(
                 group=group, source_system=group.source_system, record_type=sheet,
@@ -624,7 +577,32 @@ def execute_group(group, user):
             ))
     HistoryTakeoverSourceRecord.objects.bulk_create(source_records)
 
+    for record in source_records:
+        if record.target_model != "crm.ArchivedHistoryLine":
+            continue
+        # Only an explicit per-row mapping can confirm a link at import.
+        original = record.source_snapshot["source"]
+        entry = next(item for item in rows[record.record_type] if _record_source_id(record.record_type, item["data"]) == record.source_record_id)
+        if f"{record.record_type}:{entry['row']}:sku_code" not in group.resolution_map:
+            continue
+        sku = SKU.objects.select_for_update().filter(
+            sku=group.resolution_map[f"{record.record_type}:{entry['row']}:sku_code"], active=True,
+        ).first()
+        if not sku or not specification_matches(sku, original.get("base_unit_snapshot"), original.get("specification_snapshot")):
+            raise TakeoverRuleError("已选 SKU 停用或基础单位与历史资料不一致，请重新核实。")
+        HistoryProductLink.objects.create(source=record, sku=sku)
+        HistoryTakeoverEvent.objects.create(
+            application=group.application, group=group, event_type="history_product_linked", actor=user,
+            actor_label=user.get_full_name() or user.get_username(),
+            details={"source_id": record.pk, "source_system": record.source_system,
+                     "source_number": record.source_record_id, "before": None, "after": sku.pk, "version": 1,
+                     "operation": "archive", "request": _json_hash([group.pk, group.approved_fingerprint])},
+        )
+
     execution_result = {
+        "pending_product_links": sum(
+            record.target_model == "crm.ArchivedHistoryLine" for record in source_records
+        ) - HistoryProductLink.objects.filter(source__group=group).count(),
         "orders": created["orders"],
         "purchase_orders": created["purchase_orders"],
         "finance_records_posted": 0,

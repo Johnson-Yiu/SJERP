@@ -41,6 +41,13 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         media_settings.enable()
         self.addCleanup(media_settings.disable)
         self.sources = {(item.record_type, item.source_record_id): item for item in self.group.source_records.all()}
+        ids = [item.pk for item in self.sources.values() if item.record_type in {"销售明细", "采购明细"}]
+        preview = self.client.post("/api/import/history-products/preview/", {
+            "ids": ids, "target": self.sku.pk, "operation": "link",
+        }, format="json")
+        self.assertEqual(preview.status_code, 200, preview.data)
+        saved = self.client.post("/api/import/history-products/apply/", {"token": preview.data["token"]}, format="json")
+        self.assertEqual(saved.status_code, 200, saved.data)
         sale = self.sources[("销售订单", "SO-HT-1")]
         purchase = self.sources[("采购订单", "PO-HT-1")]
         self.payload = {"cutover_date": "2025-01-01", "reason": "核对合成合同、履约和未结款",
@@ -55,6 +62,20 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
                  "line_options": [{"source_id": self.sources[("采购明细", "PO-HT-1:1")].pk,
                     "supplier_sku_id": None, "manual_reason": "原供应商无供货档案，已核对合同", "target": "order", "sales_source_id": sale.pk}]},
             ]}
+
+    def test_unlink_invalidates_unexecuted_contract_approval(self):
+        self.approve_contracts()
+        line = self.sources[("销售明细", "SO-HT-1:1")]
+        preview = self.client.post("/api/import/history-products/preview/", {
+            "ids": [line.pk], "operation": "unlink", "reason": "待核实原件",
+        }, format="json")
+        self.assertEqual(preview.status_code, 200, preview.data)
+        saved = self.client.post("/api/import/history-products/apply/", {"token": preview.data["token"]}, format="json")
+        self.assertEqual(saved.status_code, 200, saved.data)
+        self.assertEqual(self.group.handoffs.get(kind="fulfillment").status, "needs_reapproval")
+        with self.assertRaises(APIException):
+            contracts.execute(self.group.pk, self.maker)
+        self.assertFalse(self.group.operational_contracts.exists())
 
     def approve_contracts(self):
         proposal, replay = contracts.propose(self.group.pk, self.payload, self.maker)
@@ -182,14 +203,14 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual(response.status_code, 201, response.data)
         original_sale.refresh_from_db()
         self.assertEqual(original_sale.outstanding_amount, Decimal("52"))
-        self.assertEqual(original_sale.items.get().quantity, Decimal("10"))
+        self.assertEqual(original_sale.archived_lines.get().quantity, Decimal("10"))
         change.update({"version": 1, "request_key": "SYNTH-HISTORY-REVISION-2", "reason": "撤销合成追加",
                        "items": [{"order_item": item.pk, "new_quantity": "6"}]})
         response = self.client.post(f"/api/orders/{sale.pk}/quantity-adjustments/", change, format="json")
         self.assertEqual(response.status_code, 201, response.data)
         original_sale.refresh_from_db()
         self.assertEqual(original_sale.outstanding_amount, Decimal("40"))
-        self.assertEqual(original_sale.items.get().quantity, Decimal("10"))
+        self.assertEqual(original_sale.archived_lines.get().quantity, Decimal("10"))
 
     def test_failure_rolls_back_links_drafts_and_plans(self):
         self.approve_contracts()
@@ -337,6 +358,13 @@ class HistoricalContractsPostgresTests(HistoryTakeoverFixtureMixin, TransactionT
             {"source_id": sale.pk, "balance_mode": "itemized", "evidence_reference": "synthetic://sale", "plan_source_ids": [sources[("收付款计划", "PLAN-SO-1")].pk], "remaining_shipping_fee": "0", "remaining_discount": "0", "amount_evidence": "synthetic://amount", "line_options": [{"source_id": sources[("销售明细", "SO-HT-1:1")].pk, "unit_cost": "3.25", "cost_currency": "USD", "cost_evidence": "synthetic://cost"}]},
             {"source_id": purchase.pk, "balance_mode": "itemized", "evidence_reference": "synthetic://purchase", "plan_source_ids": [sources[("收付款计划", "PLAN-PO-1")].pk], "no_additional_costs": True, "costs_evidence": "synthetic://cost", "line_options": [{"source_id": sources[("采购明细", "PO-HT-1:1")].pk, "supplier_sku_id": None, "manual_reason": "核对合成合同", "target": "order", "sales_source_id": sale.pk}]},
         ]}
+        line_ids = list(group.source_records.filter(record_type__in=["销售明细", "采购明细"]).values_list("pk", flat=True))
+        preview = self.client.post("/api/import/history-products/preview/", {
+            "ids": line_ids, "target": self.sku.pk, "operation": "link",
+        }, format="json")
+        self.assertEqual(preview.status_code, 200, preview.data)
+        saved = self.client.post("/api/import/history-products/apply/", {"token": preview.data["token"]}, format="json")
+        self.assertEqual(saved.status_code, 200, saved.data)
         contracts.propose(group.pk, payload, maker)
         contracts.approve(group.pk, "核对合成资料", reviewer)
         gate = Barrier(2)

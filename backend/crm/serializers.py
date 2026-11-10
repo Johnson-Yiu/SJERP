@@ -648,6 +648,13 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         user = serializer_user(self.context)
+        if instance.historical_only and not self.context.get("mask_quantity_adjustment_financial"):
+            from .history_products import document_product_rows
+            from .permissions import is_permission_admin
+            data["historical_products"] = document_product_rows(
+                instance, include_sku=user_can(user, "skus", "view"),
+                include_source=bool(user and user.is_authenticated and is_permission_admin(user)),
+            )
         from .sales_scope import scope_customer_related_queryset
         data['effective_party'] = None
         if user_can(user, 'suppliers', 'view') and instance.status not in {'draft', 'cancelled'}:
@@ -2184,6 +2191,13 @@ class OrderSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data.pop("amount_calculation_version", None)
         user = serializer_user(self.context)
+        if instance.historical_only and not self.context.get("mask_quantity_adjustment_financial"):
+            from .history_products import document_product_rows
+            from .permissions import is_permission_admin
+            data["historical_products"] = document_product_rows(
+                instance, include_sku=user_can(user, "skus", "view"),
+                include_source=bool(user and user.is_authenticated and is_permission_admin(user)),
+            )
         data['effective_party'] = None
         from .sales_scope import customer_in_scope
         if user_can(user, 'customers', 'view') and customer_in_scope(instance.customer_id, user) and instance.status != 'draft':

@@ -14,7 +14,10 @@ def verified_original(group, source, sheet):
     prefix = f"{sheet}:{originals[0]['row']}:"
     for key, value in (group.resolution_map or {}).items():
         if key.startswith(prefix):
-            expected[key[len(prefix):]] = str(value).strip()
+            field = key[len(prefix):]
+            if source.target_model == "crm.ArchivedHistoryLine" and field == "sku_code":
+                continue
+            expected[field] = str(value).strip()
     resolved = source.source_snapshot.get("resolved", {})
     if expected != resolved:
         raise ValidationError("来源主档映射与已核实记录不一致，请重新审核。")

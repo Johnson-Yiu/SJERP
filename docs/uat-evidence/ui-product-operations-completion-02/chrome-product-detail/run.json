@@ -1,0 +1,146 @@
+{
+  "source": "f153bc2f25800447ad272cbe055a7b23c3f2096a",
+  "browser": "Chrome/156.0.8078.80",
+  "api": "real isolated Django",
+  "states": [
+    {
+      "id": "product-overview",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "left": 272,
+      "right": 1366,
+      "availableLeft": 248,
+      "availableRight": 1366,
+      "titleLeft": 303,
+      "cardLeft": 301,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "documentWidth": 1366,
+      "png": "product-overview-1366-100.png"
+    },
+    {
+      "id": "product-nested-certificate",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "product-nested-certificate-1366-100.png"
+    },
+    {
+      "id": "product-overview",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "left": 272,
+      "right": 1440,
+      "availableLeft": 248,
+      "availableRight": 1440,
+      "titleLeft": 303,
+      "cardLeft": 301,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "documentWidth": 1440,
+      "png": "product-overview-1440-100.png"
+    },
+    {
+      "id": "product-nested-certificate",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "product-nested-certificate-1440-100.png"
+    },
+    {
+      "id": "product-overview",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "left": 0,
+      "right": 390,
+      "availableLeft": 0,
+      "availableRight": 390,
+      "titleLeft": 17,
+      "cardLeft": 13,
+      "dpr": 1,
+      "cssWidth": 390,
+      "documentWidth": 390,
+      "png": "product-overview-390-100.png"
+    },
+    {
+      "id": "product-nested-certificate",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "product-nested-certificate-390-100.png"
+    },
+    {
+      "id": "product-overview",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "left": 272,
+      "right": 1092.7999877929688,
+      "availableLeft": 248,
+      "availableRight": 1092.7999877929688,
+      "titleLeft": 302.8000183105469,
+      "cardLeft": 300.8000183105469,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "documentWidth": 1093,
+      "png": "product-overview-1366-125.png"
+    },
+    {
+      "id": "product-nested-certificate",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "product-nested-certificate-1366-125.png"
+    },
+    {
+      "id": "product-overview",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "left": 272,
+      "right": 1152,
+      "availableLeft": 248,
+      "availableRight": 1152,
+      "titleLeft": 302.8000183105469,
+      "cardLeft": 300.8000183105469,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "documentWidth": 1152,
+      "png": "product-overview-1440-125.png"
+    },
+    {
+      "id": "product-nested-certificate",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "product-nested-certificate-1440-125.png"
+    },
+    {
+      "id": "product-overview",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "left": 0,
+      "right": 312,
+      "availableLeft": 0,
+      "availableRight": 312,
+      "titleLeft": 16.80000114440918,
+      "cardLeft": 12.800000190734863,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "documentWidth": 312,
+      "png": "product-overview-390-125.png"
+    },
+    {
+      "id": "product-nested-certificate",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "product-nested-certificate-390-125.png"
+    }
+  ],
+  "failures": []
+}

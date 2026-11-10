@@ -1,7 +1,7 @@
 <script setup>
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronDown, ChevronRight, Database, ListFilter, Pencil, Plus, Search, Trash2, X } from 'lucide-vue-next'
 import { listData } from '../api'
@@ -155,13 +155,19 @@ function openEdit(product, { keepDetail = false } = {}) {
   guard.markClean()
 }
 function closeModal() { return guard.requestClose(() => { modalOpen.value = false; keepDetailOpen.value = false; prefixReview.value = null; editingProduct.value = null; pickerOpen.value = false }) }
-function closeDetail() {
+async function closeDetail() {
   const origin = internalPagePath(route.query.returnTo)
   if (origin) { void router.push(origin); return }
+  const closedId = detailId.value
   detailId.value = null
   if (!route.query.detail) return
   const { detail, tab, returnTo, ...query } = route.query
-  void router.replace({ path: route.path, query, hash: route.hash })
+  await router.replace({ path: route.path, query, hash: route.hash })
+  await nextTick()
+  const activePane = document.querySelector('.workspace-pane[aria-hidden="false"]')
+  const row = [...(activePane?.querySelectorAll('[data-product-row]') || [])]
+    .find(element => element.dataset.productRow === String(closedId))
+  row?.focus({ preventScroll: true })
 }
 function openDetail(id) { return router.push({ path: route.path, query: { ...route.query, detail: String(id), tab: undefined } }) }
 async function editDetail() {
@@ -296,7 +302,7 @@ watch(() => route.query.detail, id => { detailId.value = id ? Number(id) : null 
     <section class="panel">
       <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="loadError" @retry="load" />
       <ListEmptyState v-if="hasLoaded && !products.length" entity="产品" :filtered="filteredProductEmpty" @clear="clearProductFilters"><template #action><p>选择“新建产品”添加产品资料。</p></template></ListEmptyState>
-      <div v-else-if="hasLoaded && products.length" class="table-wrap"><table class="data-table product-list-table"><thead><tr><th>产品编号</th><th>产品名称</th><th>销售型号前缀</th><th>主分类</th><th>状态</th><th>SKU</th><th>参数</th><th>证书</th><th /></tr></thead><tbody><tr v-for="product in orderedProducts" :key="product.id" class="clickable-row" tabindex="0" @click="openDetail(product.id)" @keydown.enter="openDetail(product.id)"><td class="primary-cell">{{ product.code }}</td><td><strong>{{ product.name }}</strong><small class="product-secondary">{{ product.name_en || '未填写英文名称' }}</small></td><td>{{ product.sales_model_prefix || '—' }}</td><td>{{ product.category_name }}</td><td><span class="tag">{{ product.status === 'active' ? '在售' : product.status === 'development' ? '开发中' : '停产' }}</span></td><td>{{ product.sku_count }}</td><td>{{ product.parameter_count }}</td><td>{{ product.certificate_count }}</td><td><div class="table-actions"><button v-if="can('products', 'update')" class="mini-btn" title="编辑产品" @click.stop="openEdit(product)"><Pencil :size="14" /></button><button v-if="can('products', 'delete')" class="mini-btn danger" title="删除产品" @click.stop="remove(product)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div>
+      <div v-else-if="hasLoaded && products.length" class="table-wrap"><table class="data-table product-list-table"><thead><tr><th>产品编号</th><th>产品名称</th><th>销售型号前缀</th><th>主分类</th><th>状态</th><th>SKU</th><th>参数</th><th>证书</th><th /></tr></thead><tbody><tr v-for="product in orderedProducts" :key="product.id" :data-product-row="product.id" class="clickable-row" tabindex="0" @click="openDetail(product.id)" @keydown.enter="openDetail(product.id)"><td class="primary-cell">{{ product.code }}</td><td><strong>{{ product.name }}</strong><small class="product-secondary">{{ product.name_en || '未填写英文名称' }}</small></td><td>{{ product.sales_model_prefix || '—' }}</td><td>{{ product.category_name }}</td><td><span class="tag">{{ product.status === 'active' ? '在售' : product.status === 'development' ? '开发中' : '停产' }}</span></td><td>{{ product.sku_count }}</td><td>{{ product.parameter_count }}</td><td>{{ product.certificate_count }}</td><td><div class="table-actions"><button v-if="can('products', 'update')" class="mini-btn" title="编辑产品" @click.stop="openEdit(product)"><Pencil :size="14" /></button><button v-if="can('products', 'delete')" class="mini-btn danger" title="删除产品" @click.stop="remove(product)"><Trash2 :size="14" /></button></div></td></tr></tbody></table></div>
     </section>
 
     <div v-if="modalOpen" class="modal-backdrop"><form class="modal product-modal" role="dialog" aria-modal="true" :aria-label="title" :style="productModalStyle" @submit.prevent="save"><div class="modal-head"><h3>{{ title }}</h3><button type="button" class="mini-btn" :disabled="saving" aria-label="关闭产品表单" @click="closeModal"><X :size="17" /></button></div><div class="modal-body"><p v-if="saveError" class="option-load-error" role="alert">{{ saveError }}</p><h4 class="product-group-title">基本资料</h4><div v-if="Object.keys(referenceErrors).length" class="option-load-error" role="alert"><p v-for="(message,key) in referenceErrors" :key="key">{{ message }} <button type="button" @click="load">重新加载</button></p></div><div class="form-grid" :inert="saving"><div class="field"><label>产品编号 <em>*</em></label><input v-model="form.code" class="readonly-input" readonly /></div><div class="field"><label>产品名称 <em>*</em></label><input v-model.trim="form.name" placeholder="如：BTY橱柜电源" required /></div>

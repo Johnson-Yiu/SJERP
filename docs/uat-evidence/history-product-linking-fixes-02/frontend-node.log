@@ -1,0 +1,14 @@
+✔ history order entry uses isolated endpoints and keeps the analysis-only label visible (5.1988ms)
+✔ history order entry preserves the supplied historical date and does not expose formal actions (1.7736ms)
+✔ history page keeps unauthorized optional requests from blanking authorized data (1.9076ms)
+✔ history page does not offer an entry form without its master-data permissions (1.3022ms)
+✔ history navigation accepts either sales or purchasing view permission (3.6291ms)
+✔ history analysis renders permission-filtered detail tables with local narrow-screen scrolling (1.2492ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 100.2407

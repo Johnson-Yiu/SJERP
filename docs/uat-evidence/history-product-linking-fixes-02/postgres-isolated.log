@@ -1,0 +1,117 @@
+H1 source: 85a2b96b5a7b48d015e22a800b4c60e6ae83b857
+The files belonging to this database system will be owned by user "Johnson".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+creating directory C:/Users/Johnson/AppData/Local/Temp/sunjack-h1-pg-y5ug3m4y/cluster ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... windows
+selecting default "max_connections" ... 100
+selecting default "shared_buffers" ... 128MB
+selecting default time zone ... Asia/Shanghai
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    ^"C^:^\Users^\Johnson^\AppData^\Local^\Temp^\sunjack^-iss018^-pg17^-d26bfa744cf54322af03ea964e90089f^\pgsql^\bin^\pg^_ctl^" -D ^"C^:^\Users^\Johnson^\AppData^\Local^\Temp^\sunjack^-h1^-pg^-y5ug3m4y^\cluster^" -l logfile start
+
+waiting for server to start.... done
+server started
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 25, in <module>
+    import psycopg as Database
+ModuleNotFoundError: No module named 'psycopg'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 27, in <module>
+    import psycopg2 as Database
+ModuleNotFoundError: No module named 'psycopg2'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\manage.py", line 13, in <module>
+    main()
+    ~~~~^^
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\manage.py", line 9, in main
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\management\__init__.py", line 443, in execute_from_command_line
+    utility.execute()
+    ~~~~~~~~~~~~~~~^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\core\management\__init__.py", line 417, in execute
+    django.setup()
+    ~~~~~~~~~~~~^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\apps\registry.py", line 116, in populate
+    app_config.import_models()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\apps\config.py", line 269, in import_models
+    self.models_module = import_module(models_module_name)
+                         ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\contrib\auth\models.py", line 5, in <module>
+    from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\contrib\auth\base_user.py", line 43, in <module>
+    class AbstractBaseUser(models.Model):
+    ...<120 lines>...
+            )
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\db\models\base.py", line 145, in __new__
+    new_class.add_to_class("_meta", Options(meta, app_label))
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\db\models\base.py", line 393, in add_to_class
+    value.contribute_to_class(cls, name)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\db\models\options.py", line 238, in contribute_to_class
+    self.db_table, connection.ops.max_name_length()
+                   ^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\utils\connection.py", line 15, in __getattr__
+    return getattr(self._connections[self._alias], item)
+                   ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\utils\connection.py", line 62, in __getitem__
+    conn = self.create_connection(alias)
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\db\utils.py", line 196, in create_connection
+    backend = load_backend(db["ENGINE"])
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\db\utils.py", line 116, in load_backend
+    return import_module("%s.base" % backend_name)
+  File "C:\Python314\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.venv\Lib\site-packages\django\db\backends\postgresql\base.py", line 29, in <module>
+    raise ImproperlyConfigured("Error loading psycopg2 or psycopg module")
+django.core.exceptions.ImproperlyConfigured: Error loading psycopg2 or psycopg module
+waiting for server to shut down.... done
+server stopped
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\docs\uat-evidence\history-product-sku-linking-01\run-postgres.py", line 72, in <module>
+    main()
+    ~~~~^^
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\docs\uat-evidence\history-product-sku-linking-01\run-postgres.py", line 49, in main
+    django('test', *args.test_label, '--noinput', '-v', '2')
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\docs\uat-evidence\history-product-sku-linking-01\run-postgres.py", line 38, in django
+    subprocess.run([sys.executable, "manage.py", *options], cwd=repo / "backend", env=env, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['D:\\Codex项目\\森爵照明管理系统\\.venv\\Scripts\\python.exe', 'manage.py', 'test', 'crm.tests.test_history_products', 'crm.tests.test_history_product_migration', 'crm.tests.test_history_takeover.HistoricalSourceIdentityTests', 'crm.tests.test_history_operational_inventory', '--noinput', '-v', '2']' returned non-zero exit status 1.

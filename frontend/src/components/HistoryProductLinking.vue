@@ -208,7 +208,7 @@ onBeforeUnmount(() => { session++; searchVersion++ })
       </div>
       <div class="actions dialog-actions">
         <button type="button" :disabled="busy" @click="dialog.close()">关闭</button>
-        <button type="button" :disabled="busy || (targetRequired && !target) || ((operation !== 'link' || verifiedSpecification) && !reason)" @click="run('preview')">生成预览</button>
+        <button type="button" :disabled="busy || (targetRequired && !target) || ((operation !== 'link' || Boolean(verifiedSpecification)) && !reason)" @click="run('preview')">生成预览</button>
         <button v-if="preview" class="confirm" type="button" :disabled="busy" @click="run('apply')">{{ busy ? '处理中…' : '确认保存' }}</button>
       </div>
     </dialog>

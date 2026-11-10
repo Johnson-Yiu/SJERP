@@ -1,15 +1,15 @@
 from datetime import date
 
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
-from django.test import TransactionTestCase
 
 
 MIGRATION_0069 = [("crm", "0069_backfill_purchase_cost_allocations")]
 MIGRATION_0070 = [("crm", "0070_shipmentitem_overage_reversal_links")]
 
 
-class ShipmentOverageLinkMigrationTests(TransactionTestCase):
+class ShipmentOverageLinkMigrationTests(HistoricalMigrationTestCase):
     """Exercise 0070 against the real pre-migration schema and data."""
 
     reset_sequences = True

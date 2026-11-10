@@ -2,19 +2,27 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import PaymentPlanPage from '../src/views/PaymentPlanPage.vue'
+import { setAccessOperator } from '../src/accessControl'
 import TransactionPage from '../src/views/TransactionPage.vue'
 const api = vi.hoisted(() => ({ listAll: vi.fn(), post: vi.fn(), patch: vi.fn() }))
 vi.mock('../src/api', () => ({ api, listAll: api.listAll }))
 const plan = { id: 1, contract_no: 'SO-F1-0001', counterparty_name: '验收客户', currency: 'CNY', planned_amount: '100', remaining_amount: '100', remaining_rmb: '100', settled_amount: '0', status: 'open' }
 async function page(component, path, props = {}) {
-  const router = createRouter({ history: createMemoryHistory(), routes: ['/receivables','/payables','/transactions'].map(path => ({ path, component: { template: '<main />' } })) })
+  const router = createRouter({ history: createMemoryHistory(), routes: ['/receivables','/payables','/transactions','/rmb-cash-events'].map(path => ({ path, component: { template: '<main />' } })) })
   await router.push(path)
   const wrapper = mount(component, { props, global: { plugins: [router], directives: { 'money-input': {} } } })
   await flushPromises()
   return { wrapper, router }
 }
 const click = (w, text) => w.findAll('button').find(b => b.text() === text).trigger('click')
-beforeEach(() => { vi.resetAllMocks(); api.listAll.mockResolvedValue([plan]); api.post.mockResolvedValue({}); api.patch.mockResolvedValue({}) })
+beforeEach(() => {
+  localStorage.clear()
+  setAccessOperator({ authenticated: true, user_id: 101, has_all_permissions: true })
+  vi.resetAllMocks()
+  api.listAll.mockResolvedValue([plan])
+  api.post.mockResolvedValue({})
+  api.patch.mockResolvedValue({})
+})
 it.each([['receivable','收款'],['payable','付款']])('uses clear %s success feedback and clears stale feedback before a failed operation', async (direction, noun) => {
   const {wrapper:w} = await page(PaymentPlanPage, direction === 'receivable' ? '/receivables' : '/payables', {direction})
   await click(w, `登记${noun}`); await w.get('form.dialog').trigger('submit'); await flushPromises()

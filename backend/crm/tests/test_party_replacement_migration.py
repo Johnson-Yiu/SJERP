@@ -1,14 +1,14 @@
 from django.contrib.auth import get_user_model
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
-from django.test import TransactionTestCase
 from django.test.utils import CaptureQueriesContext
 
 from crm.models import Customer, PartyVersionRequest, Quote
 from crm.party_version import _content, _digest
 
 
-class ReplacementMigrationCompatibilityTests(TransactionTestCase):
+class ReplacementMigrationCompatibilityTests(HistoricalMigrationTestCase):
     def test_legacy_fingerprints_are_readable_before_and_after_0115(self):
         executor = MigrationExecutor(connection)
         executor.migrate([('crm', '0114_party_document_version')])

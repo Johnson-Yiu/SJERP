@@ -804,6 +804,7 @@ class TradeFinanceUpgradeTests(TestCase):
             "order": self.order.pk,
             "purchase_order": None,
             "amount": Decimal("20.0000"),
+            "remaining_amount": Decimal("80.0000"),
             "is_active": True,
         }])
 

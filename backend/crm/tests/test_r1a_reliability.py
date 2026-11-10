@@ -77,14 +77,14 @@ class R1AReliabilityTests(TestCase):
         self.assertEqual(self.snapshot(), before)
 
     def test_usd_direct_split_exact_decimals_and_invalid_amount_atomicity(self):
-        response = self.client.post('/api/transactions/', {'transaction_date':str(self.day),'order':self.order.pk,'kind':'customer_receipt','direction':'income','category':'客户收款','amount':'340','currency':'USD','exchange_rate':'7.25'}, format='json')
+        response = self.client.post('/api/transactions/', {'transaction_no':'R1A-DIRECT','transaction_date':str(self.day),'order':self.order.pk,'kind':'customer_receipt','direction':'income','category':'客户收款','amount':'340','currency':'USD','exchange_rate':'7.25'}, format='json')
         self.assertEqual(response.status_code,201,response.data)
         self.assertEqual(sum((t.amount for t in self.order.transactions.all()),D('0')),D('340'))
         self.assertEqual(sum((t.rmb_amount for t in self.order.transactions.all()),D('0')),D('2465'))
         self.assertEqual(sum((p.remaining_amount for p in self.order.payment_plans.all()),D('0')),D('160'))
         before = self.snapshot()
         for amount in ['0','-1','NaN','Infinity']:
-            response = self.client.post('/api/transactions/', {'transaction_date':str(self.day),'order':self.order.pk,'kind':'customer_receipt','direction':'income','category':'客户收款','amount':amount,'currency':'USD','exchange_rate':'7.25'}, format='json')
+            response = self.client.post('/api/transactions/', {'transaction_no':f'R1A-INVALID-{amount}','transaction_date':str(self.day),'order':self.order.pk,'kind':'customer_receipt','direction':'income','category':'客户收款','amount':amount,'currency':'USD','exchange_rate':'7.25'}, format='json')
             self.assertEqual(response.status_code,400,response.data)
             self.assertEqual(self.snapshot(),before)
 
@@ -92,9 +92,14 @@ class R1AReliabilityTests(TestCase):
         payload={'transaction_date':str(self.day),'transaction_no':'R1A-RETRY','order':self.order.pk,'kind':'customer_receipt','direction':'income','category':'客户收款','amount':'340','currency':'USD','exchange_rate':'7.25'}
         response=self.client.post('/api/transactions/',payload,format='json')
         self.assertEqual(response.status_code,201,response.data)
+        first = response.data
         before=self.snapshot()
         response=self.client.post('/api/transactions/',payload,format='json')
-        self.assertEqual(response.status_code,400,response.data)
+        self.assertEqual(response.status_code,201,response.data)
+        self.assertEqual(response.headers.get("Idempotent-Replay"), "true")
+        self.assertEqual(response.data, first)
+        conflict = self.client.post('/api/transactions/', {**payload, "amount": "341"}, format='json')
+        self.assertEqual(conflict.status_code, 409, conflict.data)
         self.assertEqual(self.snapshot(),before)
 
     def test_finance_failure_after_first_split_rolls_back_all_rows_and_plans(self):

@@ -7,9 +7,10 @@ from unittest.mock import patch
 
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
-from django.test import TestCase, TransactionTestCase, override_settings
+from django.test import TestCase, override_settings
 from openpyxl import load_workbook
 from rest_framework.test import APIClient
 
@@ -145,7 +146,7 @@ class QuoteBuyerTaxTests(TestCase):
         self.assertEqual(child.buyer_tax_id, "000987")
 
 
-class QuoteBuyerTaxMigrationTests(TransactionTestCase):
+class QuoteBuyerTaxMigrationTests(HistoricalMigrationTestCase):
     def test_cross_migration_rollback_is_rejected_before_schema_changes(self):
         from django.db.migrations.recorder import MigrationRecorder
 

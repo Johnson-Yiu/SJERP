@@ -40,6 +40,7 @@ class BusinessFlowTests(APITestCase):
             "transaction_date": str(date.today()),
             "direction": "income",
             "kind": "customer_receipt",
+            "transaction_no": "BUSINESS-FLOW-RECEIPT",
             "category": "订单收款",
             "amount": "300",
             "currency": "USD",

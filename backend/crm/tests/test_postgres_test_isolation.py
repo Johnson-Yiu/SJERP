@@ -402,19 +402,23 @@ class PostgreSQLTestCleanupLifecycleTests(TransactionTestCase):
         self.assert_truncate_rejected()
 
     def test_pre_0096_migration_cleanup_and_restore_preserve_guard_contract(self):
-        executor = MigrationExecutor(connection)
-        latest = executor.loader.graph.leaf_nodes()
-        try:
+        from crm.tests.historical_database import historical_database
+
+        source_name = connection.settings_dict['NAME']
+        with historical_database() as historical:
+            executor = MigrationExecutor(connection)
+            latest = executor.loader.graph.leaf_nodes()
             executor.migrate([("crm", "0095_merge_fulfillment_idempotency")])
             self.assertEqual(active_truncate_guards(connection), TRUNCATE_GUARDS)
             self.assert_truncate_rejected()
-            result = self.run_probe(lambda: None)
+            binding = bind_created_test_database(historical, source_name, historical.settings_dict["NAME"])
+            with teardown_patch({historical.alias: binding}):
+                result = self.run_probe(lambda: None)
             self.assertTrue(result.wasSuccessful(), result.errors + result.failures)
             self.assert_truncate_rejected()
-        finally:
             MigrationExecutor(connection).migrate(latest)
-        self.assertIn(REVIEW_TABLE, active_truncate_guards(connection))
-        self.assert_truncate_rejected()
+            self.assertIn(REVIEW_TABLE, active_truncate_guards(connection))
+            self.assert_truncate_rejected()
 
     def test_failure_after_truncate_rolls_back_data_and_guard_changes(self):
         preview_id = self.create_audits()

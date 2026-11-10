@@ -1,12 +1,12 @@
 """0113 must fail before downgrading any protected earlier party facts."""
 from datetime import date
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.db.migrations.recorder import MigrationRecorder
-from django.test import TransactionTestCase
 
 
-class PartyLifecycleMigrationTests(TransactionTestCase):
+class PartyLifecycleMigrationTests(HistoricalMigrationTestCase):
     def test_cross_chain_preflight_and_empty_rollback(self):
         old = [('crm', '0108_history_append_only_truncate')]
         current = [('crm', '0113_party_request_lifecycle')]

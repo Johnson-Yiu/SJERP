@@ -2,13 +2,13 @@ from datetime import date
 from decimal import Decimal
 from uuid import uuid4
 
+from crm.tests.historical_database import HistoricalMigrationTestCase
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.db.migrations.recorder import MigrationRecorder
-from django.test import TransactionTestCase
 
 
-class FinanceMigrationRollbackMatrixTests(TransactionTestCase):
+class FinanceMigrationRollbackMatrixTests(HistoricalMigrationTestCase):
     """Exercise finance rollback guards through Django's migration executor."""
 
     merge_migration = ("crm", "0097_merge_quote_and_cash_review")
@@ -118,6 +118,7 @@ class FinanceMigrationRollbackMatrixTests(TransactionTestCase):
             self.bank_voucher_migration,
         }
         try:
+            self._migrate_to(self.bank_voucher_migration[1])
             self._migrate_to(self.merge_migration[1])
             applied = set(MigrationRecorder(connection).applied_migrations())
             self.assertTrue(guarded_migrations.isdisjoint(applied))

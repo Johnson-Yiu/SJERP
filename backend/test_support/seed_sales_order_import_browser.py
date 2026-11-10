@@ -28,7 +28,8 @@ expected_evidence_dir = (
 review_evidence_dir = (repo_root / "docs" / "uat-evidence" / "first-release-independent-review-02" / "browser" / "sales-order-import-real.spec").resolve()
 release_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-integration-repair-01" / "browser" / "sales-order-import-real.spec").resolve()
 followup_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-integration-repair-01-followup" / "browser" / "sales-order-import-real.spec").resolve()
-if evidence_dir not in {expected_evidence_dir, review_evidence_dir, release_evidence_dir, followup_evidence_dir} or evidence_dir.is_symlink():
+completion_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-completion-acceptance-02" / "browser" / "sales-order-import-real.spec").resolve()
+if evidence_dir not in {completion_evidence_dir, expected_evidence_dir, review_evidence_dir, release_evidence_dir, followup_evidence_dir} or evidence_dir.is_symlink():
     raise SystemExit("The sales import browser fixture must use its allowlisted evidence directory.")
 evidence_dir.mkdir(parents=True, exist_ok=True)
 
@@ -80,7 +81,7 @@ fixture = {
     "invalid_sku": "UAT-UNKNOWN-SKU",
     "workbook": workbook_path.name,
 }
-if evidence_dir == followup_evidence_dir:
+if evidence_dir in {followup_evidence_dir, completion_evidence_dir}:
     long_customer = Customer.objects.create(
         code="UAT-LONG-CUSTOMER",
         name="North-West International Lighting and Architectural Project Procurement Services, Distribution and Customer Care Group",
@@ -92,6 +93,15 @@ if evidence_dir == followup_evidence_dir:
     )
     for quantity in (1, 2, 3, 4):
         long_order.items.create(sku=sku_each, quantity=quantity, unit_price="1000.50")
+
+    if evidence_dir == completion_evidence_dir:
+        other = Order.objects.create(
+            customer=long_customer, order_no="UAT-FIN-2026-INTERNATIONAL-00000000002",
+            status="confirmed", order_date=date(2026, 11, 6), currency="USD", exchange_rate="7.1",
+        )
+        other.items.create(sku=sku_each, quantity=1, unit_price=500)
+        for order, total in ((long_order, "10005.00"), (other, "500.00")):
+            PaymentPlan.objects.create(order=order, direction="receivable", currency="USD", planned_amount=total)
 
     source = repo_root / "docs/uat-evidence/history-preflight-web-fix-01/workbook-A-valid.xlsx"
     historical = load_workbook(source)

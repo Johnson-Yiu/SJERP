@@ -620,6 +620,15 @@ async function runProfile(selection) {
     for (const name of evidenceEnvironmentNames) {
       env[name] = path.join(evidenceRoot, 'browser', name.toLowerCase())
     }
+    if (['ui-sales-state-evidence-01.spec.js', 'ui-sales-state-evidence-01-party.spec.js'].includes(selection.businessTest)) {
+      env.SALES_STATE_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', path.parse(selection.businessTest).name)
+    }
+    if (selection.businessTest === 'ui-product-operations-state-evidence-01.spec.js') {
+      env.PRODUCT_OPS_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'ui-product-operations-state-evidence-01')
+    }
+    if (selection.businessTest === 'ui-sales-completion-02.spec.js') {
+      env.E1_R2_EVIDENCE_DIR = path.join(evidenceRoot, 'browser', 'ui-sales-completion-02')
+    }
     if (selection.businessTest && !selection.businessSuite) {
       const fixtureProfile = isolatedFixtureSeed(selection.businessTest)
       if (fixtureProfile) env[fixtureProfile.evidenceEnv] = path.join(evidenceRoot, 'browser', path.parse(selection.businessTest).name)

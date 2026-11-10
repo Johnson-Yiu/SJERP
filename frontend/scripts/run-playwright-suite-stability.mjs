@@ -14,6 +14,9 @@ const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
+  { name: 'sales-evidence-01-isolated', file: 'ui-sales-state-evidence-01.spec.js', codex: true },
+  { name: 'sales-evidence-01-party-isolated', file: 'ui-sales-state-evidence-01-party.spec.js', codex: true },
+  { name: 'product-operations-evidence-01-isolated', file: 'ui-product-operations-state-evidence-01.spec.js', codex: true },
   { name: 'sales-completion-02-isolated', file: 'ui-sales-completion-02.spec.js', codex: true },
   { name: 'product-operations-completion-02-isolated', file: 'ui-product-operations-completion-02.spec.js', codex: true },
   { name: 'product-operations-prefix-02-isolated', file: 'ui-product-operations-prefix-02.spec.js', codex: true },
@@ -68,6 +71,7 @@ for (const run of runs) {
   const runEnv = { ...process.env }
   runEnv.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT = reportRoot
   runEnv.ISOLATED_PLAYWRIGHT_JSON = '1'
+  runEnv.A3_STRICT_BROWSER_EVIDENCE = '1'
   runEnv.ISOLATED_CODEX_TEST_SUPERADMIN = run.codex ? '1' : '0'
   const child = spawn(process.execPath, [runnerPath, ...run.args], {
     cwd: frontendRoot,

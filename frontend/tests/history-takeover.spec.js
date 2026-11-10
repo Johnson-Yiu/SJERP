@@ -49,6 +49,59 @@ beforeEach(() => {
 })
 
 describe('controlled history takeover UI', () => {
+  it.each([
+    ['late_fact', '2024-08-12', '补录发货 1 件', '', '请选择迟到记录的实际发生日期。'],
+    ['correction', '', '联系人由张三更正为李四', '', '请写明原值、更正值及涉及的字段。'],
+    ['voucher_added', '', '', 'VCH-1', '请填写补交凭证的编号或存放位置。'],
+  ])('submits %s through business fields and shows field errors', async (kind, date, description, voucher, fieldError) => {
+    mocks.post.mockResolvedValue({ data: {} })
+    const wrapper = await mountPage(detail('executed'))
+    const form = wrapper.get('form.takeover-fields')
+    await form.get('select').setValue(kind)
+    await form.trigger('submit')
+    expect(form.text()).toContain(fieldError)
+    expect(form.text()).toContain('请填写提交原因。')
+    expect(form.text()).not.toContain('JSON')
+    expect(mocks.post).not.toHaveBeenCalled()
+    const inputs = form.findAll('input')
+    await inputs[0].setValue('SO-1')
+    await inputs[1].setValue('PI-001')
+    await inputs[2].setValue(date)
+    await inputs[3].setValue(voucher)
+    await form.findAll('textarea')[0].setValue(description)
+    await form.findAll('textarea')[1].setValue('核对原件')
+    await form.trigger('submit')
+    await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/import/history-takeovers/31/groups/41/correction/', {
+      kind, occurred_at: date, reason: '核对原件',
+      details: {
+        source_record_id: 'SO-1', source_document_no: 'PI-001',
+        ...(description ? { description } : {}),
+        ...(voucher ? { voucher_reference: voucher } : {}),
+      },
+    })
+    wrapper.unmount()
+  })
+
+  it('lets the reviewer enter an audit note on the executed group', async () => {
+    const value = detail('executed')
+    value.events = [{ id: 51, group_id: 41, event_type: 'voucher_added_submitted',
+      created_at: '2026-11-09T00:00:00Z', details: { details: { voucher_reference: 'VCH-1' } } }]
+    mocks.post.mockResolvedValue({ data: {} })
+    const wrapper = await mountPage(value)
+    const audit = wrapper.get('.takeover-audit')
+    expect(audit.text()).toContain('VCH-1')
+    const approve = audit.findAll('button').find(button => button.text() === '核实并保留更正轨迹')
+    expect(approve.element.disabled).toBe(true)
+    await audit.get('textarea').setValue('原凭证已核实')
+    await approve.trigger('click')
+    await flushPromises()
+    expect(mocks.post).toHaveBeenCalledWith('/import/history-takeovers/31/groups/41/correction-review/', {
+      event_id: 51, decision: 'approve', note: '原凭证已核实',
+    })
+    wrapper.unmount()
+  })
+
   it('shows unknown internal states as 待核实 and hides full hashes and request identities', async () => {
     const value = detail('future-workflow-state')
     value.preflight_summary.overall_status = 'future-summary-state'

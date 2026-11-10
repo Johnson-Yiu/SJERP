@@ -40,6 +40,52 @@ class ReportingTests(TestCase):
         self.assertEqual(len(data['rows']), 3)
         self.assertEqual(self.query(group_by="category")['rows'][0]['count'], 1)
 
+    def test_category_snapshot_identity_survives_master_changes(self):
+        params = dict(source="sales", group_by="category", date_from="2026-10-01", date_to="2026-10-02")
+        order = Order.objects.create(order_no="SNAPSHOT-200", customer=self.customer,
+            order_date=date(2026, 10, 1), currency="CNY", exchange_rate=1, status="confirmed")
+        for index in range(2):
+            product = Product.objects.create(code=f"SNAP-{index}", name=f"Product {index}", category=self.category)
+            sku = SKU.objects.create(sku=f"SNAP-{index}", product=product, unit="pcs")
+            order.items.create(sku=sku, quantity=1, unit_price=100,
+                product_category_reference_snapshot=str(self.category.pk), product_category_name_snapshot="照明")
+        original = self.query(**params)["rows"]
+        self.assertEqual([(row["label"], row["amount"]) for row in original], [("照明", Decimal(200))])
+        key = original[0]["key"]
+        product.category = ProductCategory.objects.create(name="新分类")
+        product.save(update_fields=["category"])
+        self.assertEqual(self.query(**params)["rows"], original)
+        self.category.name = "已改名"
+        self.category.save(update_fields=["name"])
+        self.assertEqual(self.query(**params)["rows"], original)
+        self.category.delete()
+        self.assertEqual(self.query(**params)["rows"], original)
+        self.assertEqual(self.query(**params, filter_category=key)["totals"]["amount"], Decimal(200))
+        detail = self.client.get("/api/reports/details/", {**params, "group_value": key})
+        self.assertEqual(detail.status_code, 200, detail.data)
+        self.assertEqual(detail.data["totals"]["amount"], Decimal(200))
+        self.assertEqual(len(detail.data["rows"]), 2)
+        exported = self.client.get("/api/reports/data/", {**params, "filter_category": key, "export": "csv"})
+        self.assertEqual(exported.status_code, 200)
+        rows = list(csv.reader(io.StringIO(exported.content.decode("utf-8-sig"))))
+        self.assertTrue(any(row[:2] == ["照明", "200.000000"] or
+            (len(row) > 1 and row[0] == "照明" and Decimal(row[1]) == 200) for row in rows))
+        for endpoint, selection in [("data", {"filter_category": "1"}), ("details", {"group_value": "1"})]:
+            response = self.client.get(f"/api/reports/{endpoint}/", {**params, **selection})
+            self.assertEqual(response.status_code, 400)
+            self.assertIn("重新选择", str(response.data))
+
+    def test_source_category_and_unknown_do_not_use_current_master(self):
+        from crm.reporting import product_dims
+
+        source = {"category_name_snapshot": "来源分类"}
+        for snapshots, expected in [
+            (source, ("source:来源分类", "来源分类")),
+            ({"category_reference_snapshot": str(self.category.pk)}, ("__unknown__", "待核实")),
+            ({}, ("__unknown__", "待核实")),
+        ]:
+            self.assertEqual(product_dims(self.sku, use_category_snapshot=True, **snapshots)["category"], expected)
+
     def test_currency_and_excluded_status(self):
         for status in ['cancelled', 'draft', 'confirmed']:
             order = Order.objects.create(order_no=f"REPORT-{status}", customer=self.customer, order_date=date(2026, 9, 30), status=status, currency="CNY", exchange_rate=1)

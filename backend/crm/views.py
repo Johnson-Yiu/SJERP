@@ -3736,29 +3736,22 @@ def dashboard(request):
     ).values("product_category_reference_snapshot", "product_category_name_snapshot").annotate(
         sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)),
         quantity=Sum("quantity"),
-    ).order_by("-sales")[:8]
+    ).order_by()
     from .reporting import category_snapshot_dimension
-    category_ids = set()
+    category_totals = {}
     for row in category_rows:
-        try:
-            category_ids.add(int(row["product_category_reference_snapshot"]))
-        except (TypeError, ValueError):
-            pass
-    category_names = dict(ProductCategory.objects.filter(pk__in=category_ids).values_list("pk", "name"))
-    categories = []
-    for row in category_rows:
-        reference = row["product_category_reference_snapshot"]
-        try:
-            current_name = category_names.get(int(reference))
-        except (TypeError, ValueError):
-            current_name = None
-        key, label = category_snapshot_dimension(reference, row["product_category_name_snapshot"], current_name=current_name)
-        categories.append({
+        key, label = category_snapshot_dimension(
+            row["product_category_reference_snapshot"], row["product_category_name_snapshot"],
+        )
+        total = category_totals.setdefault(key, {
             "sku__product__category__name": label,
             "category_snapshot_key": key,
-            "sales": row["sales"],
-            "quantity": row["quantity"],
+            "sales": Decimal("0"),
+            "quantity": Decimal("0"),
         })
+        total["sales"] += row["sales"]
+        total["quantity"] += row["quantity"]
+    categories = sorted(category_totals.values(), key=lambda row: (-row["sales"], row["category_snapshot_key"]))[:8]
     top_customers = [
         {"id": customer_id, **values}
         for customer_id, values in sorted(customer_rows.items(), key=lambda row: row[1]["sales"], reverse=True)[:6]

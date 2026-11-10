@@ -636,7 +636,9 @@ class QuoteApiTests(TestCase):
         self.assertEqual(Decimal(response.data["payment_splits"]["deposit_amount"]), Decimal("23.00"))
         self.assertEqual(Decimal(response.data["payment_splits"]["balance_amount"]), Decimal("34.50"))
         self.assertEqual(response.data["products"][0]["description"], "Dimmable panel light")
-        self.assertIn("/api/media/quote-item-images/", response.data["products"][0]["image_url"])
+        self.assertTrue(response.data["products"][0]["image_url"].startswith("http://testserver/api/media/quote-item-images/"))
+        self.assertIn('src="/api/media/quote-item-images/', response.data["print_html"])
+        self.assertNotIn('src="http://testserver/', response.data["print_html"])
         self.assertEqual(response.data["products"][1]["image_url"], "")
 
     def test_sku_image_upload_rejects_non_image_mime_type(self):

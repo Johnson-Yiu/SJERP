@@ -737,28 +737,23 @@ async function save() {
     const hasPendingAttachments = props.config.endpoint === 'follow-ups' && pendingFollowUpFiles.value.length > 0
     if (!hasPendingAttachments) guard.markClean()
     const savedId = response.data?.id || editingId.value
-    let attachmentError = ''
-    if (props.config.endpoint === 'follow-ups' && pendingFollowUpFiles.value.length) {
+    if (hasPendingAttachments) {
       try {
         const uploaded = await uploadFollowUpFiles(savedId)
         followUpAttachments.value = [...followUpAttachments.value, ...(uploaded || [])]
         pendingFollowUpFiles.value = []
         guard.markClean()
-      } catch (error) {
-        attachmentError = error.message || '附件上传失败'
+      } catch {
+        if (!editingId.value && savedId) editingId.value = savedId
+        attachmentSaveError.value = '跟进记录已保存，附件上传失败。请点击“保存跟进”重试。'
+        await load()
+        return
       }
-    }
-    if (attachmentError) {
-      if (!editingId.value && savedId) editingId.value = savedId
-      attachmentSaveError.value = `附件上传失败：${attachmentError} 请点击“保存跟进”重试上传。`
-      notify(`记录已保存，但${attachmentError}`, true)
-      await load()
-      return
     }
     const refreshDetail = keepDetailOpen.value
     modalOpen.value = false
     const successMessage = isCertificatePage.value ? (wasEditing?'证书已更新':'证书已创建') : isContactPage.value ? (wasEditing ? '联系人已更新' : '联系人已创建') : isFollowUpPage.value ? (wasEditing ? '跟进记录已更新' : '跟进记录已保存') : isSupplierPage.value ? (wasEditing ? '供应商修改已保存。' : '供应商创建成功。') : (wasEditing ? '更新成功' : '创建成功')
-    notify(attachmentError ? `记录已保存，但${attachmentError}` : successMessage, Boolean(attachmentError))
+    notify(successMessage)
     if (workspaceNavigation.workspace && !wasEditing && savedId && !route.query.returnTo) await workspaceNavigation.adoptObject({ path: route.path, query: { ...route.query, detail: String(savedId), create: undefined, edit: undefined, returnTo: undefined } })
     else await clearModalRoute(router, route)
     await load()
@@ -1034,7 +1029,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 
       </div>
-      <div class="modal-foot"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><p v-if="isFollowUpPage && attachmentSaveError" class="follow-up-validation" role="alert">{{ attachmentSaveError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot" :class="{ 'follow-up-attachment-failed': isFollowUpPage && attachmentSaveError }"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><p v-if="isFollowUpPage && attachmentSaveError" class="follow-up-validation" role="alert">{{ attachmentSaveError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>
@@ -1049,6 +1044,8 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 .follow-up-schedule { display: flex; flex-wrap: wrap; gap: 12px 20px; }
 .follow-up-schedule label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 .follow-up-schedule input[type="radio"] { width: 16px; min-width: 16px; height: 16px; min-height: 16px; flex: 0 0 16px; padding: 0; }
+.follow-up-attachment-failed { flex-wrap: wrap; }
+.follow-up-attachment-failed .follow-up-validation { flex-basis: 100%; }
 .follow-up-validation { flex: 1; min-width: 0; align-self: center; margin: 0; color: #a23b32; font-size: var(--text-body); }
 .follow-up-schedule .field-help { flex-basis: 100%; margin: 0; }
 

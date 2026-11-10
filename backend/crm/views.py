@@ -2132,7 +2132,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 "unit_price": export_item.unit_price,
                 "amount": amount,
                 "unit": item.trade_snapshot.get("unit", item.unit_snapshot),
-                "image_url": request.build_absolute_uri(protected_media_url(item.image_snapshot)) if item.image_snapshot else "",
+                "image_url": protected_media_url(item.image_snapshot),
             })
         totals = export_dto.totals
         payment_splits = export_dto.payment_splits
@@ -2180,9 +2180,15 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         result["print_sha256"] = export_dto.template_snapshot["print_sha256"]
         try:
             template = Engine(autoescape=True).from_string(export_dto.template_snapshot["print_template"])
+            # The srcdoc iframe inherits the page origin, which may differ
+            # from the authority used by a reverse proxy to reach Django.
             result["print_html"] = template.render(Context(result, autoescape=True))
         except TemplateSyntaxError:
             return Response({"detail": "保存的打印模板损坏，需核实原件。"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        # Keep the existing absolute URL contract for JSON clients.
+        for product in products:
+            if product["image_url"]:
+                product["image_url"] = request.build_absolute_uri(product["image_url"])
         return Response(result)
 
     @action(detail=True, methods=["get"], permission_classes=[QuoteExportPermission])

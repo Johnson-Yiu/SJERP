@@ -427,11 +427,13 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
 </template>
 
 <style scoped>
-.quote-editor-backdrop{z-index:70}
+.quote-editor-backdrop{z-index:70;grid-template-columns:minmax(0,1fr)}
+.quote-editor-modal,.quote-editor-modal .modal-body{min-width:0}
 .quote-editor-modal fieldset > .form-grid:first-child{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.revision-summary textarea{min-height:64px}@media(max-width:850px){.quote-editor-modal fieldset > .form-grid:first-child{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.quote-editor-modal fieldset > .form-grid:first-child{grid-template-columns:1fr}}
 .quote-editor-actions .btn{white-space:nowrap;flex:0 0 auto}
 @media(max-width:480px){.quote-editor-modal .quote-editor-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch;gap:8px;padding:12px}.quote-editor-actions .btn{min-width:0;min-height:46px;padding:10px 12px;white-space:normal;line-height:1.35;text-align:center;word-break:normal;overflow-wrap:normal}.quote-editor-actions .quote-action-save,.quote-editor-actions .quote-action-save-export{grid-column:1/-1;width:100%}}
 .quote-line-items{position:relative;overflow:visible}
+@media(max-width:760px){.quote-line-items{overflow-x:auto}}
 .quote-line-header{border-radius:10px 10px 0 0}
 .quote-line-row{position:relative}
 .quote-line-row:focus-within{z-index:20}

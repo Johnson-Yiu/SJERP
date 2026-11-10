@@ -1,0 +1,117 @@
+{
+  "chrome": "156.0.8078.80",
+  "layouts": [
+    {
+      "width": 1366,
+      "browserZoom": 1,
+      "viewport": {
+        "width": 1366,
+        "height": 900
+      },
+      "effective": {
+        "width": 1366,
+        "dpr": 1
+      },
+      "dialog": {
+        "x": 373,
+        "y": 82.34375,
+        "width": 620,
+        "height": 735.3125
+      }
+    },
+    {
+      "width": 1366,
+      "browserZoom": 1.25,
+      "viewport": {
+        "width": 1366,
+        "height": 900
+      },
+      "effective": {
+        "width": 1093,
+        "dpr": 1.25
+      },
+      "dialog": {
+        "x": 236.40000915527344,
+        "y": 15,
+        "width": 620.0000152587891,
+        "height": 690
+      }
+    },
+    {
+      "width": 1440,
+      "browserZoom": 1,
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "effective": {
+        "width": 1440,
+        "dpr": 1
+      },
+      "dialog": {
+        "x": 410,
+        "y": 82.34375,
+        "width": 620,
+        "height": 735.3125
+      }
+    },
+    {
+      "width": 1440,
+      "browserZoom": 1.25,
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "effective": {
+        "width": 1152,
+        "dpr": 1.25
+      },
+      "dialog": {
+        "x": 266,
+        "y": 15,
+        "width": 620,
+        "height": 690
+      }
+    },
+    {
+      "width": 390,
+      "browserZoom": 1,
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "effective": {
+        "width": 390,
+        "dpr": 1
+      },
+      "dialog": {
+        "x": 17,
+        "y": 29.84375,
+        "width": 356,
+        "height": 840.3125
+      }
+    },
+    {
+      "width": 390,
+      "browserZoom": 1.25,
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "effective": {
+        "width": 312,
+        "dpr": 1.25
+      },
+      "dialog": {
+        "x": 17,
+        "y": 15,
+        "width": 278,
+        "height": 690
+      }
+    }
+  ],
+  "conflict": "HTTP 409 from competing real update",
+  "retry": "synthetic HTTP 503 followed by successful real retry",
+  "csv": "actual Chrome download parsed",
+  "navigation": "SKU detail and historical linked analysis"
+}

@@ -1,0 +1,76 @@
+{
+  "status": "INCOMPLETE_STATIC_SNAPSHOT_NOT_COVERAGE_RATE",
+  "browser_constraint": "Chrome captures are exploratory and do not satisfy the current user-specified browser constraint; compliant rerun required.",
+  "scope": "Counts describe working inventory fields, not independent review or execution coverage.",
+  "files": {
+    "coverage-working.json": {
+      "sha256": "af2500816edbe20b92a6584207dbe1bb8947ef6608afe464664b910a723f85dd",
+      "array": "surfaces",
+      "count": 267,
+      "fields": {
+        "execution": {
+          "NOT_ASSESSED": 267
+        }
+      }
+    },
+    "seed-queue.json": {
+      "sha256": "9cb24dbee4cd240c93bee035f9eb61373d4e34a0f681dd6f299eed425b93f611",
+      "array": "rows",
+      "count": 2256,
+      "fields": {
+        "execution_status": {
+          "NOT_RUN": 2256
+        }
+      }
+    },
+    "expanded-cases-working.json": {
+      "sha256": "11bcbf4e69f224d077b736706b93dc44aa565d4a581f1ab3447180cad3881c2c",
+      "array": "cases",
+      "count": 19,
+      "fields": {
+        "execution_status": {
+          "CAPTURED": 19
+        }
+      }
+    },
+    "code-candidates-working.json": {
+      "sha256": "b2c7bf13a4c316dba9deea6aff8e8364074ace644777e41c79e83dc2a5bd1def",
+      "array": "template_nodes",
+      "count": 2073,
+      "fields": {
+        "mapping_status": {
+          "PARTIAL_CONTEXT_MAPPED": 11,
+          "UNASSESSED": 2054,
+          "EXCLUDED_WITH_SOURCE_REASON": 8
+        },
+        "execution": {
+          "CAPTURED_PARTIAL": 10,
+          "NOT_RUN_OR_UNMAPPED": 2054,
+          "CAPTURED_SIMULATED_FAILURE": 1,
+          "NOT_APPLICABLE": 8
+        }
+      }
+    },
+    "dialog-callsite-working.json": {
+      "sha256": "30703cfc8658ae5f9443f4e10cdc71477223abc0fb116e9f04e2ad17c737ebff",
+      "array": "dialog_calls",
+      "count": 39,
+      "fields": {
+        "mapping_status": {
+          "PARTIAL_CONTEXT_MAPPED": 1,
+          "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED": 22,
+          "EXCLUDED_WITH_SOURCE_REASON": 2,
+          "PARTIAL_CONTEXT_MAPPING": 14
+        },
+        "runtime_status": {
+          "OBSERVED_SIMULATED_PENDING": 1,
+          "NOT_RUN_OR_NOT_YET_MAPPED": 22,
+          "NOT_APPLICABLE": 2,
+          "CONFIRM_AND_CANCEL_OBSERVED": 8,
+          "CAPTURED_PARTIAL": 5,
+          "SIMULATED_EXCEPTION_INPUT_CANCEL_OBSERVED": 1
+        }
+      }
+    }
+  }
+}

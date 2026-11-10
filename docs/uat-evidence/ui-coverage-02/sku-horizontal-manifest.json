@@ -1,0 +1,409 @@
+[
+  {
+    "evidence_id": "SKU-HORIZONTAL-START-B-1366",
+    "surface_id": "P023",
+    "expanded_case_id": "SKU-HORIZONTAL-START-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/skus",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture with WS-SKU001",
+    "steps": [
+      "open SKU list"
+    ],
+    "geometry": {
+      "scrollLeft": 0,
+      "scrollWidth": 1240,
+      "clientWidth": 1048,
+      "overflowX": "auto",
+      "rect": {
+        "x": 283,
+        "y": 564.375,
+        "width": 1048,
+        "height": 119,
+        "top": 564.375,
+        "right": 1331,
+        "bottom": 683.375,
+        "left": 283
+      },
+      "columns": [
+        {
+          "text": "内部识别名称",
+          "rect": {
+            "x": 283,
+            "y": 564.375,
+            "width": 260,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 543,
+            "bottom": 609.875,
+            "left": 283
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "对外型号 / SALES MODEL",
+          "rect": {
+            "x": 543,
+            "y": 564.375,
+            "width": 210,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 753,
+            "bottom": 609.875,
+            "left": 543
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "分类信息",
+          "rect": {
+            "x": 753,
+            "y": 564.375,
+            "width": 190,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 943,
+            "bottom": 609.875,
+            "left": 753
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "状态",
+          "rect": {
+            "x": 943,
+            "y": 564.375,
+            "width": 70,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1013,
+            "bottom": 609.875,
+            "left": 943
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "报价次数",
+          "rect": {
+            "x": 1013,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1081.328125,
+            "bottom": 609.875,
+            "left": 1013
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "订单次数",
+          "rect": {
+            "x": 1081.328125,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1149.65625,
+            "bottom": 609.875,
+            "left": 1081.328125
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "图片",
+          "rect": {
+            "x": 1149.65625,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1217.984375,
+            "bottom": 609.875,
+            "left": 1149.65625
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "库存",
+          "rect": {
+            "x": 1217.984375,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1286.3125,
+            "bottom": 609.875,
+            "left": 1217.984375
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "单位",
+          "rect": {
+            "x": 1286.3125,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1354.640625,
+            "bottom": 609.875,
+            "left": 1286.3125
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "默认售价",
+          "rect": {
+            "x": 1354.640625,
+            "y": 564.375,
+            "width": 68.359375,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1423,
+            "bottom": 609.875,
+            "left": 1354.640625
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "",
+          "rect": {
+            "x": 1231,
+            "y": 564.375,
+            "width": 100,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1331,
+            "bottom": 609.875,
+            "left": 1231
+          },
+          "display": "table-cell"
+        }
+      ]
+    },
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:12:35.172Z",
+    "file": "originals/SKU-HORIZONTAL-START-B-1366.png",
+    "sha256": "032deab4d95326aa3d4901c85dcda3113ed1c7e27731f19d854aff30c9375735",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "one synthetic SKU; no editing or save",
+    "observation": "初始表格右侧列在可视区域外。"
+  },
+  {
+    "evidence_id": "SKU-HORIZONTAL-END-B-1366",
+    "surface_id": "P023",
+    "expanded_case_id": "SKU-HORIZONTAL-END-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/skus",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture with WS-SKU001",
+    "steps": [
+      "horizontal mouse wheel over SKU table",
+      "inspect rightmost columns"
+    ],
+    "geometry": {
+      "scrollLeft": 192,
+      "scrollWidth": 1240,
+      "clientWidth": 1048,
+      "overflowX": "auto",
+      "rect": {
+        "x": 283,
+        "y": 564.375,
+        "width": 1048,
+        "height": 119,
+        "top": 564.375,
+        "right": 1331,
+        "bottom": 683.375,
+        "left": 283
+      },
+      "columns": [
+        {
+          "text": "内部识别名称",
+          "rect": {
+            "x": 91,
+            "y": 564.375,
+            "width": 260,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 351,
+            "bottom": 609.875,
+            "left": 91
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "对外型号 / SALES MODEL",
+          "rect": {
+            "x": 351,
+            "y": 564.375,
+            "width": 210,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 561,
+            "bottom": 609.875,
+            "left": 351
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "分类信息",
+          "rect": {
+            "x": 561,
+            "y": 564.375,
+            "width": 190,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 751,
+            "bottom": 609.875,
+            "left": 561
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "状态",
+          "rect": {
+            "x": 751,
+            "y": 564.375,
+            "width": 70,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 821,
+            "bottom": 609.875,
+            "left": 751
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "报价次数",
+          "rect": {
+            "x": 821,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 889.328125,
+            "bottom": 609.875,
+            "left": 821
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "订单次数",
+          "rect": {
+            "x": 889.328125,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 957.65625,
+            "bottom": 609.875,
+            "left": 889.328125
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "图片",
+          "rect": {
+            "x": 957.65625,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1025.984375,
+            "bottom": 609.875,
+            "left": 957.65625
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "库存",
+          "rect": {
+            "x": 1025.984375,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1094.3125,
+            "bottom": 609.875,
+            "left": 1025.984375
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "单位",
+          "rect": {
+            "x": 1094.3125,
+            "y": 564.375,
+            "width": 68.328125,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1162.640625,
+            "bottom": 609.875,
+            "left": 1094.3125
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "默认售价",
+          "rect": {
+            "x": 1162.640625,
+            "y": 564.375,
+            "width": 68.359375,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1231,
+            "bottom": 609.875,
+            "left": 1162.640625
+          },
+          "display": "table-cell"
+        },
+        {
+          "text": "",
+          "rect": {
+            "x": 1231,
+            "y": 564.375,
+            "width": 100,
+            "height": 45.5,
+            "top": 564.375,
+            "right": 1331,
+            "bottom": 609.875,
+            "left": 1231
+          },
+          "display": "table-cell"
+        }
+      ]
+    },
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:12:35.673Z",
+    "file": "originals/SKU-HORIZONTAL-END-B-1366.png",
+    "sha256": "d3e21fb3e091993d02e235ca949506b83ed024789a928019e30792a3a23e705b",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "one synthetic SKU; no editing or save",
+    "observation": "水平滚动至右端后可见库存 0.00、单位 pcs、默认售价 10.00 USD；SKU 名称移出左侧视口。"
+  }
+]

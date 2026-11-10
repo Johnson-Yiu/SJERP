@@ -1,0 +1,68 @@
+[
+  {
+    "evidence_id": "LOGIN-B-1920",
+    "surface_id": "G005",
+    "expanded_case_id": "LOGIN-B-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/login",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "登录森爵管理系统\n\n请输入分配给你的账号。\n\n账号\n密码\n登录",
+    "role": "unauthenticated",
+    "data": "fresh browser context and isolated server",
+    "steps": [
+      "navigate directly to /login",
+      "capture login page"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:22:18.012Z",
+    "file": "originals/LOGIN-B-1920.png",
+    "sha256": "6446889be10848913d79b8bc3d04992e1e5bc57da54bdaae876bbc0ad64d8c12",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "expired query renders message; no actual session expiry was induced",
+    "observation": "登录卡片及相应提示可见；未触发真实过期或提交。"
+  },
+  {
+    "evidence_id": "LOGIN-EXPIRED-B-1920",
+    "surface_id": "G005",
+    "expanded_case_id": "LOGIN-EXPIRED-B-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/login?reason=expired",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "登录森爵管理系统\n\n登录已过期，请重新登录。\n\n账号\n密码\n登录",
+    "role": "unauthenticated",
+    "data": "fresh browser context and isolated server",
+    "steps": [
+      "navigate directly to /login?reason=expired",
+      "capture login page"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:22:19.011Z",
+    "file": "originals/LOGIN-EXPIRED-B-1920.png",
+    "sha256": "ba9753782a83e0b54cd3aff2a78bd536150545d78ad8f637836246e31ad832b3",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "expired query renders message; no actual session expiry was induced",
+    "observation": "登录卡片及相应提示可见；未触发真实过期或提交。"
+  }
+]

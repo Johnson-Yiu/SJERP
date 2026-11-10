@@ -1,0 +1,69 @@
+[
+  {
+    "evidence_id": "ATTRIBUTE-DELETE-CONFIRM-B-1366",
+    "surface_id": "P063",
+    "expanded_case_id": "ATTRIBUTE-DELETE-CONFIRM-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/categories",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n分类与属性\n产品分类\n11月10日周二\nC\n产品分类\n×\n⋮\n产品分类\n\n按分类整理产品，并设置属性和 SKU 命名规则。\n\n新建根分类\n分类总数\n4\n根分类\n2\n最大层级\n2\n自定义属性\n2\n分类列表\n\n拖动分类可调整顺序；放到右侧“放入”区域可设为子分类。\n\n全部展开\n全部收起\n刷新\n▾\n合成照明\n1\n·\n短来源子分类\n▾\n室内商业线性照明与装饰灯具系统分类\n1\n·\n长来源子分类\n拖到这里移动为根分类\n合成照明\n合成照明\n\n暂无分类说明\n\n子分类\n中文 SKU 名称预览\n[短来源功率]\n\n按分类属性顺序预览，不会更改 SKU Code。\n\n分类属性\n\n选择用于中文 SKU 名称或 Sales Model 的属性，也可拖动调整顺序。\n\n分类属性用于产品的 SKU 参数方案。已发布的方案不会随模板自动变化；如需更新，请到产品页分析后发布。\n\n新增属性\n属性名称\t来源\t生成中文SKU\t生成销售型号\t自动大写\t必填\t\n\n短来源功率\n\t当前分类\t\n\t\n\t\n\t\n\t\n确认删除属性\n\n确定删除属性“短来源功率”吗？未冻结 SKU 引用的身份属性不能删除，系统会检查并拒绝不允许的操作。\n\n取消\n确认删除",
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic category and own attribute 短来源功率",
+    "steps": [
+      "open category page",
+      "select 合成照明",
+      "click delete 短来源功率"
+    ],
+    "delete_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:49:57.154Z",
+    "file": "originals/ATTRIBUTE-DELETE-CONFIRM-B-1366.png",
+    "sha256": "34ee8721d9928995525c6e8654c896a79c01beb2359d06332683b62ae1f73514",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "DELETE guard installed but not triggered; cancellation path only"
+  },
+  {
+    "evidence_id": "ATTRIBUTE-DELETE-CANCEL-B-1366",
+    "surface_id": "P063",
+    "expanded_case_id": "ATTRIBUTE-DELETE-CANCEL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/categories",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n分类与属性\n产品分类\n11月10日周二\nC\n产品分类\n×\n⋮\n产品分类\n\n按分类整理产品，并设置属性和 SKU 命名规则。\n\n新建根分类\n分类总数\n4\n根分类\n2\n最大层级\n2\n自定义属性\n2\n分类列表\n\n拖动分类可调整顺序；放到右侧“放入”区域可设为子分类。\n\n全部展开\n全部收起\n刷新\n▾\n合成照明\n1\n·\n短来源子分类\n▾\n室内商业线性照明与装饰灯具系统分类\n1\n·\n长来源子分类\n拖到这里移动为根分类\n合成照明\n合成照明\n\n暂无分类说明\n\n子分类\n中文 SKU 名称预览\n[短来源功率]\n\n按分类属性顺序预览，不会更改 SKU Code。\n\n分类属性\n\n选择用于中文 SKU 名称或 Sales Model 的属性，也可拖动调整顺序。\n\n分类属性用于产品的 SKU 参数方案。已发布的方案不会随模板自动变化；如需更新，请到产品页分析后发布。\n\n新增属性\n属性名称\t来源\t生成中文SKU\t生成销售型号\t自动大写\t必填\t\n\n短来源功率\n\t当前分类\t\n\t\n\t\n\t\n\t",
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic category and own attribute 短来源功率",
+    "steps": [
+      "cancel confirmation",
+      "verify attribute remains and no DELETE"
+    ],
+    "delete_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:49:57.264Z",
+    "file": "originals/ATTRIBUTE-DELETE-CANCEL-B-1366.png",
+    "sha256": "a4854d6756834934039d5b592f47262312071205eff10793e987fb5955a313dd",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "DELETE guard installed but not triggered; cancellation path only"
+  }
+]

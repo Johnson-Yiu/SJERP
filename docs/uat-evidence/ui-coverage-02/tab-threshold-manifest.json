@@ -1,0 +1,45 @@
+[
+  {
+    "evidence_id": "TABS-FIRST-OVERFLOW-B-1366",
+    "surface_id": "G002",
+    "expanded_case_id": "TABS-FIRST-OVERFLOW-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "bar": {
+      "left": 272,
+      "right": 1342,
+      "scrollLeft": 0,
+      "scrollWidth": 1249,
+      "clientWidth": 1070
+    },
+    "active": {
+      "left": 1339.09375,
+      "right": 1473.28125,
+      "title": "客户管理 · 新建 6"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; unsaved blank customer drafts",
+    "steps": [
+      "open 6 customer drafts from list",
+      "measure active tab and capture first not fully visible"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:17:31.792Z",
+    "file": "originals/TABS-FIRST-OVERFLOW-B-1366.png",
+    "sha256": "a498391b0061d89508c9dedd698dd7f01222c01ac31b9231a8f3a7fec7371098",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "第六个草稿的活动标签几乎完全落在右侧裁剪之外；表单仍显示。"
+  }
+]

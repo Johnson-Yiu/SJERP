@@ -1,0 +1,83 @@
+[
+  {
+    "evidence_id": "QUOTE-NOTE-DEACTIVATE-FAIL-CONFIRM-B-1366",
+    "surface_id": "S005",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/quotes?detail=1&tab=notes",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nQUOTATION DESK\n报价管理\n11月10日周二\nC\n报价管理\n×\n⋮\nISS007-Q001\n×\n⋮\n\n管理报价、修订版及转单进度。\n\n新建报价\n报价主单\n1\n主单数量\n报价修订版\n1\n含全部版本\n跟进中\n1\n草稿或已发送\n客户已接受\n0\n已接受报价\n全部状态\n草稿\n已发送\n已接受\n已拒绝\n已过期\n全部客户\nISS007 隔离验收客户\n最近更新时间\n最早更新时间\n报价日期（新到旧）\n报价日期（旧到新）\n重置\n报价单 / 层级\t客户\t更新时间\t状态\t明细\t金额\t操作\n\nISS007-Q001\n原始报价\n\tISS007 隔离验收客户\t2026/11/10 09:05\t草稿\t1 项\tUSD 25.00\t\n关闭\n报价工作台 · ISS007-Q001\n\nISS007 隔离验收客户 · 原始报价\n\nISS007-Q001\n原始报价：ISS007-Q001\n草稿\n标记为已发送\n标记为客户已接受\n标记为客户已拒绝\n创建修订版\n预览 PI\n导出 Excel\n创建销售订单\n概览\n报价明细 (1)\n版本谱系 (1)\n订单 (0)\n主体更正\n重要备注 (1)\n操作日志 (0)\n\n备注可能已过时或不适用于最终订单，请核对来源版本和沟通记录。\n\n重要备注\n\n备注关联当前报价版本。\n\n新增备注\n有效备注\n备注于：ISS007-Q001（原始报价） · 系统 · 2026/11/10 09:05\n标记不再生效\n\n隔离测试备注\n\n确认停用备注\n\n标记后备注不会删除，但会显示为不再生效。确定继续吗？\n\n取消\n确认停用",
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007-Q001 with synthetic active note",
+    "steps": [
+      "open active note",
+      "click deactivate"
+    ],
+    "writes": 0,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:06:13.642Z",
+    "file": "originals/QUOTE-NOTE-DEACTIVATE-FAIL-CONFIRM-B-1366.png",
+    "sha256": "2d37778ca04a396987436682702095da09fe50b457274af7b7be71af208ee47f",
+    "review": "NOT_REVIEWED",
+    "limitation": "POST intercepted and simulated 503; no deactivation"
+  },
+  {
+    "evidence_id": "QUOTE-NOTE-DEACTIVATE-FAIL-CANCEL-B-1366",
+    "surface_id": "S005",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/quotes?detail=1&tab=notes",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nQUOTATION DESK\n报价管理\n11月10日周二\nC\n报价管理\n×\n⋮\nISS007-Q001\n×\n⋮\n\n管理报价、修订版及转单进度。\n\n新建报价\n报价主单\n1\n主单数量\n报价修订版\n1\n含全部版本\n跟进中\n1\n草稿或已发送\n客户已接受\n0\n已接受报价\n全部状态\n草稿\n已发送\n已接受\n已拒绝\n已过期\n全部客户\nISS007 隔离验收客户\n最近更新时间\n最早更新时间\n报价日期（新到旧）\n报价日期（旧到新）\n重置\n报价单 / 层级\t客户\t更新时间\t状态\t明细\t金额\t操作\n\nISS007-Q001\n原始报价\n\tISS007 隔离验收客户\t2026/11/10 09:05\t草稿\t1 项\tUSD 25.00\t\n关闭\n报价工作台 · ISS007-Q001\n\nISS007 隔离验收客户 · 原始报价\n\nISS007-Q001\n原始报价：ISS007-Q001\n草稿\n标记为已发送\n标记为客户已接受\n标记为客户已拒绝\n创建修订版\n预览 PI\n导出 Excel\n创建销售订单\n概览\n报价明细 (1)\n版本谱系 (1)\n订单 (0)\n主体更正\n重要备注 (1)\n操作日志 (0)\n\n备注可能已过时或不适用于最终订单，请核对来源版本和沟通记录。\n\n重要备注\n\n备注关联当前报价版本。\n\n新增备注\n有效备注\n备注于：ISS007-Q001（原始报价） · 系统 · 2026/11/10 09:05\n标记不再生效\n\n隔离测试备注",
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007-Q001 with synthetic active note",
+    "steps": [
+      "cancel",
+      "verify active note remains"
+    ],
+    "writes": 0,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:06:13.779Z",
+    "file": "originals/QUOTE-NOTE-DEACTIVATE-FAIL-CANCEL-B-1366.png",
+    "sha256": "fc561071e98ed4952cd1c9106a37a6926021002dc516865be56d6b2f55276bf1",
+    "review": "NOT_REVIEWED",
+    "limitation": "POST intercepted and simulated 503; no deactivation"
+  },
+  {
+    "evidence_id": "QUOTE-NOTE-DEACTIVATE-FAIL-B-1366",
+    "surface_id": "S005",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/quotes?detail=1&tab=notes",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nQUOTATION DESK\n报价管理\n11月10日周二\nC\n报价管理\n×\n⋮\nISS007-Q001\n×\n⋮\n\n管理报价、修订版及转单进度。\n\n新建报价\n报价主单\n1\n主单数量\n报价修订版\n1\n含全部版本\n跟进中\n1\n草稿或已发送\n客户已接受\n0\n已接受报价\n全部状态\n草稿\n已发送\n已接受\n已拒绝\n已过期\n全部客户\nISS007 隔离验收客户\n最近更新时间\n最早更新时间\n报价日期（新到旧）\n报价日期（旧到新）\n重置\n报价单 / 层级\t客户\t更新时间\t状态\t明细\t金额\t操作\n\nISS007-Q001\n原始报价\n\tISS007 隔离验收客户\t2026/11/10 09:05\t草稿\t1 项\tUSD 25.00\t\n关闭\n报价工作台 · ISS007-Q001\n\nISS007 隔离验收客户 · 原始报价\n\nISS007-Q001\n原始报价：ISS007-Q001\n草稿\n标记为已发送\n标记为客户已接受\n标记为客户已拒绝\n创建修订版\n预览 PI\n导出 Excel\n创建销售订单\n\n服务器暂时不可用，请稍后重试。\n\n概览\n报价明细 (1)\n版本谱系 (1)\n订单 (0)\n主体更正\n重要备注 (1)\n操作日志 (0)\n\n备注可能已过时或不适用于最终订单，请核对来源版本和沟通记录。\n\n重要备注\n\n备注关联当前报价版本。\n\n新增备注\n有效备注\n备注于：ISS007-Q001（原始报价） · 系统 · 2026/11/10 09:05\n标记不再生效\n\n隔离测试备注",
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007-Q001 with synthetic active note",
+    "steps": [
+      "confirm deactivate",
+      "intercept POST with simulated 503"
+    ],
+    "writes": 1,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:06:13.974Z",
+    "file": "originals/QUOTE-NOTE-DEACTIVATE-FAIL-B-1366.png",
+    "sha256": "797b3ca7bedabba01fdb2a74797ff0fe35f5ac6fee12e8227769933f17ea23b4",
+    "review": "NOT_REVIEWED",
+    "limitation": "POST intercepted and simulated 503; no deactivation"
+  }
+]

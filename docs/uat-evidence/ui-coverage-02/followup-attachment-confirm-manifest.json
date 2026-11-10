@@ -1,0 +1,56 @@
+[
+  {
+    "evidence_id": "FOLLOWUP-ATTACHMENT-DELETE-CONFIRM-B-1366",
+    "surface_id": "G039",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/follow-ups",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户跟进\n跟进记录\n11月10日周二\nC\n跟进记录\n×\n⋮\n跟进记录\n\n记录沟通内容、客户回复和下一步安排。\n\n新建跟进记录\n跟进记录\n1\n当前筛选结果\n已关联客户\n1\n有沟通记录的客户\n计划日期已到记录\n0\n历史跟进记录统计；当前待跟进以经营概览为准\n本月记录\n1\n按跟进时间统计\n新品提醒\n搜索\n所属客户\n全部客户\nISS007 隔离验收客户\n跟进人\n全部跟进人\nISS007 UAT\n跟进方式\n全部方式\n邮件\n电话\n即时通讯\n会议\n拜访\n其他\n跟进时间从\n至\n排序\n时间从近到远\n时间从远到近\n待跟进\n重置\n刷新\n客户与联系人\t跟进时间\t主题与方式\t沟通与回复\t下一步安排\t操作\nISS007 隔离验收客户\nISS007 验收联系人\n\t11/09 09:15\tISS007 附件上传与重开\n邮件\n\t隔离环境正式业务流程验收记录。\n客户回复：等待附件复核\n\t确认附件可读\n保留当前计划 · 未安排日期\n\t\n新品提醒\n编辑跟进记录\n\n跟进记录或客户回复至少填写一项。\n\n客户与沟通方式\n客户 *\n请选择\nISS007 隔离验收客户\n联系人\n请选择\nISS007 验收联系人\n跟进时间 *\n/\n/\n:\n跟进方式 *\n沟通内容\n主题\n沟通记录\n支持加粗、斜体、列表，并可粘贴图片和附件\n客户回复\n支持加粗、斜体、列表，并可粘贴图片和附件\n下一步安排\n下一步\n下次跟进安排\n保留当前计划\n设置新的跟进日期\n暂不安排后续跟进\n\n当前计划：暂无跟进日期\n\n跟进人\n附件\n支持在编辑器中粘贴图片或附件，也可拖拽、选择文件\n添加附件\n已保存附件\nsynthetic-note.txt\n已上传 · 14 B\n查看\n删除\n取消\n保存跟进\n删除附件\n\n确定删除“synthetic-note.txt”吗？附件删除将立即生效，取消或关闭本次 FollowUp 编辑都无法恢复。\n\n取消\n确认删除",
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic follow-up and attachment",
+    "steps": [
+      "edit follow-up",
+      "click delete saved attachment"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:16:10.588Z",
+    "file": "originals/FOLLOWUP-ATTACHMENT-DELETE-CONFIRM-B-1366.png",
+    "sha256": "94f914b48d7f62b8fb410142a1bbbfc0d92407cd1538fe1693ea3843bcf131f3",
+    "review": "NOT_REVIEWED",
+    "limitation": "cancel only; no attachment deletion"
+  },
+  {
+    "evidence_id": "FOLLOWUP-ATTACHMENT-DELETE-CANCEL-B-1366",
+    "surface_id": "G039",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/follow-ups",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户跟进\n跟进记录\n11月10日周二\nC\n跟进记录\n×\n⋮\n跟进记录\n\n记录沟通内容、客户回复和下一步安排。\n\n新建跟进记录\n跟进记录\n1\n当前筛选结果\n已关联客户\n1\n有沟通记录的客户\n计划日期已到记录\n0\n历史跟进记录统计；当前待跟进以经营概览为准\n本月记录\n1\n按跟进时间统计\n新品提醒\n搜索\n所属客户\n全部客户\nISS007 隔离验收客户\n跟进人\n全部跟进人\nISS007 UAT\n跟进方式\n全部方式\n邮件\n电话\n即时通讯\n会议\n拜访\n其他\n跟进时间从\n至\n排序\n时间从近到远\n时间从远到近\n待跟进\n重置\n刷新\n客户与联系人\t跟进时间\t主题与方式\t沟通与回复\t下一步安排\t操作\nISS007 隔离验收客户\nISS007 验收联系人\n\t11/09 09:15\tISS007 附件上传与重开\n邮件\n\t隔离环境正式业务流程验收记录。\n客户回复：等待附件复核\n\t确认附件可读\n保留当前计划 · 未安排日期\n\t\n新品提醒\n编辑跟进记录\n\n跟进记录或客户回复至少填写一项。\n\n客户与沟通方式\n客户 *\n请选择\nISS007 隔离验收客户\n联系人\n请选择\nISS007 验收联系人\n跟进时间 *\n/\n/\n:\n跟进方式 *\n沟通内容\n主题\n沟通记录\n支持加粗、斜体、列表，并可粘贴图片和附件\n客户回复\n支持加粗、斜体、列表，并可粘贴图片和附件\n下一步安排\n下一步\n下次跟进安排\n保留当前计划\n设置新的跟进日期\n暂不安排后续跟进\n\n当前计划：暂无跟进日期\n\n跟进人\n附件\n支持在编辑器中粘贴图片或附件，也可拖拽、选择文件\n添加附件\n已保存附件\nsynthetic-note.txt\n已上传 · 14 B\n查看\n删除\n取消\n保存跟进",
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic follow-up and attachment",
+    "steps": [
+      "cancel",
+      "verify attachment control remains"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:16:10.721Z",
+    "file": "originals/FOLLOWUP-ATTACHMENT-DELETE-CANCEL-B-1366.png",
+    "sha256": "27d8132ed40d109ce7b0880ef49bc01e5f64d583c3090ff40efca2f5d2cc81d8",
+    "review": "NOT_REVIEWED",
+    "limitation": "cancel only; no attachment deletion"
+  }
+]

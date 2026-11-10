@@ -1,0 +1,254 @@
+[
+  {
+    "evidence_id": "ULR009-B-1366-top.png",
+    "surface_id": "S040",
+    "expanded_case_id": "ULR009-B-1366-top",
+    "related_ulr": [
+      "ULR-009"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/purchase-orders?detail=1&tab=receipt",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "workspaceTop": "134px",
+    "mask": {
+      "rect": {
+        "x": 248,
+        "y": 134,
+        "width": 1118,
+        "height": 634,
+        "bottom": 768
+      },
+      "clientHeight": 634,
+      "scrollHeight": 663,
+      "scrollTop": 0,
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "100",
+      "centerHit": "<div data-v-8967c8ba=\"\" class=\"receipt-unit-field\"><span data-v-8967c8ba=\"\">交易单位 / 包装规格</span><div data-v-011aec46=\"\" data-v-8967c8ba=\"\" class=\"trade-unit-picker\"><select data-v-011aec46=\"\" aria-label"
+    },
+    "dialog": {
+      "rect": {
+        "x": 497,
+        "y": 105.40625,
+        "width": 620,
+        "height": 691.1875,
+        "bottom": 796.59375
+      },
+      "clientHeight": 691,
+      "scrollHeight": 940,
+      "scrollTop": 0,
+      "maxHeight": "691.2px",
+      "overflow": "auto",
+      "zIndex": "auto",
+      "centerHit": "<div data-v-8967c8ba=\"\" class=\"receipt-unit-field\"><span data-v-8967c8ba=\"\">交易单位 / 包装规格</span><div data-v-011aec46=\"\" data-v-8967c8ba=\"\" class=\"trade-unit-picker\"><select data-v-011aec46=\"\" aria-label"
+    },
+    "footer": {
+      "rect": {
+        "x": 521,
+        "y": 698.40625,
+        "width": 572,
+        "height": 98.1875,
+        "bottom": 796.59375
+      },
+      "clientHeight": 97,
+      "scrollHeight": 97,
+      "scrollTop": 0,
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "2",
+      "centerHit": "<div data-v-8967c8ba=\"\"><button data-v-8967c8ba=\"\" type=\"button\" class=\"btn btn-secondary\">取消</button><button data-v-8967c8ba=\"\" class=\"btn btn-primary\" disabled=\"\">确认入库</button></div>"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "existing core-workspace synthetic formal purchase and pending item; no receipt submitted",
+    "steps": [
+      "open /purchase-orders",
+      "open isolated UXPO purchase",
+      "select 收货",
+      "open 验货入库",
+      "expand location and scroll"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:24:03.338Z",
+    "file": "originals/ULR009-B-1366-top.png",
+    "sha256": "7c7d39d8fd54b50f154d635803f236c6d4c2f28cb2ba6cc1b4d2192b7db1c814",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR009-B-1366-location-bottom.png",
+    "surface_id": "S040",
+    "expanded_case_id": "ULR009-B-1366-location-bottom",
+    "related_ulr": [
+      "ULR-009"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/purchase-orders?detail=1&tab=receipt",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "workspaceTop": "134px",
+    "mask": {
+      "rect": {
+        "x": 248,
+        "y": 134,
+        "width": 1118,
+        "height": 634,
+        "bottom": 768
+      },
+      "clientHeight": 634,
+      "scrollHeight": 663,
+      "scrollTop": 0,
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "100",
+      "centerHit": "<label data-v-8967c8ba=\"\">仓库类型<select data-v-8967c8ba=\"\"><option data-v-8967c8ba=\"\">自有仓</option><option data-v-8967c8ba=\"\">第三方仓</option></select></label>"
+    },
+    "dialog": {
+      "rect": {
+        "x": 497,
+        "y": 105.40625,
+        "width": 620,
+        "height": 691.1875,
+        "bottom": 796.59375
+      },
+      "clientHeight": 691,
+      "scrollHeight": 1169,
+      "scrollTop": 478,
+      "maxHeight": "691.2px",
+      "overflow": "auto",
+      "zIndex": "auto",
+      "centerHit": "<label data-v-8967c8ba=\"\">仓库类型<select data-v-8967c8ba=\"\"><option data-v-8967c8ba=\"\">自有仓</option><option data-v-8967c8ba=\"\">第三方仓</option></select></label>"
+    },
+    "footer": {
+      "rect": {
+        "x": 521,
+        "y": 674.40625,
+        "width": 572,
+        "height": 98.1875,
+        "bottom": 772.59375
+      },
+      "clientHeight": 97,
+      "scrollHeight": 97,
+      "scrollTop": 0,
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "2",
+      "centerHit": "<div data-v-8967c8ba=\"\"><button data-v-8967c8ba=\"\" type=\"button\" class=\"btn btn-secondary\">取消</button><button data-v-8967c8ba=\"\" class=\"btn btn-primary\" disabled=\"\">确认入库</button></div>"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "existing core-workspace synthetic formal purchase and pending item; no receipt submitted",
+    "steps": [
+      "open /purchase-orders",
+      "open isolated UXPO purchase",
+      "select 收货",
+      "open 验货入库",
+      "expand location and scroll"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:24:03.887Z",
+    "file": "originals/ULR009-B-1366-location-bottom.png",
+    "sha256": "369c4bdc1980ed347354737cbe32b6c3e21ce7c6199a149ff5cb433a831897a5",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR009-B-1920-location-bottom.png",
+    "surface_id": "S040",
+    "expanded_case_id": "ULR009-B-1920-location-bottom",
+    "related_ulr": [
+      "ULR-009"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/purchase-orders?detail=1&tab=receipt",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "workspaceTop": "134px",
+    "mask": {
+      "rect": {
+        "x": 248,
+        "y": 134,
+        "width": 1672,
+        "height": 946,
+        "bottom": 1080
+      },
+      "clientHeight": 946,
+      "scrollHeight": 959,
+      "scrollTop": 0,
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "100",
+      "centerHit": "<textarea data-v-8967c8ba=\"\" placeholder=\"例如：拒收破损 2 件，已联系供应商补货\" style=\"\"></textarea>"
+    },
+    "dialog": {
+      "rect": {
+        "x": 774,
+        "y": 121,
+        "width": 620,
+        "height": 972,
+        "bottom": 1093
+      },
+      "clientHeight": 972,
+      "scrollHeight": 1169,
+      "scrollTop": 197,
+      "maxHeight": "972px",
+      "overflow": "auto",
+      "zIndex": "auto",
+      "centerHit": "<textarea data-v-8967c8ba=\"\" placeholder=\"例如：拒收破损 2 件，已联系供应商补货\" style=\"\"></textarea>"
+    },
+    "footer": {
+      "rect": {
+        "x": 798,
+        "y": 971,
+        "width": 572,
+        "height": 98.1875,
+        "bottom": 1069.1875
+      },
+      "clientHeight": 97,
+      "scrollHeight": 97,
+      "scrollTop": 0,
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "2",
+      "centerHit": "<div data-v-8967c8ba=\"\"><button data-v-8967c8ba=\"\" type=\"button\" class=\"btn btn-secondary\">取消</button><button data-v-8967c8ba=\"\" class=\"btn btn-primary\" disabled=\"\">确认入库</button></div>"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "existing core-workspace synthetic formal purchase and pending item; no receipt submitted",
+    "steps": [
+      "open /purchase-orders",
+      "open isolated UXPO purchase",
+      "select 收货",
+      "open 验货入库",
+      "expand location and scroll"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:24:04.456Z",
+    "file": "originals/ULR009-B-1920-location-bottom.png",
+    "sha256": "9d7071d0b87863d65bb98d2ef1a4b8b9f7e1099986558d043a11f5060b299e58",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    }
+  }
+]

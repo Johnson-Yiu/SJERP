@@ -1,0 +1,70 @@
+[
+  {
+    "evidence_id": "CUSTOMER-DELETE-CONFIRM-B-1366",
+    "surface_id": "G022",
+    "expanded_case_id": "CUSTOMER-DELETE-CONFIRM-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n确认删除\n\n确定删除“Workspace Alpha”吗？此操作无法撤销。\n\n取消\n确认删除",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; Workspace Alpha",
+    "steps": [
+      "open customer list",
+      "click delete on Workspace Alpha"
+    ],
+    "delete_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:22:23.441Z",
+    "file": "originals/CUSTOMER-DELETE-CONFIRM-B-1366.png",
+    "sha256": "c6031964651f3ec3099cb23bcb4ff274435912a701b16ff3cb883927c7d885cd",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "DELETE guard installed as safety but not triggered; only cancel path exercised",
+    "observation": "删除确认或取消后客户列表可见；未发 DELETE。"
+  },
+  {
+    "evidence_id": "CUSTOMER-DELETE-CANCEL-B-1366",
+    "surface_id": "G022",
+    "expanded_case_id": "CUSTOMER-DELETE-CANCEL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; Workspace Alpha",
+    "steps": [
+      "cancel confirmation",
+      "verify customer remains and no DELETE"
+    ],
+    "delete_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:22:23.569Z",
+    "file": "originals/CUSTOMER-DELETE-CANCEL-B-1366.png",
+    "sha256": "6baeb512bb0d5c837a707c2ffbf46b257780735f8946ef6c7c314fa99c291d24",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "DELETE guard installed as safety but not triggered; only cancel path exercised",
+    "observation": "删除确认或取消后客户列表可见；未发 DELETE。"
+  }
+]

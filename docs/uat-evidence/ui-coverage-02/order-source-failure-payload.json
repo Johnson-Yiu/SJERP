@@ -1,0 +1,9 @@
+{
+  "payload": {
+    "supplier_sku": 1,
+    "scope": "customer_preferred",
+    "note": "隔离测试说明"
+  },
+  "intercepted_before_service": true,
+  "status": 503
+}

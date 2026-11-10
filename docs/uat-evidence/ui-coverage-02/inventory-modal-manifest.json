@@ -1,0 +1,257 @@
+[
+  {
+    "evidence_id": "ULR007-B-opened-before-select.png",
+    "surface_id": "G040",
+    "expanded_case_id": "ULR007-B-opened-before-select",
+    "related_ulr": [
+      "ULR-007"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/inventory-movements?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "modal": {
+      "rect": {
+        "x": 133,
+        "y": 265,
+        "width": 1100,
+        "height": 238
+      },
+      "zIndex": "auto",
+      "display": "block",
+      "visibility": "visible",
+      "centerHit": "<div data-v-5c07612a=\"\" class=\"modal-loading\">正在加载...</div>"
+    },
+    "backdrop": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1366,
+        "height": 768
+      },
+      "zIndex": "70",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<div data-v-5c07612a=\"\" class=\"modal-loading\">正在加载...</div>"
+    },
+    "title": {
+      "rect": {
+        "x": 155,
+        "y": 285,
+        "width": 187.515625,
+        "height": 28
+      },
+      "zIndex": "auto",
+      "display": "block",
+      "visibility": "visible",
+      "centerHit": "<h3 data-v-5c07612a=\"\">库存调整</h3>"
+    },
+    "close": {
+      "rect": {
+        "x": 1180,
+        "y": 285,
+        "width": 31,
+        "height": 31
+      },
+      "zIndex": "auto",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<path d=\"m6 6 12 12\"></path>"
+    },
+    "activePane": "库存流水 · 新建 1",
+    "bodyModalCount": 1,
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; no save; selection outcome in inventory-selection.json",
+    "steps": [
+      "open customer list",
+      "open inventory ledger",
+      "open new adjustment",
+      "attempt SKU selection",
+      "switch customer tab"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:16:50.318Z",
+    "file": "originals/ULR007-B-opened-before-select.png",
+    "sha256": "92ef26eecdc9a08bef91beb07ca48c79e25e946eabbb6bfc085752caa4829d11",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR007-B-opened-after-select.png",
+    "surface_id": "G040",
+    "expanded_case_id": "ULR007-B-opened-after-select",
+    "related_ulr": [
+      "ULR-007"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/inventory-movements?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "modal": {
+      "rect": {
+        "x": 133,
+        "y": 30.71875,
+        "width": 1100,
+        "height": 706.546875
+      },
+      "zIndex": "auto",
+      "display": "block",
+      "visibility": "visible",
+      "centerHit": "<span data-v-360dd615=\"\">全部分类</span>"
+    },
+    "backdrop": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1366,
+        "height": 768
+      },
+      "zIndex": "70",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<span data-v-360dd615=\"\">全部分类</span>"
+    },
+    "title": {
+      "rect": {
+        "x": 155,
+        "y": 50.71875,
+        "width": 187.515625,
+        "height": 28
+      },
+      "zIndex": "auto",
+      "display": "block",
+      "visibility": "visible",
+      "centerHit": "<header class=\"topbar\"><button class=\"icon-btn mobile-menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke"
+    },
+    "close": {
+      "rect": {
+        "x": 1180,
+        "y": 50.71875,
+        "width": 31,
+        "height": 31
+      },
+      "zIndex": "auto",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<header class=\"topbar\"><button class=\"icon-btn mobile-menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke"
+    },
+    "activePane": "库存流水 · 新建 1",
+    "bodyModalCount": 1,
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; no save; selection outcome in inventory-selection.json",
+    "steps": [
+      "open customer list",
+      "open inventory ledger",
+      "open new adjustment",
+      "attempt SKU selection",
+      "switch customer tab"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:16:53.765Z",
+    "file": "originals/ULR007-B-opened-after-select.png",
+    "sha256": "01e5a4f895e6cd82eec51206d762e3f86c1fde30d8bd3d2fd61b328813c6dada",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR007-B-customer-active.png",
+    "surface_id": "G040",
+    "expanded_case_id": "ULR007-B-customer-active",
+    "related_ulr": [
+      "ULR-007"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "modal": {
+      "rect": {
+        "x": 133,
+        "y": 30.71875,
+        "width": 1100,
+        "height": 706.546875
+      },
+      "zIndex": "auto",
+      "display": "block",
+      "visibility": "visible",
+      "centerHit": "<span data-v-360dd615=\"\">全部分类</span>"
+    },
+    "backdrop": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1366,
+        "height": 768
+      },
+      "zIndex": "70",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<span data-v-360dd615=\"\">全部分类</span>"
+    },
+    "title": {
+      "rect": {
+        "x": 155,
+        "y": 50.71875,
+        "width": 187.515625,
+        "height": 28
+      },
+      "zIndex": "auto",
+      "display": "block",
+      "visibility": "visible",
+      "centerHit": "<header class=\"topbar\"><button class=\"icon-btn mobile-menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke"
+    },
+    "close": {
+      "rect": {
+        "x": 1180,
+        "y": 50.71875,
+        "width": 31,
+        "height": 31
+      },
+      "zIndex": "auto",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<header class=\"topbar\"><button class=\"icon-btn mobile-menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke"
+    },
+    "activePane": "客户管理",
+    "bodyModalCount": 1,
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; no save; selection outcome in inventory-selection.json",
+    "steps": [
+      "open customer list",
+      "open inventory ledger",
+      "open new adjustment",
+      "attempt SKU selection",
+      "switch customer tab"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:16:53.912Z",
+    "file": "originals/ULR007-B-customer-active.png",
+    "sha256": "fc033f03655a499b314f4ab58dec3ae8e706094d2015e048e11a7dd406dee4ad",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  }
+]

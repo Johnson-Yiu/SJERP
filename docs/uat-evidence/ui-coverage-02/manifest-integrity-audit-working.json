@@ -1,0 +1,8 @@
+{
+  "scope": "top-level array *manifest.json entries with file and sha256; not comprehensive coverage or semantic audit",
+  "counts": {
+    "checked": 257,
+    "not_reviewed": 16
+  },
+  "problems": []
+}

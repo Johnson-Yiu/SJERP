@@ -1,0 +1,311 @@
+[
+  {
+    "evidence_id": "ULR012-B-4level-1280.png",
+    "surface_id": "P002",
+    "expanded_case_id": "ULR012-B-4level-1280",
+    "related_ulr": [
+      "ULR-012"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products",
+    "viewport_actual": {
+      "width": 1280,
+      "height": 720
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "modal": {
+      "rect": {
+        "x": 272,
+        "y": 146,
+        "width": 984,
+        "height": 562,
+        "right": 1256,
+        "bottom": 708
+      },
+      "clientWidth": 984,
+      "scrollWidth": 1242,
+      "scrollLeft": 0,
+      "overflowX": "auto"
+    },
+    "grid": {
+      "rect": {
+        "x": 294,
+        "y": -60.609375,
+        "width": 940,
+        "height": 785.78125,
+        "right": 1234,
+        "bottom": 725.171875
+      },
+      "clientWidth": 940,
+      "scrollWidth": 1220,
+      "scrollLeft": 0,
+      "overflowX": "visible"
+    },
+    "picker": {
+      "rect": {
+        "x": 294,
+        "y": 290.78125,
+        "width": 843,
+        "height": 256,
+        "right": 1137,
+        "bottom": 546.78125
+      },
+      "clientWidth": 841,
+      "scrollWidth": 841,
+      "scrollLeft": 0,
+      "overflowX": "hidden"
+    },
+    "columns": {
+      "rect": {
+        "x": 295,
+        "y": 335.78125,
+        "width": 841,
+        "height": 210,
+        "right": 1136,
+        "bottom": 545.78125
+      },
+      "clientWidth": 841,
+      "scrollWidth": 841,
+      "scrollLeft": 0,
+      "overflowX": "hidden"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic 4-level long-name categories; unsaved blank product",
+    "steps": [
+      "open /products",
+      "open 新建产品",
+      "open primary category picker",
+      "expand 4-level category"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T11:25:02.549Z",
+    "file": "originals/ULR012-B-4level-1280.png",
+    "sha256": "95bb6d71a5049ea9993c81eb9a006893262ead98b56430f8894cebace7ee1acc",
+    "pixels": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  {
+    "evidence_id": "ULR012-B-4level-1366.png",
+    "surface_id": "P002",
+    "expanded_case_id": "ULR012-B-4level-1366",
+    "related_ulr": [
+      "ULR-012"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "modal": {
+      "rect": {
+        "x": 272,
+        "y": 146,
+        "width": 1070,
+        "height": 610,
+        "right": 1342,
+        "bottom": 756
+      },
+      "clientWidth": 1070,
+      "scrollWidth": 1242,
+      "scrollLeft": 0,
+      "overflowX": "auto"
+    },
+    "grid": {
+      "rect": {
+        "x": 294,
+        "y": -60.609375,
+        "width": 1026,
+        "height": 785.78125,
+        "right": 1320,
+        "bottom": 725.171875
+      },
+      "clientWidth": 1026,
+      "scrollWidth": 1220,
+      "scrollLeft": 0,
+      "overflowX": "visible"
+    },
+    "picker": {
+      "rect": {
+        "x": 294,
+        "y": 290.78125,
+        "width": 843,
+        "height": 256,
+        "right": 1137,
+        "bottom": 546.78125
+      },
+      "clientWidth": 841,
+      "scrollWidth": 841,
+      "scrollLeft": 0,
+      "overflowX": "hidden"
+    },
+    "columns": {
+      "rect": {
+        "x": 295,
+        "y": 335.78125,
+        "width": 841,
+        "height": 210,
+        "right": 1136,
+        "bottom": 545.78125
+      },
+      "clientWidth": 841,
+      "scrollWidth": 841,
+      "scrollLeft": 0,
+      "overflowX": "hidden"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic 4-level long-name categories; unsaved blank product",
+    "steps": [
+      "open /products",
+      "open 新建产品",
+      "open primary category picker",
+      "expand 4-level category"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T11:25:02.634Z",
+    "file": "originals/ULR012-B-4level-1366.png",
+    "sha256": "30f2cec715ed3e31c47105e73359a47cdcce2b461966d832936a847c027ebde7",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR012-B-selected-horizontal-wheel-1366.png",
+    "surface_id": "P002",
+    "expanded_case_id": "ULR012-B-selected-horizontal-wheel-1366",
+    "related_ulr": [
+      "ULR-012"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "modal": {
+      "rect": {
+        "x": 272,
+        "y": 146,
+        "width": 1070,
+        "height": 610,
+        "right": 1342,
+        "bottom": 756
+      },
+      "clientWidth": 1070,
+      "scrollWidth": 1242,
+      "scrollLeft": 172,
+      "overflowX": "auto"
+    },
+    "grid": {
+      "rect": {
+        "x": 122,
+        "y": -60.609375,
+        "width": 1026,
+        "height": 785.78125,
+        "right": 1148,
+        "bottom": 725.171875
+      },
+      "clientWidth": 1026,
+      "scrollWidth": 1220,
+      "scrollLeft": 0,
+      "overflowX": "visible"
+    },
+    "picker": null,
+    "columns": null,
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic 4-level long-name categories; unsaved blank product",
+    "steps": [
+      "open /products",
+      "open 新建产品",
+      "open primary category picker",
+      "expand 4-level category"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T11:25:03.161Z",
+    "file": "originals/ULR012-B-selected-horizontal-wheel-1366.png",
+    "sha256": "366dc9644995604c75be5426d951f8ab96e83ec177454d092069af6378786d5a",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR012-B-additional-after-toggle-1366.png",
+    "surface_id": "P002",
+    "expanded_case_id": "ULR012-B-additional-after-toggle-1366",
+    "related_ulr": [
+      "ULR-012"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "modal": {
+      "rect": {
+        "x": 272,
+        "y": 146,
+        "width": 1070,
+        "height": 610,
+        "right": 1342,
+        "bottom": 756
+      },
+      "clientWidth": 1070,
+      "scrollWidth": 1242,
+      "scrollLeft": 136,
+      "overflowX": "auto"
+    },
+    "grid": {
+      "rect": {
+        "x": 158,
+        "y": -60.609375,
+        "width": 1026,
+        "height": 808.78125,
+        "right": 1184,
+        "bottom": 748.171875
+      },
+      "clientWidth": 1026,
+      "scrollWidth": 1220,
+      "scrollLeft": 0,
+      "overflowX": "visible"
+    },
+    "picker": null,
+    "columns": null,
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic 4-level long-name categories; unsaved blank product",
+    "steps": [
+      "open /products",
+      "open 新建产品",
+      "open primary category picker",
+      "expand 4-level category"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T11:25:03.291Z",
+    "file": "originals/ULR012-B-additional-after-toggle-1366.png",
+    "sha256": "af667404869efe3baf529da5f5c9cbed6facb590da0539e645dbeb96f5bc6fa6",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "note": "Picker absent in captured state after add and toggle; do not claim additional picker shown."
+  }
+]

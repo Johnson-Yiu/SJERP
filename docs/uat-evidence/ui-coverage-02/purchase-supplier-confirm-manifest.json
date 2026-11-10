@@ -1,0 +1,159 @@
+[
+  {
+    "evidence_id": "PURCHASE-SUPPLIER-CONFIRM-B-1366",
+    "surface_id": "S035",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/purchase-orders?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPROCUREMENT DESK\n采购管理\n11月10日周二\nC\n采购管理\n×\n⋮\nWS-PO001\n×\n⋮\n\n管理采购下单、到货与供应商应付。\n\n刷新\n新建采购单\n执行中\n0\n已下单 / 部分到货\n待到货\n0\n尚未全部到货\n待付款\n0\n仍有应付余额\n已完成\n0\n已完成采购\n搜索\n状态\n全部状态\n草稿\n已下单\n部分到货\n已完成\n已取消\n仅看待到货\n重置\n编辑采购草稿\n\n保存草稿后可确认采购下单。\n\n采购基本信息\n采购单号\n供应商 *\n选择供应商\nWorkspace Supplier\nWorkspace Supplier Two\n整张采购单使用同一供应商。\n来源销售订单（可选）\n不关联订单\nWS-SO001 · Workspace Alpha\n一张采购单可关联多个销售订单，具体归属在成本分配中处理。\n下单日期 *\n预计到货\n币种 *\nCNY · 人民币\nUSD · 美元\nEUR · 欧元\nGBP · 英镑\nHKD · 港币\nJPY · 日元\nAUD · 澳元\nCAD · 加元\nSGD · 新加坡元\n对人民币汇率 *\n本单付款计划\n仅记录本单约定；未协商时可暂不填写。\n阶段名称\n比例 %\n到期依据\n延后天数\n新增付款阶段\n合计：0%\n\n付款阶段可暂不设置；未协商时不会自动生成应付计划。\n\n采购商品\n\n选择 SKU 后填写规格、数量和单价。\n\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n已选 SKU 详情\nWorkspace Light\nSKU Code\nWS-SKU001\nSales Model\n—\n单位 / 默认单价\npcs / USD 10.00\nWorkspace Light\nSKU: WS-SKU001 · Sales Model: —\n删除\n交易单位 / 包装规格\npcs（基础单位）\n供应商供货档案\n暂无供货档案\n未维护供应商供货档案，本次采购仍可继续。\n更换供应商来源\n采购数量 *\n采购单价（USD） *\n本行金额\nUSD 40.00\n增加同 SKU 规格行\n用于同一 SKU 以不同包装规格采购。\n采购金额汇总\n商品项数 1\n币种 USD\n商品金额 USD 40.00\n保存采购草稿不会生成应付或在途采购；确认采购下单后才进入正式采购流程。\n取消\n保存采购草稿\n采购单号\t供应商\t来源订单\t下单日期\t预计到货\t状态\t采购金额\t已付 / 未付\t操作\nWS-PO001\tWorkspace Supplier\t—\t2026-11-10\t\n—\n\t草稿\tUSD 40.00\t0.00 / 40.00\t\n关闭\n采购工作台\n\nWorkspace Supplier · 下单日期 2026-11-10\n\nWS-PO001\n草稿\n\n预计到货 —\n\n确认采购下单\n编辑草稿\n删除草稿\n取消采购单\n概览\n采购明细\n收货\n供应商应付\n关联销售订单\n草稿双方资料\n\n尚未记录；未知资料不会从当前主档补填。\n\n买方\n买方名称\n买方国家 / 地区\n买方地址\n买方税号\n买方联系人\n买方电话\n买方邮箱\n买方账单地址\n买方收货地址\n买方收件人\n卖方\n卖方名称\n卖方国家 / 地区\n卖方地址\n卖方税号\n卖方联系人\n卖方电话\n卖方邮箱\n卖方账单地址\n卖方收货地址\n卖方收件人\n保存双方资料\n采购摘要\n采购金额\nUSD 40.00\n商品项数\n1\n已付金额\nUSD 0.00\n未付金额\nUSD 40.00\n当前待办\n采购单待确认\n\n确认采购下单后进入正式采购流程。\n\n到货进度\n采购数量\n10 pcs\n已到货\n0\n待到货\n10\n完成比例\n0%\n付款进度\n应付 / 合同金额\nUSD 40.00\n已付\n0.00\n未付\n40.00\n付款百分比\n0%\n采购成本分配\n\n将采购成本和公共费用分配到关联销售订单。\n\n更换供应商\n\n更换供应商将清除当前商品的供应商来源、采购价格和供应商专属交易规格，并可能带来包装、LOGO、认证差异。是否继续？\n\n取消\n更换供应商",
+    "role": "authenticated codex test superuser",
+    "data": "isolated fixture WS-PO001 and two synthetic suppliers",
+    "steps": [
+      "select second supplier in priced draft"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T00:51:38.922Z",
+    "file": "originals/PURCHASE-SUPPLIER-CONFIRM-B-1366.png",
+    "sha256": "28eb5f2794f50cff00e67a755a647dfdca2c126aafd8379877e5392b3d165c4e",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "NOT_REVIEWED",
+    "limitation": "unsaved form only; no purchase write"
+  },
+  {
+    "evidence_id": "PURCHASE-SUPPLIER-CANCEL-B-1366",
+    "surface_id": "S035",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/purchase-orders?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPROCUREMENT DESK\n采购管理\n11月10日周二\nC\n采购管理\n×\n⋮\nWS-PO001\n×\n⋮\n\n管理采购下单、到货与供应商应付。\n\n刷新\n新建采购单\n执行中\n0\n已下单 / 部分到货\n待到货\n0\n尚未全部到货\n待付款\n0\n仍有应付余额\n已完成\n0\n已完成采购\n搜索\n状态\n全部状态\n草稿\n已下单\n部分到货\n已完成\n已取消\n仅看待到货\n重置\n编辑采购草稿\n\n保存草稿后可确认采购下单。\n\n采购基本信息\n采购单号\n供应商 *\n选择供应商\nWorkspace Supplier\nWorkspace Supplier Two\n整张采购单使用同一供应商。\n来源销售订单（可选）\n不关联订单\nWS-SO001 · Workspace Alpha\n一张采购单可关联多个销售订单，具体归属在成本分配中处理。\n下单日期 *\n预计到货\n币种 *\nCNY · 人民币\nUSD · 美元\nEUR · 欧元\nGBP · 英镑\nHKD · 港币\nJPY · 日元\nAUD · 澳元\nCAD · 加元\nSGD · 新加坡元\n对人民币汇率 *\n本单付款计划\n仅记录本单约定；未协商时可暂不填写。\n阶段名称\n比例 %\n到期依据\n延后天数\n新增付款阶段\n合计：0%\n\n付款阶段可暂不设置；未协商时不会自动生成应付计划。\n\n采购商品\n\n选择 SKU 后填写规格、数量和单价。\n\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n已选 SKU 详情\nWorkspace Light\nSKU Code\nWS-SKU001\nSales Model\n—\n单位 / 默认单价\npcs / USD 10.00\nWorkspace Light\nSKU: WS-SKU001 · Sales Model: —\n删除\n交易单位 / 包装规格\npcs（基础单位）\n供应商供货档案\n暂无供货档案\n未维护供应商供货档案，本次采购仍可继续。\n更换供应商来源\n采购数量 *\n采购单价（USD） *\n本行金额\nUSD 40.00\n增加同 SKU 规格行\n用于同一 SKU 以不同包装规格采购。\n采购金额汇总\n商品项数 1\n币种 USD\n商品金额 USD 40.00\n保存采购草稿不会生成应付或在途采购；确认采购下单后才进入正式采购流程。\n取消\n保存采购草稿\n采购单号\t供应商\t来源订单\t下单日期\t预计到货\t状态\t采购金额\t已付 / 未付\t操作\nWS-PO001\tWorkspace Supplier\t—\t2026-11-10\t\n—\n\t草稿\tUSD 40.00\t0.00 / 40.00\t\n关闭\n采购工作台\n\nWorkspace Supplier · 下单日期 2026-11-10\n\nWS-PO001\n草稿\n\n预计到货 —\n\n确认采购下单\n编辑草稿\n删除草稿\n取消采购单\n概览\n采购明细\n收货\n供应商应付\n关联销售订单\n草稿双方资料\n\n尚未记录；未知资料不会从当前主档补填。\n\n买方\n买方名称\n买方国家 / 地区\n买方地址\n买方税号\n买方联系人\n买方电话\n买方邮箱\n买方账单地址\n买方收货地址\n买方收件人\n卖方\n卖方名称\n卖方国家 / 地区\n卖方地址\n卖方税号\n卖方联系人\n卖方电话\n卖方邮箱\n卖方账单地址\n卖方收货地址\n卖方收件人\n保存双方资料\n采购摘要\n采购金额\nUSD 40.00\n商品项数\n1\n已付金额\nUSD 0.00\n未付金额\nUSD 40.00\n当前待办\n采购单待确认\n\n确认采购下单后进入正式采购流程。\n\n到货进度\n采购数量\n10 pcs\n已到货\n0\n待到货\n10\n完成比例\n0%\n付款进度\n应付 / 合同金额\nUSD 40.00\n已付\n0.00\n未付\n40.00\n付款百分比\n0%\n采购成本分配\n\n将采购成本和公共费用分配到关联销售订单。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated fixture WS-PO001 and two synthetic suppliers",
+    "steps": [
+      "cancel supplier change",
+      "verify supplier and price preserved"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T00:51:39.072Z",
+    "file": "originals/PURCHASE-SUPPLIER-CANCEL-B-1366.png",
+    "sha256": "9865c367a53e8b2ed6c2c42f9dc26af917f93e3f4dff5cd3e4ddb806508915e4",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "NOT_REVIEWED",
+    "limitation": "unsaved form only; no purchase write"
+  },
+  {
+    "evidence_id": "PURCHASE-SUPPLIER-CANCEL-PRICE-B-1366",
+    "surface_id": "S035",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/purchase-orders?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPROCUREMENT DESK\n采购管理\n11月10日周二\nC\n采购管理\n×\n⋮\nWS-PO001\n×\n⋮\n\n管理采购下单、到货与供应商应付。\n\n刷新\n新建采购单\n执行中\n0\n已下单 / 部分到货\n待到货\n0\n尚未全部到货\n待付款\n0\n仍有应付余额\n已完成\n0\n已完成采购\n搜索\n状态\n全部状态\n草稿\n已下单\n部分到货\n已完成\n已取消\n仅看待到货\n重置\n编辑采购草稿\n\n保存草稿后可确认采购下单。\n\n采购基本信息\n采购单号\n供应商 *\n选择供应商\nWorkspace Supplier\nWorkspace Supplier Two\n整张采购单使用同一供应商。\n来源销售订单（可选）\n不关联订单\nWS-SO001 · Workspace Alpha\n一张采购单可关联多个销售订单，具体归属在成本分配中处理。\n下单日期 *\n预计到货\n币种 *\nCNY · 人民币\nUSD · 美元\nEUR · 欧元\nGBP · 英镑\nHKD · 港币\nJPY · 日元\nAUD · 澳元\nCAD · 加元\nSGD · 新加坡元\n对人民币汇率 *\n本单付款计划\n仅记录本单约定；未协商时可暂不填写。\n阶段名称\n比例 %\n到期依据\n延后天数\n新增付款阶段\n合计：0%\n\n付款阶段可暂不设置；未协商时不会自动生成应付计划。\n\n采购商品\n\n选择 SKU 后填写规格、数量和单价。\n\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n已选 SKU 详情\nWorkspace Light\nSKU Code\nWS-SKU001\nSales Model\n—\n单位 / 默认单价\npcs / USD 10.00\nWorkspace Light\nSKU: WS-SKU001 · Sales Model: —\n删除\n交易单位 / 包装规格\npcs（基础单位）\n供应商供货档案\n暂无供货档案\n未维护供应商供货档案，本次采购仍可继续。\n更换供应商来源\n采购数量 *\n采购单价（USD） *\n本行金额\nUSD 40.00\n增加同 SKU 规格行\n用于同一 SKU 以不同包装规格采购。\n采购金额汇总\n商品项数 1\n币种 USD\n商品金额 USD 40.00\n保存采购草稿不会生成应付或在途采购；确认采购下单后才进入正式采购流程。\n取消\n保存采购草稿\n采购单号\t供应商\t来源订单\t下单日期\t预计到货\t状态\t采购金额\t已付 / 未付\t操作\nWS-PO001\tWorkspace Supplier\t—\t2026-11-10\t\n—\n\t草稿\tUSD 40.00\t0.00 / 40.00\t\n关闭\n采购工作台\n\nWorkspace Supplier · 下单日期 2026-11-10\n\nWS-PO001\n草稿\n\n预计到货 —\n\n确认采购下单\n编辑草稿\n删除草稿\n取消采购单\n概览\n采购明细\n收货\n供应商应付\n关联销售订单\n草稿双方资料\n\n尚未记录；未知资料不会从当前主档补填。\n\n买方\n买方名称\n买方国家 / 地区\n买方地址\n买方税号\n买方联系人\n买方电话\n买方邮箱\n买方账单地址\n买方收货地址\n买方收件人\n卖方\n卖方名称\n卖方国家 / 地区\n卖方地址\n卖方税号\n卖方联系人\n卖方电话\n卖方邮箱\n卖方账单地址\n卖方收货地址\n卖方收件人\n保存双方资料\n采购摘要\n采购金额\nUSD 40.00\n商品项数\n1\n已付金额\nUSD 0.00\n未付金额\nUSD 40.00\n当前待办\n采购单待确认\n\n确认采购下单后进入正式采购流程。\n\n到货进度\n采购数量\n10 pcs\n已到货\n0\n待到货\n10\n完成比例\n0%\n付款进度\n应付 / 合同金额\nUSD 40.00\n已付\n0.00\n未付\n40.00\n付款百分比\n0%\n采购成本分配\n\n将采购成本和公共费用分配到关联销售订单。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated fixture WS-PO001 and two synthetic suppliers",
+    "steps": [
+      "scroll to preserved price"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T00:51:39.234Z",
+    "file": "originals/PURCHASE-SUPPLIER-CANCEL-PRICE-B-1366.png",
+    "sha256": "613050e041811f00619c44d6db6a558f34283dbf1ebd188f24edfe0a212d0dfb",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "NOT_REVIEWED",
+    "limitation": "unsaved form only; no purchase write"
+  },
+  {
+    "evidence_id": "PURCHASE-SUPPLIER-APPLIED-B-1366",
+    "surface_id": "S035",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/purchase-orders?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPROCUREMENT DESK\n采购管理\n11月10日周二\nC\n采购管理\n×\n⋮\nWS-PO001 ●\n×\n⋮\n\n管理采购下单、到货与供应商应付。\n\n刷新\n新建采购单\n执行中\n0\n已下单 / 部分到货\n待到货\n0\n尚未全部到货\n待付款\n0\n仍有应付余额\n已完成\n0\n已完成采购\n搜索\n状态\n全部状态\n草稿\n已下单\n部分到货\n已完成\n已取消\n仅看待到货\n重置\n编辑采购草稿\n\n保存草稿后可确认采购下单。\n\n采购基本信息\n采购单号\n供应商 *\n选择供应商\nWorkspace Supplier\nWorkspace Supplier Two\n整张采购单使用同一供应商。\n来源销售订单（可选）\n不关联订单\nWS-SO001 · Workspace Alpha\n一张采购单可关联多个销售订单，具体归属在成本分配中处理。\n下单日期 *\n预计到货\n币种 *\nCNY · 人民币\nUSD · 美元\nEUR · 欧元\nGBP · 英镑\nHKD · 港币\nJPY · 日元\nAUD · 澳元\nCAD · 加元\nSGD · 新加坡元\n对人民币汇率 *\n本单付款计划\n仅记录本单约定；未协商时可暂不填写。\n阶段名称\n比例 %\n到期依据\n延后天数\n新增付款阶段\n合计：0%\n\n付款阶段可暂不设置；未协商时不会自动生成应付计划。\n\n采购商品\n\n选择 SKU 后填写规格、数量和单价。\n\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n已选 SKU 详情\nWorkspace Light\nSKU Code\nWS-SKU001\nSales Model\n—\n单位 / 默认单价\npcs / USD 10.00\nWorkspace Light\nSKU: WS-SKU001 · Sales Model: —\n删除\n交易单位 / 包装规格\npcs（基础单位）\n供应商供货档案\n暂无供货档案\n未维护供应商供货档案，本次采购仍可继续。\n更换供应商来源\n采购数量 *\n采购单价（USD） *\n本行金额\nUSD 0.00\n增加同 SKU 规格行\n用于同一 SKU 以不同包装规格采购。\n采购金额汇总\n商品项数 1\n币种 USD\n商品金额 USD 0.00\n保存采购草稿不会生成应付或在途采购；确认采购下单后才进入正式采购流程。\n取消\n保存采购草稿\n采购单号\t供应商\t来源订单\t下单日期\t预计到货\t状态\t采购金额\t已付 / 未付\t操作\nWS-PO001\tWorkspace Supplier\t—\t2026-11-10\t\n—\n\t草稿\tUSD 40.00\t0.00 / 40.00\t\n关闭\n采购工作台\n\nWorkspace Supplier · 下单日期 2026-11-10\n\nWS-PO001\n草稿\n\n预计到货 —\n\n确认采购下单\n编辑草稿\n删除草稿\n取消采购单\n概览\n采购明细\n收货\n供应商应付\n关联销售订单\n草稿双方资料\n\n尚未记录；未知资料不会从当前主档补填。\n\n买方\n买方名称\n买方国家 / 地区\n买方地址\n买方税号\n买方联系人\n买方电话\n买方邮箱\n买方账单地址\n买方收货地址\n买方收件人\n卖方\n卖方名称\n卖方国家 / 地区\n卖方地址\n卖方税号\n卖方联系人\n卖方电话\n卖方邮箱\n卖方账单地址\n卖方收货地址\n卖方收件人\n保存双方资料\n采购摘要\n采购金额\nUSD 40.00\n商品项数\n1\n已付金额\nUSD 0.00\n未付金额\nUSD 40.00\n当前待办\n采购单待确认\n\n确认采购下单后进入正式采购流程。\n\n到货进度\n采购数量\n10 pcs\n已到货\n0\n待到货\n10\n完成比例\n0%\n付款进度\n应付 / 合同金额\nUSD 40.00\n已付\n0.00\n未付\n40.00\n付款百分比\n0%\n采购成本分配\n\n将采购成本和公共费用分配到关联销售订单。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated fixture WS-PO001 and two synthetic suppliers",
+    "steps": [
+      "confirm supplier change",
+      "verify new supplier, no save"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T00:51:39.427Z",
+    "file": "originals/PURCHASE-SUPPLIER-APPLIED-B-1366.png",
+    "sha256": "cb25d2cf1f5e026a5ecc30ea342c199d5b6719cb963feb9e2068b35cafe05f7b",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "NOT_REVIEWED",
+    "limitation": "unsaved form only; no purchase write"
+  },
+  {
+    "evidence_id": "PURCHASE-SUPPLIER-APPLIED-PRICE-B-1366",
+    "surface_id": "S035",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/purchase-orders?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPROCUREMENT DESK\n采购管理\n11月10日周二\nC\n采购管理\n×\n⋮\nWS-PO001 ●\n×\n⋮\n\n管理采购下单、到货与供应商应付。\n\n刷新\n新建采购单\n执行中\n0\n已下单 / 部分到货\n待到货\n0\n尚未全部到货\n待付款\n0\n仍有应付余额\n已完成\n0\n已完成采购\n搜索\n状态\n全部状态\n草稿\n已下单\n部分到货\n已完成\n已取消\n仅看待到货\n重置\n编辑采购草稿\n\n保存草稿后可确认采购下单。\n\n采购基本信息\n采购单号\n供应商 *\n选择供应商\nWorkspace Supplier\nWorkspace Supplier Two\n整张采购单使用同一供应商。\n来源销售订单（可选）\n不关联订单\nWS-SO001 · Workspace Alpha\n一张采购单可关联多个销售订单，具体归属在成本分配中处理。\n下单日期 *\n预计到货\n币种 *\nCNY · 人民币\nUSD · 美元\nEUR · 欧元\nGBP · 英镑\nHKD · 港币\nJPY · 日元\nAUD · 澳元\nCAD · 加元\nSGD · 新加坡元\n对人民币汇率 *\n本单付款计划\n仅记录本单约定；未协商时可暂不填写。\n阶段名称\n比例 %\n到期依据\n延后天数\n新增付款阶段\n合计：0%\n\n付款阶段可暂不设置；未协商时不会自动生成应付计划。\n\n采购商品\n\n选择 SKU 后填写规格、数量和单价。\n\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n已选 SKU 详情\nWorkspace Light\nSKU Code\nWS-SKU001\nSales Model\n—\n单位 / 默认单价\npcs / USD 10.00\nWorkspace Light\nSKU: WS-SKU001 · Sales Model: —\n删除\n交易单位 / 包装规格\npcs（基础单位）\n供应商供货档案\n暂无供货档案\n未维护供应商供货档案，本次采购仍可继续。\n更换供应商来源\n采购数量 *\n采购单价（USD） *\n本行金额\nUSD 0.00\n增加同 SKU 规格行\n用于同一 SKU 以不同包装规格采购。\n采购金额汇总\n商品项数 1\n币种 USD\n商品金额 USD 0.00\n保存采购草稿不会生成应付或在途采购；确认采购下单后才进入正式采购流程。\n取消\n保存采购草稿\n采购单号\t供应商\t来源订单\t下单日期\t预计到货\t状态\t采购金额\t已付 / 未付\t操作\nWS-PO001\tWorkspace Supplier\t—\t2026-11-10\t\n—\n\t草稿\tUSD 40.00\t0.00 / 40.00\t\n关闭\n采购工作台\n\nWorkspace Supplier · 下单日期 2026-11-10\n\nWS-PO001\n草稿\n\n预计到货 —\n\n确认采购下单\n编辑草稿\n删除草稿\n取消采购单\n概览\n采购明细\n收货\n供应商应付\n关联销售订单\n草稿双方资料\n\n尚未记录；未知资料不会从当前主档补填。\n\n买方\n买方名称\n买方国家 / 地区\n买方地址\n买方税号\n买方联系人\n买方电话\n买方邮箱\n买方账单地址\n买方收货地址\n买方收件人\n卖方\n卖方名称\n卖方国家 / 地区\n卖方地址\n卖方税号\n卖方联系人\n卖方电话\n卖方邮箱\n卖方账单地址\n卖方收货地址\n卖方收件人\n保存双方资料\n采购摘要\n采购金额\nUSD 40.00\n商品项数\n1\n已付金额\nUSD 0.00\n未付金额\nUSD 40.00\n当前待办\n采购单待确认\n\n确认采购下单后进入正式采购流程。\n\n到货进度\n采购数量\n10 pcs\n已到货\n0\n待到货\n10\n完成比例\n0%\n付款进度\n应付 / 合同金额\nUSD 40.00\n已付\n0.00\n未付\n40.00\n付款百分比\n0%\n采购成本分配\n\n将采购成本和公共费用分配到关联销售订单。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated fixture WS-PO001 and two synthetic suppliers",
+    "steps": [
+      "scroll to cleared price"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T00:51:39.517Z",
+    "file": "originals/PURCHASE-SUPPLIER-APPLIED-PRICE-B-1366.png",
+    "sha256": "c49a00d2ee2b0dd3f62cfba654813b4f9e3ddda06f491722d7d78161b97e7f80",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "NOT_REVIEWED",
+    "limitation": "unsaved form only; no purchase write"
+  }
+]

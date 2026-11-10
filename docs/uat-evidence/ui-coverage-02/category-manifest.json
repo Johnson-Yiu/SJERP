@@ -1,0 +1,272 @@
+[
+  {
+    "evidence_id": "ULR011-B-long-1280.png",
+    "surface_id": "P036",
+    "expanded_case_id": "ULR011-B-long-1280",
+    "related_ulr": [
+      "ULR-011"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/categories",
+    "viewport_actual": {
+      "width": 1280,
+      "height": 720
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "badge": {
+      "text": "继承：室内商业线性照明与装饰灯具系统分类",
+      "rect": {
+        "x": 800.828125,
+        "y": 582.953125,
+        "width": 274,
+        "height": 27.5,
+        "right": 1074.828125
+      },
+      "clientWidth": 274,
+      "scrollWidth": 274,
+      "overflowX": "visible",
+      "whiteSpace": "nowrap"
+    },
+    "cell": {
+      "text": "继承：室内商业线性照明与装饰灯具系统分类",
+      "rect": {
+        "x": 792.828125,
+        "y": 572.453125,
+        "width": 113.03125,
+        "height": 48,
+        "right": 905.859375
+      },
+      "clientWidth": 113,
+      "scrollWidth": 282,
+      "overflowX": "visible",
+      "whiteSpace": "normal"
+    },
+    "nextCell": {
+      "text": "",
+      "rect": {
+        "x": 905.859375,
+        "y": 572.453125,
+        "width": 62.796875,
+        "height": 48,
+        "right": 968.65625
+      },
+      "clientWidth": 63,
+      "scrollWidth": 63,
+      "overflowX": "visible",
+      "whiteSpace": "normal"
+    },
+    "switch": {
+      "text": "",
+      "rect": {
+        "x": 913.859375,
+        "y": 585.203125,
+        "width": 32,
+        "height": 18,
+        "right": 945.859375
+      },
+      "clientWidth": 32,
+      "scrollWidth": 32,
+      "overflowX": "visible",
+      "whiteSpace": "normal"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic short/long inherited category fixture",
+    "steps": [
+      "open /categories",
+      "expand tree",
+      "select child",
+      "scroll attribute table into view"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T08:27:17.103Z",
+    "file": "originals/ULR011-B-long-1280.png",
+    "sha256": "1ef59f47c2f7a726c78f0a2e19638b32dbca259750417bb68b66b77ee6aed03b",
+    "pixels": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  {
+    "evidence_id": "ULR011-B-long-1366.png",
+    "surface_id": "P036",
+    "expanded_case_id": "ULR011-B-long-1366",
+    "related_ulr": [
+      "ULR-011"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/categories",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "badge": {
+      "text": "继承：室内商业线性照明与装饰灯具系统分类",
+      "rect": {
+        "x": 824.921875,
+        "y": 587.5625,
+        "width": 274,
+        "height": 27.5,
+        "right": 1098.921875
+      },
+      "clientWidth": 274,
+      "scrollWidth": 274,
+      "overflowX": "visible",
+      "whiteSpace": "nowrap"
+    },
+    "cell": {
+      "text": "继承：室内商业线性照明与装饰灯具系统分类",
+      "rect": {
+        "x": 816.921875,
+        "y": 577.0625,
+        "width": 128.515625,
+        "height": 48,
+        "right": 945.4375
+      },
+      "clientWidth": 129,
+      "scrollWidth": 282,
+      "overflowX": "visible",
+      "whiteSpace": "normal"
+    },
+    "nextCell": {
+      "text": "",
+      "rect": {
+        "x": 945.4375,
+        "y": 577.0625,
+        "width": 71.390625,
+        "height": 48,
+        "right": 1016.828125
+      },
+      "clientWidth": 71,
+      "scrollWidth": 71,
+      "overflowX": "visible",
+      "whiteSpace": "normal"
+    },
+    "switch": {
+      "text": "",
+      "rect": {
+        "x": 953.4375,
+        "y": 589.8125,
+        "width": 32,
+        "height": 18,
+        "right": 985.4375
+      },
+      "clientWidth": 32,
+      "scrollWidth": 32,
+      "overflowX": "visible",
+      "whiteSpace": "normal"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic short/long inherited category fixture",
+    "steps": [
+      "open /categories",
+      "expand tree",
+      "select child",
+      "scroll attribute table into view"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T08:27:17.186Z",
+    "file": "originals/ULR011-B-long-1366.png",
+    "sha256": "5fd13e2e1132d8b86acc92353e5b7043638afbfe905357c6f7822ec517f910e0",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR011-B-short-1366.png",
+    "surface_id": "P036",
+    "expanded_case_id": "ULR011-B-short-1366",
+    "related_ulr": [
+      "ULR-011"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/categories",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "badge": {
+      "text": "继承：合成照明",
+      "rect": {
+        "x": 824.921875,
+        "y": 587.5625,
+        "width": 105,
+        "height": 27.5,
+        "right": 929.921875
+      },
+      "clientWidth": 105,
+      "scrollWidth": 105,
+      "overflowX": "visible",
+      "whiteSpace": "nowrap"
+    },
+    "cell": {
+      "text": "继承：合成照明",
+      "rect": {
+        "x": 816.921875,
+        "y": 577.0625,
+        "width": 128.515625,
+        "height": 48,
+        "right": 945.4375
+      },
+      "clientWidth": 129,
+      "scrollWidth": 129,
+      "overflowX": "visible",
+      "whiteSpace": "normal"
+    },
+    "nextCell": {
+      "text": "",
+      "rect": {
+        "x": 945.4375,
+        "y": 577.0625,
+        "width": 71.390625,
+        "height": 48,
+        "right": 1016.828125
+      },
+      "clientWidth": 71,
+      "scrollWidth": 71,
+      "overflowX": "visible",
+      "whiteSpace": "normal"
+    },
+    "switch": {
+      "text": "",
+      "rect": {
+        "x": 953.4375,
+        "y": 589.8125,
+        "width": 32,
+        "height": 18,
+        "right": 985.4375
+      },
+      "clientWidth": 32,
+      "scrollWidth": 32,
+      "overflowX": "visible",
+      "whiteSpace": "normal"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated synthetic short/long inherited category fixture",
+    "steps": [
+      "open /categories",
+      "expand tree",
+      "select child",
+      "scroll attribute table into view"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T08:27:17.330Z",
+    "file": "originals/ULR011-B-short-1366.png",
+    "sha256": "3d6fed9fc860487f0f0d83771ae76de7185f47573b44667ed93d2e7b8c235958",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  }
+]

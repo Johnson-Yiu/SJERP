@@ -1,0 +1,140 @@
+[
+  {
+    "draft": 1,
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "bar": {
+      "left": 272,
+      "right": 1342,
+      "scrollLeft": 0,
+      "scrollWidth": 1070,
+      "clientWidth": 1070
+    },
+    "active": {
+      "left": 401.359375,
+      "right": 535.546875,
+      "title": "客户管理 · 新建 1"
+    },
+    "fullyVisible": true
+  },
+  {
+    "draft": 2,
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "bar": {
+      "left": 272,
+      "right": 1342,
+      "scrollLeft": 0,
+      "scrollWidth": 1070,
+      "clientWidth": 1070
+    },
+    "active": {
+      "left": 588.90625,
+      "right": 723.09375,
+      "title": "客户管理 · 新建 2"
+    },
+    "fullyVisible": true
+  },
+  {
+    "draft": 3,
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "bar": {
+      "left": 272,
+      "right": 1342,
+      "scrollLeft": 0,
+      "scrollWidth": 1070,
+      "clientWidth": 1070
+    },
+    "active": {
+      "left": 776.453125,
+      "right": 910.640625,
+      "title": "客户管理 · 新建 3"
+    },
+    "fullyVisible": true
+  },
+  {
+    "draft": 4,
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "bar": {
+      "left": 272,
+      "right": 1342,
+      "scrollLeft": 0,
+      "scrollWidth": 1070,
+      "clientWidth": 1070
+    },
+    "active": {
+      "left": 964,
+      "right": 1098.1875,
+      "title": "客户管理 · 新建 4"
+    },
+    "fullyVisible": true
+  },
+  {
+    "draft": 5,
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "bar": {
+      "left": 272,
+      "right": 1342,
+      "scrollLeft": 0,
+      "scrollWidth": 1070,
+      "clientWidth": 1070
+    },
+    "active": {
+      "left": 1151.546875,
+      "right": 1285.734375,
+      "title": "客户管理 · 新建 5"
+    },
+    "fullyVisible": true
+  },
+  {
+    "draft": 6,
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "bar": {
+      "left": 272,
+      "right": 1342,
+      "scrollLeft": 0,
+      "scrollWidth": 1249,
+      "clientWidth": 1070
+    },
+    "active": {
+      "left": 1339.09375,
+      "right": 1473.28125,
+      "title": "客户管理 · 新建 6"
+    },
+    "fullyVisible": false
+  }
+]

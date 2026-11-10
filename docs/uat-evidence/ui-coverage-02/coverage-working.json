@@ -1,0 +1,2188 @@
+{
+  "status": "WORKING_INVENTORY_NOT_COMPLETION",
+  "warning": "静态范围，未逐项核对及拆分，不是执行覆盖率；截图映射尚未完整核验。",
+  "source_document": "UI-COVERAGE-02.json",
+  "surfaces": [
+    {
+      "id": "G001",
+      "name": "应用外壳与侧栏",
+      "route": "所有业务路由",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G002",
+      "name": "内部工作区标签与切换",
+      "route": "B所有业务路由",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G003",
+      "name": "标签操作菜单",
+      "route": "B所有业务路由",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G004",
+      "name": "工作区更新与容量通知",
+      "route": "B所有业务路由",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G005",
+      "name": "登录页",
+      "route": "/login",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G006",
+      "name": "访问受限/权限读取失败页",
+      "route": "/access-denied；/access-status-error",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G007",
+      "name": "确认对话框",
+      "route": "全站调用点",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G008",
+      "name": "原因/说明输入对话框",
+      "route": "全站调用点",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G009",
+      "name": "信息提示对话框",
+      "route": "全站调用点",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G010",
+      "name": "全局与页面消息提示",
+      "route": "全站调用点",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G011",
+      "name": "共享加载与刷新状态",
+      "route": "按调用点展开",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G012",
+      "name": "共享空列表与筛选无结果",
+      "route": "按ListEmptyState调用点展开",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G013",
+      "name": "操作日志面板",
+      "route": "实体详情、报价/订单/采购等",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G014",
+      "name": "日志变更前后明细",
+      "route": "同操作日志父页",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G015",
+      "name": "可搜索下拉选择浮层",
+      "route": "客户国家/来源、跟进方式、库存关联订单、SKU字段等调用点",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G016",
+      "name": "分段日期/日期时间及原生选择器",
+      "route": "各表单的SegmentedDateInput调用点",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G017",
+      "name": "跟进富文本与附件粘贴编辑区",
+      "route": "/follow-ups 与关联新建跟进",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G018",
+      "name": "经营概览",
+      "route": "/",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G019",
+      "name": "组织与权限总览",
+      "route": "/organization",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G020",
+      "name": "组织架构展开区",
+      "route": "/organization",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G021",
+      "name": "角色选择与权限矩阵",
+      "route": "/organization",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G022",
+      "name": "客户列表及筛选",
+      "route": "/customers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G023",
+      "name": "客户新建/编辑表单",
+      "route": "/customers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G024",
+      "name": "供应商列表及筛选",
+      "route": "/suppliers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G025",
+      "name": "供应商新建/编辑表单",
+      "route": "/suppliers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G026",
+      "name": "联系人列表及筛选",
+      "route": "/contacts",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G027",
+      "name": "联系人新建/编辑表单",
+      "route": "/contacts",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G028",
+      "name": "跟进记录列表及筛选",
+      "route": "/follow-ups",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G029",
+      "name": "跟进记录新建/编辑表单",
+      "route": "/follow-ups",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G030",
+      "name": "库存流水列表及筛选",
+      "route": "/inventory-movements",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G031",
+      "name": "库存流水编辑表单",
+      "route": "/inventory-movements",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G032",
+      "name": "产品参数列表及筛选",
+      "route": "/product-parameters",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G033",
+      "name": "产品参数新建/编辑表单",
+      "route": "/product-parameters",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G034",
+      "name": "产品证书列表及筛选",
+      "route": "/product-certificates",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G035",
+      "name": "产品证书新建/编辑表单",
+      "route": "/product-certificates",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G036",
+      "name": "新建客户的多联系人区",
+      "route": "/customers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G037",
+      "name": "联系人重复提醒",
+      "route": "/contacts",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G038",
+      "name": "跟进计划选择与日期区",
+      "route": "/follow-ups及关联新建",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G039",
+      "name": "跟进附件管理区",
+      "route": "/follow-ups及关联新建",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G040",
+      "name": "批量新建库存调整",
+      "route": "/inventory-movements",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G041",
+      "name": "库存调整的SKU明细展开区",
+      "route": "/inventory-movements",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G042",
+      "name": "客户关联详情外框",
+      "route": "/customers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G043",
+      "name": "客户详情 · 跟进记录",
+      "route": "/customers?detail=<id>&tab=followups",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G044",
+      "name": "客户详情 · 报价记录",
+      "route": "/customers?detail=<id>&tab=quotes",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G045",
+      "name": "客户详情 · 订单",
+      "route": "/customers?detail=<id>&tab=orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G046",
+      "name": "客户详情 · 联系人",
+      "route": "/customers?detail=<id>&tab=contacts",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G047",
+      "name": "客户详情 · 成交商品记录",
+      "route": "/customers?detail=<id>&tab=purchases",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G048",
+      "name": "客户详情 · 财务流水",
+      "route": "/customers?detail=<id>&tab=cash",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G049",
+      "name": "联系人关联详情外框",
+      "route": "/contacts",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G050",
+      "name": "联系人详情 · 跟进记录",
+      "route": "/contacts?detail=<id>&tab=followups",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G051",
+      "name": "联系人详情 · 关联企业",
+      "route": "/contacts?detail=<id>&tab=company",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G052",
+      "name": "供应商关联详情外框",
+      "route": "/suppliers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G053",
+      "name": "供应商详情 · 合作产品",
+      "route": "/suppliers?detail=<id>&tab=products",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G054",
+      "name": "供应商详情 · 供应商 SKU 档案",
+      "route": "/suppliers?detail=<id>&tab=supplier-skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G055",
+      "name": "供应商详情 · 采购单",
+      "route": "/suppliers?detail=<id>&tab=purchases",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G056",
+      "name": "供应商详情 · 付款流水",
+      "route": "/suppliers?detail=<id>&tab=payments",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G057",
+      "name": "供应商付款条款与其他备注",
+      "route": "/suppliers?detail=<id>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G058",
+      "name": "库存流水关联详情外框",
+      "route": "/inventory-movements",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G059",
+      "name": "库存流水详情 · 关联 SKU",
+      "route": "/inventory-movements?detail=<id>&tab=sku",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G060",
+      "name": "库存流水详情 · 所属产品",
+      "route": "/inventory-movements?detail=<id>&tab=product",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G061",
+      "name": "库存流水详情 · 关联订单",
+      "route": "/inventory-movements?detail=<id>&tab=order",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G062",
+      "name": "产品参数关联详情外框",
+      "route": "/product-parameters",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G063",
+      "name": "产品参数详情 · 所属产品",
+      "route": "/product-parameters?detail=<id>&tab=product",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G064",
+      "name": "产品证书关联详情外框",
+      "route": "/product-certificates",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G065",
+      "name": "产品证书详情 · 所属产品",
+      "route": "/product-certificates?detail=<id>&tab=product",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G066",
+      "name": "证书文件与有效状态",
+      "route": "/product-certificates?detail=<id>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G067",
+      "name": "SKU关联详情外框",
+      "route": "/skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G068",
+      "name": "SKU详情 · 所属产品",
+      "route": "/skus?detail=<id>&tab=product",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G069",
+      "name": "SKU详情 · 出入库流水",
+      "route": "/skus?detail=<id>&tab=inventory",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G070",
+      "name": "SKU详情 · 销售订单",
+      "route": "/skus?detail=<id>&tab=orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G071",
+      "name": "SKU详情 · 历史名称 / 历史版本",
+      "route": "/skus?detail=<id>&tab=versions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G072",
+      "name": "SKU历史版本关联详情外框",
+      "route": "由父详情进入，非独立路由",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G073",
+      "name": "SKU历史版本详情 · 当前 SKU",
+      "route": "父详情内选择该页签",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G074",
+      "name": "供应商SKU档案关联详情外框",
+      "route": "由父详情进入，非独立路由",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G075",
+      "name": "供应商SKU档案详情 · 销售订单引用",
+      "route": "父详情内选择该页签",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G076",
+      "name": "供应商SKU档案详情 · 采购明细",
+      "route": "父详情内选择该页签",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G077",
+      "name": "关联财务流水关联详情外框",
+      "route": "由父详情进入，非独立路由",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G078",
+      "name": "关联财务流水详情 · 关联客户",
+      "route": "父详情内选择该页签",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G079",
+      "name": "关联财务流水详情 · 关联供应商",
+      "route": "父详情内选择该页签",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G080",
+      "name": "关联财务流水详情 · 关联订单",
+      "route": "父详情内选择该页签",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G081",
+      "name": "关联财务流水详情 · 关联采购单",
+      "route": "父详情内选择该页签",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G082",
+      "name": "跟进记录详情",
+      "route": "/follow-ups?detail=<id> 或关联下钻",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G083",
+      "name": "在详情内新增联系人",
+      "route": "/customers?detail=<id>&tab=contacts",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G084",
+      "name": "在详情内新增跟进记录",
+      "route": "/customers?detail=<id>&tab=followups或关联下钻客户",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G085",
+      "name": "在详情内新增产品参数",
+      "route": "/products?detail=<id>&tab=parameters",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G086",
+      "name": "在详情内新增产品证书",
+      "route": "/products?detail=<id>&tab=certificates",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G087",
+      "name": "新品需求列表",
+      "route": "/new-product-reminders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G088",
+      "name": "新品需求新建/修改",
+      "route": "/new-product-reminders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G089",
+      "name": "新品需求详情",
+      "route": "/new-product-reminders?detail=<id>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G090",
+      "name": "新品需求作废原因",
+      "route": "/new-product-reminders?detail=<id>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G091",
+      "name": "新品需求修改历史",
+      "route": "/new-product-reminders?detail=<id>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G092",
+      "name": "相关数据更新后的继续提交确认",
+      "route": "B使用useWorkspaceApi的写入调用点",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G093",
+      "name": "手工库存流水冲销原因窗口",
+      "route": "/inventory-movements",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "G094",
+      "name": "供应商启用/停用确认窗口",
+      "route": "/suppliers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P001",
+      "name": "产品主列表、查询与统计",
+      "route": "/products",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P002",
+      "name": "产品新建 / 编辑主档表单",
+      "route": "/products",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P003",
+      "name": "主分类 / 附加分类级联浮层",
+      "route": "/products",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P004",
+      "name": "产品供应商搜索及多选区",
+      "route": "/products",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P005",
+      "name": "销售型号前缀变更影响确认",
+      "route": "/products",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P006",
+      "name": "产品详情工作区壳、头部与导航",
+      "route": "/products?detail={product_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P007",
+      "name": "总览页签",
+      "route": "/products?detail={product_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P008",
+      "name": "SKU 管理页签：候选供应商与 SKU 矩阵",
+      "route": "/products?detail={product_id}&tab=skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P009",
+      "name": "供应能力规则页签：规则列表 / 折叠区",
+      "route": "/products?detail={product_id}&tab=suppliers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P010",
+      "name": "供应能力规则新增 / 编辑及匹配预览",
+      "route": "/products?detail={product_id}&tab=suppliers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P011",
+      "name": "订单记录页签",
+      "route": "/products?detail={product_id}&tab=sales",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P012",
+      "name": "销售统计页签",
+      "route": "/products?detail={product_id}&tab=sales-summary",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P013",
+      "name": "出入库流水页签",
+      "route": "/products?detail={product_id}&tab=inventory",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P014",
+      "name": "产品参数页签",
+      "route": "/products?detail={product_id}&tab=parameters",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P015",
+      "name": "证书档案页签",
+      "route": "/products?detail={product_id}&tab=certificates",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P016",
+      "name": "销售规则页签：规则卡片列表",
+      "route": "/products?detail={product_id}&tab=sales-rules",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P017",
+      "name": "销售规则新增 / 编辑表单",
+      "route": "/products?detail={product_id}&tab=sales-rules",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P018",
+      "name": "产品操作日志页签与变更明细",
+      "route": "/products?detail={product_id}&tab=operation_logs",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P019",
+      "name": "批量绑定供应商抽屉",
+      "route": "/products?detail={product_id}&tab=skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P020",
+      "name": "参数变更草稿、参数定义及 SKU 补值 / 拆分",
+      "route": "/products?detail={product_id}&tab=skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P021",
+      "name": "参数方案发布前影响结果",
+      "route": "/products?detail={product_id}&tab=skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P022",
+      "name": "参数方案导致 SKU 身份变化的确认弹窗",
+      "route": "/products?detail={product_id}&tab=skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P023",
+      "name": "SKU 主列表",
+      "route": "/skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P024",
+      "name": "新建 SKU 组合编辑器",
+      "route": "/skus?create=1；/products?detail={product_id}&tab=skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P025",
+      "name": "编辑现有 SKU 编辑器",
+      "route": "/skus?edit={sku_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P026",
+      "name": "ComboInput 候选浮层、选中标签及自定义值",
+      "route": "/skus；/products?detail={product_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P027",
+      "name": "SKU 组合约束规则内联编辑器",
+      "route": "/skus?create=1；/products?detail={product_id}&tab=skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P028",
+      "name": "销售型号参数缩写参考说明",
+      "route": "/skus；/products?detail={product_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P029",
+      "name": "现有 SKU 供应来源内联表格",
+      "route": "/skus?edit={sku_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P030",
+      "name": "供应来源新增 / 编辑嵌套弹窗",
+      "route": "/skus?edit={sku_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P031",
+      "name": "逐组合包装模板搜索浮层",
+      "route": "/skus；/products?detail={product_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P032",
+      "name": "快速新增包装并引用弹窗",
+      "route": "/skus；/products?detail={product_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P033",
+      "name": "既有 SKU 名称 / 型号身份变化确认",
+      "route": "/skus?edit={sku_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P034",
+      "name": "SKU 历史版本弹窗",
+      "route": "/skus",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P035",
+      "name": "分类树列表与树操作",
+      "route": "/categories",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P036",
+      "name": "分类属性配置、继承属性与行内新增 / 重命名",
+      "route": "/categories",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P037",
+      "name": "分类新建 / 子分类 / 编辑弹窗",
+      "route": "/categories",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P038",
+      "name": "属性排序导致 SKU 身份变化的确认",
+      "route": "/categories",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P039",
+      "name": "包装模板主列表",
+      "route": "/sku-packaging",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P040",
+      "name": "完整包装模板新建 / 编辑 / 复制表单",
+      "route": "/sku-packaging",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P041",
+      "name": "包装策略说明展开区",
+      "route": "/sku-packaging",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P042",
+      "name": "包装模板详情抽屉",
+      "route": "/sku-packaging?template={template_id}&panel=detail",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P043",
+      "name": "关联 SKU 列表弹窗",
+      "route": "/sku-packaging?template={template_id}&panel=linked",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P044",
+      "name": "HS 编码主列表与管理能力提示",
+      "route": "/hs-codes",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P045",
+      "name": "HS 编码新建 / 编辑弹窗",
+      "route": "/hs-codes",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P046",
+      "name": "分配产品弹窗",
+      "route": "/hs-codes",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P047",
+      "name": "交易规格列表页与 SKU 上下文",
+      "route": "/sku-trade-units?sku={sku_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P048",
+      "name": "SKU 搜索、选择及预览面板",
+      "route": "/sku-trade-units",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P049",
+      "name": "新增 / 编辑交易规格内联表单",
+      "route": "/sku-trade-units?sku={sku_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P050",
+      "name": "库存主列表、状态卡与分页",
+      "route": "/inventory",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P051",
+      "name": "SKU 库存详情抽屉壳与指标导航",
+      "route": "/inventory?detail={sku_id}",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P052",
+      "name": "库存流水页签",
+      "route": "/inventory?detail={sku_id}&tab=movements",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P053",
+      "name": "关联销售订单页签",
+      "route": "/inventory?detail={sku_id}&tab=orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P054",
+      "name": "采购记录页签",
+      "route": "/inventory?detail={sku_id}&tab=purchases",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P055",
+      "name": "出库记录页签",
+      "route": "/inventory?detail={sku_id}&tab=shipments",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P056",
+      "name": "SKU 操作日志页签及变更明细",
+      "route": "/inventory?detail={sku_id}&tab=operation_logs",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P057",
+      "name": "分类路径级联过滤浮层",
+      "route": "/sku-trade-units；其他使用 SkuPickerPanel 的页面",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P058",
+      "name": "供应分类多选级联列与已选标签",
+      "route": "/suppliers",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P059",
+      "name": "交易规格原生选择及数量换算提示",
+      "route": "/quotes；/orders；/purchase-orders；/inventory-movements；相关快捷表单",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P060",
+      "name": "SKU 上下文提示横幅与清除操作",
+      "route": "/purchase-orders；DocumentPage 对应路由；ResourcePage 对应路由",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P061",
+      "name": "产品内钻取非产品详情的入口集合",
+      "route": "产品详情或 SKU 列表的对应记录入口",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P062",
+      "name": "产品参数 / 证书的快捷新建入口",
+      "route": "/products?detail={product_id}&tab=parameters|certificates",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "P063",
+      "name": "商品域删除 / 启停 / 未保存修改确认对话框",
+      "route": "各所属页面",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S001",
+      "name": "报价管理列表与修订树",
+      "route": "/quotes",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S002",
+      "name": "报价工作台：概览及共用头部",
+      "route": "/quotes?detail=<quoteId>&tab=overview",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S003",
+      "name": "报价工作台：报价明细",
+      "route": "/quotes?detail=<quoteId>&tab=items",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S004",
+      "name": "报价工作台：版本谱系",
+      "route": "/quotes?detail=<quoteId>&tab=lineage",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S005",
+      "name": "报价工作台：关联销售订单",
+      "route": "/quotes?detail=<quoteId>&tab=orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S006",
+      "name": "报价工作台：主体更正、审批和变更记录",
+      "route": "/quotes?detail=<quoteId>&tab=party-change",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S007",
+      "name": "报价工作台：重要备注列表",
+      "route": "/quotes?detail=<quoteId>&tab=notes",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S008",
+      "name": "报价工作台：操作日志及变更内容展开",
+      "route": "/quotes?detail=<quoteId>&tab=operation_logs",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S009",
+      "name": "新建报价、创建修订版及客户关联入口编辑器",
+      "route": [
+        "/quotes?create=1",
+        "/quotes?detail=<quoteId>（从详情修订，原详情可保留）",
+        "/customers?detail=<customerId> 或 /follow-ups?detail=<followUpId>（关联新建，URL 保留来源）"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S010",
+      "name": "报价编辑器：预计装箱展开区",
+      "route": [
+        "/quotes?create=1",
+        "报价修订/客户关联新建的当前 URL"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S011",
+      "name": "补充 SKU 默认包装子弹窗",
+      "route": [
+        "报价编辑器所在 URL"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S012",
+      "name": "PI 预览：未保存编辑稿与已保存版本",
+      "route": [
+        "/quotes?detail=<quoteId>",
+        "报价编辑器或客户关联新建的当前 URL"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S013",
+      "name": "重要备注新增富文本表单",
+      "route": "/quotes?detail=<quoteId>&tab=notes",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S014",
+      "name": "从报价创建销售订单草稿",
+      "route": "/quotes?detail=<quoteId>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S015",
+      "name": "销售订单管理列表",
+      "route": "/orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S016",
+      "name": "订单管理：新建及编辑销售草稿",
+      "route": [
+        "/orders?create=1",
+        "/orders?detail=<orderId>（详情内编辑）",
+        "/orders（列表内编辑）"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S017",
+      "name": "客户详情：关联新增订单独立表单",
+      "route": "/customers?detail=<customerId>&tab=orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S018",
+      "name": "订单工作台：概览及共用头部",
+      "route": "/orders?detail=<orderId>&tab=overview",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S019",
+      "name": "订单工作台：订单明细",
+      "route": "/orders?detail=<orderId>&tab=items",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S020",
+      "name": "订单工作台：采购与发货",
+      "route": "/orders?detail=<orderId>&tab=fulfillment",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S021",
+      "name": "订单工作台：回款流水及预收核销",
+      "route": "/orders?detail=<orderId>&tab=payments",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S022",
+      "name": "订单工作台：预计装箱页签",
+      "route": "/orders?detail=<orderId>&tab=packing",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S023",
+      "name": "订单工作台：库存流水",
+      "route": "/orders?detail=<orderId>&tab=inventory",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S024",
+      "name": "订单工作台：操作日志及变更内容展开",
+      "route": "/orders?detail=<orderId>&tab=operation_logs",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S025",
+      "name": "正式订单数量调整及影响预览",
+      "route": "/orders?detail=<orderId>&tab=overview",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S026",
+      "name": "发货确认：单行预选与批量",
+      "route": "/orders?detail=<orderId>&tab=fulfillment",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S027",
+      "name": "发货整单冲销",
+      "route": "/orders?detail=<orderId>&tab=fulfillment",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S028",
+      "name": "取消订单原因表单",
+      "route": "/orders?detail=<orderId>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S029",
+      "name": "当前采购来源选择抽屉",
+      "route": "/orders?detail=<orderId>&tab=fulfillment",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S030",
+      "name": "生成采购草稿分组预览抽屉",
+      "route": "/orders?detail=<orderId>&tab=fulfillment",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S031",
+      "name": "实际装箱：按发货单展示的箱单区",
+      "route": "/orders?detail=<orderId>&tab=packing",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S032",
+      "name": "新增/编辑实际装箱记录",
+      "route": "/orders?detail=<orderId>&tab=packing",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S033",
+      "name": "采购管理列表",
+      "route": "/purchase-orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S034",
+      "name": "新建采购单与编辑采购草稿",
+      "route": [
+        "/purchase-orders?create=1",
+        "/purchase-orders?detail=<purchaseId>（编辑草稿）",
+        "/purchase-orders?create=1&supplier=<supplierId>&returnTo=<source>"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S035",
+      "name": "采购工作台：概览及共用头部",
+      "route": "/purchase-orders?detail=<purchaseId>&tab=overview",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S036",
+      "name": "采购工作台：采购明细",
+      "route": "/purchase-orders?detail=<purchaseId>&tab=items",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S037",
+      "name": "采购工作台：收货及入库历史",
+      "route": "/purchase-orders?detail=<purchaseId>&tab=receipt",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S038",
+      "name": "采购工作台：供应商应付与应付计划",
+      "route": "/purchase-orders?detail=<purchaseId>&tab=payment",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S039",
+      "name": "采购工作台：关联销售订单",
+      "route": "/purchase-orders?detail=<purchaseId>&tab=orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S040",
+      "name": "验货合格入库",
+      "route": "/purchase-orders?detail=<purchaseId>&tab=receipt",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S041",
+      "name": "冲销采购入库原因表单",
+      "route": "/purchase-orders?detail=<purchaseId>&tab=receipt",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S042",
+      "name": "供应商登记付款",
+      "route": "/purchase-orders?detail=<purchaseId>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S043",
+      "name": "采购成本分配、公共费用及实时预览",
+      "route": "/purchase-orders?detail=<purchaseId>&tab=overview",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S044",
+      "name": "采购商品更换来源选择抽屉",
+      "route": "/purchase-orders 的新建或编辑草稿当前 URL",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S045",
+      "name": "双方资料：草稿编辑、当前有效资料和原始资料展开",
+      "route": [
+        "/quotes?detail=<id>&tab=overview",
+        "/orders?detail=<id>&tab=overview",
+        "/purchase-orders?detail=<id>&tab=overview"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S046",
+      "name": "订单/采购主体版本与更正展开区",
+      "route": [
+        "/orders?detail=<id>&tab=overview",
+        "/purchase-orders?detail=<id>&tab=overview"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S047",
+      "name": "更换法律主体申请表",
+      "route": [
+        "/quotes?detail=<id>&tab=party-change",
+        "/orders?detail=<id>&tab=overview",
+        "/purchase-orders?detail=<id>&tab=overview"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S048",
+      "name": "已批准主体替换：填写关联新单",
+      "route": [
+        "/quotes?detail=<id>&tab=party-change",
+        "/orders?detail=<id>&tab=overview",
+        "/purchase-orders?detail=<id>&tab=overview"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S049",
+      "name": "合同金额调整输入与审批记录",
+      "route": [
+        "/orders?detail=<id>&tab=overview",
+        "/purchase-orders?detail=<id>&tab=overview"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S050",
+      "name": "本单付款阶段编辑器",
+      "route": "/purchase-orders 的新建或编辑草稿当前 URL",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S051",
+      "name": "SKU 多选、搜索及右侧预览",
+      "route": [
+        "报价新建/修订/客户关联入口",
+        "订单新建/编辑/报价转单/客户关联入口",
+        "采购新建/编辑"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S052",
+      "name": "SKU 分类级联弹出面板",
+      "route": "保持所属编辑界面 URL",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S053",
+      "name": "交易单位/包装规格选择器",
+      "route": "保持所属单据或弹窗 URL",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S054",
+      "name": "分段日期输入与浏览器原生日历",
+      "route": "保持所属编辑界面 URL",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S055",
+      "name": "尾货策略说明浮层",
+      "route": [
+        "/quotes?detail=<quoteId>",
+        "/customers?detail=<customerId>&tab=orders"
+      ],
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "S056",
+      "name": "商贸流程的确认、原因输入与提醒弹窗",
+      "route": "保持各触发界面 URL",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F001",
+      "name": "日期筛选、经营指标与账面/到期计划主内容",
+      "route": "/finance",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F002",
+      "name": "金额构成明细展开区",
+      "route": "/finance",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F003",
+      "name": "银行/现金实际人民币资金区域",
+      "route": "/finance",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F004",
+      "name": "收付款计划列表与筛选",
+      "route": "/receivables | /payables",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F005",
+      "name": "指定订单应收上下文提示区",
+      "route": "/receivables?order=<id>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F006",
+      "name": "登记收款/付款窗",
+      "route": "/receivables | /payables",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F007",
+      "name": "调整收付款计划窗",
+      "route": "/receivables | /payables",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F008",
+      "name": "流水列表、筛选与关联资料加载区",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F009",
+      "name": "新增记账窗",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F010",
+      "name": "业务关联选择器",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F011",
+      "name": "收款扣费/扣减明细展开区",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F012",
+      "name": "多订单收款分配（A）",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F013",
+      "name": "更改业务类型/币种/关联的确认提示（A）",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F014",
+      "name": "收款关联结汇内联表单",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F015",
+      "name": "流水详情窗",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F016",
+      "name": "已保存外币流水结汇窗（B）",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F017",
+      "name": "核销预收预付款窗",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F018",
+      "name": "作废流水确认窗",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F019",
+      "name": "登记授权抹零窗（B）",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F020",
+      "name": "更正授权抹零窗（B）",
+      "route": "/transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F021",
+      "name": "银行资金记录列表",
+      "route": "/rmb-cash-events",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F022",
+      "name": "银行资金事件只读详情面板",
+      "route": "/rmb-cash-events?event=<id>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F023",
+      "name": "独立新增资金事件窗",
+      "route": "/rmb-cash-events",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F024",
+      "name": "独立资金事件来源流水选择器与核实表",
+      "route": "/rmb-cash-events",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F025",
+      "name": "资金事件预览结果与登记按钮",
+      "route": "/rmb-cash-events | /transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F026",
+      "name": "资金事件复核界面、重复核实及放弃展开区",
+      "route": "/rmb-cash-events | /transactions",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F027",
+      "name": "资金事实页签与凭证历史展开",
+      "route": "/finance-ledger?fact=<id>",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F028",
+      "name": "账户与映射页签",
+      "route": "/finance-ledger",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F029",
+      "name": "登记与复核页签",
+      "route": "/finance-ledger",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F030",
+      "name": "账户核对页签",
+      "route": "/finance-ledger",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F031",
+      "name": "转账与分类页签",
+      "route": "/finance-ledger",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F032",
+      "name": "CSV导入页签与预览/结果",
+      "route": "/import",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F033",
+      "name": "销售订单XLSX导入页签与预览/结果",
+      "route": "/import",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F034",
+      "name": "执行导入确认窗",
+      "route": "/import",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F035",
+      "name": "只读预检上传页",
+      "route": "/history-preflight",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F036",
+      "name": "预检汇总与行级问题结果",
+      "route": "/history-preflight",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F037",
+      "name": "承接申请上传与申请记录导航",
+      "route": "/history-takeover",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F038",
+      "name": "申请详情、关联组页签与审核区",
+      "route": "/history-takeover",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F039",
+      "name": "人工关联现有主档展开区",
+      "route": "/history-takeover",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F040",
+      "name": "历史资金接续展开区",
+      "route": "/history-takeover",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F041",
+      "name": "库存盘点基准展开区",
+      "route": "/history-takeover",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F042",
+      "name": "未结余额与剩余业务展开区",
+      "route": "/history-takeover",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F043",
+      "name": "追溯更正申请及申请操作记录",
+      "route": "/history-takeover",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F044",
+      "name": "原生确认与原因输入提示",
+      "route": "/finance-ledger | /history-takeover",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F045",
+      "name": "历史销售/采购录入与已录入列表",
+      "route": "/historical-orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F046",
+      "name": "历史经营分析区",
+      "route": "/historical-orders",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F047",
+      "name": "报表查询与附加筛选构建器",
+      "route": "/reports",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F048",
+      "name": "当前/已保存图表块与图表模式",
+      "route": "/reports",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F049",
+      "name": "销售/采购原始构成明细下钻区",
+      "route": "/reports",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F050",
+      "name": "团队共享模板列表",
+      "route": "/reports",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F051",
+      "name": "团队模板创建/编辑表单",
+      "route": "/reports",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F052",
+      "name": "模板删除/取消发布行内确认",
+      "route": "/reports",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F053",
+      "name": "团队模板操作记录展开区",
+      "route": "/reports",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    },
+    {
+      "id": "F054",
+      "name": "未保存离开确认与保存结果不明提示",
+      "route": "/transactions | /rmb-cash-events | /receivables | /payables | /finance-ledger | /import",
+      "static_inventory": "inventoried_from_code",
+      "execution": "NOT_ASSESSED",
+      "note": "需按父上下文和状态核对；不得推断为已执行或通过"
+    }
+  ]
+}

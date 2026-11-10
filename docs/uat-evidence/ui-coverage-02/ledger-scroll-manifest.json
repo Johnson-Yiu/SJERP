@@ -1,0 +1,113 @@
+[
+  {
+    "evidence_id": "LEDGER-F029-SCROLL-B-1366",
+    "surface_id": "F029",
+    "expanded_case_id": "LEDGER-F029-SCROLL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/finance-ledger",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "scrollY": 477,
+    "scrollHeight": 1245,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCOUNT CASH\n账户余额与对账\n11月10日周二\nC\n账户余额与对账\n×\n⋮\n账户余额与对账\n\n按真实账户核对人民币变动、凭证和处理记录。\n\n刷新\n资金事实\n登记与复核\n账户与映射\n账户核对\n转账与分类\n私有凭证\n凭证文件（PDF / PNG / JPEG，最多10MB）\n上传凭证\n资金指令\n请求标识\n开始独立新操作\n操作类型\n实际收支\n启用余额\n人工更正\n退款批准依据\n实际退款扣款\n银行退回\n退款扣款后退回\n自有账户\n请选择\n实际日期\n人民币金额\n方向\n流入\n流出\n资金性质\n性质待分类\n其他收入\n其他支出\n利息\n借款\n注资\n手续费\n商业退款\n超额退款\n内部转账本金\n更正\n真实性\n待核实\n已核实真实资料\n模拟资料（不记实际资金）\n文件凭证\n请选择\n来源系统\n来源编号\n原资金事实编号\n退款批准指令编号\n替代的已取消指令编号\n原因及凭证依据\n退款批准及超额性质依据\n既有银行事件编号（需明确账户映射）\n订单分配（不明确时留空，保留待分配）\n订单编号\n分配人民币金额\n增加分配\n只读预检\n保存指令\n已核对实际日期、人民币金额及文件凭证",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture, empty finance data",
+    "steps": [
+      "navigate to /finance-ledger",
+      "click 登记与复核",
+      "scroll page with mouse wheel",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T17:39:49.961Z",
+    "file": "originals/LEDGER-F029-SCROLL-B-1366.png",
+    "sha256": "2f0cc9892f2a8a8c9ff15209cc5df80e896016249d2372b03b951e063617491c",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "initial empty forms only; no submitted operations",
+    "observation": "滚动后下方表单可见；只观察空表单，未操作提交。"
+  },
+  {
+    "evidence_id": "LEDGER-F028-SCROLL-B-1366",
+    "surface_id": "F028",
+    "expanded_case_id": "LEDGER-F028-SCROLL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/finance-ledger",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "scrollY": 119,
+    "scrollHeight": 887,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCOUNT CASH\n账户余额与对账\n11月10日周二\nC\n账户余额与对账\n×\n⋮\n账户余额与对账\n\n按真实账户核对人民币变动、凭证和处理记录。\n\n刷新\n资金事实\n登记与复核\n账户与映射\n账户核对\n转账与分类\n新增账户\n受控标识\n显示名称\n账户类型\n银行\n现金\n归属\n待核实\n自有\n外部\n归属核实依据\n保存账户\n核实旧账户映射\n\n仅明确的一对一映射可承接；显示名称不会自动确定归属。\n\n旧受控标识\n对应自有账户\n请选择\n核实依据\n保存映射\n核实待定归属\n待核实账户\n请选择\n核实归属\n自有\n外部\n归属依据\n确认归属",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture, empty finance data",
+    "steps": [
+      "navigate to /finance-ledger",
+      "click 账户与映射",
+      "scroll page with mouse wheel",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T17:39:50.600Z",
+    "file": "originals/LEDGER-F028-SCROLL-B-1366.png",
+    "sha256": "9a084f28058b45289444daacb7bc7fa848740dba6dd180b191aaa353d216a2ea",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "initial empty forms only; no submitted operations",
+    "observation": "滚动后下方表单可见；只观察空表单，未操作提交。"
+  },
+  {
+    "evidence_id": "LEDGER-F031-SCROLL-B-1366",
+    "surface_id": "F031",
+    "expanded_case_id": "LEDGER-F031-SCROLL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/finance-ledger",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "scrollY": 176,
+    "scrollHeight": 944,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCOUNT CASH\n账户余额与对账\n11月10日周二\nC\n账户余额与对账\n×\n⋮\n账户余额与对账\n\n按真实账户核对人民币变动、凭证和处理记录。\n\n刷新\n资金事实\n登记与复核\n账户与映射\n账户核对\n转账与分类\n核实内部转账\n\n须分别保存两端真实事实。允许跨日，差额不能直接认定为手续费；手续费另行登记。\n\n流出事实编号\n流入事实编号\n两端核实依据\n核实两端\n待分类处理\n事实编号\n资金性质\n性质待分类\n其他收入\n其他支出\n利息\n借款\n注资\n手续费\n商业退款\n超额退款\n内部转账本金\n更正\n核实依据\n追加分类核实\n既有银行事实的转账核实\n\n既有银行使用 legacy:编号，新账户事实使用 fact:编号。须先明确账户映射，并分别绑定系统核验的私有文件；不复制或改写原银行事件。\n\n流出引用\n流入引用\n流出文件凭证\n请选择\n流入文件凭证\n请选择\n历史两端核实依据\n核实既有银行两端",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture, empty finance data",
+    "steps": [
+      "navigate to /finance-ledger",
+      "click 转账与分类",
+      "scroll page with mouse wheel",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T17:39:51.256Z",
+    "file": "originals/LEDGER-F031-SCROLL-B-1366.png",
+    "sha256": "325c4f494354607307bc1391248301854f74c091acd7b02072e6ca54147c4ad3",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "initial empty forms only; no submitted operations",
+    "observation": "滚动后下方表单可见；只观察空表单，未操作提交。"
+  }
+]

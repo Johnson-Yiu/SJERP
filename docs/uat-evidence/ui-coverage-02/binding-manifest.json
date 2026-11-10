@@ -1,0 +1,250 @@
+[
+  {
+    "evidence_id": "ULR004-B-keyboard-sku-management.png",
+    "surface_id": "P019",
+    "expanded_case_id": "ULR004-B-keyboard-sku-management",
+    "related_ulr": [
+      "ULR-004"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=skus",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "drawer": null,
+    "confirmation": null,
+    "role": "authenticated codex test superuser",
+    "object_reference": "WS-P001 / WS-SKU001 / Workspace Supplier",
+    "data": "existing workspace-tabs synthetic fixture in isolated SQLite",
+    "stage": "keyboard-sku-management",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:02:32.134Z",
+    "file": "originals/ULR004-B-keyboard-sku-management.png",
+    "sha256": "778a1343e014817ce48e419ba365e66c9e4f65da5e138d082c512d7610721999",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "steps": [
+      "打开产品列表并进入 WS-P001 详情",
+      "在 SKU 管理预览点击查看全部"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-binding.spec.js 对应截图阶段追溯；点击结果另见 binding-click-result.json"
+  },
+  {
+    "evidence_id": "ULR004-B-keyboard-selected.png",
+    "surface_id": "P019",
+    "expanded_case_id": "ULR004-B-keyboard-selected",
+    "related_ulr": [
+      "ULR-004"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=skus",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "drawer": null,
+    "confirmation": null,
+    "role": "authenticated codex test superuser",
+    "object_reference": "WS-P001 / WS-SKU001 / Workspace Supplier",
+    "data": "existing workspace-tabs synthetic fixture in isolated SQLite",
+    "stage": "keyboard-selected",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:02:32.280Z",
+    "file": "originals/ULR004-B-keyboard-selected.png",
+    "sha256": "0d792600f6e023e529ad16ad74eb8699c97be20dcef2fe8b73a4aa89451f3583",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "steps": [
+      "打开产品列表并进入 WS-P001 详情",
+      "在 SKU 管理预览点击查看全部",
+      "使用 Tab 和空格选中 WS-SKU001"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-binding.spec.js 对应截图阶段追溯；点击结果另见 binding-click-result.json"
+  },
+  {
+    "evidence_id": "ULR004-B-dirty-before-close.png",
+    "surface_id": "P019",
+    "expanded_case_id": "ULR004-B-dirty-before-close",
+    "related_ulr": [
+      "ULR-004"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=skus",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "drawer": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "zIndex": "300",
+      "visible": "visible",
+      "centerHit": "<div data-v-b3925ba4=\"\" class=\"binding-backdrop\"><section data-v-b3925ba4=\"\" class=\"binding-drawer\" role=\"dialog\" aria-modal=\"true\" aria-label=\"批量绑定供应商\"><header data-v-b3925ba4=\"\"><div data-v-b3925ba4=\"\"><h3 data-v-b3925ba4=\"\">批量绑定供应商</h3><p data-v-b"
+    },
+    "confirmation": null,
+    "role": "authenticated codex test superuser",
+    "object_reference": "WS-P001 / WS-SKU001 / Workspace Supplier",
+    "data": "existing workspace-tabs synthetic fixture in isolated SQLite",
+    "stage": "dirty-before-close",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:02:32.603Z",
+    "file": "originals/ULR004-B-dirty-before-close.png",
+    "sha256": "f622c35aba472a30e91373ad7bccaf700dab010354925c7df0911ac96566d988",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "steps": [
+      "打开产品列表并进入 WS-P001 详情",
+      "在 SKU 管理预览点击查看全部",
+      "使用 Tab 和空格选中 WS-SKU001",
+      "打开批量绑定供应商",
+      "更改开关并选择 Workspace Supplier"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-binding.spec.js 对应截图阶段追溯；点击结果另见 binding-click-result.json"
+  },
+  {
+    "evidence_id": "ULR004-B-after-close.png",
+    "surface_id": "P019",
+    "expanded_case_id": "ULR004-B-after-close",
+    "related_ulr": [
+      "ULR-004"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=skus",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "drawer": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "zIndex": "300",
+      "visible": "visible",
+      "centerHit": "<div data-v-b3925ba4=\"\" class=\"binding-backdrop\"><section data-v-b3925ba4=\"\" class=\"binding-drawer\" role=\"dialog\" aria-modal=\"true\" aria-label=\"批量绑定供应商\"><header data-v-b3925ba4=\"\"><div data-v-b3925ba4=\"\"><h3 data-v-b3925ba4=\"\">批量绑定供应商</h3><p data-v-b"
+    },
+    "confirmation": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "zIndex": "200",
+      "visible": "visible",
+      "centerHit": "<div data-v-b3925ba4=\"\" class=\"binding-backdrop\"><section data-v-b3925ba4=\"\" class=\"binding-drawer\" role=\"dialog\" aria-modal=\"true\" aria-label=\"批量绑定供应商\"><header data-v-b3925ba4=\"\"><div data-v-b3925ba4=\"\"><h3 data-v-b3925ba4=\"\">批量绑定供应商</h3><p data-v-b"
+    },
+    "role": "authenticated codex test superuser",
+    "object_reference": "WS-P001 / WS-SKU001 / Workspace Supplier",
+    "data": "existing workspace-tabs synthetic fixture in isolated SQLite",
+    "stage": "after-close",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:02:32.799Z",
+    "file": "originals/ULR004-B-after-close.png",
+    "sha256": "4ee50743e2fe8dc75565b427503a3c02905cab92dd8a303e93a6880e131981f9",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "steps": [
+      "打开产品列表并进入 WS-P001 详情",
+      "在 SKU 管理预览点击查看全部",
+      "使用 Tab 和空格选中 WS-SKU001",
+      "打开批量绑定供应商",
+      "更改开关并选择 Workspace Supplier",
+      "点击关闭，显示未保存确认"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-binding.spec.js 对应截图阶段追溯；点击结果另见 binding-click-result.json"
+  },
+  {
+    "evidence_id": "ULR004-B-after-click-attempt.png",
+    "surface_id": "P019",
+    "expanded_case_id": "ULR004-B-after-click-attempt",
+    "related_ulr": [
+      "ULR-004"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=skus",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "drawer": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "zIndex": "300",
+      "visible": "visible",
+      "centerHit": "<div data-v-b3925ba4=\"\" class=\"binding-backdrop\"><section data-v-b3925ba4=\"\" class=\"binding-drawer\" role=\"dialog\" aria-modal=\"true\" aria-label=\"批量绑定供应商\"><header data-v-b3925ba4=\"\"><div data-v-b3925ba4=\"\"><h3 data-v-b3925ba4=\"\">批量绑定供应商</h3><p data-v-b"
+    },
+    "confirmation": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "zIndex": "200",
+      "visible": "visible",
+      "centerHit": "<div data-v-b3925ba4=\"\" class=\"binding-backdrop\"><section data-v-b3925ba4=\"\" class=\"binding-drawer\" role=\"dialog\" aria-modal=\"true\" aria-label=\"批量绑定供应商\"><header data-v-b3925ba4=\"\"><div data-v-b3925ba4=\"\"><h3 data-v-b3925ba4=\"\">批量绑定供应商</h3><p data-v-b"
+    },
+    "role": "authenticated codex test superuser",
+    "object_reference": "WS-P001 / WS-SKU001 / Workspace Supplier",
+    "data": "existing workspace-tabs synthetic fixture in isolated SQLite",
+    "stage": "after-click-attempt",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:02:36.044Z",
+    "file": "originals/ULR004-B-after-click-attempt.png",
+    "sha256": "4ee50743e2fe8dc75565b427503a3c02905cab92dd8a303e93a6880e131981f9",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "steps": [
+      "打开产品列表并进入 WS-P001 详情",
+      "在 SKU 管理预览点击查看全部",
+      "使用 Tab 和空格选中 WS-SKU001",
+      "打开批量绑定供应商",
+      "更改开关并选择 Workspace Supplier",
+      "点击关闭，显示未保存确认",
+      "尝试正常点击继续编辑；结果见 binding-click-result.json"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-binding.spec.js 对应截图阶段追溯；点击结果另见 binding-click-result.json"
+  }
+]

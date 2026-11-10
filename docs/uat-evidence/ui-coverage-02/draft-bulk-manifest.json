@@ -1,0 +1,132 @@
+[
+  {
+    "evidence_id": "DRAFT-BULK-MENU-B-1366",
+    "surface_id": "G002",
+    "expanded_case_id": "DRAFT-BULK-MENU-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n客户管理 · 新建 1 ●\n×\n⋮\n客户管理 · 新建 2 ●\n×\n⋮\n关闭其他\n关闭右侧\n向左移动\n向右移动\n收起\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n新建客户\n客户名称 *\n客户编号 *\n国家/地区\n\n请选择标准英文名称 / 两位代码；历史文本需人工确认。\n\n业务区域\n负责人\n请选择\n客户来源\n联系人信息\n\n至少登记一位联系人，可指定默认联系人。\n\n1 位\n联系人 1\n默认联系人\n姓名 *\n职位\n邮箱\n电话\nWhatsApp\n备注\n新增联系人\n补充信息\n网站\n地址\n备注\n取消\n保存客户",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "create two dirty drafts",
+      "open first tab actions"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:01:11.269Z",
+    "file": "originals/DRAFT-BULK-MENU-B-1366.png",
+    "sha256": "7c8eee29f82568c841313a496054280d6270f21ce1efe96a93104a9926d178bf",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "标签菜单、确认或对应草稿保留状态可见。"
+  },
+  {
+    "evidence_id": "DRAFT-BULK-CONFIRM-B-1366",
+    "surface_id": "G002",
+    "expanded_case_id": "DRAFT-BULK-CONFIRM-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n客户管理 · 新建 1 ●\n×\n⋮\n客户管理 · 新建 2 ●\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n新建客户\n客户名称 *\n客户编号 *\n国家/地区\n\n请选择标准英文名称 / 两位代码；历史文本需人工确认。\n\n业务区域\n负责人\n请选择\n客户来源\n联系人信息\n\n至少登记一位联系人，可指定默认联系人。\n\n1 位\n联系人 1\n默认联系人\n姓名 *\n职位\n邮箱\n电话\nWhatsApp\n备注\n新增联系人\n补充信息\n网站\n地址\n备注\n取消\n保存客户\n未保存修改\n\n当前修改尚未保存，离开后将丢失。是否继续？\n\n继续编辑\n放弃修改",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "choose close others",
+      "observe confirmation"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:01:11.461Z",
+    "file": "originals/DRAFT-BULK-CONFIRM-B-1366.png",
+    "sha256": "7941d87483e53006893dd0442d1f34cdecd92f357062fd8b7a764eb0268727a6",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "标签菜单、确认或对应草稿保留状态可见。"
+  },
+  {
+    "evidence_id": "DRAFT-BULK-CANCELLED-B-1366",
+    "surface_id": "G002",
+    "expanded_case_id": "DRAFT-BULK-CANCELLED-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n客户管理 · 新建 1 ●\n×\n⋮\n客户管理 · 新建 2 ●\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n新建客户\n客户名称 *\n客户编号 *\n国家/地区\n\n请选择标准英文名称 / 两位代码；历史文本需人工确认。\n\n业务区域\n负责人\n请选择\n客户来源\n联系人信息\n\n至少登记一位联系人，可指定默认联系人。\n\n1 位\n联系人 1\n默认联系人\n姓名 *\n职位\n邮箱\n电话\nWhatsApp\n备注\n新增联系人\n补充信息\n网站\n地址\n备注\n取消\n保存客户",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "choose continue editing",
+      "switch to second draft",
+      "verify value retained"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:01:11.663Z",
+    "file": "originals/DRAFT-BULK-CANCELLED-B-1366.png",
+    "sha256": "f824469325c0a6a4ddbbc4bb338f6d08d52bea4a86bc6ab19b566867c4bf4b6a",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "标签菜单、确认或对应草稿保留状态可见。"
+  },
+  {
+    "evidence_id": "DRAFT-BULK-RIGHT-CLOSED-B-1366",
+    "surface_id": "G002",
+    "expanded_case_id": "DRAFT-BULK-RIGHT-CLOSED-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n客户管理 · 新建 1 ●\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n新建客户\n客户名称 *\n客户编号 *\n国家/地区\n\n请选择标准英文名称 / 两位代码；历史文本需人工确认。\n\n业务区域\n负责人\n请选择\n客户来源\n联系人信息\n\n至少登记一位联系人，可指定默认联系人。\n\n1 位\n联系人 1\n默认联系人\n姓名 *\n职位\n邮箱\n电话\nWhatsApp\n备注\n新增联系人\n补充信息\n网站\n地址\n备注\n取消\n保存客户",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "choose close right",
+      "discard second draft",
+      "verify first draft remains"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:01:11.926Z",
+    "file": "originals/DRAFT-BULK-RIGHT-CLOSED-B-1366.png",
+    "sha256": "ee02072eaf75dcf17a2f00c83def014d35097def2ac09ac7f352e7b6fe6489cf",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "标签菜单、确认或对应草稿保留状态可见。"
+  }
+]

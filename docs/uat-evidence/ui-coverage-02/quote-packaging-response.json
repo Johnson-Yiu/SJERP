@@ -1,0 +1,8 @@
+{
+  "status": 503,
+  "intercepted": 1,
+  "body": {
+    "detail": "隔离模拟包装保存失败"
+  },
+  "note": "simulated in browser; request did not reach backend"
+}

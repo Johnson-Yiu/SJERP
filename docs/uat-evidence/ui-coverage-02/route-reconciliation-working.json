@@ -1,0 +1,653 @@
+{
+  "status": "WORKING_ROUTE_RECONCILIATION_NOT_COVERAGE_PASS",
+  "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+  "method": "源码路由表显式 path 与 resourceConfigs 展开项，人工核对正则输出；只匹配实际路由与截图记录，不推断状态覆盖。",
+  "routes": [
+    {
+      "route": "/login",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "LOGIN-B-1366",
+          "manifest": "login-load-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "LOGIN-B-1920",
+          "manifest": "login-variants-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/new-product-reminders",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-new-product-reminders-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-new-product-reminders-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/finance-ledger",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-finance-ledger-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-finance-ledger-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/sku-trade-units",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-sku-trade-units-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-sku-trade-units-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/reports",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-reports-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-reports-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/historical-orders",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-historical-orders-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-historical-orders-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-root-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-root-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/categories",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-categories-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-categories-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/products",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-products-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-products-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/skus",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-skus-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-skus-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/sku-packaging",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-sku-packaging-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-sku-packaging-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/hs-codes",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-hs-codes-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-hs-codes-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/quotes",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-quotes-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-quotes-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/orders",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-orders-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-orders-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/import",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-import-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-import-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/history-preflight",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-history-preflight-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-history-preflight-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/history-takeover",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-history-takeover-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-history-takeover-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/organization",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-organization-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-organization-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/inventory",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-inventory-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-inventory-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/purchase-orders",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-purchase-orders-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-purchase-orders-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/finance",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-finance-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-finance-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/receivables",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-receivables-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-receivables-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/payables",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-payables-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-payables-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/transactions",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-transactions-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-transactions-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/rmb-cash-events",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-rmb-cash-events-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-rmb-cash-events-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/access-denied",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "ACCESS-access-denied-B-1366",
+          "manifest": "access-pages-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "ACCESS-access-denied-B-1920",
+          "manifest": "access-pages-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "直接访问状态页仅证明结构，不证明真实权限结果"
+    },
+    {
+      "route": "/access-status-error",
+      "source": "workspaceRoutes.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "ACCESS-access-status-error-B-1366",
+          "manifest": "access-pages-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "ACCESS-access-status-error-B-1920",
+          "manifest": "access-pages-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "直接访问状态页仅证明结构，不证明真实权限结果"
+    },
+    {
+      "route": "/suppliers",
+      "source": "workspaceRoutes.js + resourceConfigs.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-suppliers-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-suppliers-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/customers",
+      "source": "workspaceRoutes.js + resourceConfigs.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-customers-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-customers-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/contacts",
+      "source": "workspaceRoutes.js + resourceConfigs.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-contacts-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-contacts-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/follow-ups",
+      "source": "workspaceRoutes.js + resourceConfigs.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-follow-ups-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-follow-ups-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/inventory-movements",
+      "source": "workspaceRoutes.js + resourceConfigs.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-inventory-movements-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-inventory-movements-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/product-parameters",
+      "source": "workspaceRoutes.js + resourceConfigs.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-product-parameters-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-product-parameters-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    },
+    {
+      "route": "/product-certificates",
+      "source": "workspaceRoutes.js + resourceConfigs.js",
+      "initial_view_evidence": [
+        {
+          "viewport_width": 1366,
+          "evidence_id": "BASE-B-product-certificates-1366.png",
+          "manifest": "route-baseline-manifest.json"
+        },
+        {
+          "viewport_width": 1920,
+          "evidence_id": "BASE-B-product-certificates-1920.png",
+          "manifest": "route-baseline-1920-manifest.json"
+        }
+      ],
+      "initial_1366": "CAPTURED",
+      "initial_1920": "CAPTURED",
+      "limitations": "仅初始视口；模式、状态、交互、断点及独立审阅不由本记录证明"
+    }
+  ]
+}

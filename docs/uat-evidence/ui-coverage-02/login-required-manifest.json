@@ -1,0 +1,97 @@
+[
+  {
+    "evidence_id": "LOGIN-EMPTY-USERNAME-B-1366",
+    "surface_id": "G005",
+    "expanded_case_id": "LOGIN-EMPTY-USERNAME-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/login",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "focused": "username",
+    "fields": [
+      {
+        "autocomplete": "username",
+        "required": true,
+        "valueMissing": true,
+        "validationMessage": "请填写此字段。"
+      },
+      {
+        "autocomplete": "current-password",
+        "required": true,
+        "valueMissing": true,
+        "validationMessage": "请填写此字段。"
+      }
+    ],
+    "role": "unauthenticated",
+    "data": "fresh isolated browser and server; no credentials entered",
+    "steps": [
+      "click login with both fields empty"
+    ],
+    "simulated": false,
+    "posts_observed": 0,
+    "capture_time_utc": "2026-11-09T18:26:53.299Z",
+    "file": "originals/LOGIN-EMPTY-USERNAME-B-1366.png",
+    "sha256": "78dbd24f2ce56d200272024ded96ca12bd64d58024df66152dcf757b2743762a",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "browser-native validation bubble may not be represented in screenshot; validity and focus recorded separately",
+    "observation": "对应空字段获得焦点；原生提示在截图中不稳定，校验状态及无 POST 由记录与断言佐证。"
+  },
+  {
+    "evidence_id": "LOGIN-EMPTY-PASSWORD-B-1366",
+    "surface_id": "G005",
+    "expanded_case_id": "LOGIN-EMPTY-PASSWORD-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/login",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "focused": "current-password",
+    "fields": [
+      {
+        "autocomplete": "username",
+        "required": true,
+        "valueMissing": false,
+        "validationMessage": ""
+      },
+      {
+        "autocomplete": "current-password",
+        "required": true,
+        "valueMissing": true,
+        "validationMessage": "请填写此字段。"
+      }
+    ],
+    "role": "unauthenticated",
+    "data": "fresh isolated browser and server; no credentials entered",
+    "steps": [
+      "enter fictitious account only",
+      "click login with password empty"
+    ],
+    "simulated": false,
+    "posts_observed": 0,
+    "capture_time_utc": "2026-11-09T18:26:53.448Z",
+    "file": "originals/LOGIN-EMPTY-PASSWORD-B-1366.png",
+    "sha256": "8fe7c68f6d0411ad4fa73801a36908f738d6fc7c8a91864c629a9ee284fa0460",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "browser-native validation bubble may not be represented in screenshot; validity and focus recorded separately",
+    "observation": "对应空字段获得焦点；原生提示在截图中不稳定，校验状态及无 POST 由记录与断言佐证。"
+  }
+]

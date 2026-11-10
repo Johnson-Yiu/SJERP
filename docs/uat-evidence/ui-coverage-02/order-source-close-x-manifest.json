@@ -1,0 +1,70 @@
+[
+  {
+    "evidence_id": "ORDER-SOURCE-X-PENDING-B-1366",
+    "surface_id": "S029",
+    "expanded_case_id": "ORDER-SOURCE-X-PENDING-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?detail=1&tab=fulfillment",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\nWS-SO001\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t\n关闭\n订单工作台 · 履约与回款\n编辑草稿\n确认订单\n取消订单\n\nWorkspace Alpha · 下单于 2026-11-10\n\nWS-SO001\n预计交期：未设置\n履约：草稿\n概览\n订单明细 (1)\n采购与发货\n回款 (0)\n装箱\n库存流水 (0)\n操作日志 (0)\n采购与发货\n生成采购草稿\n待采购 SKU\n1\n采购中 SKU\n0\n待发货明细\n1\n已完成明细\n0\nSKU 履约明细\n\n数量按 SKU 基础单位显示。\n\nSKU / 当前状态\t采购来源\t订单需求\t采购进度\t到货进度\t发货进度\t操作\n\nWS-SKU001\nWorkspace Light\n基础单位：pcs\n明细 #1 · 基础单位\n待选供应商\t\n未分配\n\t\n订单 10 pcs\n已预留 0 pcs\n\t\n待采购 10 pcs\n可建草稿 10 pcs\n\t—\t\n已发 0 pcs\n待发 10 pcs\n\t\n选择来源\n关联采购单\n\n采购草稿不计入已下单数量。\n\n尚未创建关联采购单\n\n请先选择采购来源，再生成采购草稿。\n\n发货记录\n\n整单冲销会同步撤销关联的超发或增补记录。\n\n0 条\n暂无发货记录\n\n有可发库存后，可在明细中确认发货。\n\n销售订单 · 采购分配\n选择当前采购来源\n订单行信息\nWS-SKU001\n\nWorkspace Light\n\nWorkspace Light\n\n数量\n10 pcs\n当前采购来源\n未选择\n候选采购来源（1）\n\n优先参考该客户此 SKU 的历史采购；SKU 全局首选仅作弱推荐。\n\nWorkspace Supplier\n单价\n12.50 USD\n交期\n7 天\nMOQ\n10\n最近采购\n暂无\n\n首个启用来源 · 供货档案\n\n本次分配说明\n\n此选择用于后续采购草稿；已经生成的采购单保留原采购来源，不会被改写。\n\n仅本次采购使用\n只为当前订单行记录供应商，不改变该客户或 SKU 的长期优先来源。\n设为该客户此 SKU 今后优先来源\n只更新当前客户与当前 SKU 的优先来源，不修改全局 SKU 首选，也不影响其他客户。\n取消\n保存中…",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture with synthetic supplier SKU source",
+    "steps": [
+      "open WS-SO001 procurement tab and choose source",
+      "enter isolated note",
+      "hold allocation POST before service"
+    ],
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T19:56:13.375Z",
+    "file": "originals/ORDER-SOURCE-X-PENDING-B-1366.png",
+    "sha256": "039c2a5552f3f69658ed77b051b6974fc9f70a70578f6fe94a9fc4810ee0f33e",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "POST intercepted before service; synthetic 503, no allocation saved"
+  },
+  {
+    "evidence_id": "ORDER-SOURCE-X-AFTER-B-1366",
+    "surface_id": "S029",
+    "expanded_case_id": "ORDER-SOURCE-X-AFTER-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?detail=1&tab=fulfillment",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\nWS-SO001\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t\n关闭\n订单工作台 · 履约与回款\n编辑草稿\n确认订单\n取消订单\n\nWorkspace Alpha · 下单于 2026-11-10\n\nWS-SO001\n预计交期：未设置\n履约：草稿\n概览\n订单明细 (1)\n采购与发货\n回款 (0)\n装箱\n库存流水 (0)\n操作日志 (0)\n采购与发货\n生成采购草稿\n待采购 SKU\n1\n采购中 SKU\n0\n待发货明细\n1\n已完成明细\n0\nSKU 履约明细\n\n数量按 SKU 基础单位显示。\n\nSKU / 当前状态\t采购来源\t订单需求\t采购进度\t到货进度\t发货进度\t操作\n\nWS-SKU001\nWorkspace Light\n基础单位：pcs\n明细 #1 · 基础单位\n待选供应商\t\n未分配\n\t\n订单 10 pcs\n已预留 0 pcs\n\t\n待采购 10 pcs\n可建草稿 10 pcs\n\t—\t\n已发 0 pcs\n待发 10 pcs\n\t\n选择来源\n关联采购单\n\n采购草稿不计入已下单数量。\n\n尚未创建关联采购单\n\n请先选择采购来源，再生成采购草稿。\n\n发货记录\n\n整单冲销会同步撤销关联的超发或增补记录。\n\n0 条\n暂无发货记录\n\n有可发库存后，可在明细中确认发货。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture with synthetic supplier SKU source",
+    "steps": [
+      "open WS-SO001 procurement tab and choose source",
+      "enter isolated note",
+      "hold allocation POST before service",
+      "click 关闭 while pending",
+      "fulfill held POST with simulated 503"
+    ],
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T19:56:13.786Z",
+    "file": "originals/ORDER-SOURCE-X-AFTER-B-1366.png",
+    "sha256": "d0ae9c40cbaf68aadd18a8a169155a14804d234d590fcbc4d674722fa96014da",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "POST intercepted before service; synthetic 503, no allocation saved"
+  }
+]

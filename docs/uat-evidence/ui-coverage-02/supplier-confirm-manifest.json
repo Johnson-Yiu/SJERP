@@ -1,0 +1,70 @@
+[
+  {
+    "evidence_id": "SUPPLIER-DEACTIVATE-CONFIRM-B-1366",
+    "surface_id": "G024",
+    "expanded_case_id": "SUPPLIER-DEACTIVATE-CONFIRM-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/suppliers",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSUPPLIER DIRECTORY\n供应商管理\n11月10日周二\nC\n供应商管理\n×\n⋮\n\n维护供应商资料与付款条款备注。\n\n新建供应商\n供应商\n1\n全部筛选结果\n可供分类\n0\n已选择的分类\n有店铺链接\n0\n可打开的网页链接\n搜索\n可供分类\n全部分类\nWorkspace Category\n重置\n刷新\n\n付款备注仅供沟通参考；采购单付款条件需逐单协商。\n\n供应商\t状态\t产品与可供分类\t联系方式\t付款条款说明（备注）\t操作\nWorkspace Supplier\nWS-S001 · 中国\n\t启用\t—\n未填可供分类\n\t—\n\t\n30%预付款，70%尾款发货前结清\n\t\n停用\n停用供应商\n\n停用“Workspace Supplier”后，它不会再作为新采购候选；历史采购、付款和来源仍会保留。\n\n取消\n确认停用",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; active Workspace Supplier",
+    "steps": [
+      "open supplier list",
+      "click deactivate on synthetic supplier"
+    ],
+    "mutation_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:24:52.244Z",
+    "file": "originals/SUPPLIER-DEACTIVATE-CONFIRM-B-1366.png",
+    "sha256": "76412e5bb62f0b49a5dbb2a9cda13dda753c6256b65d42fff81057e7425fdb29",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "mutation guard installed but not triggered; cancel path only",
+    "observation": "停用确认及取消后仍显示停用入口；未发状态变更请求。"
+  },
+  {
+    "evidence_id": "SUPPLIER-DEACTIVATE-CANCEL-B-1366",
+    "surface_id": "G024",
+    "expanded_case_id": "SUPPLIER-DEACTIVATE-CANCEL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/suppliers",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSUPPLIER DIRECTORY\n供应商管理\n11月10日周二\nC\n供应商管理\n×\n⋮\n\n维护供应商资料与付款条款备注。\n\n新建供应商\n供应商\n1\n全部筛选结果\n可供分类\n0\n已选择的分类\n有店铺链接\n0\n可打开的网页链接\n搜索\n可供分类\n全部分类\nWorkspace Category\n重置\n刷新\n\n付款备注仅供沟通参考；采购单付款条件需逐单协商。\n\n供应商\t状态\t产品与可供分类\t联系方式\t付款条款说明（备注）\t操作\nWorkspace Supplier\nWS-S001 · 中国\n\t启用\t—\n未填可供分类\n\t—\n\t\n30%预付款，70%尾款发货前结清\n\t\n停用",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; active Workspace Supplier",
+    "steps": [
+      "cancel confirmation",
+      "verify active action remains and no mutation request"
+    ],
+    "mutation_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:24:52.347Z",
+    "file": "originals/SUPPLIER-DEACTIVATE-CANCEL-B-1366.png",
+    "sha256": "00fc47813813896466f8632ef1c5b182335d54a95d35b1f91c8f3399f3d144aa",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "mutation guard installed but not triggered; cancel path only",
+    "observation": "停用确认及取消后仍显示停用入口；未发状态变更请求。"
+  }
+]

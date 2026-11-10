@@ -1,0 +1,621 @@
+{
+  "status": "IN_PROGRESS_NOT_COMPLETENESS_CLAIM",
+  "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+  "source_index_sha256": "5d151104b5b770271272ca5d7db0b95f08d10bc552786504bf81041397bbc995",
+  "warning": "仅公共提示调用点；条件模板、原生调用与共享父上下文尚需单独反查。未映射不代表不可达。",
+  "dialog_calls": [
+    {
+      "id": "D001",
+      "source_variant": "B",
+      "path": "frontend/src/workspaceManager.js",
+      "line": 140,
+      "kind": "alertDialog",
+      "title_hint": "操作正在提交",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPED",
+      "runtime_status": "OBSERVED_SIMULATED_PENDING",
+      "evidence_ids": [
+        "WORKSPACE-BUSY-ALERT-B-1366"
+      ],
+      "reason": "订单工作台采购来源 POST 浏览器拦截挂起，先关闭来源抽屉后关闭工作区；仅此父上下文，其他写操作和批量关闭未验证。"
+    },
+    {
+      "id": "D002",
+      "source_variant": "B",
+      "path": "frontend/src/components/EntityDetailModal.vue",
+      "line": 191,
+      "kind": "confirmDialog",
+      "title_hint": "确认删除跟进记录",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "FOLLOWUP-DETAIL-DELETE-CONFIRM-B-1366",
+        "FOLLOWUP-DETAIL-DELETE-CANCEL-B-1366"
+      ],
+      "reason": "跟进列表进入合成记录详情后删除确认和取消；无写请求。取消后即时截图左侧裁切，延迟 500ms 的另次详情基线两尺寸未见同样裁切；未确认删除及其他入口。"
+    },
+    {
+      "id": "D003",
+      "source_variant": "B",
+      "path": "frontend/src/components/EntityDetailModal.vue",
+      "line": 296,
+      "kind": "confirmDialog",
+      "title_hint": "确认停用 SKU",
+      "static_status": "statically_unreachable",
+      "mapping_status": "EXCLUDED_WITH_SOURCE_REASON",
+      "runtime_status": "NOT_APPLICABLE",
+      "evidence_ids": [],
+      "reason": "B 冻结源码 EntityDetailModal.vue:459 的父 section 条件为 !isSkuSection，而该子按钮/选择控件要求 isSkuSection；同一渲染上下文互斥。函数只由这些按钮调用，不能通过真实渲染入口触发。此排除仅针对旧通用关联区，不能排除 ProductWorkspace/SkuPage 的其他 SKU 操作。"
+    },
+    {
+      "id": "D004",
+      "source_variant": "B",
+      "path": "frontend/src/components/EntityDetailModal.vue",
+      "line": 306,
+      "kind": "confirmDialog",
+      "title_hint": "确认重新启用 SKU",
+      "static_status": "statically_unreachable",
+      "mapping_status": "EXCLUDED_WITH_SOURCE_REASON",
+      "runtime_status": "NOT_APPLICABLE",
+      "evidence_ids": [],
+      "reason": "B 冻结源码 EntityDetailModal.vue:459 的父 section 条件为 !isSkuSection，而该子按钮/选择控件要求 isSkuSection；同一渲染上下文互斥。函数只由这些按钮调用，不能通过真实渲染入口触发。此排除仅针对旧通用关联区，不能排除 ProductWorkspace/SkuPage 的其他 SKU 操作。"
+    },
+    {
+      "id": "D005",
+      "source_variant": "B",
+      "path": "frontend/src/components/OrderDetailModal.vue",
+      "line": 209,
+      "kind": "confirmDialog",
+      "title_hint": "确认调整订单数量",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：订单工作台概览中 confirmed/production/shipped 状态且有 orders update 权限时打开调整数量；预览允许提交且载荷未变，点击确认调整进入确认框（OrderDetailModal.vue:156-209,489-515,571）。需隔离的正式订单及有效预览；尚未浏览器验证。"
+    },
+    {
+      "id": "D006",
+      "source_variant": "B",
+      "path": "frontend/src/components/OrderDetailModal.vue",
+      "line": 358,
+      "kind": "confirmDialog",
+      "title_hint": "确认批量超发",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：订单工作台采购与发货的批量发货或可发订单行确认发货；选择明细、填写正数且任一基础数量超过待发数量并选择对应原因后，提交触发批量超发确认（OrderDetailModal.vue:284-285,348-363,518-543,598,612）。单行入口亦可进入同一表单；未运行或验证库存及服务结果。"
+    },
+    {
+      "id": "D007",
+      "source_variant": "B",
+      "path": "frontend/src/components/OrderDetailModal.vue",
+      "line": 387,
+      "kind": "confirmDialog",
+      "title_hint": "确认订单操作",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "ORDER-CONFIRM-DIALOG-B-1366",
+        "ORDER-CONFIRM-CANCEL-B-1366"
+      ],
+      "reason": "订单工作台草稿确认订单及取消；其他生命周期路径、确认提交和服务结果未验证。"
+    },
+    {
+      "id": "D008",
+      "source_variant": "B",
+      "path": "frontend/src/components/OrderDetailModal.vue",
+      "line": 436,
+      "kind": "confirmDialog",
+      "title_hint": "确认重新生成",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：订单工作台装箱标签已有预计装箱方案且有 orders update 权限时，点击重新生成预计装箱方案进入确认框（OrderDetailModal.vue:433-437,580-584）。需要既有隔离方案；尚未运行或验证服务结果。"
+    },
+    {
+      "id": "D009",
+      "source_variant": "B",
+      "path": "frontend/src/components/PurchaseCostAllocationModal.vue",
+      "line": 59,
+      "kind": "confirmDialog",
+      "title_hint": "改按采购金额分摊",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：采购单详情发出 allocate-cost，由采购页具有 purchases update 权限时加载可归属订单并打开成本分配。历史按数量分摊、可编辑且采购单未取消时，“改按金额分摊并预览”触发确认；繁忙时函数不执行。见 PurchaseOrderPage.vue:120-126,505,571 和 PurchaseCostAllocationModal.vue:12,57-62,95。需隔离历史数据；未运行。"
+    },
+    {
+      "id": "D010",
+      "source_variant": "B",
+      "path": "frontend/src/components/PurchaseCostAllocationModal.vue",
+      "line": 84,
+      "kind": "confirmDialog",
+      "title_hint": "放弃未保存修改",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：采购单详情打开成本分配后，编辑数量、归属或附加费用使 dirty 为真，使用右上关闭或底部取消触发放弃修改确认。见 PurchaseCostAllocationModal.vue:31-33,83-84,91,97,131。历史转换尚未确认或不可编辑时 changed 不设置 dirty；尚未运行。"
+    },
+    {
+      "id": "D011",
+      "source_variant": "B",
+      "path": "frontend/src/components/QuoteDetailModal.vue",
+      "line": 156,
+      "kind": "confirmDialog",
+      "title_hint": "确认停用备注",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "QUOTE-NOTE-DEACTIVATE-CONFIRM-B-1366",
+        "QUOTE-NOTE-DEACTIVATE-CANCEL-B-1366",
+        "QUOTE-NOTE-DEACTIVATE-FAIL-B-1366"
+      ],
+      "reason": "隔离报价有效备注确认、取消及确认后的模拟 503 已采集；失败后错误可见、备注仍有效；真实停用、恢复及其他视口未验证。"
+    },
+    {
+      "id": "D012",
+      "source_variant": "B",
+      "path": "frontend/src/components/ProductSkuManagement.vue",
+      "line": 74,
+      "kind": "confirmDialog",
+      "title_hint": "确认${active ? '重新启用' : '停用'} SKU",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "PRODUCT-SKU-BATCH-CONFIRM-B-1920",
+        "PRODUCT-SKU-BATCH-CANCEL-B-1920"
+      ],
+      "reason": "产品工作台 SKU 管理选中一条启用 SKU 后批量停用确认及取消；通过正常键盘选择绕开已记录的左侧裁切。未执行停用或重新启用分支。"
+    },
+    {
+      "id": "D013",
+      "source_variant": "B",
+      "path": "frontend/src/components/RichTextEditor.vue",
+      "line": 19,
+      "kind": "inputDialog",
+      "title_hint": "插入链接",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "EMPTY_AND_UNSAVED_HTTPS_OBSERVED",
+      "evidence_ids": [
+        "QUOTE-NOTE-LINK-EMPTY-B-1366",
+        "QUOTE-NOTE-LINK-VALID-B-1366"
+      ],
+      "reason": "报价新增备注链接空输入及 HTTPS 插入已采集；截图显示 URL 与原文字并列，选中文字是否保留为链接文本需专项复核。未保存、未验证其他格式和取消。"
+    },
+    {
+      "id": "D014",
+      "source_variant": "B",
+      "path": "frontend/src/components/RichTextEditor.vue",
+      "line": 22,
+      "kind": "alertDialog",
+      "title_hint": "链接格式不支持",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "UNSUPPORTED_SCHEME_OBSERVED",
+      "evidence_ids": [
+        "QUOTE-NOTE-LINK-INVALID-B-1366"
+      ],
+      "reason": "报价工作台新增重要备注插入 ftp 链接时显示不支持格式提示；其他非法输入及有效链接未验。"
+    },
+    {
+      "id": "D015",
+      "source_variant": "B",
+      "path": "frontend/src/components/ShipmentActualPacking.vue",
+      "line": 85,
+      "kind": "confirmDialog",
+      "title_hint": "删除第 ${row.carton_no} 箱？",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：订单工作台装箱标签的实际箱单中，对可修改发货的已有箱记录点击删除，弹确认；确认后才发 DELETE。需有合适隔离发货和箱记录。见 OrderDetailModal.vue:580-590、ShipmentActualPacking.vue:80-87,139；未运行。"
+    },
+    {
+      "id": "D016",
+      "source_variant": "B",
+      "path": "frontend/src/components/ShipmentActualPacking.vue",
+      "line": 98,
+      "kind": "confirmDialog",
+      "title_hint": "替换实际箱单？",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：同一实际箱单需有可修改发货、已加载的现有箱记录及预计装箱方案；点击复制预计装箱方案，在已有箱记录时弹替换确认。见 ShipmentActualPacking.vue:92-100,137-139；未运行。"
+    },
+    {
+      "id": "D017",
+      "source_variant": "B",
+      "path": "frontend/src/composables/useUnsavedChangesGuard.js",
+      "line": 48,
+      "kind": "confirmDialog",
+      "title_hint": "未保存修改",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CAPTURED_PARTIAL",
+      "evidence_ids": [
+        "DRAFT-CLOSE-CONFIRM-B-1366",
+        "MOBILE-ORDER-CONFIRM-B-390",
+        "TRADE-UNIT-DIRTY-CONFIRM-B-1366",
+        "TRADE-UNIT-DIRTY-CANCEL-B-1366",
+        "TRADE-UNIT-DIRTY-DISCARD-B-1366",
+        "TRADE-UNIT-DIRTY-DISCARD-CANCEL-B-1366"
+      ],
+      "reason": "客户新建标签关闭和订单新建取消各有确认画面；公共 guard 的其他调用上下文尚未映射。 补充交易规格新增表单有未保存名称时点击停用，选择继续编辑后输入保留；放弃后显示停用确认，取消后规格仍启用。"
+    },
+    {
+      "id": "D018",
+      "source_variant": "B",
+      "path": "frontend/src/composables/useWorkspaceApi.js",
+      "line": 22,
+      "kind": "confirmDialog",
+      "title_hint": "相关数据已更新",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：注入 workspace 的 useWorkspaceApi 包装写请求时，如果 workspace.stale 为真，在请求前显示相关数据已更新确认；适用于多个使用该包装的工作区，具体父上下文需逐一展开。无 workspace 时直接使用共享 API。见 useWorkspaceApi.js:8-25；未运行。"
+    },
+    {
+      "id": "D019",
+      "source_variant": "B",
+      "path": "frontend/src/utils/followUpAttachments.js",
+      "line": 20,
+      "kind": "confirmDialog",
+      "title_hint": "删除附件",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "FOLLOWUP-ATTACHMENT-DELETE-CONFIRM-B-1366",
+        "FOLLOWUP-ATTACHMENT-DELETE-CANCEL-B-1366",
+        "FOLLOWUP-ATTACHMENT-FAIL-B-1366"
+      ],
+      "reason": "跟进编辑器合成附件删除确认、取消及确认后模拟 503 已采集；失败后附件及错误提示可见，请求未到服务；真实删除、文件访问和其他父入口未验证。"
+    },
+    {
+      "id": "D020",
+      "source_variant": "B",
+      "path": "frontend/src/views/DocumentPage.vue",
+      "line": 234,
+      "kind": "confirmDialog",
+      "title_hint": "从报价载入",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CANCEL_AND_UNSAVED_LOAD_OBSERVED",
+      "evidence_ids": [
+        "ORDER-QUOTE-OVERWRITE-CONFIRM-B-1366",
+        "ORDER-QUOTE-OVERWRITE-CANCEL-B-1366",
+        "ORDER-QUOTE-OVERWRITE-LOADED-B-1366",
+        "ORDER-QUOTE-OVERWRITE-ITEM-B-1366",
+        "ORDER-QUOTE-OVERWRITE-ITEM-VALUES-B-1366",
+        "ORDER-QUOTE-FAIL-B-1366"
+      ],
+      "reason": "隔离订单报价覆盖确认、取消、读取成功与模拟 503 已采集；失败经 GET 自动重试后提示，交期保留、报价未选。未保存订单或验证其他字段。"
+    },
+    {
+      "id": "D021",
+      "source_variant": "B",
+      "path": "frontend/src/views/DocumentPage.vue",
+      "line": 304,
+      "kind": "confirmDialog",
+      "title_hint": "确认删除订单",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "ORDER-DELETE-CONFIRM-B-1366",
+        "ORDER-DELETE-CANCEL-B-1366",
+        "ORDER-DELETE-FAILURE-B-1366"
+      ],
+      "reason": "订单列表合成草稿确认、取消及确认后的模拟 503；真实删除结果和其他视口未验证。"
+    },
+    {
+      "id": "D022",
+      "source_variant": "B",
+      "path": "frontend/src/views/TradeUnitsPage.vue",
+      "line": 49,
+      "kind": "confirmDialog",
+      "title_hint": "停用交易规格",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "TRADE-UNIT-DEACTIVATE-CONFIRM-B-1366",
+        "TRADE-UNIT-DEACTIVATE-CANCEL-B-1366",
+        "TRADE-UNIT-FAIL-B-1366",
+        "TRADE-UNIT-DIRTY-DISCARD-B-1366",
+        "TRADE-UNIT-DIRTY-DISCARD-CANCEL-B-1366"
+      ],
+      "reason": "交易规格列表启用规格确认及取消，确认后模拟 PATCH 503；状态保持启用，错误出现在右侧新增表单区。未保存名称时放弃修改后进入停用确认，取消后仍启用；真实停用未验证。"
+    },
+    {
+      "id": "D023",
+      "source_variant": "B",
+      "path": "frontend/src/views/ResourcePage.vue",
+      "line": 784,
+      "kind": "confirmDialog",
+      "title_hint": "确认删除",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CAPTURED_PARTIAL",
+      "evidence_ids": [
+        "CUSTOMER-DELETE-CONFIRM-B-1366",
+        "CUSTOMER-DELETE-CANCEL-B-1366"
+      ],
+      "reason": "客户列表 Workspace Alpha 删除确认及取消已实测；同一调用点其他资源上下文和确认删除路径未覆盖。"
+    },
+    {
+      "id": "D024",
+      "source_variant": "B",
+      "path": "frontend/src/views/ResourcePage.vue",
+      "line": 791,
+      "kind": "confirmDialog",
+      "title_hint": "",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CAPTURED_PARTIAL",
+      "evidence_ids": [
+        "SUPPLIER-DEACTIVATE-CONFIRM-B-1366",
+        "SUPPLIER-DEACTIVATE-CANCEL-B-1366"
+      ],
+      "reason": "供应商列表启用供应商的停用确认及取消已实测；确认停用和重新启用状态未覆盖。"
+    },
+    {
+      "id": "D025",
+      "source_variant": "B",
+      "path": "frontend/src/views/ResourcePage.vue",
+      "line": 805,
+      "kind": "inputDialog",
+      "title_hint": "冲销库存流水",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "EMPTY_INPUT_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "MOVEMENT-REVERSE-EMPTY-B-1366",
+        "MOVEMENT-REVERSE-REASON-B-1366",
+        "MOVEMENT-REVERSE-CANCEL-B-1366",
+        "MOVEMENT-FAIL-B-1366"
+      ],
+      "reason": "隔离手工流水冲销原因空值、输入、取消和提交后模拟 503 已采集；错误可见，流水保留。请求未到服务，真实冲销、自动流水与其他角色未验证。"
+    },
+    {
+      "id": "D026",
+      "source_variant": "B",
+      "path": "frontend/src/views/CategoryPage.vue",
+      "line": 143,
+      "kind": "confirmDialog",
+      "title_hint": "确认删除分类",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "CATEGORY-DELETE-CONFIRM-B-1366",
+        "CATEGORY-DELETE-CANCEL-B-1366"
+      ],
+      "reason": "分类页面含关联产品的合成分类确认和取消；未执行删除或验证服务端拒绝。"
+    },
+    {
+      "id": "D027",
+      "source_variant": "B",
+      "path": "frontend/src/views/CategoryPage.vue",
+      "line": 255,
+      "kind": "confirmDialog",
+      "title_hint": "确认删除属性",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "ATTRIBUTE-DELETE-CONFIRM-B-1366",
+        "ATTRIBUTE-DELETE-CANCEL-B-1366"
+      ],
+      "reason": "分类页面合成自有属性的确认及取消；未执行删除、验证冻结引用或其他视口。"
+    },
+    {
+      "id": "D028",
+      "source_variant": "B",
+      "path": "frontend/src/views/ImportPage.vue",
+      "line": 135,
+      "kind": "confirmDialog",
+      "title_hint": "确认导入销售草稿",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：导入页销售订单 XLSX 完成预览且存在可导入订单时显示确认导入草稿按钮；执行函数弹确认并在批准后检查导入权限。见 ImportPage.vue:132-137,215-229；未上传或实际导入。"
+    },
+    {
+      "id": "D029",
+      "source_variant": "B",
+      "path": "frontend/src/views/ImportPage.vue",
+      "line": 184,
+      "kind": "confirmDialog",
+      "title_hint": "确认执行导入",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "STATIC_PARENT_IDENTIFIED_RUNTIME_UNVERIFIED",
+      "runtime_status": "NOT_RUN_OR_NOT_YET_MAPPED",
+      "evidence_ids": [],
+      "reason": "静态路径：导入页客户、产品与财务流水 CSV 预览无错误且未完成时，具备导入权限可进入确认执行导入；确认后才执行写入。见 ImportPage.vue:181-186,236-250；未上传或实际导入。"
+    },
+    {
+      "id": "D030",
+      "source_variant": "B",
+      "path": "frontend/src/views/PackagingPage.vue",
+      "line": 71,
+      "kind": "confirmDialog",
+      "title_hint": "确认修改包装模板",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "PACKAGING-CHANGE-CONFIRM-B-1366",
+        "PACKAGING-CHANGE-CANCEL-B-1366",
+        "PACKAGING-FAIL-B-1366"
+      ],
+      "reason": "隔离包装模板关联一个 SKU，修改长度后的确认、取消及确认后模拟 503 已采集；错误可见，未保存输入保留；真实保存和其他字段未测。"
+    },
+    {
+      "id": "D031",
+      "source_variant": "B",
+      "path": "frontend/src/views/SKUPage.vue",
+      "line": 524,
+      "kind": "confirmDialog",
+      "title_hint": "停用供应来源",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "SKU-SOURCE-DEACTIVATE-CONFIRM-B-1366",
+        "SKU-SOURCE-DEACTIVATE-CANCEL-B-1366",
+        "SKU-SOURCE-FAIL-B-1366"
+      ],
+      "reason": "SKU 编辑器启用来源的停用确认、取消及确认后模拟 503 已采集；错误可见且来源仍启用，真实停用及其他上下文未测。"
+    },
+    {
+      "id": "D032",
+      "source_variant": "B",
+      "path": "frontend/src/views/SKUPage.vue",
+      "line": 778,
+      "kind": "confirmDialog",
+      "title_hint": "确认停用 SKU",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "SKU-DEACTIVATE-CONFIRM-B-1366",
+        "SKU-DEACTIVATE-CANCEL-B-1366",
+        "SKU-DEACTIVATE-FAILURE-B-1366"
+      ],
+      "reason": "SKU 列表合成启用 SKU 的确认、取消及确认后的模拟 503；真实停用或其他父场景未验证。"
+    },
+    {
+      "id": "D033",
+      "source_variant": "B",
+      "path": "frontend/src/views/PurchaseOrderPage.vue",
+      "line": 112,
+      "kind": "confirmDialog",
+      "title_hint": "切换采购币种",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CANCEL_AND_UNSAVED_CONFIRM_OBSERVED",
+      "evidence_ids": [
+        "PURCHASE-CURRENCY-CONFIRM-B-1366",
+        "PURCHASE-CURRENCY-CANCEL-B-1366",
+        "PURCHASE-CURRENCY-CANCEL-PRICE-B-1366",
+        "PURCHASE-CURRENCY-APPLIED-B-1366"
+      ],
+      "reason": "隔离采购草稿已有价格、无供应商供货档案时，取消切换后原 USD 价格可见；确认切换后新币种显示且价格清空；未保存或覆盖有匹配供应商参考价情况。"
+    },
+    {
+      "id": "D034",
+      "source_variant": "B",
+      "path": "frontend/src/views/PurchaseOrderPage.vue",
+      "line": 380,
+      "kind": "confirmDialog",
+      "title_hint": "更换供应商",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CANCEL_AND_UNSAVED_CONFIRM_OBSERVED",
+      "evidence_ids": [
+        "PURCHASE-SUPPLIER-CONFIRM-B-1366",
+        "PURCHASE-SUPPLIER-CANCEL-B-1366",
+        "PURCHASE-SUPPLIER-CANCEL-PRICE-B-1366",
+        "PURCHASE-SUPPLIER-APPLIED-B-1366",
+        "PURCHASE-SUPPLIER-APPLIED-PRICE-B-1366"
+      ],
+      "reason": "隔离草稿选择第二个合成供应商，取消后原供应商及单价保持；确认后新供应商和空价格分别有可见原图。未保存或验证来源匹配、交易规格。"
+    },
+    {
+      "id": "D035",
+      "source_variant": "B",
+      "path": "frontend/src/views/PurchaseOrderPage.vue",
+      "line": 435,
+      "kind": "confirmDialog",
+      "title_hint": "确认采购下单",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "PURCHASE-PLACE-CONFIRM-B-1366",
+        "PURCHASE-PLACE-CANCEL-B-1366"
+      ],
+      "reason": "采购工作台合成非零单价草稿确认及取消；零价提示、实际下单和 MOQ 例外未验证。"
+    },
+    {
+      "id": "D036",
+      "source_variant": "B",
+      "path": "frontend/src/views/PurchaseOrderPage.vue",
+      "line": 451,
+      "kind": "inputDialog",
+      "title_hint": "采购 MOQ 例外确认",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "SIMULATED_EXCEPTION_INPUT_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "PURCHASE-MOQ-EMPTY-B-1366",
+        "PURCHASE-MOQ-REASON-B-1366",
+        "PURCHASE-MOQ-CANCEL-B-1366",
+        "PURCHASE-MOQ-RETRY-FAIL-B-1366"
+      ],
+      "reason": "模拟 MOQ 例外的原因输入、取消及继续提交载荷；第二请求模拟 503，真实 MOQ 判定和持久化未验证。"
+    },
+    {
+      "id": "D037",
+      "source_variant": "B",
+      "path": "frontend/src/views/PurchaseOrderPage.vue",
+      "line": 465,
+      "kind": "inputDialog",
+      "title_hint": "取消采购单",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CAPTURED_PARTIAL",
+      "evidence_ids": [
+        "PURCHASE-CANCEL-EMPTY-B-1366",
+        "PURCHASE-CANCEL-REASON-B-1366",
+        "PURCHASE-CANCEL-DISMISSED-B-1366"
+      ],
+      "reason": "采购草稿取消原因空值、填写和退出已实测；确认取消及成功/失败反馈未覆盖。"
+    },
+    {
+      "id": "D038",
+      "source_variant": "B",
+      "path": "frontend/src/views/PurchaseOrderPage.vue",
+      "line": 466,
+      "kind": "confirmDialog",
+      "title_hint": "确认删除采购草稿",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CAPTURED_PARTIAL",
+      "evidence_ids": [
+        "PURCHASE-DELETE-CONFIRM-B-1366",
+        "PURCHASE-DELETE-CANCEL-B-1366"
+      ],
+      "reason": "采购工作台草稿删除确认及取消已实测；确认删除、失败和成功反馈未覆盖。"
+    },
+    {
+      "id": "D039",
+      "source_variant": "B",
+      "path": "frontend/src/views/ProductPage.vue",
+      "line": 279,
+      "kind": "confirmDialog",
+      "title_hint": "确认删除产品",
+      "static_status": "inventoried_from_code",
+      "mapping_status": "PARTIAL_CONTEXT_MAPPING",
+      "runtime_status": "CONFIRM_AND_CANCEL_OBSERVED",
+      "evidence_ids": [
+        "PRODUCT-DELETE-CONFIRM-B-1366",
+        "PRODUCT-DELETE-CANCEL-B-1366"
+      ],
+      "reason": "产品列表合成产品的确认及取消路径，未执行确认删除、服务响应或其他视口。"
+    }
+  ]
+}

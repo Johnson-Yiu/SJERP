@@ -1,0 +1,13 @@
+import {test,expect} from '@playwright/test'
+import {mkdir,writeFile} from 'node:fs/promises'
+import {createHash} from 'node:crypto'
+import path from 'node:path'
+test.use({channel:'chrome',deviceScaleFactor:1})
+test('navigation around 980 breakpoint and narrow menu',async({page,browser})=>{
+ test.setTimeout(90000);const root=process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT,entries=[];await mkdir(path.join(root,'originals'),{recursive:true})
+ async function capture(id,steps){const state=await page.evaluate(()=>({route:location.pathname+location.search,viewport_actual:{width:innerWidth,height:innerHeight},dpr:devicePixelRatio,zoom:visualViewport.scale,menuDisplay:getComputedStyle(document.querySelector('.mobile-menu')).display,sidebarTransform:getComputedStyle(document.querySelector('.sidebar')).transform,scrim:!!document.querySelector('.scrim'),visibleText:document.body.innerText.slice(0,2500)}));const name=id+'.png',b=await page.screenshot({path:path.join(root,'originals',name)});entries.push({evidence_id:id,surface_id:'G001',expanded_case_id:id,source_branch:'codex/first-release-independent-review-02',source_sha:'c90cacaa99a468d92dd61c41437834c5d8acb094',browser_version:browser.version(),...state,role:'authenticated codex test superuser',data:'fresh isolated database',steps,simulated:false,capture_time_utc:new Date().toISOString(),file:`originals/${name}`,sha256:createHash('sha256').update(b).digest('hex'),pixels:{width:b.readUInt32BE(16),height:b.readUInt32BE(20)},review:'NOT_REVIEWED'});await writeFile(path.join(root,'navigation-breakpoint-manifest.json'),JSON.stringify(entries,null,2))}
+ for(const size of [{width:981,height:768},{width:980,height:768},{width:390,height:844}]){
+  await page.setViewportSize(size);await page.goto('/customers',{waitUntil:'networkidle'});await page.evaluate(()=>document.fonts.ready);await page.waitForTimeout(350);const menu=page.locator('.mobile-menu');if(size.width>980)await expect(menu).toBeHidden();else await expect(menu).toBeVisible();await capture(`NAV-CLOSED-B-${size.width}`,['open customer page','capture initial navigation'])
+  if(size.width<=980){await menu.click();await expect(page.locator('.sidebar')).toHaveClass(/open/);await expect(page.locator('.scrim')).toBeVisible();await page.waitForTimeout(350);await capture(`NAV-OPEN-B-${size.width}`,['open customer page','click mobile menu','capture expanded navigation']);await page.locator('.scrim').click({position:{x:size.width-5,y:500}});await expect(page.locator('.scrim')).toHaveCount(0);await page.waitForTimeout(350);await capture(`NAV-DISMISSED-B-${size.width}`,['open mobile menu','click scrim','capture closed navigation'])}
+ }
+})

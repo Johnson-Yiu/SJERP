@@ -1,0 +1,100 @@
+{
+  "status": "IN_PROGRESS",
+  "scope": "仅根目录 *manifest.json 的顶层截图记录；只检查存在文件字段与 sha256 的记录；不检查独立轨迹、附件及无文件字段的对象。",
+  "source_sha_B": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+  "checked_images": 158,
+  "file_or_hash_errors": [],
+  "records_with_missing_fields": [
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 0,
+      "evidence_id": "ULR006-B-baseline-before.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    },
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 1,
+      "evidence_id": "ULR006-B-baseline-after.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    },
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 2,
+      "evidence_id": "ULR006-B-packaging-hidden-before.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    },
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 3,
+      "evidence_id": "ULR006-B-packaging-hidden-after.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    },
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 4,
+      "evidence_id": "ULR006-B-packaging-closed-before.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    },
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 5,
+      "evidence_id": "ULR006-B-packaging-closed-after.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    },
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 6,
+      "evidence_id": "ULR006-B-sku-hidden-before.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    },
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 7,
+      "evidence_id": "ULR006-B-sku-hidden-after.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    },
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 8,
+      "evidence_id": "ULR006-B-sku-closed-before.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    },
+    {
+      "manifest": "scroll-manifest.json",
+      "index": 9,
+      "evidence_id": "ULR006-B-sku-closed-after.png",
+      "missing_fields": [
+        "steps"
+      ],
+      "note": "须逐条追溯，不得猜测。"
+    }
+  ],
+  "note": "旧 scroll-manifest.json 原脚本被 v2 覆盖，不能仅凭后续脚本推断旧运行细节；须追溯原始轨迹或保持步骤未知。此检查不证明场景或独立复审通过。"
+}

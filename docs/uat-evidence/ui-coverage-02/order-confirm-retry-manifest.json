@@ -1,0 +1,37 @@
+[
+  {
+    "evidence_id": "ORDER-CONFIRM-RETRY-B-1366",
+    "surface_id": "S018",
+    "expanded_case_id": "ORDER-CONFIRM-RETRY-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\nWS-SO001\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t\n关闭\n订单工作台 · 履约与回款\n编辑草稿\n确认订单\n取消订单\n\nWorkspace Alpha · 下单于 2026-11-10\n\nWS-SO001\n预计交期：未设置\n履约：草稿\n概览\n订单明细 (1)\n采购与发货\n回款 (0)\n装箱\n库存流水 (0)\n操作日志 (0)\n草稿双方资料\n\n尚未记录；未知资料不会从当前主档补填。\n\n买方\n买方名称\n买方国家 / 地区\n买方地址\n买方税号\n买方联系人\n买方电话\n买方邮箱\n买方账单地址\n买方收货地址\n买方收件人\n卖方\n卖方名称\n卖方国家 / 地区\n卖方地址\n卖方税号\n卖方联系人\n卖方电话\n卖方邮箱\n卖方账单地址\n卖方收货地址\n卖方收件人\n保存双方资料\n订单摘要\n订单金额\nUSD 100.00\n合同草稿金额\n商品项数\n1\n订单数量\n10\n预计交期\n未设置\n当前待办\n订单待确认\n\n确认后生成库存预留和应收计划。\n\n履约进度\n\n按销售出库流水统计。\n\n0%\n订单数量\n10\n已出库\n0\n待出库\n10\n查看采购与发货\n回款状态：尚未生效\n\n已收含预收核销，并扣除退款。\n\n0%\n应收计划\nUSD 0.00\n已收金额\nUSD 0.00\n当前待收\n尚未生效\n成本与毛利\n分配商品成本\n¥ 0.00\n分摊附加费用\n¥ 0.00\n预估总成本\n¥ 0.00\n预估毛利\n¥ 720.00\n来源报价\n\n成交时采用的报价版本。\n\n该订单未关联来源报价。\n\n合同金额调整\n\n已确认调整会改变当前合同总额；调减只会减少未结清计划，不会自动退款。\n\nUSD 100.00\n基础金额 USD 100.00\n已确认调整 USD 0.00\n新增调整\n\n暂无金额调整记录。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; draft WS-SO001",
+    "steps": [
+      "simulate confirm POST 503",
+      "click workbench retry",
+      "observe restored draft detail"
+    ],
+    "post_requests_intercepted": 1,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T00:19:22.689Z",
+    "file": "originals/ORDER-CONFIRM-RETRY-B-1366.png",
+    "sha256": "37c34ce044a83d8e344b0bf6b682a5b2c15280e50b99073c2c1f0b3e65a34987",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "NOT_REVIEWED",
+    "observation": "重试后草稿详情重新显示",
+    "limitation": "confirm POST intercepted before service; retry reloads isolated fixture"
+  }
+]

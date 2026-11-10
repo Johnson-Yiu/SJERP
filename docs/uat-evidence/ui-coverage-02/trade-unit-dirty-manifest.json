@@ -1,0 +1,111 @@
+[
+  {
+    "evidence_id": "TRADE-UNIT-DIRTY-CONFIRM-B-1366",
+    "surface_id": "P047",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/sku-trade-units?sku=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nTRANSACTION UNITS\nSKU 交易单位\n11月10日周二\nC\nSKU 交易单位 ●\n×\n⋮\nSKU 交易单位\n\n设置卷、箱等交易规格；库存仍按 SKU 基础单位记账。\n\n返回 SKU\n刷新\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n已选 SKU 详情\nWorkspace Light\nSKU Code\nWS-SKU001\nSales Model\n—\n单位 / 默认单价\npcs / USD 10.00\n\n基础单位：pcs。包装规格不会自动改变此单位。\n\n交易规格 1 项\n新增规格\n\n1 卷或 1 箱含多少基础单位，由换算系数决定。供应商专用规格只适用于对应供应商。\n\nSKU / 规格\t换算关系\t供应商\t数量规则 / 状态\t操作\n隔离测试十件箱\nWS-SKU001\n\t1 箱 = 10.00 pcs\t通用规格\t仅整数数量\n启用\n\t\n编辑备注\n停用\n设为默认\n新增交易规格\n\nWorkspace Light · 基础单位：pcs\n\n规格名称\n交易单位\n换算系数\n填写系数后显示换算关系\n供应商（可选）\n通用规格\nWorkspace Supplier\n允许小数交易数量\n\n例如 0.5 卷；未勾选时只能填写整数卷数或箱数。\n\n设为该 SKU 默认规格\n备注\n\n名称、单位、换算系数、供应商和小数规则保存后固定。规格变化时请停用旧项后新建；历史单据保留原快照。装箱数量及产品净重仍按基础单位填写。\n\n取消\n添加规格\n未保存修改\n\n当前修改尚未保存，离开后将丢失。是否继续？\n\n继续编辑\n放弃修改",
+    "role": "authenticated codex test superuser",
+    "data": "isolated SKU and active synthetic trade unit",
+    "steps": [
+      "select SKU",
+      "enter unsaved name",
+      "click deactivate"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:28:14.940Z",
+    "file": "originals/TRADE-UNIT-DIRTY-CONFIRM-B-1366.png",
+    "sha256": "0759463ac041f40f01429ea54de4df67047def8d8acac00d1759515236ecec95",
+    "review": "NOT_REVIEWED",
+    "limitation": "unsaved edit and cancel only; no deactivation"
+  },
+  {
+    "evidence_id": "TRADE-UNIT-DIRTY-CANCEL-B-1366",
+    "surface_id": "P047",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/sku-trade-units?sku=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nTRANSACTION UNITS\nSKU 交易单位\n11月10日周二\nC\nSKU 交易单位 ●\n×\n⋮\nSKU 交易单位\n\n设置卷、箱等交易规格；库存仍按 SKU 基础单位记账。\n\n返回 SKU\n刷新\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n已选 SKU 详情\nWorkspace Light\nSKU Code\nWS-SKU001\nSales Model\n—\n单位 / 默认单价\npcs / USD 10.00\n\n基础单位：pcs。包装规格不会自动改变此单位。\n\n交易规格 1 项\n新增规格\n\n1 卷或 1 箱含多少基础单位，由换算系数决定。供应商专用规格只适用于对应供应商。\n\nSKU / 规格\t换算关系\t供应商\t数量规则 / 状态\t操作\n隔离测试十件箱\nWS-SKU001\n\t1 箱 = 10.00 pcs\t通用规格\t仅整数数量\n启用\n\t\n编辑备注\n停用\n设为默认\n新增交易规格\n\nWorkspace Light · 基础单位：pcs\n\n规格名称\n交易单位\n换算系数\n填写系数后显示换算关系\n供应商（可选）\n通用规格\nWorkspace Supplier\n允许小数交易数量\n\n例如 0.5 卷；未勾选时只能填写整数卷数或箱数。\n\n设为该 SKU 默认规格\n备注\n\n名称、单位、换算系数、供应商和小数规则保存后固定。规格变化时请停用旧项后新建；历史单据保留原快照。装箱数量及产品净重仍按基础单位填写。\n\n取消\n添加规格",
+    "role": "authenticated codex test superuser",
+    "data": "isolated SKU and active synthetic trade unit",
+    "steps": [
+      "continue editing",
+      "verify unsaved input remains"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:28:15.046Z",
+    "file": "originals/TRADE-UNIT-DIRTY-CANCEL-B-1366.png",
+    "sha256": "157dd2daa8ee2afbb5f771b87e08dcc0f5479d8b575724e190ef12014334a0f9",
+    "review": "NOT_REVIEWED",
+    "limitation": "unsaved edit and cancel only; no deactivation"
+  },
+  {
+    "evidence_id": "TRADE-UNIT-DIRTY-DISCARD-B-1366",
+    "surface_id": "P047",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/sku-trade-units?sku=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nTRANSACTION UNITS\nSKU 交易单位\n11月10日周二\nC\nSKU 交易单位\n×\n⋮\nSKU 交易单位\n\n设置卷、箱等交易规格；库存仍按 SKU 基础单位记账。\n\n返回 SKU\n刷新\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n已选 SKU 详情\nWorkspace Light\nSKU Code\nWS-SKU001\nSales Model\n—\n单位 / 默认单价\npcs / USD 10.00\n\n基础单位：pcs。包装规格不会自动改变此单位。\n\n交易规格 1 项\n新增规格\n\n1 卷或 1 箱含多少基础单位，由换算系数决定。供应商专用规格只适用于对应供应商。\n\nSKU / 规格\t换算关系\t供应商\t数量规则 / 状态\t操作\n隔离测试十件箱\nWS-SKU001\n\t1 箱 = 10.00 pcs\t通用规格\t仅整数数量\n启用\n\t\n编辑备注\n停用\n设为默认\n新增交易规格\n\nWorkspace Light · 基础单位：pcs\n\n规格名称\n交易单位\n换算系数\n填写系数后显示换算关系\n供应商（可选）\n通用规格\nWorkspace Supplier\n允许小数交易数量\n\n例如 0.5 卷；未勾选时只能填写整数卷数或箱数。\n\n设为该 SKU 默认规格\n备注\n\n名称、单位、换算系数、供应商和小数规则保存后固定。规格变化时请停用旧项后新建；历史单据保留原快照。装箱数量及产品净重仍按基础单位填写。\n\n保存中…\n停用交易规格\n\n停用后不能用于新单据，历史单据的换算快照保留。\n\n取消\n确认停用",
+    "role": "authenticated codex test superuser",
+    "data": "isolated SKU and active synthetic trade unit",
+    "steps": [
+      "discard unsaved form",
+      "observe deactivation confirmation"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:28:15.243Z",
+    "file": "originals/TRADE-UNIT-DIRTY-DISCARD-B-1366.png",
+    "sha256": "ad2106ff4804af86fd732bf91579ea49944f7ff4e0d24ad1e97017bb73d3d07b",
+    "review": "NOT_REVIEWED",
+    "limitation": "unsaved edit and cancel only; no deactivation"
+  },
+  {
+    "evidence_id": "TRADE-UNIT-DIRTY-DISCARD-CANCEL-B-1366",
+    "surface_id": "P047",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/sku-trade-units?sku=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nTRANSACTION UNITS\nSKU 交易单位\n11月10日周二\nC\nSKU 交易单位\n×\n⋮\nSKU 交易单位\n\n设置卷、箱等交易规格；库存仍按 SKU 基础单位记账。\n\n返回 SKU\n刷新\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n已选 SKU 详情\nWorkspace Light\nSKU Code\nWS-SKU001\nSales Model\n—\n单位 / 默认单价\npcs / USD 10.00\n\n基础单位：pcs。包装规格不会自动改变此单位。\n\n交易规格 1 项\n新增规格\n\n1 卷或 1 箱含多少基础单位，由换算系数决定。供应商专用规格只适用于对应供应商。\n\nSKU / 规格\t换算关系\t供应商\t数量规则 / 状态\t操作\n隔离测试十件箱\nWS-SKU001\n\t1 箱 = 10.00 pcs\t通用规格\t仅整数数量\n启用\n\t\n编辑备注\n停用\n设为默认\n新增交易规格\n\nWorkspace Light · 基础单位：pcs\n\n规格名称\n交易单位\n换算系数\n填写系数后显示换算关系\n供应商（可选）\n通用规格\nWorkspace Supplier\n允许小数交易数量\n\n例如 0.5 卷；未勾选时只能填写整数卷数或箱数。\n\n设为该 SKU 默认规格\n备注\n\n名称、单位、换算系数、供应商和小数规则保存后固定。规格变化时请停用旧项后新建；历史单据保留原快照。装箱数量及产品净重仍按基础单位填写。\n\n添加规格",
+    "role": "authenticated codex test superuser",
+    "data": "isolated SKU and active synthetic trade unit",
+    "steps": [
+      "cancel deactivation",
+      "verify active state"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:28:15.330Z",
+    "file": "originals/TRADE-UNIT-DIRTY-DISCARD-CANCEL-B-1366.png",
+    "sha256": "8d17a7ff275899a8a10daf2e8f9af5702a8855dbc89fa2efe47bb8378f7c3e5c",
+    "review": "NOT_REVIEWED",
+    "limitation": "unsaved edit and cancel only; no deactivation"
+  }
+]

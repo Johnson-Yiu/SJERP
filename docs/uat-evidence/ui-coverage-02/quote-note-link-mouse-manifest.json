@@ -1,0 +1,29 @@
+[
+  {
+    "evidence_id": "QUOTE-NOTE-LINK-MOUSE-B-1366",
+    "surface_id": "S005",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007-Q001",
+    "steps": [
+      "type linkword",
+      "double click word",
+      "insert https URL"
+    ],
+    "selectedBefore": "linkword",
+    "anchorText": "https://example.com",
+    "editorText": "https://example.comlinkword",
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:01:48.157Z",
+    "file": "originals/QUOTE-NOTE-LINK-MOUSE-B-1366.png",
+    "sha256": "232d6fba8379917754074b0778883f21724b25a68d7ec03f0441b2c74f641570",
+    "review": "NOT_REVIEWED",
+    "limitation": "one mouse selection, unsaved note"
+  }
+]

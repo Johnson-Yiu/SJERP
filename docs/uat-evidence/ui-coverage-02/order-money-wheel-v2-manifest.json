@@ -1,0 +1,151 @@
+[
+  {
+    "evidence_id": "ORDER-SHIPPING-WHEEL-BEFORE-V2-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-SHIPPING-WHEEL-BEFORE-V2-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "打开新建订单",
+      "在目标金额框输入 7",
+      "向下滚动表单并聚焦目标框",
+      "确认指针命中输入框"
+    ],
+    "pointer_hit_input_before_wheel": true,
+    "before": "7",
+    "after": "7",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:48:55.573Z",
+    "file": "originals/ORDER-SHIPPING-WHEEL-BEFORE-V2-B-1366.png",
+    "sha256": "1bcccf9d27db8039ead45f3a5c2c772850a186fb99dad5398f8dc7fcffcfb7a1",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "记录的是当前 Chrome、视口及此字段。"
+  },
+  {
+    "evidence_id": "ORDER-SHIPPING-WHEEL-AFTER-V2-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-SHIPPING-WHEEL-AFTER-V2-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "打开新建订单",
+      "在目标金额框输入 7",
+      "向下滚动表单并聚焦目标框",
+      "确认指针命中输入框",
+      "向上滚动鼠标滚轮",
+      "读取变化值后滚回字段位置截图"
+    ],
+    "pointer_hit_input_before_wheel": true,
+    "before": "7",
+    "after": "8",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:48:56.293Z",
+    "file": "originals/ORDER-SHIPPING-WHEEL-AFTER-V2-B-1366.png",
+    "sha256": "20c1cd4e6d84558f2682dd02c99f96232f8794a6ad4fe32f60f48cf4b23c568d",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "记录的是当前 Chrome、视口及此字段。"
+  },
+  {
+    "evidence_id": "ORDER-DISCOUNT-WHEEL-BEFORE-V2-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-DISCOUNT-WHEEL-BEFORE-V2-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "打开新建订单",
+      "在目标金额框输入 7",
+      "向下滚动表单并聚焦目标框",
+      "确认指针命中输入框"
+    ],
+    "pointer_hit_input_before_wheel": true,
+    "before": "6",
+    "after": "6",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:48:56.811Z",
+    "file": "originals/ORDER-DISCOUNT-WHEEL-BEFORE-V2-B-1366.png",
+    "sha256": "6a8b44912a289114ea5c9b87c6a7c55a2c13a77ea3520729a93d80835a8b573a",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "折扣输入 7 后滚动定位时已变为 6，截图前值以 before 字段为准；未保存。",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  },
+  {
+    "evidence_id": "ORDER-DISCOUNT-WHEEL-AFTER-V2-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-DISCOUNT-WHEEL-AFTER-V2-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "打开新建订单",
+      "在目标金额框输入 7",
+      "向下滚动表单并聚焦目标框",
+      "确认指针命中输入框",
+      "向上滚动鼠标滚轮",
+      "读取变化值后滚回字段位置截图"
+    ],
+    "pointer_hit_input_before_wheel": true,
+    "before": "6",
+    "after": "7",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:48:57.593Z",
+    "file": "originals/ORDER-DISCOUNT-WHEEL-AFTER-V2-B-1366.png",
+    "sha256": "2f73a22cd2af19cdf80f30c552c6a61722e3426efc4ab6c40e55ac3ec9fd73b6",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "折扣输入 7 后滚动定位时已变为 6，截图前值以 before 字段为准；未保存。"
+  }
+]

@@ -1,0 +1,139 @@
+[
+  {
+    "evidence_id": "ULR014-B-failed-child.png",
+    "surface_id": "S011",
+    "expanded_case_id": "ULR014-B-failed-child",
+    "related_ulr": [
+      "ULR-014"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/quotes?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "parent": {
+      "text": "创建报价修订版\n基于 ISS007-Q001 创建修订版；原报价保留。\n保存 ISS007-SKU001 的默认包装失败：服务器暂时不可用，请稍后重试。\n客户 *\n请选择\nISS007 隔离验收客户\n报价单号\n报价日期 *\n/\n/\n有效期\n天\n/\n/\n状态\n币种\nUSD\nCNY\nEUR\nGBP\n对人民币汇率\n交期（天）\n定金比例（%）\n修订说明 *\n说明本次调整内容。\n报价明细\n选择 SKU 后填写数量、交易单位和单价。\n选择 SKU\n全部分类\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001\nSales Model: ISS7-001\nUSD 0.00\n已选 SKU 详情\nISS007 可上传图片 SKU\nSKU Code\nISS007-SKU001\nSales Model\nISS7-001\n单位 / 默认单价\npcs / USD 0.00\n客户版产品描述可按本次报价调整\nSKU\nMODEL\n数量 *\n单价 *\n产品描述\n小计\nISS007-SKU001\npcs（基础单位）\n增加规格行\n25.00\n库存参考 · 按 SKU 基础单位\n最近刷新 00:06:27\n",
+      "rect": {
+        "x": 317,
+        "y": 146,
+        "width": 980,
+        "height": 610
+      },
+      "visibility": "visible",
+      "display": "block",
+      "zIndex": "auto"
+    },
+    "child": {
+      "text": "补充 SKU 默认包装\nISS007-SKU001 · 保存后将作为该 SKU 的默认包装配置\n包装模板 *\n请选择包装模板\n合成包装模板\n装箱数 (pcs) *\n单件净重 (kg) *\n取消\n保存默认包装",
+      "rect": {
+        "x": 671,
+        "y": 338,
+        "width": 520,
+        "height": 360
+      },
+      "visibility": "visible",
+      "display": "block",
+      "zIndex": "auto"
+    },
+    "parentError": {
+      "text": "保存 ISS007-SKU001 的默认包装失败：服务器暂时不可用，请稍后重试。",
+      "rect": {
+        "x": 339,
+        "y": -903,
+        "width": 936,
+        "height": 47
+      },
+      "visibility": "visible",
+      "display": "flex",
+      "zIndex": "auto"
+    },
+    "confirmation": null,
+    "role": "authenticated codex test superuser",
+    "object_reference": "ISS007-Q001 / ISS007-SKU001",
+    "data": "isolated synthetic quote and packaging template",
+    "simulated": "PUT packaging blocked before service, synthetic 503",
+    "capture_time_utc": "2026-11-09T16:06:28.551Z",
+    "file": "originals/ULR014-B-failed-child.png",
+    "sha256": "5cb6ccc9b6f6b9dc865ac7660814c22750d9c2d08e463113210c4c0dc417d82b",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "在隔离报价列表打开 ISS007-Q001 并创建修订版",
+      "生成预计装箱方案并打开补充默认包装",
+      "选择合成包装模板并填写数量",
+      "保存默认包装；PUT 在到达服务前被拦截并返回模拟 503"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-quote-packaging.spec.js 重建截图前步骤"
+  },
+  {
+    "evidence_id": "ULR014-B-parent-error.png",
+    "surface_id": "S011",
+    "expanded_case_id": "ULR014-B-parent-error",
+    "related_ulr": [
+      "ULR-014"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/quotes?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "parent": {
+      "text": "创建报价修订版\n基于 ISS007-Q001 创建修订版；原报价保留。\n保存 ISS007-SKU001 的默认包装失败：服务器暂时不可用，请稍后重试。\n客户 *\n请选择\nISS007 隔离验收客户\n报价单号\n报价日期 *\n/\n/\n有效期\n天\n/\n/\n状态\n币种\nUSD\nCNY\nEUR\nGBP\n对人民币汇率\n交期（天）\n定金比例（%）\n修订说明 *\n说明本次调整内容。\n报价明细\n选择 SKU 后填写数量、交易单位和单价。\n选择 SKU\n全部分类\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001\nSales Model: ISS7-001\nUSD 0.00\n已选 SKU 详情\nISS007 可上传图片 SKU\nSKU Code\nISS007-SKU001\nSales Model\nISS7-001\n单位 / 默认单价\npcs / USD 0.00\n客户版产品描述可按本次报价调整\nSKU\nMODEL\n数量 *\n单价 *\n产品描述\n小计\nISS007-SKU001\npcs（基础单位）\n增加规格行\n25.00\n库存参考 · 按 SKU 基础单位\n最近刷新 00:06:27\n",
+      "rect": {
+        "x": 317,
+        "y": 146,
+        "width": 980,
+        "height": 610
+      },
+      "visibility": "visible",
+      "display": "block",
+      "zIndex": "auto"
+    },
+    "child": null,
+    "parentError": {
+      "text": "保存 ISS007-SKU001 的默认包装失败：服务器暂时不可用，请稍后重试。",
+      "rect": {
+        "x": 339,
+        "y": 259,
+        "width": 936,
+        "height": 47
+      },
+      "visibility": "visible",
+      "display": "flex",
+      "zIndex": "auto"
+    },
+    "confirmation": null,
+    "role": "authenticated codex test superuser",
+    "object_reference": "ISS007-Q001 / ISS007-SKU001",
+    "data": "isolated synthetic quote and packaging template",
+    "simulated": "PUT packaging blocked before service, synthetic 503",
+    "capture_time_utc": "2026-11-09T16:06:28.892Z",
+    "file": "originals/ULR014-B-parent-error.png",
+    "sha256": "09377af3d1f86e6fba00e54f544be0ec7353c9a7326c64185b8acd3a5ec31c5f",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "在隔离报价列表打开 ISS007-Q001 并创建修订版",
+      "生成预计装箱方案并打开补充默认包装",
+      "选择合成包装模板并填写数量",
+      "保存默认包装；PUT 在到达服务前被拦截并返回模拟 503",
+      "取消子窗并确认放弃修改",
+      "滚到父窗错误提示"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-quote-packaging.spec.js 重建截图前步骤"
+  }
+]

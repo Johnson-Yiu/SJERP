@@ -1,0 +1,1535 @@
+[
+  {
+    "evidence_id": "ULR006-B-v2-baseline-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-baseline-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "scrollChain": [
+      {
+        "tag": "DIV",
+        "className": "contact-create-card",
+        "scrollTop": 0,
+        "scrollHeight": 223,
+        "clientHeight": 223,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "contact-create-section",
+        "scrollTop": 0,
+        "scrollHeight": 367,
+        "clientHeight": 367,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 0,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:09:59.036Z",
+    "file": "originals/ULR006-B-v2-baseline-before.png",
+    "sha256": "2055e5cc7143f9567e06db6fa8937ca46ba30e129986cad182009425704cb258",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "滚轮向上至顶部"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  },
+  {
+    "evidence_id": "ULR006-B-v2-baseline-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-baseline-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "scrollChain": [
+      {
+        "tag": "TEXTAREA",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 56,
+        "clientHeight": 56,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "field full",
+        "scrollTop": 0,
+        "scrollHeight": 91,
+        "clientHeight": 91,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "form-grid",
+        "scrollTop": 0,
+        "scrollHeight": 285,
+        "clientHeight": 285,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 550,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:09:59.529Z",
+    "file": "originals/ULR006-B-v2-baseline-after.png",
+    "sha256": "ee496f84bb46bd8b854dea8db189ab80077e1e6f4692bfced7714c77b1c87620",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "滚轮向上至顶部",
+      "再向下滚动 550 像素"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  },
+  {
+    "evidence_id": "ULR006-B-v2-packaging-hidden-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-packaging-hidden-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "hidden",
+    "scrollChain": [
+      {
+        "tag": "DIV",
+        "className": "contact-create-card",
+        "scrollTop": 0,
+        "scrollHeight": 223,
+        "clientHeight": 223,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "contact-create-section",
+        "scrollTop": 0,
+        "scrollHeight": 367,
+        "clientHeight": 367,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 0,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "hidden"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [
+      {
+        "className": "modal-backdrop",
+        "display": "none"
+      }
+    ],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:10:00.287Z",
+    "file": "originals/ULR006-B-v2-packaging-hidden-before.png",
+    "sha256": "d19b2a24cd2371c15d57b7ee41125980af4ce4e1fa3675fc0c01a19b00293ba1",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "打开包装管理新建模板",
+      "切回客户标签",
+      "滚轮向上至顶部"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  },
+  {
+    "evidence_id": "ULR006-B-v2-packaging-hidden-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-packaging-hidden-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "hidden",
+    "scrollChain": [
+      {
+        "tag": "TEXTAREA",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 56,
+        "clientHeight": 56,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "field full",
+        "scrollTop": 0,
+        "scrollHeight": 91,
+        "clientHeight": 91,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "form-grid",
+        "scrollTop": 0,
+        "scrollHeight": 285,
+        "clientHeight": 285,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 550,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "hidden"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [
+      {
+        "className": "modal-backdrop",
+        "display": "none"
+      }
+    ],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:10:00.765Z",
+    "file": "originals/ULR006-B-v2-packaging-hidden-after.png",
+    "sha256": "72c8b2d67a04d54dcad00c2a8a3ead4fae3c45e550778c73ae110a1f08a9f23d",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "打开包装管理新建模板",
+      "切回客户标签",
+      "滚轮向上至顶部",
+      "再向下滚动 550 像素"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  },
+  {
+    "evidence_id": "ULR006-B-v2-packaging-closed-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-packaging-closed-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "scrollChain": [
+      {
+        "tag": "DIV",
+        "className": "contact-create-card",
+        "scrollTop": 0,
+        "scrollHeight": 223,
+        "clientHeight": 223,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "contact-create-section",
+        "scrollTop": 0,
+        "scrollHeight": 367,
+        "clientHeight": 367,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 0,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:10:01.396Z",
+    "file": "originals/ULR006-B-v2-packaging-closed-before.png",
+    "sha256": "af74723ad82b70bebdd65706fbd3d5dd199b7380a5ba674dffb7c639fb4c098f",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "打开包装管理新建模板",
+      "切回客户标签",
+      "切回包装管理并关闭表单",
+      "切回客户标签",
+      "滚轮向上至顶部"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  },
+  {
+    "evidence_id": "ULR006-B-v2-packaging-closed-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-packaging-closed-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "scrollChain": [
+      {
+        "tag": "TEXTAREA",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 56,
+        "clientHeight": 56,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "field full",
+        "scrollTop": 0,
+        "scrollHeight": 91,
+        "clientHeight": 91,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "form-grid",
+        "scrollTop": 0,
+        "scrollHeight": 285,
+        "clientHeight": 285,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 550,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:10:01.870Z",
+    "file": "originals/ULR006-B-v2-packaging-closed-after.png",
+    "sha256": "03e09375eb3acde1689f1d0ddf9e6b5aaa93e572a8d4fbacc1fc0506a4e80fd9",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "打开包装管理新建模板",
+      "切回客户标签",
+      "切回包装管理并关闭表单",
+      "切回客户标签",
+      "滚轮向上至顶部",
+      "再向下滚动 550 像素"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  },
+  {
+    "evidence_id": "ULR006-B-v2-sku-hidden-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-sku-hidden-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "hidden",
+    "scrollChain": [
+      {
+        "tag": "DIV",
+        "className": "contact-create-card",
+        "scrollTop": 0,
+        "scrollHeight": 223,
+        "clientHeight": 223,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "contact-create-section",
+        "scrollTop": 0,
+        "scrollHeight": 367,
+        "clientHeight": 367,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 0,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "hidden"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [
+      {
+        "className": "modal-backdrop",
+        "display": "none"
+      }
+    ],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:10:02.607Z",
+    "file": "originals/ULR006-B-v2-sku-hidden-before.png",
+    "sha256": "e3b4b7089bed0063066494d41260d07dd87faaabfb2264903fe19be4dae61e0a",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "打开并关闭包装管理新建模板后切回客户",
+      "在 SKU 管理打开 WS-SKU001 历史版本",
+      "切回客户标签",
+      "滚轮向上至顶部"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  },
+  {
+    "evidence_id": "ULR006-B-v2-sku-hidden-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-sku-hidden-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "hidden",
+    "scrollChain": [
+      {
+        "tag": "TEXTAREA",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 56,
+        "clientHeight": 56,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "field full",
+        "scrollTop": 0,
+        "scrollHeight": 91,
+        "clientHeight": 91,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "form-grid",
+        "scrollTop": 0,
+        "scrollHeight": 285,
+        "clientHeight": 285,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 550,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "hidden"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [
+      {
+        "className": "modal-backdrop",
+        "display": "none"
+      }
+    ],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:10:03.084Z",
+    "file": "originals/ULR006-B-v2-sku-hidden-after.png",
+    "sha256": "88db93819e128e6a00db3e6b995302c1dd5f77aafd1bed4e9a1670d29918f9e4",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "打开并关闭包装管理新建模板后切回客户",
+      "在 SKU 管理打开 WS-SKU001 历史版本",
+      "切回客户标签",
+      "滚轮向上至顶部",
+      "再向下滚动 550 像素"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  },
+  {
+    "evidence_id": "ULR006-B-v2-sku-closed-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-sku-closed-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "scrollChain": [
+      {
+        "tag": "DIV",
+        "className": "contact-create-card",
+        "scrollTop": 0,
+        "scrollHeight": 223,
+        "clientHeight": 223,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "contact-create-section",
+        "scrollTop": 0,
+        "scrollHeight": 367,
+        "clientHeight": 367,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 0,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:10:03.635Z",
+    "file": "originals/ULR006-B-v2-sku-closed-before.png",
+    "sha256": "e3b4b7089bed0063066494d41260d07dd87faaabfb2264903fe19be4dae61e0a",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "打开并关闭包装管理新建模板后切回客户",
+      "在 SKU 管理打开 WS-SKU001 历史版本",
+      "切回客户标签",
+      "切回 SKU 管理并关闭历史版本",
+      "切回客户标签",
+      "滚轮向上至顶部"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  },
+  {
+    "evidence_id": "ULR006-B-v2-sku-closed-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-sku-closed-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "scrollChain": [
+      {
+        "tag": "TEXTAREA",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 56,
+        "clientHeight": 56,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "field full",
+        "scrollTop": 0,
+        "scrollHeight": 91,
+        "clientHeight": 91,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "form-grid",
+        "scrollTop": 0,
+        "scrollHeight": 285,
+        "clientHeight": 285,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-body",
+        "scrollTop": 0,
+        "scrollHeight": 1045,
+        "clientHeight": 1045,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "FORM",
+        "className": "modal wide customer-editor",
+        "scrollTop": 550,
+        "scrollHeight": 1193,
+        "clientHeight": 610,
+        "overflowY": "auto"
+      },
+      {
+        "tag": "DIV",
+        "className": "modal-backdrop",
+        "scrollTop": 0,
+        "scrollHeight": 634,
+        "clientHeight": 634,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "resource-page core-list-page",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "workspace-pane",
+        "scrollTop": 0,
+        "scrollHeight": 624,
+        "clientHeight": 624,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "SECTION",
+        "className": "content",
+        "scrollTop": 0,
+        "scrollHeight": 700,
+        "clientHeight": 700,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "MAIN",
+        "className": "main",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "app-shell",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "DIV",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "BODY",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 834,
+        "overflowY": "visible"
+      },
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "scrollHeight": 834,
+        "clientHeight": 768,
+        "overflowY": "visible"
+      }
+    ],
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:10:04.115Z",
+    "file": "originals/ULR006-B-v2-sku-closed-after.png",
+    "sha256": "88db93819e128e6a00db3e6b995302c1dd5f77aafd1bed4e9a1670d29918f9e4",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "客户列表打开新建客户表单",
+      "打开并关闭包装管理新建模板后切回客户",
+      "在 SKU 管理打开 WS-SKU001 历史版本",
+      "切回客户标签",
+      "切回 SKU 管理并关闭历史版本",
+      "切回客户标签",
+      "滚轮向上至顶部",
+      "再向下滚动 550 像素"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-scroll.spec.js 的 v2 对应阶段追溯"
+  }
+]

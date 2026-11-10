@@ -1,0 +1,140 @@
+[
+  {
+    "evidence_id": "ORDER-LEAD-WHEEL-BEFORE-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-LEAD-WHEEL-BEFORE-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "open new order",
+      "enter 7 lead-time days",
+      "focus input"
+    ],
+    "before": "7",
+    "after": "7",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:41:23.723Z",
+    "file": "originals/ORDER-LEAD-WHEEL-BEFORE-B-1366.png",
+    "sha256": "5424a625887ac470e4576c9f17287c7061246fbcb9eabe8b0b2dfe2ca9b91cd9",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  },
+  {
+    "evidence_id": "ORDER-LEAD-WHEEL-AFTER-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-LEAD-WHEEL-AFTER-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "open new order",
+      "enter 7 lead-time days",
+      "focus input",
+      "wheel upward over input"
+    ],
+    "before": "7",
+    "after": "8",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:41:24.148Z",
+    "file": "originals/ORDER-LEAD-WHEEL-AFTER-B-1366.png",
+    "sha256": "3279a3452b64de0d4bbc64a8b9058eb9ff0e8394b190c6a508a6409986cc6827",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  },
+  {
+    "evidence_id": "ORDER-LEAD-WHEEL-BEFORE-B-390",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-LEAD-WHEEL-BEFORE-B-390",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 390,
+      "height": 844
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "open new order",
+      "enter 7 lead-time days",
+      "focus input"
+    ],
+    "before": "7",
+    "after": "7",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:41:25.848Z",
+    "file": "originals/ORDER-LEAD-WHEEL-BEFORE-B-390.png",
+    "sha256": "22df5d00f88594eb30f9aec405c1675683fc33f67826d9ba281927fc420e80b8",
+    "pixels": {
+      "width": 390,
+      "height": 844
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "滚轮前交期 7 天、预计日期 11月17日；滚轮后 8 天、11月18日。"
+  },
+  {
+    "evidence_id": "ORDER-LEAD-WHEEL-AFTER-B-390",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-LEAD-WHEEL-AFTER-B-390",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 390,
+      "height": 844
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "open new order",
+      "enter 7 lead-time days",
+      "focus input",
+      "wheel upward over input"
+    ],
+    "before": "7",
+    "after": "8",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:41:26.234Z",
+    "file": "originals/ORDER-LEAD-WHEEL-AFTER-B-390.png",
+    "sha256": "547e00c8f6ee89f1887da6b8f04203c771be4ecc0f85c7655c876a9a92ad6a2b",
+    "pixels": {
+      "width": 390,
+      "height": 844
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "滚轮前交期 7 天、预计日期 11月17日；滚轮后 8 天、11月18日。"
+  }
+]

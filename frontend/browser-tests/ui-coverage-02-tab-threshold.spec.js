@@ -1,0 +1,12 @@
+import {test,expect} from '@playwright/test'
+import {mkdir,writeFile} from 'node:fs/promises'
+import {createHash} from 'node:crypto'
+import path from 'node:path'
+test.use({channel:'chrome',viewport:{width:1366,height:768},deviceScaleFactor:1})
+test('first active tab overflow after creating drafts',async({page,browser})=>{
+ test.setTimeout(90000);const root=process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT,entries=[],measurements=[];await mkdir(path.join(root,'originals'),{recursive:true});const active=()=>page.locator('.workspace-pane[aria-hidden="false"]');await page.goto('/customers',{waitUntil:'networkidle'})
+ for(let i=1;i<=10;i++){
+  await page.getByRole('tab',{name:'客户管理',exact:true}).click();await active().getByRole('button',{name:/新建客户/}).click();await expect(active().locator('.customer-editor')).toBeVisible();const state=await page.evaluate(()=>{const bar=document.querySelector('.workspace-tabs'),b=bar.getBoundingClientRect(),tab=bar.querySelector('[aria-selected="true"]'),r=tab.getBoundingClientRect();return {route:location.pathname+location.search,viewport_actual:{width:innerWidth,height:innerHeight},dpr:devicePixelRatio,zoom:visualViewport.scale,bar:{left:b.left,right:b.right,scrollLeft:bar.scrollLeft,scrollWidth:bar.scrollWidth,clientWidth:bar.clientWidth},active:{left:r.left,right:r.right,title:tab.innerText}}});const visible=state.active.left>=state.bar.left&&state.active.right<=state.bar.right;measurements.push({draft:i,...state,fullyVisible:visible});await writeFile(path.join(root,'tab-threshold-measurements.json'),JSON.stringify(measurements,null,2));if(!visible){const id=`TABS-FIRST-OVERFLOW-B-1366`,name=id+'.png',b=await page.screenshot({path:path.join(root,'originals',name)});entries.push({evidence_id:id,surface_id:'G002',expanded_case_id:id,source_branch:'codex/first-release-independent-review-02',source_sha:'c90cacaa99a468d92dd61c41437834c5d8acb094',browser_version:browser.version(),...state,role:'authenticated codex test superuser',data:'isolated workspace fixture; unsaved blank customer drafts',steps:[`open ${i} customer drafts from list`,'measure active tab and capture first not fully visible'],simulated:false,capture_time_utc:new Date().toISOString(),file:`originals/${name}`,sha256:createHash('sha256').update(b).digest('hex'),pixels:{width:b.readUInt32BE(16),height:b.readUInt32BE(20)},review:'NOT_REVIEWED'});await writeFile(path.join(root,'tab-threshold-manifest.json'),JSON.stringify(entries,null,2));break}
+ }
+ expect(entries.length).toBe(1)
+})

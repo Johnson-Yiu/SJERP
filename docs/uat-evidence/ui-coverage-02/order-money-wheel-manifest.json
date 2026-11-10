@@ -1,0 +1,140 @@
+[
+  {
+    "evidence_id": "ORDER-SHIPPING-WHEEL-BEFORE-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-SHIPPING-WHEEL-BEFORE-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "open new order",
+      "enter 7 in 运费",
+      "focus input"
+    ],
+    "before": "7",
+    "after": "7",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:44:14.114Z",
+    "file": "originals/ORDER-SHIPPING-WHEEL-BEFORE-B-1366.png",
+    "sha256": "ecd5ceeab88b1a527020f7ea778dc9ad3e2581385ee93662b76c223e7ce26fa7",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "INVALID_FOR_WHEEL_CONCLUSION",
+    "limitation": "人工查看截图发现目标字段被固定底栏遮挡；鼠标滚轮未证明命中输入框，不能据 before/after 推断滚轮行为。"
+  },
+  {
+    "evidence_id": "ORDER-SHIPPING-WHEEL-AFTER-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-SHIPPING-WHEEL-AFTER-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "open new order",
+      "enter 7 in 运费",
+      "focus input",
+      "wheel upward over input"
+    ],
+    "before": "7",
+    "after": "7",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:44:14.535Z",
+    "file": "originals/ORDER-SHIPPING-WHEEL-AFTER-B-1366.png",
+    "sha256": "fef52fe4f7026c237d48e6b014b4219a5c3b395b7e05825903911aec57203d0c",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "INVALID_FOR_WHEEL_CONCLUSION",
+    "limitation": "人工查看截图发现目标字段被固定底栏遮挡；鼠标滚轮未证明命中输入框，不能据 before/after 推断滚轮行为。"
+  },
+  {
+    "evidence_id": "ORDER-DISCOUNT-WHEEL-BEFORE-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-DISCOUNT-WHEEL-BEFORE-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "open new order",
+      "enter 7 in 折扣",
+      "focus input"
+    ],
+    "before": "7",
+    "after": "7",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:44:14.685Z",
+    "file": "originals/ORDER-DISCOUNT-WHEEL-BEFORE-B-1366.png",
+    "sha256": "ecd5ceeab88b1a527020f7ea778dc9ad3e2581385ee93662b76c223e7ce26fa7",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "INVALID_FOR_WHEEL_CONCLUSION",
+    "limitation": "人工查看截图发现目标字段被固定底栏遮挡；鼠标滚轮未证明命中输入框，不能据 before/after 推断滚轮行为。"
+  },
+  {
+    "evidence_id": "ORDER-DISCOUNT-WHEEL-AFTER-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-DISCOUNT-WHEEL-AFTER-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "open new order",
+      "enter 7 in 折扣",
+      "focus input",
+      "wheel upward over input"
+    ],
+    "before": "7",
+    "after": "7",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:44:15.098Z",
+    "file": "originals/ORDER-DISCOUNT-WHEEL-AFTER-B-1366.png",
+    "sha256": "fef52fe4f7026c237d48e6b014b4219a5c3b395b7e05825903911aec57203d0c",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "INVALID_FOR_WHEEL_CONCLUSION",
+    "limitation": "人工查看截图发现目标字段被固定底栏遮挡；鼠标滚轮未证明命中输入框，不能据 before/after 推断滚轮行为。"
+  }
+]

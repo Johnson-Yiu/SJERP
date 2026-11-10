@@ -1,0 +1,7 @@
+{
+  "type": "beforeunload",
+  "message": "",
+  "observed_at_utc": "2026-11-09T20:28:06.155Z",
+  "action": "dismiss",
+  "native_window_screenshot": false
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "evidence_id": "ULR019-B-selected.png",
+    "surface_id": "S017",
+    "expanded_case_id": "ULR019-B-selected",
+    "related_ulr": [
+      "ULR-019"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "http://127.0.0.1:1788/customers?detail=1&tab=orders",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "isolated Workspace Alpha and WS-SKU001",
+    "simulated": "POST intercepted before service",
+    "capture_time_utc": "2026-11-09T17:03:24.882Z",
+    "file": "originals/ULR019-B-selected.png",
+    "sha256": "0cedee02124d68ef633b080eaef46641da96a7fb2bcefe639463be0c3b191810",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "从客户列表打开 Workspace Alpha",
+      "订单记录 → 新增订单",
+      "状态选择已确认并选择 WS-SKU001",
+      "截图；之后保存 POST 在服务前拦截，见 related-order-result.json"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-related-order.spec.js 重建；截图时点在 POST 之前，原 capture_time_utc 写于响应之后"
+  }
+]

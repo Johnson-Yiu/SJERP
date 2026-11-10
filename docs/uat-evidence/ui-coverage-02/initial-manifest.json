@@ -1,0 +1,140 @@
+[
+  {
+    "evidence_id": "F035-B-1366.png",
+    "surface_id": "F035",
+    "state": "history preflight initial",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "route": "/history-preflight",
+    "role": "authenticated codex test superuser; development_superadmin=false; RBAC enforcement=false in isolated DB",
+    "data": "new isolated SQLite database",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T06:47:29.666Z",
+    "file": "originals/F035-B-1366.png",
+    "sha256": "62ea9bd4cc488151ef5c157c470c1cc214d875f28d9be6a0d1da97460ac0bed8",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "related_ulr": [],
+    "notes": "Preflight page, not ULR-001 takeover page; original capture script mislabeled the route.",
+    "expanded_case_id": "F035-B-1366",
+    "steps": [
+      "navigate to /history-preflight",
+      "wait for network idle"
+    ],
+    "metadata_provenance": "case ID assigned from existing evidence ID; steps reconstructed from ui-coverage-02-initial.spec.js"
+  },
+  {
+    "evidence_id": "F035-B-1920.png",
+    "surface_id": "F035",
+    "state": "history preflight initial",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "route": "/history-preflight",
+    "role": "authenticated codex test superuser; development_superadmin=false; RBAC enforcement=false in isolated DB",
+    "data": "new isolated SQLite database",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T06:47:29.786Z",
+    "file": "originals/F035-B-1920.png",
+    "sha256": "da6aeb3a0180525b5ac09a9d2ffadfc35d2392333de942a05dab598353aaa2a1",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "related_ulr": [],
+    "notes": "Preflight page, not ULR-001 takeover page; original capture script mislabeled the route.",
+    "expanded_case_id": "F035-B-1920",
+    "steps": [
+      "navigate to /history-preflight",
+      "wait for network idle"
+    ],
+    "metadata_provenance": "case ID assigned from existing evidence ID; steps reconstructed from ui-coverage-02-initial.spec.js"
+  },
+  {
+    "evidence_id": "ULR018-B-1366-pending.png",
+    "surface_id": "F021",
+    "state": "first GET pending",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "route": "/rmb-cash-events",
+    "role": "authenticated codex test superuser; development_superadmin=false; RBAC enforcement=false in isolated DB",
+    "data": "new isolated SQLite database",
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T06:47:30.855Z",
+    "file": "originals/ULR018-B-1366-pending.png",
+    "sha256": "034a42a4286bce01d4fde16c57fd783c3aa1022b2b47409fa6cc526d58db430c",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "related_ulr": [
+      "ULR-018"
+    ],
+    "expanded_case_id": "ULR018-B-1366-pending",
+    "steps": [
+      "delay cash-events GET in browser",
+      "navigate to /rmb-cash-events",
+      "capture while GET pending"
+    ],
+    "metadata_provenance": "case ID assigned from existing evidence ID; steps reconstructed from ui-coverage-02-initial.spec.js"
+  },
+  {
+    "evidence_id": "ULR018-B-1366-loaded.png",
+    "surface_id": "F021",
+    "state": "first GET complete",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "route": "/rmb-cash-events",
+    "role": "authenticated codex test superuser; development_superadmin=false; RBAC enforcement=false in isolated DB",
+    "data": "new isolated SQLite database",
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T06:47:31.447Z",
+    "file": "originals/ULR018-B-1366-loaded.png",
+    "sha256": "2c715be53a366d618ce45293e4d489089583f2e150fc91692b9e9fd4d7d5fc3c",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "related_ulr": [
+      "ULR-018"
+    ],
+    "expanded_case_id": "ULR018-B-1366-loaded",
+    "steps": [
+      "delay cash-events GET in browser",
+      "navigate to /rmb-cash-events",
+      "capture while GET pending",
+      "release delayed request",
+      "wait for response and network idle"
+    ],
+    "metadata_provenance": "case ID assigned from existing evidence ID; steps reconstructed from ui-coverage-02-initial.spec.js"
+  }
+]

@@ -1,0 +1,141 @@
+[
+  {
+    "evidence_id": "ORDER-QUOTE-OVERWRITE-CONFIRM-B-1366",
+    "surface_id": "S016",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\n订单管理 · 新建 1 ●\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n暂无订单\n\n点击“新建订单”开始录入。\n\n新建订单\n订单号\n客户 *\n请选择\nISS007 隔离验收客户\n订单日期 *\n/\n/\n预计交期\n天\n/\n/\n状态\n保存后为草稿；确认订单后进入履约。\n来源报价（可选）\n不关联报价\nISS007-Q001\n币种\nUSD\nCNY\nEUR\nGBP\n对人民币汇率\n产品明细\n先选择一个或多个 SKU，再填写数量与价格\n选择 SKU\n全部分类\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001\nSales Model: ISS7-001\nUSD 0.00\n\n从左侧勾选 SKU 后，可在这里查看详情。\n\nSKU\n数量 *\n单价 *\n成本\n小计\n\n请先从上方选择至少一个 SKU。\n\n运费\n折扣\n商品小计 USD 0.00\n合计\nUSD 0.00\n条款 / 备注\n取消\n保存销售订单草稿\n从报价载入\n\n载入报价将覆盖当前订单草稿中的客户、商品、价格、日期、币种、汇率及条款。是否继续？\n\n取消\n载入报价",
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007 quote and unsaved order draft",
+    "steps": [
+      "new order",
+      "enter lead time",
+      "select source quote"
+    ],
+    "writes": 0,
+    "loads": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T02:10:13.678Z",
+    "file": "originals/ORDER-QUOTE-OVERWRITE-CONFIRM-B-1366.png",
+    "sha256": "960e7b2a5fcf531f7b84de26ef68e963fbed9707d84c1620f501d459fb47d945",
+    "review": "NOT_REVIEWED",
+    "limitation": "isolated quote read; no order save"
+  },
+  {
+    "evidence_id": "ORDER-QUOTE-OVERWRITE-CANCEL-B-1366",
+    "surface_id": "S016",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\n订单管理 · 新建 1 ●\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n暂无订单\n\n点击“新建订单”开始录入。\n\n新建订单\n订单号\n客户 *\n请选择\nISS007 隔离验收客户\n订单日期 *\n/\n/\n预计交期\n天\n/\n/\n状态\n保存后为草稿；确认订单后进入履约。\n来源报价（可选）\n不关联报价\nISS007-Q001\n币种\nUSD\nCNY\nEUR\nGBP\n对人民币汇率\n产品明细\n先选择一个或多个 SKU，再填写数量与价格\n选择 SKU\n全部分类\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001\nSales Model: ISS7-001\nUSD 0.00\n\n从左侧勾选 SKU 后，可在这里查看详情。\n\nSKU\n数量 *\n单价 *\n成本\n小计\n\n请先从上方选择至少一个 SKU。\n\n运费\n折扣\n商品小计 USD 0.00\n合计\nUSD 0.00\n条款 / 备注\n取消\n保存销售订单草稿",
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007 quote and unsaved order draft",
+    "steps": [
+      "cancel overwrite",
+      "verify draft preserved"
+    ],
+    "writes": 0,
+    "loads": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T02:10:14.309Z",
+    "file": "originals/ORDER-QUOTE-OVERWRITE-CANCEL-B-1366.png",
+    "sha256": "0f9600526e94e69fa466e61535c11304905e809460ba4d84c31491e28c9080ed",
+    "review": "NOT_REVIEWED",
+    "limitation": "isolated quote read; no order save"
+  },
+  {
+    "evidence_id": "ORDER-QUOTE-OVERWRITE-LOADED-B-1366",
+    "surface_id": "S016",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\n订单管理 · 新建 1\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n暂无订单\n\n点击“新建订单”开始录入。\n\n新建订单\n订单号\n客户 *\n请选择\nISS007 隔离验收客户\n订单日期 *\n/\n/\n预计交期\n天\n/\n/\n状态\n保存后为草稿；确认订单后进入履约。\n来源报价（可选）\n不关联报价\nISS007-Q001\n币种\nUSD\nCNY\nEUR\nGBP\n对人民币汇率\n产品明细\n先选择一个或多个 SKU，再填写数量与价格\n选择 SKU\n全部分类\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001\nSales Model: ISS7-001\nUSD 0.00\n已选 SKU 详情\nISS007 可上传图片 SKU\nSKU Code\nISS007-SKU001\nSales Model\nISS7-001\n单位 / 默认单价\npcs / USD 0.00\nSKU\n数量 *\n单价 *\n成本\n小计\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001 · Sales Model: ISS7-001\npcs（基础单位）\n增加规格行\n25.00\n运费\n折扣\n商品小计 USD 25.00\n合计\nUSD 25.00\n条款 / 备注\n取消\n保存销售订单草稿",
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007 quote and unsaved order draft",
+    "steps": [
+      "confirm overwrite",
+      "load isolated quote into unsaved order"
+    ],
+    "writes": 0,
+    "loads": 1,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T02:10:14.803Z",
+    "file": "originals/ORDER-QUOTE-OVERWRITE-LOADED-B-1366.png",
+    "sha256": "42fb58159cc558494195015f30cb579edb3aa336d54b00e73508cc2743b77ccb",
+    "review": "NOT_REVIEWED",
+    "limitation": "isolated quote read; no order save"
+  },
+  {
+    "evidence_id": "ORDER-QUOTE-OVERWRITE-ITEM-B-1366",
+    "surface_id": "S016",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\n订单管理 · 新建 1\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n暂无订单\n\n点击“新建订单”开始录入。\n\n新建订单\n订单号\n客户 *\n请选择\nISS007 隔离验收客户\n订单日期 *\n/\n/\n预计交期\n天\n/\n/\n状态\n保存后为草稿；确认订单后进入履约。\n来源报价（可选）\n不关联报价\nISS007-Q001\n币种\nUSD\nCNY\nEUR\nGBP\n对人民币汇率\n产品明细\n先选择一个或多个 SKU，再填写数量与价格\n选择 SKU\n全部分类\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001\nSales Model: ISS7-001\nUSD 0.00\n已选 SKU 详情\nISS007 可上传图片 SKU\nSKU Code\nISS007-SKU001\nSales Model\nISS7-001\n单位 / 默认单价\npcs / USD 0.00\nSKU\n数量 *\n单价 *\n成本\n小计\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001 · Sales Model: ISS7-001\npcs（基础单位）\n增加规格行\n25.00\n运费\n折扣\n商品小计 USD 25.00\n合计\nUSD 25.00\n条款 / 备注\n取消\n保存销售订单草稿",
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007 quote and unsaved order draft",
+    "steps": [
+      "scroll to imported SKU line"
+    ],
+    "writes": 0,
+    "loads": 1,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T02:10:14.903Z",
+    "file": "originals/ORDER-QUOTE-OVERWRITE-ITEM-B-1366.png",
+    "sha256": "a26c130c184dc6e53383a848ec560d2256422709b081b48dbae6f9028d5a4756",
+    "review": "NOT_REVIEWED",
+    "limitation": "isolated quote read; no order save"
+  },
+  {
+    "evidence_id": "ORDER-QUOTE-OVERWRITE-ITEM-VALUES-B-1366",
+    "surface_id": "S016",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\n订单管理 · 新建 1\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n暂无订单\n\n点击“新建订单”开始录入。\n\n新建订单\n订单号\n客户 *\n请选择\nISS007 隔离验收客户\n订单日期 *\n/\n/\n预计交期\n天\n/\n/\n状态\n保存后为草稿；确认订单后进入履约。\n来源报价（可选）\n不关联报价\nISS007-Q001\n币种\nUSD\nCNY\nEUR\nGBP\n对人民币汇率\n产品明细\n先选择一个或多个 SKU，再填写数量与价格\n选择 SKU\n全部分类\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001\nSales Model: ISS7-001\nUSD 0.00\n已选 SKU 详情\nISS007 可上传图片 SKU\nSKU Code\nISS007-SKU001\nSales Model\nISS7-001\n单位 / 默认单价\npcs / USD 0.00\nSKU\n数量 *\n单价 *\n成本\n小计\nISS007 可上传图片 SKU\nSKU: ISS007-SKU001 · Sales Model: ISS7-001\npcs（基础单位）\n增加规格行\n25.00\n运费\n折扣\n商品小计 USD 25.00\n合计\nUSD 25.00\n条款 / 备注\n取消\n保存销售订单草稿",
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007 quote and unsaved order draft",
+    "steps": [
+      "scroll to line quantities and prices"
+    ],
+    "writes": 0,
+    "loads": 1,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T02:10:15.530Z",
+    "file": "originals/ORDER-QUOTE-OVERWRITE-ITEM-VALUES-B-1366.png",
+    "sha256": "fe7d22af9f7024121e34ee88de2941b4b1f8ba0a5dcca6d7e03c2a5db3cac8e0",
+    "review": "NOT_REVIEWED",
+    "limitation": "isolated quote read; no order save"
+  }
+]

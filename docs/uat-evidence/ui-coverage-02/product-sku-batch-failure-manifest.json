@@ -1,0 +1,79 @@
+[
+  {
+    "evidence_id": "PRODUCT-SKU-BATCH-FAIL-B-1920",
+    "surface_id": "P008",
+    "expanded_case_id": "PRODUCT-SKU-BATCH-FAIL-B-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=skus",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "error_rect": {
+      "x": 170,
+      "y": 721.5625,
+      "width": 1701,
+      "height": 41,
+      "top": 721.5625,
+      "right": 1871,
+      "bottom": 762.5625,
+      "left": 170
+    },
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n产品资料\n产品管理\n11月10日周二\nC\n产品管理\n×\n⋮\nWorkspace Light\n×\n⋮\n产品管理\n\n维护产品名称、分类和销售状态；SKU 编码请在“SKU 管理”中维护。\n\n新建产品\n产品总数\n1\n当前筛选范围\n在售产品\n1\n可继续添加 SKU\n开发中\n0\n尚未正式销售\nSKU 总数\n1\n产品下的 SKU\n全部分类\nWorkspace Category\n产品编号顺序\n产品名称顺序\nSKU 数量最多\n查询\n重置\n刷新\n产品编号\t产品名称\t销售型号前缀\t主分类\t状态\tSKU\t参数\t证书\t\nWS-P001\tWorkspace Light\n未填写英文名称\n\t—\tWorkspace Category\t在售\t1\t0\t0\t\n产品管理 / 产品详情\n查看经营分析\n编辑主档\n关闭\nWS-P001 · Workspace Category\nWorkspace Light\n在售\nSKU\n1\n供应商\n0\n当前库存\n0\n参数\n0\n总览\nSKU 管理1\n供应能力规则0\n订单记录0\n销售统计\n出入库流水0\n产品参数0\n证书档案0\n销售规则\n操作日志\nSKU 管理与批量维护\n\n新增组合在上方填写；下方统一维护已有 SKU、候选供应商及启停状态。\n\n新增 SKU 组合\nSKU 档案与供应商分配\n\n一份 SKU 清单管理规格与供货候选；实际采购供应商在销售订单或采购单中确认。\n\n1 个操作失败：服务器暂时不可用，请稍后重试。\n\n成功停用 0 个 SKU。\n\n已有 SKU · 1 条\n\n筛选参数并勾选 SKU，可批量绑定候选供应商；同一参数多选为任一匹配，不同参数同时满足。\n\n清空筛选\n启用 SKU 总数\n1\n已有候选供应商\n0\n覆盖率\n0%\n全部来源\n按供货范围匹配\n曾采购过\n手动添加\n已登记供货信息\n显示已停用 SKU\n已选 0 项（仅当前筛选结果）\n批量绑定供应商\n\tSKU Code\t中文名称 / Sales Model\t规格\t库存 / 单位\t成本 / 售价\t可选供应商\t最近采购\t状态\t操作\n\tWS-SKU001\t\nWorkspace Light\n未设置 Sales Model\n\t—\t0.00\npcs\n\t4.0000 / 10.0000\nUSD\n\t暂无可选供应商\t尚未采购\t启用\t\n查看 SKU\n参数变更与历史方案 调整已有 SKU 时，先分析影响再确认发布",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; WS-P001 active WS-SKU001",
+    "steps": [
+      "open product SKU management",
+      "select SKU by keyboard",
+      "confirm deactivate",
+      "return simulated 503"
+    ],
+    "patch_requests_intercepted": 1,
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T21:08:22.720Z",
+    "file": "originals/PRODUCT-SKU-BATCH-FAIL-B-1920.png",
+    "sha256": "c12b58b05f3eb10737133d64c3e1348d89e1d8fd59e9185a9da66b11d5d60cf8",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "PATCH intercepted and fulfilled with simulated 503 before service; no SKU deactivated"
+  },
+  {
+    "evidence_id": "PRODUCT-SKU-BATCH-FAIL-LATER-B-1920",
+    "surface_id": "P008",
+    "expanded_case_id": "PRODUCT-SKU-BATCH-FAIL-LATER-B-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=skus",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n产品资料\n产品管理\n11月10日周二\nC\n产品管理\n×\n⋮\nWorkspace Light\n×\n⋮\n产品管理\n\n维护产品名称、分类和销售状态；SKU 编码请在“SKU 管理”中维护。\n\n新建产品\n产品总数\n1\n当前筛选范围\n在售产品\n1\n可继续添加 SKU\n开发中\n0\n尚未正式销售\nSKU 总数\n1\n产品下的 SKU\n全部分类\nWorkspace Category\n产品编号顺序\n产品名称顺序\nSKU 数量最多\n查询\n重置\n刷新\n产品编号\t产品名称\t销售型号前缀\t主分类\t状态\tSKU\t参数\t证书\t\nWS-P001\tWorkspace Light\n未填写英文名称\n\t—\tWorkspace Category\t在售\t1\t0\t0\t\n产品管理 / 产品详情\n查看经营分析\n编辑主档\n关闭\nWS-P001 · Workspace Category\nWorkspace Light\n在售\nSKU\n1\n供应商\n0\n当前库存\n0\n参数\n0\n总览\nSKU 管理1\n供应能力规则0\n订单记录0\n销售统计\n出入库流水0\n产品参数0\n证书档案0\n销售规则\n操作日志\nSKU 管理与批量维护\n\n新增组合在上方填写；下方统一维护已有 SKU、候选供应商及启停状态。\n\n新增 SKU 组合\nSKU 档案与供应商分配\n\n一份 SKU 清单管理规格与供货候选；实际采购供应商在销售订单或采购单中确认。\n\n成功停用 0 个 SKU。\n\n已有 SKU · 1 条\n\n筛选参数并勾选 SKU，可批量绑定候选供应商；同一参数多选为任一匹配，不同参数同时满足。\n\n清空筛选\n启用 SKU 总数\n1\n已有候选供应商\n0\n覆盖率\n0%\n全部来源\n按供货范围匹配\n曾采购过\n手动添加\n已登记供货信息\n显示已停用 SKU\n已选 0 项（仅当前筛选结果）\n批量绑定供应商\n\tSKU Code\t中文名称 / Sales Model\t规格\t库存 / 单位\t成本 / 售价\t可选供应商\t最近采购\t状态\t操作\n\tWS-SKU001\t\nWorkspace Light\n未设置 Sales Model\n\t—\t0.00\npcs\n\t4.0000 / 10.0000\nUSD\n\t暂无可选供应商\t尚未采购\t启用\t\n查看 SKU\n参数变更与历史方案 调整已有 SKU 时，先分析影响再确认发布",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; WS-P001 active WS-SKU001",
+    "steps": [
+      "wait two seconds after failure and parent refresh"
+    ],
+    "patch_requests_intercepted": 1,
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T21:08:24.826Z",
+    "file": "originals/PRODUCT-SKU-BATCH-FAIL-LATER-B-1920.png",
+    "sha256": "e0fd55457679770255fd234e21545b3d2f5c0622c02a7b784847097213f986c8",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "PATCH intercepted and fulfilled with simulated 503 before service; no SKU deactivated"
+  }
+]

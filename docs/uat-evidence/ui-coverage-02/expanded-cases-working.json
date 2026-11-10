@@ -1,0 +1,662 @@
+{
+  "status": "IN_PROGRESS_PARTIAL_NOT_FINAL_DENOMINATOR",
+  "warning": "仅包含已逐项明确的少数用例；原始种子和未拆分情况仍见 seed-queue.json。CAPTURED 不代表通过或独立审查。",
+  "cases": [
+    {
+      "case_id": "G005-B-INITIAL-1366",
+      "seed_check_id": "G005.V01",
+      "surface_id": "G005",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "未认证 /login",
+      "prerequisites": "新的浏览器上下文",
+      "steps": [
+        "打开 /login"
+      ],
+      "expected": "显示账号、密码和登录操作",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LOGIN-B-1366"
+      ],
+      "simulated": false,
+      "observation": "证据已采集；独立审查待定",
+      "limitations": "仅初始表单，未验证登录流程或错误。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G022-B-FIRST-RETRYING-1366",
+      "seed_check_id": "G022.T01",
+      "surface_id": "G022",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "客户列表首次加载",
+      "prerequisites": "隔离测试超级管理员；GET 返回模拟503并自动重试",
+      "steps": [
+        "打开 /customers"
+      ],
+      "expected": "请求未完成期间显示加载提示",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "CUSTOMERS-FIRST-503-LOADING-B-1366"
+      ],
+      "simulated": true,
+      "observation": "证据已采集；独立审查待定",
+      "limitations": "503 是受控模拟，不代表服务实际故障。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G022-B-FIRST-ERROR-1366",
+      "seed_check_id": "G022.T03",
+      "surface_id": "G022",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "客户列表首次失败",
+      "prerequisites": "隔离测试超级管理员；GET 返回模拟503",
+      "steps": [
+        "打开 /customers",
+        "等待自动重试结束"
+      ],
+      "expected": "显示失败信息和重新加载入口",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "CUSTOMERS-FIRST-503-ERROR-B-1366",
+        "CUSTOMER-RETRY-FAIL-B-1366",
+        "CUSTOMER-RETRY-RECOVERED-B-1366"
+      ],
+      "simulated": true,
+      "observation": "证据已采集；独立审查待定",
+      "limitations": "后续同一隔离场景解除模拟后点击重新加载，成功返回两条合成客户；不代表其他故障类型。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G022-B-REFRESHING-1366",
+      "seed_check_id": "G022.T02",
+      "surface_id": "G022",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "有数据客户列表刷新",
+      "prerequisites": "隔离测试超级管理员；两条合成客户；刷新 GET 模拟503",
+      "steps": [
+        "成功加载客户列表",
+        "点击刷新"
+      ],
+      "expected": "刷新期间保留旧数据并显示刷新中",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "CUSTOMERS-REFRESH-503-LOADING-B-1366"
+      ],
+      "simulated": true,
+      "observation": "证据已采集；独立审查待定",
+      "limitations": "图片底部未完整显示数据行。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G022-B-REFRESH-ERROR-1366",
+      "seed_check_id": "G022.T04",
+      "surface_id": "G022",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "有数据客户列表刷新失败",
+      "prerequisites": "隔离测试超级管理员；两条合成客户；刷新 GET 模拟503",
+      "steps": [
+        "成功加载客户列表",
+        "点击刷新",
+        "等待自动重试结束"
+      ],
+      "expected": "保留上次数据并提示刷新失败",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "CUSTOMERS-REFRESH-503-ERROR-B-1366",
+        "CUSTOMER-REFRESH-FAIL-ROWS-B-1366"
+      ],
+      "simulated": true,
+      "observation": "证据已采集；独立审查待定",
+      "limitations": "补图显示失败提示和两条保留的合成客户；模拟不代表实际服务故障。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "F028-B-EMPTY-1366",
+      "seed_check_id": "F028.BASE",
+      "surface_id": "F028",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "账户余额与对账 /finance-ledger",
+      "prerequisites": "隔离测试超级管理员；无财务数据",
+      "steps": [
+        "打开账户余额与对账",
+        "点击账户与映射",
+        "滚轮查看下方"
+      ],
+      "expected": "显示对应页签初始表单",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LEDGER-F028-B-1366",
+        "LEDGER-F028-SCROLL-B-1366"
+      ],
+      "simulated": false,
+      "observation": "证据已采集；独立审查待定",
+      "limitations": "仅空表单；具体操作类型、权限、成功和失败状态未覆盖。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "F029-B-EMPTY-1366",
+      "seed_check_id": "F029.BASE",
+      "surface_id": "F029",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "账户余额与对账 /finance-ledger",
+      "prerequisites": "隔离测试超级管理员；无财务数据",
+      "steps": [
+        "打开账户余额与对账",
+        "点击登记与复核",
+        "滚轮查看下方"
+      ],
+      "expected": "显示对应页签初始表单",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LEDGER-F029-B-1366",
+        "LEDGER-F029-SCROLL-B-1366"
+      ],
+      "simulated": false,
+      "observation": "证据已采集；独立审查待定",
+      "limitations": "仅空表单；具体操作类型、权限、成功和失败状态未覆盖。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "F030-B-EMPTY-1366",
+      "seed_check_id": "F030.BASE",
+      "surface_id": "F030",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "账户余额与对账 /finance-ledger",
+      "prerequisites": "隔离测试超级管理员；无财务数据",
+      "steps": [
+        "打开账户余额与对账",
+        "点击账户核对"
+      ],
+      "expected": "显示对应页签初始表单",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LEDGER-F030-B-1366"
+      ],
+      "simulated": false,
+      "observation": "证据已采集；独立审查待定",
+      "limitations": "仅空表单；具体操作类型、权限、成功和失败状态未覆盖。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "F031-B-EMPTY-1366",
+      "seed_check_id": "F031.BASE",
+      "surface_id": "F031",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "账户余额与对账 /finance-ledger",
+      "prerequisites": "隔离测试超级管理员；无财务数据",
+      "steps": [
+        "打开账户余额与对账",
+        "点击转账与分类",
+        "滚轮查看下方"
+      ],
+      "expected": "显示对应页签初始表单",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LEDGER-F031-B-1366",
+        "LEDGER-F031-SCROLL-B-1366"
+      ],
+      "simulated": false,
+      "observation": "证据已采集；独立审查待定",
+      "limitations": "仅空表单；具体操作类型、权限、成功和失败状态未覆盖。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G022-B-SEARCH-NO-RESULTS-1366",
+      "seed_check_id": "G022.T06",
+      "surface_id": "G022",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "客户列表 /customers",
+      "prerequisites": "隔离测试超级管理员；两条合成客户",
+      "steps": [
+        "搜索不存在的客户",
+        "点击清除筛选"
+      ],
+      "expected": "显示筛选无结果并允许恢复客户列表",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "CUSTOMER-SEARCH-EMPTY-B-1366",
+        "CUSTOMER-SEARCH-CLEARED-B-1366"
+      ],
+      "simulated": false,
+      "observation": "无结果提示可见，清除后两条客户可见；独立审查待定",
+      "limitations": "只测试搜索；未测试各筛选器及真实空库。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "CUSTOMER-EMPTY-B-1366",
+      "seed_check_id": "G022.T05",
+      "surface_id": "G022",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "客户列表 /customers",
+      "prerequisites": "空隔离库；测试超级管理员；真实 GET 返回零客户",
+      "steps": [
+        "打开客户列表",
+        "确认接口空结果及空态"
+      ],
+      "expected": "显示暂无客户及创建引导",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "CUSTOMER-EMPTY-B-1366"
+      ],
+      "simulated": false,
+      "observation": "空态及新建入口可见；独立审查待定",
+      "limitations": "只覆盖空库初始状态，未创建客户。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "CUSTOMER-EMPTY-B-1920",
+      "seed_check_id": "G022.T05",
+      "surface_id": "G022",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "客户列表 /customers",
+      "prerequisites": "空隔离库；测试超级管理员；真实 GET 返回零客户",
+      "steps": [
+        "打开客户列表",
+        "确认接口空结果及空态"
+      ],
+      "expected": "显示暂无客户及创建引导",
+      "viewport": "1920x1080",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "CUSTOMER-EMPTY-B-1920"
+      ],
+      "simulated": false,
+      "observation": "空态及新建入口可见；独立审查待定",
+      "limitations": "只覆盖空库初始状态，未创建客户。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G022-B-COUNTRY-OPTIONS-FAIL-RETRY-1366",
+      "seed_check_id": "G022.T07",
+      "surface_id": "G022",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "客户列表 /customers",
+      "prerequisites": "两条隔离合成客户；国家选项 GET 模拟503",
+      "steps": [
+        "进入客户列表并等待失败",
+        "解除拦截并点击重新加载筛选选项"
+      ],
+      "expected": "提示选项失败且保留客户列表，重试后恢复国家选项",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "CUSTOMER-OPTIONS-FAIL-B-1366",
+        "CUSTOMER-OPTIONS-RETRY-B-1366"
+      ],
+      "simulated": true,
+      "observation": "失败提示和客户行可见；重试后错误消失且国家选项恢复，独立审查待定",
+      "limitations": "只模拟国家选项失败，未测负责人选项及其他失败类型。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G022-B-COUNTRY-STATUS-RELOAD-RESET-1366",
+      "seed_check_id": "G022.V01",
+      "surface_id": "G022",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "客户列表 /customers",
+      "prerequisites": "隔离测试超级管理员；两条合成客户",
+      "steps": [
+        "选择美国与线索",
+        "刷新浏览器",
+        "重置筛选"
+      ],
+      "expected": "筛选出对应客户，刷新恢复筛选，重置后恢复两条客户",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "CUSTOMER-COMBINED-B-1366",
+        "CUSTOMER-COMBINED-RELOAD-B-1366",
+        "CUSTOMER-COMBINED-RESET-B-1366"
+      ],
+      "simulated": false,
+      "observation": "筛选、刷新回显、重置均有截图和自动断言；独立审查待定",
+      "limitations": "仅此国家与状态组合；负责人筛选未覆盖。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "LOGIN-INVALID-B-1366",
+      "seed_check_id": "G005.T03",
+      "surface_id": "G005",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "未登录 /login",
+      "prerequisites": "fresh isolated database; fictitious account and password",
+      "steps": [
+        "enter fictitious unknown account and wrong password",
+        "submit to isolated service",
+        "wait for error and password clearing"
+      ],
+      "expected": "显示对应登录状态或反馈",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LOGIN-INVALID-B-1366"
+      ],
+      "simulated": false,
+      "observation": "对应登录提示或登录中状态可见；密码清理由自动断言验证。",
+      "limitations": "仅隔离环境及本次输入；独立审阅待定。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "LOGIN-PENDING-B-1366",
+      "seed_check_id": "G005.T02",
+      "surface_id": "G005",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "未登录 /login",
+      "prerequisites": "fresh isolated database; fictitious account and password",
+      "steps": [
+        "intercept and hold login POST",
+        "submit fictitious credentials",
+        "capture pending state"
+      ],
+      "expected": "显示对应登录状态或反馈",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LOGIN-PENDING-B-1366"
+      ],
+      "simulated": true,
+      "observation": "对应登录提示或登录中状态可见；密码清理由自动断言验证。",
+      "limitations": "仅隔离环境及本次输入；独立审阅待定。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "LOGIN-NETWORK-ERROR-B-1366",
+      "seed_check_id": "G005.T04",
+      "surface_id": "G005",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "未登录 /login",
+      "prerequisites": "fresh isolated database; fictitious account and password",
+      "steps": [
+        "abort held login POST before service",
+        "wait for network error and password clearing"
+      ],
+      "expected": "显示对应登录状态或反馈",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LOGIN-NETWORK-ERROR-B-1366"
+      ],
+      "simulated": true,
+      "observation": "对应登录提示或登录中状态可见；密码清理由自动断言验证。",
+      "limitations": "仅隔离环境及本次输入；独立审阅待定。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "LOGIN-EMPTY-USERNAME-B-1366",
+      "seed_check_id": "G005.T01",
+      "surface_id": "G005",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "未登录 /login",
+      "prerequisites": "新浏览器上下文；隔离服务",
+      "steps": [
+        "click login with both fields empty"
+      ],
+      "expected": "必填字段获得焦点，浏览器阻止提交",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LOGIN-EMPTY-USERNAME-B-1366"
+      ],
+      "simulated": false,
+      "observation": "对应空字段获得焦点；原生提示在截图中不稳定，校验状态及无 POST 由记录与断言佐证。",
+      "limitations": "原生提示气泡未稳定呈现在截图；只验证当前 Chrome。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "LOGIN-EMPTY-PASSWORD-B-1366",
+      "seed_check_id": "G005.T01",
+      "surface_id": "G005",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "未登录 /login",
+      "prerequisites": "新浏览器上下文；隔离服务",
+      "steps": [
+        "enter fictitious account only",
+        "click login with password empty"
+      ],
+      "expected": "必填字段获得焦点，浏览器阻止提交",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "LOGIN-EMPTY-PASSWORD-B-1366"
+      ],
+      "simulated": false,
+      "observation": "对应空字段获得焦点；原生提示在截图中不稳定，校验状态及无 POST 由记录与断言佐证。",
+      "limitations": "原生提示气泡未稳定呈现在截图；只验证当前 Chrome。",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G039.T02-B-1366-RECENT-01",
+      "seed_check_id": "G039.T02",
+      "surface_id": "G039",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "跟进列表编辑合成记录",
+      "prerequisites": "已保存合成附件；隔离 SQLite，codex 测试超级管理员",
+      "steps": [
+        "删除附件并取消"
+      ],
+      "expected": "确认框提示立即生效；取消保留附件",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "FOLLOWUP-ATTACHMENT-DELETE-CONFIRM-B-1366",
+        "FOLLOWUP-ATTACHMENT-DELETE-CANCEL-B-1366"
+      ],
+      "simulated": false,
+      "observation": "取消后附件控件仍在且无写请求",
+      "limitations": "未验证确认删除和其他父入口",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G093.T01-B-1366-RECENT-02",
+      "seed_check_id": "G093.T01",
+      "surface_id": "G093",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "库存流水列表",
+      "prerequisites": "合成手工流水；隔离 SQLite，codex 测试超级管理员",
+      "steps": [
+        "打开冲销原因窗口"
+      ],
+      "expected": "空原因不能确认",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "MOVEMENT-REVERSE-EMPTY-B-1366"
+      ],
+      "simulated": false,
+      "observation": "空原因时确认禁用",
+      "limitations": "未验证其他流水或权限",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G093.T03-B-1366-RECENT-03",
+      "seed_check_id": "G093.T03",
+      "surface_id": "G093",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "库存流水列表",
+      "prerequisites": "合成手工流水；隔离 SQLite，codex 测试超级管理员",
+      "steps": [
+        "填写原因后取消冲销"
+      ],
+      "expected": "取消后保留流水",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "MOVEMENT-REVERSE-REASON-B-1366",
+        "MOVEMENT-REVERSE-CANCEL-B-1366"
+      ],
+      "simulated": false,
+      "observation": "流水仍显示，无写请求",
+      "limitations": "未验证真实冲销",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "G093.T05-B-1366-RECENT-04",
+      "seed_check_id": "G093.T05",
+      "surface_id": "G093",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "库存流水列表",
+      "prerequisites": "合成手工流水；隔离 SQLite，codex 测试超级管理员",
+      "steps": [
+        "确认冲销，浏览器模拟 POST 503"
+      ],
+      "expected": "显示失败反馈",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "MOVEMENT-FAIL-B-1366"
+      ],
+      "simulated": true,
+      "observation": "错误提示可见，流水保留",
+      "limitations": "只模拟失败，请求未到服务；成功未测",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "P040.T02-B-1366-RECENT-05",
+      "seed_check_id": "P040.T02",
+      "surface_id": "P040",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "包装模板列表编辑",
+      "prerequisites": "模板关联一个合成 SKU；隔离 SQLite，codex 测试超级管理员",
+      "steps": [
+        "修改长度并尝试保存"
+      ],
+      "expected": "出现影响确认",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "PACKAGING-CHANGE-CONFIRM-B-1366",
+        "PACKAGING-CHANGE-CANCEL-B-1366"
+      ],
+      "simulated": false,
+      "observation": "显示确认；取消保留编辑，未写入",
+      "limitations": "仅长度和取消，其他字段未测",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "P047.T05-B-1366-RECENT-06",
+      "seed_check_id": "P047.T05",
+      "surface_id": "P047",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "交易规格列表",
+      "prerequisites": "合成启用规格；隔离 SQLite，codex 测试超级管理员",
+      "steps": [
+        "点击停用并取消"
+      ],
+      "expected": "先确认且取消后保持启用",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "TRADE-UNIT-DEACTIVATE-CONFIRM-B-1366",
+        "TRADE-UNIT-DEACTIVATE-CANCEL-B-1366"
+      ],
+      "simulated": false,
+      "observation": "确认可见，取消后启用且无写请求",
+      "limitations": "仅列表取消，其他权限与状态未覆盖",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "P029.T02-B-1366-RECENT-07",
+      "seed_check_id": "P029.T02",
+      "surface_id": "P029",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "SKU 列表编辑",
+      "prerequisites": "合成 SKU 与启用来源；隔离 SQLite，codex 测试超级管理员",
+      "steps": [
+        "点击停用来源并取消"
+      ],
+      "expected": "显示确认并保持来源启用",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "SKU-SOURCE-DEACTIVATE-CONFIRM-B-1366",
+        "SKU-SOURCE-DEACTIVATE-CANCEL-B-1366"
+      ],
+      "simulated": false,
+      "observation": "确认可见，取消后来源启用",
+      "limitations": "未覆盖首选、停用来源及其他父入口",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "S016.V01-B-1366-RECENT-08",
+      "seed_check_id": "S016.V01",
+      "surface_id": "S016",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "订单列表新建草稿",
+      "prerequisites": "合成报价可用；隔离 SQLite，codex 测试超级管理员",
+      "steps": [
+        "填写交期后选择并确认载入报价"
+      ],
+      "expected": "未保存草稿带入报价资料",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "ORDER-QUOTE-OVERWRITE-LOADED-B-1366",
+        "ORDER-QUOTE-OVERWRITE-ITEM-VALUES-B-1366"
+      ],
+      "simulated": false,
+      "observation": "显示客户、来源报价及 SKU 数量 2、单价 12.50",
+      "limitations": "其他字段和持久化未逐项核对",
+      "review_disposition": "PENDING"
+    },
+    {
+      "case_id": "S016.T02-B-1366-RECENT-09",
+      "seed_check_id": "S016.T02",
+      "surface_id": "S016",
+      "source_branch": "codex/first-release-independent-review-02",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "parent_context": "订单列表新建草稿",
+      "prerequisites": "已输入交期、合成报价可用；隔离 SQLite，codex 测试超级管理员",
+      "steps": [
+        "选择报价后取消覆盖确认"
+      ],
+      "expected": "保留已有草稿内容",
+      "viewport": "1366x768",
+      "execution_status": "CAPTURED",
+      "evidence_ids": [
+        "ORDER-QUOTE-OVERWRITE-CONFIRM-B-1366",
+        "ORDER-QUOTE-OVERWRITE-CANCEL-B-1366"
+      ],
+      "simulated": false,
+      "observation": "交期保留，来源未载入，无业务写请求",
+      "limitations": "未覆盖其他已有内容或加载中禁用状态",
+      "review_disposition": "PENDING"
+    }
+  ]
+}

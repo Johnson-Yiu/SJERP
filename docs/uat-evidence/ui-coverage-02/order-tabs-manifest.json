@@ -1,0 +1,200 @@
+[
+  {
+    "evidence_id": "ORDER-S019-DRAFT-B-1366",
+    "surface_id": "S019",
+    "expanded_case_id": "ORDER-S019-DRAFT-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?detail=1&tab=items",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\nWS-SO001\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t\n关闭\n订单工作台 · 履约与回款\n编辑草稿\n确认订单\n取消订单\n\nWorkspace Alpha · 下单于 2026-11-10\n\nWS-SO001\n预计交期：未设置\n履约：草稿\n概览\n订单明细 (1)\n采购与发货\n回款 (0)\n装箱\n库存流水 (0)\n操作日志 (0)\n订单明细\n\n商品信息按保存时的快照显示。更换采购来源不影响已生成的采购单。\n\n1 项\nModel\t内部名称 / SKU Code\tDescription\t当前采购来源\t数量\t单位\t成交单价\t参考成本单价\t小计\n未设置\tWorkspace Light\nWS-SKU001\n\tWorkspace Light\t未分配\n\t10.00\tpcs\tUSD 10.00\tUSD 4.00\tUSD 100.00\n商品小计\nUSD 100.00\n运费\nUSD 0.00\n折扣 / 优惠\n- USD 0.00\n订单总计\nUSD 100.00",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; draft WS-SO001 with one synthetic item",
+    "steps": [
+      "open WS-SO001 order workbench",
+      "click 订单明细 tab"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:37:22.589Z",
+    "file": "originals/ORDER-S019-DRAFT-B-1366.png",
+    "sha256": "5f7014f4e29298d015f2674c6e75aa2f7fbc0493cb9ffa7c7e0adb4aff0cf9be",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "draft initial tab only; no write operations",
+    "observation": "草稿对应页签初始内容可见；未执行写操作。"
+  },
+  {
+    "evidence_id": "ORDER-S020-DRAFT-B-1366",
+    "surface_id": "S020",
+    "expanded_case_id": "ORDER-S020-DRAFT-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?detail=1&tab=fulfillment",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\nWS-SO001\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t\n关闭\n订单工作台 · 履约与回款\n编辑草稿\n确认订单\n取消订单\n\nWorkspace Alpha · 下单于 2026-11-10\n\nWS-SO001\n预计交期：未设置\n履约：草稿\n概览\n订单明细 (1)\n采购与发货\n回款 (0)\n装箱\n库存流水 (0)\n操作日志 (0)\n采购与发货\n生成采购草稿\n待采购 SKU\n1\n采购中 SKU\n0\n待发货明细\n1\n已完成明细\n0\nSKU 履约明细\n\n数量按 SKU 基础单位显示。\n\nSKU / 当前状态\t采购来源\t订单需求\t采购进度\t到货进度\t发货进度\t操作\n\nWS-SKU001\nWorkspace Light\n基础单位：pcs\n明细 #1 · 基础单位\n待选供应商\t\n未分配\n\t\n订单 10 pcs\n已预留 0 pcs\n\t\n待采购 10 pcs\n可建草稿 10 pcs\n\t—\t\n已发 0 pcs\n待发 10 pcs\n\t\n选择来源\n关联采购单\n\n采购草稿不计入已下单数量。\n\n尚未创建关联采购单\n\n请先选择采购来源，再生成采购草稿。\n\n发货记录\n\n整单冲销会同步撤销关联的超发或增补记录。\n\n0 条\n暂无发货记录\n\n有可发库存后，可在明细中确认发货。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; draft WS-SO001 with one synthetic item",
+    "steps": [
+      "open WS-SO001 order workbench",
+      "click 采购与发货 tab"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:37:22.985Z",
+    "file": "originals/ORDER-S020-DRAFT-B-1366.png",
+    "sha256": "d0ae9c40cbaf68aadd18a8a169155a14804d234d590fcbc4d674722fa96014da",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "draft initial tab only; no write operations",
+    "observation": "草稿对应页签初始内容可见；未执行写操作。"
+  },
+  {
+    "evidence_id": "ORDER-S021-DRAFT-B-1366",
+    "surface_id": "S021",
+    "expanded_case_id": "ORDER-S021-DRAFT-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?detail=1&tab=payments",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\nWS-SO001\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t\n关闭\n订单工作台 · 履约与回款\n编辑草稿\n确认订单\n取消订单\n\nWorkspace Alpha · 下单于 2026-11-10\n\nWS-SO001\n预计交期：未设置\n履约：草稿\n概览\n订单明细 (1)\n采购与发货\n回款 (0)\n装箱\n库存流水 (0)\n操作日志 (0)\n回款流水\n\n确认收款后自动更新已收金额。\n\n0 条\n暂无关联流水\n\n在财务流水中登记本单定金或尾款。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; draft WS-SO001 with one synthetic item",
+    "steps": [
+      "open WS-SO001 order workbench",
+      "click 回款 tab"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:37:23.368Z",
+    "file": "originals/ORDER-S021-DRAFT-B-1366.png",
+    "sha256": "214dfdfb13e16c0bc163858df1ad3d81428c3db9a4cf2ab593e855bedd083b7d",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "draft initial tab only; no write operations",
+    "observation": "草稿对应页签初始内容可见；未执行写操作。"
+  },
+  {
+    "evidence_id": "ORDER-S022-DRAFT-B-1366",
+    "surface_id": "S022",
+    "expanded_case_id": "ORDER-S022-DRAFT-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?detail=1&tab=packing",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\nWS-SO001\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t\n关闭\n订单工作台 · 履约与回款\n编辑草稿\n确认订单\n取消订单\n\nWorkspace Alpha · 下单于 2026-11-10\n\nWS-SO001\n预计交期：未设置\n履约：草稿\n概览\n订单明细 (1)\n采购与发货\n回款 (0)\n装箱\n库存流水 (0)\n操作日志 (0)\n 预计装箱\n\n预计装箱保留包装快照，不会创建发货或实际装箱记录。\n\n尚未生成预计装箱方案\n\n按当前 SKU 包装配置生成箱规快照。\n\n生成预计装箱方案\n实际装箱（Packing List）\n\n记录本次发货的实际箱单；不会改变预计装箱、发货、库存或订单数量。\n\n暂无发货记录，确认发货后可登记实际箱单。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; draft WS-SO001 with one synthetic item",
+    "steps": [
+      "open WS-SO001 order workbench",
+      "click 装箱 tab"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:37:23.764Z",
+    "file": "originals/ORDER-S022-DRAFT-B-1366.png",
+    "sha256": "4e7d8b53a592a8031565f799e41230095af9d9aadb74f884d18768f90df810c9",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "draft initial tab only; no write operations",
+    "observation": "草稿对应页签初始内容可见；未执行写操作。"
+  },
+  {
+    "evidence_id": "ORDER-S023-DRAFT-B-1366",
+    "surface_id": "S023",
+    "expanded_case_id": "ORDER-S023-DRAFT-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?detail=1&tab=inventory",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\nWS-SO001\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t\n关闭\n订单工作台 · 履约与回款\n编辑草稿\n确认订单\n取消订单\n\nWorkspace Alpha · 下单于 2026-11-10\n\nWS-SO001\n预计交期：未设置\n履约：草稿\n概览\n订单明细 (1)\n采购与发货\n回款 (0)\n装箱\n库存流水 (0)\n操作日志 (0)\n履约流水\n\n本订单关联的出入库记录。\n\n0 条\n暂无出入库流水",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; draft WS-SO001 with one synthetic item",
+    "steps": [
+      "open WS-SO001 order workbench",
+      "click 库存流水 tab"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:37:24.245Z",
+    "file": "originals/ORDER-S023-DRAFT-B-1366.png",
+    "sha256": "73c35f44ba0219edf94402fcdc45852429e7318393b538ed7faa7bd7950eafdb",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "draft initial tab only; no write operations",
+    "observation": "草稿对应页签初始内容可见；未执行写操作。"
+  },
+  {
+    "evidence_id": "ORDER-S024-DRAFT-B-1366",
+    "surface_id": "S024",
+    "expanded_case_id": "ORDER-S024-DRAFT-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?detail=1&tab=operation_logs",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\nWS-SO001\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t\n关闭\n订单工作台 · 履约与回款\n编辑草稿\n确认订单\n取消订单\n\nWorkspace Alpha · 下单于 2026-11-10\n\nWS-SO001\n预计交期：未设置\n履约：草稿\n概览\n订单明细 (1)\n采购与发货\n回款 (0)\n装箱\n库存流水 (0)\n操作日志 (0)\n操作日志\n\n记录创建、修改、删除及业务状态变更。\n\n未启用\n当前身份或环境未启用操作日志。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; draft WS-SO001 with one synthetic item",
+    "steps": [
+      "open WS-SO001 order workbench",
+      "click 操作日志 tab"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:37:24.845Z",
+    "file": "originals/ORDER-S024-DRAFT-B-1366.png",
+    "sha256": "c93458a119d82eba322c560a449cfe0b89e2831d5158cac3c511d0e1ed2f0403",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "draft initial tab only; no write operations",
+    "observation": "草稿对应页签初始内容可见；未执行写操作。"
+  }
+]

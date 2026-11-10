@@ -1,0 +1,100 @@
+[
+  {
+    "evidence_id": "LOGIN-INVALID-B-1366",
+    "surface_id": "G005",
+    "expanded_case_id": "LOGIN-INVALID-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/login",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "登录森爵管理系统\n\n请输入分配给你的账号。\n\n账号\n密码\n\n账号或密码不正确，请重试。\n\n登录",
+    "role": "unauthenticated",
+    "data": "fresh isolated database; fictitious account and password",
+    "steps": [
+      "enter fictitious unknown account and wrong password",
+      "submit to isolated service",
+      "wait for error and password clearing"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:24:40.938Z",
+    "file": "originals/LOGIN-INVALID-B-1366.png",
+    "sha256": "77614de26dafd5bce827caf3430a439e19189b5c4420768ec92db560ffada606",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "对应登录提示或登录中状态可见；密码清理由自动断言验证。"
+  },
+  {
+    "evidence_id": "LOGIN-PENDING-B-1366",
+    "surface_id": "G005",
+    "expanded_case_id": "LOGIN-PENDING-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/login",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "登录森爵管理系统\n\n请输入分配给你的账号。\n\n账号\n密码\n登录中…",
+    "role": "unauthenticated",
+    "data": "fresh isolated database; fictitious account and password",
+    "steps": [
+      "intercept and hold login POST",
+      "submit fictitious credentials",
+      "capture pending state"
+    ],
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T18:24:41.061Z",
+    "file": "originals/LOGIN-PENDING-B-1366.png",
+    "sha256": "a2a2e0d846402645eedf4ab5dd2a0cb6634cb702730432c4abe545c5503fdcae",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "对应登录提示或登录中状态可见；密码清理由自动断言验证。"
+  },
+  {
+    "evidence_id": "LOGIN-NETWORK-ERROR-B-1366",
+    "surface_id": "G005",
+    "expanded_case_id": "LOGIN-NETWORK-ERROR-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/login",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "登录森爵管理系统\n\n请输入分配给你的账号。\n\n账号\n密码\n\n登录未完成，请检查网络后重试。\n\n登录",
+    "role": "unauthenticated",
+    "data": "fresh isolated database; fictitious account and password",
+    "steps": [
+      "abort held login POST before service",
+      "wait for network error and password clearing"
+    ],
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T18:24:41.139Z",
+    "file": "originals/LOGIN-NETWORK-ERROR-B-1366.png",
+    "sha256": "829f127910cc0c001d2923d958d0700333a00471c8592f41a02abfcb04e832ba",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "对应登录提示或登录中状态可见；密码清理由自动断言验证。"
+  }
+]

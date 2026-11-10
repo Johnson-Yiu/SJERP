@@ -1,0 +1,70 @@
+[
+  {
+    "evidence_id": "CUSTOMER-OPTIONS-FAIL-B-1366",
+    "surface_id": "G022",
+    "expanded_case_id": "CUSTOMER-OPTIONS-FAIL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "scrollY": 139,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n筛选选项加载失败：服务器暂时不可用，请稍后重试。\n重新加载筛选选项\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒",
+    "role": "authenticated codex test superuser",
+    "data": "two synthetic customers in isolated database",
+    "steps": [
+      "intercept country options GET with simulated 503",
+      "wait for automatic retries",
+      "scroll to error and customer rows"
+    ],
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T17:56:06.095Z",
+    "file": "originals/CUSTOMER-OPTIONS-FAIL-B-1366.png",
+    "sha256": "871e9e71f7ae6dbbdd25e5bdfc7fbfa7f73a2a026de6ea4dac4659f066816923",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "筛选选项失败提示与客户行同时可见"
+  },
+  {
+    "evidence_id": "CUSTOMER-OPTIONS-RETRY-B-1366",
+    "surface_id": "G022",
+    "expanded_case_id": "CUSTOMER-OPTIONS-RETRY-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "scrollY": 66,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒",
+    "role": "authenticated codex test superuser",
+    "data": "two synthetic customers in isolated database",
+    "steps": [
+      "remove failure interception",
+      "click reload filter options",
+      "verify two country options returned"
+    ],
+    "simulated": true,
+    "capture_time_utc": "2026-11-09T17:56:06.379Z",
+    "file": "originals/CUSTOMER-OPTIONS-RETRY-B-1366.png",
+    "sha256": "39a38ca89a2a4c4c158d0e3e374e8d0acc15aafe4a4531f08e806d2f7c80725d",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "重试后错误消失，客户行仍可见；选项数量由自动断言确认。"
+  }
+]

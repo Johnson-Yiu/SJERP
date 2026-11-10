@@ -1,0 +1,251 @@
+[
+  {
+    "evidence_id": "NAV-CLOSED-B-981",
+    "surface_id": "G001",
+    "expanded_case_id": "NAV-CLOSED-B-981",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 981,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "menuDisplay": "none",
+    "sidebarTransform": "none",
+    "scrim": false,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n0\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n0\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n暂无客户\n\n添加客户资料，记录负责人和跟进计划。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database",
+    "steps": [
+      "open customer page",
+      "capture initial navigation"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:29:25.080Z",
+    "file": "originals/NAV-CLOSED-B-981.png",
+    "sha256": "426627201e1c0ec9879a6bbc8f00dd9da7279c9297855bb2e831cd89d3099ceb",
+    "pixels": {
+      "width": 981,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "导航结构与对应展开/收起状态可见；业务页面其他部分未完整检查。"
+  },
+  {
+    "evidence_id": "NAV-CLOSED-B-980",
+    "surface_id": "G001",
+    "expanded_case_id": "NAV-CLOSED-B-980",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 980,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "menuDisplay": "grid",
+    "sidebarTransform": "matrix(1, 0, 0, 1, -248, 0)",
+    "scrim": false,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n0\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n0\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n暂无客户\n\n添加客户资料，记录负责人和跟进计划。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database",
+    "steps": [
+      "open customer page",
+      "capture initial navigation"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:29:26.509Z",
+    "file": "originals/NAV-CLOSED-B-980.png",
+    "sha256": "80088c985921aa95e819d052d95fe92ff08b36aa8e804f230a065f68d9551dcc",
+    "pixels": {
+      "width": 980,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "导航结构与对应展开/收起状态可见；业务页面其他部分未完整检查。"
+  },
+  {
+    "evidence_id": "NAV-OPEN-B-980",
+    "surface_id": "G001",
+    "expanded_case_id": "NAV-OPEN-B-980",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 980,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "menuDisplay": "grid",
+    "sidebarTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "scrim": true,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n0\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n0\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n暂无客户\n\n添加客户资料，记录负责人和跟进计划。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database",
+    "steps": [
+      "open customer page",
+      "click mobile menu",
+      "capture expanded navigation"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:29:26.981Z",
+    "file": "originals/NAV-OPEN-B-980.png",
+    "sha256": "17329ff53f491780aab3c19383a2a405c8f63306434319198a31abdb6d8c1495",
+    "pixels": {
+      "width": 980,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  },
+  {
+    "evidence_id": "NAV-DISMISSED-B-980",
+    "surface_id": "G001",
+    "expanded_case_id": "NAV-DISMISSED-B-980",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 980,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "menuDisplay": "grid",
+    "sidebarTransform": "matrix(1, 0, 0, 1, -248, 0)",
+    "scrim": false,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n0\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n0\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n暂无客户\n\n添加客户资料，记录负责人和跟进计划。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database",
+    "steps": [
+      "open mobile menu",
+      "click scrim",
+      "capture closed navigation"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:29:27.454Z",
+    "file": "originals/NAV-DISMISSED-B-980.png",
+    "sha256": "80088c985921aa95e819d052d95fe92ff08b36aa8e804f230a065f68d9551dcc",
+    "pixels": {
+      "width": 980,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  },
+  {
+    "evidence_id": "NAV-CLOSED-B-390",
+    "surface_id": "G001",
+    "expanded_case_id": "NAV-CLOSED-B-390",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 390,
+      "height": 844
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "menuDisplay": "grid",
+    "sidebarTransform": "matrix(1, 0, 0, 1, -248, 0)",
+    "scrim": false,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n0\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n0\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n暂无客户\n\n添加客户资料，记录负责人和跟进计划。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database",
+    "steps": [
+      "open customer page",
+      "capture initial navigation"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:29:29.488Z",
+    "file": "originals/NAV-CLOSED-B-390.png",
+    "sha256": "cff74292b21179fe898d10dc564ab2e7bee632eb0e222b57eb7320eee005f5c2",
+    "pixels": {
+      "width": 390,
+      "height": 844
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  },
+  {
+    "evidence_id": "NAV-OPEN-B-390",
+    "surface_id": "G001",
+    "expanded_case_id": "NAV-OPEN-B-390",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 390,
+      "height": 844
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "menuDisplay": "grid",
+    "sidebarTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "scrim": true,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n0\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n0\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n暂无客户\n\n添加客户资料，记录负责人和跟进计划。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database",
+    "steps": [
+      "open customer page",
+      "click mobile menu",
+      "capture expanded navigation"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:29:29.951Z",
+    "file": "originals/NAV-OPEN-B-390.png",
+    "sha256": "232f02f8b944517e3354fdb02af52536486c18ef719dc39c61c375e2903b8390",
+    "pixels": {
+      "width": 390,
+      "height": 844
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "导航结构与对应展开/收起状态可见；业务页面其他部分未完整检查。"
+  },
+  {
+    "evidence_id": "NAV-DISMISSED-B-390",
+    "surface_id": "G001",
+    "expanded_case_id": "NAV-DISMISSED-B-390",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 390,
+      "height": 844
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "menuDisplay": "grid",
+    "sidebarTransform": "matrix(1, 0, 0, 1, -248, 0)",
+    "scrim": false,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n0\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n0\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n暂无客户\n\n添加客户资料，记录负责人和跟进计划。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database",
+    "steps": [
+      "open mobile menu",
+      "click scrim",
+      "capture closed navigation"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:29:30.378Z",
+    "file": "originals/NAV-DISMISSED-B-390.png",
+    "sha256": "cff74292b21179fe898d10dc564ab2e7bee632eb0e222b57eb7320eee005f5c2",
+    "pixels": {
+      "width": 390,
+      "height": 844
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "导航结构与对应展开/收起状态可见；业务页面其他部分未完整检查。"
+  }
+]

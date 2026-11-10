@@ -1,0 +1,352 @@
+[
+  {
+    "evidence_id": "ULR006-B-baseline-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-baseline-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:50.902Z",
+    "file": "originals/ULR006-B-baseline-before.png",
+    "sha256": "2055e5cc7143f9567e06db6fa8937ca46ba30e129986cad182009425704cb258",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR006-B-baseline-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-baseline-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:51.377Z",
+    "file": "originals/ULR006-B-baseline-after.png",
+    "sha256": "ee496f84bb46bd8b854dea8db189ab80077e1e6f4692bfced7714c77b1c87620",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR006-B-packaging-hidden-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-packaging-hidden-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "hidden",
+    "hiddenModals": [
+      {
+        "className": "modal-backdrop",
+        "display": "none"
+      }
+    ],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:52.116Z",
+    "file": "originals/ULR006-B-packaging-hidden-before.png",
+    "sha256": "d19b2a24cd2371c15d57b7ee41125980af4ce4e1fa3675fc0c01a19b00293ba1",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR006-B-packaging-hidden-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-packaging-hidden-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "hidden",
+    "hiddenModals": [
+      {
+        "className": "modal-backdrop",
+        "display": "none"
+      }
+    ],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:52.604Z",
+    "file": "originals/ULR006-B-packaging-hidden-after.png",
+    "sha256": "72c8b2d67a04d54dcad00c2a8a3ead4fae3c45e550778c73ae110a1f08a9f23d",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR006-B-packaging-closed-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-packaging-closed-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:53.234Z",
+    "file": "originals/ULR006-B-packaging-closed-before.png",
+    "sha256": "af74723ad82b70bebdd65706fbd3d5dd199b7380a5ba674dffb7c639fb4c098f",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR006-B-packaging-closed-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-packaging-closed-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:53.730Z",
+    "file": "originals/ULR006-B-packaging-closed-after.png",
+    "sha256": "03e09375eb3acde1689f1d0ddf9e6b5aaa93e572a8d4fbacc1fc0506a4e80fd9",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR006-B-sku-hidden-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-sku-hidden-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "hidden",
+    "hiddenModals": [
+      {
+        "className": "modal-backdrop",
+        "display": "none"
+      }
+    ],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:54.434Z",
+    "file": "originals/ULR006-B-sku-hidden-before.png",
+    "sha256": "e3b4b7089bed0063066494d41260d07dd87faaabfb2264903fe19be4dae61e0a",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR006-B-sku-hidden-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-sku-hidden-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "hidden",
+    "hiddenModals": [
+      {
+        "className": "modal-backdrop",
+        "display": "none"
+      }
+    ],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:54.913Z",
+    "file": "originals/ULR006-B-sku-hidden-after.png",
+    "sha256": "88db93819e128e6a00db3e6b995302c1dd5f77aafd1bed4e9a1670d29918f9e4",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR006-B-sku-closed-before.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-sku-closed-before",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:55.481Z",
+    "file": "originals/ULR006-B-sku-closed-before.png",
+    "sha256": "e3b4b7089bed0063066494d41260d07dd87faaabfb2264903fe19be4dae61e0a",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR006-B-sku-closed-after.png",
+    "surface_id": "G002",
+    "expanded_case_id": "ULR006-B-sku-closed-after",
+    "related_ulr": [
+      "ULR-006"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "scrollY": 0,
+    "scrollHeight": 834,
+    "clientHeight": 768,
+    "bodyOverflow": "visible",
+    "hiddenModals": [],
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "workspace fixture; blank unsaved customer editor",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:07:55.958Z",
+    "file": "originals/ULR006-B-sku-closed-after.png",
+    "sha256": "88db93819e128e6a00db3e6b995302c1dd5f77aafd1bed4e9a1670d29918f9e4",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  }
+]

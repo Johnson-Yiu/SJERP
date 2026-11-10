@@ -1,0 +1,102 @@
+[
+  {
+    "evidence_id": "DRAFT-B-B-1366",
+    "surface_id": "G002",
+    "expanded_case_id": "DRAFT-B-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?search=Workspace&create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n客户管理 · 新建 1 ●\n×\n⋮\n客户管理 · 新建 2 ●\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n新建客户\n客户名称 *\n客户编号 *\n国家/地区\n\n请选择标准英文名称 / 两位代码；历史文本需人工确认。\n\n业务区域\n负责人\n请选择\n客户来源\n联系人信息\n\n至少登记一位联系人，可指定默认联系人。\n\n1 位\n联系人 1\n默认联系人\n姓名 *\n职位\n邮箱\n电话\nWhatsApp\n备注\n新增联系人\n补充信息\n网站\n地址\n备注\n取消\n保存客户",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "open first customer draft and enter A",
+      "return to list",
+      "open second draft and enter B"
+    ],
+    "active_input": "Synthetic Draft B",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:54:26.973Z",
+    "file": "originals/DRAFT-B-B-1366.png",
+    "sha256": "af3eb373fbb82b6ddbfd2a727bae63f6bc74c2be75e81841a1fff1d2599e7d66",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  },
+  {
+    "evidence_id": "DRAFT-A-RETURN-B-1366",
+    "surface_id": "G002",
+    "expanded_case_id": "DRAFT-A-RETURN-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?search=Workspace&create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n客户管理 · 新建 1 ●\n×\n⋮\n客户管理 · 新建 2 ●\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n新建客户\n客户名称 *\n客户编号 *\n国家/地区\n\n请选择标准英文名称 / 两位代码；历史文本需人工确认。\n\n业务区域\n负责人\n请选择\n客户来源\n联系人信息\n\n至少登记一位联系人，可指定默认联系人。\n\n1 位\n联系人 1\n默认联系人\n姓名 *\n职位\n邮箱\n电话\nWhatsApp\n备注\n新增联系人\n补充信息\n网站\n地址\n备注\n取消\n保存客户",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "switch from second draft to first",
+      "verify first value"
+    ],
+    "active_input": "Synthetic Draft A",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:54:27.103Z",
+    "file": "originals/DRAFT-A-RETURN-B-1366.png",
+    "sha256": "7e2ffafbc02fc98c3537aef4f1eed34af76962b77030b467bc3ae6a084b9f279",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "切回后对应草稿名称和活动标签可见。"
+  },
+  {
+    "evidence_id": "DRAFT-B-RETURN-B-1366",
+    "surface_id": "G002",
+    "expanded_case_id": "DRAFT-B-RETURN-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?search=Workspace&create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n客户管理 · 新建 1 ●\n×\n⋮\n客户管理 · 新建 2 ●\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n新建客户\n客户名称 *\n客户编号 *\n国家/地区\n\n请选择标准英文名称 / 两位代码；历史文本需人工确认。\n\n业务区域\n负责人\n请选择\n客户来源\n联系人信息\n\n至少登记一位联系人，可指定默认联系人。\n\n1 位\n联系人 1\n默认联系人\n姓名 *\n职位\n邮箱\n电话\nWhatsApp\n备注\n新增联系人\n补充信息\n网站\n地址\n备注\n取消\n保存客户",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "switch back to second draft",
+      "verify second value"
+    ],
+    "active_input": "Synthetic Draft B",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:54:27.214Z",
+    "file": "originals/DRAFT-B-RETURN-B-1366.png",
+    "sha256": "469663c01158a71cf65af534bacd380f40b90de6c86b173e26f2e88e4aa2f65f",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "切回后对应草稿名称和活动标签可见。"
+  }
+]

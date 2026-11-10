@@ -1,0 +1,197 @@
+[
+  {
+    "evidence_id": "ULR005-A-dirty.png",
+    "surface_id": "F017",
+    "expanded_case_id": "ULR005-A-dirty",
+    "related_ulr": [
+      "ULR-005"
+    ],
+    "source_branch": "codex/finance-receipt-optimization-02",
+    "source_sha": "c978758f37db8b8acf5e751fc7aa836287163a6b",
+    "browser_version": "156.0.8078.80",
+    "route": "/transactions",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "mask": {
+      "text": "新增记账\n\n记录业务收付款；银行账户资金确认仍按资金事件流程办理。\n\n×\n流水信息（业务记账）\n类型\n客户收款\n未分配预收款\n供应商退款（原付款退回）\n其他收入\n供应商付款\n订单费用\n样品费用\n运费/物流费\n银行手续费\n税费\n工资/福利\n办公费用\n差旅/招待\n营销推广\n仓储费用\n设备/固定资产\n其他期间费用（如水电费、物业费、软件订阅费等）\n未分配预付款\n客户退款（原收款退回）\n汇兑损失\n其他支出\n已按收入 / 支出分组；选择类型后会自动确定收支方向。\n流水发生日期\n\n分类由所选类型自动生成：其他期间费用，无需重复填写。\n\n原币金额\n币种\nCNY · 人民币\nUSD · 美元\nEUR · 欧元\nGBP · 英镑\nJPY · 日元\nHKD · 港币\nAUD · 澳元\n业务关联\n收付款信息\n支付方式\n银行参考号\n备注\n取消\n保存",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1366,
+        "height": 768
+      },
+      "zIndex": "1600",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<select data-v-dbe48257=\"\" required=\"\" value=\"CNY\"><option data-v-dbe48257=\"\" value=\"CNY\">CNY · 人民币</option><option data-v-dbe48257=\"\" value=\"USD\">USD · 美元</option><option data-v-dbe48257=\"\" value=\"EUR\">EUR · 欧元</option><option data-v-dbe48257=\"\" value=\"GBP\">GBP · 英镑</option><option data-v-dbe48257="
+    },
+    "confirmation": null,
+    "confirmButton": null,
+    "role": "authenticated codex test superuser",
+    "data": "new isolated SQLite, unsaved synthetic note only",
+    "steps": [
+      "open /transactions",
+      "open 新增记账",
+      "enter synthetic note",
+      "close form"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:04:41.146Z",
+    "file": "originals/ULR005-A-dirty.png",
+    "sha256": "71ffe64ec4c4e38dd4613b466be806ece2df3ea786fee73eb2b76e8552df7b2e",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR005-A-after-close.png",
+    "surface_id": "F017",
+    "expanded_case_id": "ULR005-A-after-close",
+    "related_ulr": [
+      "ULR-005"
+    ],
+    "source_branch": "codex/finance-receipt-optimization-02",
+    "source_sha": "c978758f37db8b8acf5e751fc7aa836287163a6b",
+    "browser_version": "156.0.8078.80",
+    "route": "/transactions",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "mask": {
+      "text": "新增记账\n\n记录业务收付款；银行账户资金确认仍按资金事件流程办理。\n\n×\n流水信息（业务记账）\n类型\n客户收款\n未分配预收款\n供应商退款（原付款退回）\n其他收入\n供应商付款\n订单费用\n样品费用\n运费/物流费\n银行手续费\n税费\n工资/福利\n办公费用\n差旅/招待\n营销推广\n仓储费用\n设备/固定资产\n其他期间费用（如水电费、物业费、软件订阅费等）\n未分配预付款\n客户退款（原收款退回）\n汇兑损失\n其他支出\n已按收入 / 支出分组；选择类型后会自动确定收支方向。\n流水发生日期\n\n分类由所选类型自动生成：其他期间费用，无需重复填写。\n\n原币金额\n币种\nCNY · 人民币\nUSD · 美元\nEUR · 欧元\nGBP · 英镑\nJPY · 日元\nHKD · 港币\nAUD · 澳元\n业务关联\n收付款信息\n支付方式\n银行参考号\n备注\n取消\n保存",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1366,
+        "height": 768
+      },
+      "zIndex": "1600",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<label data-v-dbe48257=\"\">原币金额<input data-v-dbe48257=\"\" type=\"number\" min=\"0.0001\" step=\"any\" required=\"\" style=\"\"></label>"
+    },
+    "confirmation": {
+      "text": "未保存修改\n\n当前修改尚未保存，离开后将丢失。是否继续？\n\n继续编辑\n放弃修改",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1366,
+        "height": 768
+      },
+      "zIndex": "200",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<label data-v-dbe48257=\"\">原币金额<input data-v-dbe48257=\"\" type=\"number\" min=\"0.0001\" step=\"any\" required=\"\" style=\"\"></label>"
+    },
+    "confirmButton": {
+      "text": "继续编辑",
+      "rect": {
+        "x": 715,
+        "y": 416.890625,
+        "width": 90,
+        "height": 43
+      },
+      "zIndex": "auto",
+      "display": "flex",
+      "visibility": "visible",
+      "centerHit": "<input data-v-dbe48257=\"\" type=\"number\" min=\"0.0001\" step=\"any\" required=\"\" style=\"\">"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "new isolated SQLite, unsaved synthetic note only",
+    "steps": [
+      "open /transactions",
+      "open 新增记账",
+      "enter synthetic note",
+      "close form"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:04:41.299Z",
+    "file": "originals/ULR005-A-after-close.png",
+    "sha256": "04077c33ffbca82453e358347e4ffe82231e0587d52c97a93a7496f4c8ba7fad",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR005-A-after-click.png",
+    "surface_id": "F017",
+    "expanded_case_id": "ULR005-A-after-click",
+    "related_ulr": [
+      "ULR-005"
+    ],
+    "source_branch": "codex/finance-receipt-optimization-02",
+    "source_sha": "c978758f37db8b8acf5e751fc7aa836287163a6b",
+    "browser_version": "156.0.8078.80",
+    "route": "/transactions",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "mask": {
+      "text": "新增记账\n\n记录业务收付款；银行账户资金确认仍按资金事件流程办理。\n\n×\n流水信息（业务记账）\n类型\n客户收款\n未分配预收款\n供应商退款（原付款退回）\n其他收入\n供应商付款\n订单费用\n样品费用\n运费/物流费\n银行手续费\n税费\n工资/福利\n办公费用\n差旅/招待\n营销推广\n仓储费用\n设备/固定资产\n其他期间费用（如水电费、物业费、软件订阅费等）\n未分配预付款\n客户退款（原收款退回）\n汇兑损失\n其他支出\n已按收入 / 支出分组；选择类型后会自动确定收支方向。\n流水发生日期\n\n分类由所选类型自动生成：其他期间费用，无需重复填写。\n\n原币金额\n币种\nCNY · 人民币\nUSD · 美元\nEUR · 欧元\nGBP · 英镑\nJPY · 日元\nHKD · 港币\nAUD · 澳元\n业务关联\n收付款信息\n支付方式\n银行参考号\n备注\n取消\n保存",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1366,
+        "height": 768
+      },
+      "zIndex": "1600",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<label data-v-dbe48257=\"\">原币金额<input data-v-dbe48257=\"\" type=\"number\" min=\"0.0001\" step=\"any\" required=\"\" style=\"\"></label>"
+    },
+    "confirmation": {
+      "text": "未保存修改\n\n当前修改尚未保存，离开后将丢失。是否继续？\n\n继续编辑\n放弃修改",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1366,
+        "height": 768
+      },
+      "zIndex": "200",
+      "display": "grid",
+      "visibility": "visible",
+      "centerHit": "<label data-v-dbe48257=\"\">原币金额<input data-v-dbe48257=\"\" type=\"number\" min=\"0.0001\" step=\"any\" required=\"\" style=\"\"></label>"
+    },
+    "confirmButton": {
+      "text": "继续编辑",
+      "rect": {
+        "x": 715,
+        "y": 416.890625,
+        "width": 90,
+        "height": 43
+      },
+      "zIndex": "auto",
+      "display": "flex",
+      "visibility": "visible",
+      "centerHit": "<input data-v-dbe48257=\"\" type=\"number\" min=\"0.0001\" step=\"any\" required=\"\" style=\"\">"
+    },
+    "role": "authenticated codex test superuser",
+    "data": "new isolated SQLite, unsaved synthetic note only",
+    "steps": [
+      "open /transactions",
+      "open 新增记账",
+      "enter synthetic note",
+      "close form"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:04:44.419Z",
+    "file": "originals/ULR005-A-after-click.png",
+    "sha256": "04077c33ffbca82453e358347e4ffe82231e0587d52c97a93a7496f4c8ba7fad",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  }
+]

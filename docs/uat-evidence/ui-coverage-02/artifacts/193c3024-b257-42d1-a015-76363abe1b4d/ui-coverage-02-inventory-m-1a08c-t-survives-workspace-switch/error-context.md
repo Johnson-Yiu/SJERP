@@ -1,0 +1,269 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: ui-coverage-02-inventory-modal.spec.js >> inventory adjustment survives workspace switch
+- Location: browser-tests\ui-coverage-02-inventory-modal.spec.js:6:1
+
+# Error details
+
+```
+Test timeout of 120000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: S
+        - generic [ref=e7]:
+          - strong [ref=e8]: 森爵照明管理系统
+          - text: 客户 · 销售 · 产品
+      - navigation [ref=e9]:
+        - generic [ref=e10]: 经营
+        - link "经营概览" [ref=e11] [cursor=pointer]:
+          - /url: /
+        - link "报表中心" [ref=e18] [cursor=pointer]:
+          - /url: /reports
+        - link "历史订单分析" [ref=e25] [cursor=pointer]:
+          - /url: /historical-orders
+        - generic [ref=e31]: 客户
+        - link "客户管理" [ref=e32] [cursor=pointer]:
+          - /url: /customers
+        - link "联系人" [ref=e39] [cursor=pointer]:
+          - /url: /contacts
+        - link "跟进记录" [ref=e45] [cursor=pointer]:
+          - /url: /follow-ups
+        - generic [ref=e49]: 销售
+        - link "报价管理" [ref=e50] [cursor=pointer]:
+          - /url: /quotes
+        - link "订单管理" [ref=e55] [cursor=pointer]:
+          - /url: /orders
+        - generic [ref=e61]: 采购与库存
+        - link "供应商管理" [ref=e62] [cursor=pointer]:
+          - /url: /suppliers
+        - link "采购管理" [ref=e69] [cursor=pointer]:
+          - /url: /purchase-orders
+        - link "库存" [ref=e75] [cursor=pointer]:
+          - /url: /inventory
+        - link "库存流水" [ref=e80] [cursor=pointer]:
+          - /url: /inventory-movements
+        - generic [ref=e85]: 产品资料
+        - link "产品管理" [ref=e86] [cursor=pointer]:
+          - /url: /products
+        - link "SKU 管理" [ref=e92] [cursor=pointer]:
+          - /url: /skus
+        - link "产品分类" [ref=e104] [cursor=pointer]:
+          - /url: /categories
+        - link "产品参数" [ref=e110] [cursor=pointer]:
+          - /url: /product-parameters
+        - link "包装管理" [ref=e113] [cursor=pointer]:
+          - /url: /sku-packaging
+        - link "交易单位" [ref=e119] [cursor=pointer]:
+          - /url: /sku-trade-units
+        - link "产品证书" [ref=e131] [cursor=pointer]:
+          - /url: /product-certificates
+        - link "HS 编码维护" [ref=e136] [cursor=pointer]:
+          - /url: /hs-codes
+        - generic [ref=e139]: 财务与工具
+        - link "财务概览" [ref=e140] [cursor=pointer]:
+          - /url: /finance
+        - link "应收计划" [ref=e146] [cursor=pointer]:
+          - /url: /receivables
+        - link "应付计划" [ref=e152] [cursor=pointer]:
+          - /url: /payables
+        - link "财务流水" [ref=e158] [cursor=pointer]:
+          - /url: /transactions
+        - link "银行资金记录" [ref=e164] [cursor=pointer]:
+          - /url: /rmb-cash-events
+        - link "账户余额与对账" [ref=e170] [cursor=pointer]:
+          - /url: /finance-ledger
+        - link "数据导入" [ref=e176] [cursor=pointer]:
+          - /url: /import
+        - link "历史资料预检" [ref=e181] [cursor=pointer]:
+          - /url: /history-preflight
+        - link "历史资料承接" [ref=e187] [cursor=pointer]:
+          - /url: /history-takeover
+        - generic [ref=e193]: 组织与系统
+        - link "组织与权限" [ref=e194] [cursor=pointer]:
+          - /url: /organization
+      - generic [ref=e199]:
+        - generic [ref=e200]: C
+        - generic [ref=e202]:
+          - strong [ref=e203]: 当前账号：codex
+          - generic [ref=e204]: 超级管理员 · 全部功能与数据权限
+        - button "退出登录" [ref=e205] [cursor=pointer]
+    - main [ref=e206]:
+      - generic [ref=e207]:
+        - generic [ref=e208]:
+          - text: Inventory ledger
+          - heading "库存流水" [level=1] [ref=e209]
+        - generic [ref=e210]:
+          - generic [ref=e211]: 11月9日周一
+          - generic "codex" [ref=e212]: C
+      - tablist "业务工作区" [ref=e214]:
+        - generic [ref=e215]:
+          - tab "客户管理" [ref=e216] [cursor=pointer]
+          - button "关闭 客户管理" [ref=e217] [cursor=pointer]: ×
+          - button "客户管理 标签操作" [ref=e218] [cursor=pointer]: ⋮
+        - generic [ref=e219]:
+          - tab "库存流水" [ref=e220] [cursor=pointer]
+          - button "关闭 库存流水" [ref=e221] [cursor=pointer]: ×
+          - button "库存流水 标签操作" [ref=e222] [cursor=pointer]: ⋮
+        - generic [ref=e223]:
+          - tab "库存流水 · 新建 1" [selected] [ref=e224] [cursor=pointer]
+          - button "关闭 库存流水 · 新建 1" [ref=e225] [cursor=pointer]: ×
+          - button "库存流水 · 新建 1 标签操作" [ref=e226] [cursor=pointer]: ⋮
+      - tabpanel "库存流水 · 新建 1" [ref=e228]:
+        - generic [ref=e229]:
+          - generic [ref=e230]:
+            - paragraph [ref=e232]: 查看每次库存增减及其来源；库存缺口仅作核对参考，不会自动下采购单。
+            - button "新建库存调整" [ref=e233] [cursor=pointer]
+          - region "页面小计" [ref=e236]:
+            - article [ref=e237]:
+              - generic [ref=e238]: 流水记录
+              - strong [ref=e239]: "0"
+              - generic [ref=e240]: 当前筛选结果
+            - article [ref=e244]:
+              - generic [ref=e245]: 入库记录
+              - strong [ref=e246]: "0"
+              - generic [ref=e247]: 库存增加
+            - article [ref=e251]:
+              - generic [ref=e252]: 出库记录
+              - strong [ref=e253]: "0"
+              - generic [ref=e254]: 库存减少
+            - article [ref=e258]:
+              - generic [ref=e259]: 冲销记录
+              - strong [ref=e260]: "0"
+              - generic [ref=e261]: 冲销生成
+          - generic "库存流水筛选" [ref=e265]:
+            - generic [ref=e266]:
+              - text: 搜索
+              - textbox "搜索库存流水" [ref=e267]:
+                - /placeholder: 流水号、SKU、产品、订单、仓库、参考号
+            - generic [ref=e268]:
+              - text: 类型
+              - combobox "按流水类型筛选" [ref=e269]:
+                - option "全部类型" [selected]
+                - option "盘盈入库"
+                - option "盘亏出库"
+                - option "样品出库"
+                - option "客户退回"
+                - option "调拨入库"
+                - option "调拨出库"
+                - option "生产入库"
+                - option "生产领料"
+                - option "其他入库"
+                - option "其他出库"
+            - generic [ref=e270]:
+              - text: 方向
+              - combobox "按库存方向筛选" [ref=e271]:
+                - option "全部方向" [selected]
+                - option "入库"
+                - option "出库"
+            - generic [ref=e272]:
+              - text: 来源
+              - combobox "按流水来源筛选" [ref=e273]:
+                - option "全部来源" [selected]
+                - option "系统自动"
+                - option "手工登记"
+                - option "冲销"
+            - button "重置" [ref=e274] [cursor=pointer]
+          - paragraph [ref=e275]: 数量按 SKU 基础单位显示；自动流水不可手工修改。
+          - status [ref=e277]:
+            - heading "暂无库存流水" [level=3] [ref=e278]
+            - paragraph [ref=e279]: 点击“新建库存调整”开始录入。
+  - dialog "新建手工库存流水" [ref=e281]:
+    - generic [ref=e282]:
+      - generic [ref=e283]:
+        - heading "库存调整" [level=3] [ref=e284]
+        - paragraph [ref=e285]: 每个 SKU 生成独立库存流水。
+      - button "关闭手工库存流水" [ref=e286] [cursor=pointer]
+    - generic [ref=e290]:
+      - generic [ref=e291]:
+        - heading "流水基本信息" [level=4] [ref=e292]
+        - generic [ref=e293]:
+          - generic [ref=e294]:
+            - generic [ref=e295]: 流水号
+            - textbox "流水号" [ref=e296]: 保存时自动生成 · 本次 0 条明细
+          - generic [ref=e297]:
+            - generic [ref=e298]:
+              - text: 发生日期
+              - emphasis [ref=e299]: "*"
+            - generic [ref=e300]:
+              - textbox "年份" [ref=e301]: "2026"
+              - generic [ref=e302]: /
+              - textbox "月份" [ref=e303]: "11"
+              - generic [ref=e304]: /
+              - textbox "日期" [ref=e305]: "09"
+              - button "打开日期选择器" [ref=e306] [cursor=pointer]
+              - textbox: 2026-11-09
+          - generic [ref=e309]:
+            - generic [ref=e310]:
+              - text: 类型
+              - emphasis [ref=e311]: "*"
+            - combobox "手工流水类型" [ref=e312]:
+              - option "盘盈入库" [selected]
+              - option "客户退回"
+              - option "调拨入库"
+              - option "生产入库"
+              - option "其他入库"
+              - option "盘亏出库"
+              - option "样品出库"
+              - option "调拨出库"
+              - option "生产领料"
+              - option "其他出库"
+      - generic [ref=e313]:
+        - heading "关联业务" [level=4] [ref=e314]
+        - generic [ref=e315]:
+          - generic [ref=e316]: 关联订单 可不选、可多选
+          - textbox "搜索并选择订单" [ref=e319]
+          - paragraph [ref=e320]: 可关联多个订单，仅记录调整来源。
+      - generic [ref=e321]:
+        - heading "SKU 明细" [level=4] [ref=e322]
+        - generic [ref=e323]: 仅用于盘盈、盘亏、样品、退货、调拨、生产等调整。采购入库请使用“验货入库”，销售出库请使用“确认发货”。
+        - paragraph [ref=e324]: 数量填正数，类型决定入库或出库方向。单位成本用于本次调整的成本参考。
+        - generic [ref=e325]:
+          - generic [ref=e326]:
+            - text: 选择 SKU
+            - emphasis [ref=e327]: "*"
+            - text: 支持搜索、分类筛选和多选；每个 SKU 独立登记
+          - generic [ref=e328]:
+            - generic [ref=e329]:
+              - generic [ref=e330]:
+                - strong [ref=e331]: 选择 SKU
+                - generic [ref=e332]:
+                  - searchbox "搜索 SKU、型号或描述" [ref=e333]
+                  - button "按产品分类筛选" [ref=e334] [cursor=pointer]:
+                    - generic [ref=e335]: 全部分类
+              - generic [ref=e339] [cursor=pointer]:
+                - 'checkbox "Workspace Light SKU: WS-SKU001 Sales Model: — USD 10.00" [ref=e340]'
+                - generic [ref=e341]:
+                  - generic [ref=e342]: Workspace Light
+                  - generic [ref=e343]:
+                    - generic [ref=e344]: "SKU: WS-SKU001"
+                    - generic [ref=e345]: "Sales Model: —"
+                - emphasis [ref=e346]: USD 10.00
+            - complementary [ref=e347]:
+              - paragraph [ref=e348]: 从左侧勾选 SKU 后，可在这里查看详情。
+        - generic [ref=e349]:
+          - generic [ref=e350]:
+            - generic [ref=e351]:
+              - strong [ref=e352]: SKU 明细
+              - generic [ref=e353]: 每一行将生成一条库存流水。
+            - generic [ref=e354]: 0 项
+          - paragraph [ref=e355]: 请先从上方选择 SKU。
+    - generic [ref=e357]:
+      - generic [ref=e358]:
+        - strong [ref=e359]: 保存说明
+        - generic [ref=e360]: 保存后将生成 0 条独立库存流水。
+      - button "取消" [ref=e361] [cursor=pointer]
+      - button "保存库存调整" [disabled] [ref=e362] [cursor=pointer]
+```

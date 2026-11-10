@@ -1,0 +1,38 @@
+[
+  {
+    "evidence_id": "ORDER-LEAD-WHEEL-B-1366",
+    "surface_id": "S016",
+    "expanded_case_id": "ORDER-LEAD-WHEEL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/orders?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\n订单管理 · 新建 1 ●\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n暂无订单\n\n点击“新建订单”开始录入。\n\n新建订单\n订单号\n客户 *\n请选择\n订单日期 *\n/\n/\n预计交期\n天\n/\n/\n状态\n保存后为草稿；确认订单后进入履约。\n来源报价（可选）\n不关联报价\n币种\nUSD\nCNY\nEUR\nGBP\n对人民币汇率\n产品明细\n先选择一个或多个 SKU，再填写数量与价格\n选择 SKU\n全部分类\n\n没有匹配的 SKU。\n\n从左侧勾选 SKU 后，可在这里查看详情。\n\nSKU\n数量 *\n单价 *\n成本\n小计\n\n请先从上方选择至少一个 SKU。\n\n运费\n折扣\n商品小计 USD 0.00\n合计\nUSD 0.00\n条款 / 备注\n取消\n保存销售订单草稿",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; unsaved synthetic order",
+    "steps": [
+      "open new order",
+      "enter 7 lead-time days",
+      "focus input and wheel upward over it",
+      "capture after wheel"
+    ],
+    "before": "7",
+    "after": "8",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:39:03.398Z",
+    "file": "originals/ORDER-LEAD-WHEEL-B-1366.png",
+    "sha256": "3279a3452b64de0d4bbc64a8b9058eb9ff0e8394b190c6a508a6409986cc6827",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  }
+]

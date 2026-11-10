@@ -1,0 +1,68 @@
+[
+  {
+    "evidence_id": "SKU-DEACTIVATE-CONFIRM-B-1366",
+    "surface_id": "P063",
+    "expanded_case_id": "SKU-DEACTIVATE-CONFIRM-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/skus",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n销售规格\nSKU 管理\n11月10日周二\nC\nSKU 管理\n×\n⋮\nSKU 管理\n\n为产品添加可报价、可下单的 SKU，并维护对应规格。\n\n新建 SKU\nSKU 总数\n1\n当前查询结果\n已启用\n1\n可用于报价与下单\n已设型号\n0\n对外 Sales Model 已完整\n关联产品\n1\n已配置销售规格的产品\n全部产品\nWS-P001 · Workspace Light\n全部状态\n启用\n停用\n查询\n重置\n刷新\n内部识别名称\t对外型号 / SALES MODEL\t分类信息\t状态\t报价次数\t订单次数\t图片\t库存\t单位\t默认售价\t\nWorkspace Light\nSKU Code：WS-SKU001\n\t未设置\tWorkspace Category\t启用\t0\t1\t—\t0.00\tpcs\t10.00 USD\t\n确认停用 SKU\n\n确定停用 SKU “Workspace Light”吗？停用后会保留历史记录。\n\n取消\n确认停用",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; active WS-SKU001",
+    "steps": [
+      "open SKU list",
+      "click deactivate WS-SKU001"
+    ],
+    "patch_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:52:35.340Z",
+    "file": "originals/SKU-DEACTIVATE-CONFIRM-B-1366.png",
+    "sha256": "0d5018b040b71388ad101eb89e3c2ff0ab2061407dc047232f41a2ea8e046ac3",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "PATCH guard installed but not triggered; cancellation path only"
+  },
+  {
+    "evidence_id": "SKU-DEACTIVATE-CANCEL-B-1366",
+    "surface_id": "P063",
+    "expanded_case_id": "SKU-DEACTIVATE-CANCEL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/skus",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n销售规格\nSKU 管理\n11月10日周二\nC\nSKU 管理\n×\n⋮\nSKU 管理\n\n为产品添加可报价、可下单的 SKU，并维护对应规格。\n\n新建 SKU\nSKU 总数\n1\n当前查询结果\n已启用\n1\n可用于报价与下单\n已设型号\n0\n对外 Sales Model 已完整\n关联产品\n1\n已配置销售规格的产品\n全部产品\nWS-P001 · Workspace Light\n全部状态\n启用\n停用\n查询\n重置\n刷新\n内部识别名称\t对外型号 / SALES MODEL\t分类信息\t状态\t报价次数\t订单次数\t图片\t库存\t单位\t默认售价\t\nWorkspace Light\nSKU Code：WS-SKU001\n\t未设置\tWorkspace Category\t启用\t0\t1\t—\t0.00\tpcs\t10.00 USD\t",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; active WS-SKU001",
+    "steps": [
+      "cancel confirmation",
+      "verify active SKU remains and no PATCH"
+    ],
+    "patch_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:52:35.447Z",
+    "file": "originals/SKU-DEACTIVATE-CANCEL-B-1366.png",
+    "sha256": "168a916914569cafbcdb7d4cdeefc403044490b24bbdd67be89679bc40d2119e",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "PATCH guard installed but not triggered; cancellation path only"
+  }
+]

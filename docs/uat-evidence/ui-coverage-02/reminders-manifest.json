@@ -1,0 +1,263 @@
+[
+  {
+    "evidence_id": "ULR013-B-before-new.png",
+    "surface_id": "G088",
+    "expanded_case_id": "ULR013-B-before-new",
+    "related_ulr": [
+      "ULR-013"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/new-product-reminders",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "windowScrollY": 0,
+    "rowCount": 12,
+    "editor": null,
+    "scrollChain": [
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "clientHeight": 768,
+        "scrollHeight": 2873,
+        "overflowY": "visible"
+      }
+    ],
+    "role": "authenticated codex test superuser",
+    "data": "12 synthetic reminders in isolated SQLite; no UI save",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T13:32:17.406Z",
+    "file": "originals/ULR013-B-before-new.png",
+    "sha256": "3445243abbb408f8f3aad723ebe964918bd062b5a715a600e95766d5ee83031a",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "打开新品需求页并确认 12 条隔离合成需求"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-reminders.spec.js 对应截图阶段追溯"
+  },
+  {
+    "evidence_id": "ULR013-B-after-new.png",
+    "surface_id": "G088",
+    "expanded_case_id": "ULR013-B-after-new",
+    "related_ulr": [
+      "ULR-013"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/new-product-reminders",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "windowScrollY": 0,
+    "rowCount": 12,
+    "editor": {
+      "x": 282,
+      "y": 2845,
+      "width": 1050,
+      "height": 955.390625,
+      "bottom": 3800.390625
+    },
+    "scrollChain": [
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "clientHeight": 768,
+        "scrollHeight": 3868,
+        "overflowY": "visible"
+      }
+    ],
+    "role": "authenticated codex test superuser",
+    "data": "12 synthetic reminders in isolated SQLite; no UI save",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T13:32:17.643Z",
+    "file": "originals/ULR013-B-after-new.png",
+    "sha256": "931c7402dd9cf01d5e68157bcb6136ac06fa6a0f646ffed19fd97ea6481d448b",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "打开新品需求页并确认 12 条隔离合成需求",
+      "点击记录新品需求"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-reminders.spec.js 对应截图阶段追溯"
+  },
+  {
+    "evidence_id": "ULR013-B-new-bottom.png",
+    "surface_id": "G088",
+    "expanded_case_id": "ULR013-B-new-bottom",
+    "related_ulr": [
+      "ULR-013"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/new-product-reminders",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "windowScrollY": 3100,
+    "rowCount": 12,
+    "editor": {
+      "x": 282,
+      "y": -255,
+      "width": 1050,
+      "height": 955.390625,
+      "bottom": 700.390625
+    },
+    "scrollChain": [
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 3100,
+        "clientHeight": 768,
+        "scrollHeight": 3868,
+        "overflowY": "visible"
+      }
+    ],
+    "role": "authenticated codex test superuser",
+    "data": "12 synthetic reminders in isolated SQLite; no UI save",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T13:32:18.232Z",
+    "file": "originals/ULR013-B-new-bottom.png",
+    "sha256": "bfc3b6a2721b0e8c9028a146453777df2c78afb25c32863e0562a6dbe60cdd34",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "打开新品需求页并确认 12 条隔离合成需求",
+      "点击记录新品需求",
+      "滚轮向下查看新建表单"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-reminders.spec.js 对应截图阶段追溯"
+  },
+  {
+    "evidence_id": "ULR013-B-after-detail.png",
+    "surface_id": "G088",
+    "expanded_case_id": "ULR013-B-after-detail",
+    "related_ulr": [
+      "ULR-013"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/new-product-reminders?detail=12",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "windowScrollY": 0,
+    "rowCount": 12,
+    "editor": {
+      "x": 282,
+      "y": 2845,
+      "width": 1050,
+      "height": 379.3125,
+      "bottom": 3224.3125
+    },
+    "scrollChain": [
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 0,
+        "clientHeight": 768,
+        "scrollHeight": 3292,
+        "overflowY": "visible"
+      }
+    ],
+    "role": "authenticated codex test superuser",
+    "data": "12 synthetic reminders in isolated SQLite; no UI save",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T13:32:19.197Z",
+    "file": "originals/ULR013-B-after-detail.png",
+    "sha256": "0a1acc878623ea04ad4ce40e8935adcddb8943228f5065c8f9d7face69acf563",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "打开新品需求页并确认 12 条隔离合成需求",
+      "点击记录新品需求",
+      "滚轮向下查看新建表单",
+      "取消未修改表单并滚回顶部",
+      "点击首条查看需求"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-reminders.spec.js 对应截图阶段追溯"
+  },
+  {
+    "evidence_id": "ULR013-B-detail-bottom.png",
+    "surface_id": "G088",
+    "expanded_case_id": "ULR013-B-detail-bottom",
+    "related_ulr": [
+      "ULR-013"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/new-product-reminders?detail=12",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "windowScrollY": 2524,
+    "rowCount": 12,
+    "editor": {
+      "x": 282,
+      "y": 321,
+      "width": 1050,
+      "height": 379.3125,
+      "bottom": 700.3125
+    },
+    "scrollChain": [
+      {
+        "tag": "HTML",
+        "className": "",
+        "scrollTop": 2524,
+        "clientHeight": 768,
+        "scrollHeight": 3292,
+        "overflowY": "visible"
+      }
+    ],
+    "role": "authenticated codex test superuser",
+    "data": "12 synthetic reminders in isolated SQLite; no UI save",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T13:32:19.787Z",
+    "file": "originals/ULR013-B-detail-bottom.png",
+    "sha256": "ce53807b2aab2034e7894487b801bf57e1d82d932a142ed7b4c965da7bc6d571",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "打开新品需求页并确认 12 条隔离合成需求",
+      "点击记录新品需求",
+      "滚轮向下查看新建表单",
+      "取消未修改表单并滚回顶部",
+      "点击首条查看需求",
+      "滚轮向下查看详情"
+    ],
+    "metadata_provenance": "步骤按 ui-coverage-02-reminders.spec.js 对应截图阶段追溯"
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "evidence_id": "ULR002-A-customer-create.png",
+    "surface_id": "G001",
+    "expanded_case_id": "ULR002-A-customer-create",
+    "related_ulr": [
+      "ULR-002"
+    ],
+    "source_branch": "codex/finance-receipt-optimization-02",
+    "source_sha": "c978758f37db8b8acf5e751fc7aa836287163a6b",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "workspace_tabs": 0,
+    "sidebar_text": "经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n数据导入\n历史资料承接\n组织与系统\n组织与权限",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated SQLite; blank unsaved form",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T06:54:21.324Z",
+    "file": "originals/ULR002-A-customer-create.png",
+    "sha256": "386c474d6540f68e1362a7fbb1e6048ded0677b8051b9065ca8cbf8dd10a5ec7",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "navigate to /customers",
+      "open new customer form"
+    ],
+    "metadata_provenance": "viewport copied from original viewport field; steps reconstructed from ui-coverage-02-workspace.spec.js"
+  },
+  {
+    "evidence_id": "ULR002-A-products.png",
+    "surface_id": "G001",
+    "expanded_case_id": "ULR002-A-products",
+    "related_ulr": [
+      "ULR-002"
+    ],
+    "source_branch": "codex/finance-receipt-optimization-02",
+    "source_sha": "c978758f37db8b8acf5e751fc7aa836287163a6b",
+    "browser_version": "156.0.8078.80",
+    "route": "/products",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "workspace_tabs": 0,
+    "sidebar_text": "经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n数据导入\n历史资料承接\n组织与系统\n组织与权限",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated SQLite; blank unsaved form",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T06:54:21.671Z",
+    "file": "originals/ULR002-A-products.png",
+    "sha256": "98ef4076a0fa7a1d0a69d96328f156e53e67ad063e68ab5b9b60832725af6641",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "navigate to /customers",
+      "open new customer form",
+      "click 产品管理 in sidebar",
+      "wait for network idle"
+    ],
+    "metadata_provenance": "viewport copied from original viewport field; steps reconstructed from ui-coverage-02-workspace.spec.js"
+  }
+]

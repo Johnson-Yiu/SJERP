@@ -1,0 +1,9 @@
+{
+  "status": "WORKING_CHECK_NOT_COMPLETENESS",
+  "scope": "evidence_ids in dialog-callsite, code-candidates and findings against evidence_id in top-level array *manifest.json",
+  "manifest_count": 74,
+  "unique_evidence_ids": 273,
+  "references_checked": 56,
+  "missing": [],
+  "limitations": "只检查标识存在，不证明语义映射、图片完整性、清单之外的引用或独立复核。"
+}

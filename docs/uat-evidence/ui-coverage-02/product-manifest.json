@@ -1,0 +1,124 @@
+[
+  {
+    "evidence_id": "ULR003-B-1366.png",
+    "surface_id": "P006",
+    "expanded_case_id": "ULR003-B-1366",
+    "related_ulr": [
+      "ULR-003"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=__overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "backdrop": {
+      "left": 248,
+      "right": 1366,
+      "top": 134,
+      "bottom": 768,
+      "width": 1118,
+      "height": 634,
+      "clientWidth": 1118,
+      "scrollWidth": 1118,
+      "computedWidth": "1118px",
+      "overflowX": "hidden",
+      "overflowY": "hidden"
+    },
+    "article": {
+      "left": 24,
+      "right": 1366,
+      "top": 134,
+      "bottom": 768,
+      "width": 1342,
+      "height": 634,
+      "clientWidth": 1341,
+      "scrollWidth": 1341,
+      "computedWidth": "1342px",
+      "overflowX": "hidden",
+      "overflowY": "auto"
+    },
+    "role": "authenticated codex test superuser",
+    "object_reference": "WS-P001 / Workspace Light",
+    "data": "existing workspace-tabs synthetic fixture in isolated SQLite",
+    "steps": [
+      "open /products",
+      "click WS-P001",
+      "wait for product detail data",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T06:56:56.666Z",
+    "file": "originals/ULR003-B-1366.png",
+    "sha256": "f8f1ae56390b9c97ccf4ceae0043eea249c25799a86a0276e23a3dfec23537f9",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR003-B-1920.png",
+    "surface_id": "P006",
+    "expanded_case_id": "ULR003-B-1920",
+    "related_ulr": [
+      "ULR-003"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=__overview",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "backdrop": {
+      "left": 248,
+      "right": 1920,
+      "top": 134,
+      "bottom": 1080,
+      "width": 1672,
+      "height": 946,
+      "clientWidth": 1672,
+      "scrollWidth": 1672,
+      "computedWidth": "1672px",
+      "overflowX": "hidden",
+      "overflowY": "hidden"
+    },
+    "article": {
+      "left": 120,
+      "right": 1920,
+      "top": 134,
+      "bottom": 1080,
+      "width": 1800,
+      "height": 946,
+      "clientWidth": 1799,
+      "scrollWidth": 1799,
+      "computedWidth": "1800px",
+      "overflowX": "hidden",
+      "overflowY": "auto"
+    },
+    "role": "authenticated codex test superuser",
+    "object_reference": "WS-P001 / Workspace Light",
+    "data": "existing workspace-tabs synthetic fixture in isolated SQLite",
+    "steps": [
+      "open /products",
+      "click WS-P001",
+      "wait for product detail data",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T06:56:56.772Z",
+    "file": "originals/ULR003-B-1920.png",
+    "sha256": "47bfdd27645ea7c3c47715158e7547824b98f14c534c7a4d75ecd9238e7ffcfa",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    }
+  }
+]

@@ -1,0 +1,68 @@
+[
+  {
+    "evidence_id": "CATEGORY-DELETE-CONFIRM-B-1366",
+    "surface_id": "P063",
+    "expanded_case_id": "CATEGORY-DELETE-CONFIRM-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/categories",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n分类与属性\n产品分类\n11月10日周二\nC\n产品分类\n×\n⋮\n产品分类\n\n按分类整理产品，并设置属性和 SKU 命名规则。\n\n新建根分类\n分类总数\n1\n根分类\n1\n最大层级\n1\n自定义属性\n0\n分类列表\n\n拖动分类可调整顺序；放到右侧“放入”区域可设为子分类。\n\n全部展开\n全部收起\n刷新\n·\nWorkspace Category\n拖到这里移动为根分类\nWorkspace Category\nWorkspace Category\n\n暂无分类说明\n\n子分类\n中文 SKU 名称预览\n选择用于中文 SKU 名称的属性后，这里会显示预览\n\n按分类属性顺序预览，不会更改 SKU Code。\n\n分类属性\n\n选择用于中文 SKU 名称或 Sales Model 的属性，也可拖动调整顺序。\n\n分类属性用于产品的 SKU 参数方案。已发布的方案不会随模板自动变化；如需更新，请到产品页分析后发布。\n\n新增属性\n此分类及其上级分类还没有属性。\n确认删除分类\n\n确定删除分类“Workspace Category”吗？有子分类或关联产品时不能删除。\n\n取消\n确认删除",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; Workspace Category has associated product",
+    "steps": [
+      "open category page",
+      "click delete selected Workspace Category"
+    ],
+    "delete_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:47:20.433Z",
+    "file": "originals/CATEGORY-DELETE-CONFIRM-B-1366.png",
+    "sha256": "4681bbd6320295dd6658ab5cd4f10cc20ad4e8b0c87f957f655db9e8cc1d3f25",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "DELETE guard installed but not triggered; cancellation path only"
+  },
+  {
+    "evidence_id": "CATEGORY-DELETE-CANCEL-B-1366",
+    "surface_id": "P063",
+    "expanded_case_id": "CATEGORY-DELETE-CANCEL-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/categories",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n分类与属性\n产品分类\n11月10日周二\nC\n产品分类\n×\n⋮\n产品分类\n\n按分类整理产品，并设置属性和 SKU 命名规则。\n\n新建根分类\n分类总数\n1\n根分类\n1\n最大层级\n1\n自定义属性\n0\n分类列表\n\n拖动分类可调整顺序；放到右侧“放入”区域可设为子分类。\n\n全部展开\n全部收起\n刷新\n·\nWorkspace Category\n拖到这里移动为根分类\nWorkspace Category\nWorkspace Category\n\n暂无分类说明\n\n子分类\n中文 SKU 名称预览\n选择用于中文 SKU 名称的属性后，这里会显示预览\n\n按分类属性顺序预览，不会更改 SKU Code。\n\n分类属性\n\n选择用于中文 SKU 名称或 Sales Model 的属性，也可拖动调整顺序。\n\n分类属性用于产品的 SKU 参数方案。已发布的方案不会随模板自动变化；如需更新，请到产品页分析后发布。\n\n新增属性\n此分类及其上级分类还没有属性。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; Workspace Category has associated product",
+    "steps": [
+      "cancel confirmation",
+      "verify category remains and no DELETE"
+    ],
+    "delete_requests_observed": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:47:20.550Z",
+    "file": "originals/CATEGORY-DELETE-CANCEL-B-1366.png",
+    "sha256": "c4498a9d1f90177013c392f313994d140b22ecac19d9e06fb5a7da888bcbd3de",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "DELETE guard installed but not triggered; cancellation path only"
+  }
+]

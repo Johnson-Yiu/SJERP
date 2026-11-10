@@ -1,0 +1,269 @@
+[
+  {
+    "evidence_id": "SUPPLIER-HORIZONTAL-START-B-1366",
+    "surface_id": "G024",
+    "expanded_case_id": "SUPPLIER-HORIZONTAL-START-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/suppliers",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture with Workspace Supplier",
+    "steps": [
+      "open supplier list"
+    ],
+    "geometry": {
+      "scrollLeft": 0,
+      "scrollWidth": 1208,
+      "clientWidth": 1048,
+      "overflowX": "auto",
+      "rect": {
+        "x": 283,
+        "y": 494.578125,
+        "width": 1048,
+        "height": 115.5,
+        "top": 494.578125,
+        "right": 1331,
+        "bottom": 610.078125,
+        "left": 283
+      },
+      "cells": [
+        {
+          "text": "Workspace Supplier\nWS-S001 · 中国",
+          "rect": {
+            "x": 283,
+            "y": 536.578125,
+            "width": 230,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 513,
+            "bottom": 610.078125,
+            "left": 283
+          },
+          "position": "static"
+        },
+        {
+          "text": "启用",
+          "rect": {
+            "x": 513,
+            "y": 536.578125,
+            "width": 230,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 743,
+            "bottom": 610.078125,
+            "left": 513
+          },
+          "position": "static"
+        },
+        {
+          "text": "—\n未填可供分类",
+          "rect": {
+            "x": 743,
+            "y": 536.578125,
+            "width": 180,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 923,
+            "bottom": 610.078125,
+            "left": 743
+          },
+          "position": "static"
+        },
+        {
+          "text": "—",
+          "rect": {
+            "x": 923,
+            "y": 536.578125,
+            "width": 240,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 1163,
+            "bottom": 610.078125,
+            "left": 923
+          },
+          "position": "static"
+        },
+        {
+          "text": "30%预付款，70%尾款发货前结清",
+          "rect": {
+            "x": 1163,
+            "y": 536.578125,
+            "width": 220,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 1383,
+            "bottom": 610.078125,
+            "left": 1163
+          },
+          "position": "static"
+        },
+        {
+          "text": "停用",
+          "rect": {
+            "x": 1223,
+            "y": 536.578125,
+            "width": 108,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 1331,
+            "bottom": 610.078125,
+            "left": 1223
+          },
+          "position": "sticky"
+        }
+      ]
+    },
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:17:34.932Z",
+    "file": "originals/SUPPLIER-HORIZONTAL-START-B-1366.png",
+    "sha256": "00fc47813813896466f8632ef1c5b182335d54a95d35b1f91c8f3399f3d144aa",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "one synthetic supplier; no edits or state changes",
+    "observation": "初始位置付款备注部分被固定操作区覆盖。"
+  },
+  {
+    "evidence_id": "SUPPLIER-HORIZONTAL-END-B-1366",
+    "surface_id": "G024",
+    "expanded_case_id": "SUPPLIER-HORIZONTAL-END-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/suppliers",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture with Workspace Supplier",
+    "steps": [
+      "horizontal mouse wheel over supplier table",
+      "inspect payment terms"
+    ],
+    "geometry": {
+      "scrollLeft": 160,
+      "scrollWidth": 1208,
+      "clientWidth": 1048,
+      "overflowX": "auto",
+      "rect": {
+        "x": 283,
+        "y": 494.578125,
+        "width": 1048,
+        "height": 115.5,
+        "top": 494.578125,
+        "right": 1331,
+        "bottom": 610.078125,
+        "left": 283
+      },
+      "cells": [
+        {
+          "text": "Workspace Supplier\nWS-S001 · 中国",
+          "rect": {
+            "x": 123,
+            "y": 536.578125,
+            "width": 230,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 353,
+            "bottom": 610.078125,
+            "left": 123
+          },
+          "position": "static"
+        },
+        {
+          "text": "启用",
+          "rect": {
+            "x": 353,
+            "y": 536.578125,
+            "width": 230,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 583,
+            "bottom": 610.078125,
+            "left": 353
+          },
+          "position": "static"
+        },
+        {
+          "text": "—\n未填可供分类",
+          "rect": {
+            "x": 583,
+            "y": 536.578125,
+            "width": 180,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 763,
+            "bottom": 610.078125,
+            "left": 583
+          },
+          "position": "static"
+        },
+        {
+          "text": "—",
+          "rect": {
+            "x": 763,
+            "y": 536.578125,
+            "width": 240,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 1003,
+            "bottom": 610.078125,
+            "left": 763
+          },
+          "position": "static"
+        },
+        {
+          "text": "30%预付款，70%尾款发货前结清",
+          "rect": {
+            "x": 1003,
+            "y": 536.578125,
+            "width": 220,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 1223,
+            "bottom": 610.078125,
+            "left": 1003
+          },
+          "position": "static"
+        },
+        {
+          "text": "停用",
+          "rect": {
+            "x": 1223,
+            "y": 536.578125,
+            "width": 108,
+            "height": 73.5,
+            "top": 536.578125,
+            "right": 1331,
+            "bottom": 610.078125,
+            "left": 1223
+          },
+          "position": "sticky"
+        }
+      ]
+    },
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T20:17:35.439Z",
+    "file": "originals/SUPPLIER-HORIZONTAL-END-B-1366.png",
+    "sha256": "2c6de80c2bc8662be0d1ac0d31ce870a034d883411c30c64c3dfbc8ae792bfe2",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "one synthetic supplier; no edits or state changes",
+    "observation": "水平滚动后可见完整合成付款备注，但供应商名称移出左侧视口。"
+  }
+]

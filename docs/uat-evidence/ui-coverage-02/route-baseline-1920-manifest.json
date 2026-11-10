@@ -1,0 +1,1118 @@
+[
+  {
+    "evidence_id": "BASE-B-root-1920.png",
+    "surface_id": "G018",
+    "expanded_case_id": "BASE-B-root-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/",
+    "route": "/",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n销售与客户\n经营概览\n11月10日周二\nC\n经营概览\n×\n⋮\n\n查看销售额、待跟进事项和收支。\n\n更新于 01:22\n刷新数据\n报表中心\n订单管理\n客户管理\n财务概览\n销售与客户\n\n按订单日期和合同金额统计，按订单汇率折算成人民币；不等于实际收款。\n\n2026-01-01 — 2026-11-10\n本年截至今日销售额\n¥ 0.00\n2026-01-01 — 2026-11-10\n去年同期为零，暂不计算变化率\n本年截至今日订单数\n0\n2026-01-01 — 2026-11-10 · 正式订单\n合作中客户\n0\n按当前客户档案统计\n当前待跟进\n0\n含今天到期和已逾期的跟进\n销售趋势\n\n最近12个自然月（2025-12-01 — 2026-11-10）· 人民币\n\n暂无月度销售数据。\n\n按订单日期统计，含本月和前 11 个月；无订单的月份按 0 显示。\n\n分类销售额\n\n2026-01-01 — 2026-11-10 · 销售额最高的 8 个分类\n\n暂无分类销售数据。\n\n仅统计产品金额，不含运费、折扣和合同调整；占比按当前显示的分类计算。\n\n重点客户\n\n2026-01-01 — 2026-11-10 · 销售额前 6 名\n\n客户列表\n\n暂无客户销售记录。\n\n待跟进事项\n\n今天到期和已逾期的跟进，显示前 5 条\n\n全部待跟进\n\n没有待跟进事项。\n\n证书到期提醒\n\n暂无已过期或 90 天内到期的证书。\n\n全部需关注证书\n账面收支（人民币折算参考）\n\n按流水发生日期，2026-01-01 — 2026-11-10 汇总；仅已确认流水。账面人民币折算参考：已确认流水按既有人民币金额及流水汇率汇总，包含原币为CNY的既有流水；不代表银行实际到账、已完成结汇或银行账户余额。流水发生日期不等同于银行到账日。\n\n账面收入（折算参考）\n¥ 0.00\n账面支出（折算参考）\n¥ 0.00\n账面净收支（收入 − 支出）\n¥ 0.00",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:20.992Z",
+    "file": "originals/BASE-B-root-1920.png",
+    "sha256": "ffc84e102bcff02cc2f2284393f568dc432f866dcd611edcd5cc190ffb03870c",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "经营概览显示零值销售卡片及空图表；更下方内容依视口不同。 仅初始视口，未证明交互和其他状态。"
+  },
+  {
+    "evidence_id": "BASE-B-new-product-reminders-1920.png",
+    "surface_id": "G087",
+    "expanded_case_id": "BASE-B-new-product-reminders-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/new-product-reminders",
+    "route": "/new-product-reminders",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n新品提醒\n11月10日周二\nC\n新品提醒\n×\n⋮\n客户产品需求\n\n记录客户所找的产品，按关键词查找待联系客户。\n\n记录新品需求\n标签\n新品提醒\n关键词\n条目状态\n有效条目\n已作废\n全部条目\n查询\n\n没有符合条件的需求。\n\n上一页\n共 0 条 · 第 1 页\n下一页",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:22.211Z",
+    "file": "originals/BASE-B-new-product-reminders-1920.png",
+    "sha256": "0e304715902cff5a92fae425a02c9fd1b7bb1504676ef9b7e324c3bc822f36db",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "客户产品需求筛选区及空结果可见。 仅初始视口，未证明交互和其他状态。"
+  },
+  {
+    "evidence_id": "BASE-B-finance-ledger-1920.png",
+    "surface_id": "F027",
+    "expanded_case_id": "BASE-B-finance-ledger-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/finance-ledger",
+    "route": "/finance-ledger",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCOUNT CASH\n账户余额与对账\n11月10日周二\nC\n账户余额与对账\n×\n⋮\n账户余额与对账\n\n按真实账户核对人民币变动、凭证和处理记录。\n\n刷新\n资金事实\n登记与复核\n账户与映射\n账户核对\n转账与分类\n开始日期\n结束日期\n查询\n导出 CSV\n公司流入 ¥0\n公司流出 ¥0\n净变动 ¥0\n\n本页汇总新承接的账户事实。启用余额不计收入，已核实内部本金不计公司毛流量；账户明细保留两端变动。已有银行事实见银行资金记录页，合并统计见财务概览。\n\n所选期间暂无已记账账户事实。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:24.100Z",
+    "file": "originals/BASE-B-finance-ledger-1920.png",
+    "sha256": "687057606df76fb2fd82762a97f83a7a68af97d5306e7d7f6efdc8a39952312e",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "资金事实页签及空记录提示可见，不含具体资金事实或凭证历史。 仅初始视口，未证明交互和其他状态。"
+  },
+  {
+    "evidence_id": "BASE-B-sku-trade-units-1920.png",
+    "surface_id": "P047",
+    "expanded_case_id": "BASE-B-sku-trade-units-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/sku-trade-units",
+    "route": "/sku-trade-units",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nTRANSACTION UNITS\nSKU 交易单位\n11月10日周二\nC\nSKU 交易单位\n×\n⋮\nSKU 交易单位\n\n设置卷、箱等交易规格；库存仍按 SKU 基础单位记账。\n\n返回 SKU\n刷新\n选择 SKU\n全部分类\nWorkspace Light\nSKU: WS-SKU001\nSales Model: —\n\n从左侧勾选 SKU 后，可在这里查看详情。\n\n交易规格 0 项\n\n1 卷或 1 箱含多少基础单位，由换算系数决定。供应商专用规格只适用于对应供应商。\n\n请先选择 SKU；下方展示全部已配置规格。\n\n新增交易规格\n\n请先选择一个 SKU\n\n规格名称\n交易单位\n换算系数\n填写系数后显示换算关系\n供应商（可选）\n通用规格\nWorkspace Supplier\n允许小数交易数量\n\n例如 0.5 卷；未勾选时只能填写整数卷数或箱数。\n\n设为该 SKU 默认规格\n备注\n\n名称、单位、换算系数、供应商和小数规则保存后固定。规格变化时请停用旧项后新建；历史单据保留原快照。装箱数量及产品净重仍按基础单位填写。\n\n添加规格",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:25.295Z",
+    "file": "originals/BASE-B-sku-trade-units-1920.png",
+    "sha256": "9ee540a7469d94f54831b44bff0b72e31361af8301cb0646012921a3d5f41e19",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "SKU 列表显示合成 SKU，尚未选择；不能代表已选 SKU 的规格。 仅初始视口，未证明交互和其他状态。"
+  },
+  {
+    "evidence_id": "BASE-B-reports-1920.png",
+    "surface_id": "F047",
+    "expanded_case_id": "BASE-B-reports-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/reports",
+    "route": "/reports",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nREPORTS & ANALYTICS\n报表中心\n11月10日周二\nC\n报表中心\n×\n⋮\n\n选择报表、日期口径和日期范围；查询后可继续筛选、下钻或保存图表。\n\n财务概览 →\n1. 选择报表与指标\n报表预设\n自定义查询\n销售趋势\n区域销售\n国家销售\n客户销售排行\n产品销售排行\nSKU 销售排行\n产品类别销售\n负责人销售\n采购趋势\n供应商采购排行\nSKU 采购排行\n客户增长趋势\n客户来源分布\n账面净收支趋势（折算参考）\n账面收支分类（折算参考）\n银行实际人民币资金趋势\n银行实际资金分类\n仓库库存变动\n\n选择预设后可调整条件；点击“查询报表”后，表格中的分组可继续下钻。\n\n数据来源\n销售报表\n采购 / 供应商报表\n订单利润\n客户增长\n账面收支（人民币折算参考）\n银行实际人民币资金\n库存变动\n统计维度\n时间\n业务区域\n国家/地区\n客户\n产品\nSKU\n产品主分类\n负责人\n客户来源\n状态\n原币币种\n第二统计维度（可选）\n不设置\n业务区域\n国家/地区\n客户\n产品\nSKU\n产品主分类\n负责人\n客户来源\n状态\n原币币种\n图表指标\n金额（人民币）\n去重单据 / 档案数\n数量（按单位）\n图表类型\n折线图\n条形图\n环形图\n数据表\n2. 日期口径与比较\n近30天\n近90天\n今天\n本周至今\n本月至今\n本季度至今\n本年至今\n上月\n去年\n日期口径\n订单日期\n预计交期\n创建时间\n更新时间\n开始日期\n结束日期（含当天）\n比较方式\n上一等长期间\n去年同期\n时间粒度\n日\n周（周一开始）\n月\n季度\n年\n\n有效销售订单的合同金额；商品行之外的运费、折扣和已确认合同变更统一列为订单金额调整，不分摊 SKU。金额按订单汇率折人民币，不代表实收或利润。\n\n日期口径决定按哪一天统计：销售 / 采购通常按订单日期，账面收支按流水发生日期，银行实际人民币资金按银行实际日期；当前余额只在财务概览余额区使用。\n\n3. 附加筛选\n筛选维度\n选择维度\n业务区域\n国家/地区\n客户\n产品\nSKU\n产品主分类\n负责人\n客户来源\n状态\n原币币种\n可用值\n请选择\n刷新选项\n添加筛选\n图表名称\n查询报表\n保存为图表块\n最多 30 块，仅当前浏览器可用。\n团队共享模板\n\n模板只保存报表条件；每次使用仍按当前账号的数据权限重新查询。\n\n刷新\n根据当前查询创建\n\n当前没有可用的已发布模板。\n\n当前查询口径\n\n销售报表 · 时间 · 订单日期 · 2026-01-01 — 2026-11-10\n\n经营报表\n销售趋势\n默认图表\n条形图\n折线图\n环形图\n仅表格\n导出 CSV\n金额合计（人民币）\n¥ 0\n去重单据 / 档案数\n0\n\n订单日期 · 2026-01-01 — 2026-11-10 · 上一等长期间 2025-02-21 — 2025-12-31 · 金额（人民币）变化：基期为零或该指标不适用\n\n有效销售订单的合同金额；商品行之外的运费、折扣和已确认合同变更统一列为订单金额调整，不分摊 SKU。金额按订单汇率折人民币，不代表实收或利润。 分组单据数可能交叉，不应相加；空日期不纳入该日期口径。\n\n此筛选条件下暂无数据，可调整日期、日期口径或筛选条件。\n\n我的图表块 0 / 30\n\n保存来源、维度、指标和筛选；日期跟随本页已查询条件。设置仅在当前浏览器保存。\n\n查询后点击“保存为图表块”，下次打开可继续使用。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:27.497Z",
+    "file": "originals/BASE-B-reports-1920.png",
+    "sha256": "c03955452a9a0f7dc9a13721b4564c4e5b8ed2b2b1dc4552aa7e53b7ec8beda8",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "报表初始筛选表单可见；1366 视口下部内容未完整显示。 仅初始视口，未证明交互和其他状态。"
+  },
+  {
+    "evidence_id": "BASE-B-historical-orders-1920.png",
+    "surface_id": "F045",
+    "expanded_case_id": "BASE-B-historical-orders-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/historical-orders",
+    "route": "/historical-orders",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nHISTORICAL LEDGER\n历史订单分析\n11月10日周二\nC\n历史订单分析\n×\n⋮\n\nHISTORICAL LEDGER\n\n历史订单分析\n\n录入系统启用前的真实订单并保留原日期；仅用于经营分析。\n\n不生成应收、应付、采购或库存记录\n历史销售订单\n历史采购订单\n录入历史销售订单\n\n仅保存分析资料，不进入正式履约。\n\n清空\n客户\n请选择客户\nWorkspace Beta · WS-C002\nWorkspace Alpha · WS-C001\n真实订单日期\n币种\nCNY\nUSD\nEUR\nGBP\n对人民币汇率\n商品明细\n增加 SKU\n选择 SKU\nWS-SKU001 · Workspace Light\n移除\n订单备注\n保存后状态为“历史订单 · 仅用于经营分析”\n保存历史订单\n历史经营分析\n\n与正式启用后的经营指标分开显示；没有可靠成本时不计算利润。\n\n从\n至\n刷新分析\n历史销售额（人民币折算）\n¥ 0.00\n0 张订单 · 0 件\n历史采购额（人民币折算）\n¥ 0.00\n0 张订单 · 0 件\n利润\n不计算\n历史成本未必完整，避免虚构利润\n\n当前权限下暂无可展示的历史明细。\n\n已录入历史销售订单\n\n当前共 0 张；历史记录不会出现在待收、待付、采购待办或库存预留中。\n\n暂无历史订单",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:28.665Z",
+    "file": "originals/BASE-B-historical-orders-1920.png",
+    "sha256": "9fe1cc3e184e063afc897ec8308c6d7ade129a7c79b9a3b42d8ee215f36737ff",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "历史销售订单空表单可见；1366 下保存区域位于视口下方。 仅初始视口，未证明交互和其他状态。"
+  },
+  {
+    "evidence_id": "BASE-B-categories-1920.png",
+    "surface_id": "P035",
+    "expanded_case_id": "BASE-B-categories-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/categories",
+    "route": "/categories",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n分类与属性\n产品分类\n11月10日周二\nC\n产品分类\n×\n⋮\n产品分类\n\n按分类整理产品，并设置属性和 SKU 命名规则。\n\n新建根分类\n分类总数\n1\n根分类\n1\n最大层级\n1\n自定义属性\n0\n分类列表\n\n拖动分类可调整顺序；放到右侧“放入”区域可设为子分类。\n\n全部展开\n全部收起\n刷新\n·\nWorkspace Category\n拖到这里移动为根分类\nWorkspace Category\nWorkspace Category\n\n暂无分类说明\n\n子分类\n中文 SKU 名称预览\n选择用于中文 SKU 名称的属性后，这里会显示预览\n\n按分类属性顺序预览，不会更改 SKU Code。\n\n分类属性\n\n选择用于中文 SKU 名称或 Sales Model 的属性，也可拖动调整顺序。\n\n分类属性用于产品的 SKU 参数方案。已发布的方案不会随模板自动变化；如需更新，请到产品页分析后发布。\n\n新增属性\n此分类及其上级分类还没有属性。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:31.250Z",
+    "file": "originals/BASE-B-categories-1920.png",
+    "sha256": "b1c8d519bc0e577a8a16edc082cc6d859fa243990bbdc0c82a7f621db7f23aed",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "合成分类和分类属性区域可见。 仅初始视口，未证明交互和其他状态。"
+  },
+  {
+    "evidence_id": "BASE-B-products-1920.png",
+    "surface_id": "P001",
+    "expanded_case_id": "BASE-B-products-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/products",
+    "route": "/products",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n产品资料\n产品管理\n11月10日周二\nC\n产品管理\n×\n⋮\n产品管理\n\n维护产品名称、分类和销售状态；SKU 编码请在“SKU 管理”中维护。\n\n新建产品\n产品总数\n1\n当前筛选范围\n在售产品\n1\n可继续添加 SKU\n开发中\n0\n尚未正式销售\nSKU 总数\n1\n产品下的 SKU\n全部分类\nWorkspace Category\n产品编号顺序\n产品名称顺序\nSKU 数量最多\n查询\n重置\n刷新\n产品编号\t产品名称\t销售型号前缀\t主分类\t状态\tSKU\t参数\t证书\t\nWS-P001\tWorkspace Light\n未填写英文名称\n\t—\tWorkspace Category\t在售\t1\t0\t0\t",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:32.507Z",
+    "file": "originals/BASE-B-products-1920.png",
+    "sha256": "59baeeff6149e6258e5d352fb4e9afe177afb52f702562a23325c76faf7d3814",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "合成产品行和顶部统计可见。 仅初始视口，未证明交互和其他状态。"
+  },
+  {
+    "evidence_id": "BASE-B-skus-1920.png",
+    "surface_id": "P023",
+    "expanded_case_id": "BASE-B-skus-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/skus",
+    "route": "/skus",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n销售规格\nSKU 管理\n11月10日周二\nC\nSKU 管理\n×\n⋮\nSKU 管理\n\n为产品添加可报价、可下单的 SKU，并维护对应规格。\n\n新建 SKU\nSKU 总数\n1\n当前查询结果\n已启用\n1\n可用于报价与下单\n已设型号\n0\n对外 Sales Model 已完整\n关联产品\n1\n已配置销售规格的产品\n全部产品\nWS-P001 · Workspace Light\n全部状态\n启用\n停用\n查询\n重置\n刷新\n内部识别名称\t对外型号 / SALES MODEL\t分类信息\t状态\t报价次数\t订单次数\t图片\t库存\t单位\t默认售价\t\nWorkspace Light\nSKU Code：WS-SKU001\n\t未设置\tWorkspace Category\t启用\t0\t1\t—\t0.00\tpcs\t10.00 USD\t",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:34.842Z",
+    "file": "originals/BASE-B-skus-1920.png",
+    "sha256": "d9e577e2a04555d709ad150323ea5bc6bc1150bbd6095f0c7cd8b263f2b69a96",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "合成 SKU 行可见；1366 表格未显示 1920 中的库存、单位和价格列。 仅初始视口，交互及其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-sku-packaging-1920.png",
+    "surface_id": "P039",
+    "expanded_case_id": "BASE-B-sku-packaging-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/sku-packaging",
+    "route": "/sku-packaging",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPACKAGING MAINTENANCE\n包装管理\n11月10日周二\nC\n包装管理\n×\n⋮\n包装管理\n\n维护共享包装的尺寸、皮重与尾货策略。包装模板变化不会改写历史装箱方案。\n\n刷新\n新建模板\n包装模板\n0\n全部包装资料\n启用模板\n0\n可继续被 SKU 引用\n关联 SKU\n0\n已配置包装的销售规格\n包装供应商\n0\n当前模板关联的供应商\n尾货策略\n全部\n整箱优先\n尾箱待确认\n人工装箱\n全部状态\n启用\n停用\n查询\n重置\n没有匹配的包装模板\n\n点击“新建模板”建立包装资料。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:36.163Z",
+    "file": "originals/BASE-B-sku-packaging-1920.png",
+    "sha256": "4e0453f3a0c7215787af563011a8938ef90429d74c93ea90151ee649e23318b5",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "包装模板为空，筛选及新建入口可见。 仅初始视口，交互及其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-hs-codes-1920.png",
+    "surface_id": "P044",
+    "expanded_case_id": "BASE-B-hs-codes-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/hs-codes",
+    "route": "/hs-codes",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nCUSTOMS CLASSIFICATION\nHS 编码维护\n11月10日周二\nC\nHS 编码维护\n×\n⋮\nHS 编码维护\n\n维护编码目录及产品归类。只有具备管理权限的人员可以修改。\n\n刷新\n新建 HS 编码\nHS 编码\n0\n全部编码目录\n启用编码\n0\n可分配给新产品\n已关联产品\n0\n全部编码当前关联\n搜索\n状态\n全部状态\n启用\n停用\n排序\n编码顺序\n关联产品最多\n查询\n重置\n尚无 HS 编码\n\n建立编码后即可统一分配产品。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:38.016Z",
+    "file": "originals/BASE-B-hs-codes-1920.png",
+    "sha256": "58b2d6c06603688565f0b1e76f51b6ea855f14cb0604d4930b7716e1eff80d87",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "HS 编码目录为空，筛选及新建入口可见。 仅初始视口，交互及其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-quotes-1920.png",
+    "surface_id": "S001",
+    "expanded_case_id": "BASE-B-quotes-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/quotes",
+    "route": "/quotes",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nQUOTATION DESK\n报价管理\n11月10日周二\nC\n报价管理\n×\n⋮\n\n管理报价、修订版及转单进度。\n\n新建报价\n报价主单\n0\n主单数量\n报价修订版\n0\n含全部版本\n跟进中\n0\n草稿或已发送\n客户已接受\n0\n已接受报价\n全部状态\n草稿\n已发送\n已接受\n已拒绝\n已过期\n全部客户\nWorkspace Alpha\nWorkspace Beta\n最近更新时间\n最早更新时间\n报价日期（新到旧）\n报价日期（旧到新）\n重置\n暂无报价\n\n点击“新建报价”开始录入。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:39.254Z",
+    "file": "originals/BASE-B-quotes-1920.png",
+    "sha256": "6f70244e981d582786a90a6b480f82d280b920041678410e0e8658abf83c12f7",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "报价列表为空，筛选和新建入口可见。 仅初始视口，交互及其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-orders-1920.png",
+    "surface_id": "S015",
+    "expanded_case_id": "BASE-B-orders-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/orders",
+    "route": "/orders",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSALES ORDERS\n订单管理\n11月10日周二\nC\n订单管理\n×\n⋮\n\n管理销售订单、履约与回款。\n\n新建订单\n执行中\n0\n已确认 / 生产中 / 已发货\n待出库\n0\n尚未完成发货\n待收款\n0\n仍有应收余额\n已完成\n0\n已完成交付\n全部状态\n草稿\n已确认\n生产中\n已发货\n已完成\n已取消\n全部待办\n待出库\n交期已到\n重置\n订单号\t客户\t订单日期\t预计出货日期\t履约状态\t明细\t订单总额\t已收 / 待收\t操作\nWS-SO001\tWorkspace Alpha\t2026-11-10\t未设置\t草稿\t1 项\tUSD 100.00\t0.00 / 尚未生效\t",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:41.291Z",
+    "file": "originals/BASE-B-orders-1920.png",
+    "sha256": "5a6770cfa27ba728645c959afc9d191a13b942500629b78e800a93f4e7722f04",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "合成草稿 WS-SO001 行及操作入口可见。 仅初始视口，交互及其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-import-1920.png",
+    "surface_id": "F032",
+    "expanded_case_id": "BASE-B-import-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/import",
+    "route": "/import",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nDATA ONBOARDING\n数据导入\n11月10日周二\nC\n数据导入\n×\n⋮\n数据导入\n\n上传文件并预览校验；确认后再写入业务数据。\n\n历史资料预检与承接\n客户、产品与财务流水\n销售订单\n01\n选择数据类型\n\n客户、产品和 SKU 按编号匹配；更新会经过当前业务规则校验，不会绕过主数据保护。\n\n客户\n按客户编号匹配\n产品\n分类须预先建立\nSKU\n按 SKU 与产品编号匹配\n财务流水\n只新增，不覆盖\n02\n准备并上传 CSV\n\n文件须为 UTF-8（支持 BOM），最多 5,000 条记录。选择文件后仍须预览校验，第一行保留模板字段名。\n\n下载 客户 CSV 模板\ncode · name · country · source · website · address · notes\n点击选择 CSV 文件\n单次建议不超过 5,000 行\n预览并校验\n\n尚未选择文件\n\n导入规则\n1\n客户\n按客户编号匹配\n2\n产品\n分类须预先建立\n3\nSKU\n按 SKU 与产品编号匹配\n4\n财务流水\n只新增，不覆盖\n关联与历史安全\n\n客户、产品和 SKU 按编号匹配。更新时空白字段可能清除原有内容，请先备份并核对。财务流水只新增；重复流水号会报错，绝不覆盖原记录。\n\n销售订单通过专用 XLSX 模板导入，按整单创建草稿。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:42.314Z",
+    "file": "originals/BASE-B-import-1920.png",
+    "sha256": "47954fff0b156c2b6cd7ca14183ce96daea6c47bb5c0ec903417d700fd9cb961",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "客户 CSV 导入初始状态未选文件；1366 下上传区域延伸到视口底部。 仅初始视口，交互及其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-history-preflight-1920.png",
+    "surface_id": "F035",
+    "expanded_case_id": "BASE-B-history-preflight-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/history-preflight",
+    "route": "/history-preflight",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n只读检查\n历史资料预检\n11月10日周二\nC\n历史资料预检\n×\n⋮\n\n只读检查\n\n历史资料预检\n\n上传 XLSX 查看检查结果，再按需下载行级问题清单。\n\n需要提交承接申请？\n进入历史资料承接\n选择工作簿\n\n仅支持 .xlsx 文件，大小按系统限制。\n\n请选择历史资料工作簿\n开始预检\n\n预检只读取工作簿和现有资料，不创建承接申请，也不修改库存、应收应付、订单或私有媒体。预检通过不代表已批准或已承接。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:43.518Z",
+    "file": "originals/BASE-B-history-preflight-1920.png",
+    "sha256": "74c4a4b82d3c96ad80d3f0dee63adf7b24fa4372004d827e57d4ed32b0b69a25",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "预检未选文件，开始预检按钮呈禁用状态。 仅初始视口，交互及其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-history-takeover-1920.png",
+    "surface_id": "F037",
+    "expanded_case_id": "BASE-B-history-takeover-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/history-takeover",
+    "route": "/history-takeover",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nCONTROLLED HISTORY INTAKE\n历史资料承接\n11月10日周二\nC\n历史资料承接\n×\n⋮\n\n受控流程\n\n历史资料承接\n\n申请、核实和逐组承接；预检通过不代表已批准或已迁移。\n\n只预检文件\n需要相关业务完整查看权限\n提交承接申请\n\n来源行和凭证引用会纳入申请记录。\n\n下载承接模板\n选择 .xlsx 文件提交申请并预检\n\n模拟或待核实资料只留在暂存区；不会创建主档、资金流水、库存流水或履约记录。\n\n申请记录\n刷新\n\n还没有历史承接申请\n\n选择一条申请，查看分组核验结果。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:44.706Z",
+    "file": "originals/BASE-B-history-takeover-1920.png",
+    "sha256": "c4787ce5d7a7a20eab6cf569699b57fec305b2f9605be66f62ac4194c76ee45a",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "无申请记录，部分控件呈浏览器默认样式；与 ULR-001 观察相关，详情场景未展示。 仅初始视口，交互及其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-organization-1920.png",
+    "surface_id": "G019",
+    "expanded_case_id": "BASE-B-organization-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/organization",
+    "route": "/organization",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nORGANIZATION & ACCESS\n组织与权限\n11月10日周二\nC\n组织与权限\n×\n⋮\n组织与权限\n\n查看组织架构，按角色维护功能权限。\n\n刷新\n当前服务端未启用权限执行\n\n此页只维护已有角色模板，不改变当前访问模式。正式人员权限与数据范围仍需单独配置和验收。\n\n部门\n5\n岗位\n13\n角色模板\n15\n成员账号\n0\n组织架构 部门与岗位\n角色模板\n\n共 15 个角色\n\n超级管理员\n全部数据\n管理员\n全部数据\n销售主管\n本部门及下级\n业务员\n仅本人负责\n跟单\n仅本人负责\n运营主管\n本部门及下级\n网站运营\n仅本人负责\n平台运营\n仅本人负责\n仓库主管\n本部门及下级\n仓库员工\n本部门\n财务主管\n本部门及下级\n财务员工\n本部门\n人事行政主管\n本部门及下级\n人事\n本部门\n行政\n本部门\nSUPERADMIN\n超级管理员\n\n系统最高权限，可管理所有业务、成员和权限。\n\n默认数据范围（只读）\n全部数据\n\n数据范围当前首先用于客户/CRM/销售记录。产品、SKU、库存等共享主数据不按客户负责人切分。\n\n查找功能模块\n24 / 24 个模块\n当前没有未保存修改\n\n勾选任一操作会同时勾选“查看”；取消“查看”会清除该模块的其他操作权限。筛选只影响显示，保存仍包含全部模块。\n\n包含全部ERP业务权限，不受普通勾选项限制。此最高角色不可修改；下方勾选反映实际生效权限。\n\n超级管理员 · 功能权限\n功能模块\t查看\t新建\t修改\t删除\t导出\t导入\n经营概览\t\n\t\n\t\n\t\n\t\n\t\n\n报表中心\t\n\t\n\t\n\t\n\t\n\t\n\n客户管理\t\n\t\n\t\n\t\n\t\n\t\n\n联系人\t\n\t\n\t\n\t\n\t\n\t\n\n跟进记录\t\n\t\n\t\n\t\n\t\n\t\n\n报价管理\t\n\t\n\t\n\t\n\t\n\t\n\n订单管理\t\n\t\n\t\n\t\n\t\n\t\n\n供应商管理\t\n\t\n\t\n\t\n\t\n\t\n\n采购管理\t\n\t\n\t\n\t\n\t\n\t\n\n库存\t\n\t\n\t\n\t\n\t\n\t\n\n产品管理\t\n\t\n\t\n\t\n\t\n\t\n\nSKU 管理\t\n\t\n\t\n\t\n\t\n\t\n\n产品分类\t\n\t\n\t\n\t\n\t\n\t\n\n产品参数\t\n\t\n\t\n\t\n\t\n\t\n\n包装管理\t\n\t\n\t\n\t\n\t\n\t\n\n交易单位\t\n\t\n\t\n\t\n\t\n\t\n\n产品证书\t\n\t\n\t\n\t\n\t\n\t\n\nHS 编码\t\n\t\n\t\n\t\n\t\n\t\n\n财务计划\t\n\t\n\t\n\t\n\t\n\t\n\n财务流水\t\n\t\n\t\n\t\n\t\n\t\n\n数据导入\t\n\t\n\t\n\t\n\t\n\t\n\n组织架构\t\n\t\n\t\n\t\n\t\n\t\n\n成员管理\t\n\t\n\t\n\t\n\t\n\t\n\n权限配置\t\n\t\n\t\n\t\n\t\n\t\n只读配置",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:46.740Z",
+    "file": "originals/BASE-B-organization-1920.png",
+    "sha256": "786c1e737209512286b03d00fd671d519e72a7edda1593d0b96cc25e9b4e72ee",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "隔离库提示服务端未启用权限执行；角色模板与部分权限矩阵可见，不能证明正式环境权限。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-inventory-1920.png",
+    "surface_id": "P050",
+    "expanded_case_id": "BASE-B-inventory-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/inventory",
+    "route": "/inventory",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nCURRENT INVENTORY\n库存\n11月10日周二\nC\n库存\n×\n⋮\n\n查看各 SKU 的实际库存、已预留、可用库存和采购缺口。待采购是按当前数据计算的参考值，需人工核对后决定是否采购；系统不会自动下单。\n\n刷新数据\nSKU 数量\n1\n全部筛选结果\n实际库存\n0 pcs\n已预留：0 pcs\n可用库存\n0 pcs\n已扣除预留\n在途采购\n0 pcs\n已下单未到货\n待关注\n0\n需核对的缺口 / 数据异常\n\n数量按 SKU 基础单位显示。可用库存 = 实际库存 - 已预留；待采购仅是参考缺口，不是系统自动决策。\n\n盘点与库存流水\n采购与验货入库\n订单发货\nSKU\n\t中文 SKU 名称\n\t实际库存\n\t已预留\n\t可用库存\n\t在途采购\n\t待采购\n\t状态\n\nWS-SKU001\t\nWorkspace Light\n基础单位：pcs\n\t0\t0\t0\t0\t0\t无库存",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:47.863Z",
+    "file": "originals/BASE-B-inventory-1920.png",
+    "sha256": "f1093e74bc3e963d0b7a3a190312786abfe20b333c4613f85074ab23bab6f8f5",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "合成 SKU 库存行显示零库存和无库存状态。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-purchase-orders-1920.png",
+    "surface_id": "S033",
+    "expanded_case_id": "BASE-B-purchase-orders-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/purchase-orders",
+    "route": "/purchase-orders",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPROCUREMENT DESK\n采购管理\n11月10日周二\nC\n采购管理\n×\n⋮\n\n管理采购下单、到货与供应商应付。\n\n刷新\n新建采购单\n执行中\n0\n已下单 / 部分到货\n待到货\n0\n尚未全部到货\n待付款\n0\n仍有应付余额\n已完成\n0\n已完成采购\n搜索\n状态\n全部状态\n草稿\n已下单\n部分到货\n已完成\n已取消\n仅看待到货\n重置\n采购单号\t供应商\t来源订单\t下单日期\t预计到货\t状态\t采购金额\t已付 / 未付\t操作\nWS-PO001\tWorkspace Supplier\t—\t2026-11-10\t\n—\n\t草稿\tUSD 40.00\t0.00 / 40.00\t",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:49.609Z",
+    "file": "originals/BASE-B-purchase-orders-1920.png",
+    "sha256": "6beb0c3bcbe3df3b88b5c44a0d3d879061bd16d9d049b427de670935e99c1cc6",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "合成采购草稿 WS-PO001 行可见。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-finance-1920.png",
+    "surface_id": "F001",
+    "expanded_case_id": "BASE-B-finance-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/finance",
+    "route": "/finance",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nOPERATING FINANCE\n财务概览\n11月10日周二\nC\n财务概览\n×\n⋮\n\n合同、应收应付与两种资金口径分开列示。合同按订单日期，账面收支按流水发生日期，银行实际资金按银行实际日期；当前待结与未核销是当前余额。\n\n刷新数据\n开始日期\n结束日期\n查询\n本月至今\n导出 CSV\n\n合同销售额按订单日期，账面收支按流水发生日期。待收、待付按合同汇率折算，未核销预收预付按原流水汇率折算，均为当前参考值。银行实际人民币资金按银行实际日期统计；当前待结与未核销不受所选期间限制。预计订单利润 = 合同销售额 − 采购归属成本 − 订单费用，仅作经营估算。\n\n账面人民币折算参考：已确认流水按既有人民币金额及流水汇率汇总，包含原币为CNY的既有流水；不代表银行实际到账、已完成结汇或银行账户余额。流水发生日期不等同于银行到账日。\n\n所选期间\n\n2026-11-01 至 2026-11-10\n\n合同销售额\n¥0.00\n查看构成明细\n预计订单利润\n¥0.00\n查看构成明细\n订单采购归属成本\n¥0.00\n查看构成明细\n订单费用\n¥0.00\n查看构成明细\n账面收入（折算参考）\n¥0.00\n查看构成明细\n账面支出（折算参考）\n¥0.00\n查看构成明细\n账面净收支（折算参考）\n¥0.00\n查看构成明细\n当前待结与未核销（余额）\n\n截至当前的待结与未核销金额，不受所选期间筛选限制\n\n待收笔数\n0 笔\n查看构成明细\n待收款（人民币折算参考）\n¥0.00\n查看构成明细\n待付款笔数\n0 笔\n查看构成明细\n待付款（人民币折算参考）\n¥0.00\n查看构成明细\n未核销预收款（人民币折算参考）\n¥0.00\n查看构成明细\n未核销预付款（人民币折算参考）\n¥0.00\n查看构成明细\n银行实际人民币资金\n\n统计已登记、已核实的人民币实际变动，银行与现金分开列示；不代表公司全部银行余额或现金余额。\n\n查看构成明细\n导出实际资金 CSV\n\n既有银行事实仅统计系统中已登记并人工确认的银行资金事件；新增账户事实须核实自有归属、实际日期和私有凭证。基准与已核实内部本金不计公司毛流量。\n\n银行净变动\n¥0.00\n\n流入 ¥0.00 / 流出 ¥0.00\n\n现金净变动\n¥0.00\n\n流入 ¥0.00 / 流出 ¥0.00\n\n已登记实际人民币资金：含人工确认银行事件及已核实自有银行、现金账户事实，不代表公司全部实际资金，不是利润、销售收入或银行账户余额。 未设置统计启用日期；本区域不推测未登记资金、期初余额、期末余额或公司全部银行余额。\n\n实际流入\n¥0.00\n实际流出\n¥0.00\n净流入 / 净流出\n¥0.00\n已确认银行事件\n0 笔\n按银行实际日期汇总\n月份\t流入\t流出\t净流量\n2026-11\t¥0.00\t¥0.00\t¥0.00\n按资金类型\n\n所选期间暂无已确认银行资金。\n\n已确认银行资金明细\n\n所选期间暂无已确认银行资金事件。\n\n月度账面收支（人民币折算参考）\n\n所选期间暂无已确认账面收支记录。\n\n账面收支分类（人民币折算参考）\n\n所选期间暂无账面收支分类记录。\n\n查看应收计划\n查看应付计划\n查看财务流水\n银行资金记录\n到期与逾期计划\n\n暂无到期或逾期计划。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:50.673Z",
+    "file": "originals/BASE-B-finance-1920.png",
+    "sha256": "0a469dd875727811b52e6909040b08dfd0fcb92860795320b18b0580c7b215fc",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "财务概览筛选及零值卡片可见，下方内容超出视口。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-receivables-1920.png",
+    "surface_id": "F004",
+    "expanded_case_id": "BASE-B-receivables-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/receivables",
+    "route": "/receivables",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCOUNTS RECEIVABLE\n应收计划\n11月10日周二\nC\n应收计划\n×\n⋮\n\n按合同原币跟踪计划、已核销与待结清金额；人民币汇总仅作折算参考。\n\n刷新\n计划笔数\n0\n当前筛选范围\n待结清\n0\n当前筛选结果\n已逾期\n0\n当前筛选结果\n待结金额（人民币折算参考）\n¥ 0.00\n当前应收应付按合同汇率折算参考\n搜索往来方或合同号\n状态\n待结清\n已结清\n全部状态\n仅看逾期\n计划到期日从\n计划到期日至\n查询\n重置\n暂无应收计划\n暂时没有收付款计划。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:52.211Z",
+    "file": "originals/BASE-B-receivables-1920.png",
+    "sha256": "f060a65ef72bc97a8493c7fd7fe63c771d0beb7366a5a32367f7a0dbb6525f82",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "待结清筛选下无应收计划，空状态可见。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-payables-1920.png",
+    "surface_id": "F004",
+    "expanded_case_id": "BASE-B-payables-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/payables",
+    "route": "/payables",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCOUNTS PAYABLE\n应付计划\n11月10日周二\nC\n应付计划\n×\n⋮\n\n按合同原币跟踪计划、已核销与待结清金额；人民币汇总仅作折算参考。\n\n刷新\n计划笔数\n0\n当前筛选范围\n待结清\n0\n当前筛选结果\n已逾期\n0\n当前筛选结果\n待结金额（人民币折算参考）\n¥ 0.00\n当前应收应付按合同汇率折算参考\n搜索往来方或合同号\n状态\n待结清\n已结清\n全部状态\n仅看逾期\n计划到期日从\n计划到期日至\n查询\n重置\n暂无应付计划\n暂时没有收付款计划。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:53.288Z",
+    "file": "originals/BASE-B-payables-1920.png",
+    "sha256": "19d8809571034c52aac6ce2476ff7f4fe0172468df9ea4712cc3fce79d72d4e6",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "待结清筛选下无应付计划，空状态可见。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-transactions-1920.png",
+    "surface_id": "F008",
+    "expanded_case_id": "BASE-B-transactions-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/transactions",
+    "route": "/transactions",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nCASH LEDGER\n财务流水\n11月10日周二\nC\n财务流水\n×\n⋮\n\n登记客户、供应商收付款和日常费用。流水发生日期用于记账，银行实际日期请在银行资金记录中查看。\n\n银行资金记录\n新增记账\n\n账面人民币折算参考：已确认流水按既有人民币金额及流水汇率汇总，包含原币为CNY的既有流水；不代表银行实际到账、已完成结汇或银行账户余额。流水发生日期不等同于银行到账日。\n\n流水记录实际收付；核销、退款与结汇保留各自业务关系。银行退回和更正须关联原凭证。\n\n流水笔数\n0\n当前查询结果\n账面收入（人民币折算参考）\n¥ 0.00\n按已确认流水汇总\n账面支出（人民币折算参考）\n¥ 0.00\n按已确认流水汇总\n业务归属流水\n0\n含核销分配及直接关联合同\n搜索\n状态\n已确认\n已作废\n全部状态\n收支方向\n全部\n收入\n支出\n流水发生日期从\n流水发生日期至\n查询\n重置\n流水发生日期 / 流水号\t收支 / 类型\t往来方 / 合同\t实际收付（原币）\t人民币折算参考\t状态 / 核销\t操作\n\n暂无财务流水\n当前还没有财务流水。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:54.790Z",
+    "file": "originals/BASE-B-transactions-1920.png",
+    "sha256": "ded50db556e47c4bd5398bc5bc41f97ecf6a244bafccb58e8e8170235e857f4a",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "已确认筛选下财务流水为空；1366 画面仅显示空状态上部。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-rmb-cash-events-1920.png",
+    "surface_id": "F021",
+    "expanded_case_id": "BASE-B-rmb-cash-events-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/rmb-cash-events",
+    "route": "/rmb-cash-events",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nBANK CASH FACTS\n银行资金记录\n11月10日周二\nC\n银行资金记录\n×\n⋮\n\n人民币资金\n\n银行资金记录\n\n登记实际到账信息。只有完成凭证核验的资金事件才计入银行资金汇总；客户收款和应收核销仍按原流程保存。\n\n查看财务流水\n新增资金事件\n\n核对口径：银行净额以实际凭证为准；手续费已计入净额时不再重复扣除。仅已核对并绑定实际银行凭证的事件可以确认。\n\n状态\n全部状态\n待确认\n已确认\n已放弃\n搜索\n刷新\n\n列表包含待确认、已确认和已放弃记录；只有已确认事件计入银行资金汇总。\n\n没有符合当前条件的记录\n\n请调整搜索或筛选条件。\n\n清除筛选",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:55.916Z",
+    "file": "originals/BASE-B-rmb-cash-events-1920.png",
+    "sha256": "2c435f6d4d1952e58f16b74d45070080e70b1eeff31eb650b7323918f8632b12",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "银行资金记录筛选和无匹配记录提示可见。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-suppliers-1920.png",
+    "surface_id": "G024",
+    "expanded_case_id": "BASE-B-suppliers-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/suppliers",
+    "route": "/suppliers",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nSUPPLIER DIRECTORY\n供应商管理\n11月10日周二\nC\n供应商管理\n×\n⋮\n\n维护供应商资料与付款条款备注。\n\n新建供应商\n供应商\n1\n全部筛选结果\n可供分类\n0\n已选择的分类\n有店铺链接\n0\n可打开的网页链接\n搜索\n可供分类\n全部分类\nWorkspace Category\n重置\n刷新\n\n付款备注仅供沟通参考；采购单付款条件需逐单协商。\n\n供应商\t状态\t产品与可供分类\t联系方式\t付款条款说明（备注）\t操作\nWorkspace Supplier\nWS-S001 · 中国\n\t启用\t—\n未填可供分类\n\t—\n\t\n30%预付款，70%尾款发货前结清\n\t\n停用",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:57.684Z",
+    "file": "originals/BASE-B-suppliers-1920.png",
+    "sha256": "0c38f3ecff86464ff79d56984ae69bfdd6e5e1a7423d50fc22fba1402382693e",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "合成供应商行可见；1366 时付款备注靠近固定操作区，需进一步验证遮挡及滚动。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-customers-1920.png",
+    "surface_id": "G022",
+    "expanded_case_id": "BASE-B-customers-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/customers",
+    "route": "/customers",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户资料\n客户管理\n11月10日周二\nC\n客户管理\n×\n⋮\n\n维护客户资料和负责人。客户阶段会随报价和订单自动更新。\n\n新建客户\n客户总数\n2\n全部客户档案\n正式客户\n0\n已有正式订单\n待开发\n2\n尚未成交\n累计销售额\n¥ 0.00\n当前列表累计\n新品提醒\n搜索\n负责人\n全部负责人\n国家/地区\n全部国家/地区\nUnited Kingdom / GB\nUnited States / US\n状态\n全部状态\n线索\n已联系\n商机\n正式客户\n返单客户\n重置\n刷新\n客户名称\t客户编号\t状态\t国家/地区\t业务区域\t负责人\t下次跟进\t订单数\t累计销售额\t操作\n\nWorkspace Beta\n\tWS-C002\t线索\tUnited Kingdom / GB\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒\n\n\nWorkspace Alpha\n\tWS-C001\t线索\tUnited States / US\t—\t—\t—\t0\t¥ 0.00\t\n新品提醒",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:22:58.691Z",
+    "file": "originals/BASE-B-customers-1920.png",
+    "sha256": "4de632c8ff95f7c29bbc686e8740cf6d05427faec4188cd1aee6abe456b96b9e",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "两条合成客户行可见；1366 第二行位于视口下缘。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-contacts-1920.png",
+    "surface_id": "G026",
+    "expanded_case_id": "BASE-B-contacts-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/contacts",
+    "route": "/contacts",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户联系人\n联系人\n11月10日周二\nC\n联系人\n×\n⋮\n联系人\n\n记录客户联系人及电话、邮箱等联系方式。\n\n新建联系人\n联系人\n0\n当前筛选结果\n主联系人\n0\n客户的主要联系人\n所属客户\n0\n当前筛选结果\n有联系方式\n0\n电话、WhatsApp 或邮箱\n搜索\n所属客户\n全部客户\nWorkspace Beta\nWorkspace Alpha\n联系人类型\n全部联系人\n主联系人\n其他联系人\n重置\n刷新\n暂无联系人\n\n先选择所属客户，再添加联系人。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:23:00.654Z",
+    "file": "originals/BASE-B-contacts-1920.png",
+    "sha256": "e31e2f6c938055b09207174b6a56ecc01b11ea784e57bc050e53882013d748c1",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "联系人列表为空，筛选和新建入口可见。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-follow-ups-1920.png",
+    "surface_id": "G028",
+    "expanded_case_id": "BASE-B-follow-ups-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/follow-ups",
+    "route": "/follow-ups",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户跟进\n跟进记录\n11月10日周二\nC\n跟进记录\n×\n⋮\n跟进记录\n\n记录沟通内容、客户回复和下一步安排。\n\n新建跟进记录\n跟进记录\n0\n当前筛选结果\n已关联客户\n0\n有沟通记录的客户\n计划日期已到记录\n0\n历史跟进记录统计；当前待跟进以经营概览为准\n本月记录\n0\n按跟进时间统计\n新品提醒\n搜索\n所属客户\n全部客户\nWorkspace Beta\nWorkspace Alpha\n跟进方式\n全部方式\n邮件\n电话\n即时通讯\n会议\n拜访\n其他\n跟进时间从\n至\n排序\n时间从近到远\n时间从远到近\n待跟进\n重置\n刷新\n暂无跟进记录\n\n记录客户沟通和下一步安排。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:23:01.763Z",
+    "file": "originals/BASE-B-follow-ups-1920.png",
+    "sha256": "8489966c4d23063fe02b8a857a41b85ffea2d2a39825c271fc54831bbcaa0b08",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "跟进列表为空；1366 视口仅显示空状态顶部。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-inventory-movements-1920.png",
+    "surface_id": "G030",
+    "expanded_case_id": "BASE-B-inventory-movements-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/inventory-movements",
+    "route": "/inventory-movements",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nINVENTORY LEDGER\n库存流水\n11月10日周二\nC\n库存流水\n×\n⋮\n\n查看每次库存增减及其来源；库存缺口仅作核对参考，不会自动下采购单。\n\n新建库存调整\n流水记录\n0\n当前筛选结果\n入库记录\n0\n库存增加\n出库记录\n0\n库存减少\n冲销记录\n0\n冲销生成\n搜索\n类型\n全部类型\n盘盈入库\n盘亏出库\n样品出库\n客户退回\n调拨入库\n调拨出库\n生产入库\n生产领料\n其他入库\n其他出库\n方向\n全部方向\n入库\n出库\n来源\n全部来源\n系统自动\n手工登记\n冲销\n重置\n\n数量按 SKU 基础单位显示；自动流水不可手工修改。\n\n暂无库存流水\n\n点击“新建库存调整”开始录入。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:23:03.389Z",
+    "file": "originals/BASE-B-inventory-movements-1920.png",
+    "sha256": "52dd2980cdcd967a9b5b85f2ebe616f07b1fd96134065c4a0e122d0650b88055",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "库存流水为空，筛选及新建调整入口可见。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-product-parameters-1920.png",
+    "surface_id": "G032",
+    "expanded_case_id": "BASE-B-product-parameters-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/product-parameters",
+    "route": "/product-parameters",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPRODUCT SPECIFICATIONS\n产品参数\n11月10日周二\nC\n产品参数\n×\n⋮\n产品参数\n\n将功率、色温、尺寸、防护等级等规格结构化保存。\n\n新建产品参数\n参数记录\n0\n当前筛选结果\n所属产品\n0\n当前记录关联产品\n参数分组\n0\n当前筛选范围\n有单位的参数\n0\n参数值的展示单位\n所属产品\n全部产品\nWS-P001 · Workspace Light\n重置\n刷新\n\n产品参数用于记录通用规格。分类属性用于参数模板，SKU 参数用于具体规格与身份；在此保存不会修改 SKU 参数。\n\n暂无产品参数\n\n点击“新建产品参数”开始录入。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:23:04.433Z",
+    "file": "originals/BASE-B-product-parameters-1920.png",
+    "sha256": "f495e44b1e6c65ae1875b466a5231d3bbe62ad55c07220ec399e6107759312aa",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "产品参数为空；1366 视口仅显示空状态顶部。 仅初始视口，交互和其他数据状态未由本图证明。"
+  },
+  {
+    "evidence_id": "BASE-B-product-certificates-1920.png",
+    "surface_id": "G034",
+    "expanded_case_id": "BASE-B-product-certificates-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "requested_route": "/product-certificates",
+    "route": "/product-certificates",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "title": "森爵业务中台",
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nCOMPLIANCE DOCUMENTS\n产品证书\n11月10日周二\nC\n产品证书\n×\n⋮\n产品证书\n\n管理 CE、RoHS、UL 等证书编号、机构和有效期。\n\n新建产品证书\n证书记录\n0\n当前筛选结果\n已过期\n0\n按服务端日期判断\n90天内到期\n0\n含今日到期\n未填有效期\n0\n不代表永久有效\n全部\n需关注\n已过期\n90 天内到期\n90 天后到期\n无有效期\n所属产品\n全部产品\nWS-P001 · Workspace Light\n排序\n到期日期优先\n证书名称\n重置\n刷新\n\n到期状态按系统日期和有效期判断；证书文件上传后仅通过 ERP 权限访问，不生成公开链接。\n\n暂无产品证书\n\n点击“新建产品证书”开始录入。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace synthetic fixture; route initial state only",
+    "steps": [
+      "navigate directly to route",
+      "wait for network idle and fonts/images where possible",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "navigation_error": null,
+    "capture_time_utc": "2026-11-09T17:23:05.900Z",
+    "file": "originals/BASE-B-product-certificates-1920.png",
+    "sha256": "9242b926f1c3183b96be09b0fd9b34f74244ada640d6325f454092a5133e1923",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "产品证书为空；1366 视口空状态位于下方，仅露出顶部。 仅初始视口，交互和其他数据状态未由本图证明。"
+  }
+]

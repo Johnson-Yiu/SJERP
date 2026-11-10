@@ -1,0 +1,150 @@
+[
+  {
+    "evidence_id": "ULR010-B-1366.png",
+    "surface_id": "F022",
+    "expanded_case_id": "ULR010-B-1366",
+    "related_ulr": [
+      "ULR-010"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/rmb-cash-events",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "detail": {
+      "rect": {
+        "x": 782,
+        "y": 84,
+        "width": 560,
+        "height": 660
+      },
+      "zIndex": "55",
+      "centerHit": "<dd data-v-5f30bb3c=\"\">—</dd>"
+    },
+    "title": {
+      "rect": {
+        "x": 805,
+        "y": 130,
+        "width": 99.265625,
+        "height": 28
+      },
+      "zIndex": "auto",
+      "centerHit": "<h3 data-v-5f30bb3c=\"\" id=\"cash-detail-title\">CSV2-09-0</h3>"
+    },
+    "close": {
+      "rect": {
+        "x": 1281,
+        "y": 107,
+        "width": 38,
+        "height": 37
+      },
+      "zIndex": "auto",
+      "centerHit": "<div class=\"workspace-tabs\" role=\"tablist\" aria-label=\"业务工作区\"><div class=\"workspace-tab active\"><button type=\"button\" role=\"tab\" tabindex=\"0\" aria-controls=\"workspace-panel-b37de5d7-a70f-45c7-8a1a-ed31a8927483\" aria-selected=\"true\">银行资金记录<!"
+    },
+    "workspaceBar": {
+      "rect": {
+        "x": 248,
+        "y": 82,
+        "width": 1118,
+        "height": 52
+      },
+      "zIndex": "80",
+      "centerHit": "<div class=\"workspace-tabs\" role=\"tablist\" aria-label=\"业务工作区\"><div class=\"workspace-tab active\"><button type=\"button\" role=\"tab\" tabindex=\"0\" aria-controls=\"workspace-panel-b37de5d7-a70f-45c7-8a1a-ed31a8927483\" aria-selected=\"true\">银行资金记录<!"
+    },
+    "role": "authenticated codex test superuser",
+    "object_reference": "CSV2-09-0, confirmed",
+    "data": "existing export-stability API synthetic fixture adapted to isolated codex authentication",
+    "steps": [
+      "open /rmb-cash-events",
+      "open confirmed CSV2-09-0",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:31:57.957Z",
+    "file": "originals/ULR010-B-1366.png",
+    "sha256": "74085dbde2d48b0450fcaffe8100df9264b5cef47fb863db00d283dcf26edffe",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR010-B-1920.png",
+    "surface_id": "F022",
+    "expanded_case_id": "ULR010-B-1920",
+    "related_ulr": [
+      "ULR-010"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/rmb-cash-events",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "detail": {
+      "rect": {
+        "x": 1336,
+        "y": 84,
+        "width": 560,
+        "height": 703.28125
+      },
+      "zIndex": "55",
+      "centerHit": "<dl data-v-5f30bb3c=\"\" class=\"detail-grid\"><dt data-v-5f30bb3c=\"\">实际到账日期</dt><dd data-v-5f30bb3c=\"\">2026-09-20</dd><dt data-v-5f30bb3c=\"\">银行净额</dt><dd data-v-5f30bb3c=\"\">CNY 120.01</dd><dt data-v-5f30bb3c=\"\">来源金额</dt><dd data-v-5f30bb3c=\"\">"
+    },
+    "title": {
+      "rect": {
+        "x": 1359,
+        "y": 130,
+        "width": 99.265625,
+        "height": 28
+      },
+      "zIndex": "auto",
+      "centerHit": "<h3 data-v-5f30bb3c=\"\" id=\"cash-detail-title\">CSV2-09-0</h3>"
+    },
+    "close": {
+      "rect": {
+        "x": 1835,
+        "y": 107,
+        "width": 38,
+        "height": 37
+      },
+      "zIndex": "auto",
+      "centerHit": "<div class=\"workspace-tabs\" role=\"tablist\" aria-label=\"业务工作区\"><div class=\"workspace-tab active\"><button type=\"button\" role=\"tab\" tabindex=\"0\" aria-controls=\"workspace-panel-b37de5d7-a70f-45c7-8a1a-ed31a8927483\" aria-selected=\"true\">银行资金记录<!"
+    },
+    "workspaceBar": {
+      "rect": {
+        "x": 248,
+        "y": 82,
+        "width": 1672,
+        "height": 52
+      },
+      "zIndex": "80",
+      "centerHit": "<div class=\"workspace-tabs\" role=\"tablist\" aria-label=\"业务工作区\"><div class=\"workspace-tab active\"><button type=\"button\" role=\"tab\" tabindex=\"0\" aria-controls=\"workspace-panel-b37de5d7-a70f-45c7-8a1a-ed31a8927483\" aria-selected=\"true\">银行资金记录<!"
+    },
+    "role": "authenticated codex test superuser",
+    "object_reference": "CSV2-09-0, confirmed",
+    "data": "existing export-stability API synthetic fixture adapted to isolated codex authentication",
+    "steps": [
+      "open /rmb-cash-events",
+      "open confirmed CSV2-09-0",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:31:58.115Z",
+    "file": "originals/ULR010-B-1920.png",
+    "sha256": "a3dfa8439f526097ff47f33521d1e16b965ca3db4e69f49b78c6939effea8b00",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    }
+  }
+]

@@ -1,0 +1,131 @@
+[
+  {
+    "evidence_id": "ULR015-B-before-submit.png",
+    "surface_id": "F032",
+    "expanded_case_id": "ULR015-B-before-submit",
+    "related_ulr": [
+      "ULR-015"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/import",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "scrollY": 5946,
+    "documentHeight": 6714,
+    "error": null,
+    "rows": 150,
+    "role": "authenticated codex test superuser",
+    "data": "150 synthetic orders, isolated SQLite",
+    "simulated": "execute intercepted before service, HTTP 503",
+    "capture_time_utc": "2026-11-09T16:24:20.956Z",
+    "file": "originals/ULR015-B-before-submit.png",
+    "sha256": "85eabd362852f5553232ffb233bb7ab497063303d72d33da70d03bbf8620477b",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "进入数据导入的销售订单页签",
+      "选择隔离合成工作簿并预览校验",
+      "滚动到确认导入 150 张草稿"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-sales-import.spec.js 重建截图前步骤"
+  },
+  {
+    "evidence_id": "ULR015-B-failure-bottom.png",
+    "surface_id": "F032",
+    "expanded_case_id": "ULR015-B-failure-bottom",
+    "related_ulr": [
+      "ULR-015"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/import",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "scrollY": 6092,
+    "documentHeight": 6860,
+    "error": {
+      "text": "服务器暂时不可用，请稍后重试。 提交结果待核对，请保留原文件和预览再次确认原批次；离开页面不代表回滚。",
+      "x": 308,
+      "y": -5200.21875,
+      "width": 672,
+      "height": 40
+    },
+    "rows": 150,
+    "role": "authenticated codex test superuser",
+    "data": "150 synthetic orders, isolated SQLite",
+    "simulated": "execute intercepted before service, HTTP 503",
+    "capture_time_utc": "2026-11-09T16:24:21.282Z",
+    "file": "originals/ULR015-B-failure-bottom.png",
+    "sha256": "85eabd362852f5553232ffb233bb7ab497063303d72d33da70d03bbf8620477b",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "进入数据导入的销售订单页签",
+      "选择隔离合成工作簿并预览校验",
+      "滚动到确认导入 150 张草稿",
+      "确认导入；execute 在服务前拦截并返回模拟 503"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-sales-import.spec.js 重建截图前步骤"
+  },
+  {
+    "evidence_id": "ULR015-B-failure-top.png",
+    "surface_id": "F032",
+    "expanded_case_id": "ULR015-B-failure-top",
+    "related_ulr": [
+      "ULR-015"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/import",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "scrollY": 528,
+    "documentHeight": 6860,
+    "error": {
+      "text": "服务器暂时不可用，请稍后重试。 提交结果待核对，请保留原文件和预览再次确认原批次；离开页面不代表回滚。",
+      "x": 308,
+      "y": 363.78125,
+      "width": 672,
+      "height": 40
+    },
+    "rows": 150,
+    "role": "authenticated codex test superuser",
+    "data": "150 synthetic orders, isolated SQLite",
+    "simulated": "execute intercepted before service, HTTP 503",
+    "capture_time_utc": "2026-11-09T16:24:21.382Z",
+    "file": "originals/ULR015-B-failure-top.png",
+    "sha256": "bccadde8cb7ac56946fa2f842168ad52b13153f5dd4dc0b29296ac3e26f5ad74",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "steps": [
+      "进入数据导入的销售订单页签",
+      "选择隔离合成工作簿并预览校验",
+      "滚动到确认导入 150 张草稿",
+      "确认导入；execute 在服务前拦截并返回模拟 503",
+      "滚动到提交结果待核对提示"
+    ],
+    "metadata_provenance": "按 ui-coverage-02-sales-import.spec.js 重建截图前步骤"
+  }
+]

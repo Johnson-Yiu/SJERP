@@ -1,0 +1,27 @@
+{
+  "selected_status": "confirmed",
+  "request_payload": {
+    "customer": 1,
+    "order_date": "2026-11-10",
+    "currency": "USD",
+    "exchange_rate": "7.20",
+    "shipping_fee": 0,
+    "discount": 0,
+    "notes": "",
+    "items": [
+      {
+        "sku": 1,
+        "quantity": 1,
+        "unit_price": 10,
+        "cost_price": 4,
+        "notes": "",
+        "trade_unit": null
+      }
+    ],
+    "quote": null,
+    "expected_ship_date": "",
+    "tail_goods_policy": "SAME_CARTON"
+  },
+  "status": 503,
+  "intercepted_before_service": true
+}

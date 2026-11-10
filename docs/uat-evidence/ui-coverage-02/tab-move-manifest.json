@@ -1,0 +1,111 @@
+[
+  {
+    "evidence_id": "TAB-MOVE-BEFORE-B-1366",
+    "surface_id": "G003",
+    "expanded_case_id": "TAB-MOVE-BEFORE-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "tabOrder": [
+      "客户管理",
+      "客户管理 · 新建 1 ●",
+      "客户管理 · 新建 2 ●"
+    ],
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "create two dirty customer drafts"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:11:39.973Z",
+    "file": "originals/TAB-MOVE-BEFORE-B-1366.png",
+    "sha256": "2eccfd75b0f6b955d91a87cd984a9a02473f0d8498369957fef63d761b804e01",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  },
+  {
+    "evidence_id": "TAB-MOVE-LEFT-B-1366",
+    "surface_id": "G003",
+    "expanded_case_id": "TAB-MOVE-LEFT-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "tabOrder": [
+      "客户管理",
+      "客户管理 · 新建 2 ●",
+      "客户管理 · 新建 1 ●"
+    ],
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "open second tab actions",
+      "move left",
+      "verify B remains"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:11:40.167Z",
+    "file": "originals/TAB-MOVE-LEFT-B-1366.png",
+    "sha256": "205ab26eab4d0a8d59191c6678d3d9334ec8b4eeaa1d5f1f80d97f03c318bebf",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "标签顺序和对应草稿名称可见。"
+  },
+  {
+    "evidence_id": "TAB-MOVE-RIGHT-B-1366",
+    "surface_id": "G003",
+    "expanded_case_id": "TAB-MOVE-RIGHT-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/customers?create=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "tabOrder": [
+      "客户管理",
+      "客户管理 · 新建 1 ●",
+      "客户管理 · 新建 2 ●"
+    ],
+    "role": "authenticated codex test superuser",
+    "data": "isolated workspace fixture; two unsaved synthetic customer drafts",
+    "steps": [
+      "move second tab right",
+      "switch to first",
+      "verify A remains"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T19:11:40.368Z",
+    "file": "originals/TAB-MOVE-RIGHT-B-1366.png",
+    "sha256": "9aa703d60c4977223cc069a9c09a8d37db31df5d6cd2415ac96bf36f0f5b32ef",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "observation": "标签顺序和对应草稿名称可见。"
+  }
+]

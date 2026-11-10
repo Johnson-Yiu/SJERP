@@ -1,0 +1,83 @@
+[
+  {
+    "evidence_id": "PACKAGING-FAIL-CONFIRM-B-1366",
+    "surface_id": "P040",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/sku-packaging",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPACKAGING MAINTENANCE\n包装管理\n11月10日周二\nC\n包装管理 ●\n×\n⋮\n包装管理\n\n维护共享包装的尺寸、皮重与尾货策略。包装模板变化不会改写历史装箱方案。\n\n刷新\n新建模板\n包装模板\n1\n全部包装资料\n启用模板\n1\n可继续被 SKU 引用\n关联 SKU\n1\n已配置包装的销售规格\n包装供应商\n0\n当前模板关联的供应商\n尾货策略\n全部\n整箱优先\n尾箱待确认\n人工装箱\n全部状态\n启用\n停用\n查询\n重置\n模板名称\n\t供应商\n\t长 (cm)\n\t宽 (cm)\n\t高 (cm)\n\t体积 (m³)\n\t外箱皮重 (kg)\n\t尾货策略\n\t关联 SKU\n\t操作\n隔离测试包装\nPKG-20261110-0001 · 启用\n\t未指定\t50.0\t40.0\t30.0\t0.0600\t1.500 kg\t整箱优先\t1 个 SKU\t\n共 1 条包装模板\n编辑包装模板\n\n模板可被多个 SKU 引用；装箱数在 SKU 管理中按 SKU 单独维护。\n\n已关联 1 个 SKU。修改物理参数或尾货策略后需重新验证。\n\n模板名称 *\n包装供应商\n未指定\nWorkspace Supplier\n尾货策略 ?\n整箱优先\n尾箱待确认\n人工装箱\n长 (cm) *\n宽 (cm) *\n高 (cm) *\n外箱皮重 (kg)\n启用模板\n备注\n取消\n保存中...\n确认修改包装模板\n\n该模板已关联 1 个 SKU。物理参数或尾货策略变化会使包装验证失效，需要重新确认；历史装箱快照保留。\n\n取消\n确认继续",
+    "role": "authenticated codex test superuser",
+    "data": "isolated linked SKU and synthetic packaging template",
+    "steps": [
+      "edit linked template length",
+      "save to open confirmation"
+    ],
+    "writes": 0,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:33:26.067Z",
+    "file": "originals/PACKAGING-FAIL-CONFIRM-B-1366.png",
+    "sha256": "d072d460f3d9b49119fdac0577968c87ac529ffddac868c1ef5683702c22cd4f",
+    "review": "NOT_REVIEWED",
+    "limitation": "PUT intercepted and simulated 503; no template update"
+  },
+  {
+    "evidence_id": "PACKAGING-FAIL-CANCEL-B-1366",
+    "surface_id": "P040",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/sku-packaging",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPACKAGING MAINTENANCE\n包装管理\n11月10日周二\nC\n包装管理 ●\n×\n⋮\n包装管理\n\n维护共享包装的尺寸、皮重与尾货策略。包装模板变化不会改写历史装箱方案。\n\n刷新\n新建模板\n包装模板\n1\n全部包装资料\n启用模板\n1\n可继续被 SKU 引用\n关联 SKU\n1\n已配置包装的销售规格\n包装供应商\n0\n当前模板关联的供应商\n尾货策略\n全部\n整箱优先\n尾箱待确认\n人工装箱\n全部状态\n启用\n停用\n查询\n重置\n模板名称\n\t供应商\n\t长 (cm)\n\t宽 (cm)\n\t高 (cm)\n\t体积 (m³)\n\t外箱皮重 (kg)\n\t尾货策略\n\t关联 SKU\n\t操作\n隔离测试包装\nPKG-20261110-0001 · 启用\n\t未指定\t50.0\t40.0\t30.0\t0.0600\t1.500 kg\t整箱优先\t1 个 SKU\t\n共 1 条包装模板\n编辑包装模板\n\n模板可被多个 SKU 引用；装箱数在 SKU 管理中按 SKU 单独维护。\n\n已关联 1 个 SKU。修改物理参数或尾货策略后需重新验证。\n\n模板名称 *\n包装供应商\n未指定\nWorkspace Supplier\n尾货策略 ?\n整箱优先\n尾箱待确认\n人工装箱\n长 (cm) *\n宽 (cm) *\n高 (cm) *\n外箱皮重 (kg)\n启用模板\n备注\n取消\n保存模板",
+    "role": "authenticated codex test superuser",
+    "data": "isolated linked SKU and synthetic packaging template",
+    "steps": [
+      "cancel confirmation",
+      "verify unsaved edit retained"
+    ],
+    "writes": 0,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:33:26.203Z",
+    "file": "originals/PACKAGING-FAIL-CANCEL-B-1366.png",
+    "sha256": "5b8054402c134d76732e6531ef3d4f6faf8fff4e26a648fbeb8f18c611bbae7c",
+    "review": "NOT_REVIEWED",
+    "limitation": "PUT intercepted and simulated 503; no template update"
+  },
+  {
+    "evidence_id": "PACKAGING-FAIL-B-1366",
+    "surface_id": "P040",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/sku-packaging",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nPACKAGING MAINTENANCE\n包装管理\n11月10日周二\nC\n包装管理 ●\n×\n⋮\n包装管理\n\n维护共享包装的尺寸、皮重与尾货策略。包装模板变化不会改写历史装箱方案。\n\n刷新\n新建模板\n包装模板\n1\n全部包装资料\n启用模板\n1\n可继续被 SKU 引用\n关联 SKU\n1\n已配置包装的销售规格\n包装供应商\n0\n当前模板关联的供应商\n尾货策略\n全部\n整箱优先\n尾箱待确认\n人工装箱\n全部状态\n启用\n停用\n查询\n重置\n模板名称\n\t供应商\n\t长 (cm)\n\t宽 (cm)\n\t高 (cm)\n\t体积 (m³)\n\t外箱皮重 (kg)\n\t尾货策略\n\t关联 SKU\n\t操作\n隔离测试包装\nPKG-20261110-0001 · 启用\n\t未指定\t50.0\t40.0\t30.0\t0.0600\t1.500 kg\t整箱优先\t1 个 SKU\t\n共 1 条包装模板\n编辑包装模板\n\n模板可被多个 SKU 引用；装箱数在 SKU 管理中按 SKU 单独维护。\n\n服务器暂时不可用，请稍后重试。\n\n已关联 1 个 SKU。修改物理参数或尾货策略后需重新验证。\n\n模板名称 *\n包装供应商\n未指定\nWorkspace Supplier\n尾货策略 ?\n整箱优先\n尾箱待确认\n人工装箱\n长 (cm) *\n宽 (cm) *\n高 (cm) *\n外箱皮重 (kg)\n启用模板\n备注\n取消\n保存模板",
+    "role": "authenticated codex test superuser",
+    "data": "isolated linked SKU and synthetic packaging template",
+    "steps": [
+      "confirm template update",
+      "intercept PUT with simulated 503"
+    ],
+    "writes": 1,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:33:26.431Z",
+    "file": "originals/PACKAGING-FAIL-B-1366.png",
+    "sha256": "45a44bb6418bc74adfaa103234c3c8712acbb1100ab8eb7836fbfa4cffa810a7",
+    "review": "NOT_REVIEWED",
+    "limitation": "PUT intercepted and simulated 503; no template update"
+  }
+]

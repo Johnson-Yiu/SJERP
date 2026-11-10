@@ -1,0 +1,12 @@
+import {test,expect} from '@playwright/test'
+import {mkdir,writeFile} from 'node:fs/promises'
+import {createHash} from 'node:crypto'
+import path from 'node:path'
+test.use({channel:'chrome',viewport:{width:1366,height:768},deviceScaleFactor:1})
+test('customer country filter option failure and retry',async({page,browser})=>{
+ test.setTimeout(90000);const root=process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT,entries=[];await mkdir(path.join(root,'originals'),{recursive:true})
+ async function capture(id,steps){const state=await page.evaluate(()=>({route:location.pathname+location.search,viewport_actual:{width:innerWidth,height:innerHeight},dpr:devicePixelRatio,zoom:visualViewport.scale,scrollY,visibleText:document.body.innerText.slice(0,4000)}));const name=id+'.png',b=await page.screenshot({path:path.join(root,'originals',name)});entries.push({evidence_id:id,surface_id:'G022',expanded_case_id:id,source_branch:'codex/first-release-independent-review-02',source_sha:'c90cacaa99a468d92dd61c41437834c5d8acb094',browser_version:browser.version(),...state,role:'authenticated codex test superuser',data:'two synthetic customers in isolated database',steps,simulated:true,capture_time_utc:new Date().toISOString(),file:`originals/${name}`,sha256:createHash('sha256').update(b).digest('hex'),pixels:{width:b.readUInt32BE(16),height:b.readUInt32BE(20)},review:'NOT_REVIEWED'});await writeFile(path.join(root,'customer-options-manifest.json'),JSON.stringify(entries,null,2))}
+ const matcher=url=>url.pathname==='/api/customers/country-options/', fail=route=>route.fulfill({status:503,contentType:'application/json',body:'{"detail":"Simulated service unavailable"}'})
+ await page.route(matcher,fail);await page.goto('/customers',{waitUntil:'networkidle'});await expect(page.getByText('筛选选项加载失败：',{exact:false})).toBeVisible({timeout:30000});await expect(page.getByText('Workspace Alpha')).toBeVisible();await page.mouse.move(1100,650);await page.mouse.wheel(0,500);await page.waitForTimeout(300);await capture('CUSTOMER-OPTIONS-FAIL-B-1366',['intercept country options GET with simulated 503','wait for automatic retries','scroll to error and customer rows'])
+ await page.unroute(matcher,fail);await page.getByRole('button',{name:'重新加载筛选选项'}).click();await expect(page.getByText('筛选选项加载失败：',{exact:false})).toHaveCount(0);await expect(page.getByRole('combobox',{name:'按国家/地区筛选客户'}).locator('option')).toHaveCount(3);await capture('CUSTOMER-OPTIONS-RETRY-B-1366',['remove failure interception','click reload filter options','verify two country options returned'])
+})

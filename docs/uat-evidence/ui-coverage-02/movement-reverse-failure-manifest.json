@@ -1,0 +1,107 @@
+[
+  {
+    "evidence_id": "MOVEMENT-FAIL-EMPTY-B-1366",
+    "surface_id": "G093",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/inventory-movements",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nINVENTORY LEDGER\n库存流水\n11月10日周二\nC\n库存流水\n×\n⋮\n\n查看每次库存增减及其来源；库存缺口仅作核对参考，不会自动下采购单。\n\n新建库存调整\n流水记录\n1\n当前筛选结果\n入库记录\n1\n库存增加\n出库记录\n0\n库存减少\n冲销记录\n0\n冲销生成\n搜索\n类型\n全部类型\n盘盈入库\n盘亏出库\n样品出库\n客户退回\n调拨入库\n调拨出库\n生产入库\n生产领料\n其他入库\n其他出库\n方向\n全部方向\n入库\n出库\n来源\n全部来源\n系统自动\n手工登记\n冲销\n重置\n\n数量按 SKU 基础单位显示；自动流水不可手工修改。\n\n日期\t流水号\tSKU / 产品\t类型\t库存变动\t来源\t仓库\t关联单据\t冲销状态\t操作\n2026-11-10\tWS-MOV001\tWS-SKU001\nWorkspace Light\n基础单位：pcs\n\t盘盈入库\t+10 pcs\t手工登记\t隔离仓\t—\n\t正常\t\n冲销库存流水\n\n冲销后原流水保留，并生成一条反向流水。\n流水号：WS-MOV001\nSKU：WS-SKU001\n类型：盘盈入库\n原数量：10.00 pcs\n发生日期：2026-11-10\n关联订单：—\n\n冲销原因*\n取消\n确认冲销",
+    "role": "authenticated codex test superuser",
+    "data": "isolated manual synthetic movement WS-MOV001",
+    "steps": [
+      "open manual movement reversal"
+    ],
+    "writes": 0,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:38:30.096Z",
+    "file": "originals/MOVEMENT-FAIL-EMPTY-B-1366.png",
+    "sha256": "b9dd7a40472c82046a5a8cae7dc4d0a533521a4a57fb828b893d472a2f945cd0",
+    "review": "NOT_REVIEWED",
+    "limitation": "POST intercepted and simulated 503; no reversal"
+  },
+  {
+    "evidence_id": "MOVEMENT-FAIL-REASON-B-1366",
+    "surface_id": "G093",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/inventory-movements",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nINVENTORY LEDGER\n库存流水\n11月10日周二\nC\n库存流水\n×\n⋮\n\n查看每次库存增减及其来源；库存缺口仅作核对参考，不会自动下采购单。\n\n新建库存调整\n流水记录\n1\n当前筛选结果\n入库记录\n1\n库存增加\n出库记录\n0\n库存减少\n冲销记录\n0\n冲销生成\n搜索\n类型\n全部类型\n盘盈入库\n盘亏出库\n样品出库\n客户退回\n调拨入库\n调拨出库\n生产入库\n生产领料\n其他入库\n其他出库\n方向\n全部方向\n入库\n出库\n来源\n全部来源\n系统自动\n手工登记\n冲销\n重置\n\n数量按 SKU 基础单位显示；自动流水不可手工修改。\n\n日期\t流水号\tSKU / 产品\t类型\t库存变动\t来源\t仓库\t关联单据\t冲销状态\t操作\n2026-11-10\tWS-MOV001\tWS-SKU001\nWorkspace Light\n基础单位：pcs\n\t盘盈入库\t+10 pcs\t手工登记\t隔离仓\t—\n\t正常\t\n冲销库存流水\n\n冲销后原流水保留，并生成一条反向流水。\n流水号：WS-MOV001\nSKU：WS-SKU001\n类型：盘盈入库\n原数量：10.00 pcs\n发生日期：2026-11-10\n关联订单：—\n\n冲销原因*\n取消\n确认冲销",
+    "role": "authenticated codex test superuser",
+    "data": "isolated manual synthetic movement WS-MOV001",
+    "steps": [
+      "enter synthetic reason"
+    ],
+    "writes": 0,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:38:30.218Z",
+    "file": "originals/MOVEMENT-FAIL-REASON-B-1366.png",
+    "sha256": "464351df6628c6568e5520e9e3c65ee23840b54b7b0056a34831e661f079a78c",
+    "review": "NOT_REVIEWED",
+    "limitation": "POST intercepted and simulated 503; no reversal"
+  },
+  {
+    "evidence_id": "MOVEMENT-FAIL-CANCEL-B-1366",
+    "surface_id": "G093",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/inventory-movements",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nINVENTORY LEDGER\n库存流水\n11月10日周二\nC\n库存流水\n×\n⋮\n\n查看每次库存增减及其来源；库存缺口仅作核对参考，不会自动下采购单。\n\n新建库存调整\n流水记录\n1\n当前筛选结果\n入库记录\n1\n库存增加\n出库记录\n0\n库存减少\n冲销记录\n0\n冲销生成\n搜索\n类型\n全部类型\n盘盈入库\n盘亏出库\n样品出库\n客户退回\n调拨入库\n调拨出库\n生产入库\n生产领料\n其他入库\n其他出库\n方向\n全部方向\n入库\n出库\n来源\n全部来源\n系统自动\n手工登记\n冲销\n重置\n\n数量按 SKU 基础单位显示；自动流水不可手工修改。\n\n日期\t流水号\tSKU / 产品\t类型\t库存变动\t来源\t仓库\t关联单据\t冲销状态\t操作\n2026-11-10\tWS-MOV001\tWS-SKU001\nWorkspace Light\n基础单位：pcs\n\t盘盈入库\t+10 pcs\t手工登记\t隔离仓\t—\n\t正常\t",
+    "role": "authenticated codex test superuser",
+    "data": "isolated manual synthetic movement WS-MOV001",
+    "steps": [
+      "cancel reversal"
+    ],
+    "writes": 0,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:38:30.332Z",
+    "file": "originals/MOVEMENT-FAIL-CANCEL-B-1366.png",
+    "sha256": "3bc900a6fbfbfb7c851731ac2265be05c344e5cd7875c55a945e8ae9812143c6",
+    "review": "NOT_REVIEWED",
+    "limitation": "POST intercepted and simulated 503; no reversal"
+  },
+  {
+    "evidence_id": "MOVEMENT-FAIL-B-1366",
+    "surface_id": "G093",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/inventory-movements",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nINVENTORY LEDGER\n库存流水\n11月10日周二\nC\n库存流水\n×\n⋮\n\n查看每次库存增减及其来源；库存缺口仅作核对参考，不会自动下采购单。\n\n新建库存调整\n流水记录\n1\n当前筛选结果\n入库记录\n1\n库存增加\n出库记录\n0\n库存减少\n冲销记录\n0\n冲销生成\n搜索\n类型\n全部类型\n盘盈入库\n盘亏出库\n样品出库\n客户退回\n调拨入库\n调拨出库\n生产入库\n生产领料\n其他入库\n其他出库\n方向\n全部方向\n入库\n出库\n来源\n全部来源\n系统自动\n手工登记\n冲销\n重置\n\n数量按 SKU 基础单位显示；自动流水不可手工修改。\n\n日期\t流水号\tSKU / 产品\t类型\t库存变动\t来源\t仓库\t关联单据\t冲销状态\t操作\n2026-11-10\tWS-MOV001\tWS-SKU001\nWorkspace Light\n基础单位：pcs\n\t盘盈入库\t+10 pcs\t手工登记\t隔离仓\t—\n\t正常\t\n服务器暂时不可用，请稍后重试。",
+    "role": "authenticated codex test superuser",
+    "data": "isolated manual synthetic movement WS-MOV001",
+    "steps": [
+      "confirm reversal",
+      "intercept POST with simulated 503"
+    ],
+    "writes": 1,
+    "simulated": true,
+    "capture_time_utc": "2026-11-10T01:38:30.549Z",
+    "file": "originals/MOVEMENT-FAIL-B-1366.png",
+    "sha256": "224588430050dce67fe1074b9c6c17b8308dc35e01ec2def12dd354e91c2be96",
+    "review": "NOT_REVIEWED",
+    "limitation": "POST intercepted and simulated 503; no reversal"
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "evidence_id": "ULR019-B-status.png",
+  "surface_id": "S017",
+  "expanded_case_id": "ULR019-B-status",
+  "related_ulr": [
+    "ULR-019"
+  ],
+  "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+  "source_branch": "codex/first-release-independent-review-02",
+  "browser_version": "156.0.8078.80",
+  "route": "/customers?detail=1&tab=orders",
+  "viewport_actual": {
+    "width": 1366,
+    "height": 768
+  },
+  "dpr": 1,
+  "zoom": 1,
+  "role": "authenticated codex test superuser",
+  "fixture": "Workspace Alpha / WS-SKU001",
+  "steps": [
+    "客户列表打开 Workspace Alpha",
+    "订单记录",
+    "新增订单",
+    "状态选择已确认"
+  ],
+  "selected_status": "confirmed",
+  "capture_time_utc": "2026-11-09T17:03:24.418Z",
+  "simulated": false,
+  "file": "originals/ULR019-B-status.png",
+  "sha256": "bec007ffec538fd72bf1fa1ca87d6a9c9dbbb9f49ea4db2d1b6f0de4078bbcd8",
+  "pixels": {
+    "width": 1366,
+    "height": 768
+  }
+}

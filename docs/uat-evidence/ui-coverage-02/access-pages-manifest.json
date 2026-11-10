@@ -1,0 +1,138 @@
+[
+  {
+    "evidence_id": "ACCESS-access-denied-B-1366",
+    "surface_id": "G006",
+    "expanded_case_id": "ACCESS-access-denied-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/access-denied",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCESS DENIED\n访问受限\n11月10日周二\nC\n访问受限\n×\n⋮\n403\n没有此页面的访问权限\n\n当前身份没有查看此页面的权限。可返回其他页面，或请权限管理员核对角色配置。\n\n重新加载权限状态\n返回可访问页面\n重新加载只检查当前权限，不会修改角色配置。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; direct navigation, no simulated permission denial or failed lookup",
+    "steps": [
+      "navigate directly to /access-denied",
+      "wait for initial status page",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:19:06.877Z",
+    "file": "originals/ACCESS-access-denied-B-1366.png",
+    "sha256": "b39f876004cb925d8e02f8a68e8e63d722a444c1e71d77328b18a2a044d6841d",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "direct route rendering only; does not demonstrate actual permission denial, lookup error or retry",
+    "observation": "状态文案及重新加载、返回入口可见；未操作入口。"
+  },
+  {
+    "evidence_id": "ACCESS-access-status-error-B-1366",
+    "surface_id": "G006",
+    "expanded_case_id": "ACCESS-access-status-error-B-1366",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/access-status-error",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCESS STATUS\n权限状态\n11月10日周二\nC\n权限状态\n×\n⋮\n!\n权限状态获取失败\n\n暂时无法确认当前身份的权限。请重新加载权限状态，再继续操作。\n\n重新加载权限状态\n返回可访问页面\n重新加载只检查当前权限，不会修改角色配置。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; direct navigation, no simulated permission denial or failed lookup",
+    "steps": [
+      "navigate directly to /access-status-error",
+      "wait for initial status page",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:19:07.907Z",
+    "file": "originals/ACCESS-access-status-error-B-1366.png",
+    "sha256": "879a56e9589b1e9cd26d8d729022f782d0772eb16079cb4d19501dadc8a7277b",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "direct route rendering only; does not demonstrate actual permission denial, lookup error or retry",
+    "observation": "状态文案及重新加载、返回入口可见；未操作入口。"
+  },
+  {
+    "evidence_id": "ACCESS-access-denied-B-1920",
+    "surface_id": "G006",
+    "expanded_case_id": "ACCESS-access-denied-B-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/access-denied",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCESS DENIED\n访问受限\n11月10日周二\nC\n访问受限\n×\n⋮\n403\n没有此页面的访问权限\n\n当前身份没有查看此页面的权限。可返回其他页面，或请权限管理员核对角色配置。\n\n重新加载权限状态\n返回可访问页面\n重新加载只检查当前权限，不会修改角色配置。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; direct navigation, no simulated permission denial or failed lookup",
+    "steps": [
+      "navigate directly to /access-denied",
+      "wait for initial status page",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:19:09.324Z",
+    "file": "originals/ACCESS-access-denied-B-1920.png",
+    "sha256": "333d8db0cd286b9b79009fc54f90b1fad3997f411873cb09186d99c61dcdce36",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "direct route rendering only; does not demonstrate actual permission denial, lookup error or retry",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  },
+  {
+    "evidence_id": "ACCESS-access-status-error-B-1920",
+    "surface_id": "G006",
+    "expanded_case_id": "ACCESS-access-status-error-B-1920",
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/access-status-error",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\nACCESS STATUS\n权限状态\n11月10日周二\nC\n权限状态\n×\n⋮\n!\n权限状态获取失败\n\n暂时无法确认当前身份的权限。请重新加载权限状态，再继续操作。\n\n重新加载权限状态\n返回可访问页面\n重新加载只检查当前权限，不会修改角色配置。",
+    "role": "authenticated codex test superuser",
+    "data": "fresh isolated database; direct navigation, no simulated permission denial or failed lookup",
+    "steps": [
+      "navigate directly to /access-status-error",
+      "wait for initial status page",
+      "capture viewport"
+    ],
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T18:19:10.539Z",
+    "file": "originals/ACCESS-access-status-error-B-1920.png",
+    "sha256": "4648467a932c7c5389c651125eebad1febe170d1346b5f96a3593a73c902c635",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "review": "VISUALLY_INSPECTED_BY_CODEX_NOT_INDEPENDENT",
+    "limitation": "direct route rendering only; does not demonstrate actual permission denial, lookup error or retry",
+    "review_note": "已查看原始截图；仅支持截图所示状态，模拟及采集限制保持原记录。"
+  }
+]

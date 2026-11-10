@@ -1,0 +1,188 @@
+[
+  {
+    "evidence_id": "FOLLOWUP-GEOMETRY-B-1366",
+    "surface_id": "G082",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/follow-ups?detail=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户跟进\n跟进记录\n11月10日周二\nC\n跟进记录\n×\n⋮\nISS007 附件上传与重开\n×\n⋮\n跟进记录\n\n记录沟通内容、客户回复和下一步安排。\n\n新建跟进记录\n跟进记录\n1\n当前筛选结果\n已关联客户\n1\n有沟通记录的客户\n计划日期已到记录\n0\n历史跟进记录统计；当前待跟进以经营概览为准\n本月记录\n1\n按跟进时间统计\n新品提醒\n搜索\n所属客户\n全部客户\nISS007 隔离验收客户\n跟进人\n全部跟进人\nISS007 UAT\n跟进方式\n全部方式\n邮件\n电话\n即时通讯\n会议\n拜访\n其他\n跟进时间从\n至\n排序\n时间从近到远\n时间从远到近\n待跟进\n重置\n刷新\n客户与联系人\t跟进时间\t主题与方式\t沟通与回复\t下一步安排\t操作\nISS007 隔离验收客户\nISS007 验收联系人\n\t11/09 09:13\tISS007 附件上传与重开\n邮件\n\t隔离环境正式业务流程验收记录。\n客户回复：等待附件复核\n\t确认附件可读\n保留当前计划 · 未安排日期\n\t\n新品提醒\n返回列表\n跟进详情\n编辑\n删除\n返回\n新建报价\n发送 WhatsApp\n跟进记录 · 创建时间：2026-11-09 09:13\n跟进记录详情\nISS007 附件上传与重开\n邮件\n跟进对象\nISS007 隔离验收客户（Germany）\n跟进方式 / 主题\nISS007 附件上传与重开\n邮件\n跟进结果\n\n等待附件复核\n\n下次跟进时间\n—\n负责人\nI\nISS007 UAT\n跟进内容\n本次沟通记录\n\n隔离环境正式业务流程验收记录。\n\n下一步计划\n\n确认附件可读\n\n客户反馈 / 问题\n\n等待附件复核\n\n附件\n0 个附件\n暂无附件\n跟进记录时间线\nISS007 UAT\n本次跟进（最新）\n\nISS007 附件上传与重开\n\n已记录\n2026-11-09 09:13\n标签\n邮件\n计划跟进\n相关数据\n▦\nISS007 隔离验收客户\n客户 · ISS007-C001\n●\nISS007 验收联系人\n联系人\n操作日志\n\n记录创建、修改、删除及业务状态变更。\n\n未启用\n当前身份或环境未启用操作日志。",
+    "geometry": {
+      ".follow-up-detail-backdrop": {
+        "x": 248,
+        "right": 1366,
+        "width": 1118,
+        "overflow": "visible"
+      },
+      ".follow-up-detail-modal": {
+        "x": 248,
+        "right": 1366,
+        "width": 1118,
+        "overflow": "auto"
+      },
+      ".follow-up-hero-identity": {
+        "x": 294,
+        "right": 1320,
+        "width": 1026,
+        "overflow": "visible"
+      }
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007 follow-up fixture",
+    "steps": [
+      "open follow-up detail"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:13:24.631Z",
+    "file": "originals/FOLLOWUP-GEOMETRY-B-1366.png",
+    "sha256": "4d10a654544d45b381995876aedaadbd7e067169d68c1009d7cdd69d9bd063d6",
+    "review": "NOT_REVIEWED",
+    "limitation": "cancel only; no deletion"
+  },
+  {
+    "evidence_id": "FOLLOWUP-GEOMETRY-CANCEL-NOW-B-1366",
+    "surface_id": "G082",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/follow-ups?detail=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户跟进\n跟进记录\n11月10日周二\nC\n跟进记录\n×\n⋮\nISS007 附件上传与重开\n×\n⋮\n跟进记录\n\n记录沟通内容、客户回复和下一步安排。\n\n新建跟进记录\n跟进记录\n1\n当前筛选结果\n已关联客户\n1\n有沟通记录的客户\n计划日期已到记录\n0\n历史跟进记录统计；当前待跟进以经营概览为准\n本月记录\n1\n按跟进时间统计\n新品提醒\n搜索\n所属客户\n全部客户\nISS007 隔离验收客户\n跟进人\n全部跟进人\nISS007 UAT\n跟进方式\n全部方式\n邮件\n电话\n即时通讯\n会议\n拜访\n其他\n跟进时间从\n至\n排序\n时间从近到远\n时间从远到近\n待跟进\n重置\n刷新\n客户与联系人\t跟进时间\t主题与方式\t沟通与回复\t下一步安排\t操作\nISS007 隔离验收客户\nISS007 验收联系人\n\t11/09 09:13\tISS007 附件上传与重开\n邮件\n\t隔离环境正式业务流程验收记录。\n客户回复：等待附件复核\n\t确认附件可读\n保留当前计划 · 未安排日期\n\t\n新品提醒\n返回列表\n跟进详情\n编辑\n删除\n返回\n新建报价\n发送 WhatsApp\n跟进记录 · 创建时间：2026-11-09 09:13\n跟进记录详情\nISS007 附件上传与重开\n邮件\n跟进对象\nISS007 隔离验收客户（Germany）\n跟进方式 / 主题\nISS007 附件上传与重开\n邮件\n跟进结果\n\n等待附件复核\n\n下次跟进时间\n—\n负责人\nI\nISS007 UAT\n跟进内容\n本次沟通记录\n\n隔离环境正式业务流程验收记录。\n\n下一步计划\n\n确认附件可读\n\n客户反馈 / 问题\n\n等待附件复核\n\n附件\n0 个附件\n暂无附件\n跟进记录时间线\nISS007 UAT\n本次跟进（最新）\n\nISS007 附件上传与重开\n\n已记录\n2026-11-09 09:13\n标签\n邮件\n计划跟进\n相关数据\n▦\nISS007 隔离验收客户\n客户 · ISS007-C001\n●\nISS007 验收联系人\n联系人\n操作日志\n\n记录创建、修改、删除及业务状态变更。\n\n未启用\n当前身份或环境未启用操作日志。",
+    "geometry": {
+      ".follow-up-detail-backdrop": {
+        "x": 248,
+        "right": 1366,
+        "width": 1118,
+        "overflow": "visible"
+      },
+      ".follow-up-detail-modal": {
+        "x": 248,
+        "right": 1366,
+        "width": 1118,
+        "overflow": "auto"
+      },
+      ".follow-up-hero-identity": {
+        "x": 294,
+        "right": 1320,
+        "width": 1026,
+        "overflow": "visible"
+      }
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007 follow-up fixture",
+    "steps": [
+      "cancel delete confirmation",
+      "capture immediately"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:13:24.833Z",
+    "file": "originals/FOLLOWUP-GEOMETRY-CANCEL-NOW-B-1366.png",
+    "sha256": "4d10a654544d45b381995876aedaadbd7e067169d68c1009d7cdd69d9bd063d6",
+    "review": "NOT_REVIEWED",
+    "limitation": "cancel only; no deletion"
+  },
+  {
+    "evidence_id": "FOLLOWUP-GEOMETRY-CANCEL-STABLE-B-1366",
+    "surface_id": "G082",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/follow-ups?detail=1",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户跟进\n跟进记录\n11月10日周二\nC\n跟进记录\n×\n⋮\nISS007 附件上传与重开\n×\n⋮\n跟进记录\n\n记录沟通内容、客户回复和下一步安排。\n\n新建跟进记录\n跟进记录\n1\n当前筛选结果\n已关联客户\n1\n有沟通记录的客户\n计划日期已到记录\n0\n历史跟进记录统计；当前待跟进以经营概览为准\n本月记录\n1\n按跟进时间统计\n新品提醒\n搜索\n所属客户\n全部客户\nISS007 隔离验收客户\n跟进人\n全部跟进人\nISS007 UAT\n跟进方式\n全部方式\n邮件\n电话\n即时通讯\n会议\n拜访\n其他\n跟进时间从\n至\n排序\n时间从近到远\n时间从远到近\n待跟进\n重置\n刷新\n客户与联系人\t跟进时间\t主题与方式\t沟通与回复\t下一步安排\t操作\nISS007 隔离验收客户\nISS007 验收联系人\n\t11/09 09:13\tISS007 附件上传与重开\n邮件\n\t隔离环境正式业务流程验收记录。\n客户回复：等待附件复核\n\t确认附件可读\n保留当前计划 · 未安排日期\n\t\n新品提醒\n返回列表\n跟进详情\n编辑\n删除\n返回\n新建报价\n发送 WhatsApp\n跟进记录 · 创建时间：2026-11-09 09:13\n跟进记录详情\nISS007 附件上传与重开\n邮件\n跟进对象\nISS007 隔离验收客户（Germany）\n跟进方式 / 主题\nISS007 附件上传与重开\n邮件\n跟进结果\n\n等待附件复核\n\n下次跟进时间\n—\n负责人\nI\nISS007 UAT\n跟进内容\n本次沟通记录\n\n隔离环境正式业务流程验收记录。\n\n下一步计划\n\n确认附件可读\n\n客户反馈 / 问题\n\n等待附件复核\n\n附件\n0 个附件\n暂无附件\n跟进记录时间线\nISS007 UAT\n本次跟进（最新）\n\nISS007 附件上传与重开\n\n已记录\n2026-11-09 09:13\n标签\n邮件\n计划跟进\n相关数据\n▦\nISS007 隔离验收客户\n客户 · ISS007-C001\n●\nISS007 验收联系人\n联系人\n操作日志\n\n记录创建、修改、删除及业务状态变更。\n\n未启用\n当前身份或环境未启用操作日志。",
+    "geometry": {
+      ".follow-up-detail-backdrop": {
+        "x": 248,
+        "right": 1366,
+        "width": 1118,
+        "overflow": "visible"
+      },
+      ".follow-up-detail-modal": {
+        "x": 248,
+        "right": 1366,
+        "width": 1118,
+        "overflow": "auto"
+      },
+      ".follow-up-hero-identity": {
+        "x": 294,
+        "right": 1320,
+        "width": 1026,
+        "overflow": "visible"
+      }
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007 follow-up fixture",
+    "steps": [
+      "cancel delete confirmation",
+      "wait 500ms"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:13:25.450Z",
+    "file": "originals/FOLLOWUP-GEOMETRY-CANCEL-STABLE-B-1366.png",
+    "sha256": "4d10a654544d45b381995876aedaadbd7e067169d68c1009d7cdd69d9bd063d6",
+    "review": "NOT_REVIEWED",
+    "limitation": "cancel only; no deletion"
+  },
+  {
+    "evidence_id": "FOLLOWUP-GEOMETRY-B-1920",
+    "surface_id": "G082",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/follow-ups?detail=1",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "visibleText": "S\n森爵照明管理系统\n客户 · 销售 · 产品\n经营\n经营概览\n报表中心\n历史订单分析\n客户\n客户管理\n联系人\n跟进记录\n销售\n报价管理\n订单管理\n采购与库存\n供应商管理\n采购管理\n库存\n库存流水\n产品资料\n产品管理\nSKU 管理\n产品分类\n产品参数\n包装管理\n交易单位\n产品证书\nHS 编码维护\n财务与工具\n财务概览\n应收计划\n应付计划\n财务流水\n银行资金记录\n账户余额与对账\n数据导入\n历史资料预检\n历史资料承接\n组织与系统\n组织与权限\nC\n当前账号：codex\n超级管理员 · 全部功能与数据权限\n退出登录\n客户跟进\n跟进记录\n11月10日周二\nC\n跟进记录\n×\n⋮\nISS007 附件上传与重开\n×\n⋮\n跟进记录\n\n记录沟通内容、客户回复和下一步安排。\n\n新建跟进记录\n跟进记录\n1\n当前筛选结果\n已关联客户\n1\n有沟通记录的客户\n计划日期已到记录\n0\n历史跟进记录统计；当前待跟进以经营概览为准\n本月记录\n1\n按跟进时间统计\n新品提醒\n搜索\n所属客户\n全部客户\nISS007 隔离验收客户\n跟进人\n全部跟进人\nISS007 UAT\n跟进方式\n全部方式\n邮件\n电话\n即时通讯\n会议\n拜访\n其他\n跟进时间从\n至\n排序\n时间从近到远\n时间从远到近\n待跟进\n重置\n刷新\n客户与联系人\t跟进时间\t主题与方式\t沟通与回复\t下一步安排\t操作\nISS007 隔离验收客户\nISS007 验收联系人\n\t11/09 09:13\tISS007 附件上传与重开\n邮件\n\t隔离环境正式业务流程验收记录。\n客户回复：等待附件复核\n\t确认附件可读\n保留当前计划 · 未安排日期\n\t\n新品提醒\n返回列表\n跟进详情\n编辑\n删除\n返回\n新建报价\n发送 WhatsApp\n跟进记录 · 创建时间：2026-11-09 09:13\n跟进记录详情\nISS007 附件上传与重开\n邮件\n跟进对象\nISS007 隔离验收客户（Germany）\n跟进方式 / 主题\nISS007 附件上传与重开\n邮件\n跟进结果\n\n等待附件复核\n\n下次跟进时间\n—\n负责人\nI\nISS007 UAT\n跟进内容\n本次沟通记录\n\n隔离环境正式业务流程验收记录。\n\n下一步计划\n\n确认附件可读\n\n客户反馈 / 问题\n\n等待附件复核\n\n附件\n0 个附件\n暂无附件\n跟进记录时间线\nISS007 UAT\n本次跟进（最新）\n\nISS007 附件上传与重开\n\n已记录\n2026-11-09 09:13\n标签\n邮件\n计划跟进\n相关数据\n▦\nISS007 隔离验收客户\n客户 · ISS007-C001\n●\nISS007 验收联系人\n联系人\n操作日志\n\n记录创建、修改、删除及业务状态变更。\n\n未启用\n当前身份或环境未启用操作日志。",
+    "geometry": {
+      ".follow-up-detail-backdrop": {
+        "x": 248,
+        "right": 1920,
+        "width": 1672,
+        "overflow": "visible"
+      },
+      ".follow-up-detail-modal": {
+        "x": 248,
+        "right": 1920,
+        "width": 1672,
+        "overflow": "auto"
+      },
+      ".follow-up-hero-identity": {
+        "x": 294,
+        "right": 1874,
+        "width": 1580,
+        "overflow": "visible"
+      }
+    },
+    "role": "authenticated codex test superuser",
+    "data": "isolated ISS007 follow-up fixture",
+    "steps": [
+      "resize follow-up detail"
+    ],
+    "writes": 0,
+    "simulated": false,
+    "capture_time_utc": "2026-11-10T01:13:26.137Z",
+    "file": "originals/FOLLOWUP-GEOMETRY-B-1920.png",
+    "sha256": "c970dc974220ea64c2c54b4d15412b3aa29ccf29a1d2f9da5aefb1d35bd5b796",
+    "review": "NOT_REVIEWED",
+    "limitation": "cancel only; no deletion"
+  }
+]

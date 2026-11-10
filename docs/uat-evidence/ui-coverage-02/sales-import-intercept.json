@@ -1,0 +1,5 @@
+{
+  "intercepted": 1,
+  "status": 503,
+  "note": "request fulfilled by browser before reaching backend"
+}

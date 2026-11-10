@@ -1,0 +1,40 @@
+[
+  {
+    "evidence_id": "ULR004-B-sku-management.png",
+    "surface_id": "P019",
+    "expanded_case_id": "ULR004-B-sku-management",
+    "related_ulr": [
+      "ULR-004"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/products?detail=1&tab=skus",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "drawer": null,
+    "confirmation": null,
+    "role": "authenticated codex test superuser",
+    "object_reference": "WS-P001 / WS-SKU001 / Workspace Supplier",
+    "data": "existing workspace-tabs synthetic fixture in isolated SQLite",
+    "stage": "sku-management",
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T06:59:25.068Z",
+    "file": "originals/ULR004-B-sku-management.png",
+    "sha256": "778a1343e014817ce48e419ba365e66c9e4f65da5e138d082c512d7610721999",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    },
+    "steps": [
+      "打开产品列表，进入隔离合成产品 WS-P001 详情",
+      "通过 SKU 管理预览的查看全部进入 SKU 管理",
+      "截图后尝试鼠标点击 SKU 选择框；失败轨迹另存于 artifacts/7f6dbfb3-bb31-4265-b5f4-cc72fa72aa7b/"
+    ],
+    "metadata_provenance": "路径根据本目录 README 的 ULR-004 首次运行记录追溯；截图是点击尝试前的 sku-management 阶段"
+  }
+]

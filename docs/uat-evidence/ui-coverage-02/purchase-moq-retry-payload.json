@@ -1,0 +1,11 @@
+{
+  "intercepted_count": 2,
+  "second_body": {
+    "moq_exception_reason": "隔离测试小批量"
+  },
+  "responses": [
+    "simulated 400 MOQ",
+    "simulated 503"
+  ],
+  "service_reached": false
+}

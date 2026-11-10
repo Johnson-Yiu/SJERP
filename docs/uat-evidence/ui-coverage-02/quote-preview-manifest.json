@@ -1,0 +1,214 @@
+[
+  {
+    "evidence_id": "ULR008-B-1366.png",
+    "surface_id": "S005",
+    "expanded_case_id": "ULR008-B-1366",
+    "related_ulr": [
+      "ULR-008"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/quotes?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1366,
+      "height": 768
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "parent": {
+      "rect": {
+        "x": 248,
+        "y": 134,
+        "width": 1118,
+        "height": 634
+      },
+      "top": "134px",
+      "left": "248px",
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "25",
+      "centerHit": "<iframe title=\"已保存 PI\" srcdoc=\"&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;ISS007-Q001&lt;/title&gt;\n&lt;style&gt;\nbody{font:14"
+    },
+    "backdrop": {
+      "rect": {
+        "x": 496,
+        "y": 268,
+        "width": 870,
+        "height": 500
+      },
+      "top": "134px",
+      "left": "248px",
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "75",
+      "centerHit": "<iframe title=\"已保存 PI\" srcdoc=\"&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;ISS007-Q001&lt;/title&gt;\n&lt;style&gt;\nbody{font:14"
+    },
+    "preview": {
+      "rect": {
+        "x": 514,
+        "y": 149.375,
+        "width": 834,
+        "height": 737.265625
+      },
+      "top": "auto",
+      "left": "auto",
+      "maxHeight": "737.28px",
+      "overflow": "hidden",
+      "zIndex": "auto",
+      "centerHit": "<iframe title=\"已保存 PI\" srcdoc=\"&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;ISS007-Q001&lt;/title&gt;\n&lt;style&gt;\nbody{font:14"
+    },
+    "close": {
+      "rect": {
+        "x": 1299,
+        "y": 170.375,
+        "width": 31,
+        "height": 31
+      },
+      "top": "auto",
+      "left": "auto",
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "auto",
+      "centerHit": "<path d=\"m6 6 12 12\"></path>"
+    },
+    "iframe": {
+      "rect": {
+        "x": 542,
+        "y": 251.375,
+        "width": 778,
+        "height": 614.390625
+      },
+      "top": "auto",
+      "left": "auto",
+      "maxHeight": "none",
+      "overflow": "clip",
+      "zIndex": "auto",
+      "centerHit": "<iframe title=\"已保存 PI\" srcdoc=\"&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;ISS007-Q001&lt;/title&gt;\n&lt;style&gt;\nbody{font:14"
+    },
+    "role": "authenticated codex test superuser",
+    "object_reference": "ISS007-Q001",
+    "data": "existing isolated ISS-007 synthetic quote fixture",
+    "steps": [
+      "open /quotes",
+      "open ISS007-Q001",
+      "click 预览 PI",
+      "wait for response and fonts"
+    ],
+    "pi_data_http_status": 200,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:19:53.769Z",
+    "file": "originals/ULR008-B-1366.png",
+    "sha256": "b5bdb7c0b1eac4a71be9ada01ea9a22240ec2afeb7ed98983baa1574464bb6c5",
+    "pixels": {
+      "width": 1366,
+      "height": 768
+    }
+  },
+  {
+    "evidence_id": "ULR008-B-1920.png",
+    "surface_id": "S005",
+    "expanded_case_id": "ULR008-B-1920",
+    "related_ulr": [
+      "ULR-008"
+    ],
+    "source_branch": "codex/first-release-independent-review-02",
+    "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+    "browser_version": "156.0.8078.80",
+    "route": "/quotes?detail=1&tab=overview",
+    "viewport_actual": {
+      "width": 1920,
+      "height": 1080
+    },
+    "dpr": 1,
+    "zoom": 1,
+    "parent": {
+      "rect": {
+        "x": 248,
+        "y": 134,
+        "width": 1672,
+        "height": 946
+      },
+      "top": "134px",
+      "left": "248px",
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "25",
+      "centerHit": "<iframe title=\"已保存 PI\" srcdoc=\"&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;ISS007-Q001&lt;/title&gt;\n&lt;style&gt;\nbody{font:14"
+    },
+    "backdrop": {
+      "rect": {
+        "x": 496,
+        "y": 268,
+        "width": 1424,
+        "height": 812
+      },
+      "top": "134px",
+      "left": "248px",
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "75",
+      "centerHit": "<iframe title=\"已保存 PI\" srcdoc=\"&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;ISS007-Q001&lt;/title&gt;\n&lt;style&gt;\nbody{font:14"
+    },
+    "preview": {
+      "rect": {
+        "x": 588,
+        "y": 174.5,
+        "width": 1240,
+        "height": 999
+      },
+      "top": "auto",
+      "left": "auto",
+      "maxHeight": "1036.8px",
+      "overflow": "hidden",
+      "zIndex": "auto",
+      "centerHit": "<iframe title=\"已保存 PI\" srcdoc=\"&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;ISS007-Q001&lt;/title&gt;\n&lt;style&gt;\nbody{font:14"
+    },
+    "close": {
+      "rect": {
+        "x": 1779,
+        "y": 195.5,
+        "width": 31,
+        "height": 31
+      },
+      "top": "auto",
+      "left": "auto",
+      "maxHeight": "none",
+      "overflow": "visible",
+      "zIndex": "auto",
+      "centerHit": "<path d=\"m6 6 12 12\"></path>"
+    },
+    "iframe": {
+      "rect": {
+        "x": 616,
+        "y": 276.5,
+        "width": 1184,
+        "height": 864
+      },
+      "top": "auto",
+      "left": "auto",
+      "maxHeight": "none",
+      "overflow": "clip",
+      "zIndex": "auto",
+      "centerHit": "<iframe title=\"已保存 PI\" srcdoc=\"&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;title&gt;ISS007-Q001&lt;/title&gt;\n&lt;style&gt;\nbody{font:14"
+    },
+    "role": "authenticated codex test superuser",
+    "object_reference": "ISS007-Q001",
+    "data": "existing isolated ISS-007 synthetic quote fixture",
+    "steps": [
+      "open /quotes",
+      "open ISS007-Q001",
+      "click 预览 PI",
+      "wait for response and fonts"
+    ],
+    "pi_data_http_status": 200,
+    "simulated": false,
+    "capture_time_utc": "2026-11-09T07:19:53.926Z",
+    "file": "originals/ULR008-B-1920.png",
+    "sha256": "f6c30a4d76c0e268eb9b663149ffd7da7d7f9e239d9e3fa49c38953edeab2276",
+    "pixels": {
+      "width": 1920,
+      "height": 1080
+    }
+  }
+]

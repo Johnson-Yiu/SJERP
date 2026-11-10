@@ -1,0 +1,123 @@
+{
+  "status": "IN_PROGRESS_NOT_FORMAL_ISSUE_LEDGER",
+  "findings": [
+    {
+      "id": "UCR-020",
+      "surface_id": "G022",
+      "title": "客户搜索结果为空时，客户总数卡片仍写“全部客户档案”",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "runtime_observation": "隔离库有两条客户；搜索不存在名称后，卡片显示客户总数 0 和全部客户档案，清除筛选后显示 2。",
+      "source_evidence": "frontend/src/views/ResourcePage.vue:239-245 对 rows.length 计数，客户 load 使用搜索/筛选参数；其中累计销售额明确标注当前列表累计。",
+      "evidence_ids": [
+        "CUSTOMER-SEARCH-EMPTY-B-1366",
+        "CUSTOMER-SEARCH-CLEARED-B-1366"
+      ],
+      "observation_status": "REPRODUCED",
+      "review_disposition": "PENDING",
+      "issue_mapping": "未确认同根因既有 ISS；只检索了客户统计、筛选、卡片相关台账文本，仍需完整人工核对后决定是否登记。",
+      "limitations": "仅隔离数据和一个搜索条件；统计范围是否符合业务要求及措辞是否误导须独立复审。"
+    },
+    {
+      "id": "UCR-021",
+      "surface_id": "S016",
+      "title": "订单交期天数获得焦点时滚轮改变数值和预计日期",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "runtime_observation": "1366×768 和 390×844：输入 7 后在焦点数字框上向上滚轮，值变为 8；390 原图显示预计交期随之从 11月17日变为11月18日。",
+      "evidence_ids": [
+        "ORDER-LEAD-WHEEL-BEFORE-B-1366",
+        "ORDER-LEAD-WHEEL-AFTER-B-1366",
+        "ORDER-LEAD-WHEEL-BEFORE-B-390",
+        "ORDER-LEAD-WHEEL-AFTER-B-390",
+        "ORDER-SHIPPING-WHEEL-BEFORE-V2-B-1366",
+        "ORDER-SHIPPING-WHEEL-AFTER-V2-B-1366",
+        "ORDER-DISCOUNT-WHEEL-BEFORE-V2-B-1366",
+        "ORDER-DISCOUNT-WHEEL-AFTER-V2-B-1366"
+      ],
+      "observation_status": "REPRODUCED",
+      "review_disposition": "PENDING",
+      "issue_mapping": "PROJECT_ISSUES.md 中按滚轮关键词未找到匹配；完整同根因核查仍待完成。",
+      "limitations": "交期在两尺寸、运费和折扣在 1366；Chrome 隔离未保存，不能推及全部字段。",
+      "additional_observation": "同一新建订单 1366×768：指针命中运费和折扣输入框时向上滚轮分别使运费 7→8、折扣 6→7；前后金额和合计变化见 v2 清单。折扣定位时先由 7 变为 6。"
+    },
+    {
+      "id": "UCR-022",
+      "surface_id": "G002",
+      "title": "创建多个工作区后最新活动标签位于可视标签栏之外",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "runtime_observation": "1366×768 连续打开 11 个客户草稿后，活动标签边界 x=2284.6–2426.5，而标签栏可视边界 x=272–1342、scrollLeft=0；当前草稿表单显示但活动标签不在可视区域。",
+      "evidence_ids": [
+        "TABS-TWELVE-B-1366",
+        "TABS-FIRST-OVERFLOW-B-1366"
+      ],
+      "observation_status": "REPRODUCED",
+      "review_disposition": "PENDING",
+      "issue_mapping": "对工作区活动标签、滚动和可见性关键词检索未确认同根因；完整台账映射待核对。",
+      "limitations": "1366 本次固定标签宽度路径已测首次越界；键盘可达性、其他视口与不同标题宽度尚未覆盖。390 手动滚动可查看不同标签。",
+      "additional_observation": "在 1366×768 本次连续创建路径中，第 1–5 个新建草稿活动标签完整可见；第 6 个首次越界，活动标签 x=1339.1–1473.3，栏右缘 1342。"
+    },
+    {
+      "id": "UCR-023",
+      "surface_id": "S029",
+      "title": "采购来源保存失败提示在抽屉底栏下不可读",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "runtime_observation": "1366×768 选择客户优先来源并提交，浏览器拦截 POST 模拟 503；错误节点 y≈689–730，而固定底栏从约 y=696 开始，提示文字不可见；滚动抽屉后可见。",
+      "evidence_ids": [
+        "ORDER-SOURCE-FAIL-B-1366",
+        "ORDER-SOURCE-FAIL-SCROLLED-B-1366"
+      ],
+      "observation_status": "REPRODUCED",
+      "review_disposition": "PENDING",
+      "issue_mapping": "与 ULR-014/015 同属失败反馈不在可见区域，但父组件和定位机制不同，未断定同根因；正式 Issue 映射待核对。",
+      "limitations": "仅模拟 503、1366 和单个候选；请求未到服务，不代表真实保存失败或成功。"
+    },
+    {
+      "id": "UCR-024",
+      "surface_id": "S015",
+      "title": "订单删除请求等待时可再次提交",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "runtime_observation": "1366×768 第一次确认删除后 DELETE 由浏览器挂起，删除按钮仍可操作，再次确认后观察到第二个 DELETE。",
+      "evidence_ids": [
+        "ORDER-DELETE-PENDING-B-1366",
+        "ORDER-DELETE-SECOND-CONFIRM-B-1366",
+        "ORDER-DELETE-TWO-PENDING-B-1366"
+      ],
+      "observation_status": "REPRODUCED",
+      "review_disposition": "PENDING",
+      "issue_mapping": "检索 docs/PROJECT_ISSUES.md 的 DocumentPage、订单列表、删除、重复提交及防重关键词；ISS-079 是 CRM 保存/离开竞态、ISS-098 和 ISS-106 是列表样式/表头，未证明与订单列表 DELETE 等待期间可再次提交同根因。完整复核仍待独立审查，不擅自创建或关闭正式 Issue。",
+      "limitations": "两次请求均在到达服务前拦截并模拟 503，未删除订单；不能推断服务端并发处理、重复删除结果或真实业务损失。"
+    },
+    {
+      "id": "UCR-025",
+      "surface_id": "P008",
+      "title": "产品 SKU 批量停用模拟失败提示短暂出现后消失",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "runtime_observation": "1920×1080 对一条 SKU 模拟 PATCH 503，立即出现 1 个操作失败和成功停用 0 个 SKU；约两秒后错误节点消失而成功停用 0 个 SKU 提示仍在。产品详情左侧裁切使两条提示开头不可见。",
+      "evidence_ids": [
+        "PRODUCT-SKU-BATCH-FAIL-B-1920",
+        "PRODUCT-SKU-BATCH-FAIL-LATER-B-1920"
+      ],
+      "observation_status": "REPRODUCED",
+      "review_disposition": "PENDING",
+      "issue_mapping": "关键词检索 docs/PROJECT_ISSUES.md：ISS-091 为 SKUPage 包装内联保存，ISS-093 为 HS 编码，ISS-095 为组织权限；尚无证据证明与 ProductSkuManagement 批量停用失败提示同根因。左侧裁切关联 ULR-003；保留候选待独立审核。",
+      "limitations": "仅 1920、单 SKU、浏览器拦截模拟 503；不能推断真实服务失败或实际停用。时间仅测试等待约两秒，不是消失精确时刻。",
+      "source_analysis": "源码显示批量处理后 emit(changed)，父级刷新 data，ProductWorkspace 监听 data 更新 refreshKey，子组件监听 refreshKey 再 load，而 load 会清除 error；这是可能的解释，尚未通过时序插桩证明为唯一原因。"
+    },
+    {
+      "id": "UCR-026",
+      "surface_id": "S005",
+      "title": "报价备注插入链接未作用于已选文字",
+      "source_sha": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "runtime_observation": "在报价重要备注编辑器输入并全选“示例链接”，选区断言通过；点击插入链接并输入 HTTPS 地址后，生成链接的文本是网址，原选中文字在其后保持普通文本。",
+      "evidence_ids": [
+        "QUOTE-NOTE-LINK-VALID-B-1366",
+        "QUOTE-NOTE-LINK-MOUSE-B-1366"
+      ],
+      "observation_status": "REPRODUCED",
+      "review_disposition": "PENDING",
+      "issue_mapping": "检索台账富文本、链接、超链接关键词；ISS-078 涉及跟进富文本，未确认与报价备注相同根因，仍需独立复核。",
+      "limitations": "仅 Chrome、1366×768、Ctrl+A 和鼠标双击一个英文单词，单个合成报价；未验证持久化、链接点击或其他浏览器。备注未保存。",
+      "additional_evidence": "quote-note-link-selection.json 记录选区、生成链接文字、编辑器内容和 href。",
+      "additional_observation": "鼠标双击选中 linkword 后同样生成网址文本链接，原单词仍在其后；首次双击编辑区中心未选中文字、测试失败，修正点击位置后通过。"
+    }
+  ]
+}

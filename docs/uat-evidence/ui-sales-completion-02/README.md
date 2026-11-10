@@ -53,3 +53,17 @@ E1 既有证据来源 `9dd721723422b45b1fabf1d97d1ad492488b7437` 的 `docs/uat-e
 - ISS-007 原用例 1/1 PASS。单独运行首次因 SKU 保存还在进行时触发 5 秒断言，保留首次失败归因。之后等待保存收尾，并在导出时确认缺成本风险。原图和替换后历史图均已解码；缺失媒体 404，iframe 中图片节点存在且自然宽 0，无浏览器异常。原测试把缺失图也要求可见，改为断言节点、失败解码、业务行与 HTTP 404。见 [正常图](pi-regression/quote-pi-original-snapshot-desktop-1440.png) 和 [缺失图](pi-regression/missing-history-image-mobile-390.png)。
 - ISS-029 原用例 1/1 PASS。H1 已到修订保存，等待下载超时是脚本漏确认成本风险。隔离真实会话首次在直接发出的非法邮箱请求收到 403，补带 CSRF 后验证业务校验 400，并保留 A/B 的收件人快照、保存、重开及下载断言。
 - [实际 XLSX 核对](xlsx-verification.json)记录 Chrome 下载、单独的 HTTP 获取、文件哈希和收件人/金额核对。两版工作簿均为 USD 10.00，未保存邮箱未进入 B 版。含默认收款模板信息的二进制原件留于本地隔离运行产物；最终候选版本的 XLSX 与 CSV 由 A3 复验。
+
+## 跨工作区补验
+
+`workspace-integration-real.spec.js` 的 4 项均 PASS，使用真实 Chrome 和独立后端，产品源码与上方 SHA 等价。覆盖登出时保护未保存草稿及同名账号切换后的清理、会话过期后拒收迟到结果、并行客户草稿保存后返回原筛选列表、在两个客户入口之间保持各自的新品需求上下文和未提交内容。截图为各用例既有 1440 或 390 视口、原生默认 100%；其他视口/缩放及关联选择器的嵌套新建仍待验。见 [跨工作区截图](workspace-regression)。
+
+## 重跑入口
+
+从独立工作树运行 `node frontend/scripts/run-isolated-browser-tests.mjs --business-test ui-sales-completion-02.spec.js`。设置 `ISOLATED_CODEX_TEST_SUPERADMIN=1`，按项目约定从本地忽略配置加载测试账号，设置 `E1_R2_EVIDENCE_DIR` 为本次独立输出目录。默认检查全部六组；`E1_R2_EXTRA=1` 开启补充状态，`E1_R2_WIDTH=390` 复现已收录的窄屏补验。原用例以各自文件名作为 `--business-test` 运行。
+
+## 报价主体生命周期补验
+
+`party-lifecycle-real.spec.js` 及 `party-replacement-quote-real.spec.js` 各 1/1 PASS。两次首次运行的管理后台登录跳转来自测试浏览器继承默认 codex 登录。两个用例均明确使用空会话起点，再分别登录独立合成申请人与复核人。更正用例改由申请人通过界面标记已发送，仍断言 200。
+
+真实后端保存拒绝和撤回，读回历史包含独立操作者及两种终态。另一个用例确认申请、独立批准、生成关联草稿并重读合成 PI。画面为用例原 1440×900 和 390×844 默认原生 100% 的相应状态。原生 125% 在这三个额外动作的缺项仍保留。见 [拒绝及撤回](party-regression/rejection-withdrawal) 与 [替换](party-regression/replacement)。

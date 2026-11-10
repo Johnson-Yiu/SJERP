@@ -546,10 +546,15 @@ test('Chrome native page zoom keeps long finance and history records usable', as
       const receipt = completion ? await context.newPage() : null
       if (completion) {
         await takeover.getByLabel('追溯类型').selectOption('correction')
+        await takeover.setViewportSize({ width: 390, height: 844 })
         await correction.click()
-        await expect(takeover.getByText('请写明原值、更正值及涉及的字段。')).toBeVisible()
+        const correctionError = takeover.getByText('请写明原值、更正值及涉及的字段。')
+        await expect(correctionError).toBeVisible()
+        await correctionError.evaluate(element => element.scrollIntoView({ block: 'center' }))
+        await capture(takeover, `history-correction-error-390-zoom-${zoom * 100}.png`)
         await takeover.getByLabel('更正明细（原值、更正值）').fill('原记录数量 20 件，核对签收凭证后更正为 22 件。')
         await takeover.getByLabel('提交原因（必填）').fill('核对签收凭证后发现数量录入错误。')
+        await expect(correctionError).toBeHidden()
         await receipt.goto(new URL('/transactions', baseURL).href, { waitUntil: 'domcontentloaded' })
         await receipt.getByRole('button', { name: '新增记账', exact: true }).click()
         const editor = receipt.getByRole('dialog', { name: '新增记账', exact: true })
@@ -662,6 +667,19 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   test.skip(!evidenceDir.includes('release-completion-acceptance-02'), 'Requires the completion fixture')
   test.setTimeout(120000)
   const proof = { name: 'synthetic-completion.pdf', mimeType: 'application/pdf', buffer: syntheticVoucherPdf() }
+  async function captureState(name, action) {
+    for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
+      await page.setViewportSize({ width, height })
+      await action.evaluate(element => element.scrollIntoView({ block: 'center' }))
+      const box = await action.boundingBox()
+      expect(box.x).toBeGreaterThanOrEqual(0)
+      expect(box.x + box.width).toBeLessThanOrEqual(width + 1)
+      expect(box.y).toBeGreaterThanOrEqual(0)
+      expect(box.y + box.height).toBeLessThanOrEqual(height + 1)
+      await page.screenshot({ path: path.join(evidenceDir, `${name}-${width}.png`) })
+    }
+    await page.setViewportSize({ width: 1600, height: 1000 })
+  }
   await page.goto('/transactions')
   await page.getByRole('button', { name: '新增记账', exact: true }).click()
   let receipt = page.getByRole('dialog', { name: '新增记账', exact: true })
@@ -684,6 +702,7 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   receipt = page.getByRole('dialog', { name: '新增记账', exact: true })
   await expect(receipt.getByLabel('银行实际到账原币金额', { exact: true })).toHaveValue(/^100(?:\.00)?$/)
   await page.screenshot({ path: path.join(evidenceDir, 'receipt-pending-recovered.png') })
+  await captureState('receipt-pending-recovered', receipt.getByRole('button', { name: /按原内容重试/ }))
   const replay = page.waitForResponse(response => response.url().endsWith('/api/transactions/') && response.request().method() === 'POST')
   await receipt.getByRole('button', { name: /按原内容重试/ }).click()
   const original = await (await replay).json()
@@ -700,6 +719,8 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   await refund.getByRole('button', { name: '上传凭证' }).click()
   await expect(refund).toContainText('凭证已上传')
   await page.screenshot({ path: path.join(evidenceDir, 'refund-actual-date.png') })
+  await captureState('refund-actual-date', refund.getByLabel('实际退款日期'))
+  await captureState('refund-submit', refund.getByRole('button', { name: '确认登记' }))
   const refundPosted = page.waitForResponse(response => response.url().endsWith('/refund-cash/') && response.request().method() === 'POST')
   await refund.getByRole('button', { name: '确认登记' }).click()
   const posted = await refundPosted
@@ -715,6 +736,7 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   await expect(source).toContainText('UAT-FIN-2026-INTERNATIONAL-00000000002')
   await source.getByRole('button', { name: '选择', exact: true }).click()
   await page.screenshot({ path: path.join(evidenceDir, 'funds-business-search.png') })
+  await captureState('funds-business-search', cash.getByPlaceholder('搜索流水号'))
   await cash.getByLabel('扣费前兑换额（CNY）', { exact: true }).fill('71')
   await cash.getByRole('combobox', { name: '来源账户', exact: true }).selectOption('SYNTH_FX')
   await cash.getByRole('combobox', { name: '人民币账户', exact: true }).selectOption('SYNTH_CNY')
@@ -729,12 +751,14 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   await cash.getByRole('button', { name: '登记待确认结汇' }).click()
   await expect(cash).toContainText('待确认')
   await page.screenshot({ path: path.join(evidenceDir, 'funds-pending-review.png') })
+  await captureState('funds-pending-review', cash.getByRole('button', { name: '确认银行凭证' }))
   await cash.getByRole('checkbox', { name: /我已核对银行凭证和来源分配/ }).check()
   await cash.getByRole('button', { name: '确认银行凭证' }).click()
   const confirmed = page.getByRole('row').filter({ hasText: 'SYNTH-COMPLETION-REVIEW-01' })
   await expect(confirmed).toContainText('已确认')
   await expect(cash).toContainText('已确认')
   await page.screenshot({ path: path.join(evidenceDir, 'funds-reviewed.png') })
+  await captureState('funds-reviewed', cash.getByRole('button', { name: '关闭', exact: true }))
 })
 
 test('codex logout clears the workspaces and returns to sign-in', async ({ page }) => {

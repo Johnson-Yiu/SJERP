@@ -643,21 +643,21 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             </details>
             <form class="takeover-fields" novalidate @submit.prevent="submitCorrection">
               <label>追溯类型<select v-model="correction.kind" @change="correctionErrors = {}"><option value="late_fact">迟到记录</option><option value="correction">审计更正</option><option value="voucher_added">补交凭证</option></select></label>
-              <label>原系统记录号<input v-model="correction.source_record_id" list="correction-source-records" aria-describedby="correction-source-error" />
+              <label>原系统记录号<input v-model="correction.source_record_id" @input="correctionErrors.source_record_id = ''" list="correction-source-records" aria-describedby="correction-source-error" />
                 <datalist id="correction-source-records"><option v-for="record in [...new Set(sourceItems.map(item => item.data?.source_record_id).filter(Boolean))]" :key="record" :value="record" /></datalist>
               </label>
-              <label>原系统业务单据号<input v-model="correction.source_document_no" aria-describedby="correction-source-error" /></label>
+              <label>原系统业务单据号<input v-model="correction.source_document_no" @input="correctionErrors.source_record_id = ''" aria-describedby="correction-source-error" /></label>
               <small v-if="correctionErrors.source_record_id" id="correction-source-error" role="alert">{{ correctionErrors.source_record_id }}</small>
-              <label>实际发生日期{{ correction.kind === 'late_fact' ? '（必填）' : '（选填）' }}<input v-model="correction.occurred_at" type="date" />
+              <label>实际发生日期{{ correction.kind === 'late_fact' ? '（必填）' : '（选填）' }}<input v-model="correction.occurred_at" @input="correctionErrors.occurred_at = ''" type="date" />
                 <small v-if="correctionErrors.occurred_at" role="alert">{{ correctionErrors.occurred_at }}</small>
               </label>
-              <label>凭证编号或存放位置{{ correction.kind === 'voucher_added' ? '（必填）' : '（选填）' }}<input v-model="correction.voucher_reference" />
+              <label>凭证编号或存放位置{{ correction.kind === 'voucher_added' ? '（必填）' : '（选填）' }}<input v-model="correction.voucher_reference" @input="correctionErrors.voucher_reference = ''" />
                 <small v-if="correctionErrors.voucher_reference" role="alert">{{ correctionErrors.voucher_reference }}</small>
               </label>
-              <label>{{ { late_fact: '迟到记录明细', correction: '更正明细（原值、更正值）', voucher_added: '补充说明（选填）' }[correction.kind] }}<textarea v-model="correction.description" rows="3" />
+              <label>{{ { late_fact: '迟到记录明细', correction: '更正明细（原值、更正值）', voucher_added: '补充说明（选填）' }[correction.kind] }}<textarea v-model="correction.description" @input="correctionErrors.description = ''" rows="3" />
                 <small v-if="correctionErrors.description" role="alert">{{ correctionErrors.description }}</small>
               </label>
-              <label>提交原因（必填）<textarea v-model="correction.reason" rows="2" />
+              <label>提交原因（必填）<textarea v-model="correction.reason" @input="correctionErrors.reason = ''" rows="2" />
                 <small v-if="correctionErrors.reason" role="alert">{{ correctionErrors.reason }}</small>
               </label>
               <button type="submit" class="takeover-secondary" :disabled="saving">提交追溯更正申请</button>

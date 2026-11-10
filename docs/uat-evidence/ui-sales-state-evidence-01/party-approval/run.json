@@ -1,0 +1,85 @@
+{
+  "browser": "Chrome/156.0.8078.80",
+  "zoom": 1,
+  "results": [
+    {
+      "action": "标记为已发送",
+      "status": 200
+    },
+    {
+      "action": "提交更正申请",
+      "status": 201
+    },
+    {
+      "state": "Q07-pending-self-review",
+      "width": 1366,
+      "height": 768,
+      "dpr": 1,
+      "file": "Q07-pending-self-review-1366-100.png"
+    },
+    {
+      "state": "Q07-pending-self-review",
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "file": "Q07-pending-self-review-1440-100.png"
+    },
+    {
+      "state": "Q07-pending-self-review",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "file": "Q07-pending-self-review-390-100.png"
+    },
+    {
+      "action": "登录",
+      "status": 200
+    },
+    {
+      "state": "Q07-review",
+      "width": 1366,
+      "height": 768,
+      "dpr": 1,
+      "file": "Q07-review-1366-100.png"
+    },
+    {
+      "state": "Q07-review",
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "file": "Q07-review-1440-100.png"
+    },
+    {
+      "state": "Q07-review",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "file": "Q07-review-390-100.png"
+    },
+    {
+      "action": "批准更正",
+      "status": 200
+    },
+    {
+      "state": "Q07-approved",
+      "width": 1366,
+      "height": 768,
+      "dpr": 1,
+      "file": "Q07-approved-1366-100.png"
+    },
+    {
+      "state": "Q07-approved",
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "file": "Q07-approved-1440-100.png"
+    },
+    {
+      "state": "Q07-approved",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "file": "Q07-approved-390-100.png"
+    }
+  ]
+}

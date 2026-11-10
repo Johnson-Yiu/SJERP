@@ -1,0 +1,228 @@
+{
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.80",
+    "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.27"
+  },
+  "customerCreate": 201,
+  "results": [
+    {
+      "id": "Q04-required-summary",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "Q04-required-summary-1366-100.png"
+    },
+    {
+      "id": "Q04-required-summary",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "Q04-required-summary-1440-100.png"
+    },
+    {
+      "id": "Q04-required-summary",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 853,
+      "file": "Q04-required-summary-390-100.png"
+    },
+    {
+      "id": "Q04-required-summary",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1122,
+      "file": "Q04-required-summary-1366-125.png"
+    },
+    {
+      "id": "Q04-required-summary",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "Q04-required-summary-1440-125.png"
+    },
+    {
+      "id": "Q04-required-summary",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 853,
+      "file": "Q04-required-summary-390-125.png"
+    },
+    {
+      "id": "Q04-revise-http",
+      "method": "POST",
+      "path": "/api/quotes/1/revise/",
+      "httpStatus": 201
+    },
+    {
+      "id": "Q04-revision-saved",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "Q04-revision-saved-1366-100.png"
+    },
+    {
+      "id": "Q04-revision-saved",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "Q04-revision-saved-1440-100.png"
+    },
+    {
+      "id": "Q04-revision-saved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 853,
+      "file": "Q04-revision-saved-390-100.png"
+    },
+    {
+      "id": "Q04-revision-saved",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1122,
+      "file": "Q04-revision-saved-1366-125.png"
+    },
+    {
+      "id": "Q04-revision-saved",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "Q04-revision-saved-1440-125.png"
+    },
+    {
+      "id": "Q04-revision-saved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 853,
+      "file": "Q04-revision-saved-390-125.png"
+    },
+    {
+      "id": "O03-draft-create-http",
+      "method": "POST",
+      "path": "/api/orders/",
+      "httpStatus": 201
+    },
+    {
+      "id": "O03-draft-edit-http",
+      "method": "PUT",
+      "path": "/api/orders/2/",
+      "httpStatus": 200
+    },
+    {
+      "id": "O03-draft-saved",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "file": "O03-draft-saved-1366-100.png"
+    },
+    {
+      "id": "O03-draft-saved",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "file": "O03-draft-saved-1440-100.png"
+    },
+    {
+      "id": "O03-draft-saved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "file": "O03-draft-saved-390-100.png"
+    },
+    {
+      "id": "O03-draft-saved",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "file": "O03-draft-saved-1366-125.png"
+    },
+    {
+      "id": "O03-draft-saved",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "file": "O03-draft-saved-1440-125.png"
+    },
+    {
+      "id": "O03-draft-saved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "file": "O03-draft-saved-390-125.png"
+    }
+  ]
+}

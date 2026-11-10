@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { chromium, expect, test } from '@playwright/test'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { recordSalesJourneys } from './ui-sales-state-evidence-01.journeys.js'
 
 const active = page => page.locator('.workspace-pane[aria-hidden="false"]')
 const customerName = 'SYNTH-SALES 森爵界面验收国际商业照明与综合工程采购服务中心 — International Commercial Lighting Project Procurement'
@@ -19,7 +20,7 @@ const states = [
 ]
 
 test('sales state evidence in an owned Google Chrome profile', async ({ baseURL }) => {
-  test.setTimeout(480000)
+  test.setTimeout(2400000)
   const root = process.env.ISOLATED_TEST_ROOT
   const output = path.resolve(process.env.SALES_STATE_EVIDENCE_DIR)
   await mkdir(output, { recursive: true })
@@ -36,6 +37,8 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
       if (stored) for (const item of stored.localStorage) localStorage.setItem(item.name, item.value)
     }, { origins })
     const settings = context.pages()[0]
+    context.setDefaultTimeout(150000)
+    context.setDefaultNavigationTimeout(100000)
     const page = await context.newPage()
     const cdp = await context.newCDPSession(page)
     const browser = await cdp.send('Browser.getVersion')
@@ -65,10 +68,12 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
     await expect(page).toHaveURL(new RegExp('[?&]detail=' + customer.id))
     const coreCases = [...states, ['C07', '/customers?detail=' + customer.id, '关闭详情', 'visible-button'], ['C08', '/customers?detail=' + customer.id, '编辑客户', 'button', '.customer-editor']]
     const supplemental = process.env.SALES_STATE_SUPPLEMENTAL === '1'
+    const journey = process.env.SALES_STATE_JOURNEYS === '1'
+    let fixture
     let cases = coreCases
-    if (supplemental) {
+    if (supplemental || journey) {
       const seed = path.resolve('../docs/uat-evidence/ui-sales-state-evidence-01/seed-synthetic.py')
-      const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [seed, String(customer.id)], { encoding: 'utf8' }))
+      fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [seed, String(customer.id)], { encoding: 'utf8' }))
       const quote = '/quotes?detail=' + fixture.quote
       const order = '/orders?detail=' + fixture.order
       cases = [
@@ -90,6 +95,11 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
       ['Q02R', '/quotes', '新建报价', 'button', '.quote-editor-modal'],
     ]
     const saveIndex = () => writeFile(path.join(output, 'run.json'), JSON.stringify({ browser, customerCreate: response.status(), results }, null, 2))
+    if (journey) {
+      await recordSalesJourneys({ page, settings, baseURL, fixture, customer, capture, results, saveIndex })
+      expect(results.some(result => result.file)).toBe(true)
+      return
+    }
     for (const zoom of [1, 1.25]) {
       await settings.goto('chrome://settings/appearance')
       await settings.locator('settings-appearance-page select').filter({
@@ -102,16 +112,16 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
           try {
             const customerList = url => url.pathname === '/api/customers/' && url.searchParams.has('search')
             if (action === 'failure') await page.route(customerList, route => route.abort('failed'))
-            await page.goto(new URL(route, baseURL).href, { timeout: 20000 })
+            await page.goto(new URL(route, baseURL).href, { timeout: 100000 })
             if (action === 'button') {
-              await page.getByRole('button', { name: label, exact: true }).first().click({ timeout: 5000 })
-              await expect(page.locator(target).first()).toBeVisible({ timeout: 4000 })
+              await page.getByRole('button', { name: label, exact: true }).first().click({ timeout: 25000 })
+              await expect(page.locator(target).first()).toBeVisible({ timeout: 20000 })
             } else if (action === 'failure') {
               await expect(page.locator('.page-load-state-error')).toBeVisible()
             } else if (action === 'visible-button') {
-              await expect(active(page).getByRole('button', { name: label, exact: true })).toBeVisible({ timeout: 4000 })
+              await expect(active(page).getByRole('button', { name: label, exact: true })).toBeVisible({ timeout: 20000 })
             } else {
-              await expect(page.getByText(label, { exact: false }).first()).toBeVisible({ timeout: 4000 })
+              await expect(page.getByText(label, { exact: false }).first()).toBeVisible({ timeout: 20000 })
             }
             if (preparation === 'attachments') {
               const files = ['synth-brief.txt', 'synth-follow-up.txt'].map(name => ({

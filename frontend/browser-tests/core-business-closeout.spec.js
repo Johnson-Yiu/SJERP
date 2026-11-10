@@ -1,7 +1,10 @@
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs'
 import path from 'node:path'
-const root = path.resolve('../docs/uat-evidence/core-business-closeout-20261105/chrome')
+import { syntheticVoucherPdf } from './helpers/bank-voucher.js'
+const root = process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
+ ? path.join(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'browser', 'core-business-closeout')
+ : path.resolve('../docs/uat-evidence/core-business-closeout-20261105/chrome')
 test.use({channel:'chrome'})
 for (const width of [1440,390]) test(`real core closure ${width}px`, async({page})=>{
  test.setTimeout(120000);fs.mkdirSync(root,{recursive:true})
@@ -67,14 +70,29 @@ for (const width of [1440,390]) test(`real core closure ${width}px`, async({page
  await expect(modal).toContainText('履约：已完成')
  await expect(modal.locator('.current-todo-card')).toContainText('60.00')
  await page.screenshot({path:path.join(root,`${width}-completed-debt.png`),fullPage:true})
- const money=(amount,kind)=>api('/transactions/',{order:order.id,transaction_date:day,amount,currency:'CNY',exchange_rate:'1',kind,direction:kind==='refund'?'expense':'income',category:kind==='refund'?'合成退款':'客户收款'})
  const reloadOrder=async()=>{
   const [response]=await Promise.all([page.waitForResponse(r=>new URL(r.url()).pathname===`/api/orders/${order.id}/workbench/`),page.reload()])
   expect(response.status()).toBe(200);http.push({method:'GET',url:response.url(),status:response.status(),body:await response.json()})
  }
- await money('60','customer_receipt');await reloadOrder()
+ const receiptData = {order:order.id,transaction_date:day,amount:'60',currency:'CNY',exchange_rate:'1',kind:'customer_receipt',direction:'income',category:'客户收款'}
+ const receiptKey = 'CORE-RECEIPT-'+suffix
+ const receiptTransaction = await api('/transactions/',receiptData,201,receiptKey)
+ const replay = await api('/transactions/',receiptData,201,receiptKey)
+ expect(replay.id).toBe(receiptTransaction.id)
+ await reloadOrder()
  await expect(modal.locator('.payment-card')).toContainText('款项已结清')
- await money('10','refund');await reloadOrder()
+ const voucher = await page.request.post('/api/transactions/voucher-upload/', {
+  multipart: {file: {name: 'synthetic-core-refund.pdf',mimeType:'application/pdf',buffer:syntheticVoucherPdf()}},
+ })
+ expect(voucher.status()).toBe(201)
+ const proof = await voucher.json()
+ const refund = await api('/transactions/'+receiptTransaction.id+'/refund-cash/', {
+  order:order.id,amount:'10',reason:'合成核心验收退款',voucher:proof.id,actual_date:day,
+ },201,'CORE-REFUND-'+suffix)
+ expect(refund.refunds).toHaveLength(1)
+ expect(Number(refund.refunds[0].amount)).toBe(10)
+ expect(refund.refunds[0].actual_date).toBe(day)
+ await reloadOrder()
  await expect(modal).toContainText('履约：已完成')
  await expect(modal.locator('.current-todo-card')).toContainText('10.00')
  await page.screenshot({path:path.join(root,`${width}-refund-todo.png`),fullPage:true})

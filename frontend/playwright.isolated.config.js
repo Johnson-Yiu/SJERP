@@ -29,7 +29,9 @@ export default defineConfig({
   forbidOnly: true,
   retries: 0,
   workers: 1,
-  reporter: 'list',
+  reporter: process.env.ISOLATED_PLAYWRIGHT_JSON_REPORT
+    ? [['list'], ['json', { outputFile: process.env.ISOLATED_PLAYWRIGHT_JSON_REPORT }]]
+    : 'list',
   outputDir: path.resolve(process.env.ISOLATED_PLAYWRIGHT_OUTPUT_DIR || path.join(path.resolve(isolationRoot), 'playwright-results')),
   use: {
     baseURL,

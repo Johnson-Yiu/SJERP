@@ -582,11 +582,14 @@ async function runProfile(selection) {
       ISOLATED_PLAYWRIGHT_API_BASE_URL: `http://127.0.0.1:${apiPort}`,
       ISS007_BASE_URL: baseURL,
       ISOLATED_PLAYWRIGHT_TEST_FILE: selection.businessTest || '',
-      PLAYWRIGHT_CHANNEL: ['iss028-035-category-schema.spec.js', 'access-session-real.spec.js', 'workspace-tabs-real.spec.js', 'workspace-integration-real.spec.js', 'quote-editor-mobile-actions.spec.js', 'first-release-consolidation-02.spec.js', 'sales-order-import-real.spec.js'].includes(selection.businessTest) ? 'chrome' : '',
+      PLAYWRIGHT_CHANNEL: process.env.ISOLATED_PLAYWRIGHT_USE_CHROME === '1' || ['iss028-035-category-schema.spec.js', 'access-session-real.spec.js', 'workspace-tabs-real.spec.js', 'workspace-integration-real.spec.js', 'quote-editor-mobile-actions.spec.js', 'first-release-consolidation-02.spec.js', 'sales-order-import-real.spec.js'].includes(selection.businessTest) ? 'chrome' : '',
       ISOLATED_PLAYWRIGHT_TEST_EXCLUDE: selection.businessSuite
         ? JSON.stringify(isolatedExcludedTests(selection))
         : '',
       ISOLATED_PLAYWRIGHT_OUTPUT_DIR: path.join(evidenceRoot, 'artifacts', runId),
+      ISOLATED_PLAYWRIGHT_JSON_REPORT: process.env.ISOLATED_PLAYWRIGHT_JSON === '1'
+        ? path.join(evidenceRoot, 'artifacts', runId, 'playwright-report.json')
+        : '',
       ISOLATED_TEST_PYTHON: python,
       PYTHONDONTWRITEBYTECODE: '1',
       PYTHONUNBUFFERED: '1',
@@ -646,7 +649,7 @@ async function runProfile(selection) {
         'django.setup()',
         'from django.conf import settings',
         'from test_support.isolated_runtime import verify_isolated_runtime',
-        `print(verify_isolated_runtime(settings=settings, database_must_exist=${databaseMustExist ? 'True' : 'False'}))`,
+        `print({k: v for k, v in verify_isolated_runtime(settings=settings, database_must_exist=${databaseMustExist ? 'True' : 'False'}).items() if k != 'token'})`,
       ].join('; ')
 
       await runStage('Pre-migration isolation verification', python, ['-c', verificationCode(false)], { cwd: backendRoot, env, label: 'Pre-migration isolation verification' })

@@ -47,6 +47,8 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
       const metrics = await page.evaluate(() => ({
         cssWidth: innerWidth, cssHeight: innerHeight, dpr: devicePixelRatio,
         documentWidth: document.documentElement.scrollWidth,
+        topbarBottom: document.querySelector('.topbar')?.getBoundingClientRect().bottom,
+        workspaceTop: document.querySelector('.workspace-bar')?.getBoundingClientRect().top,
       }))
       expect(metrics.dpr).toBeCloseTo(zoom, 2)
       expect(metrics.cssWidth).toBeCloseTo(width / zoom, 0)
@@ -94,14 +96,17 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
       ['C11', '/customers', '', 'failure'],
       ['Q02R', '/quotes', '新建报价', 'button', '.quote-editor-modal'],
     ]
+    const caseFilter = process.env.SALES_STATE_CASES?.split(',')
+    if (caseFilter) cases = caseFilter.map(id => [...cases, ...coreCases].find(([key]) => key === id)).filter(Boolean)
     const saveIndex = () => writeFile(path.join(output, 'run.json'), JSON.stringify({ browser, customerCreate: response.status(), results }, null, 2))
     if (journey) {
       await recordSalesJourneys({ page, settings, baseURL, fixture, customer, capture, results, saveIndex })
       expect(results.some(result => result.file)).toBe(true)
       return
     }
-    for (const zoom of [1, 1.25]) {
-      await settings.goto('chrome://settings/appearance')
+    await settings.goto('chrome://settings/appearance', { waitUntil: 'domcontentloaded' })
+    const zoomLevels = process.env.SALES_STATE_ZOOM ? [Number(process.env.SALES_STATE_ZOOM)] : [1, 1.25]
+    for (const zoom of zoomLevels) {
       await settings.locator('settings-appearance-page select').filter({
         has: settings.locator('option[value="1.25"]'),
       }).selectOption(String(zoom))
@@ -135,6 +140,11 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
               await Promise.race([document.fonts.ready, new Promise(resolve => setTimeout(resolve, 500))])
               await Promise.race([Promise.allSettled(document.getAnimations().map(animation => animation.finished)), new Promise(resolve => setTimeout(resolve, 400))])
             })
+            if (width === 390) {
+              await expect.poll(() => page.locator('.sidebar').evaluate(sidebar => sidebar.getBoundingClientRect().right), {
+                timeout: 20000,
+              }).toBeLessThanOrEqual(1)
+            }
             await capture(id, width, height, zoom)
             if (id === 'Q02R') {
               const overflow = await page.evaluate(() => {

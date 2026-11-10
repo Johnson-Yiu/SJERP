@@ -1,0 +1,63 @@
+{
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.80",
+    "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.27"
+  },
+  "customerCreate": 201,
+  "results": [
+    {
+      "id": "C04-duplicate-hint",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "topbarBottom": 70,
+      "workspaceTop": 82,
+      "file": "C04-duplicate-hint-390-100.png"
+    },
+    {
+      "id": "C04-contact-save-http",
+      "method": "POST",
+      "path": "/api/contacts/",
+      "httpStatus": 201
+    },
+    {
+      "id": "C04-contact-saved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "topbarBottom": 70,
+      "workspaceTop": 82,
+      "file": "C04-contact-saved-390-100.png"
+    },
+    {
+      "id": "C05-upload-interception",
+      "method": "Paused then aborted attachment POST only"
+    },
+    {
+      "id": "C05-attachment-failure",
+      "outcome": "incomplete",
+      "reason": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed"
+    },
+    {
+      "id": "O04-confirm",
+      "outcome": "incomplete",
+      "reason": "page.goto: Target page, context or browser has been closed"
+    },
+    {
+      "id": "O06-quantity",
+      "outcome": "incomplete",
+      "reason": "page.goto: Target page, context or browser has been closed"
+    }
+  ]
+}

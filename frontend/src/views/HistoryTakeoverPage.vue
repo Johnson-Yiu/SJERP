@@ -2,7 +2,7 @@
 import HistoryProductLinking from "../components/HistoryProductLinking.vue"
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api } = useWorkspaceApi()
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 import { AlertTriangle, Check, CircleHelp, FileUp, History, RotateCcw, ShieldCheck } from 'lucide-vue-next'
@@ -14,6 +14,12 @@ const canApply = computed(() => can('imports', 'import'))
 const canReview = computed(() => Boolean(accessState.operator?.can_manage_permissions || accessState.operator?.development_superadmin || accessState.operator?.has_all_permissions))
 const applications = ref([])
 const showProducts = ref(false)
+const productsPanel = ref(null)
+async function openInventoryProductLinking() {
+  showProducts.value = true
+  await nextTick()
+  productsPanel.value?.querySelector('summary')?.focus()
+}
 async function openProductSource(id, group) {
   await loadApplication(id)
   if (selected.value?.id === id && selected.value.groups?.some(row => row.id === group)) selectedGroupId.value = group
@@ -487,7 +493,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
       </div>
     </header>
 
-    <details v-if="canReview && canApply" @toggle="showProducts = $event.target.open">
+    <details v-if="canReview && canApply" ref="productsPanel" :open="showProducts" @toggle="showProducts = $event.target.open">
       <summary>历史商品关联</summary>
       <HistoryProductLinking v-if="showProducts" @open-source="openProductSource" @saved="selected && loadApplication(selected.id)" />
     </details>
@@ -627,11 +633,11 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
               <summary>库存盘点基准</summary>
               <p>盘点基准不会重放历史出入库。仓库归属和货物所有权分别核实；只有自有货物计入可用库存。已有库存流水或预留的 SKU 需先人工核对。</p>
               <button class="takeover-secondary" :disabled="saving" @click="loadInventory">读取盘点来源</button>
+              <button v-if="inventoryRows.length && can('skus', 'view')" type="button" class="takeover-secondary" @click="openInventoryProductLinking">打开历史商品关联</button>
               <p v-if="inventoryStatus">当前状态：{{ handoffLabel(inventoryStatus.status) }}；基准记录 {{ inventoryStatus.baselines?.length || 0 }} 条。</p>
               <div v-for="row in inventoryRows" :key="row.source_id" class="takeover-remainder-item">
                 <strong>SKU {{ skuBusinessLabel(row.source) }} · {{ row.source.counted_quantity }} {{ row.source.unit_snapshot }}</strong>
                 <p v-if="row.linked_sku">正式 SKU {{ masterLabel(row.linked_sku) }}{{ row.link_needs_review ? ' · 待核实' : '' }}</p>
-                <button v-if="can('skus', 'view')" type="button" class="takeover-secondary" @click="showProducts = true">打开历史商品关联</button>
                 <span>{{ row.source.warehouse_type }} · {{ row.source.warehouse }} · {{ row.source.lot_reference || '无批次/货位' }}</span>
                 <div class="takeover-form-grid wide">
                   <label>货物所有权<select v-model="row.goods_ownership"><option value="">请选择</option><option value="own">自有货物</option><option value="third_party">第三方货物</option></select></label>

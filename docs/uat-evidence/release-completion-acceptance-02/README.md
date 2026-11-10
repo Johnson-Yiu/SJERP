@@ -103,3 +103,13 @@ Vitest 全量 89 文件、834 项通过，0 失败、0 跳过。复跑的 worker
 内置浏览器截图记录在当前验收对话中，未生成可提交的本地截图文件。仓库所附实际 Chrome 截图和下载清单归属 `d4f90b92`，与最终候选的差异单列。[早期截图与测量](browser/sales-order-import-real.spec/native-zoom-results.json) [源码差异](source-diff-verification.txt)
 
 状态为待独立复审。GitHub Actions 为 `NOT_RUN`。正式媒体权限、异地副本、正式调度、真实历史资料、完整打印与分页验收保留既有状态。生产部署、正式导入均未执行。
+
+### 网络超时后的内置浏览器复验
+
+同一业务候选 `d836ba21a657a3a61b770a1d124a5b1fb62a9f46`，通过隔离运行器临时副本执行 `node scripts/a2-iab-recheck.local.mjs --business-test sales-order-import-real.spec.js`，以等待内置浏览器操作替代 Playwright 阶段。使用独立 SQLite、媒体目录与合成资料，`codex` 登录返回 200。
+
+- 从历史承接点击下载模板，隔离服务返回 HTTP 200、14337 字节。从财务概览点击导出 CSV，隔离服务返回 HTTP 200、592 字节。两次请求均来自实际页面操作，最终候选的浏览器落盘文件仍未取得。现有早期候选实际文件和哈希继续有效。
+- 财务流水成功保存 USD 100 合成客户收款，返回 201，界面显示已核销。打开原流水退款表单，实测日期 2026-10-30、关联订单和 USD 10 金额。截图在验收对话。凭证上传未观察到成功反馈，退款提交与回读仍待验。
+- 隔离运行器清理服务、数据库与媒体目录。此记录仅追加本次已观测结果，原有待复审项仍可在本报告中核对。
+
+[脱敏隔离运行及 HTTP 日志](logs/a2-iab-download-recheck.txt)

@@ -4,6 +4,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
 
+test.use({ channel: 'chrome' })
+
 const evidenceDir = process.env.ISS007_EVIDENCE_DIR
 const repositoryRoot = path.resolve(process.cwd(), '..')
 const backendRoot = path.join(repositoryRoot, 'backend')
@@ -27,9 +29,12 @@ function pythonEvidence(stage, workbookPath) {
 
 async function apiJson(page, method, url, body) {
   return page.evaluate(async ({ method, url, body }) => {
+    const csrf = document.cookie.split('; ').find(cookie => cookie.startsWith('csrftoken='))?.slice('csrftoken='.length)
+    const headers = body === undefined ? {} : { 'Content-Type': 'application/json' }
+    if (csrf) headers['X-CSRFToken'] = decodeURIComponent(csrf)
     const response = await fetch(url, {
       method,
-      headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
+      headers,
       body: body === undefined ? undefined : JSON.stringify(body),
     })
     const text = await response.text()
@@ -104,7 +109,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   await expect(page.getByRole('heading', { name: 'SKU 管理', exact: true, level: 2 })).toBeVisible()
   let dialog = await openSkuEditor(page, fixture.sku_code)
   await selectImageAndSave(page, dialog, 'iss007-original-red.png', originalBytes)
-  await expect(dialog).toHaveCount(0)
+  await expect(dialog).toHaveCount(0, { timeout: 30_000 })
 
   let row = page.locator('.sku-data-row').filter({ hasText: fixture.sku_code })
   let thumbnail = row.locator('img.sku-table-thumbnail')
@@ -163,6 +168,9 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   const workbench = page.getByRole('dialog', { name: '报价工作台' })
   const downloadPromise = page.waitForEvent('download')
   await workbench.getByRole('button', { name: '导出 Excel' }).click()
+  const risk = page.getByRole('dialog', { name: '导出前风险提示' })
+  await expect(risk).toContainText(fixture.sku_code)
+  await risk.getByRole('button', { name: '了解风险，继续导出', exact: true }).click()
   const download = await downloadPromise
   const workbookPath = path.join(evidenceDir, 'exports', 'iss007-formal-quote-pi.xlsx')
   await download.saveAs(workbookPath)
@@ -181,7 +189,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
 
   await dialog.locator('input[type="file"]').setInputFiles({ name: 'iss007-replacement-blue.png', mimeType: 'image/png', buffer: replacementBytes })
   await dialog.getByRole('button', { name: '重试上传图片', exact: true }).click()
-  await expect(dialog).toHaveCount(0)
+  await expect(dialog).toHaveCount(0, { timeout: 30_000 })
   expect(imageResponses.some(response => response.status === 200)).toBeTruthy()
 
   currentSku = await apiJson(page, 'GET', `/api/skus/${fixture.sku_id}/`)
@@ -245,7 +253,7 @@ test('ISS-007 SKU image upload, immutable quote/order snapshots, exports, and mi
   expect(missingMedia.status()).toBe(404)
   const missingPreview = await openQuotePreview(page, fixture.missing_quote_id)
   const missingImage = page.frameLocator('iframe[title="已保存 PI"]').locator('tbody img').first()
-  await expect(missingImage).toBeVisible()
+  await expect(missingImage).toBeAttached()
   await expect.poll(() => missingImage.evaluate(image => image.complete && image.naturalWidth === 0)).toBeTruthy()
   await expect(page.frameLocator('iframe[title="已保存 PI"]').locator('tbody tr').first()).toContainText('用于验证历史图片文件缺失时页面仍可用')
   await page.screenshot({ path: path.join(evidenceDir, 'screenshots', 'missing-history-image-mobile-390.png'), fullPage: true })

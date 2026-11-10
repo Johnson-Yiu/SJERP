@@ -1,0 +1,6360 @@
+{
+  "source": "1e45e42cc4fa38afbf856143228dada7c8a2e86f",
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.80",
+    "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.27"
+  },
+  "results": [
+    {
+      "state": "products-empty",
+      "screenshot": "products-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-empty",
+      "screenshot": "categories-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-empty",
+      "screenshot": "skus-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-empty",
+      "screenshot": "parameters-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-empty",
+      "screenshot": "suppliers-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchases-empty",
+      "screenshot": "purchases-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "inventory-empty",
+      "screenshot": "inventory-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "movements-empty",
+      "screenshot": "movements-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "packaging-empty",
+      "screenshot": "packaging-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "trade-units-empty",
+      "screenshot": "trade-units-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/sku-trade-units/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-empty",
+      "screenshot": "certificates-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-empty",
+      "screenshot": "hs-codes-empty-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-list",
+      "screenshot": "products-list-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-list",
+      "screenshot": "products-list-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-list",
+      "screenshot": "products-list-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-create",
+      "screenshot": "products-create-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/next-code/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-create",
+      "screenshot": "products-create-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/next-code/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-create",
+      "screenshot": "products-create-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/next-code/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-list",
+      "screenshot": "categories-list-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-list",
+      "screenshot": "categories-list-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-list",
+      "screenshot": "categories-list-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-create",
+      "screenshot": "categories-create-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-create",
+      "screenshot": "categories-create-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-create",
+      "screenshot": "categories-create-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-list",
+      "screenshot": "skus-list-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-list",
+      "screenshot": "skus-list-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-list",
+      "screenshot": "skus-list-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-create",
+      "screenshot": "skus-create-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-create",
+      "screenshot": "skus-create-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-create",
+      "screenshot": "skus-create-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-list",
+      "screenshot": "parameters-list-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-list",
+      "screenshot": "parameters-list-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-list",
+      "screenshot": "parameters-list-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-create",
+      "screenshot": "parameters-create-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-create",
+      "screenshot": "parameters-create-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-create",
+      "screenshot": "parameters-create-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-list",
+      "screenshot": "suppliers-list-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-list",
+      "screenshot": "suppliers-list-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-list",
+      "screenshot": "suppliers-list-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-create",
+      "screenshot": "suppliers-create-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-create",
+      "screenshot": "suppliers-create-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-create",
+      "screenshot": "suppliers-create-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "trade-units-list",
+      "screenshot": "trade-units-list-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/sku-trade-units/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "trade-units-list",
+      "screenshot": "trade-units-list-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/sku-trade-units/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "trade-units-list",
+      "screenshot": "trade-units-list-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/sku-trade-units/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-list",
+      "screenshot": "certificates-list-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-list",
+      "screenshot": "certificates-list-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-list",
+      "screenshot": "certificates-list-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-create",
+      "screenshot": "certificates-create-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-create",
+      "screenshot": "certificates-create-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-create",
+      "screenshot": "certificates-create-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-list",
+      "screenshot": "hs-codes-list-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-list",
+      "screenshot": "hs-codes-list-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-list",
+      "screenshot": "hs-codes-list-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-create",
+      "screenshot": "hs-codes-create-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-create",
+      "screenshot": "hs-codes-create-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-create",
+      "screenshot": "hs-codes-create-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "product-detail",
+      "screenshot": "product-detail-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/products/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "product-detail",
+      "screenshot": "product-detail-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/products/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "product-detail",
+      "screenshot": "product-detail-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/products/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "sku-detail",
+      "screenshot": "sku-detail-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/skus/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "sku-detail",
+      "screenshot": "sku-detail-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/skus/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "sku-detail",
+      "screenshot": "sku-detail-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/skus/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "supplier-detail",
+      "screenshot": "supplier-detail-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/suppliers/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "supplier-detail",
+      "screenshot": "supplier-detail-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/suppliers/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "supplier-detail",
+      "screenshot": "supplier-detail-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/suppliers/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail",
+      "screenshot": "purchase-detail-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail",
+      "screenshot": "purchase-detail-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail",
+      "screenshot": "purchase-detail-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail-items",
+      "screenshot": "purchase-detail-items-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail-items",
+      "screenshot": "purchase-detail-items-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail-items",
+      "screenshot": "purchase-detail-items-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "stock-detail",
+      "screenshot": "stock-detail-1366-125.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "documentWidth": 1093,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "stock-detail",
+      "screenshot": "stock-detail-1440-125.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "documentWidth": 1152,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "stock-detail",
+      "screenshot": "stock-detail-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-list",
+      "screenshot": "products-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/inventory-detail/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-list",
+      "screenshot": "products-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/inventory-detail/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-list",
+      "screenshot": "products-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/inventory-detail/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-create",
+      "screenshot": "products-create-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/inventory-detail/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/next-code/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-create",
+      "screenshot": "products-create-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/inventory-detail/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/next-code/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "products-create",
+      "screenshot": "products-create-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/inventory-detail/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/next-code/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-list",
+      "screenshot": "categories-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-list",
+      "screenshot": "categories-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-list",
+      "screenshot": "categories-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-create",
+      "screenshot": "categories-create-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-create",
+      "screenshot": "categories-create-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "categories-create",
+      "screenshot": "categories-create-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-list",
+      "screenshot": "skus-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-list",
+      "screenshot": "skus-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-list",
+      "screenshot": "skus-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-create",
+      "screenshot": "skus-create-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-create",
+      "screenshot": "skus-create-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "skus-create",
+      "screenshot": "skus-create-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-list",
+      "screenshot": "parameters-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-list",
+      "screenshot": "parameters-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-list",
+      "screenshot": "parameters-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-create",
+      "screenshot": "parameters-create-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-create",
+      "screenshot": "parameters-create-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "parameters-create",
+      "screenshot": "parameters-create-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-list",
+      "screenshot": "suppliers-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-list",
+      "screenshot": "suppliers-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-list",
+      "screenshot": "suppliers-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-create",
+      "screenshot": "suppliers-create-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-create",
+      "screenshot": "suppliers-create-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "suppliers-create",
+      "screenshot": "suppliers-create-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchases-list",
+      "screenshot": "purchases-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchases-list",
+      "screenshot": "purchases-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchases-list",
+      "screenshot": "purchases-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchases-create",
+      "screenshot": "purchases-create-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchases-create",
+      "screenshot": "purchases-create-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchases-create",
+      "screenshot": "purchases-create-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "inventory-list",
+      "screenshot": "inventory-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "inventory-list",
+      "screenshot": "inventory-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "inventory-list",
+      "screenshot": "inventory-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "movements-list",
+      "screenshot": "movements-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "movements-list",
+      "screenshot": "movements-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "movements-list",
+      "screenshot": "movements-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "packaging-list",
+      "screenshot": "packaging-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "packaging-list",
+      "screenshot": "packaging-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "packaging-list",
+      "screenshot": "packaging-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "trade-units-list",
+      "screenshot": "trade-units-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/sku-trade-units/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "trade-units-list",
+      "screenshot": "trade-units-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/sku-trade-units/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "trade-units-list",
+      "screenshot": "trade-units-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/sku-trade-units/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-list",
+      "screenshot": "certificates-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-list",
+      "screenshot": "certificates-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-list",
+      "screenshot": "certificates-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-create",
+      "screenshot": "certificates-create-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-create",
+      "screenshot": "certificates-create-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificates-create",
+      "screenshot": "certificates-create-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-list",
+      "screenshot": "hs-codes-list-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-list",
+      "screenshot": "hs-codes-list-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-list",
+      "screenshot": "hs-codes-list-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-create",
+      "screenshot": "hs-codes-create-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-create",
+      "screenshot": "hs-codes-create-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "hs-codes-create",
+      "screenshot": "hs-codes-create-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/hs-codes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "product-detail",
+      "screenshot": "product-detail-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/products/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "product-detail",
+      "screenshot": "product-detail-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/products/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "product-detail",
+      "screenshot": "product-detail-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/products/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "sku-detail",
+      "screenshot": "sku-detail-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/skus/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "sku-detail",
+      "screenshot": "sku-detail-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/skus/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "sku-detail",
+      "screenshot": "sku-detail-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/context/skus/1/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail",
+      "screenshot": "purchase-detail-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail",
+      "screenshot": "purchase-detail-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail",
+      "screenshot": "purchase-detail-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail-items",
+      "screenshot": "purchase-detail-items-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail-items",
+      "screenshot": "purchase-detail-items-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-detail-items",
+      "screenshot": "purchase-detail-items-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "stock-detail",
+      "screenshot": "stock-detail-1366-100.png",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "documentWidth": 1366,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/inventory-detail/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "stock-detail",
+      "screenshot": "stock-detail-1440-100.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "documentWidth": 1440,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/inventory-detail/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "stock-detail",
+      "screenshot": "stock-detail-390-100.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "documentWidth": 390,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/inventory-list/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/operation-logs/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/1/inventory-detail/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-edit-draft",
+      "screenshot": "purchase-edit-draft-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-edit-draft-line",
+      "screenshot": "purchase-edit-draft-line-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "certificate-field-error",
+      "screenshot": "certificate-field-error-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 400,
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "state": "certificate-upload-selected",
+      "screenshot": "certificate-upload-selected-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/supplier-skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-certificates/",
+          "status": 400,
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "state": "purchase-place-confirmation",
+      "screenshot": "purchase-place-confirmation-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-partial-receipt-form",
+      "screenshot": "purchase-partial-receipt-form-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/place/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "purchase-partial-receipt-saved",
+      "screenshot": "purchase-partial-receipt-saved-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/place/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/receive/",
+          "status": 201,
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "state": "purchase-cost-overview",
+      "screenshot": "purchase-cost-overview-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/contract-changes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/cost-allocation-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/cost-allocation/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "state": "purchases-list-1.25",
+      "message": "page.goto: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:10901/purchase-orders\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    {
+      "state": "inventory-list-1.25",
+      "message": "page.goto: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:10901/inventory\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    {
+      "state": "movements-list-1.25",
+      "message": "page.goto: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:10901/inventory-movements\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    {
+      "state": "packaging-list-1.25",
+      "message": "page.goto: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:10901/sku-packaging\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    {
+      "state": "packaging-list-1",
+      "message": "locator.click: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '新建包装模板', exact: true }).first()\u001b[22m\n"
+    },
+    {
+      "state": "supplier-detail-1",
+      "message": "page.goto: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:10901/suppliers?detail=1\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    {
+      "state": "product-search-no-match",
+      "message": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/未找到|没有找到/).first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText(/未找到|没有找到/).first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/未找到|没有找到/).first()\u001b[22m\n"
+    },
+    {
+      "state": "product-load-failure",
+      "message": "page.goto: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:10901/products\", waiting until \"load\"\u001b[22m\n"
+    },
+    {
+      "state": "product-category-and-unsaved",
+      "message": "page.goto: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:10901/products\", waiting until \"domcontentloaded\"\u001b[22m\n"
+    },
+    {
+      "state": "certificate-validate-and-upload",
+      "message": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText('EVID 合成附件证书', { exact: true })\nExpected: visible\nError: strict mode violation: getByText('EVID 合成附件证书', { exact: true }) resolved to 3 elements:\n    1) <button role=\"tab\" tabindex=\"0\" type=\"button\" aria-selected=\"true\" aria-controls=\"workspace-panel-1a119c20-6e8d-4f85-ba36-40455aa6d1ee\">…</button> aka getByRole('tab', { name: 'EVID 合成附件证书' })\n    2) <strong data-v-05d91905=\"\">EVID 合成附件证书</strong> aka getByRole('strong').filter({ hasText: 'EVID 合成附件证书' })\n    3) <h2 data-v-9751b1ea=\"\">EVID 合成附件证书</h2> aka getByRole('heading', { name: 'EVID 合成附件证书' })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('EVID 合成附件证书', { exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('EVID 合成附件证书', { exact: true })\u001b[22m\n"
+    },
+    {
+      "state": "purchase-cost-allocation",
+      "message": "locator.selectOption: Timeout 6000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.cost-modal').locator('.cost-item').first().locator('.cost-row').last().getByLabel('成本归属', { exact: true })\u001b[22m\n"
+    }
+  ]
+}

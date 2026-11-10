@@ -1,0 +1,134 @@
+[
+  {
+    "name": "receipt-edit",
+    "width": 1366,
+    "height": 768,
+    "zoom": 1,
+    "screenshot": "receipt-edit-1366-zoom-100.png",
+    "dpr": 1,
+    "pageWidth": 1366,
+    "topbarBottom": 82,
+    "tabsTop": 82
+  },
+  {
+    "name": "history-correction",
+    "width": 1366,
+    "height": 768,
+    "zoom": 1,
+    "screenshot": "history-correction-1366-zoom-100.png",
+    "dpr": 1,
+    "pageWidth": 1366,
+    "topbarBottom": 82,
+    "tabsTop": 82
+  },
+  {
+    "name": "receipt-edit",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1,
+    "screenshot": "receipt-edit-1440-zoom-100.png",
+    "dpr": 1,
+    "pageWidth": 1440,
+    "topbarBottom": 82,
+    "tabsTop": 82
+  },
+  {
+    "name": "history-correction",
+    "width": 1440,
+    "height": 900,
+    "zoom": 1,
+    "screenshot": "history-correction-1440-zoom-100.png",
+    "dpr": 1,
+    "pageWidth": 1440,
+    "topbarBottom": 82,
+    "tabsTop": 82
+  },
+  {
+    "name": "receipt-edit",
+    "width": 390,
+    "height": 844,
+    "zoom": 1,
+    "screenshot": "receipt-edit-390-zoom-100.png",
+    "dpr": 1,
+    "pageWidth": 390,
+    "topbarBottom": 70,
+    "tabsTop": 70
+  },
+  {
+    "name": "history-correction",
+    "width": 390,
+    "height": 844,
+    "zoom": 1,
+    "screenshot": "history-correction-390-zoom-100.png",
+    "dpr": 1,
+    "pageWidth": 390,
+    "topbarBottom": 70,
+    "tabsTop": 70
+  },
+  {
+    "name": "receipt-edit",
+    "width": 1093,
+    "height": 768,
+    "zoom": 1.25,
+    "screenshot": "receipt-edit-1366-zoom-125.png",
+    "dpr": 1.25,
+    "pageWidth": 1093,
+    "topbarBottom": 82,
+    "tabsTop": 82
+  },
+  {
+    "name": "history-correction",
+    "width": 1093,
+    "height": 768,
+    "zoom": 1.25,
+    "screenshot": "history-correction-1366-zoom-125.png",
+    "dpr": 1.25,
+    "pageWidth": 1093,
+    "topbarBottom": 82,
+    "tabsTop": 82
+  },
+  {
+    "name": "receipt-edit",
+    "width": 1152,
+    "height": 900,
+    "zoom": 1.25,
+    "screenshot": "receipt-edit-1440-zoom-125.png",
+    "dpr": 1.25,
+    "pageWidth": 1152,
+    "topbarBottom": 82,
+    "tabsTop": 82
+  },
+  {
+    "name": "history-correction",
+    "width": 1152,
+    "height": 900,
+    "zoom": 1.25,
+    "screenshot": "history-correction-1440-zoom-125.png",
+    "dpr": 1.25,
+    "pageWidth": 1152,
+    "topbarBottom": 82,
+    "tabsTop": 82
+  },
+  {
+    "name": "receipt-edit",
+    "width": 312,
+    "height": 844,
+    "zoom": 1.25,
+    "screenshot": "receipt-edit-390-zoom-125.png",
+    "dpr": 1.25,
+    "pageWidth": 312,
+    "topbarBottom": 70,
+    "tabsTop": 70
+  },
+  {
+    "name": "history-correction",
+    "width": 312,
+    "height": 844,
+    "zoom": 1.25,
+    "screenshot": "history-correction-390-zoom-125.png",
+    "dpr": 1.25,
+    "pageWidth": 312,
+    "topbarBottom": 70,
+    "tabsTop": 70
+  }
+]

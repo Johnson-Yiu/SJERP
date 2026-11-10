@@ -1,0 +1,641 @@
+Creating test database for alias 'default' ('test_sunjack_5cedd74d333e4b958598d6c3521eeb14')...
+
+Found 123 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying crm.0093_csv_import_preview_audit... OK
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+  Applying crm.0090_fulfillment_request_idempotency... OK
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+  Applying crm.0096_quote_pi_template_snapshots... OK
+  Applying crm.0097_merge_quote_and_cash_review... OK
+  Applying crm.0098_finance_accounts... OK
+  Applying crm.0099_finance_closeout_workflows... OK
+  Applying crm.0100_finance_legacy_fact_links... OK
+  Applying crm.0101_finance_historical_transfer_links... OK
+  Applying crm.0102_bank_private_voucher_binding... OK
+  Applying crm.0098_history_takeover_workflow... OK
+  Applying crm.0103_merge_finance_and_history... OK
+  Applying crm.0104_historical_inventory_baseline... OK
+  Applying crm.0105_historical_operational_contract... OK
+  Applying crm.0106_historical_purchase_balance_mode... OK
+  Applying crm.0107_inventory_movement_location... OK
+  Applying crm.0108_history_append_only_truncate... OK
+  Applying crm.0109_quote_buyer_country_snapshot... OK
+  Applying crm.0110_party_version... OK
+  Applying crm.0111_quote_buyer_tax_id... OK
+  Applying crm.0112_party_quote_application... OK
+  Applying crm.0113_party_request_lifecycle... OK
+  Applying crm.0114_party_document_version... OK
+  Applying crm.0109_new_product_reminders... OK
+  Applying crm.0115_party_replacement... OK
+  Applying crm.0116_party_document_details_storage... OK
+  Applying crm.0117_party_details_draft_guard... OK
+  Applying crm.0118_merge_party_reminders... OK
+  Applying crm.0109_finance_transaction_unified_entry... OK
+  Applying crm.0110_remove_rmbcashevent_cash_event_net_positive_and_more... OK
+  Applying crm.0111_financeplanwriteoff... OK
+  Applying crm.0119_merge_finance_and_party... OK
+  Applying crm.0120_finance_actual_receipt_and_writeoff_correction... OK
+  Applying crm.0121_reconcile_legacy_fee_allocation_cash... OK
+  Applying crm.0110_sales_order_import_sources... OK
+  Applying crm.0119_merge_sales_order_import... OK
+  Applying crm.0122_merge_sales_and_finance_review... OK
+  Applying crm.0119_merge_20261108_1834... OK
+  Applying crm.0120_advanceallocation_cash_amount_and_more... OK
+  Applying crm.0123_merge_finance_receipt_histories... OK
+  Applying crm.0124_finance_bank_fact_match... OK
+  Applying crm.0125_finance_receipt_refund... OK
+  Applying crm.0126_finance_cash_confirmation... OK
+  Applying crm.0127_finance_bank_return_allocation... OK
+  Applying crm.0123_sku_cost_snapshots... OK
+  Applying crm.0123_history_reporting_snapshots... OK
+  Applying crm.0128_merge_release_integration... OK
+test_930_cash_20_company_fee_and_50_discount (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_930_cash_20_company_fee_and_50_discount) ... ok
+test_audit_failure_rolls_back_entire_receipt (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_audit_failure_rolls_back_entire_receipt) ... Internal Server Error: /api/transactions/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\release-completion-acceptance-02\backend\crm\views.py", line 3074, in create
+    record_operation(request=request, instance=row, action="create", action_label="登记财务流水")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+ok
+test_customer_fee_leaves_difference (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_customer_fee_leaves_difference) ... ok
+test_legacy_direct_receipt_replays_by_business_identity (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_legacy_direct_receipt_replays_by_business_identity) ... Conflict: /api/transactions/
+ok
+test_no_order_receipt_can_be_allocated_later (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_no_order_receipt_can_be_allocated_later) ... Conflict: /api/transactions/5/allocate/
+Bad Request: /api/transactions/5/allocate/
+ok
+test_one_receipt_can_be_distributed_across_orders (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_one_receipt_can_be_distributed_across_orders) ... ok
+test_plan_replay_uses_submitted_intent_after_contract_rate_changes (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_plan_replay_uses_submitted_intent_after_contract_rate_changes) ... ok
+test_refund_uses_actual_date_and_replays_across_days (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_refund_uses_actual_date_and_replays_across_days) ... Bad Request: /api/transactions/8/refund-cash/
+Conflict: /api/transactions/8/refund-cash/
+ok
+test_selected_plan_audit_failure_allows_same_key_retry (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_selected_plan_audit_failure_allows_same_key_retry) ... Internal Server Error: /api/payment-plans/10/settle/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\release-completion-acceptance-02\backend\crm\views.py", line 3612, in settle
+    record_operation(request=request, instance=row, action="create", action_label="结算付款计划", metadata={"payment_plan_id": plan.id})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic plan audit failure
+ok
+test_selected_plan_replay_accepts_same_explicit_business_number (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_selected_plan_replay_accepts_same_explicit_business_number) ... Conflict: /api/payment-plans/11/settle/
+ok
+test_structured_receipt_preserves_cash_and_idempotent_replay (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_structured_receipt_preserves_cash_and_idempotent_replay) ... Conflict: /api/transactions/
+ok
+test_structured_receipt_replay_requires_the_original_operator (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_structured_receipt_replay_requires_the_original_operator) ... Conflict: /api/transactions/
+ok
+test_unallocated_balance_counts_cash_not_fee_credit (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_unallocated_balance_counts_cash_not_fee_credit) ... ok
+test_void_audit_rollback_and_replay (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_void_audit_rollback_and_replay) ... Internal Server Error: /api/transactions/16/void/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\release-completion-acceptance-02\backend\crm\views.py", line 3213, in void
+    record_operation(
+    ~~~~~~~~~~~~~~~~^
+        request=request, instance=row, action="custom", action_label="作废财务流水", before=before,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        metadata={"transaction_id": row.id, "reason": row.void_reason, "split_transaction_ids": split_ids},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+Conflict: /api/transactions/16/void/
+ok
+test_voucher_cannot_be_reused_for_another_receipt (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_voucher_cannot_be_reused_for_another_receipt) ... Bad Request: /api/transactions/
+ok
+test_actual_rate_rounding_does_not_override_confirmed_gross (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_actual_rate_rounding_does_not_override_confirmed_gross) ... ok
+test_audit_failure_rolls_back_and_same_identity_can_retry (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_audit_failure_rolls_back_and_same_identity_can_retry) ... Internal Server Error: /api/transactions/19/refund-cash/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\release-completion-acceptance-02\backend\crm\views.py", line 3305, in refund_cash
+    record_operation(request=request, instance=refund, action="create", action_label="登记原收款退款",
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        metadata={"source_transaction_id": source.pk, "link_id": link.pk, "reason": reason, "actual_date": actual_date.isoformat()})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+ok
+test_cny_bank_confirmation_is_not_an_fx_conversion (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_cny_bank_confirmation_is_not_an_fx_conversion) ... ok
+test_direct_customer_refund_requires_original_receipt_and_evidence (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_direct_customer_refund_requires_original_receipt_and_evidence) ... Bad Request: /api/transactions/
+ok
+test_one_settlement_from_receipt_can_combine_another_receipt (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_one_settlement_from_receipt_can_combine_another_receipt) ... ok
+test_orderless_customer_receipt_can_be_partially_exchanged_from_detail (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_orderless_customer_receipt_can_be_partially_exchanged_from_detail) ... ok
+test_other_order_historical_refund_does_not_block_known_source (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_other_order_historical_refund_does_not_block_known_source) ... ok
+test_partly_exchanged_source_only_refunds_remaining_cash (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_partly_exchanged_source_only_refunds_remaining_cash) ... Bad Request: /api/transactions/35/refund-cash/
+ok
+test_reference_fx_difference_cannot_be_created_as_cash (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_reference_fx_difference_cannot_be_created_as_cash) ... Bad Request: /api/transactions/
+ok
+test_refund_is_bound_to_source_and_replayed (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_refund_is_bound_to_source_and_replayed) ... Conflict: /api/transactions/38/refund-cash/
+Bad Request: /api/transactions/38/refund-cash/
+ok
+test_unallocated_refund_reduces_later_allocation_and_fx_capacity (crm.tests.test_receipt_refund_attribution.ReceiptRefundAttributionTests.test_unallocated_refund_reduces_later_allocation_and_fx_capacity) ... ok
+test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes (crm.tests.test_cash_events.CashEventTests.test_a_b_unconverted_then_bank_net_confirmed_without_legacy_writes) ... ok
+test_actual_receipt_caps_refunds_while_company_fee_settles_plan_and_hits_profit_once (crm.tests.test_cash_events.CashEventTests.test_actual_receipt_caps_refunds_while_company_fee_settles_plan_and_hits_profit_once) ... ok
+test_advance_allocation_does_not_consume_cash_source (crm.tests.test_cash_events.CashEventTests.test_advance_allocation_does_not_consume_cash_source) ... ok
+test_bank_replays_require_the_original_operator (crm.tests.test_cash_events.CashEventTests.test_bank_replays_require_the_original_operator) ... Conflict: /api/rmb-cash-events/
+Conflict: /api/rmb-cash-events/8/confirm/
+ok
+test_c_partial_60_40_and_overallocation (crm.tests.test_cash_events.CashEventTests.test_c_partial_60_40_and_overallocation) ... Conflict: /api/rmb-cash-events/
+ok
+test_cancel_pending_retains_evidence_and_allows_original_void (crm.tests.test_cash_events.CashEventTests.test_cancel_pending_retains_evidence_and_allows_original_void) ... Bad Request: /api/rmb-cash-events/11/confirm/
+ok
+test_cash_account_choices_return_configured_readable_names_only (crm.tests.test_cash_events.CashEventTests.test_cash_account_choices_return_configured_readable_names_only) ... ok
+test_company_fee_allocation_fx_settlement_and_customer_fee_receivable (crm.tests.test_cash_events.CashEventTests.test_company_fee_allocation_fx_settlement_and_customer_fee_receivable) ... Bad Request: /api/transactions/56/writeoff/
+Internal Server Error: /api/transactions/56/writeoff/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\release-completion-acceptance-02\backend\crm\views.py", line 3335, in writeoff
+    record_operation(request=request, instance=row, action="create", action_label="登记授权抹零",
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        metadata={"transaction_id": source.pk, "plan_id": plan.pk, "amount": str(row.amount),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            "confirmed_actor": row.confirmed_actor})
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+ok
+test_confirm_failure_after_status_update_is_rolled_back (crm.tests.test_cash_events.CashEventTests.test_confirm_failure_after_status_update_is_rolled_back) ... ok
+test_customer_and_unknown_fee_keep_unreceived_amount_open_and_void_restores_full_settlement (crm.tests.test_cash_events.CashEventTests.test_customer_and_unknown_fee_keep_unreceived_amount_open_and_void_restores_full_settlement) ... ok
+test_d_split_family_is_cash_rows_not_root_total (crm.tests.test_cash_events.CashEventTests.test_d_split_family_is_cash_rows_not_root_total) ... Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee (crm.tests.test_cash_events.CashEventTests.test_e_separate_fee_uses_independent_cny_source_and_no_double_included_fee) ... Bad Request: /api/rmb-cash-events/
+ok
+test_f_cny_direct_identical_amounts_are_distinct_real_events (crm.tests.test_cash_events.CashEventTests.test_f_cny_direct_identical_amounts_are_distinct_real_events) ... Conflict: /api/rmb-cash-events/19/confirm/
+Conflict: /api/rmb-cash-events/21/confirm/
+ok
+test_failure_after_event_creation_rolls_back_both_tables (crm.tests.test_cash_events.CashEventTests.test_failure_after_event_creation_rolls_back_both_tables) ... ok
+test_family_root_invalid_inputs_return_4xx_without_internal_errors (crm.tests.test_cash_events.CashEventTests.test_family_root_invalid_inputs_return_4xx_without_internal_errors) ... Not Found: /api/rmb-cash-events/sources/
+Bad Request: /api/rmb-cash-events/sources/
+Bad Request: /api/rmb-cash-events/sources/
+Bad Request: /api/rmb-cash-events/sources/
+ok
+test_fee_only_installment_is_non_cash_and_voidable (crm.tests.test_cash_events.CashEventTests.test_fee_only_installment_is_non_cash_and_voidable) ... ok
+test_g_missing_voucher_account_and_manual_check_fail_without_writes (crm.tests.test_cash_events.CashEventTests.test_g_missing_voucher_account_and_manual_check_fail_without_writes) ... Bad Request: /api/rmb-cash-events/23/confirm/
+Bad Request: /api/rmb-cash-events/24/confirm/
+Bad Request: /api/rmb-cash-events/24/confirm/
+ok
+test_h_refund_void_and_correction_protection_are_atomic (crm.tests.test_cash_events.CashEventTests.test_h_refund_void_and_correction_protection_are_atomic) ... Bad Request: /api/rmb-cash-events/25/cancel/
+Bad Request: /api/rmb-cash-events/
+ok
+test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload (crm.tests.test_cash_events.CashEventTests.test_i_idempotency_lookup_conflict_cancel_and_immutable_confirm_payload) ... Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/26/confirm/
+Method Not Allowed: /api/rmb-cash-events/26/
+Method Not Allowed: /api/rmb-cash-events/26/
+Method Not Allowed: /api/rmb-cash-events/26/
+ok
+test_invalid_receipt_fee_evidence_never_expands_allocation_capacity (crm.tests.test_cash_events.CashEventTests.test_invalid_receipt_fee_evidence_never_expands_allocation_capacity) ... ok
+test_k_invalid_money_rate_sources_and_unknown_fields (crm.tests.test_cash_events.CashEventTests.test_k_invalid_money_rate_sources_and_unknown_fields) ... Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_l_historical_fraction_jpy_precision_and_reference_round_half_up (crm.tests.test_cash_events.CashEventTests.test_l_historical_fraction_jpy_precision_and_reference_round_half_up) ... Bad Request: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+ok
+test_legacy_contract_only_party_is_protected_and_snapshot_owner_cannot_leak (crm.tests.test_cash_events.CashEventTests.test_legacy_contract_only_party_is_protected_and_snapshot_owner_cannot_leak) ... ok
+test_linked_receipt_uses_saved_split_family_and_keeps_unallocated_advance_distinct (crm.tests.test_cash_events.CashEventTests.test_linked_receipt_uses_saved_split_family_and_keeps_unallocated_advance_distinct) ... Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/preview/
+ok
+test_mixed_currency_stale_snapshot_and_event_number_conflict (crm.tests.test_cash_events.CashEventTests.test_mixed_currency_stale_snapshot_and_event_number_conflict) ... Bad Request: /api/rmb-cash-events/31/confirm/
+Conflict: /api/rmb-cash-events/
+Bad Request: /api/rmb-cash-events/
+Not Found: /api/rmb-cash-events/not-an-id/
+ok
+test_one_fx_settlement_merges_multiple_independent_receipts (crm.tests.test_cash_events.CashEventTests.test_one_fx_settlement_merges_multiple_independent_receipts) ... ok
+test_receipt_fee_requires_difference_and_private_proof (crm.tests.test_cash_events.CashEventTests.test_receipt_fee_requires_difference_and_private_proof) ... ok
+test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview (crm.tests.test_cash_events.CashEventTests.test_unrelated_refunds_remain_legal_and_unknown_refunds_block_preview) ... Bad Request: /api/rmb-cash-events/preview/
+ok
+test_writeoff_corrections_restore_plan_without_cash_and_roll_back_on_audit_failure (crm.tests.test_cash_events.CashEventTests.test_writeoff_corrections_restore_plan_without_cash_and_roll_back_on_audit_failure) ... Internal Server Error: /api/transactions/104/writeoff-corrections/
+Traceback (most recent call last):
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\Johnson\AppData\Local\Temp\iss018-command-locked-venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex项目\森爵照明管理系统\.worktrees\release-completion-acceptance-02\backend\crm\views.py", line 3363, in writeoff_corrections
+    record_operation(request=request, instance=correction, action="create", action_label="更正授权抹零",
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        metadata={"transaction_id": source.pk, "writeoff_id": original.pk, "amount": str(correction.amount),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            "reason": correction.reason, "actor": correction.actor})
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic correction audit failure
+Bad Request: /api/transactions/104/writeoff-corrections/
+ok
+test_zero_net_fx_requires_included_fee_and_keeps_actual_cash_at_zero (crm.tests.test_cash_events.CashEventTests.test_zero_net_fx_requires_included_fee_and_keeps_actual_cash_at_zero) ... Bad Request: /api/rmb-cash-events/
+ok
+test_family_root_outside_scope_is_indistinguishable_from_missing (crm.tests.test_cash_events.CashPermissionsTests.test_family_root_outside_scope_is_indistinguishable_from_missing) ... ok
+test_k_merged_batch_hidden_entirely_and_all_actions_scoped (crm.tests.test_cash_events.CashPermissionsTests.test_k_merged_batch_hidden_entirely_and_all_actions_scoped) ... ok
+test_missing_contract_module_hides_whole_source_family (crm.tests.test_cash_events.CashPermissionsTests.test_missing_contract_module_hides_whole_source_family) ... ok
+test_no_finance_or_transaction_view_no_amounts_and_write_rights (crm.tests.test_cash_events.CashPermissionsTests.test_no_finance_or_transaction_view_no_amounts_and_write_rights) ... ok
+test_old_sales_report_url_is_rejected_when_orders_view_is_revoked (crm.tests.test_reporting.ReportingDimensionPermissionTests.test_old_sales_report_url_is_rejected_when_orders_view_is_revoked) ... ok
+test_raw_details_require_original_record_permission (crm.tests.test_reporting.ReportingDimensionPermissionTests.test_raw_details_require_original_record_permission) ... ok
+test_second_dimension_requires_its_own_view_permission (crm.tests.test_reporting.ReportingDimensionPermissionTests.test_second_dimension_requires_its_own_view_permission) ... ok
+test_cash_only_confirmed_and_signed_actual_amount (crm.tests.test_reporting.ReportingTests.test_cash_only_confirmed_and_signed_actual_amount) ... ok
+test_catalog_and_region_edit_api (crm.tests.test_reporting.ReportingTests.test_catalog_and_region_edit_api) ... ok
+test_category_and_sku_cross_group_keeps_units_and_document_count (crm.tests.test_reporting.ReportingTests.test_category_and_sku_cross_group_keeps_units_and_document_count) ... ok
+test_category_snapshot_identity_survives_master_changes (crm.tests.test_reporting.ReportingTests.test_category_snapshot_identity_survives_master_changes) ... Bad Request: /api/reports/data/
+Bad Request: /api/reports/details/
+ok
+test_country_and_customer_cross_group_preserves_totals_and_distinct_documents (crm.tests.test_reporting.ReportingTests.test_country_and_customer_cross_group_preserves_totals_and_distinct_documents) ... ok
+test_created_at_uses_business_timezone (crm.tests.test_reporting.ReportingTests.test_created_at_uses_business_timezone) ... ok
+test_cross_group_filter_and_csv_have_the_same_two_group_columns (crm.tests.test_reporting.ReportingTests.test_cross_group_filter_and_csv_have_the_same_two_group_columns) ... ok
+test_cross_group_rejects_invalid_duplicate_or_time_filter_dimensions (crm.tests.test_reporting.ReportingTests.test_cross_group_rejects_invalid_duplicate_or_time_filter_dimensions) ... Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+ok
+test_currency_and_excluded_status (crm.tests.test_reporting.ReportingTests.test_currency_and_excluded_status) ... ok
+test_customer_growth_and_invalid_inputs (crm.tests.test_reporting.ReportingTests.test_customer_growth_and_invalid_inputs) ... Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+Bad Request: /api/reports/data/
+ok
+test_date_boundary_and_null_due_date (crm.tests.test_reporting.ReportingTests.test_date_boundary_and_null_due_date) ... ok
+test_details_reject_invalid_selection_and_keep_historical_order_out (crm.tests.test_reporting.ReportingTests.test_details_reject_invalid_selection_and_keep_historical_order_out) ... Bad Request: /api/reports/details/
+ok
+test_every_catalog_dimension_runs (crm.tests.test_reporting.ReportingTests.test_every_catalog_dimension_runs) ... ok
+test_export_has_full_rows_and_formula_protection (crm.tests.test_reporting.ReportingTests.test_export_has_full_rows_and_formula_protection) ... ok
+test_historical_dimensions_remain_frozen_after_customer_and_product_master_changes (crm.tests.test_reporting.ReportingTests.test_historical_dimensions_remain_frozen_after_customer_and_product_master_changes) ... ok
+test_historical_only_order_is_not_in_formal_cross_group_report (crm.tests.test_reporting.ReportingTests.test_historical_only_order_is_not_in_formal_cross_group_report) ... ok
+test_inventory_net_change_per_unit (crm.tests.test_reporting.ReportingTests.test_inventory_net_change_per_unit) ... ok
+test_product_filter_excludes_order_adjustment (crm.tests.test_reporting.ReportingTests.test_product_filter_excludes_order_adjustment) ... ok
+test_profit_report_excludes_draft_and_cancelled_contracts (crm.tests.test_reporting.ReportingTests.test_profit_report_excludes_draft_and_cancelled_contracts) ... ok
+test_purchase_details_are_paginated_and_reconcile_purchase_adjustment (crm.tests.test_reporting.ReportingTests.test_purchase_details_are_paginated_and_reconcile_purchase_adjustment) ... ok
+test_purchase_report_excludes_draft_and_cancelled_contracts (crm.tests.test_reporting.ReportingTests.test_purchase_report_excludes_draft_and_cancelled_contracts) ... ok
+test_purchase_report_includes_approved_contract_adjustments_without_additional_costs (crm.tests.test_reporting.ReportingTests.test_purchase_report_includes_approved_contract_adjustments_without_additional_costs) ... ok
+test_purchase_without_sales_order_and_supplier_country (crm.tests.test_reporting.ReportingTests.test_purchase_without_sales_order_and_supplier_country) ... ok
+test_region_and_empty_filter (crm.tests.test_reporting.ReportingTests.test_region_and_empty_filter) ... ok
+test_sales_details_follow_sku_group_without_repeating_order_amount (crm.tests.test_reporting.ReportingTests.test_sales_details_follow_sku_group_without_repeating_order_amount) ... ok
+test_sales_details_reconcile_country_customer_group_and_keep_adjustment_separate (crm.tests.test_reporting.ReportingTests.test_sales_details_reconcile_country_customer_group_and_keep_adjustment_separate) ... ok
+test_sales_reconciles_and_counts_documents_once (crm.tests.test_reporting.ReportingTests.test_sales_reconciles_and_counts_documents_once) ... ok
+test_sales_report_includes_approved_contract_adjustments_as_separate_rows (crm.tests.test_reporting.ReportingTests.test_sales_report_includes_approved_contract_adjustments_as_separate_rows) ... ok
+test_source_category_and_unknown_do_not_use_current_master (crm.tests.test_reporting.ReportingTests.test_source_category_and_unknown_do_not_use_current_master) ... ok
+test_time_and_customer_cross_group_uses_date_bucket_and_no_future_bucket (crm.tests.test_reporting.ReportingTests.test_time_and_customer_cross_group_uses_date_bucket_and_no_future_bucket) ... ok
+test_time_buckets_zero_fill_and_comparison (crm.tests.test_reporting.ReportingTests.test_time_buckets_zero_fill_and_comparison) ... ok
+test_voided_transaction_is_excluded_from_cash_dashboard (crm.tests.test_reporting.ReportingTests.test_voided_transaction_is_excluded_from_cash_dashboard) ... ok
+test_year_comparison_handles_leap_day (crm.tests.test_reporting.ReportingTests.test_year_comparison_handles_leap_day) ... ok
+test_audit_events_are_database_append_only_and_development_identity_is_not_real_operator (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_audit_events_are_database_append_only_and_development_identity_is_not_real_operator) ... ok
+test_cancelled_and_completed_lifecycle_states_are_preserved_without_replaying_fulfillment (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_cancelled_and_completed_lifecycle_states_are_preserved_without_replaying_fulfillment) ... ok
+test_complete_synthetic_group_executes_once_without_posting_finance_stock_or_fulfillment (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_complete_synthetic_group_executes_once_without_posting_finance_stock_or_fulfillment) ... Bad Request: /api/orders/139/
+Bad Request: /api/purchase-orders/14/
+ok
+test_downloaded_template_matches_parser_and_requires_warehouse_origin_and_lot (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_downloaded_template_matches_parser_and_requires_warehouse_origin_and_lot) ... ok
+test_existing_document_conflict_blocks_approval_without_creating_a_duplicate (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_existing_document_conflict_blocks_approval_without_creating_a_duplicate) ... Bad Request: /api/import/history-takeovers/6/groups/6/review/
+ok
+test_failure_in_later_business_write_rolls_back_the_whole_group (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_failure_in_later_business_write_rolls_back_the_whole_group) ... ok
+test_late_fact_and_voucher_review_append_without_overwriting_history (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_late_fact_and_voucher_review_append_without_overwriting_history) ... Bad Request: /api/import/history-takeovers/8/groups/8/correction-review/
+ok
+test_master_change_between_approval_and_execution_requires_reapproval (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_master_change_between_approval_and_execution_requires_reapproval) ... ok
+test_name_candidate_requires_explicit_admin_mapping_and_preserves_source_value (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_name_candidate_requires_explicit_admin_mapping_and_preserves_source_value) ... Bad Request: /api/import/history-takeovers/10/groups/10/review/
+ok
+test_non_admin_application_access_is_scoped_to_applicant (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_non_admin_application_access_is_scoped_to_applicant) ... Not Found: /api/import/history-takeovers/12/
+Not Found: /api/import/history-takeovers/12/review-report.csv
+Conflict: /api/import/history-takeovers/
+ok
+test_rejection_missing_dependencies_conflicts_and_simulated_data_never_execute (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_rejection_missing_dependencies_conflicts_and_simulated_data_never_execute) ... Bad Request: /api/import/history-takeovers/13/groups/11/execute/
+Bad Request: /api/import/history-takeovers/14/groups/12/review/
+Bad Request: /api/import/history-takeovers/15/groups/13/review/
+ok
+test_restricted_employee_cannot_open_takeover_endpoints (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_restricted_employee_cannot_open_takeover_endpoints) ... ok
+test_terminal_groups_cannot_be_revived_and_group_action_returns_the_requested_group (crm.tests.test_history_takeover.HistoryTakeoverWorkflowTests.test_terminal_groups_cannot_be_revived_and_group_action_returns_the_requested_group) ... Bad Request: /api/import/history-takeovers/17/groups/16/review/
+Bad Request: /api/import/history-takeovers/17/groups/16/resolve-master/
+Bad Request: /api/import/history-takeovers/18/groups/17/resolve-master/
+Bad Request: /api/import/history-takeovers/18/groups/17/review/
+ok
+test_concurrent_allocation_replays_once (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_allocation_replays_once) ... ok
+test_concurrent_identical_receipts_create_one_fact (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_identical_receipts_create_one_fact) ... ok
+test_concurrent_legacy_direct_receipt_replays_once (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_legacy_direct_receipt_replays_once) ... ok
+test_concurrent_selected_plan_receipt_replays_once (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_selected_plan_receipt_replays_once) ... Conflict: /api/payment-plans/103/settle/
+Bad Request: /api/payment-plans/103/settle/
+ok
+test_concurrent_supplier_payment_replays_once (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_supplier_payment_replays_once) ... Conflict: /api/purchase-orders/18/pay/
+Bad Request: /api/purchase-orders/18/pay/
+ok
+test_concurrent_void_has_one_reversal_and_one_audit (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_void_has_one_reversal_and_one_audit) ... ok
+test_fx_return_uses_verified_original_amount_and_serializes_competing_returns (crm.tests.test_finance_closeout.FinanceBankReturnConcurrencyTests.test_fx_return_uses_verified_original_amount_and_serializes_competing_returns) ... ok
+test_concurrent_refunds_cannot_exceed_original_cash (crm.tests.test_receipt_refund_attribution.ReceiptRefundConcurrencyTests.test_concurrent_refunds_cannot_exceed_original_cash) ... Bad Request: /api/transactions/143/refund-cash/
+ok
+test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy (crm.tests.test_cash_events.CashConcurrencyTests.test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy) ... ok
+test_i_concurrent_same_request_creates_one_event_and_one_allocation (crm.tests.test_cash_events.CashConcurrencyTests.test_i_concurrent_same_request_creates_one_event_and_one_allocation) ... ok
+test_j_different_keys_compete_for_same_source (crm.tests.test_cash_events.CashConcurrencyTests.test_j_different_keys_compete_for_same_source) ... ok
+test_writeoff_correction_competition_and_same_request_are_serialized (crm.tests.test_cash_events.CashConcurrencyTests.test_writeoff_correction_competition_and_same_request_are_serialized) ... ok
+test_additive_migration_preserves_historical_rows_and_decimal_fields (crm.tests.test_cash_events.CashMigrationTests.test_additive_migration_preserves_historical_rows_and_decimal_fields) ... ok
+test_postgres_concurrent_execute_is_serialized_by_group_lock (crm.tests.test_history_takeover.HistoryTakeoverPostgresConcurrencyTests.test_postgres_concurrent_execute_is_serialized_by_group_lock) ... ok
+
+----------------------------------------------------------------------
+Ran 123 tests in 306.314s
+
+OK
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).
+P2A-DATABASE_VERIFICATION {"before": "b39c5040debd5145210d2f0552bd5d6320f08bdd611ada39786d9c43dc20ce8f", "after": "b39c5040debd5145210d2f0552bd5d6320f08bdd611ada39786d9c43dc20ce8f", "bank_net": "705.00", "included_fee": "5.00", "source_used": "100.0000", "legacy_unchanged": true}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "confirm_void_refund", "legacy_unchanged": true, "remaining": "0.0000", "vendor": "postgresql"}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "same_request_and_confirm", "one_event": true, "one_allocation": true, "vendor": "postgresql"}
+P2A_REAL_POSTGRES_CONCURRENCY {"case": "different_keys_shared_source", "results": ["confirmed", "conflict"], "source": "100.0000", "confirmed_usage": "60.0000", "remaining": "40.0000", "vendor": "postgresql"}
+FINANCE_REAL_POSTGRES_CONCURRENCY {"case": "writeoff_correction_competition_and_idempotency", "competing": [["rejected", null], ["created", 4]], "same_request_ids": [[5, true], [5, false]], "net_writeoff": "2.0000", "vendor": "postgresql"}
+P2A_MIGRATION_VERIFICATION {"vendor": "postgresql", "all_legacy_rows_equal": true, "old_amount": "12.3401", "old_rmb": "87.9034", "old_allocated": "0.0001", "new_bank_facts": 0}

@@ -719,3 +719,9 @@ R1-POSTGRES-TEST-ISOLATION-01 从 `2e25b743884123d7ae5599c89586988a12791bf4` 新
 ### 2026-11-06 PARTY-VERSION-INTEGRATION-01
 
 主体来源 `7cc8c4bf0249a3de53809836b7b3f233476a1648` 与新品提醒已集成并新增迁移合流；隔离 PG 升级、旧快照保值、主体替换及 PI/XLSX 定向结果见 [验收报告](uat-evidence/party-int01/README.md)。旧报价未知税号及模板无法表达的主体字段导致输出 422，首发使用该类报价为条件性阻断，真实数量和业务范围待核实；不改变现有 Issue 状态。`aa15c9ba7584599e918c1dd14723d31e31158b3d` 为后续多标签及身份接线对照，尚未合入。全量和 CI 按用户要求 NOT_RUN。
+
+### 2026-11-10 RELEASE-COMPLETION-ACCEPTANCE-02
+
+已审基线 `1e45e42c` 上接入 B2 `96ad680c` 和 D2 `3e925910`。ISS-105、ISS-108 的作废审计、实际退款日期与同账号恢复由本轮回归覆盖。ISS-018 的隔离恢复证据与正式环境的媒体权限、异地副本、调度验收分别记录。真实历史资料和首发独立复审继续待验。既有 Issue 状态和原版本证据保留，当前结果见 [集成验收报告](uat-evidence/release-completion-acceptance-02/README.md)。
+
+ISS-105、ISS-108 补充两个反例，分别为旧响应清理新操作及权限刷新中打开页面后持续无法提交。业务提交 `d836ba21` 的实际组件交错与权限刷新回归通过，PostgreSQL 全量 0 失败、0 错误，保留独立复审状态。

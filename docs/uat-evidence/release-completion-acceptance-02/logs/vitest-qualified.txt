@@ -1,0 +1,31 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/release-completion-acceptance-02/frontend
+
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: navigation to another Document
+Not implemented: Window's scrollTo() method
+
+ Test Files  89 passed (89)
+      Tests  829 passed (829)
+   Start at  11:40:53
+   Duration  444.51s (transform 22.85s, setup 68.39s, import 45.53s, tests 56.66s, environment 636.19s)

@@ -1,0 +1,573 @@
+{
+  "source": "50be7d8a377cffb0635ce193c02feb44f37cc985",
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.80",
+    "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.27"
+  },
+  "results": [
+    {
+      "state": "priority-inventory-0001",
+      "screenshot": "verification-priority-inventory-0001-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "priority-inventory-0002",
+      "screenshot": "verification-priority-inventory-0002-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "priority-inventory-lot-no-match",
+      "screenshot": "verification-priority-inventory-lot-no-match-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/inventory-movements/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "priority-purchase-cancel-confirm",
+      "screenshot": "verification-priority-purchase-cancel-confirm-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "priority-purchase-cancelled",
+      "screenshot": "verification-priority-purchase-cancelled-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/2/cancel/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/2/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/contract-changes/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/2/party-details/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "priority-purchase-overage-form",
+      "screenshot": "verification-priority-purchase-overage-form-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/place/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "priority-purchase-complete",
+      "screenshot": "verification-priority-purchase-complete-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/party-details/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/place/",
+          "status": 200,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/receive/",
+          "status": 201,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/receive/",
+          "status": 201,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/receive/",
+          "status": 201,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/1/receive/",
+          "status": 201,
+          "method": "POST"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/purchase-orders/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "priority-sku-combinations",
+      "screenshot": "verification-priority-sku-combinations-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/sales-model-abbreviations/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/sales-model-abbreviations/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "priority-sku-batch-packaging-applied",
+      "screenshot": "verification-priority-sku-batch-packaging-applied-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/sales-model-abbreviations/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/sales-model-abbreviations/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "state": "priority-sku-batch-packaging-undone",
+      "screenshot": "verification-priority-sku-batch-packaging-undone-390-125.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "documentWidth": 312,
+      "api": "real",
+      "responses": [
+        {
+          "pathname": "/api/session/current-operator/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/products/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/categories/tree/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/product-parameters/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/packaging-templates/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/suppliers/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/sales-model-abbreviations/",
+          "status": 200,
+          "method": "GET"
+        },
+        {
+          "pathname": "/api/skus/sales-model-abbreviations/",
+          "status": 200,
+          "method": "GET"
+        }
+      ]
+    }
+  ],
+  "gaps": []
+}

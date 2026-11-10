@@ -29,11 +29,13 @@ test('product operations evidence with real Chrome and the isolated API', async 
   const root = process.env.ISOLATED_TEST_ROOT
   const refreshOnly = process.env.PRODUCT_OPS_FOLLOWUP === 'refresh'
   const lifecycle = process.env.PRODUCT_OPS_FOLLOWUP === 'lifecycle'
+  const priority = process.env.PRODUCT_OPS_FOLLOWUP === 'priority'
+  const priorityZoom = process.env.PRODUCT_OPS_PRIORITY_ZOOM === '100' ? 1 : 1.25
   const candidate = process.env.PRODUCT_OPS_FOLLOWUP === 'candidate'
   if (candidate) expect(source).toBe(process.env.PRODUCT_OPS_CANDIDATE_SHA)
-  const verify = refreshOnly || lifecycle || process.env.PRODUCT_OPS_FOLLOWUP === 'verify'
+  const verify = refreshOnly || lifecycle || priority || process.env.PRODUCT_OPS_FOLLOWUP === 'verify'
   const followup = verify || process.env.PRODUCT_OPS_FOLLOWUP === '1'
-  const indexName = candidate ? 'browser-a2-candidate.json' : lifecycle ? 'browser-lifecycle.json' : refreshOnly ? 'browser-product-refresh.json' : verify ? 'browser-verification.json' : followup ? 'browser-followup.json' : 'browser-results.json'
+  const indexName = priority ? (priorityZoom === 1 ? 'browser-priority-standard.json' : 'browser-priority.json') : candidate ? 'browser-a2-candidate.json' : lifecycle ? 'browser-lifecycle.json' : refreshOnly ? 'browser-product-refresh.json' : verify ? 'browser-verification.json' : followup ? 'browser-followup.json' : 'browser-results.json'
   if (!root || process.env.ISOLATED_CODEX_TEST_SUPERADMIN !== '1') throw new Error('Run through the isolated codex profile.')
   const screenshots = path.join(evidence, 'screenshots')
   await mkdir(screenshots, { recursive: true })
@@ -187,8 +189,104 @@ test('product operations evidence with real Chrome and the isolated API', async 
       expect(gaps).toEqual([])
       return
     }
-    await zoomTo(1.25)
+    if (!priority || priorityZoom === 1.25) await zoomTo(1.25)
     await page.setViewportSize({ width: 390, height: 844 })
+    if (priority) {
+      await attempt('inventory-warehouse-lot-search', async () => {
+        const search = page.getByRole('textbox', { name: '搜索库存流水' })
+        await open('/inventory-movements', 'inventory-movements')
+        for (const [query, key, other] of [['合成一号仓', '0001', '0002'], ['合成第三方仓', '0002', '0001'], ['EVID-LOT-20261110-A-02', null, '0002']]) {
+          const loaded = page.waitForResponse(response => {
+            const url = new URL(response.url())
+            return url.pathname === '/api/inventory-movements/' && url.searchParams.get('search') === query && response.ok()
+          })
+          await search.fill(query)
+          await loaded
+          const rows = page.locator('.workspace-pane:not([aria-hidden=true]) tbody tr')
+          if (key) await expect(rows.filter({ hasText: `EVID-IM-${key}` })).toHaveCount(1)
+          else await expect(rows).toHaveCount(0)
+          await expect(rows.filter({ hasText: `EVID-IM-${other}` })).toHaveCount(0)
+          await search.scrollIntoViewIfNeeded()
+          await capture(`priority-inventory-${key ?? 'lot-no-match'}`, priorityZoom, 390, 844)
+        }
+      })
+      await attempt('purchase-cancel', async () => {
+        await open('/purchase-orders', 'purchase-orders', `?detail=${fixture.cancel_purchase}`)
+        const workbench = page.getByRole('dialog', { name: '采购工作台' })
+        await workbench.getByRole('button', { name: '取消采购单', exact: true }).click()
+        await page.getByPlaceholder('请输入取消原因').fill('EVID 合成采购取消验证')
+        await capture('priority-purchase-cancel-confirm', priorityZoom, 390, 844)
+        const cancelled = page.waitForResponse(r => r.url().endsWith('/cancel/') && r.request().method() === 'POST')
+        await page.getByRole('button', { name: '确认取消', exact: true }).click()
+        expect((await cancelled).ok()).toBeTruthy()
+        await expect(workbench.getByText('已取消', { exact: true })).toBeVisible()
+        await capture('priority-purchase-cancelled', priorityZoom, 390, 844)
+      })
+      await attempt('purchase-overage-and-complete', async () => {
+        await open('/purchase-orders', 'purchase-orders', `?detail=${fixture.purchase}`)
+        const workbench = page.getByRole('dialog', { name: '采购工作台' })
+        await workbench.getByRole('button', { name: /确认.*下单/ }).first().click()
+        const placed = page.waitForResponse(r => r.url().endsWith('/place/') && r.request().method() === 'POST')
+        await page.getByTestId('dialog-confirm').click()
+        expect((await placed).ok()).toBeTruthy()
+        await workbench.getByRole('button', { name: '收货', exact: true }).click()
+        for (let index = 0; index < 4; index++) {
+          await workbench.locator('.receipt-heading button').nth(index).click()
+          const form = page.locator('form.receipt-dialog')
+          if (index === 0) {
+            await form.getByLabel(/本次合格入库数量/).fill('11')
+            await form.getByLabel('确认超到').check()
+            await form.getByLabel(/超到原因/).selectOption('overprocurement')
+            await form.getByLabel(/超到原因/).scrollIntoViewIfNeeded()
+            await capture('priority-purchase-overage-form', priorityZoom, 390, 844)
+          }
+          await form.getByLabel(/已核对型号/).check()
+          const received = page.waitForResponse(r => r.url().endsWith('/receive/') && r.request().method() === 'POST')
+          await form.getByRole('button', { name: '确认入库', exact: true }).click()
+          const result = await received
+          expect(result.status(), await result.text()).toBe(201)
+          await expect(form).toHaveCount(0)
+          await expect(workbench.locator('.receipt-history-row')).toHaveCount(index + 1)
+        }
+        await workbench.getByRole('button', { name: '采购明细', exact: true }).click()
+        const complete = workbench.getByText('已到齐', { exact: true })
+        await expect(complete).toHaveCount(4)
+        await complete.first().scrollIntoViewIfNeeded()
+        await capture('priority-purchase-complete', priorityZoom, 390, 844)
+      })
+      await attempt('sku-combination-batch-packaging', async () => {
+        await open('/skus', 'skus')
+        await page.getByRole('button', { name: '新建 SKU', exact: true }).click()
+        const dialog = page.getByRole('dialog', { name: /新建 SKU/ })
+        await dialog.locator('select').first().selectOption(String(fixture.product))
+        for (const [attribute, values] of [['色温', ['3000K', '4000K']], ['发光角度', ['24', '36']], ['外壳颜色', ['黑']]]) {
+          const input = dialog.getByPlaceholder(`输入${attribute}后按回车确认`)
+          for (const value of values) { await input.fill(value); await input.press('Enter') }
+        }
+        const step = dialog.locator('[data-sku-step="4"]')
+        const fill = step.getByRole('button', { name: '批量填充 4 项' })
+        await expect(fill).toBeEnabled()
+        await dialog.locator('.preview-section').scrollIntoViewIfNeeded()
+        await capture('priority-sku-combinations', priorityZoom, 390, 844)
+        await step.getByPlaceholder('搜索并选择包装名称').fill('合成长箱规')
+        await step.getByText(/合成长箱规/).last().click()
+        await step.getByPlaceholder('批量备注').fill('EVID 批量包装')
+        await fill.click()
+        const packaging = step.getByPlaceholder('未配置，输入任意文字搜索')
+        await expect(packaging).toHaveCount(4)
+        for (const field of await packaging.all()) await expect(field).toHaveValue(/合成长箱规/)
+        const undo = step.getByRole('button', { name: '撤销上一步' })
+        await expect(undo).toBeEnabled()
+        await undo.scrollIntoViewIfNeeded()
+        await capture('priority-sku-batch-packaging-applied', priorityZoom, 390, 844)
+        await undo.click()
+        for (const field of await packaging.all()) await expect(field).toHaveValue('')
+        await expect(undo).toBeDisabled()
+        await capture('priority-sku-batch-packaging-undone', priorityZoom, 390, 844)
+      })
+      expect(gaps).toEqual([])
+      return
+    }
     if (!refreshOnly && !lifecycle) await attempt('product-search-no-match', async () => {
       await open('/products', 'products', '?search=EVID-NO-SUCH-PRODUCT')
       await expect(page.getByText('没有符合当前条件的记录', { exact: true })).toBeVisible()

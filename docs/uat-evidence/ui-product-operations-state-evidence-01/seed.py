@@ -71,4 +71,12 @@ for index in (1, 2):
         order_no=f"EVID-SO-00{index}", customer=customer, order_date=date.today(),
         status="draft", currency="USD", exchange_rate="7.2",
     )
-print(json.dumps({"product": product.pk, "sku": skus[0].pk, "purchase": purchase.pk, "supplier": supplier.pk}))
+fixture = {"product": product.pk, "sku": skus[0].pk, "purchase": purchase.pk, "supplier": supplier.pk}
+if os.environ.get("PRODUCT_OPS_FOLLOWUP") == "priority":
+    cancel_purchase = PurchaseOrder.objects.create(
+        purchase_no="EVID-PO-CANCEL", supplier=supplier, order_date=date.today(),
+        status="draft", currency="USD", exchange_rate="7.2",
+    )
+    PurchaseOrderItem.objects.create(purchase_order=cancel_purchase, sku=skus[0], quantity=5, unit_price="4")
+    fixture["cancel_purchase"] = cancel_purchase.pk
+print(json.dumps(fixture))

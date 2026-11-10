@@ -299,4 +299,15 @@ HTTP 记录以对应 JSON 为准。早期留档只有截图，可能包含缩放
 | [a2-purchase-detail-orders-1440-100.png](screenshots/a2-purchase-detail-orders-1440-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
 | [a2-purchase-detail-orders-390-100.png](screenshots/a2-purchase-detail-orders-390-100.png) | [browser-a2-candidate.json](browser-a2-candidate.json) |
 
+| [verification-priority-inventory-0001-390-125.png](screenshots/verification-priority-inventory-0001-390-125.png) | [browser-priority.json](browser-priority.json) |
+| [verification-priority-inventory-0002-390-125.png](screenshots/verification-priority-inventory-0002-390-125.png) | [browser-priority.json](browser-priority.json) |
+| [verification-priority-inventory-lot-no-match-390-125.png](screenshots/verification-priority-inventory-lot-no-match-390-125.png) | [browser-priority.json](browser-priority.json) |
+| [verification-priority-purchase-cancel-confirm-390-125.png](screenshots/verification-priority-purchase-cancel-confirm-390-125.png) | [browser-priority.json](browser-priority.json) |
+| [verification-priority-purchase-cancelled-390-125.png](screenshots/verification-priority-purchase-cancelled-390-125.png) | [browser-priority.json](browser-priority.json) |
+| [verification-priority-purchase-overage-form-390-125.png](screenshots/verification-priority-purchase-overage-form-390-125.png) | [browser-priority.json](browser-priority.json) |
+| [verification-priority-purchase-complete-390-125.png](screenshots/verification-priority-purchase-complete-390-125.png) | [browser-priority.json](browser-priority.json) |
+| [verification-priority-sku-combinations-390-125.png](screenshots/verification-priority-sku-combinations-390-125.png) | [browser-priority.json](browser-priority.json) |
+| [verification-priority-sku-batch-packaging-applied-390-125.png](screenshots/verification-priority-sku-batch-packaging-applied-390-125.png) | [browser-priority.json](browser-priority.json) |
+| [verification-priority-sku-batch-packaging-undone-390-125.png](screenshots/verification-priority-sku-batch-packaging-undone-390-125.png) | [browser-priority.json](browser-priority.json) |
+
 两张问题图另见 [复现记录](reproductions.md)。

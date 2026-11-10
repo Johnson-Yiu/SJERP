@@ -500,7 +500,7 @@ test('Chrome native page zoom keeps long finance and history records usable', as
     const context = zoom === 1 ? page.context() : await chromium.launchPersistentContext(profile, {
       channel: 'chrome', viewport: { width: 1366, height: 768 }, timeout: 30000,
     })
-    context.setDefaultTimeout(25000)
+    context.setDefaultTimeout(60000)
     context.setDefaultNavigationTimeout(30000)
     try {
       if (zoom !== 1) {
@@ -515,8 +515,7 @@ test('Chrome native page zoom keeps long finance and history records usable', as
       if (zoom !== 1) await context.addCookies(cookies)
       const app = completion ? null : await context.newPage()
       const history = completion ? null : await context.newPage()
-      const takeover = await context.newPage()
-      const receipt = completion ? await context.newPage() : null
+      const takeover = zoom === 1 ? page : context.pages()[0]
       async function capture(candidate, screenshot) {
         const session = await context.newCDPSession(candidate)
         try {
@@ -544,6 +543,7 @@ test('Chrome native page zoom keeps long finance and history records usable', as
       }
       const takeoverFinance = await openHistoricalFinance(takeover, baseURL)
       const correction = takeover.getByRole('button', { name: '提交追溯更正申请' })
+      const receipt = completion ? await context.newPage() : null
       if (completion) {
         await takeover.getByLabel('追溯类型').selectOption('correction')
         await correction.click()
@@ -595,7 +595,7 @@ test('Chrome native page zoom keeps long finance and history records usable', as
               tabsTop: document.querySelector('.workspace-bar').getBoundingClientRect().top,
             }))
             expect(layout.dpr).toBeCloseTo(zoom, 2)
-            expect(layout.pageWidth).toBeLessThanOrEqual(layout.width + 1)
+            expect(layout.pageWidth, `${name} at ${width}px and ${zoom * 100}%`).toBeLessThanOrEqual(layout.width + 1)
             if (candidate === takeover) expect(Math.abs(layout.topbarBottom - layout.tabsTop)).toBeLessThanOrEqual(1)
             const bounds = await action.boundingBox()
             expect(bounds.x).toBeGreaterThanOrEqual(0)

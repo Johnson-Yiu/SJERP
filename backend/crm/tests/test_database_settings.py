@@ -17,6 +17,7 @@ class DatabaseSettingsTests(SimpleTestCase):
         env = os.environ.copy()
         env.update({
             "DJANGO_SETTINGS_MODULE": "config.settings",
+            "PYTHONIOENCODING": "utf-8",
             "APP_STAGE": stage,
             "DJANGO_DEBUG": "false" if stage != "development" else "true",
             "DJANGO_SECRET_KEY": self.SAFE_TEST_SECRET,
@@ -51,7 +52,7 @@ print(settings.DATABASES['default']['ENGINE'])
             cwd=self.backend_dir,
             env=env,
             capture_output=True,
-            text=True,
+            encoding="utf-8",
             check=False,
         )
 

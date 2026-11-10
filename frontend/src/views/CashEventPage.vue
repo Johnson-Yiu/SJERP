@@ -88,7 +88,7 @@ onMounted(loadEvents)
       <footer class="detail-actions"><button type="button" class="secondary" @click="selected = null">关闭</button><button v-if="selected.status === 'pending' && can('finance', 'update')" type="button" class="primary" @click="showForm = true">核对并确认</button></footer>
     </div>
 
-    <CashEventEntryForm v-if="showForm" :key="selected?.id || 'new'" mode="standalone" :initial-event="selected?.status === 'pending' ? selected : null" @close="closeEntry" @created="refreshAfterSave" @updated="refreshAfterSave" />
+    <CashEventEntryForm v-if="showForm" :key="selected?.id || 'new'" mode="standalone" :initial-event="selected" @close="closeEntry" @created="refreshAfterSave" @updated="refreshAfterSave" />
   </section>
 </template>
 

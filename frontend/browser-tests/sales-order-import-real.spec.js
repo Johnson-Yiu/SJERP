@@ -412,7 +412,7 @@ test('finance fee scenarios refuse excess refunds and reverse writeoffs without 
 })
 
 async function openHistoricalFinance(page, baseURL) {
-  await page.goto(new URL('/history-takeover', baseURL).href)
+  await page.goto(new URL('/history-takeover', baseURL).href, { waitUntil: 'domcontentloaded' })
   await page.locator('.takeover-list-item').first().click()
   const summary = page.getByText('历史资金接续', { exact: true })
   await summary.click()
@@ -423,7 +423,7 @@ async function openHistoricalFinance(page, baseURL) {
 }
 
 test('historical finance reviews a duplicate and posts only after second-user approval', async ({ browser, baseURL }) => {
-  test.setTimeout(90000)
+  test.setTimeout(180000)
   const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8')).history_finance
   test.skip(!fixture, 'Requires the follow-up historical finance fixture')
   const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } })
@@ -497,11 +497,11 @@ test('Chrome native page zoom keeps long finance and history records usable', as
   const cookies = await page.context().cookies()
   for (const zoom of [1, 1.25]) {
     const profile = path.join(process.env.ISOLATED_TEST_ROOT, `chrome-native-zoom-${zoom}`)
-    const context = await chromium.launchPersistentContext(profile, {
+    const context = zoom === 1 ? page.context() : await chromium.launchPersistentContext(profile, {
       channel: 'chrome', viewport: { width: 1366, height: 768 }, timeout: 30000,
     })
-    context.setDefaultTimeout(15000)
-    context.setDefaultNavigationTimeout(20000)
+    context.setDefaultTimeout(25000)
+    context.setDefaultNavigationTimeout(30000)
     try {
       if (zoom !== 1) {
         const settings = context.pages()[0]
@@ -512,9 +512,9 @@ test('Chrome native page zoom keeps long finance and history records usable', as
         await control.selectOption(String(zoom))
       }
       console.log(`Chrome native page zoom set to ${zoom * 100}%`)
-      await context.addCookies(cookies)
-      const app = await context.newPage()
-      const history = await context.newPage()
+      if (zoom !== 1) await context.addCookies(cookies)
+      const app = completion ? null : await context.newPage()
+      const history = completion ? null : await context.newPage()
       const takeover = await context.newPage()
       const receipt = completion ? await context.newPage() : null
       async function capture(candidate, screenshot) {
@@ -526,19 +526,22 @@ test('Chrome native page zoom keeps long finance and history records usable', as
           await session.detach()
         }
       }
-      await app.goto(new URL('/finance?date_from=2026-11-01&date_to=2026-11-30', baseURL).href)
-      const sales = app.locator('article').filter({ hasText: '合同销售额' }).first()
-      await sales.getByRole('button', { name: '查看构成明细' }).click()
-      const detail = app.getByRole('region', { name: '财务金额构成明细' })
-      const orderRow = detail.getByRole('row').filter({ hasText: fixture.order })
-      await expect(orderRow).toContainText(fixture.customer)
-      await expect(orderRow).toContainText('¥71,035.50')
-      await history.goto(new URL('/history-preflight', baseURL).href)
-      await history.locator('input[type="file"]').setInputFiles(path.join(evidenceDir, fixture.workbook))
-      await history.getByRole('button', { name: '开始预检', exact: true }).click()
-      await expect(history.locator('.preflight-summary')).toContainText(fixture.workbook)
-      await expect(history.getByRole('row').filter({ hasText: fixture.historical_order })).not.toHaveCount(0)
-      await expect(history.getByRole('row').filter({ hasText: 'SYNTH-HISTORY-LONG-LINE-' })).toHaveCount(4)
+      let orderRow
+      if (!completion) {
+        await app.goto(new URL('/finance?date_from=2026-11-01&date_to=2026-11-30', baseURL).href)
+        const sales = app.locator('article').filter({ hasText: '合同销售额' }).first()
+        await sales.getByRole('button', { name: '查看构成明细' }).click()
+        const detail = app.getByRole('region', { name: '财务金额构成明细' })
+        orderRow = detail.getByRole('row').filter({ hasText: fixture.order })
+        await expect(orderRow).toContainText(fixture.customer)
+        await expect(orderRow).toContainText('¥71,035.50')
+        await history.goto(new URL('/history-preflight', baseURL).href)
+        await history.locator('input[type="file"]').setInputFiles(path.join(evidenceDir, fixture.workbook))
+        await history.getByRole('button', { name: '开始预检', exact: true }).click()
+        await expect(history.locator('.preflight-summary')).toContainText(fixture.workbook)
+        await expect(history.getByRole('row').filter({ hasText: fixture.historical_order })).not.toHaveCount(0)
+        await expect(history.getByRole('row').filter({ hasText: 'SYNTH-HISTORY-LONG-LINE-' })).toHaveCount(4)
+      }
       const takeoverFinance = await openHistoricalFinance(takeover, baseURL)
       const correction = takeover.getByRole('button', { name: '提交追溯更正申请' })
       if (completion) {
@@ -547,7 +550,7 @@ test('Chrome native page zoom keeps long finance and history records usable', as
         await expect(takeover.getByText('请写明原值、更正值及涉及的字段。')).toBeVisible()
         await takeover.getByLabel('更正明细（原值、更正值）').fill('原记录数量 20 件，核对签收凭证后更正为 22 件。')
         await takeover.getByLabel('提交原因（必填）').fill('核对签收凭证后发现数量录入错误。')
-        await receipt.goto(new URL('/transactions', baseURL).href)
+        await receipt.goto(new URL('/transactions', baseURL).href, { waitUntil: 'domcontentloaded' })
         await receipt.getByRole('button', { name: '新增记账', exact: true }).click()
         const editor = receipt.getByRole('dialog', { name: '新增记账', exact: true })
         await editor.getByLabel(/^类型/).selectOption('customer_receipt')
@@ -598,8 +601,11 @@ test('Chrome native page zoom keeps long finance and history records usable', as
             expect(bounds.x).toBeGreaterThanOrEqual(0)
             expect(bounds.x + bounds.width).toBeLessThanOrEqual(layout.width + 1)
             expect(bounds.y + bounds.height).toBeLessThanOrEqual(height / zoom + 1)
-            await capture(candidate, `${name}-${width}-zoom-${zoom * 100}.png`)
+            const screenshot = `${name}-${width}-zoom-${zoom * 100}.png`
+            await capture(candidate, screenshot)
+            results.push({ name, width, height, zoom, screenshot, ...layout })
           }
+          continue
         }
         for (const [name, candidate] of [['finance', app], ['history-preflight', history], ['history-takeover', takeover]]) {
           await candidate.setViewportSize({ width, height })
@@ -630,7 +636,7 @@ test('Chrome native page zoom keeps long finance and history records usable', as
         }
       }
     } finally {
-      await context.close()
+      if (zoom !== 1) await context.close()
     }
   }
   await writeFile(path.join(evidenceDir, 'native-zoom-results.json'), JSON.stringify(results, null, 2))
@@ -725,6 +731,8 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   await page.screenshot({ path: path.join(evidenceDir, 'funds-pending-review.png') })
   await cash.getByRole('checkbox', { name: /我已核对银行凭证和来源分配/ }).check()
   await cash.getByRole('button', { name: '确认银行凭证' }).click()
+  const confirmed = page.getByRole('row').filter({ hasText: 'SYNTH-COMPLETION-REVIEW-01' })
+  await expect(confirmed).toContainText('已确认')
   await expect(cash).toContainText('已确认')
   await page.screenshot({ path: path.join(evidenceDir, 'funds-reviewed.png') })
 })

@@ -738,6 +738,13 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 @media(max-width:900px){.takeover-columns{grid-template-columns:1fr}.takeover-list{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-list-head,.takeover-empty{grid-column:1/-1}}
 .takeover-step-number{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-right:5px;border-radius:50%;background:#e7f1eb;color:#285c49;font-size:11px;vertical-align:middle}.takeover-group-head,.takeover-remainder-item,.takeover-result-row,.takeover-audit{min-width:0}.takeover-result-row,.takeover-result-row li,.takeover-remainder-item,.takeover-group-tab,.takeover-audit li{overflow-wrap:anywhere;word-break:break-word}.takeover-form-grid input,.takeover-form-grid select{min-width:0;max-width:100%}.takeover-resolution summary{cursor:pointer;font-weight:700}.takeover-resolution p{line-height:1.6}
 @media(max-width:600px){.takeover-intro{display:grid;padding:16px}.takeover-intro-actions{justify-items:start;width:100%}.takeover-lock{white-space:normal;width:max-content;max-width:100%}.takeover-upload,.takeover-list,.takeover-detail{padding:14px}.takeover-upload-row{display:grid}.takeover-file{align-items:flex-start;flex-direction:column}.takeover-file input{max-width:100%;width:100%}.takeover-list{grid-template-columns:1fr}.takeover-detail-head{display:grid}.takeover-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.takeover-form-grid{grid-template-columns:minmax(0,1fr)}.takeover-actions>*{flex:1}.takeover-actions button{min-height:40px}.takeover-group-tab{max-width:100%;flex-wrap:wrap}.takeover-step-number{flex:none}}
-.takeover-fields { display: grid; gap: .75rem; }
+.takeover-fields { display: grid; gap: .75rem; min-width: 0; }
+.takeover-fields label { display: grid; gap: 5px; min-width: 0; color: #3b5149; }
+.takeover-fields :is(input, select, textarea) {
+  box-sizing: border-box; width: 100%; min-width: 0; padding: 8px 10px;
+  border: 1px solid #d0ddd6; border-radius: 7px; background: #fff; color: inherit; font: inherit;
+}
+.takeover-fields textarea { resize: vertical; }
+.takeover-fields [role=alert] { color: #a12319; overflow-wrap: anywhere; }
 .takeover-audit dd { overflow-wrap: anywhere; white-space: pre-wrap; }
 </style>

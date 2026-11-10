@@ -1,0 +1,88 @@
+{
+  "source": "a36dd39425f00252414a9f012d910caef9660614",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "key": "quote-packaging-saved-return-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-packaging-saved-return-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ]
+    },
+    {
+      "key": "quote-packaging-saved-return-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-packaging-saved-return-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ]
+    },
+    {
+      "key": "quote-trade-unit-reopened-http",
+      "quoteStatus": 201,
+      "packagingStatus": 200,
+      "cartons": 2,
+      "baseQuantity": 10
+    }
+  ],
+  "failures": []
+}

@@ -9,6 +9,11 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
   test.setTimeout(2400000)
   const root = process.env.ISOLATED_TEST_ROOT
   const output = path.resolve(process.env.E1_R2_EVIDENCE_DIR)
+  const extension = process.env.E1_R2_EXTRA || ''
+  const widthFilter = process.env.E1_R2_WIDTH
+  expect(['', '1', '2', '3', '4']).toContain(extension)
+  if (widthFilter) expect(viewports.map(([width]) => String(width))).toContain(widthFilter)
+  const core = !extension || extension === '1'
   await mkdir(output, { recursive: true })
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
   const seed = path.resolve('../docs/uat-evidence/ui-sales-completion-02/seed.py')
@@ -32,6 +37,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
     const zoomControl = settings.locator('settings-appearance-page select').filter({
       has: settings.locator('option[value="1.25"]'),
     })
+    await expect(zoomControl).toBeVisible({ timeout: 150000 })
     const page = await context.newPage()
     const cdp = await context.newCDPSession(page)
     const browser = (await cdp.send('Browser.getVersion')).product
@@ -44,7 +50,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       for (const zoom of [1, 1.25]) {
         await zoomControl.selectOption(String(zoom))
         for (const [width, height] of viewports) {
-          if (process.env.E1_R2_WIDTH && width !== Number(process.env.E1_R2_WIDTH)) continue
+          if (widthFilter && String(width) !== widthFilter) continue
           const key = state + '-' + width + '-' + zoom * 100
           try {
             await page.setViewportSize({ width, height })
@@ -88,13 +94,13 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       catch (error) { failures.push({ key, error: String(error.message).slice(0, 900) }); await save() }
     }
 
-    await scenario('quote-editor', async () => {
+    if (core) await scenario('quote-editor', async () => {
       await go('/quotes')
       await button('新建报价').click()
       const editor = page.getByRole('form', { name: '报价编辑器' })
       await expect(editor).toBeVisible()
       await collect('quote-new', noPageOverflow)
-      await editor.locator('.sku-picker-options input[type=checkbox]').first().check()
+      await editor.locator('.sku-picker-options label').filter({ hasText: 'SYNTH-SALES-SKU-001' }).getByRole('checkbox').check()
       await expect(editor.locator('.quote-line-row')).toHaveCount(1)
       await collect('quote-selected', async result => {
         noPageOverflow(result)
@@ -111,7 +117,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       })
     })
 
-    if (process.env.E1_R2_EXTRA === '1') await scenario('quote-editor-recovery', async () => {
+    if (extension === '1') await scenario('quote-editor-recovery', async () => {
       const editor = page.getByRole('form', { name: '报价编辑器' })
       await editor.getByRole('button', { name: '保存报价', exact: true }).click()
       const requiredCustomer = editor.getByText('请选择客户。', { exact: true })
@@ -172,14 +178,14 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       await expect(editor).toHaveCount(0)
     })
 
-    await scenario('quote-revision', async () => {
+    if (core) await scenario('quote-revision', async () => {
       await go('/quotes?detail=' + fixture.quote)
       await button('创建修订版').click()
       await expect(page.locator('.quote-line-row')).toHaveCount(4)
       await collect('quote-revision', noPageOverflow)
     })
 
-    await scenario('quote-preview', async () => {
+    if (core) await scenario('quote-preview', async () => {
       await go('/quotes?detail=' + fixture.quote)
       await button('预览 PI').click()
       const modal = page.getByRole('dialog', { name: 'PI 预览' })
@@ -200,7 +206,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       await expect(button('预览 PI')).toBeVisible()
     })
 
-    await scenario('order-badge', async () => {
+    if (core) await scenario('order-badge', async () => {
       await go('/orders?detail=' + fixture.order)
       const badge = page.locator('.detail-identity .detail-badge')
       await expect(badge).toBeVisible()
@@ -216,7 +222,133 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       })
     })
 
-    await scenario('follow-up-attachment-retry', async () => {
+    if (extension === '2') await scenario('order-terminal-states', async () => {
+      await go('/orders?detail=' + fixture.order)
+      const workbench = page.getByRole('dialog', { name: '订单工作台' })
+      await workbench.getByRole('button', { name: '取消订单', exact: true }).click()
+      const cancellation = page.locator('.trade-shipment-dialog').filter({ has: page.getByRole('heading', { name: '取消订单' }) })
+      const confirm = cancellation.getByRole('button', { name: '确认取消', exact: true })
+      await expect(confirm).toBeDisabled()
+      await collect('order-cancel-required', async result => {
+        noPageOverflow(result)
+        await expect(confirm).toBeDisabled()
+        await expect(cancellation.getByRole('button', { name: '返回' })).toBeVisible()
+      })
+      await cancellation.getByRole('button', { name: '返回' }).click()
+      await expect(workbench.getByRole('button', { name: '编辑草稿' })).toBeVisible()
+      await workbench.getByRole('button', { name: '取消订单', exact: true }).click()
+      const reason = 'SYNTH-SALES 验收取消'
+      await cancellation.getByLabel('取消原因').fill(reason)
+      const cancelled = page.waitForResponse(r => r.url().endsWith('/cancel/') && r.request().method() === 'POST')
+      await confirm.click()
+      expect((await cancelled).status()).toBe(200)
+      await expect(cancellation).toHaveCount(0)
+      await go('/orders?detail=' + fixture.order)
+      await expect(workbench.locator('.detail-badge')).toContainText('已取消')
+      await expect(workbench.getByText(reason, { exact: false }).first()).toBeVisible()
+      await collect('order-cancelled-read-only', async result => {
+        noPageOverflow(result)
+        await expect(workbench.getByRole('button', { name: '编辑草稿' })).toHaveCount(0)
+        await expect(workbench.getByRole('button', { name: '取消订单' })).toHaveCount(0)
+      })
+
+      await go('/orders?detail=' + fixture.completedOrder)
+      await expect(workbench.locator('.detail-badge')).toContainText('已完成')
+      await collect('order-completed-read-only', async result => {
+        noPageOverflow(result)
+        await expect(workbench.getByRole('button', { name: '编辑草稿' })).toHaveCount(0)
+        await expect(workbench.getByRole('button', { name: '取消订单' })).toHaveCount(0)
+        await expect(workbench.getByRole('button', { name: '完成履约' })).toHaveCount(0)
+      })
+    })
+
+    if (extension === '3') await scenario('order-procurement-draft', async () => {
+      await go('/orders?detail=' + fixture.procurementOrder)
+      const workbench = page.getByRole('dialog', { name: '订单工作台' })
+      await workbench.getByRole('button', { name: '采购与发货', exact: true }).click()
+      await button('生成采购草稿').click()
+      const drawer = page.getByRole('dialog', { name: '采购草稿预览' })
+      await expect(drawer.getByRole('heading', { name: '合成采购来源 · CNY' })).toBeVisible()
+      const create = drawer.getByRole('button', { name: '创建 采购草稿' })
+      const quantity = drawer.getByRole('row').filter({ hasText: 'SYNTH-PROCUREMENT' }).getByRole('spinbutton').first()
+      await quantity.fill('16')
+      await expect(drawer.getByText('本次采购数量必须介于 0 与当前可生成数量之间。')).toBeVisible()
+      await expect(create).toBeDisabled()
+      await quantity.fill('15')
+      await collect('order-procurement-draft-preview', async result => {
+        noPageOverflow(result)
+        await expect(create).toBeEnabled()
+      })
+
+      const created = page.waitForResponse(r => r.url().endsWith('/generate-purchase-drafts/') && r.request().method() === 'POST')
+      await create.click()
+      const response = await created
+      expect(response.status()).toBe(201)
+      const { created_count, purchase_orders } = await response.json()
+      expect(created_count).toBe(1)
+      const [draft] = purchase_orders
+      await expect(drawer).toHaveCount(0)
+      await expect(workbench.getByRole('link', { name: draft.purchase_no })).toBeVisible()
+      const stored = await page.request.get(`/api/purchase-orders/${draft.id}/`)
+      expect(stored.status()).toBe(200)
+      const record = await stored.json()
+      expect(record.status).toBe('draft')
+      expect(record.order).toBe(fixture.procurementOrder)
+      expect(Number(record.items[0].quantity)).toBe(15)
+      await go('/orders?detail=' + fixture.procurementOrder)
+      await workbench.getByRole('button', { name: '采购与发货', exact: true }).click()
+      await collect('order-procurement-draft-reopened', async result => {
+        noPageOverflow(result)
+        await expect(workbench.getByRole('link', { name: draft.purchase_no })).toBeVisible()
+        await expect(button('生成采购草稿')).toBeDisabled()
+      })
+      results.push({ key: 'procurement-created-http', status: 201, purchase: draft.purchase_no, draftQuantity: 15 })
+      await save()
+    })
+
+    if (extension === '4') await scenario('quote-trade-unit-and-packaging', async () => {
+      await go('/quotes?create=1&customer=' + fixture.customer)
+      const editor = page.getByRole('form', { name: '报价编辑器' })
+      await editor.locator('.sku-picker-options label').filter({ hasText: 'SYNTH-SALES-SKU-001' }).getByRole('checkbox').check()
+      const tradeUnit = editor.getByLabel('交易单位与包装规格')
+      await tradeUnit.selectOption(String(fixture.tradeUnit))
+      await editor.getByLabel('数量', { exact: true }).fill('2')
+      await expect(editor.getByText(/^2(?:\.0+)? 箱 = 10 pcs$/)).toBeVisible()
+      await button('生成预计装箱方案').click()
+      await editor.getByRole('button', { name: /补充默认包装/ }).click()
+      const packaging = page.locator('.packaging-config-modal')
+      await packaging.locator('select').selectOption(String(fixture.carton))
+      await packaging.getByRole('spinbutton').nth(0).fill('5')
+      await packaging.getByRole('spinbutton').nth(1).fill('0.5')
+      const savedPackaging = page.waitForResponse(r => r.url().endsWith('/packaging/') && r.request().method() === 'PUT')
+      await packaging.getByRole('button', { name: '保存默认包装' }).click()
+      expect((await savedPackaging).status()).toBe(200)
+      await expect(packaging).toHaveCount(0)
+      await expect(editor.locator('.packing-table-wrap tbody tr')).toHaveCount(2)
+      await editor.locator('.packing-summary').scrollIntoViewIfNeeded()
+      await collect('quote-packaging-saved-return', async result => {
+        noPageOverflow(result)
+        await expect(editor.getByText(/^2(?:\.0+)? 箱 = 10 pcs$/)).toBeVisible()
+        await expect(editor.locator('.packing-table-wrap tbody tr')).toHaveCount(2)
+      })
+
+      const created = page.waitForResponse(r => r.url().endsWith('/api/quotes/') && r.request().method() === 'POST')
+      await editor.getByRole('button', { name: '保存报价', exact: true }).click()
+      const response = await created
+      const saved = await response.json()
+      expect(response.status(), JSON.stringify(saved)).toBe(201)
+      expect(Number(saved.items[0].trade_unit)).toBe(fixture.tradeUnit)
+      await go('/quotes?edit=' + saved.id)
+      await expect(tradeUnit).toHaveValue(String(fixture.tradeUnit))
+      await expect.poll(() => editor.getByLabel('数量', { exact: true }).evaluate(input => Number(input.value))).toBe(2)
+      await expect(editor.getByText(/^2(?:\.0+)? 箱 = 10 pcs$/)).toBeVisible()
+      await button('生成预计装箱方案').click()
+      await expect(editor.locator('.packing-table-wrap tbody tr')).toHaveCount(2)
+      results.push({ key: 'quote-trade-unit-reopened-http', quoteStatus: 201, packagingStatus: 200, cartons: 2, baseQuantity: 10 })
+      await save()
+    })
+
+    if (core) await scenario('follow-up-attachment-retry', async () => {
       await go('/follow-ups?search=SYNTH-SALES')
       const row = page.getByRole('row').filter({ hasText: 'SYNTH-SALES 附件与重开' })
       await row.getByRole('button', { name: '编辑跟进记录' }).click()
@@ -256,6 +388,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
     })
 
     expect(failures, JSON.stringify(failures, null, 2)).toEqual([])
+    expect(results.some(result => result.file)).toBe(true)
   } finally {
     await context.close()
   }

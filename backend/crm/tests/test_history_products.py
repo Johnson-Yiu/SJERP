@@ -7,7 +7,7 @@ from unittest import skipUnless
 from decimal import Decimal
 from unittest.mock import patch
 
-from django.db import close_old_connections, connection
+from django.db import close_old_connections, connection, connections
 from django.test import TestCase, TransactionTestCase, override_settings
 
 from crm.history_product_models import ArchivedHistoryLine, HistoryProductLink, HistoryProductRule
@@ -199,7 +199,7 @@ class HistoryProductPostgresTests(HistoryProductFixture, TransactionTestCase):
                 result = client.post(ROOT + "apply/", {"token": token}, format="json")
                 return result.status_code, result.data
             finally:
-                close_old_connections()
+                connections.close_all()
 
         with ThreadPoolExecutor(max_workers=2) as pool:
             futures = [pool.submit(worker, self.admin, left.data["token"]), pool.submit(worker, other, right.data["token"])]

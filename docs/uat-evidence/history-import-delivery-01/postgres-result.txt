@@ -1,7 +1,8 @@
 PostgreSQL 17.11, isolated temporary cluster and dedicated test database
-Source commit: 973b022c4e1f8d90f867562f5966e52aa3345246
+Source commit: 676c401c4c4e49f6aaf6f6ec0b89b3ec995eefd7
 Test: crm.tests.test_history_delivery_same_batch.DeliverySameBatchTests.test_customer_archive_link_and_finance
-Result: 1 test, OK, 0 skipped (4.500 seconds)
+Result: 1 test, OK, 0 skipped (4.178 seconds)
 Expected 400 responses: malformed source group review duplicate source review and specification conflict preview.
 Test databases remaining: []
 Cluster cleanup: complete
+Python environment: requirements.lock exact versions verified; pip check passed.

@@ -1,0 +1,90 @@
+{
+  "source": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+  "chromeResults": {
+    "salesImportCompletion": 11,
+    "historicalLinking125Percent": 1
+  },
+  "files": [
+    {
+      "file": "finance-overview.csv",
+      "bytes": 592,
+      "sha256": "92ec6fbf6beb034c2516b39acb19b771f8d0df7bc7dc456008a34684ca30bc74",
+      "header": [
+        "账面收支报表（人民币折算参考）",
+        "2026-11-01",
+        "2026-11-11",
+        "账面人民币折算参考：已确认流水按既有人民币金额及流水汇率汇总，包含原币为CNY的既有流水；不代表银行实际到账、已完成结汇或银行账户余额。流水发生日期不等同于银行到账日。"
+      ],
+      "dataRows": 6,
+      "utf8Bom": true
+    },
+    {
+      "file": "history-products.csv",
+      "bytes": 756,
+      "sha256": "4b399dc70358315d5c7c8f7db88b244b7058ce025fe5c061557fcd950976bb95",
+      "header": [
+        "统计口径",
+        "来源",
+        "批次",
+        "原订单",
+        "原明细",
+        "日期",
+        "原编码",
+        "历史商品",
+        "历史规格",
+        "历史分类",
+        "数量",
+        "单位",
+        "商品金额",
+        "币种",
+        "关联状态",
+        "正式 SKU",
+        "当前 SKU 名称"
+      ],
+      "dataRows": 4,
+      "utf8Bom": true,
+      "totals": {
+        "USD": "15.00",
+        "CNY": "200.00"
+      }
+    },
+    {
+      "file": "integrated-history-preflight.csv",
+      "bytes": 2141,
+      "sha256": "3c97367973636225fae5d41aeaa20fa576a93e1aeb1a2133d1ca360787925528",
+      "header": [
+        "工作表",
+        "原行号",
+        "原系统记录编号",
+        "来源关联组编号",
+        "结果",
+        "原因",
+        "关联记录",
+        "建议动作"
+      ],
+      "dataRows": 4,
+      "utf8Bom": true
+    },
+    {
+      "file": "sales-order-import-errors.csv",
+      "bytes": 109,
+      "sha256": "69c1008b26050dd5943d2a0fa8885aaee8ef0efc7eace10d1e9e17955d41b0db",
+      "header": [
+        "表格行号",
+        "来源订单编号",
+        "错误原因"
+      ],
+      "dataRows": 1,
+      "utf8Bom": true
+    },
+    {
+      "file": "sales-order-import-template.xlsx",
+      "bytes": 10116,
+      "sha256": "c6550153e82e77c8a1445c87f38d8fdaf045ccbaa7507e001e003d591069b0de",
+      "sheets": [
+        "使用说明",
+        "订单明细"
+      ]
+    }
+  ]
+}

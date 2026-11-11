@@ -1,0 +1,1503 @@
+[
+  {
+    "branch": "codex/audit-ux-visual-20261029",
+    "originalSha": "d3b9be06da578b988a78d595eab21fccb2983520",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "frontend/browser-tests/r1-ux-visual-audit-20261029.spec.js",
+      "frontend/scripts/run-isolated-browser-tests.mjs"
+    ]
+  },
+  {
+    "branch": "codex/finance-list-flex-01",
+    "originalSha": "75a6ff0843bc0b7c4a849fc3b61fd018486bdc84",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "frontend/src/views/CashEventPage.vue",
+      "frontend/src/views/FinanceLedgerPage.vue",
+      "frontend/src/views/TransactionPage.vue"
+    ]
+  },
+  {
+    "branch": "codex/finance-receipt-optimization-02",
+    "originalSha": "c978758f37db8b8acf5e751fc7aa836287163a6b",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/services/finance_closeout.py": {
+        "blob": "8df4d10b26692db2e55102e04dc983a944d453a1",
+        "candidateAncestor": "648b6c90e3cc6ac16259c7a07f8073f3641a6b13"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/cash_api.py",
+      "backend/crm/context.py",
+      "backend/crm/migrations/0120_advanceallocation_cash_amount_and_more.py",
+      "backend/crm/models.py",
+      "backend/crm/reporting.py",
+      "backend/crm/serializers.py",
+      "backend/crm/services/cash_events.py",
+      "backend/crm/services/finance.py",
+      "backend/crm/services/profit.py",
+      "backend/crm/tests/test_cash_events.py",
+      "backend/crm/tests/test_finance_receipt_optimization.py",
+      "backend/crm/views.py",
+      "backend/test_support/seed_numeric_wheel_browser.py",
+      "frontend/browser-tests/global-numeric-wheel-guard.spec.js",
+      "frontend/scripts/run-isolated-browser-tests.mjs",
+      "frontend/src/App.vue",
+      "frontend/src/components/CashEventEntryForm.vue",
+      "frontend/src/utils/numericWheelGuard.test.js",
+      "frontend/src/views/FinanceDashboardPage.vue",
+      "frontend/src/views/TransactionPage.test.js",
+      "frontend/src/views/TransactionPage.vue",
+      "frontend/tests/finance-reference-basis.spec.js",
+      "frontend/tests/receipt-settlement-entry.spec.js",
+      "frontend/tests/trade-finance.spec.js"
+    ]
+  },
+  {
+    "branch": "codex/finance-transactions-unified-entry-01",
+    "originalSha": "52d924b05085e67bf97dc5a5cfac01b6ba48ed70",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/services/finance_closeout.py": {
+        "blob": "8df4d10b26692db2e55102e04dc983a944d453a1",
+        "candidateAncestor": "648b6c90e3cc6ac16259c7a07f8073f3641a6b13"
+      },
+      "frontend/tests/trade-finance.spec.js": {
+        "blob": "4334be5a8cf6e878765972a89a688fb39c61dcf9",
+        "candidateAncestor": "eb2a57dbb70f088682b6a0102f6c2f726ff66ec0"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/cash_api.py",
+      "backend/crm/models.py",
+      "backend/crm/serializers.py",
+      "backend/crm/services/cash_events.py",
+      "backend/crm/services/finance.py",
+      "backend/crm/tests/test_cash_events.py",
+      "backend/crm/views.py",
+      "frontend/src/App.vue",
+      "frontend/src/views/CashEventPage.test.js",
+      "frontend/src/views/CashEventPage.vue",
+      "frontend/src/views/FinanceDashboardPage.vue",
+      "frontend/src/views/TransactionPage.test.js",
+      "frontend/src/views/TransactionPage.vue"
+    ],
+    "descendantBranchHeads": [
+      {
+        "branch": "codex/finance-receipt-optimization-02",
+        "sha": "c978758f37db8b8acf5e751fc7aa836287163a6b"
+      }
+    ]
+  },
+  {
+    "branch": "codex/first-release-independent-review-02",
+    "originalSha": "11c964897afb7558db8e3cd41c4539571aead5eb",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "backend/test_support/seed_ui_coverage_cash.py",
+      "backend/test_support/seed_ui_coverage_categories.py",
+      "backend/test_support/seed_ui_coverage_order_source.py",
+      "backend/test_support/seed_ui_coverage_product_tree.py",
+      "backend/test_support/seed_ui_coverage_quote_packaging.py",
+      "backend/test_support/seed_ui_coverage_reminders.py",
+      "backend/test_support/seed_ui_coverage_sales_import.py",
+      "backend/test_support/seed_ui_followup_attachment.py",
+      "backend/test_support/seed_ui_movement_reverse.py",
+      "backend/test_support/seed_ui_movement_states.py",
+      "backend/test_support/seed_ui_packaging_confirm.py",
+      "backend/test_support/seed_ui_quote_note.py",
+      "backend/test_support/seed_ui_supplier_change.py",
+      "backend/test_support/seed_ui_trade_unit.py",
+      "frontend/browser-tests/ui-coverage-02-access-pages.spec.js",
+      "frontend/browser-tests/ui-coverage-02-attribute-delete-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-beforeunload.spec.js",
+      "frontend/browser-tests/ui-coverage-02-binding.spec.js",
+      "frontend/browser-tests/ui-coverage-02-cash-detail.spec.js",
+      "frontend/browser-tests/ui-coverage-02-category-delete-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-category.spec.js",
+      "frontend/browser-tests/ui-coverage-02-customer-combined.spec.js",
+      "frontend/browser-tests/ui-coverage-02-customer-delete-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-customer-empty.spec.js",
+      "frontend/browser-tests/ui-coverage-02-customer-filter.spec.js",
+      "frontend/browser-tests/ui-coverage-02-customer-options.spec.js",
+      "frontend/browser-tests/ui-coverage-02-customer-retry.spec.js",
+      "frontend/browser-tests/ui-coverage-02-draft-bulk.spec.js",
+      "frontend/browser-tests/ui-coverage-02-draft-close.spec.js",
+      "frontend/browser-tests/ui-coverage-02-draft-isolation.spec.js",
+      "frontend/browser-tests/ui-coverage-02-finance-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-followup-attachment-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-followup-attachment.spec.js",
+      "frontend/browser-tests/ui-coverage-02-followup-delete.spec.js",
+      "frontend/browser-tests/ui-coverage-02-followup-geometry.spec.js",
+      "frontend/browser-tests/ui-coverage-02-initial.spec.js",
+      "frontend/browser-tests/ui-coverage-02-inventory-modal.spec.js",
+      "frontend/browser-tests/ui-coverage-02-ledger-scroll.spec.js",
+      "frontend/browser-tests/ui-coverage-02-ledger-tabs.spec.js",
+      "frontend/browser-tests/ui-coverage-02-login-errors.spec.js",
+      "frontend/browser-tests/ui-coverage-02-login-load.spec.js",
+      "frontend/browser-tests/ui-coverage-02-login-required.spec.js",
+      "frontend/browser-tests/ui-coverage-02-login-variants.spec.js",
+      "frontend/browser-tests/ui-coverage-02-logout-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-mobile-navigation.spec.js",
+      "frontend/browser-tests/ui-coverage-02-mobile-order-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-mobile-order.spec.js",
+      "frontend/browser-tests/ui-coverage-02-movement-reverse-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-movement-reverse.spec.js",
+      "frontend/browser-tests/ui-coverage-02-movement-states.spec.js",
+      "frontend/browser-tests/ui-coverage-02-navigation-breakpoint.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-backdrop.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-confirm-dialog.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-confirm-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-delete-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-delete-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-delete-pending.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-money-wheel.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-quote-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-quote-overwrite.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-source-candidate.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-source-close-pending.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-source-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-source-pending.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-source.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-tabs.spec.js",
+      "frontend/browser-tests/ui-coverage-02-order-wheel.spec.js",
+      "frontend/browser-tests/ui-coverage-02-packaging-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-packaging-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-product-delete-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-product-sku-batch-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-product-sku-batch-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-product-tree.spec.js",
+      "frontend/browser-tests/ui-coverage-02-product.spec.js",
+      "frontend/browser-tests/ui-coverage-02-purchase-cancel.spec.js",
+      "frontend/browser-tests/ui-coverage-02-purchase-currency.spec.js",
+      "frontend/browser-tests/ui-coverage-02-purchase-delete.spec.js",
+      "frontend/browser-tests/ui-coverage-02-purchase-moq-dialog.spec.js",
+      "frontend/browser-tests/ui-coverage-02-purchase-moq-retry.spec.js",
+      "frontend/browser-tests/ui-coverage-02-purchase-place-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-purchase-supplier.spec.js",
+      "frontend/browser-tests/ui-coverage-02-purchase-tabs.spec.js",
+      "frontend/browser-tests/ui-coverage-02-quote-note-deactivate-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-quote-note-deactivate.spec.js",
+      "frontend/browser-tests/ui-coverage-02-quote-note-link.spec.js",
+      "frontend/browser-tests/ui-coverage-02-quote-note-mouse.spec.js",
+      "frontend/browser-tests/ui-coverage-02-quote-packaging.spec.js",
+      "frontend/browser-tests/ui-coverage-02-quote-preview.spec.js",
+      "frontend/browser-tests/ui-coverage-02-receipt.spec.js",
+      "frontend/browser-tests/ui-coverage-02-related-order.spec.js",
+      "frontend/browser-tests/ui-coverage-02-reminders.spec.js",
+      "frontend/browser-tests/ui-coverage-02-route-1920.spec.js",
+      "frontend/browser-tests/ui-coverage-02-route-baseline.spec.js",
+      "frontend/browser-tests/ui-coverage-02-sales-import.spec.js",
+      "frontend/browser-tests/ui-coverage-02-scroll.spec.js",
+      "frontend/browser-tests/ui-coverage-02-sku-deactivate-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-sku-deactivate-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-sku-horizontal.spec.js",
+      "frontend/browser-tests/ui-coverage-02-sku-source-deactivate.spec.js",
+      "frontend/browser-tests/ui-coverage-02-sku-source-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-supplier-confirm.spec.js",
+      "frontend/browser-tests/ui-coverage-02-supplier-horizontal.spec.js",
+      "frontend/browser-tests/ui-coverage-02-tab-move.spec.js",
+      "frontend/browser-tests/ui-coverage-02-tab-overflow.spec.js",
+      "frontend/browser-tests/ui-coverage-02-tab-threshold.spec.js",
+      "frontend/browser-tests/ui-coverage-02-takeover.spec.js",
+      "frontend/browser-tests/ui-coverage-02-trade-unit-deactivate.spec.js",
+      "frontend/browser-tests/ui-coverage-02-trade-unit-dirty.spec.js",
+      "frontend/browser-tests/ui-coverage-02-trade-unit-failure.spec.js",
+      "frontend/browser-tests/ui-coverage-02-workspace-busy.spec.js",
+      "frontend/browser-tests/ui-coverage-02-workspace.spec.js",
+      "frontend/scripts/run-ui-coverage-isolated.mjs"
+    ]
+  },
+  {
+    "branch": "codex/fix-iss052-csv-import-audit-20261029",
+    "originalSha": "dc2bbbb2b29fbc8ffc26c392659e79319c86d592",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/permissions.py": {
+        "blob": "49312bbf4e967927dcdaec93a93827e6bb627a68",
+        "candidateAncestor": "2f5b7a332e18c4d389cf832e015eaca3c623728f"
+      },
+      "backend/crm/tests/__init__.py": {
+        "blob": "3b30e94f46acec11ec391709241bf275176f6d78",
+        "candidateAncestor": "e6b40cadb04c54ef3376307daba19f78276a913d"
+      },
+      "backend/crm/tests/test_dashboard_import.py": {
+        "blob": "abfaf1310bcbe04e2ba5e78df776a30fddbf102f",
+        "candidateAncestor": "2f5b7a332e18c4d389cf832e015eaca3c623728f"
+      },
+      "backend/crm/tests/test_safe_csv_import.py": {
+        "blob": "396d9ce538d9b97d1afaf0ab7737bb9a1300a925",
+        "candidateAncestor": "403f4a30d914e9e888dde2de261357d3c05deab7"
+      },
+      "backend/crm/tests/test_sales_data_scope.py": {
+        "blob": "616d61124b491217c1af31e364c8169fbb7a89a2",
+        "candidateAncestor": "642f3f1772cb8217a36b8c8b6a5e7f4d9e397f0a"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/models.py",
+      "backend/crm/views.py"
+    ]
+  },
+  {
+    "branch": "codex/fix-playwright-suite-stability-20261029",
+    "originalSha": "68ceb2953b19f1831e06f7d161e8364902308e4b",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/browser-tests/fulfillment-receivables.spec.js": {
+        "blob": "0c56f00c295689724335fba8756aae7a79fa46f5",
+        "candidateAncestor": "a9473afb3a68665ba59e3306a0e9cd4d4581236c"
+      },
+      "frontend/playwright.isolated.config.js": {
+        "blob": "c61c4f1f47b37227362f9e182d0c99ba39daf8cd",
+        "candidateAncestor": "f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a"
+      },
+      "frontend/scripts/run-playwright-suite-stability.mjs": {
+        "blob": "20d7cabe976978007a7547d57ec86de0374ea36f",
+        "candidateAncestor": "f9ccfbbdec5df26b269596b50f07eef590fed0f6"
+      }
+    },
+    "remainingDistinctPaths": [
+      "frontend/infrastructure-tests/runner-validation.test.mjs",
+      "frontend/scripts/run-isolated-browser-tests.mjs"
+    ]
+  },
+  {
+    "branch": "codex/fix-unified-ci-env-20261101",
+    "originalSha": "cd479ea5ad7cd923f5b1798c0f296f960ae46dae",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      ".github/workflows/ci.yml",
+      "frontend/infrastructure-tests/runner-validation.test.mjs"
+    ],
+    "descendantBranchHeads": [
+      {
+        "branch": "codex/r1-csv-audit-truncate-test-20261102",
+        "sha": "aeab244b7475f95d0c1d8069af546529e735e90f"
+      },
+      {
+        "branch": "codex/r1-iss018-postgres-boundary-20261102",
+        "sha": "704b0df6cc7fa18ce8ed29567afa8d13d605557e"
+      },
+      {
+        "branch": "codex/r1-iss018-postgres-ci-boundary-20261101",
+        "sha": "ac0d5a22ebecead70cf479fdee09d2f40335600d"
+      }
+    ]
+  },
+  {
+    "branch": "codex/global-numeric-wheel-guard-01",
+    "originalSha": "568105bd220185ae95e9f0d7b8b1c32081d445c3",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/src/utils/numericWheelGuard.test.js": {
+        "blob": "0632bacff9ad5e460c570cac199f1ec1fe4ead26",
+        "candidateAncestor": "fbd8bf3583531f5f42be532225c2c03982458fed"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/test_support/seed_numeric_wheel_browser.py",
+      "frontend/browser-tests/global-numeric-wheel-guard.spec.js",
+      "frontend/scripts/run-isolated-browser-tests.mjs"
+    ],
+    "descendantBranchHeads": [
+      {
+        "branch": "codex/finance-receipt-optimization-02",
+        "sha": "c978758f37db8b8acf5e751fc7aa836287163a6b"
+      }
+    ]
+  },
+  {
+    "branch": "codex/history-data-readiness-01",
+    "originalSha": "4d205ece04204e2f8d915ca9ba7707ac86532be7",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/history_import_preflight.py": {
+        "blob": "d15b9a1d5ccdb6441371cad8e44d4f75c5525553",
+        "candidateAncestor": "7eeae5de4feaaafbbcd4c1574acb88ecbfeec9b0"
+      },
+      "backend/crm/history_takeover.py": {
+        "blob": "1d8efa5579730b8bafcd829d8eb0855e5cfce014",
+        "candidateAncestor": "7eeae5de4feaaafbbcd4c1574acb88ecbfeec9b0"
+      },
+      "backend/crm/history_takeover_api.py": {
+        "blob": "4616e9f528b11ef314793cb7b9fa4dbd7aa3e9b8",
+        "candidateAncestor": "a1693bd58ba57a9ed68eed787af8a47d5f468426"
+      },
+      "backend/crm/models.py": {
+        "blob": "807476e4a4748dc7dfab19d66f4f6f9364852323",
+        "candidateAncestor": "ed1a554e09d8f49c9b0e07b96921b863b2f8e4f7"
+      },
+      "backend/crm/reporting.py": {
+        "blob": "d037ba78b793f74dba14f1622577eb00e8c3fd5f",
+        "candidateAncestor": "ed1a554e09d8f49c9b0e07b96921b863b2f8e4f7"
+      },
+      "backend/crm/tests/test_historical_orders.py": {
+        "blob": "cea2416742a14127cc7a02739a8526d0b34ab483",
+        "candidateAncestor": "ed1a554e09d8f49c9b0e07b96921b863b2f8e4f7"
+      },
+      "backend/crm/tests/test_history_import_preflight.py": {
+        "blob": "d6d216cbbffd7be4fdfeaa5db542e1e9ea840333",
+        "candidateAncestor": "7eeae5de4feaaafbbcd4c1574acb88ecbfeec9b0"
+      },
+      "backend/crm/tests/test_history_takeover.py": {
+        "blob": "8873185844a9b36de8a4f012d8af1cac3c4ce80e",
+        "candidateAncestor": "62245cfc8d55714af2ce14c9cb1dab825e164b82"
+      },
+      "backend/crm/tests/test_reporting.py": {
+        "blob": "48b1f52791428893a7a8ad076f197f9fa2046014",
+        "candidateAncestor": "62245cfc8d55714af2ce14c9cb1dab825e164b82"
+      },
+      "backend/crm/views.py": {
+        "blob": "e6f40d83d6e15a912279054875bcbcf04e90209d",
+        "candidateAncestor": "ed1a554e09d8f49c9b0e07b96921b863b2f8e4f7"
+      },
+      "frontend/src/views/HistoryPreflightPage.vue": {
+        "blob": "ec5300f86ae754cb95147a566f1832d493fe2b8a",
+        "candidateAncestor": "85a2b96b5a7b48d015e22a800b4c60e6ae83b857"
+      },
+      "frontend/src/views/HistoryTakeoverPage.vue": {
+        "blob": "37e3a8d85fff9b5c6e9532f66eb487b43b000db2",
+        "candidateAncestor": "a1693bd58ba57a9ed68eed787af8a47d5f468426"
+      },
+      "frontend/src/views/ImportPage.vue": {
+        "blob": "d144e9431ac4fd4b2e4e14c508d7c4278c3433ad",
+        "candidateAncestor": "717bfc3a3e208382f97045c915ce448bd71f9658"
+      },
+      "frontend/tests/history-takeover.spec.js": {
+        "blob": "2b8fe39e4d7bcaa466c2fb7fa3e94f8940cb59aa",
+        "candidateAncestor": "a1693bd58ba57a9ed68eed787af8a47d5f468426"
+      }
+    },
+    "remainingDistinctPaths": []
+  },
+  {
+    "branch": "codex/history-preflight-web-01",
+    "originalSha": "4c29837f42697596c8c67e8c2d34379a5939eebd",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/src/views/HistoryPreflightPage.test.js": {
+        "blob": "b59586ca9b688639f83f5c11c368195609ce37ce",
+        "candidateAncestor": "570e3c28df196d8494083072f4af326bfb853a54"
+      },
+      "frontend/src/views/HistoryPreflightPage.vue": {
+        "blob": "26a64b26c74a3db8d683f5daee3989dc378c13ca",
+        "candidateAncestor": "570e3c28df196d8494083072f4af326bfb853a54"
+      }
+    },
+    "remainingDistinctPaths": [
+      "frontend/src/App.vue",
+      "frontend/src/accessControl.js",
+      "frontend/src/router.js",
+      "frontend/src/views/HistoryTakeoverPage.vue"
+    ],
+    "descendantBranchHeads": [
+      {
+        "branch": "codex/history-preflight-web-fix-01",
+        "sha": "ecb38a7869ebff35ac76a876ee1f801616a64db0"
+      }
+    ]
+  },
+  {
+    "branch": "codex/history-preflight-web-fix-01",
+    "originalSha": "ecb38a7869ebff35ac76a876ee1f801616a64db0",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/src/views/HistoryPreflightPage.test.js": {
+        "blob": "51e312e4820f3a6a4e785778003e92a3490a42fe",
+        "candidateAncestor": "49189649f25fbe4849cf717d8d0118add556d794"
+      },
+      "frontend/src/views/HistoryPreflightPage.vue": {
+        "blob": "afb87c901bb43860962cb911c8036788fb9671cb",
+        "candidateAncestor": "49189649f25fbe4849cf717d8d0118add556d794"
+      }
+    },
+    "remainingDistinctPaths": [
+      "frontend/src/App.vue",
+      "frontend/src/accessControl.js",
+      "frontend/src/router.js",
+      "frontend/src/views/HistoryTakeoverPage.vue"
+    ],
+    "descendantBranchHeads": [
+      {
+        "branch": "codex/ui-copy-optimization-02",
+        "sha": "945c2ae41ce59d55051bbab4664f3d7a4df0fbba"
+      }
+    ]
+  },
+  {
+    "branch": "codex/iss-008-country-select",
+    "originalSha": "a14d3d929e0c64dbb06d375d9a0ffa832526af92",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/context.py": {
+        "blob": "113a8eb995c4b24600c19b0ae78bda4ba7d35fab",
+        "candidateAncestor": "8b2b5c19e517addd9604b239211e199a789b739e"
+      },
+      "backend/crm/country_registry.py": {
+        "blob": "38f53e28b070782a57d07d4d001847e73f104c74",
+        "candidateAncestor": "7de261e4e50758b7ba7809170be0a20cb5d384e7"
+      },
+      "backend/crm/serializers.py": {
+        "blob": "0ec447d01e6bc4e764fc77c40ba72cc94e9a4dab",
+        "candidateAncestor": "3ec269246c39c77bb34d530d8817ba0cb136c9a6"
+      },
+      "backend/crm/tests/test_issue_008_country_select.py": {
+        "blob": "54210871140d534e28de27ad7212e42db1a642ee",
+        "candidateAncestor": "7de261e4e50758b7ba7809170be0a20cb5d384e7"
+      },
+      "frontend/src/resourceConfigs.js": {
+        "blob": "38d6a0ece516d778c30e96eaa59cf9c7e3dd6b6f",
+        "candidateAncestor": "8b2b5c19e517addd9604b239211e199a789b739e"
+      },
+      "frontend/src/views/ResourcePage.vue": {
+        "blob": "639ee48a7bb19a71d0e3cf924b7eb6ac82d591c3",
+        "candidateAncestor": "8b2b5c19e517addd9604b239211e199a789b739e"
+      },
+      "frontend/tests/country-select.spec.js": {
+        "blob": "93f1afd9bb8417d73de2e89b4fff42ea5ceb2b52",
+        "candidateAncestor": "7de261e4e50758b7ba7809170be0a20cb5d384e7"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/views.py"
+    ]
+  },
+  {
+    "branch": "codex/iss-022-procurement-moq",
+    "originalSha": "6e7aaedd2cccef3150a5c7ee3135fd5f37dcee47",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/serializers.py": {
+        "blob": "83073416f016bb010e6c25262a63e52f2aa35bf9",
+        "candidateAncestor": "f12b591cb90d6a5d8ebfedf1c559703377c92d84"
+      },
+      "backend/crm/services/purchase_lifecycle.py": {
+        "blob": "683ee963463994d36ab1cc17b3aa1b8a079e27f5",
+        "candidateAncestor": "438bc5b8526bb43b48445b4646e82ead0b2caaa6"
+      },
+      "backend/crm/tests/test_purchase_moq.py": {
+        "blob": "cfd7850f61f20df1f372cc575273d73fc1916795",
+        "candidateAncestor": "e6b40cadb04c54ef3376307daba19f78276a913d"
+      },
+      "frontend/browser-tests/iss022-moq-real.spec.js": {
+        "blob": "1260a834b31299e2b5aadd041730b8ae2f087d53",
+        "candidateAncestor": "f12b591cb90d6a5d8ebfedf1c559703377c92d84"
+      },
+      "frontend/src/components/PurchaseDetailModal.vue": {
+        "blob": "073f0a7288127d2889ded1143b119ded590e8a39",
+        "candidateAncestor": "58577c809168a36c5b8f0d331b795d4c8d11f9f2"
+      },
+      "frontend/src/views/PurchaseOrderPage.test.js": {
+        "blob": "a099cc74f7ed1189128747fbd7e32ea0a4ae9ed3",
+        "candidateAncestor": "58577c809168a36c5b8f0d331b795d4c8d11f9f2"
+      },
+      "frontend/src/views/PurchaseOrderPage.vue": {
+        "blob": "b4e2e757638e7c51b6d7dd0778cc5facaca6023b",
+        "candidateAncestor": "8b2b5c19e517addd9604b239211e199a789b739e"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/models.py",
+      "backend/crm/views.py"
+    ]
+  },
+  {
+    "branch": "codex/iss-023-sales-model",
+    "originalSha": "c6a1415437fb2a020ec31d655fe8ce274aa93912",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/src/views/SKUPage.test.js": {
+        "blob": "10528337b166f4ef124e656b3fb7b499c874f2c6",
+        "candidateAncestor": "d9033a80134e3d02636208fb9b1033ce59c969c0"
+      },
+      "frontend/src/views/SKUPage.vue": {
+        "blob": "c306bfcde9744cb807d1ea79e4401fc2270f2f5b",
+        "candidateAncestor": "f82554686478f62e3a60ed69bb4144e8c052ac7c"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/serializers.py"
+    ]
+  },
+  {
+    "branch": "codex/iss-029-quote-recipient-snapshot",
+    "originalSha": "bb68ead4fd248fc446c259a5a142b798b4cd124a",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/tests/test_quotes.py": {
+        "blob": "758d21e55a848d0f5b0b897792ba0cc237b3283d",
+        "candidateAncestor": "e6b40cadb04c54ef3376307daba19f78276a913d"
+      },
+      "frontend/browser-tests/iss029-recipient-snapshot.spec.js": {
+        "blob": "98a64fe12cc536c90b519d8bd78d73bc306577dc",
+        "candidateAncestor": "39067e5d4c706d0fb2689c1cf62dae9036f26a3d"
+      },
+      "frontend/src/components/QuoteEditorModal.vue": {
+        "blob": "34200d4008f8fe6cee294be69e2a4b838fe8091a",
+        "candidateAncestor": "0eeaca68f6acf1f4029a1e955defaaafb765e046"
+      },
+      "frontend/tests/quote-editor-availability.spec.js": {
+        "blob": "8c0287057bce262ed59f280d6f288083b1f2c26b",
+        "candidateAncestor": "58577c809168a36c5b8f0d331b795d4c8d11f9f2"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/serializers.py"
+    ]
+  },
+  {
+    "branch": "codex/iss-043-audit-protection",
+    "originalSha": "dea057ce0c98fc32da44b72999beb4af78a58176",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      ".github/workflows/ci.yml": {
+        "blob": "ebbe64391d6a49279678948025296561c1681953",
+        "candidateAncestor": "069928829f5648be540bef469f3abcf8d4449753"
+      },
+      "backend/config/settings.py": {
+        "blob": "b597c988f7923011d0877b81ce993b06b8378aa3",
+        "candidateAncestor": "3cf5a8155df746728b0c3c56fc6fd1e8fa7a6e59"
+      },
+      "backend/crm/models.py": {
+        "blob": "89230003053e2509d7944266460764cc4021e12c",
+        "candidateAncestor": "1025c0c80f7ebafc3579293299a0187f027ee951"
+      }
+    },
+    "remainingDistinctPaths": []
+  },
+  {
+    "branch": "codex/iss-051-environment-isolation",
+    "originalSha": "8a3c8a0a0a67f896f62483ece5551f7d32fb868b",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      ".github/workflows/ci.yml": {
+        "blob": "be2d5465688803ab2a111922587f0fd3f6a5fa55",
+        "candidateAncestor": "8b2b5c19e517addd9604b239211e199a789b739e"
+      },
+      "backend/config/settings.py": {
+        "blob": "4a118f9a6f40c0c205682672ff7841dac6da686e",
+        "candidateAncestor": "8b2b5c19e517addd9604b239211e199a789b739e"
+      },
+      "backend/crm/tests/test_database_settings.py": {
+        "blob": "bcc0a98fe1a07ad77f5eeafa808fc3713b2648de",
+        "candidateAncestor": "3cf5a8155df746728b0c3c56fc6fd1e8fa7a6e59"
+      },
+      "backend/environment.example": {
+        "blob": "8384ee75a7643b011e2cccadc8999e5c7e113d0e",
+        "candidateAncestor": "3cf5a8155df746728b0c3c56fc6fd1e8fa7a6e59"
+      }
+    },
+    "remainingDistinctPaths": []
+  },
+  {
+    "branch": "codex/iss-075-payment-terms",
+    "originalSha": "771307b19667256453c7c22ebf60256ffd2a26dd",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/context.py": {
+        "blob": "d9f2db5abd96498914dcec4c3718e1075bb3a4ab",
+        "candidateAncestor": "a8dd277609d7364d301d1a330f717f00962d8619"
+      },
+      "backend/crm/services/finance.py": {
+        "blob": "06a711d04c10034c1e3e86dfb018e5670ba626c2",
+        "candidateAncestor": "438bc5b8526bb43b48445b4646e82ead0b2caaa6"
+      },
+      "backend/crm/tests/test_contract_lifecycle.py": {
+        "blob": "b664ed432eee8a7f5513d92600a2cb3630cb49d3",
+        "candidateAncestor": "1025c0c80f7ebafc3579293299a0187f027ee951"
+      },
+      "backend/crm/tests/test_inventory_movement_reversal.py": {
+        "blob": "873d341c06433644b02266845676d17a5738c085",
+        "candidateAncestor": "648b6c90e3cc6ac16259c7a07f8073f3641a6b13"
+      },
+      "backend/crm/tests/test_trade_finance_upgrade.py": {
+        "blob": "31ee573183c31d0e463d4640abd91039beaaf05e",
+        "candidateAncestor": "7670d8a682ab437d395ac3b1368670bcd7db86ee"
+      },
+      "frontend/browser-tests/iss075-payment-terms-real.spec.js": {
+        "blob": "2880e58615d0172ac9dcd8f4ef3b8ddc581c499d",
+        "candidateAncestor": "84da66e963414002576b653cf8d9340dafcbc2d6"
+      },
+      "frontend/src/resourceConfigs.js": {
+        "blob": "92fa7af511c4af7734fd80f30f768add530f97fc",
+        "candidateAncestor": "f82554686478f62e3a60ed69bb4144e8c052ac7c"
+      },
+      "frontend/src/views/PurchaseOrderPage.vue": {
+        "blob": "307dad66822c17fc946c2ea503de32f3551aed07",
+        "candidateAncestor": "1025c0c80f7ebafc3579293299a0187f027ee951"
+      },
+      "frontend/src/views/ResourcePage.vue": {
+        "blob": "32067578fc195ba7ecbfb48461d9dd549e9d0dbd",
+        "candidateAncestor": "d2d0a09a8a30e356c39e8803fbee7c80328750b5"
+      },
+      "frontend/tests/purchase-safety.spec.js": {
+        "blob": "dbb17d6521d1bfb649c557ec429e8332a1debd3e",
+        "candidateAncestor": "58577c809168a36c5b8f0d331b795d4c8d11f9f2"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/serializers.py"
+    ]
+  },
+  {
+    "branch": "codex/iss-080-contact-duplicates",
+    "originalSha": "9fe9f479bc47fd7470c80822c89fa59d7d71cbf5",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      ".github/workflows/ci.yml": {
+        "blob": "ebbe64391d6a49279678948025296561c1681953",
+        "candidateAncestor": "069928829f5648be540bef469f3abcf8d4449753"
+      },
+      "backend/config/settings.py": {
+        "blob": "b597c988f7923011d0877b81ce993b06b8378aa3",
+        "candidateAncestor": "3cf5a8155df746728b0c3c56fc6fd1e8fa7a6e59"
+      },
+      "backend/crm/context.py": {
+        "blob": "d9f2db5abd96498914dcec4c3718e1075bb3a4ab",
+        "candidateAncestor": "a8dd277609d7364d301d1a330f717f00962d8619"
+      },
+      "backend/crm/models.py": {
+        "blob": "89230003053e2509d7944266460764cc4021e12c",
+        "candidateAncestor": "1025c0c80f7ebafc3579293299a0187f027ee951"
+      },
+      "backend/crm/serializers.py": {
+        "blob": "0c2196f26d5083f397af119fc57e2f9916e51312",
+        "candidateAncestor": "2f67e72ca43a4bab17300d31f2440eaf59b32a35"
+      },
+      "backend/crm/services/finance.py": {
+        "blob": "06a711d04c10034c1e3e86dfb018e5670ba626c2",
+        "candidateAncestor": "438bc5b8526bb43b48445b4646e82ead0b2caaa6"
+      },
+      "backend/crm/tests/test_contract_lifecycle.py": {
+        "blob": "b664ed432eee8a7f5513d92600a2cb3630cb49d3",
+        "candidateAncestor": "1025c0c80f7ebafc3579293299a0187f027ee951"
+      },
+      "backend/crm/tests/test_inventory_movement_reversal.py": {
+        "blob": "873d341c06433644b02266845676d17a5738c085",
+        "candidateAncestor": "648b6c90e3cc6ac16259c7a07f8073f3641a6b13"
+      },
+      "backend/crm/tests/test_trade_finance_upgrade.py": {
+        "blob": "31ee573183c31d0e463d4640abd91039beaaf05e",
+        "candidateAncestor": "7670d8a682ab437d395ac3b1368670bcd7db86ee"
+      },
+      "frontend/browser-tests/iss075-payment-terms-real.spec.js": {
+        "blob": "2880e58615d0172ac9dcd8f4ef3b8ddc581c499d",
+        "candidateAncestor": "84da66e963414002576b653cf8d9340dafcbc2d6"
+      },
+      "frontend/src/resourceConfigs.js": {
+        "blob": "92fa7af511c4af7734fd80f30f768add530f97fc",
+        "candidateAncestor": "f82554686478f62e3a60ed69bb4144e8c052ac7c"
+      },
+      "frontend/src/views/PurchaseOrderPage.vue": {
+        "blob": "307dad66822c17fc946c2ea503de32f3551aed07",
+        "candidateAncestor": "1025c0c80f7ebafc3579293299a0187f027ee951"
+      },
+      "frontend/src/views/ResourcePage.vue": {
+        "blob": "fd84a99d4e6d4b31f8e7f09c8f6e51e26a6f38c1",
+        "candidateAncestor": "a8dd277609d7364d301d1a330f717f00962d8619"
+      },
+      "frontend/src/views/SKUPage.test.js": {
+        "blob": "10528337b166f4ef124e656b3fb7b499c874f2c6",
+        "candidateAncestor": "d9033a80134e3d02636208fb9b1033ce59c969c0"
+      },
+      "frontend/src/views/SKUPage.vue": {
+        "blob": "c306bfcde9744cb807d1ea79e4401fc2270f2f5b",
+        "candidateAncestor": "f82554686478f62e3a60ed69bb4144e8c052ac7c"
+      },
+      "frontend/tests/purchase-safety.spec.js": {
+        "blob": "dbb17d6521d1bfb649c557ec429e8332a1debd3e",
+        "candidateAncestor": "58577c809168a36c5b8f0d331b795d4c8d11f9f2"
+      }
+    },
+    "remainingDistinctPaths": []
+  },
+  {
+    "branch": "codex/iss-097-admin-permissions",
+    "originalSha": "9ee4bd4b1eb14f45e08a4b83f0b1cd1b294cde37",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/serializers.py": {
+        "blob": "1c916fb0301ec941ea2da6e15c54e7a2060392b8",
+        "candidateAncestor": "31b58cd9ca971ebe4183e378a1a82e517ac7c1fe"
+      },
+      "frontend/src/views/OrganizationPage.vue": {
+        "blob": "cd4e090d763562b1e9c95ddd5ed60b1030ff20be",
+        "candidateAncestor": "a74363bff837360f3436e08e8d32aaaf322d0c88"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/tests/test_functional_rbac.py"
+    ]
+  },
+  {
+    "branch": "codex/iss-107-finance-labels",
+    "originalSha": "60df1b045c06c7f2146b44e4a60866b1786024cc",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/src/resourceConfigs.js": {
+        "blob": "e43f72ca3c4c2b6edeabe215ff60fd856ee33697",
+        "candidateAncestor": "8c53a67e34b744691b7d42913b06a0eb0c643825"
+      },
+      "frontend/src/views/ResourcePage.test.js": {
+        "blob": "d4578b931f7e4536534aca8f49b9eb647cbedf71",
+        "candidateAncestor": "a8dd277609d7364d301d1a330f717f00962d8619"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/models.py"
+    ]
+  },
+  {
+    "branch": "codex/next-iss-039-integration",
+    "originalSha": "1d976d8dd1d1b827d9ab9122c4d07be8c816a14d",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/tests/test_iss039_shared_purchase_costs.py": {
+        "blob": "7413e7e2aedd9d39e7ad418233e9fc5245b957fc",
+        "candidateAncestor": "e6b40cadb04c54ef3376307daba19f78276a913d"
+      },
+      "backend/crm/tests/test_procurement_data_scope.py": {
+        "blob": "68b166d81c8f30d1751a1704204e745d0ca8da70",
+        "candidateAncestor": "1025c0c80f7ebafc3579293299a0187f027ee951"
+      },
+      "backend/crm/views.py": {
+        "blob": "c55d8b1a43943c05a1c21c1131ca86f78c095ade",
+        "candidateAncestor": "2dc00706696c5035aadd1a64da34bc0266e9a326"
+      },
+      "frontend/browser-tests/iss039-shared-purchase-costs.spec.js": {
+        "blob": "1654e295f8919e861f4d72beebd6d8d57c691b7b",
+        "candidateAncestor": "3adcc61afa9318fc0b86c45e4308cf866f9173eb"
+      },
+      "frontend/src/components/PurchaseCostAllocationModal.vue": {
+        "blob": "08f86ea8a057d51a187c84681820edf682f5fc69",
+        "candidateAncestor": "b95852a4e4152d60976aa16d3f8e229b1e07a934"
+      },
+      "frontend/tests/purchase-costs.spec.js": {
+        "blob": "307445824e58b8679aa20e02c547becb4b2bc3b1",
+        "candidateAncestor": "b95852a4e4152d60976aa16d3f8e229b1e07a934"
+      }
+    },
+    "remainingDistinctPaths": [
+      "frontend/src/views/PurchaseOrderPage.test.js",
+      "frontend/src/views/PurchaseOrderPage.vue"
+    ]
+  },
+  {
+    "branch": "codex/publish-local-20261031/r1-iss-039",
+    "originalSha": "ac52d3d126a6dbeb9225e6044fa8da234c72db8f",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "backend/crm/procurement_scope.py",
+      "backend/crm/tests/test_iss039_shared_purchase_costs.py",
+      "backend/crm/tests/test_procurement_data_scope.py",
+      "backend/crm/views.py",
+      "frontend/src/components/PurchaseCostAllocationModal.vue",
+      "frontend/src/views/PurchaseOrderPage.test.js"
+    ]
+  },
+  {
+    "branch": "codex/r1-csv-audit-truncate-test-20261102",
+    "originalSha": "aeab244b7475f95d0c1d8069af546529e735e90f",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/tests/test_historical_orders.py": {
+        "blob": "882f8ae2eaf5e2231d3e07043c1fee097ccacda0",
+        "candidateAncestor": "7ab9913e03f1bde341158237e51aeebf77a86abc"
+      },
+      "backend/crm/tests/test_iss039_shared_purchase_costs.py": {
+        "blob": "b45f234a487bdaa57ce0316e20d1dd890e24fa88",
+        "candidateAncestor": "b95852a4e4152d60976aa16d3f8e229b1e07a934"
+      }
+    },
+    "remainingDistinctPaths": [
+      ".github/workflows/ci.yml",
+      "backend/crm/tests/test_order_quantity_adjustments.py",
+      "frontend/infrastructure-tests/runner-validation.test.mjs"
+    ]
+  },
+  {
+    "branch": "codex/r1-inv-03",
+    "originalSha": "d82643907f2886ecc412fdfa8839d2b8cc165751",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "backend/crm/views.py",
+      "frontend/browser-tests/purchase-inventory-reference.spec.js",
+      "frontend/src/components/PurchaseSkuReference.vue",
+      "frontend/src/components/SkuPickerPanel.vue",
+      "frontend/src/views/PurchaseOrderPage.test.js",
+      "frontend/src/views/PurchaseOrderPage.vue"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss-021-audit-01",
+    "originalSha": "12c0ea9d60537d202393266f7850fcc188276860",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "backend/crm/tests/test_iss021_audit_probe.py"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss-021-dev",
+    "originalSha": "92d32ad856fdd056fab0be56a70a9af52fbb99f2",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "backend/crm/migrations/0078_order_quantity_change_version_and_more.py",
+      "backend/crm/models.py",
+      "backend/crm/serializers.py",
+      "backend/crm/services/order_quantity_adjustments.py",
+      "backend/crm/tests/test_cash_events.py",
+      "backend/crm/tests/test_order_quantity_adjustments.py",
+      "backend/crm/views.py",
+      "frontend/src/components/OrderDetailModal.vue",
+      "frontend/tests/order-quantity-adjustment.spec.js"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss-037-p1",
+    "originalSha": "ff59be7a8c49f3a7a33a1702e74e0e29f742aa1f",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/tests/test_formal_party_snapshots.py": {
+        "blob": "e1c2b689c8d3e0969ffd0e553845a4a204bca6dd",
+        "candidateAncestor": "ed1a554e09d8f49c9b0e07b96921b863b2f8e4f7"
+      },
+      "frontend/src/components/OrderDetailModal.vue": {
+        "blob": "5be527b9473697710ed3c9f798fb2554f3021ea5",
+        "candidateAncestor": "3ec269246c39c77bb34d530d8817ba0cb136c9a6"
+      },
+      "frontend/src/components/PurchaseDetailModal.vue": {
+        "blob": "c79bd90487b440780550db073b1757bc3e86b39c",
+        "candidateAncestor": "dc02d7fbbba2ad6c1ce5f65330a8e62b6bcbdf5c"
+      },
+      "frontend/src/components/QuoteDetailModal.vue": {
+        "blob": "ee2a7b266f5dc46a1b3c22c92db8f9513b3dac67",
+        "candidateAncestor": "39067e5d4c706d0fb2689c1cf62dae9036f26a3d"
+      },
+      "frontend/src/resourceConfigs.js": {
+        "blob": "c50c180fd29a7d90618564ddbcc56faf70422272",
+        "candidateAncestor": "52bb64422b0de85fed554c5a0891874aebe42318"
+      },
+      "frontend/src/views/DocumentPage.test.js": {
+        "blob": "59946a5663dbc10071554a581c854eca6ab02df1",
+        "candidateAncestor": "58577c809168a36c5b8f0d331b795d4c8d11f9f2"
+      },
+      "frontend/src/views/DocumentPage.vue": {
+        "blob": "cfbd6b20bcafc19761958b040a3411673febcb91",
+        "candidateAncestor": "58541e94918e2d912c2b75d2371a8d625e1fc9d4"
+      },
+      "frontend/src/views/PurchaseOrderPage.test.js": {
+        "blob": "8103f33aa5cb482fd445347a35d3a94d35b437c4",
+        "candidateAncestor": "ef33bba12bc7d95ab9a44f2343703040d174a563"
+      },
+      "frontend/src/views/PurchaseOrderPage.vue": {
+        "blob": "7d65af9d8690ba6ed6d0c10f6f4fd2defb37ef00",
+        "candidateAncestor": "ef33bba12bc7d95ab9a44f2343703040d174a563"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/migrations/0078_formal_party_snapshots.py",
+      "backend/crm/models.py",
+      "backend/crm/serializers.py",
+      "backend/crm/services/order_lifecycle.py",
+      "backend/crm/services/purchase_lifecycle.py",
+      "backend/crm/tests/test_cash_events.py"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss-039",
+    "originalSha": "372221c0b4a1ea23e9a022b3bbec9eb2ec9775c0",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "backend/crm/procurement_scope.py",
+      "backend/crm/tests/test_iss039_shared_purchase_costs.py",
+      "backend/crm/tests/test_procurement_data_scope.py",
+      "backend/crm/views.py",
+      "frontend/src/components/PurchaseCostAllocationModal.vue",
+      "frontend/src/views/PurchaseOrderPage.test.js"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss-040-dev",
+    "originalSha": "f308502362fc8bbee1a57d3905b5c12278719a05",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/tests/shipment-actual-packing.spec.js": {
+        "blob": "b18222f06599afce4185ff8a43f3402223b13a1d",
+        "candidateAncestor": "31b58cd9ca971ebe4183e378a1a82e517ac7c1fe"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/services/packing_list.py",
+      "backend/crm/tests/test_packing_list_export.py",
+      "backend/crm/views.py",
+      "frontend/src/api.js",
+      "frontend/src/components/ShipmentActualPacking.vue"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss006-frontend-idempotency-20261029",
+    "originalSha": "74b1ac29e85a80efbc0ed2200a1653ad19b4bfae",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/models.py": {
+        "blob": "177d066b0d5387ad122a4a2b7d304bc08da73712",
+        "candidateAncestor": "93bf26b2211d90c5fa39a910cc14a79550c3c603"
+      },
+      "backend/crm/services/fulfillment.py": {
+        "blob": "3dea1456dce36b39c2662c7c4346652f37f1a484",
+        "candidateAncestor": "94402f951e4d4243276f018cc3a6051f0f6f2c57"
+      },
+      "backend/crm/tests/test_fulfillment.py": {
+        "blob": "06bec172fb09e5f88b9cb34220205657d3bf2501",
+        "candidateAncestor": "648b6c90e3cc6ac16259c7a07f8073f3641a6b13"
+      },
+      "backend/crm/tests/test_iss006_idempotency.py": {
+        "blob": "eff5aead25001a7bf9b949db4a86b578f6ff1b49",
+        "candidateAncestor": "657a65c10e0234345a2c648998f6d283c500d1b4"
+      },
+      "backend/crm/tests/test_trade_units.py": {
+        "blob": "c8f6a4af32f769e08553ea226ff9633296876ecb",
+        "candidateAncestor": "a66da6ae8b7559cb41c169c083cb64b69a5a09ab"
+      },
+      "backend/crm/views.py": {
+        "blob": "3c8a571cccd9c49771f88fe42d907b64ba12df03",
+        "candidateAncestor": "93bf26b2211d90c5fa39a910cc14a79550c3c603"
+      },
+      "frontend/src/components/OrderDetailModal.vue": {
+        "blob": "87818a0f61aa3cd51195dc1f7a59ff1d5727949d",
+        "candidateAncestor": "438bc5b8526bb43b48445b4646e82ead0b2caaa6"
+      },
+      "frontend/src/utils/fulfillmentIdempotency.js": {
+        "blob": "ac06e5f66673c488cd451055f5d40877d8275630",
+        "candidateAncestor": "a74363bff837360f3436e08e8d32aaaf322d0c88"
+      },
+      "frontend/src/views/PurchaseOrderPage.vue": {
+        "blob": "27a634c92a82c2768251b29861c0d48aa3480e4c",
+        "candidateAncestor": "1025c0c80f7ebafc3579293299a0187f027ee951"
+      },
+      "frontend/tests/order-detail-shipment-batch.spec.js": {
+        "blob": "ea17b79ff69ece8c8336540f5d5c60aa88911474",
+        "candidateAncestor": "f83f9b08a5f516f860655bc08b6c7d5f0787c35e"
+      },
+      "frontend/tests/purchase-editor-receipt.spec.js": {
+        "blob": "7ced49399286e4460e791c151d29c07c0f764f58",
+        "candidateAncestor": "f83f9b08a5f516f860655bc08b6c7d5f0787c35e"
+      },
+      "frontend/tests/trade-finance.spec.js": {
+        "blob": "f21cbffa425ab667a9817184e7c1892fc2f95476",
+        "candidateAncestor": "438bc5b8526bb43b48445b4646e82ead0b2caaa6"
+      }
+    },
+    "remainingDistinctPaths": []
+  },
+  {
+    "branch": "codex/r1-iss006-frontend-storage-chrome-verify",
+    "originalSha": "bf3d4e4fb1d8bf3e5f944071f4336929ff68beae",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/seed_iss006_frontend_storage_browser.py": {
+        "blob": "73966bf6a4971fd71f10116a8c7408dca49a3467",
+        "candidateAncestor": "e6b40cadb04c54ef3376307daba19f78276a913d"
+      },
+      "frontend/browser-tests/iss006-frontend-storage-chrome.spec.js": {
+        "blob": "ac6e19e35dfa429de3730cd673a7ba5f0b2a2f24",
+        "candidateAncestor": "c61b36625e1a775771ff09876b9ab01376bbcce3"
+      }
+    },
+    "remainingDistinctPaths": [
+      "frontend/playwright.isolated.config.js",
+      "frontend/scripts/run-isolated-browser-tests.mjs"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss007-followup-files-uat-20261031",
+    "originalSha": "e3b1eeb6cff69b7b77bc35c83661df052e028b41",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/file_access.py": {
+        "blob": "508a7305add4aae3f41b0b6b908a0b4c5e7f662f",
+        "candidateAncestor": "a866c2912c99bc9c193b4fb8cdf45d7479d726f6"
+      },
+      "backend/crm/tests/test_functional_rbac.py": {
+        "blob": "27518a8182064196f9501a2bc9cc7b544543db1a",
+        "candidateAncestor": "e6b40cadb04c54ef3376307daba19f78276a913d"
+      }
+    },
+    "remainingDistinctPaths": []
+  },
+  {
+    "branch": "codex/r1-iss007-image-snapshot-uat-20261031",
+    "originalSha": "d48df222271059721bfa6b9f5f61f395e57db45b",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/browser-tests/iss007-image-snapshot-real.spec.js": {
+        "blob": "d28c71710247688642c113ba9b938bf6ad736e0d",
+        "candidateAncestor": "069928829f5648be540bef469f3abcf8d4449753"
+      },
+      "frontend/infrastructure-tests/runner-validation.test.mjs": {
+        "blob": "6c866a466ffba5dc050b82c60010cb2f1e8872ef",
+        "candidateAncestor": "069928829f5648be540bef469f3abcf8d4449753"
+      },
+      "frontend/scripts/run-isolated-browser-tests.mjs": {
+        "blob": "3de73473e94210b3a292315d20c9556ac2c4a17d",
+        "candidateAncestor": "069928829f5648be540bef469f3abcf8d4449753"
+      }
+    },
+    "remainingDistinctPaths": []
+  },
+  {
+    "branch": "codex/r1-iss018-backup-restore-drill-20261103",
+    "originalSha": "0692f4db292bd6fdeea1997562fb79c662f03ae7",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "AGENTS.md": {
+        "blob": "70725c25753e3e286822bc51d5b4dcef322e62c6",
+        "candidateAncestor": "0621465d1cfee4eae8438e4c2cf15c806c197a99"
+      },
+      "backend/crm/services/postgres_drill_backup.py": {
+        "blob": "e57cde38c6d32d5876777e9478d9377b875ec1b3",
+        "candidateAncestor": "37e25810b7b9739110932f1a65a9b0a70ce6bb08"
+      },
+      "backend/crm/tests/iss018_drill_fixture.py": {
+        "blob": "af357435627e405b7b0793ea28075a6cd212bb31",
+        "candidateAncestor": "44b1f056dc53c36f7186240a1f82c1ac8074a05a"
+      },
+      "backend/crm/tests/test_postgres_drill_backup.py": {
+        "blob": "5f6f4012d76c5905970440b059c489f2feaf3ac4",
+        "candidateAncestor": "44b1f056dc53c36f7186240a1f82c1ac8074a05a"
+      }
+    },
+    "remainingDistinctPaths": []
+  },
+  {
+    "branch": "codex/r1-iss018-postgres-boundary-20261102",
+    "originalSha": "704b0df6cc7fa18ce8ed29567afa8d13d605557e",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/tests/test_iss018_backup_recovery.py": {
+        "blob": "a186710b670adfe54fc6e3dfb70362c62634f1a3",
+        "candidateAncestor": "44b1f056dc53c36f7186240a1f82c1ac8074a05a"
+      }
+    },
+    "remainingDistinctPaths": [
+      ".github/workflows/ci.yml",
+      "backend/crm/test_runner.py",
+      "backend/crm/tests/test_csv_import_audit_postgres.py",
+      "frontend/infrastructure-tests/runner-validation.test.mjs"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss018-postgres-ci-boundary-20261101",
+    "originalSha": "ac0d5a22ebecead70cf479fdee09d2f40335600d",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/tests/test_iss018_backup_recovery.py": {
+        "blob": "a186710b670adfe54fc6e3dfb70362c62634f1a3",
+        "candidateAncestor": "44b1f056dc53c36f7186240a1f82c1ac8074a05a"
+      }
+    },
+    "remainingDistinctPaths": [
+      ".github/workflows/ci.yml",
+      "frontend/infrastructure-tests/runner-validation.test.mjs"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss028-035-category-verify-20261031",
+    "originalSha": "5da8d351129e775563aced753fd05efbfc39d893",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "frontend/browser-tests/iss028-035-category-schema.spec.js"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss052-http-413-20261031",
+    "originalSha": "18a18035d1021d5306f5c47d3d55e333f2ea719d",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/views.py": {
+        "blob": "d7459b7cdee359d6ab987c5bb9e6af15afce5f80",
+        "candidateAncestor": "2f5b7a332e18c4d389cf832e015eaca3c623728f"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/tests/test_safe_csv_import.py",
+      "backend/crm/upload_handlers.py"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss052-import-audit-fix-20261031",
+    "originalSha": "f2b7fd6487459be69be687ccfeab09e7947df995",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/models.py": {
+        "blob": "ee9780a2539d128636ecc9a469bec211248b6b69",
+        "candidateAncestor": "2f5b7a332e18c4d389cf832e015eaca3c623728f"
+      },
+      "backend/crm/permissions.py": {
+        "blob": "c5a159e12ddc6ac70a8b688125c3cf218cf6ec06",
+        "candidateAncestor": "9af2a32fa81df3aa975424b70a887057e40b6b22"
+      },
+      "backend/crm/tests/test_dashboard_import.py": {
+        "blob": "d026a92b253132c9731c9596d867e41ecc5e3a62",
+        "candidateAncestor": "2f5b7a332e18c4d389cf832e015eaca3c623728f"
+      },
+      "frontend/src/views/ImportPage.vue": {
+        "blob": "8a70a1464ec20759ea980650babd4e99e315dd9d",
+        "candidateAncestor": "acd19350765086b30a29b74aeb65725af2c722f4"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/tests/test_safe_csv_import.py",
+      "backend/crm/views.py"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss052-pg-audit-appendonly-20261029",
+    "originalSha": "315d50cb2a80c882ea901181da1d5910bc6a80f3",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "backend/crm/migrations/0093_csv_import_audit_truncate_guard.py",
+      "backend/crm/test_runner.py",
+      "backend/crm/tests/test_postgres_csv_import_audit.py"
+    ]
+  },
+  {
+    "branch": "codex/r1-iss052-pg-truncate-bd324-20261030",
+    "originalSha": "bbbb7169e21233fd691af246db722875989d9453",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "backend/crm/migrations/0093_csv_import_audit_truncate_guard.py",
+      "backend/crm/test_runner.py",
+      "backend/crm/tests/test_postgres_csv_import_audit.py"
+    ]
+  },
+  {
+    "branch": "codex/r1-moq-02",
+    "originalSha": "aa35db2a49b6152e35f57b74edff95914735864d",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "backend/crm/migrations/0078_purchase_moq_exceptions.py",
+      "backend/crm/models.py",
+      "backend/crm/serializers.py",
+      "backend/crm/services/purchase_lifecycle.py",
+      "backend/crm/tests/test_cash_events.py",
+      "backend/crm/tests/test_procurement.py",
+      "backend/crm/tests/test_purchase_moq.py",
+      "backend/crm/tests/test_supplier_sku.py",
+      "backend/crm/views.py",
+      "frontend/browser-tests/r1-moq-02-real.spec.js",
+      "frontend/src/components/PurchaseDetailModal.vue",
+      "frontend/src/views/PurchaseOrderPage.test.js",
+      "frontend/src/views/PurchaseOrderPage.vue",
+      "frontend/tests/purchase-safety.spec.js"
+    ]
+  },
+  {
+    "branch": "codex/r1-postgres-auth-contract-20261102",
+    "originalSha": "784b9230906eccdd99fb2ba8ea618e78ea4e863a",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/tests/__init__.py": {
+        "blob": "05b0eb0bbd95b6cb9fe9e1d8d233ba1538415cd5",
+        "candidateAncestor": "648b6c90e3cc6ac16259c7a07f8073f3641a6b13"
+      },
+      "backend/crm/tests/test_functional_rbac.py": {
+        "blob": "b251e8a97425ff415b048842076ad8cb55543317",
+        "candidateAncestor": "a66da6ae8b7559cb41c169c083cb64b69a5a09ab"
+      },
+      "backend/crm/tests/test_quotes.py": {
+        "blob": "d62bef2892a1d9e8a8884fa7156dfd32d56e9517",
+        "candidateAncestor": "792edff6b696c4ad1f5bc65f9e91f623b5b964c0"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/tests/test_order_quantity_adjustments.py"
+    ]
+  },
+  {
+    "branch": "codex/r1-postgres-supplier-fixtures-20261101",
+    "originalSha": "e2e7e017a5a2675af44b47fc93650b3837971755",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/tests/test_historical_orders.py": {
+        "blob": "882f8ae2eaf5e2231d3e07043c1fee097ccacda0",
+        "candidateAncestor": "7ab9913e03f1bde341158237e51aeebf77a86abc"
+      },
+      "backend/crm/tests/test_iss039_shared_purchase_costs.py": {
+        "blob": "b45f234a487bdaa57ce0316e20d1dd890e24fa88",
+        "candidateAncestor": "b95852a4e4152d60976aa16d3f8e229b1e07a934"
+      }
+    },
+    "remainingDistinctPaths": [
+      ".github/workflows/ci.yml",
+      "backend/crm/tests/test_order_quantity_adjustments.py",
+      "frontend/infrastructure-tests/runner-validation.test.mjs"
+    ],
+    "descendantBranchHeads": [
+      {
+        "branch": "codex/r1-csv-audit-truncate-test-20261102",
+        "sha": "aeab244b7475f95d0c1d8069af546529e735e90f"
+      }
+    ]
+  },
+  {
+    "branch": "codex/r1-postgres-supplier-fixtures-full-20261102",
+    "originalSha": "644f6a908a755f9d2293dba74c609471f86fcd5d",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/tests/test_historical_orders.py": {
+        "blob": "882f8ae2eaf5e2231d3e07043c1fee097ccacda0",
+        "candidateAncestor": "7ab9913e03f1bde341158237e51aeebf77a86abc"
+      },
+      "backend/crm/tests/test_iss039_shared_purchase_costs.py": {
+        "blob": "b45f234a487bdaa57ce0316e20d1dd890e24fa88",
+        "candidateAncestor": "b95852a4e4152d60976aa16d3f8e229b1e07a934"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/tests/test_order_quantity_adjustments.py"
+    ]
+  },
+  {
+    "branch": "codex/r1-postgres-test-isolation-20261101",
+    "originalSha": "e280e5d140b5255bd51f5d0be428f36e87336139",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      ".github/workflows/ci.yml",
+      "backend/crm/test_runner.py",
+      "backend/crm/tests/test_csv_import_audit_postgres.py",
+      "frontend/infrastructure-tests/runner-validation.test.mjs"
+    ],
+    "descendantBranchHeads": [
+      {
+        "branch": "codex/r1-iss018-postgres-boundary-20261102",
+        "sha": "704b0df6cc7fa18ce8ed29567afa8d13d605557e"
+      }
+    ]
+  },
+  {
+    "branch": "codex/r1-sku-01",
+    "originalSha": "57d8c2df573b11621a940a756ef7ed34531e7af6",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/services/sku_costs.py": {
+        "blob": "052f0644f53028f7d4d378ad5aedb62d2d934341",
+        "candidateAncestor": "019367baa389c2a73ea2d8c58162313e4868fcca"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/migrations/0078_sku_cost_verification.py",
+      "backend/crm/models.py",
+      "backend/crm/serializers.py",
+      "backend/crm/tests/test_sku_cost_verification.py",
+      "backend/crm/views.py",
+      "frontend/src/components/QuoteDetailModal.test.js",
+      "frontend/src/components/QuoteDetailModal.vue",
+      "frontend/src/components/QuoteEditorModal.test.js",
+      "frontend/src/components/QuoteEditorModal.vue",
+      "frontend/src/components/QuoteRiskNotice.vue",
+      "frontend/src/views/DocumentPage.test.js",
+      "frontend/src/views/DocumentPage.vue",
+      "frontend/src/views/SKUPage.test.js",
+      "frontend/src/views/SKUPage.vue"
+    ],
+    "descendantBranchHeads": [
+      {
+        "branch": "codex/r1-sku-01-fix-01",
+        "sha": "450476355ffe03b9a32e69226d8b3c2e179ea155"
+      }
+    ]
+  },
+  {
+    "branch": "codex/r1-sku-01-fix-01",
+    "originalSha": "450476355ffe03b9a32e69226d8b3c2e179ea155",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/services/sku_costs.py": {
+        "blob": "052f0644f53028f7d4d378ad5aedb62d2d934341",
+        "candidateAncestor": "019367baa389c2a73ea2d8c58162313e4868fcca"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/migrations/0078_sku_cost_verification.py",
+      "backend/crm/models.py",
+      "backend/crm/serializers.py",
+      "backend/crm/views.py",
+      "frontend/browser-tests/r1-sku-01-fix-01.spec.js",
+      "frontend/src/components/QuoteDetailModal.test.js",
+      "frontend/src/components/QuoteDetailModal.vue",
+      "frontend/src/components/QuoteEditorModal.test.js",
+      "frontend/src/components/QuoteEditorModal.vue",
+      "frontend/src/views/DocumentPage.test.js",
+      "frontend/src/views/DocumentPage.vue",
+      "frontend/src/views/SKUPage.test.js",
+      "frontend/src/views/SKUPage.vue"
+    ],
+    "descendantBranchHeads": [
+      {
+        "branch": "codex/r1-sku-01-fix-02",
+        "sha": "fed49cd2b25524d79715d8c241a9ff7f0536218c"
+      }
+    ]
+  },
+  {
+    "branch": "codex/r1-sku-01-fix-02",
+    "originalSha": "fed49cd2b25524d79715d8c241a9ff7f0536218c",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/services/sku_costs.py": {
+        "blob": "052f0644f53028f7d4d378ad5aedb62d2d934341",
+        "candidateAncestor": "019367baa389c2a73ea2d8c58162313e4868fcca"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/migrations/0078_sku_cost_verification.py",
+      "backend/crm/models.py",
+      "backend/crm/serializers.py",
+      "backend/crm/tests/test_cash_events.py",
+      "backend/crm/views.py",
+      "frontend/browser-tests/r1-sku-01-fix-01.spec.js",
+      "frontend/src/components/QuoteDetailModal.test.js",
+      "frontend/src/components/QuoteDetailModal.vue",
+      "frontend/src/components/QuoteEditorModal.test.js",
+      "frontend/src/components/QuoteEditorModal.vue",
+      "frontend/src/views/DocumentPage.test.js",
+      "frontend/src/views/DocumentPage.vue",
+      "frontend/src/views/SKUPage.test.js",
+      "frontend/src/views/SKUPage.vue"
+    ]
+  },
+  {
+    "branch": "codex/repair-supplier-purchase-ux",
+    "originalSha": "3945123376d08256787ff1796ca0a9fc416c1668",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "frontend/browser-tests/supplier-ux.spec.js"
+    ]
+  },
+  {
+    "branch": "codex/repair-supplier-purchase-ux-20261028",
+    "originalSha": "fe1cc16c3950e256fa564ea4508e08414ae8810b",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "frontend/browser-tests/iss075-payment-terms-real.spec.js",
+      "frontend/browser-tests/supplier-ux.spec.js"
+    ]
+  },
+  {
+    "branch": "codex/sales-order-import-01",
+    "originalSha": "2bff4790f67b81b35a449f143b8cddb6b24e1821",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "backend/crm/sales_order_import.py": {
+        "blob": "c98c615ba75a5149e195ee24e804e516484c3cd7",
+        "candidateAncestor": "37520998e347afb34b00d725014d0137a49a6920"
+      },
+      "backend/crm/tests/test_sales_order_import.py": {
+        "blob": "b4366e449e578832259131626f6ea173c5114081",
+        "candidateAncestor": "37520998e347afb34b00d725014d0137a49a6920"
+      },
+      "frontend/src/views/ImportPage.vue": {
+        "blob": "e277c4db12b7af09a20681a99a1c73e90c85cf50",
+        "candidateAncestor": "49189649f25fbe4849cf717d8d0118add556d794"
+      },
+      "frontend/tests/sales-order-import-ux.spec.js": {
+        "blob": "e458306753e2570670cb89c079c57030739c2c49",
+        "candidateAncestor": "49189649f25fbe4849cf717d8d0118add556d794"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/models.py",
+      "backend/crm/urls.py",
+      "backend/crm/views.py"
+    ]
+  },
+  {
+    "branch": "codex/ui-copy-optimization-02",
+    "originalSha": "945c2ae41ce59d55051bbab4664f3d7a4df0fbba",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/src/views/HistoryPreflightPage.test.js": {
+        "blob": "51e312e4820f3a6a4e785778003e92a3490a42fe",
+        "candidateAncestor": "49189649f25fbe4849cf717d8d0118add556d794"
+      },
+      "frontend/src/views/TransactionPage.vue": {
+        "blob": "8620839dd718edc0039607c2d8780c87e33311a1",
+        "candidateAncestor": "f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a"
+      }
+    },
+    "remainingDistinctPaths": [
+      "backend/crm/history_import_preflight.py",
+      "backend/crm/tests/test_history_import_preflight.py",
+      "frontend/browser-tests/cash-duplicate-real.spec.js",
+      "frontend/browser-tests/cash-events-p2b.spec.js",
+      "frontend/browser-tests/independent-bank-fee-real.spec.js",
+      "frontend/scripts/history-operational-chrome-uat.mjs",
+      "frontend/scripts/history-operational-fulfillment-uat.mjs",
+      "frontend/scripts/history-operational-workflow-uat.mjs",
+      "frontend/scripts/history-takeover-chrome-uat.mjs",
+      "frontend/src/App.vue",
+      "frontend/src/api.test.js",
+      "frontend/src/components/OrderDetailModal.vue",
+      "frontend/src/components/ProductSkuManagement.vue",
+      "frontend/src/components/PurchaseDetailModal.vue",
+      "frontend/src/components/SupplierAllocationModal.vue",
+      "frontend/src/components/WorkspaceTabs.vue",
+      "frontend/src/components/reports/ReportDetailPanel.vue",
+      "frontend/src/utils/apiErrors.js",
+      "frontend/src/views/CashEventPage.vue",
+      "frontend/src/views/Dashboard.vue",
+      "frontend/src/views/FinanceDashboardPage.vue",
+      "frontend/src/views/FinanceLedgerPage.vue",
+      "frontend/src/views/HistoryOrdersPage.vue",
+      "frontend/src/views/HistoryPreflightPage.vue",
+      "frontend/src/views/HistoryTakeoverPage.vue",
+      "frontend/src/views/PurchaseOrderPage.vue",
+      "frontend/src/workspaceRoutes.js",
+      "frontend/tests/finance-closeout.spec.js",
+      "frontend/tests/history-takeover.spec.js"
+    ]
+  },
+  {
+    "branch": "codex/ui-product-operations-state-evidence-01",
+    "originalSha": "67410d72c0d4dabca1a6c374e2d9600ba6f9aee6",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {},
+    "remainingDistinctPaths": [
+      "frontend/browser-tests/ui-product-operations-state-evidence-01.spec.js"
+    ]
+  },
+  {
+    "branch": "codex/ui-sales-state-evidence-01",
+    "originalSha": "9dd721723422b45b1fabf1d97d1ad492488b7437",
+    "candidate": "7dcf4fa4045ced161232ce894de2fd2f9f533cbc",
+    "ancestorFileVersionWitnesses": {
+      "frontend/browser-tests/ui-sales-state-evidence-01.journeys.js": {
+        "blob": "513504ea369ff7d0d4b760353816d2005fc70636",
+        "candidateAncestor": "4582a4fbdb07b95fd4f0111f99da50039004910f"
+      }
+    },
+    "remainingDistinctPaths": [
+      "frontend/browser-tests/ui-sales-state-evidence-01.spec.js"
+    ]
+  }
+]

@@ -1,0 +1,129 @@
+{
+  "source": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+  "runs": [
+    {
+      "run": 42980478188,
+      "jobs": [
+        {
+          "id": 130389465694,
+          "name": "backend",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+          "html_url": "https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478188/job/130389465694",
+          "started_at": "2026-11-11T07:34:29Z",
+          "completed_at": "2026-11-11T07:53:01Z"
+        },
+        {
+          "id": 130389466023,
+          "name": "backend-postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+          "html_url": "https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478188/job/130389466023",
+          "started_at": "2026-11-11T07:34:29Z",
+          "completed_at": "2026-11-11T07:52:13Z"
+        },
+        {
+          "id": 130389466108,
+          "name": "frontend",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+          "html_url": "https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478188/job/130389466108",
+          "started_at": "2026-11-11T07:34:30Z",
+          "completed_at": "2026-11-11T08:30:37Z"
+        }
+      ]
+    },
+    {
+      "run": 42980478124,
+      "jobs": [
+        {
+          "id": 130389465901,
+          "name": "nginx-private-media",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+          "html_url": "https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478124/job/130389465901",
+          "started_at": "2026-11-11T07:34:29Z",
+          "completed_at": "2026-11-11T07:35:22Z"
+        },
+        {
+          "id": 130389466190,
+          "name": "postgres-role-receipts",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+          "html_url": "https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478124/job/130389466190",
+          "started_at": "2026-11-11T07:34:29Z",
+          "completed_at": "2026-11-11T07:35:48Z"
+        },
+        {
+          "id": 130389466600,
+          "name": "media-fence",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+          "html_url": "https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478124/job/130389466600",
+          "started_at": "2026-11-11T07:34:29Z",
+          "completed_at": "2026-11-11T07:34:56Z"
+        }
+      ]
+    }
+  ],
+  "artifact": {
+    "id": 13839269697,
+    "name": "isolated-browser-print-7e99a5d394ddc0d96a3af04b74686307f754ca08",
+    "size_in_bytes": 195194949,
+    "digest": "sha256:ce949fc835f8866a0b70775133f857a771bb61ab7b3c982ceb0728b398af1bc3",
+    "expires_at": "2026-11-18T08:30:28Z"
+  },
+  "logs": [
+    {
+      "localPath": "final-42980478188-actions.log",
+      "bytes": 7556845,
+      "sha256": "af563dbea05a2c6178ea5df31cdba953ab5625f52c77ef1261e70ce494cae0ad"
+    },
+    {
+      "localPath": "final-42980478124-actions.log",
+      "bytes": 171554,
+      "sha256": "a52e3f0885c57406fd12c674435dc592dd594ae62e9c26188b66c9e344dd1ab8"
+    },
+    {
+      "localPath": "final-7e99a5d3-backend.log",
+      "bytes": 265609,
+      "sha256": "b9e856888fa7209eff1fb0cc96e7a799be3ea43d36935cf73beb0fe55606e9e5"
+    },
+    {
+      "localPath": "final-7e99a5d3-backend-postgres.log",
+      "bytes": 893587,
+      "sha256": "1f7c7a052008ca1212d8b0121bdc028800121241b55cfbdfbdd588f0b08fe46f"
+    },
+    {
+      "localPath": "final-7e99a5d3-export.log",
+      "bytes": 39375,
+      "sha256": "ffc1116db09d1fb1c6996f3eb2b36049125a93c55174b6342cb456bea13783dc"
+    },
+    {
+      "localPath": "final-7e99a5d3-h3.log",
+      "bytes": 16695,
+      "sha256": "0c85c2b982bb9d3576ec1d0ab6c62d209bba28b0e091fe1f0177c55a332afd6d"
+    },
+    {
+      "localPath": "reflow-sales-journeys.log",
+      "bytes": 382235,
+      "sha256": "1e16cc9b21844e4c9bc8e7067fab7b3087085df65b3bb46ab79b8f0a26442b1f"
+    },
+    {
+      "localPath": "reflow-ui-product-operations-receipts-02.log",
+      "bytes": 19492,
+      "sha256": "ff7e40833a015729db7a5454ed0a8c96d63a89c28ab041214e285c6067bcd3b8"
+    },
+    {
+      "localPath": "reflow-ui-final-state-receipts-03.log",
+      "bytes": 26363,
+      "sha256": "de0588de5629bf72b6a825fdaf5b6e5baf57911a3849bb112b465cc8ae6b5c76"
+    }
+  ]
+}

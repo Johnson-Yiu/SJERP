@@ -1,0 +1,3534 @@
+{
+  "source": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+  "run": 42980478188,
+  "job": 130389466108,
+  "log": "final-42980478188-actions.log",
+  "counts": {
+    "PASS": 385,
+    "SKIPPED": 4
+  },
+  "a3HistoricalNonPassingCases": [
+    {
+      "file": "cash-duplicate-real.spec.js",
+      "title": "核对同账户同额候选并有说明放行 1440px",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-duplicate-real.spec.js",
+          "title": "核对同账户同额候选并有说明放行 1440px",
+          "status": "PASS",
+          "rawLine": 24205,
+          "sourceLine": 35
+        }
+      ]
+    },
+    {
+      "file": "cash-duplicate-real.spec.js",
+      "title": "核对同账户同额候选并有说明放行 390px",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-duplicate-real.spec.js",
+          "title": "核对同账户同额候选并有说明放行 390px",
+          "status": "PASS",
+          "rawLine": 24224,
+          "sourceLine": 35
+        }
+      ]
+    },
+    {
+      "file": "cash-events-p2b.spec.js",
+      "title": "cash event UI previews, registers, and confirms without changing receipt flows",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-events-p2b.spec.js",
+          "title": "cash event UI previews, registers, and confirms without changing receipt flows",
+          "status": "PASS",
+          "rawLine": 23823,
+          "sourceLine": 5
+        }
+      ]
+    },
+    {
+      "file": "cash-events-p2b.spec.js",
+      "title": "source verification is explicit and any fact change invalidates the preview",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-events-p2b.spec.js",
+          "title": "source verification is explicit and any fact change invalidates the preview",
+          "status": "PASS",
+          "rawLine": 23824,
+          "sourceLine": 75
+        }
+      ]
+    },
+    {
+      "file": "cash-events-p2b.spec.js",
+      "title": "refresh discards unsubmitted financial inputs and creates no pending registration",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-events-p2b.spec.js",
+          "title": "refresh discards unsubmitted financial inputs and creates no pending registration",
+          "status": "PASS",
+          "rawLine": 23825,
+          "sourceLine": 109
+        }
+      ]
+    },
+    {
+      "file": "cash-events-p2b.spec.js",
+      "title": "in-memory draft survives task switches and explicit abandon clears only after confirmation",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-events-p2b.spec.js",
+          "title": "in-memory draft survives task switches and explicit abandon clears only after confirmation",
+          "status": "PASS",
+          "rawLine": 23826,
+          "sourceLine": 132
+        }
+      ]
+    },
+    {
+      "file": "cash-events-p2b.spec.js",
+      "title": "changing a 30 allocation to 50 clears verification and requires a fresh preview",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-events-p2b.spec.js",
+          "title": "changing a 30 allocation to 50 clears verification and requires a fresh preview",
+          "status": "PASS",
+          "rawLine": 23827,
+          "sourceLine": 162
+        }
+      ]
+    },
+    {
+      "file": "cash-events-p2b.spec.js",
+      "title": "expired legacy draft remains isolated and new unsubmitted evidence is not persisted",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-events-p2b.spec.js",
+          "title": "expired legacy draft remains isolated and new unsubmitted evidence is not persisted",
+          "status": "PASS",
+          "rawLine": 23828,
+          "sourceLine": 216
+        }
+      ]
+    },
+    {
+      "file": "cash-events-p2b.spec.js",
+      "title": "legacy unscoped financial inputs remain available for reconciliation without restoring into a workspace",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-events-p2b.spec.js",
+          "title": "legacy unscoped financial inputs remain available for reconciliation without restoring into a workspace",
+          "status": "PASS",
+          "rawLine": 23829,
+          "sourceLine": 248
+        }
+      ]
+    },
+    {
+      "file": "cash-events-p2b.spec.js",
+      "title": "stale source responses cannot overwrite the current currency",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "cash-events-p2b.spec.js",
+          "title": "stale source responses cannot overwrite the current currency",
+          "status": "PASS",
+          "rawLine": 23830,
+          "sourceLine": 295
+        }
+      ]
+    },
+    {
+      "file": "finance-retry-safety.spec.js",
+      "title": "finance pending submission and ambiguous retry preserve identity and guard departure",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "finance-retry-safety.spec.js",
+          "title": "finance pending submission and ambiguous retry preserve identity and guard departure",
+          "status": "PASS",
+          "rawLine": 23904,
+          "sourceLine": 3
+        }
+      ]
+    },
+    {
+      "file": "fulfillment-receivables.spec.js",
+      "title": "restricted user cannot read protected debt from malicious unmasked order payload",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "fulfillment-receivables.spec.js",
+          "title": "restricted user cannot read protected debt from malicious unmasked order payload",
+          "status": "PASS",
+          "rawLine": 23918,
+          "sourceLine": 32
+        }
+      ]
+    },
+    {
+      "file": "independent-bank-fee-real.spec.js",
+      "title": "independent fee without FX parent: real UI 1440px",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "independent-bank-fee-real.spec.js",
+          "title": "independent fee without FX parent: real UI 1440px",
+          "status": "PASS",
+          "rawLine": 24572,
+          "sourceLine": 41
+        }
+      ]
+    },
+    {
+      "file": "independent-bank-fee-real.spec.js",
+      "title": "independent fee without FX parent: real UI 390px",
+      "a3Status": "TIMEDOUT",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "independent-bank-fee-real.spec.js",
+          "title": "independent fee without FX parent: real UI 390px",
+          "status": "PASS",
+          "rawLine": 24598,
+          "sourceLine": 41
+        }
+      ]
+    },
+    {
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF complete 1440px headers=false",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "iss037-print-output-acceptance.spec.js",
+          "title": "Chrome UI print to PDF complete 1440px headers=false",
+          "status": "PASS",
+          "rawLine": 24663,
+          "sourceLine": 74
+        }
+      ]
+    },
+    {
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF complete 1440px headers=true",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "iss037-print-output-acceptance.spec.js",
+          "title": "Chrome UI print to PDF complete 1440px headers=true",
+          "status": "PASS",
+          "rawLine": 24673,
+          "sourceLine": 74
+        }
+      ]
+    },
+    {
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF complete 390px headers=false",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "iss037-print-output-acceptance.spec.js",
+          "title": "Chrome UI print to PDF complete 390px headers=false",
+          "status": "PASS",
+          "rawLine": 24683,
+          "sourceLine": 74
+        }
+      ]
+    },
+    {
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF multipage 1440px headers=false",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "iss037-print-output-acceptance.spec.js",
+          "title": "Chrome UI print to PDF multipage 1440px headers=false",
+          "status": "PASS",
+          "rawLine": 24722,
+          "sourceLine": 74
+        }
+      ]
+    },
+    {
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF optional-empty 1440px headers=false",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "iss037-print-output-acceptance.spec.js",
+          "title": "Chrome UI print to PDF optional-empty 1440px headers=false",
+          "status": "PASS",
+          "rawLine": 24732,
+          "sourceLine": 74
+        }
+      ]
+    },
+    {
+      "file": "packaging-ux.spec.js",
+      "title": "initial template failure retries and view-only permissions hide all writing entries",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "packaging-ux.spec.js",
+          "title": "initial template failure retries and view-only permissions hide all writing entries",
+          "status": "PASS",
+          "rawLine": 24122,
+          "sourceLine": 34
+        }
+      ]
+    },
+    {
+      "file": "sku-ux.spec.js",
+      "title": "SKU read-only detail remains accessible with no write controls",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "business-suite",
+          "file": "sku-ux.spec.js",
+          "title": "SKU read-only detail remains accessible with no write controls",
+          "status": "PASS",
+          "rawLine": 24151,
+          "sourceLine": 23
+        }
+      ]
+    },
+    {
+      "file": "iss007-attachment-real.spec.js",
+      "title": "attachment upload failure stays visible and retries without duplicating the follow-up",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "iss007-attachment-isolated",
+          "file": "iss007-attachment-real.spec.js",
+          "title": "attachment upload failure stays visible and retries without duplicating the follow-up",
+          "status": "PASS",
+          "rawLine": 26774,
+          "sourceLine": 143
+        }
+      ]
+    },
+    {
+      "file": "ui-sales-state-evidence-01.spec.js",
+      "title": "sales state evidence in an owned Google Chrome profile",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "sales-evidence-01-isolated",
+          "file": "ui-sales-state-evidence-01.spec.js",
+          "title": "sales state evidence in an owned Google Chrome profile",
+          "status": "PASS",
+          "rawLine": 31236,
+          "sourceLine": 22
+        },
+        {
+          "profile": "sales-state-journeys",
+          "file": "ui-sales-state-evidence-01.spec.js",
+          "title": "sales state evidence in an owned Google Chrome profile",
+          "status": "PASS",
+          "rawLine": 37666,
+          "sourceLine": 22
+        },
+        {
+          "profile": "sales-state-supplemental",
+          "file": "ui-sales-state-evidence-01.spec.js",
+          "title": "sales state evidence in an owned Google Chrome profile",
+          "status": "PASS",
+          "rawLine": 38483,
+          "sourceLine": 22
+        },
+        {
+          "profile": "sales-state-focused",
+          "file": "ui-sales-state-evidence-01.spec.js",
+          "title": "sales state evidence in an owned Google Chrome profile",
+          "status": "PASS",
+          "rawLine": 38826,
+          "sourceLine": 22
+        },
+        {
+          "profile": "sales-state-apply-quantity",
+          "file": "ui-sales-state-evidence-01.spec.js",
+          "title": "sales state evidence in an owned Google Chrome profile",
+          "status": "PASS",
+          "rawLine": 39124,
+          "sourceLine": 22
+        }
+      ]
+    },
+    {
+      "file": "sales-order-import-real.spec.js",
+      "title": "Chrome native page zoom keeps long finance and history records usable",
+      "a3Status": "FAILED",
+      "candidate": [
+        {
+          "profile": "sales-order-import-base-isolated",
+          "file": "sales-order-import-real.spec.js",
+          "title": "Chrome native page zoom keeps long finance and history records usable",
+          "status": "SKIPPED",
+          "rawLine": 43056,
+          "sourceLine": 492
+        },
+        {
+          "profile": "sales-order-import-followup-isolated",
+          "file": "sales-order-import-real.spec.js",
+          "title": "Chrome native page zoom keeps long finance and history records usable",
+          "status": "PASS",
+          "rawLine": 43485,
+          "sourceLine": 492
+        },
+        {
+          "profile": "sales-order-import-completion-isolated",
+          "file": "sales-order-import-real.spec.js",
+          "title": "Chrome native page zoom keeps long finance and history records usable",
+          "status": "PASS",
+          "rawLine": 43918,
+          "sourceLine": 492
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "profile": "business-suite",
+      "file": "access-readiness-highest-role-real.spec.js",
+      "title": "highest role reflects API effective permissions and is read-only (desktop)",
+      "status": "PASS",
+      "rawLine": 23815,
+      "sourceLine": 7
+    },
+    {
+      "profile": "business-suite",
+      "file": "access-readiness-highest-role-real.spec.js",
+      "title": "highest role reflects API effective permissions and is read-only (narrow)",
+      "status": "PASS",
+      "rawLine": 23822,
+      "sourceLine": 7
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-events-p2b.spec.js",
+      "title": "cash event UI previews, registers, and confirms without changing receipt flows",
+      "status": "PASS",
+      "rawLine": 23823,
+      "sourceLine": 5
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-events-p2b.spec.js",
+      "title": "source verification is explicit and any fact change invalidates the preview",
+      "status": "PASS",
+      "rawLine": 23824,
+      "sourceLine": 75
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-events-p2b.spec.js",
+      "title": "refresh discards unsubmitted financial inputs and creates no pending registration",
+      "status": "PASS",
+      "rawLine": 23825,
+      "sourceLine": 109
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-events-p2b.spec.js",
+      "title": "in-memory draft survives task switches and explicit abandon clears only after confirmation",
+      "status": "PASS",
+      "rawLine": 23826,
+      "sourceLine": 132
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-events-p2b.spec.js",
+      "title": "changing a 30 allocation to 50 clears verification and requires a fresh preview",
+      "status": "PASS",
+      "rawLine": 23827,
+      "sourceLine": 162
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-events-p2b.spec.js",
+      "title": "expired legacy draft remains isolated and new unsubmitted evidence is not persisted",
+      "status": "PASS",
+      "rawLine": 23828,
+      "sourceLine": 216
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-events-p2b.spec.js",
+      "title": "legacy unscoped financial inputs remain available for reconciliation without restoring into a workspace",
+      "status": "PASS",
+      "rawLine": 23829,
+      "sourceLine": 248
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-events-p2b.spec.js",
+      "title": "stale source responses cannot overwrite the current currency",
+      "status": "PASS",
+      "rawLine": 23830,
+      "sourceLine": 295
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "certificate list and grouped form actual bounds 1440",
+      "status": "PASS",
+      "rawLine": 23831,
+      "sourceLine": 10
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "HS assignment searchable selection and actual bounds 1440",
+      "status": "PASS",
+      "rawLine": 23832,
+      "sourceLine": 11
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "certificate list and grouped form actual bounds 1280",
+      "status": "PASS",
+      "rawLine": 23833,
+      "sourceLine": 10
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "HS assignment searchable selection and actual bounds 1280",
+      "status": "PASS",
+      "rawLine": 23834,
+      "sourceLine": 11
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "certificate list and grouped form actual bounds 1024",
+      "status": "PASS",
+      "rawLine": 23835,
+      "sourceLine": 10
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "HS assignment searchable selection and actual bounds 1024",
+      "status": "PASS",
+      "rawLine": 23836,
+      "sourceLine": 11
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "certificate list and grouped form actual bounds 390",
+      "status": "PASS",
+      "rawLine": 23837,
+      "sourceLine": 10
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "HS assignment searchable selection and actual bounds 390",
+      "status": "PASS",
+      "rawLine": 23838,
+      "sourceLine": 11
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "hs-codes pending POST blocks backdrop/back/navigation; failure retains input and retries once",
+      "status": "PASS",
+      "rawLine": 23839,
+      "sourceLine": 12
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "product-certificates pending POST blocks backdrop/back/navigation; failure retains input and retries once",
+      "status": "PASS",
+      "rawLine": 23840,
+      "sourceLine": 12
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "HS read-only hides maintenance and both pages reload errors recover",
+      "status": "PASS",
+      "rawLine": 23841,
+      "sourceLine": 13
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "assignment pending PUT blocks close and survives workspace switches, retains selection on rejection and retries",
+      "status": "PASS",
+      "rawLine": 23842,
+      "sourceLine": 15
+    },
+    {
+      "profile": "business-suite",
+      "file": "certificates-hs-ux.spec.js",
+      "title": "certificate first load failure retries to empty, and expiry URL survives reload",
+      "status": "PASS",
+      "rawLine": 23843,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "core-workspace-fixture.spec.js",
+      "title": "isolated core workspace fixture and real API contracts",
+      "status": "PASS",
+      "rawLine": 23854,
+      "sourceLine": 6
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-saving.spec.js",
+      "title": "contacts pending POST resists close and navigation at 1440px",
+      "status": "PASS",
+      "rawLine": 23855,
+      "sourceLine": 73
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-saving.spec.js",
+      "title": "contacts pending POST resists close and navigation at 1280px",
+      "status": "PASS",
+      "rawLine": 23856,
+      "sourceLine": 73
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-saving.spec.js",
+      "title": "contacts pending POST resists close and navigation at 1024px",
+      "status": "PASS",
+      "rawLine": 23857,
+      "sourceLine": 73
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-saving.spec.js",
+      "title": "contacts pending PUT failure preserves fields and quick retry sends one request",
+      "status": "PASS",
+      "rawLine": 23858,
+      "sourceLine": 90
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-saving.spec.js",
+      "title": "follow-ups pending POST resists close and navigation at 1440px",
+      "status": "PASS",
+      "rawLine": 23859,
+      "sourceLine": 73
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-saving.spec.js",
+      "title": "follow-ups pending POST resists close and navigation at 1280px",
+      "status": "PASS",
+      "rawLine": 23860,
+      "sourceLine": 73
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-saving.spec.js",
+      "title": "follow-ups pending POST resists close and navigation at 1024px",
+      "status": "PASS",
+      "rawLine": 23861,
+      "sourceLine": 73
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-saving.spec.js",
+      "title": "follow-ups pending PUT failure preserves fields and quick retry sends one request",
+      "status": "PASS",
+      "rawLine": 23862,
+      "sourceLine": 90
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "contacts filters, grouped columns, and form fit 1440px",
+      "status": "PASS",
+      "rawLine": 23863,
+      "sourceLine": 148
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "contacts filters, grouped columns, and form fit 1280px",
+      "status": "PASS",
+      "rawLine": 23864,
+      "sourceLine": 148
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "contacts filters, grouped columns, and form fit 1024px",
+      "status": "PASS",
+      "rawLine": 23865,
+      "sourceLine": 148
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "contact create, duplicate advisory, primary edit and return query stay consistent",
+      "status": "PASS",
+      "rawLine": 23866,
+      "sourceLine": 167
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "contact duplicate check uses hidden customer contacts, links to the record, and fits 390px",
+      "status": "PASS",
+      "rawLine": 23867,
+      "sourceLine": 192
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "editing a contact does not flag itself as a duplicate",
+      "status": "PASS",
+      "rawLine": 23868,
+      "sourceLine": 212
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "follow-up filters, detailed groups, and long content fit 1440px",
+      "status": "PASS",
+      "rawLine": 23869,
+      "sourceLine": 225
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "follow-up filters, detailed groups, and long content fit 1280px",
+      "status": "PASS",
+      "rawLine": 23870,
+      "sourceLine": 225
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "follow-up filters, detailed groups, and long content fit 1024px",
+      "status": "PASS",
+      "rawLine": 23871,
+      "sourceLine": 225
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "follow-up search and due filters remain in URL and saved text updates list",
+      "status": "PASS",
+      "rawLine": 23872,
+      "sourceLine": 252
+    },
+    {
+      "profile": "business-suite",
+      "file": "crm-ux.spec.js",
+      "title": "saved attachment delete can be cancelled, confirmed, and remains removed after reopening",
+      "status": "PASS",
+      "rawLine": 23873,
+      "sourceLine": 279
+    },
+    {
+      "profile": "business-suite",
+      "file": "csv-upload-http-413.spec.js",
+      "title": "real Chrome upload receives HTTP 413 for an oversized CSV without connection reset",
+      "status": "PASS",
+      "rawLine": 23878,
+      "sourceLine": 10
+    },
+    {
+      "profile": "business-suite",
+      "file": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 quotes customer column and filters 1440",
+      "status": "PASS",
+      "rawLine": 23879,
+      "sourceLine": 3
+    },
+    {
+      "profile": "business-suite",
+      "file": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 orders customer column and filters 1440",
+      "status": "PASS",
+      "rawLine": 23880,
+      "sourceLine": 3
+    },
+    {
+      "profile": "business-suite",
+      "file": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 quotes customer column and filters 1280",
+      "status": "PASS",
+      "rawLine": 23881,
+      "sourceLine": 3
+    },
+    {
+      "profile": "business-suite",
+      "file": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 orders customer column and filters 1280",
+      "status": "PASS",
+      "rawLine": 23882,
+      "sourceLine": 3
+    },
+    {
+      "profile": "business-suite",
+      "file": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 quotes customer column and filters 1024",
+      "status": "PASS",
+      "rawLine": 23883,
+      "sourceLine": 3
+    },
+    {
+      "profile": "business-suite",
+      "file": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 orders customer column and filters 1024",
+      "status": "PASS",
+      "rawLine": 23884,
+      "sourceLine": 3
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-actual-cash-resilience.spec.js",
+      "title": "actual cash failure leaves the legacy dashboard available and retry is independent",
+      "status": "PASS",
+      "rawLine": 23885,
+      "sourceLine": 32
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-actual-cash-resilience.spec.js",
+      "title": "rapid date changes discard stale actual cash responses",
+      "status": "PASS",
+      "rawLine": 23886,
+      "sourceLine": 50
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-csv-stability.spec.js",
+      "title": "CSV retry and changing period 1440",
+      "status": "PASS",
+      "rawLine": 23887,
+      "sourceLine": 8
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-csv-stability.spec.js",
+      "title": "CSV retry and changing period 390",
+      "status": "PASS",
+      "rawLine": 23888,
+      "sourceLine": 8
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-csv-stability.spec.js",
+      "title": "actual cash export failure can retry and blocks duplicate pending requests",
+      "status": "PASS",
+      "rawLine": 23889,
+      "sourceLine": 23
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-drill.spec.js",
+      "title": "finance dashboard composition drill desktop and narrow 1440px",
+      "status": "PASS",
+      "rawLine": 23890,
+      "sourceLine": 39
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-drill.spec.js",
+      "title": "finance dashboard composition drill desktop and narrow 700px",
+      "status": "PASS",
+      "rawLine": 23891,
+      "sourceLine": 39
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 1440px",
+      "status": "PASS",
+      "rawLine": 23892,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 1280px",
+      "status": "PASS",
+      "rawLine": 23893,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 1024px",
+      "status": "PASS",
+      "rawLine": 23894,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 640px",
+      "status": "PASS",
+      "rawLine": 23895,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 390px",
+      "status": "PASS",
+      "rawLine": 23896,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 1440px",
+      "status": "PASS",
+      "rawLine": 23897,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 1280px",
+      "status": "PASS",
+      "rawLine": 23898,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 1024px",
+      "status": "PASS",
+      "rawLine": 23899,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 640px",
+      "status": "PASS",
+      "rawLine": 23900,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 390px",
+      "status": "PASS",
+      "rawLine": 23901,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-reference-basis.spec.js",
+      "title": "reference basis across finance, transactions and saved cash config 1440",
+      "status": "PASS",
+      "rawLine": 23902,
+      "sourceLine": 15
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-reference-basis.spec.js",
+      "title": "reference basis across finance, transactions and saved cash config 1024",
+      "status": "PASS",
+      "rawLine": 23903,
+      "sourceLine": 15
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-retry-safety.spec.js",
+      "title": "finance pending submission and ambiguous retry preserve identity and guard departure",
+      "status": "PASS",
+      "rawLine": 23904,
+      "sourceLine": 3
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "财务流水在1440px完整显示汇总金额",
+      "status": "PASS",
+      "rawLine": 23905,
+      "sourceLine": 111
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "应收计划在1440px完整显示汇总金额",
+      "status": "PASS",
+      "rawLine": 23906,
+      "sourceLine": 111
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "应付计划在1440px完整显示汇总金额",
+      "status": "PASS",
+      "rawLine": 23907,
+      "sourceLine": 111
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "财务流水在1024px完整显示汇总金额",
+      "status": "PASS",
+      "rawLine": 23908,
+      "sourceLine": 111
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "应收计划在1024px完整显示汇总金额",
+      "status": "PASS",
+      "rawLine": 23909,
+      "sourceLine": 111
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "应付计划在1024px完整显示汇总金额",
+      "status": "PASS",
+      "rawLine": 23910,
+      "sourceLine": 111
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "财务流水在390px完整显示汇总金额",
+      "status": "PASS",
+      "rawLine": 23911,
+      "sourceLine": 111
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "应收计划在390px完整显示汇总金额",
+      "status": "PASS",
+      "rawLine": 23912,
+      "sourceLine": 111
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "应付计划在390px完整显示汇总金额",
+      "status": "PASS",
+      "rawLine": 23913,
+      "sourceLine": 111
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "其他汇总卡片页面保持可用：/customers",
+      "status": "PASS",
+      "rawLine": 23914,
+      "sourceLine": 124
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "其他汇总卡片页面保持可用：/suppliers",
+      "status": "PASS",
+      "rawLine": 23915,
+      "sourceLine": 124
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-summary-cards.spec.js",
+      "title": "其他汇总卡片页面保持可用：/purchase-orders",
+      "status": "PASS",
+      "rawLine": 23916,
+      "sourceLine": 124
+    },
+    {
+      "profile": "business-suite",
+      "file": "fulfillment-receivables.spec.js",
+      "title": "completed receivable navigation, Back, settlement and refund reloads retain fulfillment",
+      "status": "PASS",
+      "rawLine": 23917,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "fulfillment-receivables.spec.js",
+      "title": "restricted user cannot read protected debt from malicious unmasked order payload",
+      "status": "PASS",
+      "rawLine": 23918,
+      "sourceLine": 32
+    },
+    {
+      "profile": "business-suite",
+      "file": "fulfillment-receivables.spec.js",
+      "title": "completion pending prevents duplicate UI action and failed reload retries without false financial success",
+      "status": "PASS",
+      "rawLine": 23919,
+      "sourceLine": 39
+    },
+    {
+      "profile": "business-suite",
+      "file": "fulfillment-receivables.spec.js",
+      "title": "unknown no_plans has a review task and no confirmed zero",
+      "status": "PASS",
+      "rawLine": 23920,
+      "sourceLine": 49
+    },
+    {
+      "profile": "business-suite",
+      "file": "fulfillment-receivables.spec.js",
+      "title": "unknown review has a review task and no confirmed zero",
+      "status": "PASS",
+      "rawLine": 23921,
+      "sourceLine": 49
+    },
+    {
+      "profile": "business-suite",
+      "file": "import-ux.spec.js",
+      "title": "import real computed bounds and long error table 1440",
+      "status": "PASS",
+      "rawLine": 23922,
+      "sourceLine": 7
+    },
+    {
+      "profile": "business-suite",
+      "file": "import-ux.spec.js",
+      "title": "import real computed bounds and long error table 1280",
+      "status": "PASS",
+      "rawLine": 23923,
+      "sourceLine": 7
+    },
+    {
+      "profile": "business-suite",
+      "file": "import-ux.spec.js",
+      "title": "import real computed bounds and long error table 1024",
+      "status": "PASS",
+      "rawLine": 23924,
+      "sourceLine": 7
+    },
+    {
+      "profile": "business-suite",
+      "file": "import-ux.spec.js",
+      "title": "downloads contain actual UTF8 BOM headers and correctly quoted failure rows",
+      "status": "PASS",
+      "rawLine": 23964,
+      "sourceLine": 34
+    },
+    {
+      "profile": "business-suite",
+      "file": "import-ux.spec.js",
+      "title": "pending preview and execute survive workspace switching and block duplicate changes; cancel never writes",
+      "status": "PASS",
+      "rawLine": 24017,
+      "sourceLine": 35
+    },
+    {
+      "profile": "business-suite",
+      "file": "import-ux.spec.js",
+      "title": "restricted import entry and template retry",
+      "status": "PASS",
+      "rawLine": 24018,
+      "sourceLine": 36
+    },
+    {
+      "profile": "business-suite",
+      "file": "integration-020-051-evidence.spec.js",
+      "title": "Chrome quote workbench and saved PI show the reconciled 1.005 total",
+      "status": "PASS",
+      "rawLine": 24019,
+      "sourceLine": 49
+    },
+    {
+      "profile": "business-suite",
+      "file": "inventory-ux.spec.js",
+      "title": "inventory overview, reserved quantities and SKU drawer at 1440",
+      "status": "PASS",
+      "rawLine": 24020,
+      "sourceLine": 30
+    },
+    {
+      "profile": "business-suite",
+      "file": "inventory-ux.spec.js",
+      "title": "ledger filters, sticky actions and adjustment dialog at 1440",
+      "status": "PASS",
+      "rawLine": 24021,
+      "sourceLine": 42
+    },
+    {
+      "profile": "business-suite",
+      "file": "inventory-ux.spec.js",
+      "title": "inventory overview, reserved quantities and SKU drawer at 1280",
+      "status": "PASS",
+      "rawLine": 24022,
+      "sourceLine": 30
+    },
+    {
+      "profile": "business-suite",
+      "file": "inventory-ux.spec.js",
+      "title": "ledger filters, sticky actions and adjustment dialog at 1280",
+      "status": "PASS",
+      "rawLine": 24023,
+      "sourceLine": 42
+    },
+    {
+      "profile": "business-suite",
+      "file": "inventory-ux.spec.js",
+      "title": "inventory overview, reserved quantities and SKU drawer at 1024",
+      "status": "PASS",
+      "rawLine": 24024,
+      "sourceLine": 30
+    },
+    {
+      "profile": "business-suite",
+      "file": "inventory-ux.spec.js",
+      "title": "ledger filters, sticky actions and adjustment dialog at 1024",
+      "status": "PASS",
+      "rawLine": 24025,
+      "sourceLine": 42
+    },
+    {
+      "profile": "business-suite",
+      "file": "inventory-ux.spec.js",
+      "title": "page restoration, detail navigation and browser Back preserve inventory context",
+      "status": "PASS",
+      "rawLine": 24026,
+      "sourceLine": 54
+    },
+    {
+      "profile": "business-suite",
+      "file": "inventory-ux.spec.js",
+      "title": "empty and failed inventories distinguish errors, retry and no records",
+      "status": "PASS",
+      "rawLine": 24027,
+      "sourceLine": 62
+    },
+    {
+      "profile": "business-suite",
+      "file": "inventory-ux.spec.js",
+      "title": "restricted UI hides adjustment, reversal and unauthorized cross-module entrances",
+      "status": "PASS",
+      "rawLine": 24028,
+      "sourceLine": 67
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss008-chinese-aliases.spec.js",
+      "title": "customer edit, country aliases and quote customer picker remain usable at 1440px",
+      "status": "PASS",
+      "rawLine": 24029,
+      "sourceLine": 57
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss008-chinese-aliases.spec.js",
+      "title": "customer edit, country aliases and quote customer picker remain usable at 390px",
+      "status": "PASS",
+      "rawLine": 24030,
+      "sourceLine": 57
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-formal-fixtures.spec.js",
+      "title": "formal synthetic PI matrix creates saved API and XLSX evidence",
+      "status": "PASS",
+      "rawLine": 24032,
+      "sourceLine": 6
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss039-shared-purchase-costs.spec.js",
+      "title": "ISS-039 authorized procurement can restore and edit a cross-order allocation without sales data",
+      "status": "PASS",
+      "rawLine": 24033,
+      "sourceLine": 92
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss039-shared-purchase-costs.spec.js",
+      "title": "ISS-039 read-only procurement is refused by the candidate API and has no edit action",
+      "status": "PASS",
+      "rawLine": 24034,
+      "sourceLine": 125
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss039-shared-purchase-costs.spec.js",
+      "title": "ISS-039 no-permission role cannot restore the purchase URL",
+      "status": "PASS",
+      "rawLine": 24035,
+      "sourceLine": 140
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss041b-evidence.spec.js",
+      "title": "ISS-041-B raw detail evidence at 1440px",
+      "status": "PASS",
+      "rawLine": 24036,
+      "sourceLine": 18
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss041b-evidence.spec.js",
+      "title": "ISS-041-B raw detail evidence at 700px",
+      "status": "PASS",
+      "rawLine": 24037,
+      "sourceLine": 18
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss067-report-permission.spec.js",
+      "title": "employee opening an old unauthorized report URL gets a valid source and keeps the warning",
+      "status": "PASS",
+      "rawLine": 24038,
+      "sourceLine": 6
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss067-report-permission.spec.js",
+      "title": "shared template path remains available to an employee with the source permission",
+      "status": "PASS",
+      "rawLine": 24039,
+      "sourceLine": 45
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss075-payment-terms-real.spec.js",
+      "title": "ISS-075 供应商固定付款规则退出常规前端真实浏览器回归 › 供应商 UI、空付款条件草稿/正式 PO、历史付款计划与窄屏",
+      "status": "PASS",
+      "rawLine": 24077,
+      "sourceLine": 22
+    },
+    {
+      "profile": "business-suite",
+      "file": "orders-390-layout.spec.js",
+      "title": "R1-REPAIR-07 orders layout after 390px",
+      "status": "PASS",
+      "rawLine": 24078,
+      "sourceLine": 54
+    },
+    {
+      "profile": "business-suite",
+      "file": "orders-390-layout.spec.js",
+      "title": "R1-REPAIR-07 orders layout after 700px",
+      "status": "PASS",
+      "rawLine": 24079,
+      "sourceLine": 54
+    },
+    {
+      "profile": "business-suite",
+      "file": "orders-390-layout.spec.js",
+      "title": "R1-REPAIR-07 orders layout after 1024px",
+      "status": "PASS",
+      "rawLine": 24080,
+      "sourceLine": 54
+    },
+    {
+      "profile": "business-suite",
+      "file": "orders-390-layout.spec.js",
+      "title": "R1-REPAIR-07 orders layout after 1440px",
+      "status": "PASS",
+      "rawLine": 24081,
+      "sourceLine": 54
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "organization long matrix computed bounds and sticky headers 1440",
+      "status": "PASS",
+      "rawLine": 24082,
+      "sourceLine": 12
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "organization long matrix computed bounds and sticky headers 1280",
+      "status": "PASS",
+      "rawLine": 24083,
+      "sourceLine": 12
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "organization long matrix computed bounds and sticky headers 1024",
+      "status": "PASS",
+      "rawLine": 24084,
+      "sourceLine": 12
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "dirty switching, cancel and delayed save/readback navigation are protected",
+      "status": "PASS",
+      "rawLine": 24085,
+      "sourceLine": 13
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "save refusal and readback refusal retain input; readback retry never posts twice",
+      "status": "PASS",
+      "rawLine": 24086,
+      "sourceLine": 14
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "read-only and overview retry do not expose a write action",
+      "status": "PASS",
+      "rawLine": 24087,
+      "sourceLine": 15
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "access-denied layout and permitted return 1440",
+      "status": "PASS",
+      "rawLine": 24088,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "access-status-error layout and permitted return 1440",
+      "status": "PASS",
+      "rawLine": 24089,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "access-denied layout and permitted return 1280",
+      "status": "PASS",
+      "rawLine": 24090,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "access-status-error layout and permitted return 1280",
+      "status": "PASS",
+      "rawLine": 24091,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "access-denied layout and permitted return 1024",
+      "status": "PASS",
+      "rawLine": 24092,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "access-status-error layout and permitted return 1024",
+      "status": "PASS",
+      "rawLine": 24093,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "permission service 401 failure and recovery avoid redirects",
+      "status": "PASS",
+      "rawLine": 24094,
+      "sourceLine": 17
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "permission service 403 failure and recovery avoid redirects",
+      "status": "PASS",
+      "rawLine": 24095,
+      "sourceLine": 17
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "permission service 500 failure and recovery avoid redirects",
+      "status": "PASS",
+      "rawLine": 24096,
+      "sourceLine": 17
+    },
+    {
+      "profile": "business-suite",
+      "file": "organization-access-ux.spec.js",
+      "title": "permission service network failure and recovery avoid redirects",
+      "status": "PASS",
+      "rawLine": 24097,
+      "sourceLine": 17
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "dashboard long names, large amounts and 12-month layout at 1440",
+      "status": "PASS",
+      "rawLine": 24098,
+      "sourceLine": 10
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "reports complex filters, multi charts and computed layout at 1440",
+      "status": "PASS",
+      "rawLine": 24099,
+      "sourceLine": 24
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "dashboard long names, large amounts and 12-month layout at 1280",
+      "status": "PASS",
+      "rawLine": 24100,
+      "sourceLine": 10
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "reports complex filters, multi charts and computed layout at 1280",
+      "status": "PASS",
+      "rawLine": 24101,
+      "sourceLine": 24
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "dashboard long names, large amounts and 12-month layout at 1024",
+      "status": "PASS",
+      "rawLine": 24102,
+      "sourceLine": 10
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "reports complex filters, multi charts and computed layout at 1024",
+      "status": "PASS",
+      "rawLine": 24103,
+      "sourceLine": 24
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "dashboard long names, large amounts and 12-month layout at 700",
+      "status": "PASS",
+      "rawLine": 24104,
+      "sourceLine": 10
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "reports complex filters, multi charts and computed layout at 700",
+      "status": "PASS",
+      "rawLine": 24105,
+      "sourceLine": 24
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "saved local chart configurations survive reload, reorder, remove and undo",
+      "status": "PASS",
+      "rawLine": 24106,
+      "sourceLine": 36
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "CSV export keeps the last submitted filters while the form has an unsaved draft",
+      "status": "PASS",
+      "rawLine": 24107,
+      "sourceLine": 44
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "drill and previous-analysis return preserve actual period and browser navigation restores URL",
+      "status": "PASS",
+      "rawLine": 24108,
+      "sourceLine": 70
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "empty dashboard and charts have useful neutral states",
+      "status": "PASS",
+      "rawLine": 24109,
+      "sourceLine": 76
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "initial failures recover, refresh failure keeps stale data, and catalog has retry",
+      "status": "PASS",
+      "rawLine": 24110,
+      "sourceLine": 79
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "restricted UI hides sources, export and navigation, retaining unavailable local configuration",
+      "status": "PASS",
+      "rawLine": 24111,
+      "sourceLine": 85
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "two-level groups show separate columns, drill either dimension and return the original query",
+      "status": "PASS",
+      "rawLine": 24112,
+      "sourceLine": 91
+    },
+    {
+      "profile": "business-suite",
+      "file": "overview-reports.spec.js",
+      "title": "cross-group result opens paginated raw detail and links to the original order",
+      "status": "PASS",
+      "rawLine": 24113,
+      "sourceLine": 95
+    },
+    {
+      "profile": "business-suite",
+      "file": "packaging-ux.spec.js",
+      "title": "packaging actual layout and linked navigation 1440",
+      "status": "PASS",
+      "rawLine": 24114,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "packaging-ux.spec.js",
+      "title": "packaging actual layout and linked navigation 1280",
+      "status": "PASS",
+      "rawLine": 24115,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "packaging-ux.spec.js",
+      "title": "packaging actual layout and linked navigation 1024",
+      "status": "PASS",
+      "rawLine": 24116,
+      "sourceLine": 16
+    },
+    {
+      "profile": "business-suite",
+      "file": "packaging-ux.spec.js",
+      "title": "trade units conversion and form fit 1440",
+      "status": "PASS",
+      "rawLine": 24117,
+      "sourceLine": 23
+    },
+    {
+      "profile": "business-suite",
+      "file": "packaging-ux.spec.js",
+      "title": "trade units conversion and form fit 1280",
+      "status": "PASS",
+      "rawLine": 24118,
+      "sourceLine": 23
+    },
+    {
+      "profile": "business-suite",
+      "file": "packaging-ux.spec.js",
+      "title": "trade units conversion and form fit 1024",
+      "status": "PASS",
+      "rawLine": 24119,
+      "sourceLine": 23
+    },
+    {
+      "profile": "business-suite",
+      "file": "packaging-ux.spec.js",
+      "title": "packaging pending save blocks close/back/navigation; rejected data stays for retry",
+      "status": "PASS",
+      "rawLine": 24120,
+      "sourceLine": 28
+    },
+    {
+      "profile": "business-suite",
+      "file": "packaging-ux.spec.js",
+      "title": "trade pending and failed save keep SKU/factor; switching warns, and retry succeeds once",
+      "status": "PASS",
+      "rawLine": 24121,
+      "sourceLine": 31
+    },
+    {
+      "profile": "business-suite",
+      "file": "packaging-ux.spec.js",
+      "title": "initial template failure retries and view-only permissions hide all writing entries",
+      "status": "PASS",
+      "rawLine": 24122,
+      "sourceLine": 34
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "product filters, long content and pending save 1440",
+      "status": "PASS",
+      "rawLine": 24123,
+      "sourceLine": 30
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "product filters, long content and pending save 1280",
+      "status": "PASS",
+      "rawLine": 24124,
+      "sourceLine": 30
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "product filters, long content and pending save 1024",
+      "status": "PASS",
+      "rawLine": 24125,
+      "sourceLine": 30
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "product detail URL survives reload and close preserves list filters",
+      "status": "PASS",
+      "rawLine": 24126,
+      "sourceLine": 54
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "product parameter to product detail closes back to original filtered list",
+      "status": "PASS",
+      "rawLine": 24127,
+      "sourceLine": 61
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "view-only fixtures cannot create/edit/delete through these page entries",
+      "status": "PASS",
+      "rawLine": 24128,
+      "sourceLine": 66
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "product failure preserves input and retry; unsaved cancel requires confirmation",
+      "status": "PASS",
+      "rawLine": 24129,
+      "sourceLine": 70
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "category search depth and retry 1440",
+      "status": "PASS",
+      "rawLine": 24130,
+      "sourceLine": 84
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "category search depth and retry 1280",
+      "status": "PASS",
+      "rawLine": 24131,
+      "sourceLine": 84
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "category search depth and retry 1024",
+      "status": "PASS",
+      "rawLine": 24132,
+      "sourceLine": 84
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "category saving blocks backdrop, retains failure and permits retry",
+      "status": "PASS",
+      "rawLine": 24133,
+      "sourceLine": 95
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "product parameter context and pending save failure remain recoverable",
+      "status": "PASS",
+      "rawLine": 24134,
+      "sourceLine": 103
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "parameter long layout and empty reset 1440",
+      "status": "PASS",
+      "rawLine": 24135,
+      "sourceLine": 114
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "parameter long layout and empty reset 1280",
+      "status": "PASS",
+      "rawLine": 24136,
+      "sourceLine": 114
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "parameter long layout and empty reset 1024",
+      "status": "PASS",
+      "rawLine": 24137,
+      "sourceLine": 114
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "category drag preserves selected node and collapsed state after reorder",
+      "status": "PASS",
+      "rawLine": 24138,
+      "sourceLine": 123
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "R0-F9 products status labels stay on one line 1440",
+      "status": "PASS",
+      "rawLine": 24139,
+      "sourceLine": 136
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "R0-F9 products status labels stay on one line 1280",
+      "status": "PASS",
+      "rawLine": 24140,
+      "sourceLine": 136
+    },
+    {
+      "profile": "business-suite",
+      "file": "product-master-ux.spec.js",
+      "title": "R0-F9 products status labels stay on one line 1024",
+      "status": "PASS",
+      "rawLine": 24141,
+      "sourceLine": 136
+    },
+    {
+      "profile": "business-suite",
+      "file": "r1-repair-04-routing.spec.js",
+      "title": "R1-REPAIR-04 font interception is registered before navigation",
+      "status": "PASS",
+      "rawLine": 24142,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "report-query-request-order.spec.js",
+      "title": "submitted labels can precede the data response; capture the actual filtered request",
+      "status": "PASS",
+      "rawLine": 24143,
+      "sourceLine": 4
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU list filters and pending batch 1440",
+      "status": "PASS",
+      "rawLine": 24144,
+      "sourceLine": 20
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU list filters and pending batch 1280",
+      "status": "PASS",
+      "rawLine": 24145,
+      "sourceLine": 20
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU list filters and pending batch 1024",
+      "status": "PASS",
+      "rawLine": 24146,
+      "sourceLine": 20
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "batch failure retains selections and retry succeeds once",
+      "status": "PASS",
+      "rawLine": 24147,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU supplier source error and retry 1440",
+      "status": "PASS",
+      "rawLine": 24148,
+      "sourceLine": 22
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU supplier source error and retry 1280",
+      "status": "PASS",
+      "rawLine": 24149,
+      "sourceLine": 22
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU supplier source error and retry 1024",
+      "status": "PASS",
+      "rawLine": 24150,
+      "sourceLine": 22
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU read-only detail remains accessible with no write controls",
+      "status": "PASS",
+      "rawLine": 24151,
+      "sourceLine": 23
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU detail inventory link and Back 1440",
+      "status": "PASS",
+      "rawLine": 24152,
+      "sourceLine": 25
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU detail inventory link and Back 1280",
+      "status": "PASS",
+      "rawLine": 24153,
+      "sourceLine": 25
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU detail inventory link and Back 1024",
+      "status": "PASS",
+      "rawLine": 24154,
+      "sourceLine": 25
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU history load failure remains distinct from empty history and retries",
+      "status": "PASS",
+      "rawLine": 24155,
+      "sourceLine": 26
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "SKU logical loads keep separate history and ignore late responses in the rendered list",
+      "status": "PASS",
+      "rawLine": 24156,
+      "sourceLine": 28
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "transaction-unit navigation returns to SKU editor with original list context",
+      "status": "PASS",
+      "rawLine": 24157,
+      "sourceLine": 57
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "R0-F9 skus status labels stay on one line 1440",
+      "status": "PASS",
+      "rawLine": 24158,
+      "sourceLine": 59
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "R0-F9 skus status labels stay on one line 1280",
+      "status": "PASS",
+      "rawLine": 24159,
+      "sourceLine": 59
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-ux.spec.js",
+      "title": "R0-F9 skus status labels stay on one line 1024",
+      "status": "PASS",
+      "rawLine": 24160,
+      "sourceLine": 59
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-workspace-batch-races.spec.js",
+      "title": "SKU source context race success and long content 1440",
+      "status": "PASS",
+      "rawLine": 24161,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-workspace-batch-races.spec.js",
+      "title": "SKU source context race failure and long content 1440",
+      "status": "PASS",
+      "rawLine": 24162,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-workspace-batch-races.spec.js",
+      "title": "SKU source context race success and long content 390",
+      "status": "PASS",
+      "rawLine": 24163,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "sku-workspace-batch-races.spec.js",
+      "title": "SKU source context race failure and long content 390",
+      "status": "PASS",
+      "rawLine": 24164,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "supplier-ux.spec.js",
+      "title": "supplier long names, notes, filters, editor and detail at 1440",
+      "status": "PASS",
+      "rawLine": 24165,
+      "sourceLine": 30
+    },
+    {
+      "profile": "business-suite",
+      "file": "supplier-ux.spec.js",
+      "title": "supplier long names, notes, filters, editor and detail at 1280",
+      "status": "PASS",
+      "rawLine": 24166,
+      "sourceLine": 30
+    },
+    {
+      "profile": "business-suite",
+      "file": "supplier-ux.spec.js",
+      "title": "supplier long names, notes, filters, editor and detail at 1024",
+      "status": "PASS",
+      "rawLine": 24167,
+      "sourceLine": 30
+    },
+    {
+      "profile": "business-suite",
+      "file": "supplier-ux.spec.js",
+      "title": "supplier creates, cancels dirty edits, saves and reopens consistent detail and list",
+      "status": "PASS",
+      "rawLine": 24168,
+      "sourceLine": 39
+    },
+    {
+      "profile": "business-suite",
+      "file": "supplier-ux.spec.js",
+      "title": "duplicate code and category retry keep entered data; supplier fixed rules stay hidden",
+      "status": "PASS",
+      "rawLine": 24169,
+      "sourceLine": 43
+    },
+    {
+      "profile": "business-suite",
+      "file": "supplier-ux.spec.js",
+      "title": "filters and page survive reload, detail close and procurement workbench return",
+      "status": "PASS",
+      "rawLine": 24170,
+      "sourceLine": 46
+    },
+    {
+      "profile": "business-suite",
+      "file": "supplier-ux.spec.js",
+      "title": "initial errors retry to empty and refresh errors retain supplier list",
+      "status": "PASS",
+      "rawLine": 24171,
+      "sourceLine": 49
+    },
+    {
+      "profile": "business-suite",
+      "file": "supplier-ux.spec.js",
+      "title": "restricted view hides supplier write actions and purchase shortcuts",
+      "status": "PASS",
+      "rawLine": 24172,
+      "sourceLine": 52
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "home copy renders in Chrome at 1440px",
+      "status": "PASS",
+      "rawLine": 24173,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "home copy renders in Chrome at 390px",
+      "status": "PASS",
+      "rawLine": 24174,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "customers copy renders in Chrome at 1440px",
+      "status": "PASS",
+      "rawLine": 24175,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "customers copy renders in Chrome at 390px",
+      "status": "PASS",
+      "rawLine": 24176,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "contacts copy renders in Chrome at 1440px",
+      "status": "PASS",
+      "rawLine": 24177,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "contacts copy renders in Chrome at 390px",
+      "status": "PASS",
+      "rawLine": 24178,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "follow-ups copy renders in Chrome at 1440px",
+      "status": "PASS",
+      "rawLine": 24179,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "follow-ups copy renders in Chrome at 390px",
+      "status": "PASS",
+      "rawLine": 24180,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "products copy renders in Chrome at 1440px",
+      "status": "PASS",
+      "rawLine": 24181,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "products copy renders in Chrome at 390px",
+      "status": "PASS",
+      "rawLine": 24182,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "skus copy renders in Chrome at 1440px",
+      "status": "PASS",
+      "rawLine": 24183,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "skus copy renders in Chrome at 390px",
+      "status": "PASS",
+      "rawLine": 24184,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "categories copy renders in Chrome at 1440px",
+      "status": "PASS",
+      "rawLine": 24185,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "ux-copy-foundation.spec.js",
+      "title": "categories copy renders in Chrome at 390px",
+      "status": "PASS",
+      "rawLine": 24186,
+      "sourceLine": 21
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-duplicate-real.spec.js",
+      "title": "核对同账户同额候选并有说明放行 1440px",
+      "status": "PASS",
+      "rawLine": 24205,
+      "sourceLine": 35
+    },
+    {
+      "profile": "business-suite",
+      "file": "cash-duplicate-real.spec.js",
+      "title": "核对同账户同额候选并有说明放行 390px",
+      "status": "PASS",
+      "rawLine": 24224,
+      "sourceLine": 35
+    },
+    {
+      "profile": "business-suite",
+      "file": "core-business-closeout.spec.js",
+      "title": "real core closure 1440px",
+      "status": "PASS",
+      "rawLine": 24304,
+      "sourceLine": 9
+    },
+    {
+      "profile": "business-suite",
+      "file": "core-business-closeout.spec.js",
+      "title": "real core closure 390px",
+      "status": "PASS",
+      "rawLine": 24384,
+      "sourceLine": 9
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-closeout-approval.spec.js",
+      "title": "authenticated finance closure and reconciliation 1440px",
+      "status": "PASS",
+      "rawLine": 24432,
+      "sourceLine": 12
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-closeout-approval.spec.js",
+      "title": "authenticated finance closure and reconciliation 390px",
+      "status": "PASS",
+      "rawLine": 24480,
+      "sourceLine": 12
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-closeout.spec.js",
+      "title": "real account ledger at 1440px",
+      "status": "PASS",
+      "rawLine": 24513,
+      "sourceLine": 11
+    },
+    {
+      "profile": "business-suite",
+      "file": "finance-closeout.spec.js",
+      "title": "real account ledger at 390px",
+      "status": "PASS",
+      "rawLine": 24546,
+      "sourceLine": 11
+    },
+    {
+      "profile": "business-suite",
+      "file": "independent-bank-fee-real.spec.js",
+      "title": "independent fee without FX parent: real UI 1440px",
+      "status": "PASS",
+      "rawLine": 24572,
+      "sourceLine": 41
+    },
+    {
+      "profile": "business-suite",
+      "file": "independent-bank-fee-real.spec.js",
+      "title": "independent fee without FX parent: real UI 390px",
+      "status": "PASS",
+      "rawLine": 24598,
+      "sourceLine": 41
+    },
+    {
+      "profile": "business-suite",
+      "file": "independent-bank-fee-real.spec.js",
+      "title": "real API preserves optional-parent rejection, source quota and idempotency protections",
+      "status": "PASS",
+      "rawLine": 24626,
+      "sourceLine": 141
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-print-font-failure.spec.js",
+      "title": "saved PI refuses printing after a font loading failure",
+      "status": "PASS",
+      "rawLine": 24635,
+      "sourceLine": 8
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "saved PI blocks printing when a document image fails",
+      "status": "PASS",
+      "rawLine": 24644,
+      "sourceLine": 29
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "saved PI permits printing after resources load on narrow screen",
+      "status": "PASS",
+      "rawLine": 24653,
+      "sourceLine": 53
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF complete 1440px headers=false",
+      "status": "PASS",
+      "rawLine": 24663,
+      "sourceLine": 74
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF complete 1440px headers=true",
+      "status": "PASS",
+      "rawLine": 24673,
+      "sourceLine": 74
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF complete 390px headers=false",
+      "status": "PASS",
+      "rawLine": 24683,
+      "sourceLine": 74
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF multipage 1440px headers=false",
+      "status": "PASS",
+      "rawLine": 24722,
+      "sourceLine": 74
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF optional-empty 1440px headers=false",
+      "status": "PASS",
+      "rawLine": 24732,
+      "sourceLine": 74
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-seller-freeze-real.spec.js",
+      "title": "saved PI and Chrome print entry 1440px",
+      "status": "PASS",
+      "rawLine": 24741,
+      "sourceLine": 25
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-seller-freeze-real.spec.js",
+      "title": "saved PI and Chrome print entry 390px",
+      "status": "PASS",
+      "rawLine": 24750,
+      "sourceLine": 25
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss037-seller-freeze-real.spec.js",
+      "title": "unsaved revision preview uses the parent seller and retains print action",
+      "status": "PASS",
+      "rawLine": 24763,
+      "sourceLine": 48
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss039-amount-allocation-real.spec.js",
+      "title": "amount-only and deliberate legacy conversion, real Chrome 1440px",
+      "status": "PASS",
+      "rawLine": 24841,
+      "sourceLine": 25
+    },
+    {
+      "profile": "business-suite",
+      "file": "iss039-amount-allocation-real.spec.js",
+      "title": "amount-only and deliberate legacy conversion, real Chrome 390px",
+      "status": "PASS",
+      "rawLine": 24917,
+      "sourceLine": 25
+    },
+    {
+      "profile": "business-suite",
+      "file": "party-details-ui-real.spec.js",
+      "title": "draft party details can be saved and reopened on all three documents",
+      "status": "PASS",
+      "rawLine": 24989,
+      "sourceLine": 7
+    },
+    {
+      "profile": "business-suite",
+      "file": "party-document-real.spec.js",
+      "title": "formal SO and PO corrections retain original snapshots and business facts",
+      "status": "PASS",
+      "rawLine": 25095,
+      "sourceLine": 8
+    },
+    {
+      "profile": "business-suite",
+      "file": "party-quote-approval-real.spec.js",
+      "title": "authenticated staff separately propose and approve a synthetic saved quote correction",
+      "status": "PASS",
+      "rawLine": 25159,
+      "sourceLine": 8
+    },
+    {
+      "profile": "business-suite",
+      "file": "party-replacement-extended-20261106.spec.js",
+      "title": "extended replacement: two accounts, facts, unknown and explicit empty",
+      "status": "PASS",
+      "rawLine": 25268,
+      "sourceLine": 7
+    },
+    {
+      "profile": "business-suite",
+      "file": "party-version-snapshot-real.spec.js",
+      "title": "saved buyer country and PI use the saved quotation after master change (1440px)",
+      "status": "PASS",
+      "rawLine": 25283,
+      "sourceLine": 8
+    },
+    {
+      "profile": "business-suite",
+      "file": "party-version-snapshot-real.spec.js",
+      "title": "saved buyer country and PI use the saved quotation after master change (390px)",
+      "status": "PASS",
+      "rawLine": 25298,
+      "sourceLine": 8
+    },
+    {
+      "profile": "business-suite",
+      "file": "quote-buyer-tax-id.spec.js",
+      "title": "new quote tax input works at desktop and narrow widths",
+      "status": "PASS",
+      "rawLine": 25306,
+      "sourceLine": 15
+    },
+    {
+      "profile": "business-suite",
+      "file": "quote-buyer-tax-id.spec.js",
+      "title": "formal revision displays saved tax read-only",
+      "status": "PASS",
+      "rawLine": 25317,
+      "sourceLine": 39
+    },
+    {
+      "profile": "business-suite",
+      "file": "quote-draft-tax-revision.spec.js",
+      "title": "draft tax revision is editable and saves a new version",
+      "status": "PASS",
+      "rawLine": 25336,
+      "sourceLine": 12
+    },
+    {
+      "profile": "business-suite",
+      "file": "quote-draft-tax-revision.spec.js",
+      "title": "formal quote revision remains read only",
+      "status": "PASS",
+      "rawLine": 25347,
+      "sourceLine": 36
+    },
+    {
+      "profile": "business-suite",
+      "file": "access-session-real.spec.js",
+      "title": "ERP login and logout use the isolated real session (desktop)",
+      "status": "PASS",
+      "rawLine": 25587,
+      "sourceLine": 6
+    },
+    {
+      "profile": "business-suite",
+      "file": "access-session-real.spec.js",
+      "title": "ERP login and logout use the isolated real session (narrow)",
+      "status": "PASS",
+      "rawLine": 25609,
+      "sourceLine": 6
+    },
+    {
+      "profile": "business-suite",
+      "file": "access-session-real.spec.js",
+      "title": "lost session shows expiry and preserves a same-origin return",
+      "status": "PASS",
+      "rawLine": 25620,
+      "sourceLine": 43
+    },
+    {
+      "profile": "business-suite",
+      "file": "access-session-real.spec.js",
+      "title": "external return target is never navigated",
+      "status": "PASS",
+      "rawLine": 25625,
+      "sourceLine": 56
+    },
+    {
+      "profile": "shared-report-templates-isolated",
+      "file": "shared-report-templates.spec.js",
+      "title": "separate manager and employee sessions share only the published query definition",
+      "status": "PASS",
+      "rawLine": 25840,
+      "sourceLine": 9
+    },
+    {
+      "profile": "quote-editor-isolated",
+      "file": "quote-editor-mobile-actions.spec.js",
+      "title": "quote editor actions stay readable at desktop and narrow widths and preserve preview/save/export",
+      "status": "PASS",
+      "rawLine": 26113,
+      "sourceLine": 12
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: sessionStorage 属性读取异常时阻止提交",
+      "status": "PASS",
+      "rawLine": 26341,
+      "sourceLine": 182
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: sessionStorage.getItem 异常时阻止提交",
+      "status": "PASS",
+      "rawLine": 26350,
+      "sourceLine": 190
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: setItem 异常后恢复存储，沿用原请求 ID",
+      "status": "PASS",
+      "rawLine": 26361,
+      "sourceLine": 198
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: removeItem 异常提示核对服务器结果，恢复后重试不重复建单",
+      "status": "PASS",
+      "rawLine": 26373,
+      "sourceLine": 214
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: 服务器成功但网络响应丢失，重试只生成一条记录",
+      "status": "PASS",
+      "rawLine": 26385,
+      "sourceLine": 232
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: sessionStorage 属性读取异常时阻止提交",
+      "status": "PASS",
+      "rawLine": 26400,
+      "sourceLine": 182
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: sessionStorage.getItem 异常时阻止提交",
+      "status": "PASS",
+      "rawLine": 26415,
+      "sourceLine": 190
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: setItem 异常后恢复存储，沿用原请求 ID",
+      "status": "PASS",
+      "rawLine": 26438,
+      "sourceLine": 198
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: removeItem 异常提示核对服务器结果，恢复后重试不重复建单",
+      "status": "PASS",
+      "rawLine": 26462,
+      "sourceLine": 214
+    },
+    {
+      "profile": "iss006-storage-isolated",
+      "file": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: 服务器成功但网络响应丢失，重试只生成一条记录",
+      "status": "PASS",
+      "rawLine": 26486,
+      "sourceLine": 232
+    },
+    {
+      "profile": "iss007-attachment-isolated",
+      "file": "iss007-attachment-real.spec.js",
+      "title": "customer follow-up attachment uploads, reopens, and serves through private API",
+      "status": "PASS",
+      "rawLine": 26725,
+      "sourceLine": 41
+    },
+    {
+      "profile": "iss007-attachment-isolated",
+      "file": "iss007-attachment-real.spec.js",
+      "title": "SKU replacement keeps quote image snapshot and exposes thumbnail",
+      "status": "PASS",
+      "rawLine": 26752,
+      "sourceLine": 85
+    },
+    {
+      "profile": "iss007-attachment-isolated",
+      "file": "iss007-attachment-real.spec.js",
+      "title": "attachment upload failure stays visible and retries without duplicating the follow-up",
+      "status": "PASS",
+      "rawLine": 26774,
+      "sourceLine": 143
+    },
+    {
+      "profile": "iss007-image-snapshot-isolated",
+      "file": "iss007-image-snapshot-real.spec.js",
+      "title": "ISS-007 SKU image upload, immutable quote/order snapshots, exports, and missing private images",
+      "status": "PASS",
+      "rawLine": 27096,
+      "sourceLine": 78
+    },
+    {
+      "profile": "iss022-isolated",
+      "file": "iss022-moq-real.spec.js",
+      "title": "ISS-022 采购 MOQ 真实浏览器回归 › 等于 MOQ、低于 MOQ、交易单位换算、取消保留草稿及例外留痕",
+      "status": "PASS",
+      "rawLine": 27379,
+      "sourceLine": 56
+    },
+    {
+      "profile": "iss028-035-isolated",
+      "file": "iss028-035-category-schema.spec.js",
+      "title": "ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-028 根/子分类归类、继承属性和筛选",
+      "status": "PASS",
+      "rawLine": 27638,
+      "sourceLine": 129
+    },
+    {
+      "profile": "iss028-035-isolated",
+      "file": "iss028-035-category-schema.spec.js",
+      "title": "ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-035 模板变更不改写已发布 SKU、报价和订单快照",
+      "status": "PASS",
+      "rawLine": 27700,
+      "sourceLine": 219
+    },
+    {
+      "profile": "iss055-rbac",
+      "file": "iss055-customer-404-real.spec.js",
+      "title": "authorized customer detail keeps secure Chinese 404 semantics (desktop)",
+      "status": "PASS",
+      "rawLine": 27928,
+      "sourceLine": 76
+    },
+    {
+      "profile": "iss055-rbac",
+      "file": "iss055-customer-404-real.spec.js",
+      "title": "authorized customer detail keeps secure Chinese 404 semantics (narrow)",
+      "status": "PASS",
+      "rawLine": 27939,
+      "sourceLine": 76
+    },
+    {
+      "profile": "iss055-rbac",
+      "file": "iss055-customer-404-real.spec.js",
+      "title": "unauthorized customer detail keeps secure Chinese 404 semantics (desktop)",
+      "status": "PASS",
+      "rawLine": 27951,
+      "sourceLine": 76
+    },
+    {
+      "profile": "iss055-rbac",
+      "file": "iss055-customer-404-real.spec.js",
+      "title": "unauthorized customer detail keeps secure Chinese 404 semantics (narrow)",
+      "status": "PASS",
+      "rawLine": 27963,
+      "sourceLine": 76
+    },
+    {
+      "profile": "iss055-rbac",
+      "file": "iss055-customer-404-real.spec.js",
+      "title": "unknown customer detail keeps secure Chinese 404 semantics (desktop)",
+      "status": "PASS",
+      "rawLine": 27975,
+      "sourceLine": 76
+    },
+    {
+      "profile": "iss055-rbac",
+      "file": "iss055-customer-404-real.spec.js",
+      "title": "unknown customer detail keeps secure Chinese 404 semantics (narrow)",
+      "status": "PASS",
+      "rawLine": 27987,
+      "sourceLine": 76
+    },
+    {
+      "profile": "history-product-linking-h2-isolated",
+      "file": "history-product-linking-h2-real.spec.js",
+      "title": "H2 controlled candidate selection, specification recovery, audit, analysis and CSV",
+      "status": "PASS",
+      "rawLine": 28238,
+      "sourceLine": 34
+    },
+    {
+      "profile": "history-product-linking-narrow-100",
+      "file": "history-product-linking-h2-real.spec.js",
+      "title": "H2 controlled candidate selection, specification recovery, audit, analysis and CSV",
+      "status": "PASS",
+      "rawLine": 28489,
+      "sourceLine": 34
+    },
+    {
+      "profile": "history-product-linking-narrow-125",
+      "file": "history-product-linking-h2-real.spec.js",
+      "title": "H2 controlled candidate selection, specification recovery, audit, analysis and CSV",
+      "status": "PASS",
+      "rawLine": 28740,
+      "sourceLine": 34
+    },
+    {
+      "profile": "ui-final-state-contact-recovery-03",
+      "file": "ui-final-state-contact-recovery-03.spec.js",
+      "title": "contact detail recovers from a delayed failure and returns to its follow-up",
+      "status": "PASS",
+      "rawLine": 29233,
+      "sourceLine": 7
+    },
+    {
+      "profile": "ui-final-state-details-03",
+      "file": "ui-final-state-details-03.spec.js",
+      "title": "same warehouse movements retain independent lot details and return to the filtered list",
+      "status": "PASS",
+      "rawLine": 29532,
+      "sourceLine": 7
+    },
+    {
+      "profile": "ui-final-state-receipts-03",
+      "file": "ui-final-state-receipts-03.spec.js",
+      "title": "receipts preserve both units and destinations and inventory movements enforce source-specific actions",
+      "status": "PASS",
+      "rawLine": 29877,
+      "sourceLine": 9
+    },
+    {
+      "profile": "ui-final-state-sku-03",
+      "file": "ui-final-state-sku-03.spec.js",
+      "title": "SKU combinations persist, duplicate candidates are excluded, and images can be replaced and removed",
+      "status": "PASS",
+      "rawLine": 30159,
+      "sourceLine": 7
+    },
+    {
+      "profile": "ui-final-state-sale-return-03",
+      "file": "ui-final-state-sale-return-03.spec.js",
+      "title": "sales shipment and customer return are written and read back in the inventory ledger",
+      "status": "PASS",
+      "rawLine": 30529,
+      "sourceLine": 9
+    },
+    {
+      "profile": "sales-evidence-01-isolated",
+      "file": "ui-sales-state-evidence-01.spec.js",
+      "title": "sales state evidence in an owned Google Chrome profile",
+      "status": "PASS",
+      "rawLine": 31236,
+      "sourceLine": 22
+    },
+    {
+      "profile": "sales-evidence-01-party-isolated",
+      "file": "ui-sales-state-evidence-01-party.spec.js",
+      "title": "quote correction separates proposal, approval and resulting draft",
+      "status": "PASS",
+      "rawLine": 31512,
+      "sourceLine": 9
+    },
+    {
+      "profile": "product-operations-evidence-01-isolated",
+      "file": "ui-product-operations-state-evidence-01.spec.js",
+      "title": "product operations evidence with real Chrome and the isolated API",
+      "status": "PASS",
+      "rawLine": 32049,
+      "sourceLine": 27
+    },
+    {
+      "profile": "sales-completion-02-isolated",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 32330,
+      "sourceLine": 8
+    },
+    {
+      "profile": "product-operations-completion-02-isolated",
+      "file": "ui-product-operations-completion-02.spec.js",
+      "title": "product detail fits the available workspace and nested details restore focus",
+      "status": "PASS",
+      "rawLine": 32676,
+      "sourceLine": 9
+    },
+    {
+      "profile": "product-operations-prefix-02-isolated",
+      "file": "ui-product-operations-prefix-02.spec.js",
+      "title": "prefix preview, cancellation, server refusal and apply preserve SKU identity",
+      "status": "PASS",
+      "rawLine": 32927,
+      "sourceLine": 7
+    },
+    {
+      "profile": "product-operations-parameter-02-isolated",
+      "file": "ui-product-operations-parameter-02.spec.js",
+      "title": "product parameter survives save and reopen and shared sales/history chrome stays aligned",
+      "status": "PASS",
+      "rawLine": 33205,
+      "sourceLine": 7
+    },
+    {
+      "profile": "product-operations-carton-02-isolated",
+      "file": "ui-product-operations-carton-02.spec.js",
+      "title": "shared carton policy update requires confirmation and invalidates linked SKU verification",
+      "status": "PASS",
+      "rawLine": 33446,
+      "sourceLine": 7
+    },
+    {
+      "profile": "product-operations-category-02-isolated",
+      "file": "ui-product-operations-category-02.spec.js",
+      "title": "category drag persists a new parent, inherited attributes and confirmed sort",
+      "status": "PASS",
+      "rawLine": 33687,
+      "sourceLine": 7
+    },
+    {
+      "profile": "product-operations-sku-lifecycle-02-isolated",
+      "file": "ui-product-operations-sku-lifecycle-02.spec.js",
+      "title": "SKU combinations persist, duplicate candidates are excluded, and images can be replaced and removed",
+      "status": "PASS",
+      "rawLine": 33975,
+      "sourceLine": 7
+    },
+    {
+      "profile": "product-operations-supplier-02-isolated",
+      "file": "ui-product-operations-supplier-02.spec.js",
+      "title": "supplier binding edit persists, preferred source switches and the purchase editor fills the selected price",
+      "status": "PASS",
+      "rawLine": 34252,
+      "sourceLine": 7
+    },
+    {
+      "profile": "product-operations-lots-02-isolated",
+      "file": "ui-product-operations-lots-02.spec.js",
+      "title": "same warehouse movements retain independent lot details and return to the filtered list",
+      "status": "PASS",
+      "rawLine": 34491,
+      "sourceLine": 7
+    },
+    {
+      "profile": "sales-completion-extra-1",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 34773,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-completion-extra-2",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 35040,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-completion-extra-3",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 35299,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-completion-extra-4",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 35542,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-completion-extra-5",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 35832,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-completion-extra-6",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 36079,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-completion-extra-7",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 36317,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-completion-extra-8",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 36579,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-completion-extra-9",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 36821,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-completion-extra-10",
+      "file": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "status": "PASS",
+      "rawLine": 37075,
+      "sourceLine": 8
+    },
+    {
+      "profile": "sales-state-journeys",
+      "file": "ui-sales-state-evidence-01.spec.js",
+      "title": "sales state evidence in an owned Google Chrome profile",
+      "status": "PASS",
+      "rawLine": 37666,
+      "sourceLine": 22
+    },
+    {
+      "profile": "sales-state-supplemental",
+      "file": "ui-sales-state-evidence-01.spec.js",
+      "title": "sales state evidence in an owned Google Chrome profile",
+      "status": "PASS",
+      "rawLine": 38483,
+      "sourceLine": 22
+    },
+    {
+      "profile": "sales-state-focused",
+      "file": "ui-sales-state-evidence-01.spec.js",
+      "title": "sales state evidence in an owned Google Chrome profile",
+      "status": "PASS",
+      "rawLine": 38826,
+      "sourceLine": 22
+    },
+    {
+      "profile": "sales-state-apply-quantity",
+      "file": "ui-sales-state-evidence-01.spec.js",
+      "title": "sales state evidence in an owned Google Chrome profile",
+      "status": "PASS",
+      "rawLine": 39124,
+      "sourceLine": 22
+    },
+    {
+      "profile": "product-operations-state-1",
+      "file": "ui-product-operations-state-evidence-01.spec.js",
+      "title": "product operations evidence with real Chrome and the isolated API",
+      "status": "PASS",
+      "rawLine": 39450,
+      "sourceLine": 27
+    },
+    {
+      "profile": "product-operations-state-refresh",
+      "file": "ui-product-operations-state-evidence-01.spec.js",
+      "title": "product operations evidence with real Chrome and the isolated API",
+      "status": "PASS",
+      "rawLine": 39686,
+      "sourceLine": 27
+    },
+    {
+      "profile": "product-operations-state-lifecycle",
+      "file": "ui-product-operations-state-evidence-01.spec.js",
+      "title": "product operations evidence with real Chrome and the isolated API",
+      "status": "PASS",
+      "rawLine": 39973,
+      "sourceLine": 27
+    },
+    {
+      "profile": "product-operations-state-verify",
+      "file": "ui-product-operations-state-evidence-01.spec.js",
+      "title": "product operations evidence with real Chrome and the isolated API",
+      "status": "PASS",
+      "rawLine": 40268,
+      "sourceLine": 27
+    },
+    {
+      "profile": "product-operations-state-priority",
+      "file": "ui-product-operations-state-evidence-01.spec.js",
+      "title": "product operations evidence with real Chrome and the isolated API",
+      "status": "PASS",
+      "rawLine": 40543,
+      "sourceLine": 27
+    },
+    {
+      "profile": "product-operations-state-candidate",
+      "file": "ui-product-operations-state-evidence-01.spec.js",
+      "title": "product operations evidence with real Chrome and the isolated API",
+      "status": "PASS",
+      "rawLine": 40840,
+      "sourceLine": 27
+    },
+    {
+      "profile": "product-operations-state-priority-standard",
+      "file": "ui-product-operations-state-evidence-01.spec.js",
+      "title": "product operations evidence with real Chrome and the isolated API",
+      "status": "PASS",
+      "rawLine": 41115,
+      "sourceLine": 27
+    },
+    {
+      "profile": "product-operations-inventory-actions-02",
+      "file": "ui-product-operations-inventory-actions-02.spec.js",
+      "title": "inventory automatic sources and reversal entries are read-only while manual adjustment can reverse",
+      "status": "PASS",
+      "rawLine": 41362,
+      "sourceLine": 9
+    },
+    {
+      "profile": "product-operations-receipts-02",
+      "file": "ui-product-operations-receipts-02.spec.js",
+      "title": "receipts preserve both units and destinations and inventory movements enforce source-specific actions",
+      "status": "PASS",
+      "rawLine": 41639,
+      "sourceLine": 9
+    },
+    {
+      "profile": "workspace-tabs-isolated",
+      "file": "workspace-tabs-real.spec.js",
+      "title": "desktop and 390px isolated workspaces preserve draft inputs, route state and atomic close cancellation",
+      "status": "PASS",
+      "rawLine": 41876,
+      "sourceLine": 6
+    },
+    {
+      "profile": "workspace-tabs-isolated",
+      "file": "workspace-tabs-real.spec.js",
+      "title": "saved object tasks deduplicate, history and refresh retain links, and bulk closing respects dirty drafts",
+      "status": "PASS",
+      "rawLine": 41922,
+      "sourceLine": 62
+    },
+    {
+      "profile": "workspace-tabs-isolated",
+      "file": "workspace-tabs-real.spec.js",
+      "title": "saved customer drafts adopt the object and related dirty edits receive an explicit conflict prompt",
+      "status": "PASS",
+      "rawLine": 41949,
+      "sourceLine": 97
+    },
+    {
+      "profile": "workspace-tabs-isolated",
+      "file": "workspace-tabs-real.spec.js",
+      "title": "bounded synthetic workspaces measure requests, mounted panels, document listeners and timers through reclamation",
+      "status": "PASS",
+      "rawLine": 42042,
+      "sourceLine": 127
+    },
+    {
+      "profile": "workspace-tabs-isolated",
+      "file": "workspace-tabs-real.spec.js",
+      "title": "direct draft links, native refresh cancellation and synthetic account changes isolate all in-memory input",
+      "status": "PASS",
+      "rawLine": 42069,
+      "sourceLine": 182
+    },
+    {
+      "profile": "workspace-tabs-isolated",
+      "file": "workspace-tabs-real.spec.js",
+      "title": "list filters, page and both list and task scroll survive independent navigation",
+      "status": "PASS",
+      "rawLine": 42133,
+      "sourceLine": 211
+    },
+    {
+      "profile": "workspace-integration-isolated",
+      "file": "workspace-integration-real.spec.js",
+      "title": "real logout protects a dirty draft and clears it before a same-name account signs in",
+      "status": "PASS",
+      "rawLine": 42394,
+      "sourceLine": 36
+    },
+    {
+      "profile": "workspace-integration-isolated",
+      "file": "workspace-integration-real.spec.js",
+      "title": "real session expiry removes dirty workspaces and rejects a late authenticated response",
+      "status": "PASS",
+      "rawLine": 42422,
+      "sourceLine": 67
+    },
+    {
+      "profile": "workspace-integration-isolated",
+      "file": "workspace-integration-real.spec.js",
+      "title": "parallel customer drafts adopt the saved object and return to the original filtered list",
+      "status": "PASS",
+      "rawLine": 42452,
+      "sourceLine": 105
+    },
+    {
+      "profile": "workspace-integration-isolated",
+      "file": "workspace-integration-real.spec.js",
+      "title": "customer reminder entries keep separate context and preserve an in-progress need",
+      "status": "PASS",
+      "rawLine": 42469,
+      "sourceLine": 131
+    },
+    {
+      "profile": "first-release-consolidation-isolated",
+      "file": "first-release-consolidation-02.spec.js",
+      "title": "finance navigation and historical preflight CSV work in isolated Chrome",
+      "status": "PASS",
+      "rawLine": 42705,
+      "sourceLine": 7
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "authenticated codex superuser imports XLSX and downloads the actual error CSV",
+      "status": "PASS",
+      "rawLine": 42942,
+      "sourceLine": 14
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "history page downloads the current workbook CSV without business writes",
+      "status": "PASS",
+      "rawLine": 42959,
+      "sourceLine": 145
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "finance overview presents the noncash reduction and downloads its CSV",
+      "status": "PASS",
+      "rawLine": 42965,
+      "sourceLine": 207
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "inventory draft guards the form and replays the same write after a lost response",
+      "status": "PASS",
+      "rawLine": 42984,
+      "sourceLine": 245
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "finance receipt separates cash fee credit refund capacity and inline settlement",
+      "status": "PASS",
+      "rawLine": 43014,
+      "sourceLine": 299
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "finance fee scenarios refuse excess refunds and reverse writeoffs without cash",
+      "status": "PASS",
+      "rawLine": 43054,
+      "sourceLine": 347
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "historical finance reviews a duplicate and posts only after second-user approval",
+      "status": "SKIPPED",
+      "rawLine": 43055,
+      "sourceLine": 425
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "Chrome native page zoom keeps long finance and history records usable",
+      "status": "SKIPPED",
+      "rawLine": 43056,
+      "sourceLine": 492
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "certificate validation identifies the business field without closing the draft",
+      "status": "PASS",
+      "rawLine": 43067,
+      "sourceLine": 653
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "completion evidence follows lost receipt, actual refund date and funds review",
+      "status": "SKIPPED",
+      "rawLine": 43068,
+      "sourceLine": 669
+    },
+    {
+      "profile": "sales-order-import-base-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "codex logout clears the workspaces and returns to sign-in",
+      "status": "PASS",
+      "rawLine": 43075,
+      "sourceLine": 778
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "authenticated codex superuser imports XLSX and downloads the actual error CSV",
+      "status": "PASS",
+      "rawLine": 43313,
+      "sourceLine": 14
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "history page downloads the current workbook CSV without business writes",
+      "status": "PASS",
+      "rawLine": 43330,
+      "sourceLine": 145
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "finance overview presents the noncash reduction and downloads its CSV",
+      "status": "PASS",
+      "rawLine": 43336,
+      "sourceLine": 207
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "inventory draft guards the form and replays the same write after a lost response",
+      "status": "PASS",
+      "rawLine": 43355,
+      "sourceLine": 245
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "finance receipt separates cash fee credit refund capacity and inline settlement",
+      "status": "PASS",
+      "rawLine": 43385,
+      "sourceLine": 299
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "finance fee scenarios refuse excess refunds and reverse writeoffs without cash",
+      "status": "PASS",
+      "rawLine": 43425,
+      "sourceLine": 347
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "historical finance reviews a duplicate and posts only after second-user approval",
+      "status": "PASS",
+      "rawLine": 43460,
+      "sourceLine": 425
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "Chrome native page zoom keeps long finance and history records usable",
+      "status": "PASS",
+      "rawLine": 43485,
+      "sourceLine": 492
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "certificate validation identifies the business field without closing the draft",
+      "status": "PASS",
+      "rawLine": 43496,
+      "sourceLine": 653
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "completion evidence follows lost receipt, actual refund date and funds review",
+      "status": "SKIPPED",
+      "rawLine": 43497,
+      "sourceLine": 669
+    },
+    {
+      "profile": "sales-order-import-followup-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "codex logout clears the workspaces and returns to sign-in",
+      "status": "PASS",
+      "rawLine": 43504,
+      "sourceLine": 778
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "authenticated codex superuser imports XLSX and downloads the actual error CSV",
+      "status": "PASS",
+      "rawLine": 43742,
+      "sourceLine": 14
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "history page downloads the current workbook CSV without business writes",
+      "status": "PASS",
+      "rawLine": 43759,
+      "sourceLine": 145
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "finance overview presents the noncash reduction and downloads its CSV",
+      "status": "PASS",
+      "rawLine": 43765,
+      "sourceLine": 207
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "inventory draft guards the form and replays the same write after a lost response",
+      "status": "PASS",
+      "rawLine": 43784,
+      "sourceLine": 245
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "finance receipt separates cash fee credit refund capacity and inline settlement",
+      "status": "PASS",
+      "rawLine": 43814,
+      "sourceLine": 299
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "finance fee scenarios refuse excess refunds and reverse writeoffs without cash",
+      "status": "PASS",
+      "rawLine": 43854,
+      "sourceLine": 347
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "historical finance reviews a duplicate and posts only after second-user approval",
+      "status": "PASS",
+      "rawLine": 43889,
+      "sourceLine": 425
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "Chrome native page zoom keeps long finance and history records usable",
+      "status": "PASS",
+      "rawLine": 43918,
+      "sourceLine": 492
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "certificate validation identifies the business field without closing the draft",
+      "status": "PASS",
+      "rawLine": 43929,
+      "sourceLine": 653
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "completion evidence follows lost receipt, actual refund date and funds review",
+      "status": "PASS",
+      "rawLine": 43962,
+      "sourceLine": 669
+    },
+    {
+      "profile": "sales-order-import-completion-isolated",
+      "file": "sales-order-import-real.spec.js",
+      "title": "codex logout clears the workspaces and returns to sign-in",
+      "status": "PASS",
+      "rawLine": 43969,
+      "sourceLine": 778
+    },
+    {
+      "profile": "historical-orders-02-isolated",
+      "file": "historical-orders-fix-02.spec.js",
+      "title": "history analysis detail tables work at desktop and 700px CSS viewport",
+      "status": "PASS",
+      "rawLine": 44201,
+      "sourceLine": 20
+    },
+    {
+      "profile": "historical-orders-02-isolated",
+      "file": "historical-orders-fix-02.spec.js",
+      "title": "history analysis hides unauthorized detail dimensions without blanking the page",
+      "status": "PASS",
+      "rawLine": 44202,
+      "sourceLine": 45
+    },
+    {
+      "profile": "historical-orders-03-isolated",
+      "file": "historical-orders-fix-03.spec.js",
+      "title": "current historical analysis detail tables match the API at desktop and 700px CSS viewport",
+      "status": "PASS",
+      "rawLine": 44428,
+      "sourceLine": 51
+    },
+    {
+      "profile": "historical-orders-03-isolated",
+      "file": "historical-orders-fix-03.spec.js",
+      "title": "current historical analysis hides unauthorized detail dimensions without blanking the page",
+      "status": "PASS",
+      "rawLine": 44429,
+      "sourceLine": 85
+    },
+    {
+      "profile": "recipient-snapshot-isolated",
+      "file": "iss029-recipient-snapshot.spec.js",
+      "title": "real Django: recipient A/B, empty/invalid email, master changes, saved PI and XLSX",
+      "status": "PASS",
+      "rawLine": 44725,
+      "sourceLine": 12
+    },
+    {
+      "profile": "party-order-purchase-isolated",
+      "file": "party-order-purchase-real.spec.js",
+      "title": "order party display at 1440px",
+      "status": "PASS",
+      "rawLine": 44954,
+      "sourceLine": 22
+    },
+    {
+      "profile": "party-order-purchase-isolated",
+      "file": "party-order-purchase-real.spec.js",
+      "title": "purchase party display at 1440px",
+      "status": "PASS",
+      "rawLine": 44963,
+      "sourceLine": 22
+    },
+    {
+      "profile": "party-order-purchase-isolated",
+      "file": "party-order-purchase-real.spec.js",
+      "title": "order party display at 390px",
+      "status": "PASS",
+      "rawLine": 44978,
+      "sourceLine": 22
+    },
+    {
+      "profile": "party-order-purchase-isolated",
+      "file": "party-order-purchase-real.spec.js",
+      "title": "purchase party display at 390px",
+      "status": "PASS",
+      "rawLine": 44987,
+      "sourceLine": 22
+    },
+    {
+      "profile": "party-replacement-acceptance-isolated",
+      "file": "party-replacement-acceptance-20261106.spec.js",
+      "title": "synthetic order replacement uses independent approval and explicit new draft",
+      "status": "PASS",
+      "rawLine": 45267,
+      "sourceLine": 7
+    },
+    {
+      "profile": "party-replacement-po-isolated",
+      "file": "party-replacement-po-real.spec.js",
+      "title": "synthetic purchase replacement uses independent approval and explicit draft",
+      "status": "PASS",
+      "rawLine": 45533,
+      "sourceLine": 7
+    },
+    {
+      "profile": "party-replacement-quote-isolated",
+      "file": "party-replacement-quote-real.spec.js",
+      "title": "synthetic quote replacement uses independent approval and synthetic saved template",
+      "status": "PASS",
+      "rawLine": 45805,
+      "sourceLine": 8
+    },
+    {
+      "profile": "party-lifecycle-isolated",
+      "file": "party-lifecycle-real.spec.js",
+      "title": "two authenticated staff reject, reapply and withdraw with saved history",
+      "status": "PASS",
+      "rawLine": 46086,
+      "sourceLine": 9
+    },
+    {
+      "profile": "party-lifecycle-real-native-125",
+      "file": "party-lifecycle-real.spec.js",
+      "title": "two authenticated staff reject, reapply and withdraw with saved history",
+      "status": "PASS",
+      "rawLine": 46367,
+      "sourceLine": 9
+    },
+    {
+      "profile": "party-replacement-quote-real-native-125",
+      "file": "party-replacement-quote-real.spec.js",
+      "title": "synthetic quote replacement uses independent approval and synthetic saved template",
+      "status": "PASS",
+      "rawLine": 46641,
+      "sourceLine": 8
+    },
+    {
+      "profile": "party-replacement-order-isolated",
+      "file": "party-replacement-real.spec.js",
+      "title": "synthetic order replacement uses independent approval and explicit new draft",
+      "status": "PASS",
+      "rawLine": 46917,
+      "sourceLine": 7
+    }
+  ]
+}

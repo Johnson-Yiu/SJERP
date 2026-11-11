@@ -1,0 +1,619 @@
+{
+  "source": "24de101362bc48ad215cddfae9234c5cec88cecf",
+  "environment": "Local Windows SQLite diagnostic",
+  "run": null,
+  "job": null,
+  "log": "final-24de1013-local-sqlite.log",
+  "items": [
+    {
+      "case": "crm.tests.test_audit.AuditTrailTests.test_postgres_trigger_rejects_raw_update_and_delete",
+      "reason": "requires a PostgreSQL database; SQLite cannot prove the production DB guard",
+      "rawLine": 492
+    },
+    {
+      "case": "crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_history_records_reject_raw_truncate_and_preserve_rows",
+      "reason": "requires PostgreSQL TRUNCATE triggers",
+      "rawLine": 1830
+    },
+    {
+      "case": "crm.tests.test_access_implementation.ReservedRoleConcurrencyTests.test_parallel_role_changes_are_both_rejected",
+      "reason": "Database doesn't support feature(s): has_select_for_update",
+      "rawLine": 3837
+    },
+    {
+      "case": "crm.tests.test_cash_duplicate_review.DuplicateConcurrencyTests.test_distinct_sources_same_bank_fact_serialize",
+      "reason": "Real PostgreSQL required",
+      "rawLine": 3838
+    },
+    {
+      "case": "crm.tests.test_cash_duplicate_review.DuplicateConcurrencyTests.test_postgres_rejects_raw_update_delete_and_truncate_of_review",
+      "reason": "Real PostgreSQL required",
+      "rawLine": 3839
+    },
+    {
+      "case": "crm.tests.test_cash_duplicate_review.DuplicateConcurrencyTests.test_same_bank_identifier_different_dates_serializes",
+      "reason": "Real PostgreSQL required",
+      "rawLine": 3840
+    },
+    {
+      "case": "crm.tests.test_cash_events.CashConcurrencyTests.test_h_confirm_races_void_and_refund_never_releases_or_changes_legacy",
+      "reason": "Real PostgreSQL locks required",
+      "rawLine": 3842
+    },
+    {
+      "case": "crm.tests.test_cash_events.CashConcurrencyTests.test_i_concurrent_same_request_creates_one_event_and_one_allocation",
+      "reason": "Real PostgreSQL locks required",
+      "rawLine": 3843
+    },
+    {
+      "case": "crm.tests.test_cash_events.CashConcurrencyTests.test_j_different_keys_compete_for_same_source",
+      "reason": "Real PostgreSQL locks required",
+      "rawLine": 3844
+    },
+    {
+      "case": "crm.tests.test_cash_events.CashConcurrencyTests.test_writeoff_correction_competition_and_same_request_are_serialized",
+      "reason": "Real PostgreSQL locks required",
+      "rawLine": 3845
+    },
+    {
+      "case": "crm.tests.test_cash_events.CashMigrationTests.test_additive_migration_preserves_historical_rows_and_decimal_fields",
+      "reason": "Historical forward migration requires an isolated PostgreSQL schema",
+      "rawLine": 3846
+    },
+    {
+      "case": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_and_ship_race_has_one_legal_outcome_without_partial_effects",
+      "reason": "Requires real PostgreSQL row locks; SQLite is not concurrency evidence",
+      "rawLine": 3847
+    },
+    {
+      "case": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cancel_between_serializer_validation_and_cost_lock_is_rejected",
+      "reason": "Requires real PostgreSQL row locks; SQLite is not concurrency evidence",
+      "rawLine": 3848
+    },
+    {
+      "case": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_cost_version_race_keeps_single_replacement_and_audit",
+      "reason": "Requires real PostgreSQL row locks; SQLite is not concurrency evidence",
+      "rawLine": 3849
+    },
+    {
+      "case": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_location_overdraw_competition_only_one_shipment_commits",
+      "reason": "Requires real PostgreSQL row locks; SQLite is not concurrency evidence",
+      "rawLine": 3850
+    },
+    {
+      "case": "crm.tests.test_core_business_concurrency.CoreBusinessConcurrencyTests.test_purchase_cancellation_and_receipt_compete_without_partial_effects",
+      "reason": "Requires real PostgreSQL row locks; SQLite is not concurrency evidence",
+      "rawLine": 3851
+    },
+    {
+      "case": "crm.tests.test_csv_import_audit_postgres.CsvImportAuditPostgresAppendOnlyTests.test_raw_update_and_delete_are_rejected_for_all_audit_tables",
+      "reason": "requires an isolated PostgreSQL test database",
+      "rawLine": 3855
+    },
+    {
+      "case": "crm.tests.test_csv_import_audit_postgres.CsvImportAuditPostgresAppendOnlyTests.test_truncate_is_rejected_for_each_audit_table_and_preserves_all_rows",
+      "reason": "requires an isolated PostgreSQL test database",
+      "rawLine": 3856
+    },
+    {
+      "case": "crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_approval_cancel_vs_actual_payment_keeps_any_real_debit",
+      "reason": "Real PostgreSQL 17 lock semantics required",
+      "rawLine": 3879
+    },
+    {
+      "case": "crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_correction_vs_transfer_preserves_one_consistent_effective_history",
+      "reason": "Real PostgreSQL 17 lock semantics required",
+      "rawLine": 3880
+    },
+    {
+      "case": "crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_fail_vs_post_cannot_leave_failed_instruction_with_business_fact",
+      "reason": "Real PostgreSQL 17 lock semantics required",
+      "rawLine": 3881
+    },
+    {
+      "case": "crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_reconciliation_vs_late_fact_never_silently_keeps_stale_completed",
+      "reason": "Real PostgreSQL 17 lock semantics required",
+      "rawLine": 3882
+    },
+    {
+      "case": "crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_transfer_competing_counterparts_do_not_reuse_a_principal",
+      "reason": "Real PostgreSQL 17 lock semantics required",
+      "rawLine": 3883
+    },
+    {
+      "case": "crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_two_independent_reconciliations_do_not_create_cash_or_overwrite_history",
+      "reason": "Real PostgreSQL 17 lock semantics required",
+      "rawLine": 3884
+    },
+    {
+      "case": "crm.tests.test_finance_adversarial_concurrency.FinanceAdversarialConcurrencyTests.test_two_partial_bank_returns_cannot_exceed_remaining_or_duplicate_audit",
+      "reason": "Real PostgreSQL 17 lock semantics required",
+      "rawLine": 3885
+    },
+    {
+      "case": "crm.tests.test_finance_closeout.FinanceBankReturnConcurrencyTests.test_fx_return_uses_verified_original_amount_and_serializes_competing_returns",
+      "reason": "Requires real PostgreSQL row locks",
+      "rawLine": 3890
+    },
+    {
+      "case": "crm.tests.test_finance_closeout_concurrency.FinanceCloseoutConcurrencyTests.test_concurrent_corrections_cannot_create_two_effective_versions",
+      "reason": "Real PostgreSQL connections and locks required",
+      "rawLine": 3891
+    },
+    {
+      "case": "crm.tests.test_finance_closeout_concurrency.FinanceCloseoutConcurrencyTests.test_concurrent_partial_returns_cannot_exceed_original",
+      "reason": "Real PostgreSQL connections and locks required",
+      "rawLine": 3892
+    },
+    {
+      "case": "crm.tests.test_finance_closeout_concurrency.FinanceCloseoutConcurrencyTests.test_concurrent_same_instruction_posts_once",
+      "reason": "Real PostgreSQL connections and locks required",
+      "rawLine": 3893
+    },
+    {
+      "case": "crm.tests.test_finance_closeout_concurrency.FinanceCloseoutConcurrencyTests.test_same_request_key_creates_one_instruction_and_audit",
+      "reason": "Real PostgreSQL connections and locks required",
+      "rawLine": 3894
+    },
+    {
+      "case": "crm.tests.test_finance_closeout_concurrency.FinanceCloseoutConcurrencyTests.test_two_refund_payments_share_approval_ceiling",
+      "reason": "Real PostgreSQL connections and locks required",
+      "rawLine": 3895
+    },
+    {
+      "case": "crm.tests.test_finance_cross_bank_match.CrossModuleBankConcurrencyTests.test_concurrent_confirmation_and_post_cannot_both_ignore_candidates",
+      "reason": "Requires PostgreSQL advisory locks",
+      "rawLine": 3896
+    },
+    {
+      "case": "crm.tests.test_finance_integration_lock_order.FinanceIntegrationLockOrderPostgreSQLTests.test_classification_waiting_behind_committed_historical_match_is_rejected",
+      "reason": "Requires actual PostgreSQL row locks and backend connections",
+      "rawLine": 3897
+    },
+    {
+      "case": "crm.tests.test_finance_integration_lock_order.FinanceIntegrationLockOrderPostgreSQLTests.test_waiting_historical_match_rechecks_classification_committed_first",
+      "reason": "Requires actual PostgreSQL row locks and backend connections",
+      "rawLine": 3898
+    },
+    {
+      "case": "crm.tests.test_finance_integration_lock_order.FinanceIntegrationLockOrderPostgreSQLTests.test_waiting_historical_match_rechecks_correction_committed_first",
+      "reason": "Requires actual PostgreSQL row locks and backend connections",
+      "rawLine": 3899
+    },
+    {
+      "case": "crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_allocation_replays_once",
+      "reason": "����������Ҫ PostgreSQL",
+      "rawLine": 3909
+    },
+    {
+      "case": "crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_identical_receipts_create_one_fact",
+      "reason": "����������Ҫ PostgreSQL",
+      "rawLine": 3910
+    },
+    {
+      "case": "crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_legacy_direct_receipt_replays_once",
+      "reason": "����������Ҫ PostgreSQL",
+      "rawLine": 3911
+    },
+    {
+      "case": "crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_selected_plan_receipt_replays_once",
+      "reason": "����������Ҫ PostgreSQL",
+      "rawLine": 3912
+    },
+    {
+      "case": "crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_supplier_payment_replays_once",
+      "reason": "����������Ҫ PostgreSQL",
+      "rawLine": 3913
+    },
+    {
+      "case": "crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_void_has_one_reversal_and_one_audit",
+      "reason": "����������Ҫ PostgreSQL",
+      "rawLine": 3914
+    },
+    {
+      "case": "crm.tests.test_formal_party_guard.FormalPartyGuardConcurrencyTests.test_stale_draft_cannot_overwrite_after_concurrent_confirmation",
+      "reason": "Requires PostgreSQL row locks",
+      "rawLine": 3916
+    },
+    {
+      "case": "crm.tests.test_history_operational_contracts.HistoricalContractsPostgresTests.test_concurrent_execute_creates_each_contract_once",
+      "reason": "requires real PostgreSQL row locks",
+      "rawLine": 3917
+    },
+    {
+      "case": "crm.tests.test_history_operational_finance.HistoricalFinancePostgresTests.test_concurrent_post_creates_one_fact_and_one_history_event",
+      "reason": "requires real PostgreSQL row locks",
+      "rawLine": 3918
+    },
+    {
+      "case": "crm.tests.test_history_operational_finance.HistoricalFinancePostgresTests.test_concurrent_same_source_submission_is_idempotent",
+      "reason": "requires real PostgreSQL row locks",
+      "rawLine": 3919
+    },
+    {
+      "case": "crm.tests.test_history_operational_inventory.HistoricalInventoryPostgresTests.test_different_groups_same_sku_cannot_double_the_stock",
+      "reason": "requires real PostgreSQL row locks",
+      "rawLine": 3920
+    },
+    {
+      "case": "crm.tests.test_history_operational_inventory.HistoricalInventoryPostgresTests.test_migration_refuses_to_remove_existing_baseline",
+      "reason": "requires real PostgreSQL row locks",
+      "rawLine": 3921
+    },
+    {
+      "case": "crm.tests.test_history_operational_inventory.HistoricalInventoryPostgresTests.test_same_group_concurrent_replay_creates_one_baseline",
+      "reason": "requires real PostgreSQL row locks",
+      "rawLine": 3922
+    },
+    {
+      "case": "crm.tests.test_history_products.HistoryProductPostgresTests.test_overlapping_operators_cannot_split_or_overwrite_a_batch",
+      "reason": "Requires PostgreSQL row locks",
+      "rawLine": 3924
+    },
+    {
+      "case": "crm.tests.test_history_takeover.HistoryTakeoverPostgresConcurrencyTests.test_postgres_concurrent_execute_is_serialized_by_group_lock",
+      "reason": "Requires PostgreSQL row locks; SQLite is not evidence of concurrent execution safety.",
+      "rawLine": 3925
+    },
+    {
+      "case": "crm.tests.test_inventory_finance_idempotency.InventoryRequestConcurrencyTests.test_same_batch_concurrently_records_each_movement_once",
+      "reason": "����������Ҫ PostgreSQL",
+      "rawLine": 3927
+    },
+    {
+      "case": "crm.tests.test_iss006_idempotency.FulfillmentIdempotencyDatabaseTests.test_postgresql_concurrent_duplicate_requests_are_serialized",
+      "reason": "���� SQLite ���ṩ PostgreSQL ���������壻���� PostgreSQL ����ִ�С�",
+      "rawLine": 3928
+    },
+    {
+      "case": "crm.tests.test_iss006_idempotency.FulfillmentIdempotencyDatabaseTests.test_postgresql_concurrent_same_key_receipts_return_one_business_result",
+      "reason": "PostgreSQL unique-key/row-lock concurrency requires PostgreSQL.",
+      "rawLine": 3929
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_existing_world_accessible_backup_directory_requires_explicit_tightening",
+      "reason": "POSIX mode check only",
+      "rawLine": 3937
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_symlink_directory_is_rejected",
+      "reason": "symlink creation unavailable: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\\\\\\\Users\\\\\\\\Johnson\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpwu7az1ew\\\\\\\\real-backups' -> 'C:\\\\\\\\Users\\\\\\\\Johnson\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpwu7az1ew\\\\\\\\backup-link'",
+      "rawLine": 3946
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_symlink_is_rejected_without_overwriting_link_target",
+      "reason": "symlink creation unavailable: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\\\\\\\Users\\\\\\\\Johnson\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmp8t5is4r0\\\\\\\\protected-report.json' -> 'C:\\\\\\\\Users\\\\\\\\Johnson\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmp8t5is4r0\\\\\\\\result.json'",
+      "rawLine": 3950
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_checksum",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 3958
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_corrupt_archive",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 3959
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_failed_restore_tool",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 3960
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_incompatible_version",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 3961
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_missing_media",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 3962
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_production_stage_rejected_before_cluster_creation",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 3963
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_success",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 3964
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_wrong_environment",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 3965
+    },
+    {
+      "case": "crm.tests.test_iss047_private_storage.ISS047PrivateMediaStorageTests.test_symlink_is_rejected_in_private_media_inventory",
+      "reason": "symlink creation is not available in this environment",
+      "rawLine": 3969
+    },
+    {
+      "case": "crm.tests.test_new_product_reminders.ReminderConcurrencyTests.test_postgres_competing_edit_void_and_duplicate",
+      "reason": "Requires real PostgreSQL concurrent connections",
+      "rawLine": 3990
+    },
+    {
+      "case": "crm.tests.test_party_details_concurrency.PartyDetailsConcurrencyTests.test_formalization_waits_for_draft_write",
+      "reason": "requires PostgreSQL row locks",
+      "rawLine": 3992
+    },
+    {
+      "case": "crm.tests.test_party_document_version_pg.PartyDocumentVersionPostgresProtectionTests.test_truncate_is_denied_even_when_empty",
+      "reason": "requires PostgreSQL",
+      "rawLine": 3999
+    },
+    {
+      "case": "crm.tests.test_party_pg_cleanup.PartyCleanupPostgresTests.test_a_truncate_is_rejected_and_guard_enabled",
+      "reason": "PostgreSQL trigger and teardown required",
+      "rawLine": 4005
+    },
+    {
+      "case": "crm.tests.test_party_pg_cleanup.PartyCleanupPostgresTests.test_b_guard_remains_enabled_after_previous_test_flush",
+      "reason": "PostgreSQL trigger and teardown required",
+      "rawLine": 4006
+    },
+    {
+      "case": "crm.tests.test_party_quote_application.PartyQuoteApplicationConcurrencyTests.test_two_authenticated_sessions_apply_once",
+      "reason": "Requires PostgreSQL row locks and independent DB sessions",
+      "rawLine": 4007
+    },
+    {
+      "case": "crm.tests.test_party_replacement_pg.ReplacementPostgresTests.test_append_only_guards_even_on_empty_tables",
+      "reason": "requires isolated PostgreSQL",
+      "rawLine": 4010
+    },
+    {
+      "case": "crm.tests.test_party_replacement_pg.ReplacementPostgresTests.test_concurrent_same_payload_creates_one_linked_quote",
+      "reason": "requires isolated PostgreSQL",
+      "rawLine": 4011
+    },
+    {
+      "case": "crm.tests.test_party_replacement_pg.ReplacementPostgresTests.test_order_and_purchase_retry_formalization_and_details_serialize",
+      "reason": "requires isolated PostgreSQL",
+      "rawLine": 4012
+    },
+    {
+      "case": "crm.tests.test_party_replacement_pg.ReplacementPostgresTests.test_source_change_serializes_before_link_lock_and_is_rejected",
+      "reason": "requires isolated PostgreSQL",
+      "rawLine": 4013
+    },
+    {
+      "case": "crm.tests.test_party_request_lifecycle.PartyLifecyclePostgresTests.test_approval_races_rejection_once",
+      "reason": "requires PostgreSQL independent connections",
+      "rawLine": 4014
+    },
+    {
+      "case": "crm.tests.test_party_request_lifecycle.PartyLifecyclePostgresTests.test_approval_races_withdrawal_and_invalidation",
+      "reason": "requires PostgreSQL independent connections",
+      "rawLine": 4015
+    },
+    {
+      "case": "crm.tests.test_party_request_lifecycle.PartyLifecyclePostgresTests.test_identical_terminal_retries_return_one_event",
+      "reason": "requires PostgreSQL independent connections",
+      "rawLine": 4016
+    },
+    {
+      "case": "crm.tests.test_party_request_lifecycle.PartyLifecyclePostgresTests.test_reapply_competes_under_database_uniqueness",
+      "reason": "requires PostgreSQL independent connections",
+      "rawLine": 4017
+    },
+    {
+      "case": "crm.tests.test_party_request_lifecycle.PartyLifecyclePostgresTests.test_replay_vs_formalization_paths",
+      "reason": "requires PostgreSQL independent connections",
+      "rawLine": 4018
+    },
+    {
+      "case": "crm.tests.test_party_version_concurrency.PartyVersionPostgresConcurrencyTests.test_two_sessions_compete_for_same_baseline",
+      "reason": "Requires PostgreSQL row locks and independent database sessions",
+      "rawLine": 4022
+    },
+    {
+      "case": "crm.tests.test_party_version_concurrency.PartyVersionPostgresConcurrencyTests.test_two_sessions_compete_to_approve_same_request",
+      "reason": "Requires PostgreSQL row locks and independent database sessions",
+      "rawLine": 4023
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_concurrent_accept_and_reject_only_allow_one_quote_transition",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4025
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_concurrent_partial_receipts_for_same_purchase_item_cannot_overreceive",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4026
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_concurrent_valid_partial_receipts_for_same_item_both_commit",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4027
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_cost_audit_failure_rolls_back_allocation_and_real_reservations",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4028
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_cost_save_races_receipt_reversal_with_shared_sku",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4029
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_cost_save_races_receipt_with_shared_sku",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4030
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_cost_two_buyers_compete_with_real_shared_reservations",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4031
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_distinct_purchases_contend_for_same_sku_reservation_lock",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4032
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_order_and_purchase_numbers_are_unique_and_contiguous_under_concurrency",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4033
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_order_confirm_locks_nullable_quote_without_outer_join_error",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4034
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_order_csv_import_is_rejected_without_advancing_sequence",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4035
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_purchase_cost_save_allows_one_writer_and_rejects_stale_writer",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4036
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_purchase_draft_generation_does_not_duplicate_under_concurrency",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4037
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_quote_revision_counters_are_unique_and_contiguous_under_concurrency",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4038
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_receipt_and_reversal_race_keeps_purchase_stock_and_reservations_consistent",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4039
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_receipt_and_shipment_concurrently_rebalance_one_sku_without_deadlock",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4040
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_root_quote_number_is_unique_and_contiguous_under_concurrency",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4041
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_same_purchase_order_different_sku_receipts_serialize_status_and_reservations",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4042
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_supplier_category_through_table_exists",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4043
+    },
+    {
+      "case": "crm.tests.test_postgres_concurrency.PostgreSQLConcurrencyTests.test_two_concurrent_requests_cannot_reverse_the_same_goods_receipt_twice",
+      "reason": "PostgreSQL row-lock tests require PostgreSQL",
+      "rawLine": 4044
+    },
+    {
+      "case": "crm.tests.test_postgres_drill_backup.PostgresDrillBackupTests.test_backup_restore_consistency_and_failure_boundaries",
+      "reason": "requires an explicitly owned PostgreSQL 17 drill cluster",
+      "rawLine": 4045
+    },
+    {
+      "case": "crm.tests.test_postgres_drill_backup.PostgresDrillBackupTests.test_empty_postgresql_media_root_is_restored_as_a_real_directory",
+      "reason": "requires an explicitly owned PostgreSQL 17 drill cluster",
+      "rawLine": 4046
+    },
+    {
+      "case": "crm.tests.test_postgres_test_isolation.PostgreSQLTestCleanupLifecycleTests.test_failure_after_truncate_rolls_back_data_and_guard_changes",
+      "reason": "requires real isolated PostgreSQL",
+      "rawLine": 4072
+    },
+    {
+      "case": "crm.tests.test_postgres_test_isolation.PostgreSQLTestCleanupLifecycleTests.test_other_session_cannot_use_temporarily_disabled_guards",
+      "reason": "requires real isolated PostgreSQL",
+      "rawLine": 4073
+    },
+    {
+      "case": "crm.tests.test_postgres_test_isolation.PostgreSQLTestCleanupLifecycleTests.test_pre_0096_migration_cleanup_and_restore_preserve_guard_contract",
+      "reason": "requires real isolated PostgreSQL",
+      "rawLine": 4074
+    },
+    {
+      "case": "crm.tests.test_postgres_test_isolation.PostgreSQLTestCleanupLifecycleTests.test_regular_backend_flush_outside_teardown_remains_protected",
+      "reason": "requires real isolated PostgreSQL",
+      "rawLine": 4075
+    },
+    {
+      "case": "crm.tests.test_postgres_test_isolation.PostgreSQLTestCleanupLifecycleTests.test_sql_error_during_cleanup_restores_guards_and_allows_retry",
+      "reason": "requires real isolated PostgreSQL",
+      "rawLine": 4076
+    },
+    {
+      "case": "crm.tests.test_postgres_test_isolation.PostgreSQLTestCleanupLifecycleTests.test_three_triggers_exist_and_normal_truncate_is_rejected",
+      "reason": "requires real isolated PostgreSQL",
+      "rawLine": 4077
+    },
+    {
+      "case": "crm.tests.test_postgres_test_isolation.PostgreSQLTestCleanupLifecycleTests.test_transaction_testcase_cleanup_empties_tables_and_restores_guards",
+      "reason": "requires real isolated PostgreSQL",
+      "rawLine": 4078
+    },
+    {
+      "case": "crm.tests.test_quote_draft_tax_revision.DraftTaxRevisionConcurrencyTests.test_ancestor_formalization_serializes_and_rejects_tax_change",
+      "reason": "requires PostgreSQL row locks",
+      "rawLine": 4083
+    },
+    {
+      "case": "crm.tests.test_quote_party_approval_guard.QuotePartyApprovalConcurrencyTests.test_result_item_change_is_serialized_before_formalization",
+      "reason": "requires PostgreSQL row locks",
+      "rawLine": 4084
+    },
+    {
+      "case": "crm.tests.test_receipt_refund_attribution.ReceiptRefundConcurrencyTests.test_concurrent_refunds_cannot_exceed_original_cash",
+      "reason": "Requires PostgreSQL row locks",
+      "rawLine": 4089
+    },
+    {
+      "case": "crm.tests.test_review_attachment_atomicity.ReviewAttachmentAtomicityTests.test_postgres_false_unlock_result_is_logged_and_discards_connection",
+      "reason": "Requires PostgreSQL session advisory locks.",
+      "rawLine": 4100
+    },
+    {
+      "case": "crm.tests.test_review_attachment_atomicity.ReviewAttachmentAtomicityTests.test_postgres_second_delete_waits_through_audit_failure_compensation",
+      "reason": "Requires PostgreSQL row and advisory locks.",
+      "rawLine": 4101
+    },
+    {
+      "case": "crm.tests.test_review_attachment_atomicity.ReviewAttachmentAtomicityTests.test_postgres_second_delete_waits_through_commit_failure_compensation",
+      "reason": "Requires PostgreSQL row and advisory locks.",
+      "rawLine": 4102
+    },
+    {
+      "case": "crm.tests.test_review_attachment_atomicity.ReviewAttachmentAtomicityTests.test_postgres_session_lock_is_released_before_connection_close",
+      "reason": "Requires PostgreSQL session advisory locks.",
+      "rawLine": 4103
+    },
+    {
+      "case": "crm.tests.test_sales_order_import.SalesOrderImportPostgresConcurrencyTests.test_parallel_clicks_with_the_same_preview_create_one_order_and_return_one_result",
+      "reason": "parallel idempotency requires independent PostgreSQL sessions",
+      "rawLine": 4140
+    },
+    {
+      "case": "crm.tests.test_sales_order_import.SalesOrderImportPostgresConcurrencyTests.test_parallel_new_previews_for_same_source_cannot_duplicate_orders",
+      "reason": "parallel idempotency requires independent PostgreSQL sessions",
+      "rawLine": 4141
+    },
+    {
+      "case": "crm.tests.test_operations_receipt_cli.ReceiptCliTests.test_configured_group_receipt_is_0640_and_uses_the_current_group",
+      "reason": "POSIX group publication requires Linux/POSIX",
+      "rawLine": 4179
+    },
+    {
+      "case": "crm.tests.test_operations_receipt_cli.ReceiptCliTests.test_group_permission_failure_never_publishes_receipt",
+      "reason": "POSIX descriptor permission failure requires Linux/POSIX",
+      "rawLine": 4181
+    }
+  ]
+}

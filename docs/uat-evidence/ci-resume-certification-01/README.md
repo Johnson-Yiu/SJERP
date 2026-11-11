@@ -60,3 +60,32 @@ ISS-007 报价导出也复现了下载取消。延长报价 Blob URL 的保留�
 
 
 已完成的早期主 CI `a5d23e86c1b74137c86a8d006edf1daf1a2ae89b` 共 357 个浏览器用例通过、3 个按原夹具条件跳过。[逐例对照](preflight-a5d23e86-browser-cases.json) 中，A3 旧逐例 JSON 的 24 个非通过用例有 23 个复验通过，剩余 1 个因夹具条件跳过。新运行矩阵显式配置基础、跟进和完整夹具。后两个配置需要实际执行相关历史财务、原生缩放和完整交付用例。基础或跟进配置中的条件跳过由对应完整配置复验，单独计数。
+
+`85e2bcb8c6bfcbe31024f431d318bcb71c17a03b` 的主 CI 终态为两个后端 job 通过、Frontend 失败。销售旅程在响应式重排时丢失滚动目标，E2 收货在浏览器应用缩放前读取了 DPR。`3adcc61afa9318fc0b86c45e4308cf866f9173eb` 的主 CI 也记录了 E2 和 U3 两套收货用例的缩放竞态。修复后的严格销售旅程、E2 收货和 U3 收货分别用真实 Chrome 跑通，各保留原有可见性、缩放和业务断言。[较早主 CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42969690828) · [收货失败主 CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42972261637)
+
+`7dcf4fa4045ced161232ce894de2fd2f9f533cbc` 的 SQLite 1,666 通过、117 跳过，PostgreSQL 17 1,748 通过、35 跳过，Frontend 及 Linux 专项三个 job 均通过。Playwright 共 69 个配置，385 项通过、4 次按夹具条件跳过；对应的三个用例在完整夹具均通过。A3 逐例 JSON 的 24 个历史非通过用例均找到复验通过记录。真实 Chrome 的销售导入完整夹具 11/11，H3 390px、125% 通过，下载保留原文件和结构校验。[逐例结果](browser-7dcf4fa4-cases.json) · [实际文件及校验](certification-7dcf4fa4/verified-downloads/manifest.json) · [主 CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42976812877) · [Linux 专项](https://github.com/Johnson-Yiu/SJERP/actions/runs/42976812583)
+
+更新后的远端快照共 244 个分支头。对原先待核对的 57 个分支逐路径追查后，8 个分支的每个差异文件版本均在候选祖先中有凭证。5 个由 A3 接收记录、后续实现及对应测试核对接续范围。另有 5 个 ISS-052 中间版本已由导入限额、审计来源、PostgreSQL 三张审计表和迁移回退的后继实现接续。其余 39 个仍有未匹配路径，其中 1 个原 SHA 已有两次完整 CI 成功。对剩下的 38 个，清单保留原始 CI、差异路径和已知后继，待核实仍需交付的差异后独立补验。[分支清单](branch-inventory.csv) · [差异路径和祖先凭证](historical-path-witnesses.json)
+
+## 冻结候选 `7e99a5d394ddc0d96a3af04b74686307f754ca08`
+
+H3 `1c478b0aa298d53ffca03a38d4200b0d122b27ea` 和 U3 `d65aca7a5e832a3108e19c1c63e5a5e548ee8542` 均为该候选的祖先。工作流由验收分支正常推送触发。
+
+| 检查 | 结果 | Job |
+| --- | --- | --- |
+| Backend | 1,666 通过，117 跳过，0 失败 | [130389465694](https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478188/job/130389465694) |
+| Backend PostgreSQL 17 | 1,748 通过，35 跳过，0 失败 | [130389466023](https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478188/job/130389466023) |
+| Frontend | Node 197 + 1 通过，Vitest 91 套件 841 项通过，Playwright 全量和 Vite 构建通过 | [130389466108](https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478188/job/130389466108) |
+| Linux Nginx 私有媒体 | 通过 | [130389465901](https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478124/job/130389465901) |
+| Linux PostgreSQL 角色与签名回执 | 通过 | [130389466190](https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478124/job/130389466190) |
+| Linux 媒体栅栏 | 通过 | [130389466600](https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478124/job/130389466600) |
+
+Playwright 共 69 个配置，385 项通过、4 次条件跳过，0 失败，0 项因失败未运行。基础夹具跳过历史资金双人复核、长财务/历史记录原生缩放、完整交付流程各一次；跟进夹具再跳过完整交付流程一次。三项都在同一 SHA 的完整夹具中实际通过。A3 逐例 JSON 的 24 个历史非通过用例均在本轮找到通过结果，其中包括原报告最后保留的 3 项资金草稿用例。[冻结候选逐例和原始日志行号](browser-7e99a5d3-log-cases.json)
+
+真实 Chrome 销售导入完整夹具 11/11，H3 窄屏 125% 1/1。实际下载校验覆盖销售模板工作簿、含 SKU 说明的错误 CSV、历史预检仅含最新选中文件来源、资金报表的非现金抵减，以及历史商品 CNY 200.00、USD 15.00 的独立合计。[实际下载及校验](certification-7e99a5d3/verified-downloads/manifest.json) · [客户编辑截图](certification-7e99a5d3/screenshots/sales-contact-saved-390-125.png) · [采购收货焦点截图](certification-7e99a5d3/screenshots/u3-receipt-focus-390-125.png) · [历史商品关联截图](certification-7e99a5d3/screenshots/h3-candidate-selected-390-125.png)
+
+较早的 Windows SQLite 详细诊断发现两套签名回执测试因进程路径中缺少 OpenSSL 而未启动。将本机已有的 Git OpenSSL 加入该次运行的进程路径后，在冻结候选定向重跑，两套共 15/15 通过。Windows 的环境专属逐例跳过依据单列，GitHub Ubuntu SQLite 的跳过数来自其原始汇总。[Windows 诊断逐例跳过](skips-24de1013.json) · [冻结候选 PostgreSQL 17 逐例跳过](skips-7e99a5d3-pg17.json)
+
+[主 CI 原始运行](https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478188) · [Linux 专项原始运行](https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478124) · [Playwright 原始产物](https://github.com/Johnson-Yiu/SJERP/actions/runs/42980478188/artifacts/13839269697)
+
+本次认证适用于冻结源码和隔离环境。完整打印成品及分页仍按原范围延期，已执行的自动打印回归保留。正式部署、真实数据导入和正式员工权限启用未执行。

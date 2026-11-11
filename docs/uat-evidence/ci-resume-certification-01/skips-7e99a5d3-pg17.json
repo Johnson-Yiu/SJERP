@@ -1,0 +1,184 @@
+{
+  "source": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+  "environment": "GitHub Ubuntu PostgreSQL 17",
+  "run": 42980478188,
+  "job": 130389466023,
+  "log": "final-7e99a5d3-backend-postgres.log",
+  "items": [
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_archive_path_traversal_is_rejected_before_target_commit",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4685
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_permissions_are_strict_on_posix_or_explicitly_pending_on_windows",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4686
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_backup_requires_an_explicit_write_quiescence_confirmation",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4687
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_disk_write_failure_leaves_no_target_or_staging_directory",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4688
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_empty_media_root_is_archived_and_actually_restored_without_source_changes",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4689
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_empty_nested_media_directories_are_recorded_and_recreated",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4690
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_existing_empty_target_is_rejected_without_deletion",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4691
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_existing_world_accessible_backup_directory_requires_explicit_tightening",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4692
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_explicit_failure_report_can_be_outside_target",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4693
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_failed_restore_to_missing_target_does_not_create_target",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4694
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_media_change_during_copy_discards_archive",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4695
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_media_manifest_digest_and_unsafe_paths_fail_before_target_commit",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4696
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_missing_and_corrupt_media_members_fail_before_restore_target_commit",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4697
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_non_empty_target_is_unchanged_and_failure_report_is_a_sibling",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4698
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_missing_directory_fails_without_creating_it",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4699
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_non_directory_fails_without_mutating_path",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4700
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_prune_symlink_directory_is_rejected",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4701
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_requested_encryption_failure_is_recorded_as_failed",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4702
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_restore_rejects_tampered_media",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4703
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_inside_existing_target_is_rejected_without_changes",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4704
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_result_file_symlink_is_rejected_without_overwriting_link_target",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4705
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_retention_plan_defaults_to_seven_daily_four_weekly_three_monthly_without_deleting",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4706
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_single_archive_restore_preserves_rows_amount_inventory_and_media_relation",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4707
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_successful_restore_reports_recovery_and_report_status_separately",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4708
+    },
+    {
+      "case": "crm.tests.test_iss018_backup_recovery.ISS018BackupRecoveryTests.test_windows_production_requires_external_ntfs_acl_verification",
+      "reason": "SQLite file backup/restore tests require SQLite; PostgreSQL fail-closed is tested separately.",
+      "rawLine": 4709
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_checksum",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 4713
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_corrupt_archive",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 4714
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_failed_restore_tool",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 4715
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_incompatible_version",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 4716
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_missing_media",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 4717
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_production_stage_rejected_before_cluster_creation",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 4718
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_success",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 4719
+    },
+    {
+      "case": "crm.tests.test_iss018_drill_command.IsolatedPostgresCommandTests.test_wrong_environment",
+      "reason": "requires local PostgreSQL 17 binaries",
+      "rawLine": 4720
+    },
+    {
+      "case": "crm.tests.test_postgres_drill_backup.PostgresDrillBackupTests.test_backup_restore_consistency_and_failure_boundaries",
+      "reason": "requires an explicitly owned PostgreSQL 17 drill cluster",
+      "rawLine": 4844
+    },
+    {
+      "case": "crm.tests.test_postgres_drill_backup.PostgresDrillBackupTests.test_empty_postgresql_media_root_is_restored_as_a_real_directory",
+      "reason": "requires an explicitly owned PostgreSQL 17 drill cluster",
+      "rawLine": 4845
+    }
+  ]
+}

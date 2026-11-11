@@ -101,7 +101,7 @@ test('receipts preserve both units and destinations and inventory movements enfo
     await workbench.getByText('收货', { exact: true }).click()
     const form = page.locator('form.receipt-dialog')
     const submit = form.getByRole('button', { name: '确认入库', exact: true })
-    const receiptTrigger = workbench.locator('.receipt-heading button').first()
+    const receiptTrigger = workbench.locator('.receipt-heading').first().getByRole('button', { name: '验货入库' })
     let receiptWrites = 0
     page.on('request', r => { if (r.url().endsWith('/receive/') && r.method() === 'POST') receiptWrites++ })
 
@@ -136,6 +136,26 @@ test('receipts preserve both units and destinations and inventory movements enfo
     await page.keyboard.press("Escape")
     await expect(form).toHaveCount(0)
     await expect(receiptTrigger).toBeFocused()
+    for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
+      for (const scale of [1, 1.25]) {
+        zoom = scale
+        await zoomControl.selectOption(String(zoom))
+        await page.setViewportSize({ width, height })
+        await go()
+        await workbench.getByText('收货', { exact: true }).click()
+        await receiptTrigger.press('Enter')
+        await expect(form).toBeFocused()
+        await receiptTrigger.evaluate(element => element.remove())
+        await expect(receiptTrigger).toHaveCount(0)
+        await page.keyboard.press('Escape')
+        await expect(form).toHaveCount(0)
+        await expect(workbench).toBeFocused()
+        await snap('purchase-receipt-detached-trigger', { method: 'controlled removal of the actual trigger, keyboard cancellation' })
+      }
+    }
+    await go()
+    await workbench.getByText('收货', { exact: true }).click()
+    await expect(receiptTrigger).toBeVisible()
     const focusReturned = true
     await receiptTrigger.scrollIntoViewIfNeeded()
     await snap('purchase-receipt-validation-cancelled', { focusReturned })

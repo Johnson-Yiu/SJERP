@@ -1,0 +1,24 @@
+{
+  "source": "e8096616bf227ed242cf837a78fb87fd0736b87c",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "purchase-two-order-allocations",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-two-order-allocations-390-125.png"
+    },
+    {
+      "id": "purchase-receipt-validation",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-receipt-validation-390-125.png",
+      "method": "single controlled 400, no backend write"
+    }
+  ],
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('dialog', { name: '采购工作台' }).locator('.receipt-heading button').first()\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  30000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByRole('dialog', { name: '采购工作台' }).locator('.receipt-heading button').first() with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '采购工作台' }).locator('.receipt-heading button').first()\u001b[22m\n\u001b[2m    60 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n"
+}

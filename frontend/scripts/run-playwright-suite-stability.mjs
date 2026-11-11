@@ -22,7 +22,7 @@ const dedicatedRuns = [
     codex: true,
     env: { H2_NATIVE_ZOOM: String(zoom), H2_VIEWPORT_WIDTH: '390' },
   })),
-  ...['contact-recovery', 'details', 'receipts', 'sku'].map(feature => ({
+  ...['contact-recovery', 'details', 'receipts', 'sku', 'sale-return'].map(feature => ({
     name: `ui-final-state-${feature}-03`,
     file: `ui-final-state-${feature}-03.spec.js`,
     codex: true,

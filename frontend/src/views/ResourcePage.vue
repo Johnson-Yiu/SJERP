@@ -172,6 +172,7 @@ function changeFollowUpMode() {
 const followUpAttachments = ref([])
 const pendingFollowUpFiles = ref([])
 const attachmentSaveError = ref('')
+const attachmentDeleteError = ref('')
 const followUpFileInput = ref(null)
 const currentOperator = ref('')
 const supplierCodeServerError = ref('')
@@ -490,6 +491,7 @@ async function uploadFollowUpFiles(id) {
 }
 async function deleteSavedFollowUpAttachment(attachment) {
   clearToast()
+  attachmentDeleteError.value = ''
   await confirmAndDeleteSavedFollowUpAttachment({
     followUpId: editingId.value,
     attachment,
@@ -502,7 +504,7 @@ async function deleteSavedFollowUpAttachment(attachment) {
       notify(`已删除附件“${deleted.name}”`)
       await load()
     },
-    onError: error => notify(error.message || '删除附件失败', true),
+    onError: () => { attachmentDeleteError.value = '附件删除失败，请重试。' },
   })
 }
 function onDateFieldChange(field, value) {
@@ -603,6 +605,7 @@ async function openCreate({ isCurrent = () => true } = {}) {
   followUpAttachments.value = []
   pendingFollowUpFiles.value = []
   attachmentSaveError.value = ''
+  attachmentDeleteError.value = ''
   applyDefaultContact()
   syncFollowUpDaysFromDate()
   if (isCurrent()) { guard.markClean(); modalOpen.value = true }
@@ -640,6 +643,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
   followUpAttachments.value = props.config.endpoint === 'follow-ups' ? (editRow.attachments || []) : []
   pendingFollowUpFiles.value = []
   attachmentSaveError.value = ''
+  attachmentDeleteError.value = ''
   syncFollowUpDaysFromDate()
   guard.markClean()
   modalOpen.value = true
@@ -647,7 +651,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
 const closeModal = () => { if ((isSupplierPage.value || isCrmPage.value || isParameterPage.value || isCertificatePage.value) && saving.value) return; return guard.requestClose(discardModal) }
 function discardModal() {
   const refreshDetail = keepDetailOpen.value
-  modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []; attachmentSaveError.value = ''; currentCertificateFileUrl.value = ''
+  modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []; attachmentSaveError.value = ''; attachmentDeleteError.value = ''; currentCertificateFileUrl.value = ''
   contactDuplicateRequest += 1; contactDuplicateRows.value = []; contactDuplicateLoading.value = false; contactDuplicateError.value = ''
   if (refreshDetail) detailRefresh.value += 1
   void clearModalRoute(router, route)
@@ -717,6 +721,7 @@ async function save() {
   if (saving.value) return
   clearToast()
   attachmentSaveError.value = ''
+  attachmentDeleteError.value = ''
   parameterSaveError.value = ''; certificateSaveError.value=''
   if (!optionsReady.value) return notify('关联资料尚未加载完成，请重试后再保存。', true)
   if (isSupplierPage.value) {
@@ -1045,7 +1050,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 
       </div>
-      <div class="modal-foot" :class="{ 'follow-up-attachment-failed': isFollowUpPage && attachmentSaveError }"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><p v-if="isFollowUpPage && attachmentSaveError" class="follow-up-validation" role="alert">{{ attachmentSaveError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot" :class="{ 'follow-up-attachment-failed': isFollowUpPage && (attachmentSaveError || attachmentDeleteError) }"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><p v-if="isFollowUpPage && attachmentSaveError" class="follow-up-validation" role="alert">{{ attachmentSaveError }}</p><p v-if="isFollowUpPage && attachmentDeleteError" class="follow-up-validation" role="alert">{{ attachmentDeleteError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>

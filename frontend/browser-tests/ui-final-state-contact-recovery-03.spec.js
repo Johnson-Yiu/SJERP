@@ -7,7 +7,7 @@ import { chromium, expect, test } from '@playwright/test'
 test('contact detail recovers from a delayed failure and returns to its follow-up', async ({ baseURL }) => {
   test.skip(process.env.ISOLATED_PLAYWRIGHT_TEST_FILE !== path.basename(fileURLToPath(import.meta.url)),
     'Requires a dedicated seeded database; run this spec through the isolated runner.')
-  test.setTimeout(600000)
+  test.setTimeout(2400000)
   const root = process.env.ISOLATED_TEST_ROOT
   const output = path.join(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'chrome-contact-recovery')
   await mkdir(output, { recursive: true })
@@ -38,7 +38,8 @@ test('contact detail recovers from a delayed failure and returns to its follow-u
       const screenshot = async state => {
         expect(await page.evaluate(() => devicePixelRatio)).toBeCloseTo(zoom, 2)
         const png = state + '-' + zoom * 100 + '.png'
-        await page.screenshot({ path: path.join(output, png) })
+        const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+        await writeFile(path.join(output, png), Buffer.from(data, 'base64'))
         results.push({ state, png, zoom, width: 390, height: 844 })
       }
       let release
@@ -66,6 +67,92 @@ test('contact detail recovers from a delayed failure and returns to its follow-u
       await contact.getByRole('button', { name: '返回 合成跟进回看' }).click()
       await expect(followUp.getByText('合成跟进回看', { exact: true }).first()).toBeVisible()
       await screenshot('followup-returned')
+    }
+    for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
+      for (const zoom of [1, 1.25]) {
+        await zoomSelect.selectOption(String(zoom))
+        await page.setViewportSize({ width, height })
+        const suffix = width + '-' + zoom * 100
+        const screenshot = async state => {
+          expect(await page.evaluate(() => devicePixelRatio)).toBeCloseTo(zoom, 2)
+          const png = state + '-' + suffix + '.png'
+          const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+        await writeFile(path.join(output, png), Buffer.from(data, 'base64'))
+          results.push({ state, png, zoom, width, height })
+        }
+        const row = page.locator('.follow-up-list-table tbody tr').filter({ hasText: '合成跟进回看' })
+        const dialog = page.getByRole('dialog', { name: '编辑跟进记录' })
+        const edit = () => row.getByRole('button', { name: '编辑跟进记录' }).click()
+        const saved = name => dialog.locator('.follow-up-attachment-editor-item.saved').filter({ hasText: name })
+        const save = dialog.getByRole('button', { name: '保存跟进', exact: true })
+        const add = name => dialog.locator('input[type="file"]').setInputFiles({
+          name, mimeType: 'text/plain', buffer: Buffer.from(name + '\n'),
+        })
+        const oldName = 'original-notes-' + suffix + '.txt'
+        const newName = 'updated-notes-' + suffix + '.txt'
+        const uploadPath = '/api/follow-ups/' + fixture.closeout_followup + '/attachments/'
+        const uploaded = () => page.waitForResponse(r => new URL(r.url()).pathname === uploadPath && r.request().method() === 'POST')
+        await page.goto(new URL('/follow-ups', baseURL).href)
+        await edit()
+        await add(oldName)
+        const initial = uploaded()
+        await save.click()
+        expect((await initial).ok()).toBeTruthy()
+        await expect(dialog).toHaveCount(0)
+        await page.reload()
+        await edit()
+        await expect(saved(oldName)).toHaveCount(1)
+
+        let release
+        let entered
+        const gate = new Promise(resolve => { release = resolve })
+        const intercepted = new Promise(resolve => { entered = resolve })
+        await page.route(url => url.pathname === uploadPath, async route => {
+          entered()
+          await gate
+          await route.continue()
+        }, { times: 1 })
+        await add(newName)
+        const replacement = uploaded()
+        try {
+          await save.click()
+          await Promise.race([intercepted, replacement])
+          const pending = dialog.getByRole('button', { name: '保存中…', exact: true })
+          await expect(pending).toBeDisabled()
+          await pending.scrollIntoViewIfNeeded()
+          await expect(pending).toBeInViewport()
+          await screenshot('attachment-upload-pending')
+        } finally { release() }
+        expect((await replacement).ok()).toBeTruthy()
+        await expect(dialog).toHaveCount(0)
+        await page.reload()
+        await edit()
+        const remove = async () => {
+          await dialog.getByRole('button', { name: '删除已保存附件 ' + oldName, exact: true }).click()
+          await page.getByRole('button', { name: '确认删除', exact: true }).click()
+        }
+        await page.route(url => url.pathname.startsWith(uploadPath) && url.pathname !== uploadPath,
+          route => route.fulfill({ status: 400, json: { detail: '合成删除失败，请重试' } }), { times: 1 })
+        await remove()
+        const error = dialog.getByRole('alert').filter({ hasText: '附件删除失败，请重试。' })
+        await expect(error).toBeInViewport()
+        await expect(saved(oldName)).toHaveCount(1)
+        await save.click({ trial: true })
+        await dialog.getByRole('button', { name: '取消', exact: true }).click({ trial: true })
+        await screenshot('attachment-delete-failed')
+        await remove()
+        await expect(saved(oldName)).toHaveCount(0)
+        await page.reload()
+        await edit()
+        await expect(saved(oldName)).toHaveCount(0)
+        await expect(saved(newName)).toHaveCount(1)
+        const href = await saved(newName).getByRole('link', { name: '查看' }).getAttribute('href')
+        const file = await page.request.get(new URL(href, baseURL).href)
+        expect(file.ok()).toBeTruthy()
+        expect(await file.text()).toBe(newName + '\n')
+        await saved(newName).scrollIntoViewIfNeeded()
+        await screenshot('attachment-replaced-and-reopened')
+      }
     }
   } catch (error) {
     failure = String(error.message)

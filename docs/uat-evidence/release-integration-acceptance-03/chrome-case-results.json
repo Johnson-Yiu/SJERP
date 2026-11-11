@@ -1,0 +1,4243 @@
+{
+  "firstObserved": {
+    "PASS": 299,
+    "TIMEDOUT": 13,
+    "FAILED": 17,
+    "SKIPPED": 1
+  },
+  "retries": {
+    "PASS": 10,
+    "TIMEDOUT": 1,
+    "FAILED": 2
+  },
+  "latest": {
+    "PASS": 305,
+    "TIMEDOUT": 10,
+    "FAILED": 14,
+    "SKIPPED": 1
+  },
+  "cases": [
+    {
+      "spec": "access-readiness-highest-role-real.spec.js",
+      "title": "highest role reflects API effective permissions and is read-only (desktop)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "access-readiness-highest-role-real.spec.js",
+      "title": "highest role reflects API effective permissions and is read-only (narrow)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "cash-duplicate-real.spec.js",
+      "title": "核对同账户同额候选并有说明放行 1440px",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "cash-duplicate-real.spec.js",
+      "title": "核对同账户同额候选并有说明放行 390px",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "cash-events-p2b.spec.js",
+      "title": "cash event UI previews, registers, and confirms without changing receipt flows",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "cash-events-p2b.spec.js",
+      "title": "source verification is explicit and any fact change invalidates the preview",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "cash-events-p2b.spec.js",
+      "title": "refresh retains the stable request identity without persisting financial inputs",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "cash-events-p2b.spec.js",
+      "title": "in-memory draft survives task switches and explicit abandon clears only after confirmation",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "cash-events-p2b.spec.js",
+      "title": "changing a 30 allocation to 50 clears verification and requires a fresh preview",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "cash-events-p2b.spec.js",
+      "title": "expired local draft is removed during page initialization and sensitive evidence is not persisted",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: expect(received).toBeNull()",
+            "Received: \"{\\\"saved_at\\\":1794243435134,\\\"form\\\":{\\\"request_key\\\":\\\"EXPIRED-REQUEST\\\",\\\"evidence_sha256\\\":\\\"secret-hash\\\",\\\"evidence_note\\\":\\\"private note\\\"},\\\"allocations\\\":[]}\""
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "cash-events-p2b.spec.js",
+      "title": "legacy unscoped financial inputs are removed and never restored into a workspace",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: expect(locator).toBeVisible() failed",
+            "Locator: getByText('旧版浏览器草稿已清理')",
+            "Expected: visible",
+            "Timeout: 15000ms",
+            "Error: element(s) not found",
+            "Call log:",
+            "- Expect \"toBeVisible\" getByText('旧版浏览器草稿已清理') with timeout 15000ms",
+            "- waiting for getByText('旧版浏览器草稿已清理')"
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "cash-events-p2b.spec.js",
+      "title": "stale source responses cannot overwrite the current currency",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "certificate list and grouped form actual bounds 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "HS assignment searchable selection and actual bounds 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "certificate list and grouped form actual bounds 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "HS assignment searchable selection and actual bounds 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "certificate list and grouped form actual bounds 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "HS assignment searchable selection and actual bounds 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "certificate list and grouped form actual bounds 390",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "HS assignment searchable selection and actual bounds 390",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "hs-codes pending POST blocks backdrop/back/navigation; failure retains input and retries once",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "product-certificates pending POST blocks backdrop/back/navigation; failure retains input and retries once",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "HS read-only hides maintenance and both pages reload errors recover",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "assignment pending PUT blocks close and survives workspace switches, retains selection on rejection and retries",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "certificates-hs-ux.spec.js",
+      "title": "certificate first load failure retries to empty, and expiry URL survives reload",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "core-business-closeout.spec.js",
+      "title": "real core closure 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "core-business-closeout.spec.js",
+      "title": "real core closure 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "core-workspace-fixture.spec.js",
+      "title": "isolated core workspace fixture and real API contracts",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-saving.spec.js",
+      "title": "contacts pending POST resists close and navigation at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-saving.spec.js",
+      "title": "contacts pending POST resists close and navigation at 1280px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-saving.spec.js",
+      "title": "contacts pending POST resists close and navigation at 1024px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-saving.spec.js",
+      "title": "contacts pending PUT failure preserves fields and quick retry sends one request",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-saving.spec.js",
+      "title": "follow-ups pending POST resists close and navigation at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-saving.spec.js",
+      "title": "follow-ups pending POST resists close and navigation at 1280px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-saving.spec.js",
+      "title": "follow-ups pending POST resists close and navigation at 1024px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-saving.spec.js",
+      "title": "follow-ups pending PUT failure preserves fields and quick retry sends one request",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "contacts filters, grouped columns, and form fit 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "contacts filters, grouped columns, and form fit 1280px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "contacts filters, grouped columns, and form fit 1024px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "contact create, duplicate advisory, primary edit and return query stay consistent",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "contact duplicate check uses hidden customer contacts, links to the record, and fits 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "editing a contact does not flag itself as a duplicate",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "follow-up filters, detailed groups, and long content fit 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "follow-up filters, detailed groups, and long content fit 1280px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "follow-up filters, detailed groups, and long content fit 1024px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "follow-up search and due filters remain in URL and saved text updates list",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "crm-ux.spec.js",
+      "title": "saved attachment delete can be cancelled, confirmed, and remains removed after reopening",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "csv-upload-http-413.spec.js",
+      "title": "real Chrome upload receives HTTP 413 for an oversized CSV without connection reset",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 quotes customer column and filters 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 orders customer column and filters 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 quotes customer column and filters 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 orders customer column and filters 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 quotes customer column and filters 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "final-cross-module-ux.spec.js",
+      "title": "R0-F9 orders customer column and filters 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-actual-cash-resilience.spec.js",
+      "title": "actual cash failure leaves the legacy dashboard available and retry is independent",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-actual-cash-resilience.spec.js",
+      "title": "rapid date changes discard stale actual cash responses",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-closeout-approval.spec.js",
+      "title": "authenticated finance closure and reconciliation 1440px",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 120000ms exceeded."
+          ]
+        },
+        {
+          "status": "PASS",
+          "run": "b1cd59e0-82fb-47c3-b006-53d400ffc99a",
+          "time": "2026-11-11T02:00:17.678Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-closeout-approval.spec.js",
+      "title": "authenticated finance closure and reconciliation 390px",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 120000ms exceeded."
+          ]
+        },
+        {
+          "status": "PASS",
+          "run": "b1cd59e0-82fb-47c3-b006-53d400ffc99a",
+          "time": "2026-11-11T02:00:17.678Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-closeout.spec.js",
+      "title": "real account ledger at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-closeout.spec.js",
+      "title": "real account ledger at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-csv-stability.spec.js",
+      "title": "CSV retry and changing period 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-csv-stability.spec.js",
+      "title": "CSV retry and changing period 390",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-csv-stability.spec.js",
+      "title": "actual cash export failure can retry and blocks duplicate pending requests",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-drill.spec.js",
+      "title": "finance dashboard composition drill desktop and narrow 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-drill.spec.js",
+      "title": "finance dashboard composition drill desktop and narrow 700px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 1280px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 1024px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 640px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "receivables: computed filter layout at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 1280px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 1024px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 640px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-layout.spec.js",
+      "title": "payables: computed filter layout at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-reference-basis.spec.js",
+      "title": "reference basis across finance, transactions and saved cash config 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-reference-basis.spec.js",
+      "title": "reference basis across finance, transactions and saved cash config 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-retry-safety.spec.js",
+      "title": "finance pending submission and ambiguous retry preserve identity and guard departure",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        },
+        {
+          "status": "FAILED",
+          "run": "d799b054-87b0-4984-9658-9772565ac944",
+          "time": "2026-11-11T02:00:14.317Z",
+          "error": [
+            "Error: expect(locator).toHaveValue(expected) failed",
+            "Locator: getByRole('dialog', { name: '新增记账', exact: true }).getByLabel('本次流水号', { exact: true })",
+            "Expected: \"FIN-0C51E86C60E76708B09F294AE8726DCB\"",
+            "Timeout: 15000ms",
+            "Error: element(s) not found",
+            "Call log:",
+            "- Expect \"toHaveValue\" getByRole('dialog', { name: '新增记账', exact: true }).getByLabel('本次流水号', { exact: true }) with timeout 15000ms",
+            "- waiting for getByRole('dialog', { name: '新增记账', exact: true }).getByLabel('本次流水号', { exact: true })"
+          ]
+        },
+        {
+          "status": "FAILED",
+          "run": "25aea086-8dc8-41e7-b8ed-a78f40492700",
+          "time": "2026-11-11T02:05:55.675Z",
+          "error": [
+            "Error: expect(locator).toContainText(expected) failed",
+            "Locator: getByRole('dialog', { name: '新增记账', exact: true }).getByRole('alert')",
+            "Expected substring: \"FIN-A38E7CA451766F6FB7233D0E886617BC\"",
+            "Received string:    \"记账结果尚未确认请按原内容重试；系统会核对原操作，避免重复登记。\"",
+            "Timeout: 15000ms",
+            "Call log:",
+            "- Expect \"toContainText\" getByRole('dialog', { name: '新增记账', exact: true }).getByRole('alert') with timeout 15000ms",
+            "- waiting for getByRole('dialog', { name: '新增记账', exact: true }).getByRole('alert')"
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "财务流水在1440px完整显示汇总金额",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "应收计划在1440px完整显示汇总金额",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "应付计划在1440px完整显示汇总金额",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "财务流水在1024px完整显示汇总金额",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "应收计划在1024px完整显示汇总金额",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "应付计划在1024px完整显示汇总金额",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "财务流水在390px完整显示汇总金额",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "应收计划在390px完整显示汇总金额",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "应付计划在390px完整显示汇总金额",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "其他汇总卡片页面保持可用：/customers",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "其他汇总卡片页面保持可用：/suppliers",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "finance-summary-cards.spec.js",
+      "title": "其他汇总卡片页面保持可用：/purchase-orders",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "fulfillment-receivables.spec.js",
+      "title": "completed receivable navigation, Back, settlement and refund reloads retain fulfillment",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "fulfillment-receivables.spec.js",
+      "title": "restricted user cannot read protected debt from malicious unmasked order payload",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: expect(locator).toContainText(expected) failed",
+            "Locator: getByRole('dialog', { name: '订单工作台' })",
+            "Expected substring: \"履约：已完成\"",
+            "Timeout: 15000ms",
+            "Error: element(s) not found",
+            "Call log:",
+            "- Expect \"toContainText\" getByRole('dialog', { name: '订单工作台' }) with timeout 15000ms",
+            "- waiting for getByRole('dialog', { name: '订单工作台' })"
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "fulfillment-receivables.spec.js",
+      "title": "completion pending prevents duplicate UI action and failed reload retries without false financial success",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "fulfillment-receivables.spec.js",
+      "title": "unknown no_plans has a review task and no confirmed zero",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "fulfillment-receivables.spec.js",
+      "title": "unknown review has a review task and no confirmed zero",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "import-ux.spec.js",
+      "title": "import real computed bounds and long error table 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        },
+        {
+          "status": "PASS",
+          "run": "e1d1bc8b-802f-400d-bb80-97449fe99c0f",
+          "time": "2026-11-11T02:00:23.675Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "import-ux.spec.js",
+      "title": "import real computed bounds and long error table 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        },
+        {
+          "status": "PASS",
+          "run": "e1d1bc8b-802f-400d-bb80-97449fe99c0f",
+          "time": "2026-11-11T02:00:23.675Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "import-ux.spec.js",
+      "title": "import real computed bounds and long error table 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        },
+        {
+          "status": "PASS",
+          "run": "e1d1bc8b-802f-400d-bb80-97449fe99c0f",
+          "time": "2026-11-11T02:00:23.675Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "import-ux.spec.js",
+      "title": "downloads contain actual UTF8 BOM headers and correctly quoted failure rows",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: expect(received).toBe(expected) // Object.is equality",
+            "- Expected  - 1",
+            "+ Received  + 1",
+            "- ﻿row,key,message",
+            "+ ﻿记录行号,业务编号,错误原因",
+            "\"3\",\"KEY,\"\"1\"\"\",\"原因, \"\"引号\"\"",
+            "第二行\""
+          ]
+        },
+        {
+          "status": "PASS",
+          "run": "e1d1bc8b-802f-400d-bb80-97449fe99c0f",
+          "time": "2026-11-11T02:00:23.675Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "import-ux.spec.js",
+      "title": "pending preview and execute survive workspace switching and block duplicate changes; cancel never writes",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: expect(locator).toBeDisabled() failed",
+            "Locator:  locator('input[type=file]')",
+            "Expected: disabled",
+            "Received: enabled",
+            "Timeout:  15000ms",
+            "Call log:",
+            "- Expect \"toBeDisabled\" locator('input[type=file]') with timeout 15000ms",
+            "- waiting for locator('input[type=file]')"
+          ]
+        },
+        {
+          "status": "PASS",
+          "run": "e1d1bc8b-802f-400d-bb80-97449fe99c0f",
+          "time": "2026-11-11T02:00:23.675Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "import-ux.spec.js",
+      "title": "restricted import entry and template retry",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        },
+        {
+          "status": "PASS",
+          "run": "e1d1bc8b-802f-400d-bb80-97449fe99c0f",
+          "time": "2026-11-11T02:00:23.675Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "independent-bank-fee-real.spec.js",
+      "title": "independent fee without FX parent: real UI 1440px",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "independent-bank-fee-real.spec.js",
+      "title": "independent fee without FX parent: real UI 390px",
+      "attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "independent-bank-fee-real.spec.js",
+      "title": "real API preserves optional-parent rejection, source quota and idempotency protections",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "integration-020-051-evidence.spec.js",
+      "title": "Chrome quote workbench and saved PI show the reconciled 1.005 total",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "inventory-ux.spec.js",
+      "title": "inventory overview, reserved quantities and SKU drawer at 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "inventory-ux.spec.js",
+      "title": "ledger filters, sticky actions and adjustment dialog at 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "inventory-ux.spec.js",
+      "title": "inventory overview, reserved quantities and SKU drawer at 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "inventory-ux.spec.js",
+      "title": "ledger filters, sticky actions and adjustment dialog at 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "inventory-ux.spec.js",
+      "title": "inventory overview, reserved quantities and SKU drawer at 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "inventory-ux.spec.js",
+      "title": "ledger filters, sticky actions and adjustment dialog at 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "inventory-ux.spec.js",
+      "title": "page restoration, detail navigation and browser Back preserve inventory context",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "inventory-ux.spec.js",
+      "title": "empty and failed inventories distinguish errors, retry and no records",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "inventory-ux.spec.js",
+      "title": "restricted UI hides adjustment, reversal and unauthorized cross-module entrances",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss008-chinese-aliases.spec.js",
+      "title": "customer edit, country aliases and quote customer picker remain usable at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss008-chinese-aliases.spec.js",
+      "title": "customer edit, country aliases and quote customer picker remain usable at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss037-formal-fixtures.spec.js",
+      "title": "formal synthetic PI matrix creates saved API and XLSX evidence",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss037-print-font-failure.spec.js",
+      "title": "saved PI refuses printing after a font loading failure",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss037-print-output-acceptance.spec.js",
+      "title": "saved PI blocks printing when a document image fails",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss037-print-output-acceptance.spec.js",
+      "title": "saved PI permits printing after resources load on narrow screen",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF complete 1440px headers=false",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: browserType.launchPersistentContext: Failed to create a ProcessSingleton for your profile directory. This usually means that the profile is already in use by another instance of Chromium.",
+            "Call log:",
+            "- <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --kiosk-printing --user-data-dir=D:\\Codex项目\\森爵照明管理系统\\.task-worktrees\\release-integration-acceptance-03\\docs\\uat-evidence\\release-integration-acceptance-03\\final-runs\\chrome\\artifacts\\4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab\\iss037-print-output-accept-51743-mplete-1440px-headers-false\\chrome-profile --remote-debugging-pipe about:blank",
+            "- <launched> pid=42512",
+            "- [pid=42512][err] [1111/022807.095:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=42512][err] [1111/022807.097:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=42512][err] [42512:41928:1111/022807.135:ERROR:chrome\\browser\\process_singleton_win.cc:286] Lock file can not be created: 拒绝访问。 (0x5)",
+            "- [pid=42512][err] [42512:41928:1111/022807.135:ERROR:chrome\\app\\chrome_main_delegate.cc:624] Failed to create a ProcessSingleton for your profile directory. This means that running multiple instances would start multiple browser processes rather than opening a new window in the existing process. Aborting now to avoid profile corruption."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF complete 1440px headers=true",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: browserType.launchPersistentContext: Failed to create a ProcessSingleton for your profile directory. This usually means that the profile is already in use by another instance of Chromium.",
+            "Call log:",
+            "- <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --kiosk-printing --user-data-dir=D:\\Codex项目\\森爵照明管理系统\\.task-worktrees\\release-integration-acceptance-03\\docs\\uat-evidence\\release-integration-acceptance-03\\final-runs\\chrome\\artifacts\\4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab\\iss037-print-output-accept-71946-omplete-1440px-headers-true\\chrome-profile --remote-debugging-pipe about:blank",
+            "- <launched> pid=29272",
+            "- [pid=29272][err] [1111/022815.147:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=29272][err] [1111/022815.148:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=29272][err] [29272:26192:1111/022815.188:ERROR:chrome\\browser\\process_singleton_win.cc:286] Lock file can not be created: 拒绝访问。 (0x5)",
+            "- [pid=29272][err] [29272:26192:1111/022815.188:ERROR:chrome\\app\\chrome_main_delegate.cc:624] Failed to create a ProcessSingleton for your profile directory. This means that running multiple instances would start multiple browser processes rather than opening a new window in the existing process. Aborting now to avoid profile corruption."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF complete 390px headers=false",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: browserType.launchPersistentContext: Failed to create a ProcessSingleton for your profile directory. This usually means that the profile is already in use by another instance of Chromium.",
+            "Call log:",
+            "- <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --kiosk-printing --user-data-dir=D:\\Codex项目\\森爵照明管理系统\\.task-worktrees\\release-integration-acceptance-03\\docs\\uat-evidence\\release-integration-acceptance-03\\final-runs\\chrome\\artifacts\\4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab\\iss037-print-output-accept-8ee6f-omplete-390px-headers-false\\chrome-profile --remote-debugging-pipe about:blank",
+            "- <launched> pid=43104",
+            "- [pid=43104][err] [1111/022822.735:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=43104][err] [1111/022822.736:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=43104][err] [43104:11832:1111/022822.776:ERROR:chrome\\browser\\process_singleton_win.cc:286] Lock file can not be created: 拒绝访问。 (0x5)",
+            "- [pid=43104][err] [43104:11832:1111/022822.776:ERROR:chrome\\app\\chrome_main_delegate.cc:624] Failed to create a ProcessSingleton for your profile directory. This means that running multiple instances would start multiple browser processes rather than opening a new window in the existing process. Aborting now to avoid profile corruption."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF multipage 1440px headers=false",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: browserType.launchPersistentContext: Failed to create a ProcessSingleton for your profile directory. This usually means that the profile is already in use by another instance of Chromium.",
+            "Call log:",
+            "- <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --kiosk-printing --user-data-dir=D:\\Codex项目\\森爵照明管理系统\\.task-worktrees\\release-integration-acceptance-03\\docs\\uat-evidence\\release-integration-acceptance-03\\final-runs\\chrome\\artifacts\\4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab\\iss037-print-output-accept-01c89-tipage-1440px-headers-false\\chrome-profile --remote-debugging-pipe about:blank",
+            "- <launched> pid=24516",
+            "- [pid=24516][err] [1111/022830.750:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=24516][err] [1111/022830.751:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=24516][err] [24516:1276:1111/022830.790:ERROR:chrome\\browser\\process_singleton_win.cc:286] Lock file can not be created: 拒绝访问。 (0x5)",
+            "- [pid=24516][err] [24516:1276:1111/022830.790:ERROR:chrome\\app\\chrome_main_delegate.cc:624] Failed to create a ProcessSingleton for your profile directory. This means that running multiple instances would start multiple browser processes rather than opening a new window in the existing process. Aborting now to avoid profile corruption."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "iss037-print-output-acceptance.spec.js",
+      "title": "Chrome UI print to PDF optional-empty 1440px headers=false",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: browserType.launchPersistentContext: Failed to create a ProcessSingleton for your profile directory. This usually means that the profile is already in use by another instance of Chromium.",
+            "Call log:",
+            "- <launching> C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --kiosk-printing --user-data-dir=D:\\Codex项目\\森爵照明管理系统\\.task-worktrees\\release-integration-acceptance-03\\docs\\uat-evidence\\release-integration-acceptance-03\\final-runs\\chrome\\artifacts\\4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab\\iss037-print-output-accept-5b8f1--empty-1440px-headers-false\\chrome-profile --remote-debugging-pipe about:blank",
+            "- <launched> pid=23444",
+            "- [pid=23444][err] [1111/022838.398:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=23444][err] [1111/022838.399:ERROR:third_party\\crashpad\\crashpad\\util\\file\\file_io_win.cc:181] CreateFile C:\\Users\\Johnson\\AppData\\Local\\Google\\Chrome\\User Data\\Crashpad\\settings.dat: 拒绝访问。 (0x5)",
+            "- [pid=23444][err] [23444:24212:1111/022838.438:ERROR:chrome\\browser\\process_singleton_win.cc:286] Lock file can not be created: 拒绝访问。 (0x5)",
+            "- [pid=23444][err] [23444:24212:1111/022838.438:ERROR:chrome\\app\\chrome_main_delegate.cc:624] Failed to create a ProcessSingleton for your profile directory. This means that running multiple instances would start multiple browser processes rather than opening a new window in the existing process. Aborting now to avoid profile corruption."
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "iss037-seller-freeze-real.spec.js",
+      "title": "saved PI and Chrome print entry 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss037-seller-freeze-real.spec.js",
+      "title": "saved PI and Chrome print entry 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss037-seller-freeze-real.spec.js",
+      "title": "unsaved revision preview uses the parent seller and retains print action",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss039-amount-allocation-real.spec.js",
+      "title": "amount-only and deliberate legacy conversion, real Chrome 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss039-amount-allocation-real.spec.js",
+      "title": "amount-only and deliberate legacy conversion, real Chrome 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss039-shared-purchase-costs.spec.js",
+      "title": "ISS-039 authorized procurement can restore and edit a cross-order allocation without sales data",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss039-shared-purchase-costs.spec.js",
+      "title": "ISS-039 read-only procurement is refused by the candidate API and has no edit action",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss039-shared-purchase-costs.spec.js",
+      "title": "ISS-039 no-permission role cannot restore the purchase URL",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss041b-evidence.spec.js",
+      "title": "ISS-041-B raw detail evidence at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss041b-evidence.spec.js",
+      "title": "ISS-041-B raw detail evidence at 700px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss067-report-permission.spec.js",
+      "title": "employee opening an old unauthorized report URL gets a valid source and keeps the warning",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss067-report-permission.spec.js",
+      "title": "shared template path remains available to an employee with the source permission",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss075-payment-terms-real.spec.js",
+      "title": "ISS-075 供应商固定付款规则退出常规前端真实浏览器回归 › 供应商 UI、空付款条件草稿/正式 PO、历史付款计划与窄屏",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "orders-390-layout.spec.js",
+      "title": "R1-REPAIR-07 orders layout after 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "orders-390-layout.spec.js",
+      "title": "R1-REPAIR-07 orders layout after 700px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "orders-390-layout.spec.js",
+      "title": "R1-REPAIR-07 orders layout after 1024px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "orders-390-layout.spec.js",
+      "title": "R1-REPAIR-07 orders layout after 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "organization long matrix computed bounds and sticky headers 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "organization long matrix computed bounds and sticky headers 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "organization long matrix computed bounds and sticky headers 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "dirty switching, cancel and delayed save/readback navigation are protected",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "save refusal and readback refusal retain input; readback retry never posts twice",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "read-only and overview retry do not expose a write action",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "access-denied layout and permitted return 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "access-status-error layout and permitted return 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "access-denied layout and permitted return 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "access-status-error layout and permitted return 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "access-denied layout and permitted return 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "access-status-error layout and permitted return 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "permission service 401 failure and recovery avoid redirects",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "permission service 403 failure and recovery avoid redirects",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "permission service 500 failure and recovery avoid redirects",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "organization-access-ux.spec.js",
+      "title": "permission service network failure and recovery avoid redirects",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "dashboard long names, large amounts and 12-month layout at 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "reports complex filters, multi charts and computed layout at 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "dashboard long names, large amounts and 12-month layout at 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "reports complex filters, multi charts and computed layout at 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "dashboard long names, large amounts and 12-month layout at 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "reports complex filters, multi charts and computed layout at 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "dashboard long names, large amounts and 12-month layout at 700",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "reports complex filters, multi charts and computed layout at 700",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "saved local chart configurations survive reload, reorder, remove and undo",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "CSV export keeps the last submitted filters while the form has an unsaved draft",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "drill and previous-analysis return preserve actual period and browser navigation restores URL",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "empty dashboard and charts have useful neutral states",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "initial failures recover, refresh failure keeps stale data, and catalog has retry",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "restricted UI hides sources, export and navigation, retaining unavailable local configuration",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "two-level groups show separate columns, drill either dimension and return the original query",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "overview-reports.spec.js",
+      "title": "cross-group result opens paginated raw detail and links to the original order",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "packaging-ux.spec.js",
+      "title": "packaging actual layout and linked navigation 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "packaging-ux.spec.js",
+      "title": "packaging actual layout and linked navigation 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "packaging-ux.spec.js",
+      "title": "packaging actual layout and linked navigation 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "packaging-ux.spec.js",
+      "title": "trade units conversion and form fit 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "packaging-ux.spec.js",
+      "title": "trade units conversion and form fit 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "packaging-ux.spec.js",
+      "title": "trade units conversion and form fit 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "packaging-ux.spec.js",
+      "title": "packaging pending save blocks close/back/navigation; rejected data stays for retry",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "packaging-ux.spec.js",
+      "title": "trade pending and failed save keep SKU/factor; switching warns, and retry succeeds once",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "packaging-ux.spec.js",
+      "title": "initial template failure retries and view-only permissions hide all writing entries",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: expect(locator).toBeVisible() failed",
+            "Locator: getByRole('alert')",
+            "Expected: visible",
+            "Timeout: 15000ms",
+            "Error: element(s) not found",
+            "Call log:",
+            "- Expect \"toBeVisible\" getByRole('alert') with timeout 15000ms",
+            "- waiting for getByRole('alert')"
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "party-details-ui-real.spec.js",
+      "title": "draft party details can be saved and reopened on all three documents",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-document-real.spec.js",
+      "title": "formal SO and PO corrections retain original snapshots and business facts",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-lifecycle-real.spec.js",
+      "title": "two authenticated staff reject, reapply and withdraw with saved history",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-quote-approval-real.spec.js",
+      "title": "authenticated staff separately propose and approve a synthetic saved quote correction",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-replacement-extended-20261106.spec.js",
+      "title": "extended replacement: two accounts, facts, unknown and explicit empty",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-version-snapshot-real.spec.js",
+      "title": "saved buyer country and PI use the saved quotation after master change (1440px)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-version-snapshot-real.spec.js",
+      "title": "saved buyer country and PI use the saved quotation after master change (390px)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "product filters, long content and pending save 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "product filters, long content and pending save 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "product filters, long content and pending save 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "product detail URL survives reload and close preserves list filters",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "product parameter to product detail closes back to original filtered list",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "view-only fixtures cannot create/edit/delete through these page entries",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "product failure preserves input and retry; unsaved cancel requires confirmation",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "category search depth and retry 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "category search depth and retry 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "category search depth and retry 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "category saving blocks backdrop, retains failure and permits retry",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "product parameter context and pending save failure remain recoverable",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "parameter long layout and empty reset 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "parameter long layout and empty reset 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "parameter long layout and empty reset 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "category drag preserves selected node and collapsed state after reorder",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "R0-F9 products status labels stay on one line 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "R0-F9 products status labels stay on one line 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "product-master-ux.spec.js",
+      "title": "R0-F9 products status labels stay on one line 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "quote-buyer-tax-id.spec.js",
+      "title": "new quote tax input works at desktop and narrow widths",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "quote-buyer-tax-id.spec.js",
+      "title": "formal revision displays saved tax read-only",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "quote-draft-tax-revision.spec.js",
+      "title": "draft tax revision is editable and saves a new version",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "quote-draft-tax-revision.spec.js",
+      "title": "formal quote revision remains read only",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "r1-repair-04-routing.spec.js",
+      "title": "R1-REPAIR-04 font interception is registered before navigation",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "report-query-request-order.spec.js",
+      "title": "submitted labels can precede the data response; capture the actual filtered request",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU list filters and pending batch 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU list filters and pending batch 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU list filters and pending batch 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "batch failure retains selections and retry succeeds once",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU supplier source error and retry 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU supplier source error and retry 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU supplier source error and retry 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU read-only detail remains accessible with no write controls",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: expect(locator).toBeVisible() failed",
+            "Locator: getByRole('heading', { name: 'SKU 管理', exact: true, level: 2 })",
+            "Expected: visible",
+            "Timeout: 15000ms",
+            "Error: element(s) not found",
+            "Call log:",
+            "- Expect \"toBeVisible\" getByRole('heading', { name: 'SKU 管理', exact: true, level: 2 }) with timeout 15000ms",
+            "- waiting for getByRole('heading', { name: 'SKU 管理', exact: true, level: 2 })"
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU detail inventory link and Back 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU detail inventory link and Back 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU detail inventory link and Back 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU history load failure remains distinct from empty history and retries",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "SKU logical loads keep separate history and ignore late responses in the rendered list",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "transaction-unit navigation returns to SKU editor with original list context",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "R0-F9 skus status labels stay on one line 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "R0-F9 skus status labels stay on one line 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-ux.spec.js",
+      "title": "R0-F9 skus status labels stay on one line 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-workspace-batch-races.spec.js",
+      "title": "SKU source context race success and long content 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-workspace-batch-races.spec.js",
+      "title": "SKU source context race failure and long content 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-workspace-batch-races.spec.js",
+      "title": "SKU source context race success and long content 390",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sku-workspace-batch-races.spec.js",
+      "title": "SKU source context race failure and long content 390",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "supplier-ux.spec.js",
+      "title": "supplier long names, notes, filters, editor and detail at 1440",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "supplier-ux.spec.js",
+      "title": "supplier long names, notes, filters, editor and detail at 1280",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "supplier-ux.spec.js",
+      "title": "supplier long names, notes, filters, editor and detail at 1024",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "supplier-ux.spec.js",
+      "title": "supplier creates, cancels dirty edits, saves and reopens consistent detail and list",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "supplier-ux.spec.js",
+      "title": "duplicate code and category retry keep entered data; supplier fixed rules stay hidden",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "supplier-ux.spec.js",
+      "title": "filters and page survive reload, detail close and procurement workbench return",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "supplier-ux.spec.js",
+      "title": "initial errors retry to empty and refresh errors retain supplier list",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "supplier-ux.spec.js",
+      "title": "restricted view hides supplier write actions and purchase shortcuts",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "home copy renders in Chrome at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "home copy renders in Chrome at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "customers copy renders in Chrome at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "customers copy renders in Chrome at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "contacts copy renders in Chrome at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "contacts copy renders in Chrome at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "follow-ups copy renders in Chrome at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "follow-ups copy renders in Chrome at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "products copy renders in Chrome at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "products copy renders in Chrome at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "skus copy renders in Chrome at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "skus copy renders in Chrome at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "categories copy renders in Chrome at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ux-copy-foundation.spec.js",
+      "title": "categories copy renders in Chrome at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "access-session-real.spec.js",
+      "title": "ERP login and logout use the isolated real session (desktop)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "0b2e6e50-deff-490c-9527-050984908e54",
+          "time": "2026-11-10T18:31:48.506Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "access-session-real.spec.js",
+      "title": "ERP login and logout use the isolated real session (narrow)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "0b2e6e50-deff-490c-9527-050984908e54",
+          "time": "2026-11-10T18:31:48.506Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "access-session-real.spec.js",
+      "title": "lost session shows expiry and preserves a same-origin return",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "0b2e6e50-deff-490c-9527-050984908e54",
+          "time": "2026-11-10T18:31:48.506Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "access-session-real.spec.js",
+      "title": "external return target is never navigated",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "0b2e6e50-deff-490c-9527-050984908e54",
+          "time": "2026-11-10T18:31:48.506Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "shared-report-templates.spec.js",
+      "title": "separate manager and employee sessions share only the published query definition",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "18c79c70-b81d-4329-91d2-db643f206a33",
+          "time": "2026-11-10T18:32:42.724Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "quote-editor-mobile-actions.spec.js",
+      "title": "quote editor actions stay readable at desktop and narrow widths and preserve preview/save/export",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "171c9cbb-a6a2-4c31-9b22-6427788feaab",
+          "time": "2026-11-10T18:33:30.549Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: sessionStorage 属性读取异常时阻止提交",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: sessionStorage.getItem 异常时阻止提交",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: setItem 异常后恢复存储，沿用原请求 ID",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: removeItem 异常提示核对服务器结果，恢复后重试不重复建单",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "采购收货: 服务器成功但网络响应丢失，重试只生成一条记录",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: sessionStorage 属性读取异常时阻止提交",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: sessionStorage.getItem 异常时阻止提交",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: setItem 异常后恢复存储，沿用原请求 ID",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: removeItem 异常提示核对服务器结果，恢复后重试不重复建单",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss006-frontend-storage-chrome.spec.js",
+      "title": "订单发货: 服务器成功但网络响应丢失，重试只生成一条记录",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "e156337a-9c64-4fc0-b24d-100ed0a9fe9e",
+          "time": "2026-11-10T18:34:20.447Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss007-attachment-real.spec.js",
+      "title": "customer follow-up attachment uploads, reopens, and serves through private API",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "5119c85e-186c-4dcb-b6c8-be39788d70b9",
+          "time": "2026-11-10T18:35:19.818Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss007-attachment-real.spec.js",
+      "title": "SKU replacement keeps quote image snapshot and exposes thumbnail",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "5119c85e-186c-4dcb-b6c8-be39788d70b9",
+          "time": "2026-11-10T18:35:19.818Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss007-attachment-real.spec.js",
+      "title": "attachment upload failure stays visible and retries without duplicating the follow-up",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "5119c85e-186c-4dcb-b6c8-be39788d70b9",
+          "time": "2026-11-10T18:35:19.818Z",
+          "error": [
+            "Error: expect(locator).toContainText(expected) failed",
+            "Locator: locator('.toast')",
+            "Expected substring: \"记录已保存，但网络连接失败\"",
+            "Timeout: 15000ms",
+            "Error: element(s) not found",
+            "Call log:",
+            "- Expect \"toContainText\" locator('.toast') with timeout 15000ms",
+            "- waiting for locator('.toast')"
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "iss007-image-snapshot-real.spec.js",
+      "title": "ISS-007 SKU image upload, immutable quote/order snapshots, exports, and missing private images",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "3516dccb-e81e-46c8-bc72-5ea4145ccc20",
+          "time": "2026-11-10T18:36:31.066Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss022-moq-real.spec.js",
+      "title": "ISS-022 采购 MOQ 真实浏览器回归 › 等于 MOQ、低于 MOQ、交易单位换算、取消保留草稿及例外留痕",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "2f5d308f-8411-4002-acf9-f3c6c5a12756",
+          "time": "2026-11-10T18:37:23.707Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss028-035-category-schema.spec.js",
+      "title": "ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-028 根/子分类归类、继承属性和筛选",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "d673b4c3-397d-4067-bab1-2e7bc099e862",
+          "time": "2026-11-10T18:38:12.327Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss028-035-category-schema.spec.js",
+      "title": "ISS-028 / ISS-035 分类模板与 SKU 历史边界 › ISS-035 模板变更不改写已发布 SKU、报价和订单快照",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "d673b4c3-397d-4067-bab1-2e7bc099e862",
+          "time": "2026-11-10T18:38:12.327Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss055-customer-404-real.spec.js",
+      "title": "authorized customer detail keeps secure Chinese 404 semantics (desktop)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "cc774d5e-6423-40c8-a5d7-d26d0dbacd1e",
+          "time": "2026-11-10T18:39:03.362Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss055-customer-404-real.spec.js",
+      "title": "authorized customer detail keeps secure Chinese 404 semantics (narrow)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "cc774d5e-6423-40c8-a5d7-d26d0dbacd1e",
+          "time": "2026-11-10T18:39:03.362Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss055-customer-404-real.spec.js",
+      "title": "unauthorized customer detail keeps secure Chinese 404 semantics (desktop)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "cc774d5e-6423-40c8-a5d7-d26d0dbacd1e",
+          "time": "2026-11-10T18:39:03.362Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss055-customer-404-real.spec.js",
+      "title": "unauthorized customer detail keeps secure Chinese 404 semantics (narrow)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "cc774d5e-6423-40c8-a5d7-d26d0dbacd1e",
+          "time": "2026-11-10T18:39:03.362Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss055-customer-404-real.spec.js",
+      "title": "unknown customer detail keeps secure Chinese 404 semantics (desktop)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "cc774d5e-6423-40c8-a5d7-d26d0dbacd1e",
+          "time": "2026-11-10T18:39:03.362Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss055-customer-404-real.spec.js",
+      "title": "unknown customer detail keeps secure Chinese 404 semantics (narrow)",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "cc774d5e-6423-40c8-a5d7-d26d0dbacd1e",
+          "time": "2026-11-10T18:39:03.362Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "history-product-linking-h2-real.spec.js",
+      "title": "H2 controlled candidate selection, specification recovery, audit, analysis and CSV",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "c2af410f-d21f-4ac8-930e-ab582c166456",
+          "time": "2026-11-10T18:40:15.722Z",
+          "error": [
+            "Error: expect(locator).toBeVisible() failed",
+            "Locator: locator('.analysis-card').getByRole('heading', { name: '历史原文' })",
+            "Expected: visible",
+            "Error: strict mode violation: locator('.analysis-card').getByRole('heading', { name: '历史原文' }) resolved to 2 elements:",
+            "1) <h5 data-v-6352f5fb=\"\">历史原文</h5> aka getByRole('article').filter({ hasText: '历史原文名称人民币折算数量A¥ 100.002 pcsA1' }).locator('h5')",
+            "2) <h5 data-v-6352f5fb=\"\">历史原文</h5> aka getByRole('heading', { name: '历史原文' }).nth(1)",
+            "Call log:",
+            "- Expect \"toBeVisible\" locator('.analysis-card').getByRole('heading', { name: '历史原文' }) with timeout 15000ms"
+          ]
+        },
+        {
+          "status": "PASS",
+          "run": "ecff36d3-b037-41c3-b833-bcc6367ab91f",
+          "time": "2026-11-11T01:56:42.080Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ui-sales-state-evidence-01.spec.js",
+      "title": "sales state evidence in an owned Google Chrome profile",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "fec1f432-f314-4f17-816c-49e938ef9fa3",
+          "time": "2026-11-10T18:41:10.645Z",
+          "error": [
+            "Error: expect(received).toEqual(expected) // deep equality",
+            "- Expected  -  1",
+            "+ Received  + 18",
+            "- Array []",
+            "+ Array [",
+            "+   Object {",
+            "+     \"height\": 844,",
+            "+     \"id\": \"C08\","
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "ui-sales-state-evidence-01-party.spec.js",
+      "title": "quote correction separates proposal, approval and resulting draft",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "3fc27a13-1d90-4cd8-bbfa-133a10fc494c",
+          "time": "2026-11-10T18:43:32.869Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ui-product-operations-state-evidence-01.spec.js",
+      "title": "product operations evidence with real Chrome and the isolated API",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "1a605c6b-850c-4db3-9e5e-d5fec738929c",
+          "time": "2026-11-10T18:44:41.616Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ui-sales-completion-02.spec.js",
+      "title": "sales fixes on real Chrome with native page zoom",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "cdba2440-f6c2-449f-9572-30d514167b64",
+          "time": "2026-11-10T18:46:47.426Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ui-product-operations-completion-02.spec.js",
+      "title": "product detail fits the available workspace and nested details restore focus",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "88532288-403f-442c-b73a-8635d8d75887",
+          "time": "2026-11-10T18:47:51.019Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ui-product-operations-prefix-02.spec.js",
+      "title": "prefix preview, cancellation, server refusal and apply preserve SKU identity",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "a0a03562-6c1b-4e63-bed3-47506dcafb4f",
+          "time": "2026-11-10T18:48:49.431Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "ui-product-operations-parameter-02.spec.js",
+      "title": "product parameter survives save and reopen and shared sales/history chrome stays aligned",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "610353bf-4e7e-41db-8d7e-9aa9f59ad1c3",
+          "time": "2026-11-10T18:49:43.395Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-tabs-real.spec.js",
+      "title": "desktop and 390px isolated workspaces preserve draft inputs, route state and atomic close cancellation",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "642d88c5-bf11-45bc-9b94-87df699971f2",
+          "time": "2026-11-10T18:50:33.846Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-tabs-real.spec.js",
+      "title": "saved object tasks deduplicate, history and refresh retain links, and bulk closing respects dirty drafts",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "642d88c5-bf11-45bc-9b94-87df699971f2",
+          "time": "2026-11-10T18:50:33.846Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-tabs-real.spec.js",
+      "title": "saved customer drafts adopt the object and related dirty edits receive an explicit conflict prompt",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "642d88c5-bf11-45bc-9b94-87df699971f2",
+          "time": "2026-11-10T18:50:33.846Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-tabs-real.spec.js",
+      "title": "bounded synthetic workspaces measure requests, mounted panels, document listeners and timers through reclamation",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "642d88c5-bf11-45bc-9b94-87df699971f2",
+          "time": "2026-11-10T18:50:33.846Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-tabs-real.spec.js",
+      "title": "direct draft links, native refresh cancellation and synthetic account changes isolate all in-memory input",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "642d88c5-bf11-45bc-9b94-87df699971f2",
+          "time": "2026-11-10T18:50:33.846Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-tabs-real.spec.js",
+      "title": "list filters, page and both list and task scroll survive independent navigation",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "642d88c5-bf11-45bc-9b94-87df699971f2",
+          "time": "2026-11-10T18:50:33.846Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-integration-real.spec.js",
+      "title": "real logout protects a dirty draft and clears it before a same-name account signs in",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "fe66f606-7438-4080-b848-e2faa123a1ec",
+          "time": "2026-11-10T18:51:44.334Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-integration-real.spec.js",
+      "title": "real session expiry removes dirty workspaces and rejects a late authenticated response",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "fe66f606-7438-4080-b848-e2faa123a1ec",
+          "time": "2026-11-10T18:51:44.334Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-integration-real.spec.js",
+      "title": "parallel customer drafts adopt the saved object and return to the original filtered list",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "fe66f606-7438-4080-b848-e2faa123a1ec",
+          "time": "2026-11-10T18:51:44.334Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "workspace-integration-real.spec.js",
+      "title": "customer reminder entries keep separate context and preserve an in-progress need",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "fe66f606-7438-4080-b848-e2faa123a1ec",
+          "time": "2026-11-10T18:51:44.334Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "first-release-consolidation-02.spec.js",
+      "title": "finance navigation and historical preflight CSV work in isolated Chrome",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "9633457b-7ab5-4077-b2e0-32bafe178934",
+          "time": "2026-11-10T18:52:42.946Z",
+          "error": [
+            "Error: expect(received).toBe(expected) // Object.is equality",
+            "Expected: \"codex\"",
+            "Received: \"Johnson\""
+          ]
+        },
+        {
+          "status": "TIMEDOUT",
+          "run": "c9215c1d-c090-4796-81c9-e567419de2c5",
+          "time": "2026-11-11T01:56:56.516Z",
+          "error": [
+            "Test timeout of 90000ms exceeded."
+          ]
+        },
+        {
+          "status": "PASS",
+          "run": "72ed5e12-bdc1-4f59-bed5-831576447b5e",
+          "time": "2026-11-11T02:06:09.947Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "historical-orders-fix-02.spec.js",
+      "title": "history analysis detail tables work at desktop and 700px CSS viewport",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "bc4e3cdf-b13c-4dae-ad63-7d7688d6ab18",
+          "time": "2026-11-10T18:54:01.537Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "historical-orders-fix-02.spec.js",
+      "title": "history analysis hides unauthorized detail dimensions without blanking the page",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "bc4e3cdf-b13c-4dae-ad63-7d7688d6ab18",
+          "time": "2026-11-10T18:54:01.537Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "historical-orders-fix-03.spec.js",
+      "title": "current historical analysis detail tables match the API at desktop and 700px CSS viewport",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "f92f4e04-4072-435c-83c3-746911b7a685",
+          "time": "2026-11-10T18:54:51.541Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "historical-orders-fix-03.spec.js",
+      "title": "current historical analysis hides unauthorized detail dimensions without blanking the page",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "f92f4e04-4072-435c-83c3-746911b7a685",
+          "time": "2026-11-10T18:54:51.541Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "iss029-recipient-snapshot.spec.js",
+      "title": "real Django: recipient A/B, empty/invalid email, master changes, saved PI and XLSX",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "4cbe98dc-58a6-42e1-a557-241a97deab6a",
+          "time": "2026-11-10T18:55:38.831Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-order-purchase-real.spec.js",
+      "title": "order party display at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "1fb5b35b-4812-4263-b625-9aa0fb9eb76f",
+          "time": "2026-11-10T18:56:29.843Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-order-purchase-real.spec.js",
+      "title": "purchase party display at 1440px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "1fb5b35b-4812-4263-b625-9aa0fb9eb76f",
+          "time": "2026-11-10T18:56:29.843Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-order-purchase-real.spec.js",
+      "title": "order party display at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "1fb5b35b-4812-4263-b625-9aa0fb9eb76f",
+          "time": "2026-11-10T18:56:29.843Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-order-purchase-real.spec.js",
+      "title": "purchase party display at 390px",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "1fb5b35b-4812-4263-b625-9aa0fb9eb76f",
+          "time": "2026-11-10T18:56:29.843Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-replacement-acceptance-20261106.spec.js",
+      "title": "synthetic order replacement uses independent approval and explicit new draft",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "93e0f753-a0ac-46fc-96c8-c0c66962d21d",
+          "time": "2026-11-10T18:57:26.732Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-replacement-po-real.spec.js",
+      "title": "synthetic purchase replacement uses independent approval and explicit draft",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "1e106f7f-de78-482b-8d20-ffff17243c1c",
+          "time": "2026-11-10T18:58:22.367Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-replacement-quote-real.spec.js",
+      "title": "synthetic quote replacement uses independent approval and synthetic saved template",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "de078747-c3c9-4c05-a9e2-3ae39bf122d5",
+          "time": "2026-11-10T18:59:28.626Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "party-replacement-real.spec.js",
+      "title": "synthetic order replacement uses independent approval and explicit new draft",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "a82cefd0-933b-417e-9b34-3ef8a23cdc83",
+          "time": "2026-11-10T19:00:49.859Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "authenticated codex superuser imports XLSX and downloads the actual error CSV",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "history page downloads the current workbook CSV without business writes",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "finance overview presents the noncash reduction and downloads its CSV",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "inventory draft guards the form and replays the same write after a lost response",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "finance receipt separates cash fee credit refund capacity and inline settlement",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "finance fee scenarios refuse excess refunds and reverse writeoffs without cash",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "historical finance reviews a duplicate and posts only after second-user approval",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "Chrome native page zoom keeps long finance and history records usable",
+      "attempts": [
+        {
+          "status": "FAILED",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": [
+            "Error: expect(received).toBeLessThanOrEqual(expected)",
+            "Expected: <= 1",
+            "Received:    248",
+            "Call Log:",
+            "- Timeout 15000ms exceeded while waiting on the predicate"
+          ]
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "certificate validation identifies the business field without closing the draft",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "completion evidence follows lost receipt, actual refund date and funds review",
+      "attempts": [
+        {
+          "status": "SKIPPED",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    },
+    {
+      "spec": "sales-order-import-real.spec.js",
+      "title": "codex logout clears the workspaces and returns to sign-in",
+      "attempts": [
+        {
+          "status": "PASS",
+          "run": "9b1ed8cf-5b37-44a1-b7ba-c9331ae2dc37",
+          "time": "2026-11-11T01:56:54.369Z",
+          "error": []
+        }
+      ]
+    }
+  ]
+}

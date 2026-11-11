@@ -1,0 +1,129 @@
+[
+  {
+    "file": "downloaded-quote.xlsx",
+    "runPath": "browser/quote-editor-mobile-actions.spec/downloaded-quote.xlsx",
+    "bytes": 10198,
+    "sha256": "fc8717289a51c7e8c2f548643e246e6af55bf762b0e9a4ed0696fc5d80bda700",
+    "sheet": "PI",
+    "quantity": "1",
+    "unitPrice": "12.5",
+    "itemAmount": "12.5",
+    "freight": "0",
+    "total": "12.5",
+    "recipient": null,
+    "archivedBinary": false
+  },
+  {
+    "file": "version-a.xlsx",
+    "runPath": "browser/iss029-recipient-snapshot.spec/version-a.xlsx",
+    "bytes": 10172,
+    "sha256": "d87406fe1c2ec8ae49d69fcb09a295c71ac5b69d11b07ce903aaf98b85205030",
+    "sheet": "PI",
+    "quantity": "1",
+    "unitPrice": "10",
+    "itemAmount": "10",
+    "freight": "0",
+    "total": "10",
+    "recipient": "Version A Recipient",
+    "archivedBinary": false
+  },
+  {
+    "file": "version-b-empty-email.xlsx",
+    "runPath": "browser/iss029-recipient-snapshot.spec/version-b-empty-email.xlsx",
+    "bytes": 10151,
+    "sha256": "bf435903cd4f7d086de63590df9cd4a8a330dbfcfe8250031bf5ac2dfe0c712f",
+    "sheet": "PI",
+    "quantity": "1",
+    "unitPrice": "10",
+    "itemAmount": "10",
+    "freight": "0",
+    "total": "10",
+    "recipient": "Version B Recipient",
+    "archivedBinary": false
+  },
+  {
+    "file": "sales-order-import-template.xlsx",
+    "runPath": "browser/sales-order-import-real.spec/sales-order-import-template.xlsx",
+    "bytes": 10115,
+    "sha256": "0f6840b569d52022048f66aab1439c370f0f463fe5c9e1942aabe43195df94ba",
+    "sheets": [
+      "使用说明",
+      "订单明细"
+    ],
+    "header": [
+      "来源订单编号",
+      "客户编号",
+      "订单日期",
+      "币种",
+      "SKU",
+      "交易单位",
+      "数量",
+      "单价",
+      "对人民币汇率"
+    ],
+    "archivedBinary": true
+  },
+  {
+    "file": "history-products.csv",
+    "runPath": "artifacts/ecff36d3-b037-41c3-b833-bcc6367ab91f/history-product-linking-h2-c2f40-very-audit-analysis-and-CSV/h2/history-products.csv",
+    "bytes": 756,
+    "sha256": "4b399dc70358315d5c7c8f7db88b244b7058ce025fe5c061557fcd950976bb95",
+    "header": [
+      "统计口径",
+      "来源",
+      "批次",
+      "原订单",
+      "原明细",
+      "日期",
+      "原编码",
+      "历史商品",
+      "历史规格",
+      "历史分类",
+      "数量",
+      "单位",
+      "商品金额",
+      "币种",
+      "关联状态",
+      "正式 SKU",
+      "当前 SKU 名称"
+    ],
+    "records": 4,
+    "archivedBinary": true,
+    "totalsByCurrency": {
+      "USD": "15.00000000000000",
+      "CNY": "200.00"
+    }
+  },
+  {
+    "file": "integrated-history-preflight.csv",
+    "runPath": "browser/sales-order-import-real.spec/integrated-history-preflight.csv",
+    "bytes": 2141,
+    "sha256": "3c97367973636225fae5d41aeaa20fa576a93e1aeb1a2133d1ca360787925528",
+    "header": [
+      "工作表",
+      "原行号",
+      "原系统记录编号",
+      "来源关联组编号",
+      "结果",
+      "原因",
+      "关联记录",
+      "建议动作"
+    ],
+    "records": 4,
+    "archivedBinary": true,
+    "source": "FIXB"
+  },
+  {
+    "file": "sales-order-import-errors.csv",
+    "runPath": "browser/sales-order-import-real.spec/sales-order-import-errors.csv",
+    "bytes": 109,
+    "sha256": "69c1008b26050dd5943d2a0fa8885aaee8ef0efc7eace10d1e9e17955d41b0db",
+    "header": [
+      "表格行号",
+      "来源订单编号",
+      "错误原因"
+    ],
+    "records": 1,
+    "archivedBinary": true
+  }
+]

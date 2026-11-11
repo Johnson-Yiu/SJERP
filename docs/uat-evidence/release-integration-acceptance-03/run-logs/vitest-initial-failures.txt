@@ -1,0 +1,76 @@
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/HistoryProductLinking.spec.js > HistoryProductLinking > clears a stale preview and lists the conflict
+AssertionError: expected '历史商品关联核对原商品与正式 SKU。原名称、规格和单位会保留。原名称或编…' to contain '影响 1 条明细'
+
+Expected: "影响 1 条明细"
+Received: "历史商品关联核对原商品与正式 SKU。原名称、规格和单位会保留。原名称或编码来源系统来源批次关联状态全部待关联已关联待核实开始日期结束日期目标 SKU 编码查询处理所选商品（1）导出 CSVA2灯A2 · 24W · 2 pcs · CNY 200.00来源一 ·  · 原单:1待关联查看原资料处理历史商品操作关联 SKU修改关联解除关联标记待核实搜索正式 SKU搜索正式 SKU请选择B · 正式灯具 · 24W · pcs保存为本来源的下次匹配候选补核规格（仅原规格缺失时）原因（选填）关闭生成预览"
+
+ ❯ src/components/HistoryProductLinking.spec.js:43:51
+     41|     expect(wrapper.text()).toContain('影响 1 条明细')
+     42|     api.post.mockRejectedValueOnce({ response: { status: 409, data: { …
+     43|     await button(wrapper, '确认保存').trigger('click')
+       |                                                   ^
+     44|     await flushPromises()
+     45|     expect(wrapper.get('[role="alert"]').text()).toContain('关联未保存')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/components/HistoryProductLinking.spec.js > HistoryProductLinking > keeps a preview on transient failure, guards duplicate writes and refreshes on success
+TypeError: Cannot read properties of undefined (reading 'trigger')
+ ❯ src/components/HistoryProductLinking.spec.js:57:21
+     55|     await button(wrapper, '确认保存').trigger('click')
+     56|     await flushPromises()
+     57|     let resolveWrite
+       |                     ^
+     58|     api.post.mockReturnValueOnce(new Promise(resolve => { resolveWrite…
+     59|     await button(wrapper, '确认保存').trigger('click')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/components/HistoryProductLinking.spec.js > HistoryProductLinking > discards an old account response and its selection
+TypeError: Cannot read properties of undefined (reading 'trigger')
+ ❯ src/components/HistoryProductLinking.spec.js:77:5
+     75|     await button(wrapper, '确认保存').trigger('click')
+     76|     api.get.mockResolvedValue({ data: { count: 0, results: [] } })
+     77|     setAccessOperator({ name: '新账号', authenticated: true, has_all_perm…
+       |     ^
+     78|     await flushPromises()
+     79|     resolveOld({ data: { updated: 1 } })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ Proxy._sfc_render src/components/HistoryProductLinking.vue:173:25
+    171|     <p v-if="error && !dialogOpen" role="alert">{{ error }}</p>
+    172|     <p v-if="loading" role="status">正在加载历史商品…</p>
+    173|     <p v-else-if="!rows.length">没有符合条件的历史商品。</p>
+       |                         ^
+    174|     <ul v-else class="product-rows">
+    175|       <li v-for="row in rows" :key="row.id">
+ ❯ renderComponentRoot node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:4727:16
+ ❯ ReactiveEffect.componentUpdateFn [as fn] node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:6353:26
+ ❯ ReactiveEffect.run node_modules/@vue/reactivity/dist/reactivity.cjs.js:268:19
+ ❯ ReactiveEffect.runIfDirty node_modules/@vue/reactivity/dist/reactivity.cjs.js:306:12
+ ❯ callWithErrorHandling node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:200:33
+ ❯ flushJobs node_modules/@vue/runtime-core/dist/runtime-core.cjs.js:436:9
+
+This error originated in "tests/history-takeover.spec.js" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "shows the historical SKU name with its business SKU label during inventory review". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed | 90 passed (91)
+      Tests  3 failed | 835 passed (838)
+     Errors  1 error
+   Start at  01:39:19
+   Duration  605.48s (transform 12.66s, setup 62.43s, import 56.32s, tests 44.15s, environment 401.56s)
+

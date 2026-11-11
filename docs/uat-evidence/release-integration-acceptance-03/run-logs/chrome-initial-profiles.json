@@ -1,0 +1,206 @@
+[
+  {
+    "profile": "business-suite",
+    "exitCode": 1,
+    "testSummaries": [
+      "25 failed",
+      "233 passed (46.9m)",
+      "4 passed (16.1s)"
+    ]
+  },
+  {
+    "profile": "shared-report-templates-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (8.8s)"
+    ]
+  },
+  {
+    "profile": "quote-editor-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (10.7s)"
+    ]
+  },
+  {
+    "profile": "iss006-storage-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "10 passed (20.4s)"
+    ]
+  },
+  {
+    "profile": "iss007-attachment-isolated",
+    "exitCode": 1,
+    "testSummaries": [
+      "1 failed",
+      "2 passed (32.3s)"
+    ]
+  },
+  {
+    "profile": "iss007-image-snapshot-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (14.0s)"
+    ]
+  },
+  {
+    "profile": "iss022-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (11.3s)"
+    ]
+  },
+  {
+    "profile": "iss028-035-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "2 passed (12.0s)"
+    ]
+  },
+  {
+    "profile": "iss055-rbac",
+    "exitCode": 0,
+    "testSummaries": [
+      "6 passed (32.0s)"
+    ]
+  },
+  {
+    "profile": "history-product-linking-h2-isolated",
+    "exitCode": 1,
+    "testSummaries": [
+      "1 failed"
+    ]
+  },
+  {
+    "profile": "sales-evidence-01-isolated",
+    "exitCode": 1,
+    "testSummaries": [
+      "1 failed"
+    ]
+  },
+  {
+    "profile": "sales-evidence-01-party-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (29.5s)"
+    ]
+  },
+  {
+    "profile": "product-operations-evidence-01-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (1.4m)"
+    ]
+  },
+  {
+    "profile": "sales-completion-02-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (24.2s)"
+    ]
+  },
+  {
+    "profile": "product-operations-completion-02-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (19.0s)"
+    ]
+  },
+  {
+    "profile": "product-operations-prefix-02-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (14.2s)"
+    ]
+  },
+  {
+    "profile": "product-operations-parameter-02-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (12.1s)"
+    ]
+  },
+  {
+    "profile": "workspace-tabs-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "6 passed (29.8s)"
+    ]
+  },
+  {
+    "profile": "workspace-integration-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "4 passed (19.1s)"
+    ]
+  },
+  {
+    "profile": "first-release-consolidation-isolated",
+    "exitCode": 1,
+    "testSummaries": [
+      "1 failed"
+    ]
+  },
+  {
+    "profile": "sales-order-import-isolated",
+    "exitCode": 1,
+    "testSummaries": []
+  },
+  {
+    "profile": "historical-orders-02-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "2 passed (10.9s)"
+    ]
+  },
+  {
+    "profile": "historical-orders-03-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "2 passed (8.8s)"
+    ]
+  },
+  {
+    "profile": "recipient-snapshot-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (12.9s)"
+    ]
+  },
+  {
+    "profile": "party-order-purchase-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "4 passed (19.5s)"
+    ]
+  },
+  {
+    "profile": "party-replacement-acceptance-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (18.0s)"
+    ]
+  },
+  {
+    "profile": "party-replacement-po-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (17.6s)"
+    ]
+  },
+  {
+    "profile": "party-replacement-quote-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (22.4s)"
+    ]
+  },
+  {
+    "profile": "party-replacement-order-isolated",
+    "exitCode": 0,
+    "testSummaries": [
+      "1 passed (17.9s)"
+    ]
+  }
+]

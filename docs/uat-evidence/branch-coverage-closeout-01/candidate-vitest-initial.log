@@ -1,0 +1,79 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/branch-coverage-closeout-01/frontend
+
+ ❯ tests/numeric-wheel-guard.spec.js (4 tests | 4 failed) 9ms
+     × cancels native wheel defaults and custom wheel handlers without changing the control 5ms
+     × guards the focused numeric control even when the pointer is elsewhere 1ms
+     × leaves text inputs and textareas on the browser scroll path 1ms
+     × uses one delegated listener and removes it cleanly 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/numeric-wheel-guard.spec.js > global numeric wheel guard > cancels native wheel defaults and custom wheel handlers without changing the control
+ReferenceError: document is not defined
+ ❯ tests/numeric-wheel-guard.spec.js:20:5
+     18| describe('global numeric wheel guard', () => {
+     19|   it('cancels native wheel defaults and custom wheel handlers without …
+     20|     document.body.innerHTML = '<input id="number" type="number" value=…
+       |     ^
+     21|     removeGuard = installNumericWheelGuard()
+     22|     const number = document.querySelector('#number')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/numeric-wheel-guard.spec.js > global numeric wheel guard > cancels native wheel defaults and custom wheel handlers without changing the control
+ FAIL  tests/numeric-wheel-guard.spec.js > global numeric wheel guard > guards the focused numeric control even when the pointer is elsewhere
+ FAIL  tests/numeric-wheel-guard.spec.js > global numeric wheel guard > leaves text inputs and textareas on the browser scroll path
+ FAIL  tests/numeric-wheel-guard.spec.js > global numeric wheel guard > uses one delegated listener and removes it cleanly
+ReferenceError: document is not defined
+ ❯ tests/numeric-wheel-guard.spec.js:9:3
+      7|   removeGuard?.()
+      8|   removeGuard = undefined
+      9|   document.body.innerHTML = ''
+       |   ^
+     10| })
+     11|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/numeric-wheel-guard.spec.js > global numeric wheel guard > guards the focused numeric control even when the pointer is elsewhere
+ReferenceError: document is not defined
+ ❯ tests/numeric-wheel-guard.spec.js:44:5
+     42|
+     43|   it('guards the focused numeric control even when the pointer is else…
+     44|     document.body.innerHTML = '<input id="number" type="number" value=…
+       |     ^
+     45|     removeGuard = installNumericWheelGuard()
+     46|     const number = document.querySelector('#number')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/numeric-wheel-guard.spec.js > global numeric wheel guard > leaves text inputs and textareas on the browser scroll path
+ReferenceError: document is not defined
+ ❯ tests/numeric-wheel-guard.spec.js:58:5
+     56|
+     57|   it('leaves text inputs and textareas on the browser scroll path', ()…
+     58|     document.body.innerHTML = '<input id="text" type="text" value="pla…
+       |     ^
+     59|     removeGuard = installNumericWheelGuard()
+     60|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/numeric-wheel-guard.spec.js > global numeric wheel guard > uses one delegated listener and removes it cleanly
+ReferenceError: document is not defined
+ ❯ tests/numeric-wheel-guard.spec.js:69:5
+     67|
+     68|   it('uses one delegated listener and removes it cleanly', () => {
+     69|     document.body.innerHTML = '<div id="rows"></div>'
+       |     ^
+     70|     const firstRemove = installNumericWheelGuard()
+     71|     const secondRemove = installNumericWheelGuard()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  4 failed | 24 passed (28)
+   Start at  18:39:39
+   Duration  7.17s (transform 1.79s, setup 1.72s, import 2.32s, tests 1.05s, environment 5.68s)

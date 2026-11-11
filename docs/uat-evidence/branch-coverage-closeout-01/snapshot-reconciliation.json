@@ -1,0 +1,34 @@
+{
+  "baseline": "f3b7242e77752b6cc5b72425bcc3df2fa938de61",
+  "certified_source": "7e99a5d394ddc0d96a3af04b74686307f754ca08",
+  "original_heads": 244,
+  "current_heads": 244,
+  "original_unmatched": 39,
+  "retained_review_rows": 38,
+  "excluded_by_original_report": [
+    {
+      "branch": "codex/r1-sku-01-fix-02",
+      "remote_sha": "fed49cd2b25524d79715d8c241a9ff7f0536218c",
+      "runs_at_exact_sha": "CI success https://github.com/Johnson-Yiu/SJERP/actions/runs/39364853862; CI success https://github.com/Johnson-Yiu/SJERP/actions/runs/39364713405",
+      "candidate_integration": "outside ancestry; 3 unmatched non-merge patches; 0 merges to review",
+      "verified_source_sha": "fed49cd2b25524d79715d8c241a9ff7f0536218c",
+      "workflow_run_job": "Original exact source CI: frontend https://github.com/Johnson-Yiu/SJERP/actions/runs/39364853862/job/118439237770 | backend-postgres https://github.com/Johnson-Yiu/SJERP/actions/runs/39364853862/job/118439237966 | backend https://github.com/Johnson-Yiu/SJERP/actions/runs/39364853862/job/118439238040 | backend-postgres https://github.com/Johnson-Yiu/SJERP/actions/runs/39364713405/job/118438785421 | backend https://github.com/Johnson-Yiu/SJERP/actions/runs/39364713405/job/118438785633 | frontend https://github.com/Johnson-Yiu/SJERP/actions/runs/39364713405/job/118438785668",
+      "remaining_action": "Original exact SHA already has two successful CI runs; distinct source scope stays outside this candidate."
+    }
+  ],
+  "new_remote_branches": [],
+  "missing_remote_branches": [],
+  "moved_review_heads": [],
+  "input_sha256": {
+    "branch-inventory.csv": "bb9412a01a92bc5f16a27409dd29a6f691d1c74d560adf1c31789d9e49392854",
+    "recent-commit-inventory.csv": "d75c86277746ec64a8ac7c4d47d46ab8ee729ff19be098a040f6b4c931e5df05",
+    "historical-path-witnesses.json": "785c8d194d6b5f670571eb9148af883a1e7379dc5a33dbd81c722750f7ee8906"
+  },
+  "classification_counts": {
+    "证据差异": 9,
+    "待 U4 复验": 2,
+    "后继替代": 20,
+    "已保留等效能力": 6,
+    "后继替代并保留延期": 1
+  }
+}

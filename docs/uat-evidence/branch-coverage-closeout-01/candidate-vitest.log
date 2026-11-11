@@ -1,0 +1,8 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/branch-coverage-closeout-01/frontend
+
+
+ Test Files  4 passed (4)
+      Tests  28 passed (28)
+   Start at  18:41:19
+   Duration  28.85s (transform 2.04s, setup 2.47s, import 2.73s, tests 1.39s, environment 47.95s)

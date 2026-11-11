@@ -99,6 +99,7 @@ test('SKU image upload can retry without repeating the SKU update', async ({ bas
           await expect(page.locator('.toast.error')).toHaveCount(0)
           const retry = edit.getByRole('button', { name: /重试上传/ })
           await retry.scrollIntoViewIfNeeded()
+          await expect(message).toBeInViewport()
           expect(await page.evaluate(() => devicePixelRatio)).toBeCloseTo(zoom, 2)
           const png = 'sku-image-failed-' + width + '-' + zoom * 100 + '.png'
           const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
@@ -131,6 +132,7 @@ test('SKU image upload can retry without repeating the SKU update', async ({ bas
           await expect(clearError).toBeVisible()
           const clearRetry = edit.getByRole('button', { name: '重试清除图片', exact: true })
           await clearRetry.click({ trial: true })
+          await expect(clearError).toBeInViewport()
           await expect(clearError).toBeVisible()
           const cleared = page.waitForResponse(removal)
           await clearRetry.click()

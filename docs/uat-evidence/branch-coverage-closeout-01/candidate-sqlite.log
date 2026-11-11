@@ -1,0 +1,554 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+Found 182 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: corsheaders, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying crm.0093_csv_import_preview_audit... OK
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+  Applying crm.0090_fulfillment_request_idempotency... OK
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+  Applying crm.0096_quote_pi_template_snapshots... OK
+  Applying crm.0097_merge_quote_and_cash_review... OK
+  Applying crm.0098_finance_accounts... OK
+  Applying crm.0099_finance_closeout_workflows... OK
+  Applying crm.0100_finance_legacy_fact_links... OK
+  Applying crm.0101_finance_historical_transfer_links... OK
+  Applying crm.0102_bank_private_voucher_binding... OK
+  Applying crm.0098_history_takeover_workflow... OK
+  Applying crm.0103_merge_finance_and_history... OK
+  Applying crm.0104_historical_inventory_baseline... OK
+  Applying crm.0105_historical_operational_contract... OK
+  Applying crm.0106_historical_purchase_balance_mode... OK
+  Applying crm.0107_inventory_movement_location... OK
+  Applying crm.0108_history_append_only_truncate... OK
+  Applying crm.0109_quote_buyer_country_snapshot... OK
+  Applying crm.0110_party_version... OK
+  Applying crm.0111_quote_buyer_tax_id... OK
+  Applying crm.0112_party_quote_application... OK
+  Applying crm.0113_party_request_lifecycle... OK
+  Applying crm.0114_party_document_version... OK
+  Applying crm.0109_new_product_reminders... OK
+  Applying crm.0115_party_replacement... OK
+  Applying crm.0116_party_document_details_storage... OK
+  Applying crm.0117_party_details_draft_guard... OK
+  Applying crm.0118_merge_party_reminders... OK
+  Applying crm.0109_finance_transaction_unified_entry... OK
+  Applying crm.0110_remove_rmbcashevent_cash_event_net_positive_and_more... OK
+  Applying crm.0111_financeplanwriteoff... OK
+  Applying crm.0119_merge_finance_and_party... OK
+  Applying crm.0120_finance_actual_receipt_and_writeoff_correction... OK
+  Applying crm.0121_reconcile_legacy_fee_allocation_cash... OK
+  Applying crm.0110_sales_order_import_sources... OK
+  Applying crm.0119_merge_sales_order_import... OK
+  Applying crm.0122_merge_sales_and_finance_review... OK
+  Applying crm.0119_merge_20261108_1834... OK
+  Applying crm.0120_advanceallocation_cash_amount_and_more... OK
+  Applying crm.0123_merge_finance_receipt_histories... OK
+  Applying crm.0124_finance_bank_fact_match... OK
+  Applying crm.0125_finance_receipt_refund... OK
+  Applying crm.0126_finance_cash_confirmation... OK
+  Applying crm.0127_finance_bank_return_allocation... OK
+  Applying crm.0123_sku_cost_snapshots... OK
+  Applying crm.0123_history_reporting_snapshots... OK
+  Applying crm.0128_merge_release_integration... OK
+  Applying crm.0129_historical_product_linking... OK
+  Applying crm.0130_history_product_candidate_rules... OK
+test_alpha2_sequences_remain_unique_per_date_and_country (crm.tests.test_issue_008_country_select.CountryQuoteCompatibilityTests.test_alpha2_sequences_remain_unique_per_date_and_country) ... ok
+test_legacy_quote_number_stays_immutable_after_customer_country_selection (crm.tests.test_issue_008_country_select.CountryQuoteCompatibilityTests.test_legacy_quote_number_stays_immutable_after_customer_country_selection) ... ok
+test_ambiguous_and_unknown_values_are_not_guessed (crm.tests.test_issue_008_country_select.CountryRegistryTests.test_ambiguous_and_unknown_values_are_not_guessed) ... ok
+test_catalog_covers_all_249_iso_records_with_cldr_chinese_names (crm.tests.test_issue_008_country_select.CountryRegistryTests.test_catalog_covers_all_249_iso_records_with_cldr_chinese_names) ... ok
+test_catalog_shows_standard_english_name_and_alpha2_and_searches_america (crm.tests.test_issue_008_country_select.CountryRegistryTests.test_catalog_shows_standard_english_name_and_alpha2_and_searches_america) ... ok
+test_common_names_codes_aliases_and_spacing_resolve_to_alpha2 (crm.tests.test_issue_008_country_select.CountryRegistryTests.test_common_names_codes_aliases_and_spacing_resolve_to_alpha2) ... ok
+test_existing_and_cldr_variant_chinese_aliases_remain_compatible (crm.tests.test_issue_008_country_select.CountryRegistryTests.test_existing_and_cldr_variant_chinese_aliases_remain_compatible) ... ok
+test_ambiguous_and_unknown_business_input_is_rejected (crm.tests.test_issue_008_country_select.CustomerCountryApiTests.test_ambiguous_and_unknown_business_input_is_rejected) ... Bad Request: /api/customers/
+Bad Request: /api/customers/
+ok
+test_country_catalog_is_local_and_includes_standard_candidates (crm.tests.test_issue_008_country_select.CustomerCountryApiTests.test_country_catalog_is_local_and_includes_standard_candidates) ... ok
+test_explicit_known_country_is_saved_as_alpha2_and_exposed_with_display_label (crm.tests.test_issue_008_country_select.CustomerCountryApiTests.test_explicit_known_country_is_saved_as_alpha2_and_exposed_with_display_label) ... ok
+test_unknown_import_text_is_preserved_for_manual_review (crm.tests.test_issue_008_country_select.CustomerCountryApiTests.test_unknown_import_text_is_preserved_for_manual_review) ... ok
+test_equal_and_high_moq_place_without_exception (crm.tests.test_purchase_moq.PurchaseMOQTests.test_equal_and_high_moq_place_without_exception) ... ok
+test_low_moq_is_a_soft_warning_and_persists_reason_operator_time_and_po (crm.tests.test_purchase_moq.PurchaseMOQTests.test_low_moq_is_a_soft_warning_and_persists_reason_operator_time_and_po) ... Bad Request: /api/purchase-orders/1/place/
+ok
+test_missing_moq_does_not_create_an_invented_threshold (crm.tests.test_purchase_moq.PurchaseMOQTests.test_missing_moq_does_not_create_an_invented_threshold) ... ok
+test_same_supplier_sku_lines_are_aggregated_in_one_real_po (crm.tests.test_purchase_moq.PurchaseMOQTests.test_same_supplier_sku_lines_are_aggregated_in_one_real_po) ... ok
+test_single_sales_order_plan_aggregates_repeated_source_lines_before_warning (crm.tests.test_purchase_moq.PurchaseMOQTests.test_single_sales_order_plan_aggregates_repeated_source_lines_before_warning) ... ok
+test_trade_units_are_compared_as_base_quantity_and_do_not_invent_extra_qty (crm.tests.test_purchase_moq.PurchaseMOQTests.test_trade_units_are_compared_as_base_quantity_and_do_not_invent_extra_qty) ... ok
+test_two_sales_order_allocations_share_one_po_moq_total (crm.tests.test_purchase_moq.PurchaseMOQTests.test_two_sales_order_allocations_share_one_po_moq_total) ... ok
+test_amount_rule_rejects_other_methods_without_any_writes (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_amount_rule_rejects_other_methods_without_any_writes) ... ok
+test_audit_contains_before_after_and_is_redacted_for_procurement_only_operator (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_audit_contains_before_after_and_is_redacted_for_procurement_only_operator) ... ok
+test_cancelled_target_and_stale_version_leave_all_state_and_audit_unchanged (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_cancelled_target_and_stale_version_leave_all_state_and_audit_unchanged) ... ok
+test_cost_allocation_orders_are_minimal_and_sales_apis_remain_scoped (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_cost_allocation_orders_are_minimal_and_sales_apis_remain_scoped) ... ok
+test_cost_allocation_reads_respect_procurement_and_sales_visibility (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_cost_allocation_reads_respect_procurement_and_sales_visibility) ... ok
+test_legacy_conversion_audit_rollback_and_reservation_rebalance (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_legacy_conversion_audit_rollback_and_reservation_rebalance) ... ok
+test_procurement_can_allocate_cross_sales_orders_without_sales_module (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_procurement_can_allocate_cross_sales_orders_without_sales_module) ... ok
+test_public_expense_and_attribution_are_atomic_and_do_not_create_other_records (crm.tests.test_iss039_shared_purchase_costs.SharedPurchaseCostPermissionTests.test_public_expense_and_attribution_are_atomic_and_do_not_create_other_records) ... ok
+test_inventory_detail_does_not_invent_history_when_snapshots_are_empty (crm.tests.test_inventory_reference.InventoryReferenceTests.test_inventory_detail_does_not_invent_history_when_snapshots_are_empty) ... ok
+test_inventory_detail_redacts_supplier_traits_without_supplier_permission (crm.tests.test_inventory_reference.InventoryReferenceTests.test_inventory_detail_redacts_supplier_traits_without_supplier_permission) ... ok
+test_inventory_detail_separates_historical_snapshot_from_current_supplier_profile (crm.tests.test_inventory_reference.InventoryReferenceTests.test_inventory_detail_separates_historical_snapshot_from_current_supplier_profile) ... ok
+test_sku_detail_does_not_turn_hidden_inventory_into_zero (crm.tests.test_inventory_reference.InventoryReferenceTests.test_sku_detail_does_not_turn_hidden_inventory_into_zero) ... ok
+test_sku_detail_reuses_authoritative_metrics_and_inventory_context (crm.tests.test_inventory_reference.InventoryReferenceTests.test_sku_detail_reuses_authoritative_metrics_and_inventory_context) ... ok
+test_cannot_decrease_below_seventy_already_shipped (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_cannot_decrease_below_seventy_already_shipped) ... Bad Request: /api/orders/1/quantity-adjustments/
+ok
+test_decrease_without_shipment_reduces_only_unsettled_plan_and_rebalances_reservation (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_decrease_without_shipment_reduces_only_unsettled_plan_and_rebalances_reservation) ... ok
+test_development_operator_is_explicitly_not_a_real_authenticated_actor (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_development_operator_is_explicitly_not_a_real_authenticated_actor) ... ok
+test_existing_purchase_allocation_is_preserved_and_excess_is_only_a_warning (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_existing_purchase_allocation_is_preserved_and_excess_is_only_a_warning) ... ok
+test_failure_after_financial_write_rolls_back_everything (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_failure_after_financial_write_rolls_back_everything) ... Internal Server Error: /api/orders/1/quantity-adjustments/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\branch-coverage-closeout-01\backend\crm\views.py", line 2434, in quantity_adjustments
+    adjustment, replayed, preview = apply_quantity_adjustment(
+                                    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        order,
+        ^^^^^^
+        request.data,
+        ^^^^^^^^^^^^^
+        operator=request.user,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\branch-coverage-closeout-01\backend\crm\services\order_quantity_adjustments.py", line 425, in apply_quantity_adjustment
+    rebalance_sku_reservations(SKU.objects.get(pk=sku_id))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: reservation failure
+ok
+test_historical_flag_cannot_bypass_dedicated_quantity_flow (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_historical_flag_cannot_bypass_dedicated_quantity_flow) ... Bad Request: /api/orders/1/quantity-adjustments/preview/
+Bad Request: /api/orders/1/quantity-adjustments/
+ok
+test_history_serializer_redacts_financial_and_procurement_impact_without_finance_view (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_history_serializer_redacts_financial_and_procurement_impact_without_finance_view) ... ok
+test_increase_updates_line_preserves_identity_and_extends_receivable (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_increase_updates_line_preserves_identity_and_extends_receivable) ... ok
+test_invalid_precision_and_oversized_quantity_are_rejected_without_500 (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_invalid_precision_and_oversized_quantity_are_rejected_without_500) ... Bad Request: /api/orders/1/quantity-adjustments/
+Bad Request: /api/orders/1/quantity-adjustments/
+Bad Request: /api/orders/1/quantity-adjustments/
+ok
+test_multi_line_adjustment_only_records_changed_lines (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_multi_line_adjustment_only_records_changed_lines) ... ok
+test_multiple_lines_are_atomic_when_one_line_is_invalid (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_multiple_lines_are_atomic_when_one_line_is_invalid) ... Bad Request: /api/orders/1/quantity-adjustments/
+ok
+test_noop_is_rejected_without_version_history_plan_or_audit_changes (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_noop_is_rejected_without_version_history_plan_or_audit_changes) ... Bad Request: /api/orders/1/quantity-adjustments/
+ok
+test_paid_amount_over_new_contract_amount_is_rejected_without_side_effects (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_paid_amount_over_new_contract_amount_is_rejected_without_side_effects) ... Bad Request: /api/orders/1/quantity-adjustments/
+ok
+test_partial_payment_allows_both_safe_increase_and_decrease (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_partial_payment_allows_both_safe_increase_and_decrease) ... ok
+test_partial_shipment_allows_safe_decrease_but_rejects_below_shipped (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_partial_shipment_allows_safe_decrease_but_rejects_below_shipped) ... Bad Request: /api/orders/1/quantity-adjustments/
+ok
+test_real_receipt_shipment_payment_and_party_snapshots_are_unchanged (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_real_receipt_shipment_payment_and_party_snapshots_are_unchanged) ... ok
+test_same_sku_multiple_lines_aggregate_demand_once_for_procurement_warning (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_same_sku_multiple_lines_aggregate_demand_once_for_procurement_warning) ... ok
+test_stale_version_and_normal_patch_cannot_bypass_dedicated_flow (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_stale_version_and_normal_patch_cannot_bypass_dedicated_flow) ... Conflict: /api/orders/1/quantity-adjustments/
+Bad Request: /api/orders/1/
+ok
+test_success_is_audited_once_and_history_is_readable (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_success_is_audited_once_and_history_is_readable) ... Bad Request: /api/orders/1/quantity-adjustments/
+ok
+test_trade_unit_uses_saved_factor_and_preserves_snapshot (crm.tests.test_order_quantity_adjustments.OrderQuantityAdjustmentApiTests.test_trade_unit_uses_saved_factor_and_preserves_snapshot) ... ok
+test_financial_rejection_for_orders_update_user_does_not_echo_amounts (crm.tests.test_order_quantity_adjustments.QuantityAdjustmentRBACApiTests.test_financial_rejection_for_orders_update_user_does_not_echo_amounts) ... ok
+test_full_finance_and_procurement_user_can_read_complete_adjustment_impact (crm.tests.test_order_quantity_adjustments.QuantityAdjustmentRBACApiTests.test_full_finance_and_procurement_user_can_read_complete_adjustment_impact) ... ok
+test_orders_update_user_can_adjust_but_receives_no_finance_or_procurement_details (crm.tests.test_order_quantity_adjustments.QuantityAdjustmentRBACApiTests.test_orders_update_user_can_adjust_but_receives_no_finance_or_procurement_details) ... ok
+test_procurement_warning_is_generic_without_purchases_view (crm.tests.test_order_quantity_adjustments.QuantityAdjustmentRBACApiTests.test_procurement_warning_is_generic_without_purchases_view) ... ok
+test_redacted_quantity_adjustment_audit_does_not_leak_financial_snapshot (crm.tests.test_order_quantity_adjustments.QuantityAdjustmentRBACApiTests.test_redacted_quantity_adjustment_audit_does_not_leak_financial_snapshot) ... ok
+test_view_only_and_out_of_scope_users_cannot_submit_or_read_foreign_order (crm.tests.test_order_quantity_adjustments.QuantityAdjustmentRBACApiTests.test_view_only_and_out_of_scope_users_cannot_submit_or_read_foreign_order) ... ok
+test_confirmed_order_freezes_quote_party_fields_and_is_not_overwritten_by_master_edit (crm.tests.test_formal_party_snapshots.FormalPartySnapshotTests.test_confirmed_order_freezes_quote_party_fields_and_is_not_overwritten_by_master_edit) ... ok
+test_confirmed_order_without_quote_uses_current_customer_contact_once (crm.tests.test_formal_party_snapshots.FormalPartySnapshotTests.test_confirmed_order_without_quote_uses_current_customer_contact_once) ... ok
+test_confirmed_purchase_freezes_supplier_party_fields_and_supplier_address_is_editable (crm.tests.test_formal_party_snapshots.FormalPartySnapshotTests.test_confirmed_purchase_freezes_supplier_party_fields_and_supplier_address_is_editable) ... ok
+test_formal_snapshot_fields_are_read_only_and_legacy_unknown_stays_unknown (crm.tests.test_formal_party_snapshots.FormalPartySnapshotTests.test_formal_snapshot_fields_are_read_only_and_legacy_unknown_stays_unknown) ... ok
+test_party_snapshots_are_redacted_without_customer_or_supplier_view_permission (crm.tests.test_formal_party_snapshots.FormalPartySnapshotTests.test_party_snapshots_are_redacted_without_customer_or_supplier_view_permission) ... ok
+test_cancelled_shipment_is_blocked (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_cancelled_shipment_is_blocked) ... ok
+test_export_blanks_hs_code_without_hs_code_permission (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_export_blanks_hs_code_without_hs_code_permission) ... ok
+test_export_requires_inventory_export_permission (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_export_requires_inventory_export_permission) ... ok
+test_export_uses_real_shipment_and_preserves_template_structure (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_export_uses_real_shipment_and_preserves_template_structure) ... ok
+test_long_description_and_notes_use_dynamic_height_without_truncation (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_long_description_and_notes_use_dynamic_height_without_truncation) ... ok
+test_missing_physical_values_are_blank_not_invented (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_missing_physical_values_are_blank_not_invented) ... ok
+test_missing_shipment_movement_uses_order_snapshot_without_failing (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_missing_shipment_movement_uses_order_snapshot_without_failing) ... ok
+test_mixed_carton_counts_physical_values_once (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_mixed_carton_counts_physical_values_once) ... ok
+test_mixed_description_rows_have_repeatable_text_capacity_and_spacing (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_mixed_description_rows_have_repeatable_text_capacity_and_spacing) ... ok
+test_product_images_keep_template_logo_and_relationships (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_product_images_keep_template_logo_and_relationships) ... ok
+test_quantity_mismatch_returns_per_sku_difference_and_does_not_write (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_quantity_mismatch_returns_per_sku_difference_and_does_not_write) ... ok
+test_same_sales_order_shipment_batches_export_as_separate_files (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_same_sales_order_shipment_batches_export_as_separate_files) ... ok
+test_same_sku_different_carton_specs_stay_separate_and_cbm_subtotal_is_complete (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_same_sku_different_carton_specs_stay_separate_and_cbm_subtotal_is_complete) ... ok
+test_same_sku_same_carton_shape_is_grouped_without_losing_quantity (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_same_sku_same_carton_shape_is_grouped_without_losing_quantity) ... ok
+test_sixty_carton_export_expands_subtotal_and_print_area (crm.tests.test_packing_list_export.PackingListExportPermissionTests.test_sixty_carton_export_expands_subtotal_and_print_area) ... ok
+test_cancelled_shipment_is_blocked (crm.tests.test_packing_list_export.PackingListExportTests.test_cancelled_shipment_is_blocked) ... Bad Request: /api/shipments/1/export-packing-list/
+ok
+test_export_uses_real_shipment_and_preserves_template_structure (crm.tests.test_packing_list_export.PackingListExportTests.test_export_uses_real_shipment_and_preserves_template_structure) ... ok
+test_long_description_and_notes_use_dynamic_height_without_truncation (crm.tests.test_packing_list_export.PackingListExportTests.test_long_description_and_notes_use_dynamic_height_without_truncation) ... ok
+test_missing_physical_values_are_blank_not_invented (crm.tests.test_packing_list_export.PackingListExportTests.test_missing_physical_values_are_blank_not_invented) ... ok
+test_missing_shipment_movement_uses_order_snapshot_without_failing (crm.tests.test_packing_list_export.PackingListExportTests.test_missing_shipment_movement_uses_order_snapshot_without_failing) ... ok
+test_mixed_carton_counts_physical_values_once (crm.tests.test_packing_list_export.PackingListExportTests.test_mixed_carton_counts_physical_values_once) ... ok
+test_mixed_description_rows_have_repeatable_text_capacity_and_spacing (crm.tests.test_packing_list_export.PackingListExportTests.test_mixed_description_rows_have_repeatable_text_capacity_and_spacing) ... ok
+test_product_images_keep_template_logo_and_relationships (crm.tests.test_packing_list_export.PackingListExportTests.test_product_images_keep_template_logo_and_relationships) ... ok
+test_quantity_mismatch_returns_per_sku_difference_and_does_not_write (crm.tests.test_packing_list_export.PackingListExportTests.test_quantity_mismatch_returns_per_sku_difference_and_does_not_write) ... Bad Request: /api/shipments/1/export-packing-list/
+ok
+test_same_sales_order_shipment_batches_export_as_separate_files (crm.tests.test_packing_list_export.PackingListExportTests.test_same_sales_order_shipment_batches_export_as_separate_files) ... ok
+test_same_sku_different_carton_specs_stay_separate_and_cbm_subtotal_is_complete (crm.tests.test_packing_list_export.PackingListExportTests.test_same_sku_different_carton_specs_stay_separate_and_cbm_subtotal_is_complete) ... ok
+test_same_sku_same_carton_shape_is_grouped_without_losing_quantity (crm.tests.test_packing_list_export.PackingListExportTests.test_same_sku_same_carton_shape_is_grouped_without_losing_quantity) ... Bad Request: /api/shipments/1/export-packing-list/
+ok
+test_sixty_carton_export_expands_subtotal_and_print_area (crm.tests.test_packing_list_export.PackingListExportTests.test_sixty_carton_export_expands_subtotal_and_print_area) ... ok
+test_cost_verification_is_server_owned_and_price_or_currency_change_invalidates (crm.tests.test_sku_cost_verification.SkuCostVerificationTests.test_cost_verification_is_server_owned_and_price_or_currency_change_invalidates) ... ok
+test_invalid_sku_cost_cannot_be_verified_or_overwrite_previous_verification (crm.tests.test_sku_cost_verification.SkuCostVerificationTests.test_invalid_sku_cost_cannot_be_verified_or_overwrite_previous_verification) ... Bad Request: /api/skus/1/verify-cost/
+ok
+test_invalid_supplier_price_cannot_be_verified_or_overwrite_previous_verification (crm.tests.test_sku_cost_verification.SkuCostVerificationTests.test_invalid_supplier_price_cannot_be_verified_or_overwrite_previous_verification) ... Bad Request: /api/supplier-skus/1/verify-price/
+ok
+test_new_sku_defaults_cost_currency_but_legacy_unknown_remains_unknown (crm.tests.test_sku_cost_verification.SkuCostVerificationTests.test_new_sku_defaults_cost_currency_but_legacy_unknown_remains_unknown) ... ok
+test_order_cost_currency_snapshot_is_stable_and_unknown_is_blank (crm.tests.test_sku_cost_verification.SkuCostVerificationTests.test_order_cost_currency_snapshot_is_stable_and_unknown_is_blank) ... ok
+test_risk_preview_reports_state_without_cost_amounts (crm.tests.test_sku_cost_verification.SkuCostVerificationTests.test_risk_preview_reports_state_without_cost_amounts) ... ok
+test_supplier_cost_serializer_hides_price_currency_without_purchase_view (crm.tests.test_sku_cost_verification.SkuCostVerificationTests.test_supplier_cost_serializer_hides_price_currency_without_purchase_view) ... ok
+test_supplier_price_verification_is_independent_per_source (crm.tests.test_sku_cost_verification.SkuCostVerificationTests.test_supplier_price_verification_is_independent_per_source) ... ok
+test_verification_state_uses_ninety_day_warning_only (crm.tests.test_sku_cost_verification.SkuCostVerificationTests.test_verification_state_uses_ninety_day_warning_only) ... ok
+test_930_cash_20_company_fee_and_50_discount (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_930_cash_20_company_fee_and_50_discount) ... ok
+test_audit_failure_rolls_back_entire_receipt (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_audit_failure_rolls_back_entire_receipt) ... Internal Server Error: /api/transactions/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\branch-coverage-closeout-01\backend\crm\views.py", line 3080, in create
+    record_operation(request=request, instance=row, action="create", action_label="�Ǽǲ�����ˮ")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+ok
+test_customer_fee_leaves_difference (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_customer_fee_leaves_difference) ... ok
+test_legacy_direct_receipt_replays_by_business_identity (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_legacy_direct_receipt_replays_by_business_identity) ... Conflict: /api/transactions/
+ok
+test_no_order_receipt_can_be_allocated_later (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_no_order_receipt_can_be_allocated_later) ... Conflict: /api/transactions/1/allocate/
+Bad Request: /api/transactions/1/allocate/
+ok
+test_one_receipt_can_be_distributed_across_orders (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_one_receipt_can_be_distributed_across_orders) ... ok
+test_plan_replay_uses_submitted_intent_after_contract_rate_changes (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_plan_replay_uses_submitted_intent_after_contract_rate_changes) ... ok
+test_refund_uses_actual_date_and_replays_across_days (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_refund_uses_actual_date_and_replays_across_days) ... Bad Request: /api/transactions/1/refund-cash/
+Conflict: /api/transactions/1/refund-cash/
+ok
+test_selected_plan_audit_failure_allows_same_key_retry (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_selected_plan_audit_failure_allows_same_key_retry) ... Internal Server Error: /api/payment-plans/1/settle/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\branch-coverage-closeout-01\backend\crm\views.py", line 3618, in settle
+    record_operation(request=request, instance=row, action="create", action_label="���㸶��ƻ�", metadata={"payment_plan_id": plan.id})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic plan audit failure
+ok
+test_selected_plan_replay_accepts_same_explicit_business_number (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_selected_plan_replay_accepts_same_explicit_business_number) ... Conflict: /api/payment-plans/1/settle/
+ok
+test_structured_receipt_preserves_cash_and_idempotent_replay (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_structured_receipt_preserves_cash_and_idempotent_replay) ... Conflict: /api/transactions/
+ok
+test_structured_receipt_replay_requires_the_original_operator (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_structured_receipt_replay_requires_the_original_operator) ... Conflict: /api/transactions/
+ok
+test_unallocated_balance_counts_cash_not_fee_credit (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_unallocated_balance_counts_cash_not_fee_credit) ... ok
+test_void_audit_rollback_and_replay (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_void_audit_rollback_and_replay) ... Internal Server Error: /api/transactions/1/void/
+Traceback (most recent call last):
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 526, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 474, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 485, in raise_uncaught_exception
+    raise exc
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.venv\Lib\site-packages\rest_framework\views.py", line 523, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Python314\Lib\contextlib.py", line 85, in inner
+    return func(*args, **kwds)
+  File "D:\Codex��Ŀ\ɭ����������ϵͳ\.worktrees\branch-coverage-closeout-01\backend\crm\views.py", line 3219, in void
+    record_operation(
+    ~~~~~~~~~~~~~~~~^
+        request=request, instance=row, action="custom", action_label="���ϲ�����ˮ", before=before,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        metadata={"transaction_id": row.id, "reason": row.void_reason, "split_transaction_ids": split_ids},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\unittest\mock.py", line 1176, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1180, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\unittest\mock.py", line 1241, in _execute_mock_call
+    raise effect
+RuntimeError: synthetic audit failure
+Conflict: /api/transactions/1/void/
+ok
+test_voucher_cannot_be_reused_for_another_receipt (crm.tests.test_finance_receipt_convergence.ReceiptConvergenceTests.test_voucher_cannot_be_reused_for_another_receipt) ... Bad Request: /api/transactions/
+ok
+test_cancelled_and_completed_orders_keep_distinct_non_importable_lifecycle_evidence (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_cancelled_and_completed_orders_keep_distinct_non_importable_lifecycle_evidence) ... ok
+test_csv_report_escapes_formula_like_source_identifiers (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_csv_report_escapes_formula_like_source_identifiers) ... ok
+test_decimal_integer_digits_cannot_exceed_current_model_precision (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_decimal_integer_digits_cannot_exceed_current_model_precision) ... ok
+test_delivered_template_headers_match_parser_and_empty_template_is_safely_rejected (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_delivered_template_headers_match_parser_and_empty_template_is_safely_rejected) ... Bad Request: /api/import/history-preflight/
+ok
+test_existing_order_and_duplicate_source_rows_are_reported_not_silently_deduplicated (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_existing_order_and_duplicate_source_rows_are_reported_not_silently_deduplicated) ... ok
+test_formula_cells_and_non_xlsx_are_rejected_without_side_effects (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_formula_cells_and_non_xlsx_are_rejected_without_side_effects) ... Bad Request: /api/import/history-preflight/
+Bad Request: /api/import/history-preflight/
+ok
+test_fulfillment_lifecycle_is_independent_of_financial_settlement (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_fulfillment_lifecycle_is_independent_of_financial_settlement) ... ok
+test_limited_data_scope_is_denied_before_workbook_parsing (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_limited_data_scope_is_denied_before_workbook_parsing) ... ok
+test_line_overfulfillment_and_excess_reversal_remain_independent_checks (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_line_overfulfillment_and_excess_reversal_remain_independent_checks) ... ok
+test_missing_historical_category_snapshot_stays_unknown_without_writing (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_missing_historical_category_snapshot_stays_unknown_without_writing) ... ok
+test_missing_parent_dependency_blocks_group_and_line (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_missing_parent_dependency_blocks_group_and_line) ... ok
+test_missing_required_invalid_date_and_decimal_are_reported_by_original_row (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_missing_required_invalid_date_and_decimal_are_reported_by_original_row) ... ok
+test_missing_sku_code_proposes_name_candidate_but_never_auto_links_ambiguous_name (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_missing_sku_code_proposes_name_candidate_but_never_auto_links_ambiguous_name) ... ok
+test_missing_voucher_and_partial_coverage_are_not_reported_as_pass (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_missing_voucher_and_partial_coverage_are_not_reported_as_pass) ... ok
+test_oversized_file_gets_http_413_and_unauthorized_user_is_denied (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_oversized_file_gets_http_413_and_unauthorized_user_is_denied) ... Content Too Large: /api/import/history-preflight/
+ok
+test_partial_multiline_mixed_progress_is_consistent_for_sales_and_purchase (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_partial_multiline_mixed_progress_is_consistent_for_sales_and_purchase) ... ok
+test_partial_order_uses_all_lines_and_only_verified_fulfillment (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_partial_order_uses_all_lines_and_only_verified_fulfillment) ... ok
+test_partial_purchase_receipt_dependency_and_trade_unit_fraction_rules (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_partial_purchase_receipt_dependency_and_trade_unit_fraction_rules) ... ok
+test_receipt_reversal_over_original_quantity_is_blocked (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_receipt_reversal_over_original_quantity_is_blocked) ... ok
+test_reuploading_same_workbook_is_repeatable_and_remains_read_only (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_reuploading_same_workbook_is_repeatable_and_remains_read_only) ... ok
+test_simulated_history_is_blocked_and_row_limit_is_enforced (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_simulated_history_is_blocked_and_row_limit_is_enforced) ... Content Too Large: /api/import/history-preflight/
+ok
+test_unmatched_product_can_archive_and_unique_name_only_customer_is_manual_review (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_unmatched_product_can_archive_and_unique_name_only_customer_is_manual_review) ... ok
+test_unverified_pending_cash_and_open_settled_cancelled_plans_do_not_write_or_confirm (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_unverified_pending_cash_and_open_settled_cancelled_plans_do_not_write_or_confirm) ... ok
+test_valid_exact_master_preflight_returns_rows_and_changes_no_business_state (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_valid_exact_master_preflight_returns_rows_and_changes_no_business_state) ... ok
+test_development_superadmin_can_read_protected_media_without_login (crm.tests.test_functional_rbac.DevelopmentAccessCompatibilityTests.test_development_superadmin_can_read_protected_media_without_login) ... ok
+test_rbac_disabled_preserves_legacy_development_access (crm.tests.test_functional_rbac.DevelopmentAccessCompatibilityTests.test_rbac_disabled_preserves_legacy_development_access) ... ok
+test_admin_can_read_permission_overview_without_organization_view (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_admin_can_read_permission_overview_without_organization_view) ... ok
+test_anonymous_business_api_is_denied (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_anonymous_business_api_is_denied) ... ok
+test_context_endpoint_cannot_bypass_primary_module_view_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_context_endpoint_cannot_bypass_primary_module_view_permission) ... ok
+test_context_hides_related_sections_without_their_module_view_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_context_hides_related_sections_without_their_module_view_permission) ... ok
+test_context_redacts_cross_module_snapshots_and_product_classification (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_context_redacts_cross_module_snapshots_and_product_classification) ... ok
+test_current_operator_returns_complete_matrix_contract (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_current_operator_returns_complete_matrix_contract) ... ok
+test_customer_nested_contacts_require_contacts_create (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_customer_nested_contacts_require_contacts_create) ... ok
+test_finance_related_filters_require_the_linked_module_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_finance_related_filters_require_the_linked_module_permission) ... ok
+test_get_export_query_uses_export_permission_before_safe_method_view (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_get_export_query_uses_export_permission_before_safe_method_view) ... ok
+test_html_api_forms_cannot_disclose_out_of_scope_relation_choices (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_html_api_forms_cannot_disclose_out_of_scope_relation_choices) ... ok
+test_inactive_employee_profile_gets_no_business_access (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_inactive_employee_profile_gets_no_business_access) ... ok
+test_inventory_workbench_apis_use_inventory_permission_and_minimal_sku_data (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_inventory_workbench_apis_use_inventory_permission_and_minimal_sku_data) ... ok
+test_media_url_requires_record_module_and_customer_scope (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_media_url_requires_record_module_and_customer_scope) ... ok
+test_new_role_permission_rows_default_to_no_access (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_new_role_permission_rows_default_to_no_access) ... ok
+test_order_response_masks_customer_and_sku_relations_without_module_permissions (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_order_response_masks_customer_and_sku_relations_without_module_permissions) ... ok
+test_ordinary_user_without_organization_view_cannot_read_overview (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_ordinary_user_without_organization_view_cannot_read_overview) ... ok
+test_parameter_and_certificate_search_do_not_query_hidden_product_names (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_parameter_and_certificate_search_do_not_query_hidden_product_names) ... ok
+test_permission_matrix_write_is_admin_only_and_admin_can_save (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_permission_matrix_write_is_admin_only_and_admin_can_save) ... ok
+test_permissions_are_union_of_active_roles (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_permissions_are_union_of_active_roles) ... ok
+test_product_certificate_files_use_private_media_and_reject_external_urls (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_product_certificate_files_use_private_media_and_reject_external_urls) ... ok
+test_purchase_finance_and_sku_apis_are_module_checked (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_purchase_finance_and_sku_apis_are_module_checked) ... ok
+test_quote_export_and_import_actions_use_special_permissions (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_quote_export_and_import_actions_use_special_permissions) ... ok
+test_report_csv_export_requires_export_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_csv_export_requires_export_permission) ... ok
+test_report_csv_export_requires_report_view_and_export_permissions (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_csv_export_requires_report_view_and_export_permissions) ... ok
+test_report_dimension_requires_its_source_module_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_dimension_requires_its_source_module_permission) ... ok
+test_report_source_and_csv_share_module_scope_and_totals (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_source_and_csv_share_module_scope_and_totals) ... ok
+test_report_view_does_not_grant_sales_source_module_access (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_report_view_does_not_grant_sales_source_module_access) ... ok
+test_sku_and_historical_quote_images_use_protected_media_permissions (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_sku_and_historical_quote_images_use_protected_media_permissions) ... ok
+test_superadmin_effectively_gets_every_module_and_action (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_superadmin_effectively_gets_every_module_and_action) ... ok
+test_superadmin_overview_exposes_effective_matrix_without_rewriting_template (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_superadmin_overview_exposes_effective_matrix_without_rewriting_template) ... ok
+test_supplier_capability_hides_product_identifier_without_product_permission (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_supplier_capability_hides_product_identifier_without_product_permission) ... ok
+test_unconfigured_non_development_environment_does_not_trust_anonymous (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_unconfigured_non_development_environment_does_not_trust_anonymous) ... ok
+test_unmapped_authenticated_api_fails_closed_in_rbac_mode (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_unmapped_authenticated_api_fails_closed_in_rbac_mode) ... ok
+test_update_and_delete_are_checked_separately (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_update_and_delete_are_checked_separately) ... ok
+test_view_permission_does_not_grant_create (crm.tests.test_functional_rbac.FunctionalRBACApiTests.test_view_permission_does_not_grant_create) ... ok
+test_preview_works_without_an_outer_test_transaction (crm.tests.test_order_quantity_adjustments.QuantityPreviewTransactionTests.test_preview_works_without_an_outer_test_transaction) ... ok
+test_concurrent_allocation_replays_once (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_allocation_replays_once) ... skipped '����������Ҫ PostgreSQL'
+test_concurrent_identical_receipts_create_one_fact (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_identical_receipts_create_one_fact) ... skipped '����������Ҫ PostgreSQL'
+test_concurrent_legacy_direct_receipt_replays_once (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_legacy_direct_receipt_replays_once) ... skipped '����������Ҫ PostgreSQL'
+test_concurrent_selected_plan_receipt_replays_once (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_selected_plan_receipt_replays_once) ... skipped '����������Ҫ PostgreSQL'
+test_concurrent_supplier_payment_replays_once (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_supplier_payment_replays_once) ... skipped '����������Ҫ PostgreSQL'
+test_concurrent_void_has_one_reversal_and_one_audit (crm.tests.test_finance_receipt_convergence.ReceiptReplayConcurrencyTests.test_concurrent_void_has_one_reversal_and_one_audit) ... skipped '����������Ҫ PostgreSQL'
+
+----------------------------------------------------------------------
+Ran 182 tests in 150.069s
+
+OK (skipped=6)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

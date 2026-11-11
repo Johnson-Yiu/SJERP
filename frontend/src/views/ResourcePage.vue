@@ -404,7 +404,7 @@ function clearListFilters() {
   return load()
 }
 watch(() => route.query.search, value => { if (isMovementPage.value || isCustomerPage.value || isSupplierPage.value || isCrmPage.value || isParameterPage.value || isCertificatePage.value) { clearTimeout(searchTimer); query.value = typeof value === 'string' ? value : '' } }, { immediate:true })
-onBeforeUnmount(() => { clearTimeout(searchTimer); clearTimeout(toastTimer); ledgerRequest++; crmRequest++ })
+onBeforeUnmount(() => { clearTimeout(searchTimer); clearTimeout(toastTimer); ledgerRequest++; crmRequest++; routeActionVersion++ })
 async function loadSupplierCategories() {
   supplierCategoryError.value = ''
   try { supplierCategories.value = await listAll('/categories/tree/') } catch (error) { supplierCategoryError.value = apiErrorMessage(error) }
@@ -841,6 +841,22 @@ async function editFromDetail(target = {}) {
     return
   }
   const row = rows.value.find(item => String(item.id) === String(targetId))
+  if (isCustomerPage.value) {
+    if (!can(accessModule.value, 'update')) return
+    const version = ++routeActionVersion
+    const path = route.fullPath
+    const workspaceSignal = workspaceNavigation.workspace?.controller.signal
+    const isCurrent = () => version === routeActionVersion && route.fullPath === path
+      && String(detailId.value) === String(targetId) && !workspaceSignal?.aborted
+      && can(accessModule.value, 'update')
+    try {
+      const customer = row || (await api.get(`/customers/${targetId}/`)).data
+      if (isCurrent()) await openEdit(customer, { keepDetail: true, isCurrent })
+    } catch (error) {
+      if (isCurrent()) notify(apiErrorMessage(error), true)
+    }
+    return
+  }
   if (row) await openEdit(row, { keepDetail: true })
   else if (isSupplierPage.value) { try { await openEdit((await api.get(`/suppliers/${targetId}/`)).data, { keepDetail:true }) } catch (error) { notify(apiErrorMessage(error), true) } }
 }

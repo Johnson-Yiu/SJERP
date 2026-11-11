@@ -5,7 +5,7 @@ async function setup(page,{restricted=false,shipped=false}={}){
  await page.route('**/api/**',async route=>{
   const path=new URL(route.request().url()).pathname
   const order={id:7,order_no:'FUP02-500',status:state.status,status_display:state.status==='completed'?'已完成':'已发货',customer_name:'合成客户',currency:'USD',total_amount:'500.00',balance_amount:state.balance,paid_amount:state.paid,items:[]}
-  if(path==='/api/session/current-operator/')return route.fulfill({json:restricted?{rbac_enforcement:true,permissions:{orders:{view:true,update:true}}}:{development_superadmin:true,has_all_permissions:true}})
+  if(path==='/api/session/current-operator/')return route.fulfill({json:restricted?{authenticated:true,rbac_enforcement:true,permissions:{orders:{view:true,update:true}}}:{development_superadmin:true,has_all_permissions:true}})
   if(path==='/api/orders/')return route.fulfill({json:[order]})
   if(path==='/api/orders/7/workbench/')return route.fulfill(state.fail?{status:500,json:{detail:'读取失败'}}:{json:{order,items:[],payments:[],inventory:[],plans:[],fulfillment_summary:{},payment_summary:{paid_amount:state.paid,balance_amount:state.balance,planned_amount:'500',settlement:{state:state.settlement || (Number(state.balance)?'partial':'settled'),label:state.label,overdue_amount:state.balance}}}})
   if(path==='/api/orders/7/fulfillment/')return route.fulfill({json:{items:[],shipments:[]}})

@@ -26,6 +26,7 @@ const dedicatedRuns = [
   { name: 'product-operations-category-02-isolated', file: 'ui-product-operations-category-02.spec.js', codex: true },
   { name: 'product-operations-sku-lifecycle-02-isolated', file: 'ui-product-operations-sku-lifecycle-02.spec.js', codex: true },
   { name: 'product-operations-supplier-02-isolated', file: 'ui-product-operations-supplier-02.spec.js', codex: true },
+  { name: 'product-operations-lots-02-isolated', file: 'ui-product-operations-lots-02.spec.js', codex: true },
   { name: 'workspace-tabs-isolated', file: 'workspace-tabs-real.spec.js' },
   { name: 'workspace-integration-isolated', file: 'workspace-integration-real.spec.js', codex: true },
   { name: 'first-release-consolidation-isolated', file: 'first-release-consolidation-02.spec.js', codex: true },

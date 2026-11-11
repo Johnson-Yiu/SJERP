@@ -1,0 +1,3018 @@
+{
+  "customer_csv_sha256": "b7f946c8e4907874422ae046116a0dc43f2031ca4cc39e232c89020fa1685361",
+  "baseline_counts": {
+    "Transaction": 0,
+    "FinanceFact": 0,
+    "InventoryMovement": 0,
+    "Shipment": 0,
+    "GoodsReceipt": 0
+  },
+  "after_archive": {
+    "application_id": 1,
+    "file": "synthetic-history.xlsx",
+    "file_sha256": "27d397e06afe959d210d8512f2855ce4f435f3ff42e8b9c7210e0936e35e3e11",
+    "source_sha": "fa2fc86672588ac6a67b43991b99e93ed0e0dc7f",
+    "application_status": "submitted",
+    "groups": [
+      {
+        "id": 1,
+        "source_group": "HT-G1",
+        "status": "executed",
+        "truth": "真实",
+        "coverage": "complete",
+        "preflight_status_counts": {
+          "待人工核实": 6,
+          "警告": 5,
+          "通过": 4
+        },
+        "preflight_results": [
+          {
+            "row": 2,
+            "sheet": "分组",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "关联组内至少一条记录需人工核实。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "row": 2,
+                "sheet": "履约记录",
+                "source_record_id": "SHIP-HT-1"
+              },
+              {
+                "row": 3,
+                "sheet": "履约记录",
+                "source_record_id": "GR-HT-1"
+              },
+              {
+                "row": 4,
+                "sheet": "履约记录",
+                "source_record_id": "SHIP-HT-DONE"
+              },
+              {
+                "row": 2,
+                "sheet": "库存盘点",
+                "source_record_id": "COUNT-HT-1"
+              },
+              {
+                "row": 2,
+                "sheet": "采购明细",
+                "source_record_id": "1"
+              },
+              {
+                "row": 2,
+                "sheet": "采购订单",
+                "source_record_id": "PO-HT-1"
+              },
+              {
+                "row": 2,
+                "sheet": "销售明细",
+                "source_record_id": "1"
+              },
+              {
+                "row": 3,
+                "sheet": "销售明细",
+                "source_record_id": "1"
+              },
+              {
+                "row": 2,
+                "sheet": "销售订单",
+                "source_record_id": "SO-HT-1"
+              },
+              {
+                "row": 3,
+                "sheet": "销售订单",
+                "source_record_id": "SO-HT-DONE"
+              },
+              {
+                "row": 2,
+                "sheet": "收付款流水",
+                "source_record_id": "TX-SO-1"
+              },
+              {
+                "row": 3,
+                "sheet": "收付款流水",
+                "source_record_id": "TX-PO-1"
+              },
+              {
+                "row": 2,
+                "sheet": "收付款计划",
+                "source_record_id": "PLAN-SO-1"
+              },
+              {
+                "row": 3,
+                "sheet": "收付款计划",
+                "source_record_id": "PLAN-PO-1"
+              }
+            ],
+            "source_record_id": "HT-G1",
+            "suggested_actions": [
+              "按关联记录逐项核实后再评估整体迁移依赖。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "销售订单",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+              },
+              {
+                "status": "警告",
+                "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "type": "客户",
+                "match": "编码精确匹配",
+                "database_id": 4
+              }
+            ],
+            "source_record_id": "SO-HT-1",
+            "suggested_actions": [
+              "补齐全部收付、履约及冲销依赖后再评估。",
+              "保留输入的历史快照，不用当前主档覆盖。",
+              "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+            ]
+          },
+          {
+            "row": 3,
+            "sheet": "销售订单",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原业务已完成；保留历史事实，不将已结清记录重新生成待办。"
+              },
+              {
+                "status": "警告",
+                "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "type": "客户",
+                "match": "编码精确匹配",
+                "database_id": 4
+              }
+            ],
+            "source_record_id": "SO-HT-DONE",
+            "suggested_actions": [
+              "核对已收付、库存及履约是否完整并保持不重复。",
+              "保留输入的历史快照，不用当前主档覆盖。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "销售明细",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          },
+          {
+            "row": 3,
+            "sheet": "销售明细",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          },
+          {
+            "row": 2,
+            "sheet": "采购订单",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+              },
+              {
+                "status": "警告",
+                "message": "供应商当前主档名称与历史快照不同；两者须分别保留。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "缺少历史供应商快照字段：国家/地区。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "type": "供应商",
+                "match": "编码精确匹配",
+                "database_id": 1
+              }
+            ],
+            "source_record_id": "PO-HT-1",
+            "suggested_actions": [
+              "补齐全部收付、履约及冲销依赖后再评估。",
+              "保留输入的历史快照，不用当前主档覆盖。",
+              "仅依据原始历史合同/凭证补充；不得以当前主档回填。",
+              "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "采购明细",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          },
+          {
+            "row": 2,
+            "sheet": "收付款计划",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "PLAN-SO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 3,
+            "sheet": "收付款计划",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "PLAN-PO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 2,
+            "sheet": "收付款流水",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "TX-SO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 3,
+            "sheet": "收付款流水",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "TX-PO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 2,
+            "sheet": "履约记录",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "SHIP-HT-1",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          },
+          {
+            "row": 3,
+            "sheet": "履约记录",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "GR-HT-1",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          },
+          {
+            "row": 4,
+            "sheet": "履约记录",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "SHIP-HT-DONE",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "库存盘点",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "COUNT-HT-1",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          }
+        ],
+        "handoffs": {
+          "finance": "not_connected",
+          "inventory": "not_connected",
+          "fulfillment": "not_connected"
+        },
+        "remainder_snapshot": {
+          "sales_orders": [
+            {
+              "lines": [
+                {
+                  "sku_code": "",
+                  "unit_snapshot": "pcs",
+                  "source_line_id": "1",
+                  "ordered_quantity_base": "10.00",
+                  "remaining_quantity_base": "6.00",
+                  "verified_net_fulfilled_quantity_base": "4.00"
+                }
+              ],
+              "source_record_id": "SO-HT-1",
+              "source_document_no": "HIST-SO-HT-1",
+              "source_lifecycle_state": "partial"
+            },
+            {
+              "lines": [
+                {
+                  "sku_code": "",
+                  "unit_snapshot": "pcs",
+                  "source_line_id": "1",
+                  "ordered_quantity_base": "10.00",
+                  "remaining_quantity_base": "0",
+                  "verified_net_fulfilled_quantity_base": "10.00"
+                }
+              ],
+              "source_record_id": "SO-HT-DONE",
+              "source_document_no": "HIST-SO-HT-DONE",
+              "source_lifecycle_state": "completed"
+            }
+          ],
+          "purchase_orders": [
+            {
+              "lines": [
+                {
+                  "sku_code": "",
+                  "unit_snapshot": "pcs",
+                  "source_line_id": "1",
+                  "ordered_quantity_base": "5.00",
+                  "remaining_quantity_base": "3.00",
+                  "verified_net_fulfilled_quantity_base": "2.00"
+                }
+              ],
+              "source_record_id": "PO-HT-1",
+              "source_document_no": "HIST-PO-HT-1",
+              "source_lifecycle_state": "partial"
+            }
+          ],
+          "source_event_count": 3
+        },
+        "source_rows": [
+          {
+            "sheet": "分组",
+            "row": 2,
+            "source_id": "HT-G1",
+            "record_id": 1,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "履约记录",
+            "row": 2,
+            "source_id": "SHIP-HT-1",
+            "record_id": 2,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "履约记录",
+            "row": 3,
+            "source_id": "GR-HT-1",
+            "record_id": 3,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "履约记录",
+            "row": 4,
+            "source_id": "SHIP-HT-DONE",
+            "record_id": 4,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "库存盘点",
+            "row": 2,
+            "source_id": "COUNT-HT-1",
+            "record_id": 5,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "采购明细",
+            "row": 2,
+            "source_id": "PO-HT-1:1",
+            "record_id": 6,
+            "target_model": "crm.ArchivedHistoryLine",
+            "target_id": 5
+          },
+          {
+            "sheet": "采购订单",
+            "row": 2,
+            "source_id": "PO-HT-1",
+            "record_id": 7,
+            "target_model": "crm.PurchaseOrder",
+            "target_id": 2
+          },
+          {
+            "sheet": "销售明细",
+            "row": 2,
+            "source_id": "SO-HT-1:1",
+            "record_id": 8,
+            "target_model": "crm.ArchivedHistoryLine",
+            "target_id": 3
+          },
+          {
+            "sheet": "销售明细",
+            "row": 3,
+            "source_id": "SO-HT-DONE:1",
+            "record_id": 9,
+            "target_model": "crm.ArchivedHistoryLine",
+            "target_id": 4
+          },
+          {
+            "sheet": "销售订单",
+            "row": 2,
+            "source_id": "SO-HT-1",
+            "record_id": 10,
+            "target_model": "crm.Order",
+            "target_id": 3
+          },
+          {
+            "sheet": "销售订单",
+            "row": 3,
+            "source_id": "SO-HT-DONE",
+            "record_id": 11,
+            "target_model": "crm.Order",
+            "target_id": 4
+          },
+          {
+            "sheet": "收付款流水",
+            "row": 2,
+            "source_id": "TX-SO-1",
+            "record_id": 12,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "收付款流水",
+            "row": 3,
+            "source_id": "TX-PO-1",
+            "record_id": 13,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "收付款计划",
+            "row": 2,
+            "source_id": "PLAN-SO-1",
+            "record_id": 14,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "收付款计划",
+            "row": 3,
+            "source_id": "PLAN-PO-1",
+            "record_id": 15,
+            "target_model": "",
+            "target_id": null
+          }
+        ],
+        "source_record_count": 15,
+        "customer_count": 1,
+        "order_count": 3,
+        "product_count": 3,
+        "product_states": {
+          "pending": 3
+        },
+        "documents": [
+          {
+            "id": 4,
+            "kind": "sales",
+            "number": "HIST-SO-HT-DONE",
+            "currency": "USD",
+            "status": "historical",
+            "products": [
+              {
+                "id": 9,
+                "source_system": "Legacy synthetic system",
+                "source_number": "SO-HT-DONE:1",
+                "batch": "HT-G1",
+                "group": 1,
+                "application": 1,
+                "kind": "sales",
+                "order_number": "HIST-SO-HT-DONE",
+                "date": "2024-08-01",
+                "code": "",
+                "name": "Historical SKU Name",
+                "specification": "24W",
+                "description": "Historical product description",
+                "category": "",
+                "category_reference": "",
+                "trade_quantity": null,
+                "trade_unit_price": null,
+                "trade_unit": "",
+                "unit_price": "12.000000000000",
+                "unit": "pcs",
+                "quantity": "10.00",
+                "amount": "120.00",
+                "currency": "USD",
+                "sku": null,
+                "status": "pending",
+                "version": 0
+              }
+            ],
+            "shipping": "0.0000",
+            "discount": "0.0000",
+            "total": "120.00",
+            "paid_formal": "0",
+            "open_formal": "0"
+          },
+          {
+            "id": 3,
+            "kind": "sales",
+            "number": "HIST-SO-HT-1",
+            "currency": "USD",
+            "status": "historical",
+            "products": [
+              {
+                "id": 8,
+                "source_system": "Legacy synthetic system",
+                "source_number": "SO-HT-1:1",
+                "batch": "HT-G1",
+                "group": 1,
+                "application": 1,
+                "kind": "sales",
+                "order_number": "HIST-SO-HT-1",
+                "date": "2024-08-01",
+                "code": "",
+                "name": "Historical SKU Name",
+                "specification": "24W",
+                "description": "Historical product description",
+                "category": "",
+                "category_reference": "",
+                "trade_quantity": null,
+                "trade_unit_price": null,
+                "trade_unit": "",
+                "unit_price": "12.000000000000",
+                "unit": "pcs",
+                "quantity": "10.00",
+                "amount": "120.00",
+                "currency": "USD",
+                "sku": null,
+                "status": "pending",
+                "version": 0
+              }
+            ],
+            "shipping": "0.0000",
+            "discount": "0.0000",
+            "total": "120.00",
+            "paid_formal": "0",
+            "open_formal": "0"
+          },
+          {
+            "id": 2,
+            "kind": "purchase",
+            "number": "HIST-PO-HT-1",
+            "currency": "USD",
+            "status": "historical",
+            "products": [
+              {
+                "id": 6,
+                "source_system": "Legacy synthetic system",
+                "source_number": "PO-HT-1:1",
+                "batch": "HT-G1",
+                "group": 1,
+                "application": 1,
+                "kind": "purchase",
+                "order_number": "HIST-PO-HT-1",
+                "date": "2024-07-01",
+                "code": "",
+                "name": "Historical Purchase SKU",
+                "specification": "24W",
+                "description": "Purchase description",
+                "category": "",
+                "category_reference": "",
+                "trade_quantity": null,
+                "trade_unit_price": null,
+                "trade_unit": "",
+                "unit_price": "3.000000000000",
+                "unit": "pcs",
+                "quantity": "5.00",
+                "amount": "15.00000000000000",
+                "currency": "USD",
+                "sku": null,
+                "status": "pending",
+                "version": 0
+              }
+            ],
+            "shipping": "0",
+            "discount": "0",
+            "total": "15.00000000000000",
+            "paid_formal": "0",
+            "open_formal": "0"
+          }
+        ],
+        "currency_totals": {
+          "USD": {
+            "sales_total": "240.00",
+            "purchase_total": "15.00000000000000",
+            "sales_products": "240.00",
+            "purchase_products": "15.00000000000000",
+            "shipping": "0.0000",
+            "discount": "0.0000",
+            "sales_paid_formal": "0",
+            "purchase_paid_formal": "0",
+            "receivable_formal": "0",
+            "payable_formal": "0"
+          }
+        },
+        "source_plans": [
+          {
+            "source_id": "PLAN-SO-1",
+            "snapshot": {
+              "notes": "preserve source plan",
+              "currency": "USD",
+              "due_date": "2024-09-01",
+              "group_id": "HT-G1",
+              "direction": "receivable",
+              "truth_status": "真实",
+              "planned_amount": "100.0000",
+              "settled_amount": "40.0000",
+              "source_plan_id": "PLAN-SO-1",
+              "lifecycle_state": "open",
+              "source_order_id": "SO-HT-1",
+              "voucher_reference": "synthetic://receivable-plan",
+              "source_purchase_id": "",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": "",
+              "settlement_detail_complete": "yes"
+            }
+          },
+          {
+            "source_id": "PLAN-PO-1",
+            "snapshot": {
+              "notes": "preserve source plan",
+              "currency": "USD",
+              "due_date": "2024-09-02",
+              "group_id": "HT-G1",
+              "direction": "payable",
+              "truth_status": "真实",
+              "planned_amount": "15.0000",
+              "settled_amount": "5.0000",
+              "source_plan_id": "PLAN-PO-1",
+              "lifecycle_state": "open",
+              "source_order_id": "",
+              "voucher_reference": "synthetic://payable-plan",
+              "source_purchase_id": "PO-HT-1",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": "",
+              "settlement_detail_complete": "yes"
+            }
+          }
+        ],
+        "source_cash_totals": {
+          "USD": {
+            "income": "40.0000",
+            "expense": "5.0000"
+          }
+        },
+        "source_cash": [
+          {
+            "source_id": "TX-SO-1",
+            "snapshot": {
+              "kind": "customer_receipt",
+              "notes": "source-only payment",
+              "amount": "40.0000",
+              "currency": "USD",
+              "group_id": "HT-G1",
+              "direction": "income",
+              "truth_status": "真实",
+              "customer_code": "HT-C1",
+              "exchange_rate": "1.000000",
+              "source_status": "confirmed",
+              "supplier_code": "",
+              "source_plan_id": "PLAN-SO-1",
+              "transaction_no": "HIST-TX-SO-1",
+              "source_order_id": "SO-HT-1",
+              "source_record_id": "TX-SO-1",
+              "transaction_date": "2024-09-03",
+              "voucher_reference": "synthetic://bank/receipt",
+              "source_purchase_id": "",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": ""
+            },
+            "finance_key": "2442de3b00528e8e8d7e2a65284139dcb8cfc0bc8e66f53a12860e62af4472ed"
+          },
+          {
+            "source_id": "TX-PO-1",
+            "snapshot": {
+              "kind": "supplier_payment",
+              "notes": "source-only payment",
+              "amount": "5.0000",
+              "currency": "USD",
+              "group_id": "HT-G1",
+              "direction": "expense",
+              "truth_status": "真实",
+              "customer_code": "",
+              "exchange_rate": "1.000000",
+              "source_status": "confirmed",
+              "supplier_code": "H1",
+              "source_plan_id": "PLAN-PO-1",
+              "transaction_no": "HIST-TX-PO-1",
+              "source_order_id": "",
+              "source_record_id": "TX-PO-1",
+              "transaction_date": "2024-09-04",
+              "voucher_reference": "synthetic://bank/payment",
+              "source_purchase_id": "PO-HT-1",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": ""
+            },
+            "finance_key": "b6960db5e115a8fa146278468e8ce5bb829639e10f577e16393cac30cf68eb60"
+          }
+        ],
+        "cny_finance_facts": []
+      },
+      {
+        "id": 2,
+        "source_group": "HT-G-ERROR",
+        "status": "blocked",
+        "truth": "真实",
+        "coverage": "complete",
+        "preflight_status_counts": {
+          "阻断": 2,
+          "待人工核实": 1
+        },
+        "preflight_results": [
+          {
+            "row": 3,
+            "sheet": "分组",
+            "status": "阻断",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "关联组内至少一条记录需人工核实。"
+              },
+              {
+                "status": "阻断",
+                "message": "关联组内存在阻断记录，不能作为完整导入组。"
+              }
+            ],
+            "group_id": "HT-G-ERROR",
+            "related_records": [
+              {
+                "row": 4,
+                "sheet": "销售订单",
+                "source_record_id": "SO-HT-BAD"
+              },
+              {
+                "row": 4,
+                "sheet": "销售明细",
+                "source_record_id": "1"
+              }
+            ],
+            "source_record_id": "HT-G-ERROR",
+            "suggested_actions": [
+              "按关联记录逐项核实后再评估整体迁移依赖。",
+              "先修复依赖或停止该关联组；不迁移孤立明细。"
+            ]
+          },
+          {
+            "row": 4,
+            "sheet": "销售订单",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+              },
+              {
+                "status": "警告",
+                "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+              }
+            ],
+            "group_id": "HT-G-ERROR",
+            "related_records": [
+              {
+                "type": "客户",
+                "match": "编码精确匹配",
+                "database_id": 4
+              }
+            ],
+            "source_record_id": "SO-HT-BAD",
+            "suggested_actions": [
+              "补齐全部收付、履约及冲销依赖后再评估。",
+              "保留输入的历史快照，不用当前主档覆盖。",
+              "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+            ]
+          },
+          {
+            "row": 4,
+            "sheet": "销售明细",
+            "status": "阻断",
+            "reasons": [
+              {
+                "status": "阻断",
+                "message": "基础数量：数值必须大于 0。"
+              },
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G-ERROR",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "按原始凭证修正格式、精度或允许值。",
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          }
+        ],
+        "handoffs": {
+          "finance": "not_connected",
+          "inventory": "not_connected",
+          "fulfillment": "not_connected"
+        },
+        "remainder_snapshot": {},
+        "source_rows": [
+          {
+            "sheet": "分组",
+            "row": 3,
+            "source_id": "HT-G-ERROR",
+            "record_id": null,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "销售明细",
+            "row": 4,
+            "source_id": "SO-HT-BAD:1",
+            "record_id": null,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "销售订单",
+            "row": 4,
+            "source_id": "SO-HT-BAD",
+            "record_id": null,
+            "target_model": "",
+            "target_id": null
+          }
+        ],
+        "source_record_count": 0,
+        "customer_count": 0,
+        "order_count": 0,
+        "product_count": 0,
+        "product_states": {},
+        "documents": [],
+        "currency_totals": {},
+        "source_plans": [],
+        "source_cash_totals": {},
+        "source_cash": [],
+        "cny_finance_facts": []
+      }
+    ],
+    "global_fact_counts": {
+      "FinanceFact": 0,
+      "Transaction": 0,
+      "InventoryMovement": 0,
+      "InventoryReservation": 0,
+      "Shipment": 0,
+      "GoodsReceipt": 0
+    },
+    "scope_note": "global_fact_counts are database-wide; compare isolated snapshots only",
+    "unverified": [
+      "group HT-G1: source completeness, conflicts and unposted amounts require review",
+      "group HT-G-ERROR: not executed; no target mapping assumed",
+      "group HT-G-ERROR: source completeness, conflicts and unposted amounts require review"
+    ]
+  },
+  "after_link": {
+    "application_id": 1,
+    "file": "synthetic-history.xlsx",
+    "file_sha256": "27d397e06afe959d210d8512f2855ce4f435f3ff42e8b9c7210e0936e35e3e11",
+    "source_sha": "fa2fc86672588ac6a67b43991b99e93ed0e0dc7f",
+    "application_status": "submitted",
+    "groups": [
+      {
+        "id": 1,
+        "source_group": "HT-G1",
+        "status": "executed",
+        "truth": "真实",
+        "coverage": "complete",
+        "preflight_status_counts": {
+          "待人工核实": 6,
+          "警告": 5,
+          "通过": 4
+        },
+        "preflight_results": [
+          {
+            "row": 2,
+            "sheet": "分组",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "关联组内至少一条记录需人工核实。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "row": 2,
+                "sheet": "履约记录",
+                "source_record_id": "SHIP-HT-1"
+              },
+              {
+                "row": 3,
+                "sheet": "履约记录",
+                "source_record_id": "GR-HT-1"
+              },
+              {
+                "row": 4,
+                "sheet": "履约记录",
+                "source_record_id": "SHIP-HT-DONE"
+              },
+              {
+                "row": 2,
+                "sheet": "库存盘点",
+                "source_record_id": "COUNT-HT-1"
+              },
+              {
+                "row": 2,
+                "sheet": "采购明细",
+                "source_record_id": "1"
+              },
+              {
+                "row": 2,
+                "sheet": "采购订单",
+                "source_record_id": "PO-HT-1"
+              },
+              {
+                "row": 2,
+                "sheet": "销售明细",
+                "source_record_id": "1"
+              },
+              {
+                "row": 3,
+                "sheet": "销售明细",
+                "source_record_id": "1"
+              },
+              {
+                "row": 2,
+                "sheet": "销售订单",
+                "source_record_id": "SO-HT-1"
+              },
+              {
+                "row": 3,
+                "sheet": "销售订单",
+                "source_record_id": "SO-HT-DONE"
+              },
+              {
+                "row": 2,
+                "sheet": "收付款流水",
+                "source_record_id": "TX-SO-1"
+              },
+              {
+                "row": 3,
+                "sheet": "收付款流水",
+                "source_record_id": "TX-PO-1"
+              },
+              {
+                "row": 2,
+                "sheet": "收付款计划",
+                "source_record_id": "PLAN-SO-1"
+              },
+              {
+                "row": 3,
+                "sheet": "收付款计划",
+                "source_record_id": "PLAN-PO-1"
+              }
+            ],
+            "source_record_id": "HT-G1",
+            "suggested_actions": [
+              "按关联记录逐项核实后再评估整体迁移依赖。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "销售订单",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+              },
+              {
+                "status": "警告",
+                "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "type": "客户",
+                "match": "编码精确匹配",
+                "database_id": 4
+              }
+            ],
+            "source_record_id": "SO-HT-1",
+            "suggested_actions": [
+              "补齐全部收付、履约及冲销依赖后再评估。",
+              "保留输入的历史快照，不用当前主档覆盖。",
+              "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+            ]
+          },
+          {
+            "row": 3,
+            "sheet": "销售订单",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原业务已完成；保留历史事实，不将已结清记录重新生成待办。"
+              },
+              {
+                "status": "警告",
+                "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "type": "客户",
+                "match": "编码精确匹配",
+                "database_id": 4
+              }
+            ],
+            "source_record_id": "SO-HT-DONE",
+            "suggested_actions": [
+              "核对已收付、库存及履约是否完整并保持不重复。",
+              "保留输入的历史快照，不用当前主档覆盖。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "销售明细",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          },
+          {
+            "row": 3,
+            "sheet": "销售明细",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          },
+          {
+            "row": 2,
+            "sheet": "采购订单",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+              },
+              {
+                "status": "警告",
+                "message": "供应商当前主档名称与历史快照不同；两者须分别保留。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "缺少历史供应商快照字段：国家/地区。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "type": "供应商",
+                "match": "编码精确匹配",
+                "database_id": 1
+              }
+            ],
+            "source_record_id": "PO-HT-1",
+            "suggested_actions": [
+              "补齐全部收付、履约及冲销依赖后再评估。",
+              "保留输入的历史快照，不用当前主档覆盖。",
+              "仅依据原始历史合同/凭证补充；不得以当前主档回填。",
+              "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "采购明细",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          },
+          {
+            "row": 2,
+            "sheet": "收付款计划",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "PLAN-SO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 3,
+            "sheet": "收付款计划",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "PLAN-PO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 2,
+            "sheet": "收付款流水",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "TX-SO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 3,
+            "sheet": "收付款流水",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "TX-PO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 2,
+            "sheet": "履约记录",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "SHIP-HT-1",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          },
+          {
+            "row": 3,
+            "sheet": "履约记录",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "GR-HT-1",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          },
+          {
+            "row": 4,
+            "sheet": "履约记录",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "SHIP-HT-DONE",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "库存盘点",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "COUNT-HT-1",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          }
+        ],
+        "handoffs": {
+          "finance": "not_connected",
+          "inventory": "not_connected",
+          "fulfillment": "not_connected"
+        },
+        "remainder_snapshot": {
+          "sales_orders": [
+            {
+              "lines": [
+                {
+                  "sku_code": "",
+                  "unit_snapshot": "pcs",
+                  "source_line_id": "1",
+                  "ordered_quantity_base": "10.00",
+                  "remaining_quantity_base": "6.00",
+                  "verified_net_fulfilled_quantity_base": "4.00"
+                }
+              ],
+              "source_record_id": "SO-HT-1",
+              "source_document_no": "HIST-SO-HT-1",
+              "source_lifecycle_state": "partial"
+            },
+            {
+              "lines": [
+                {
+                  "sku_code": "",
+                  "unit_snapshot": "pcs",
+                  "source_line_id": "1",
+                  "ordered_quantity_base": "10.00",
+                  "remaining_quantity_base": "0",
+                  "verified_net_fulfilled_quantity_base": "10.00"
+                }
+              ],
+              "source_record_id": "SO-HT-DONE",
+              "source_document_no": "HIST-SO-HT-DONE",
+              "source_lifecycle_state": "completed"
+            }
+          ],
+          "purchase_orders": [
+            {
+              "lines": [
+                {
+                  "sku_code": "",
+                  "unit_snapshot": "pcs",
+                  "source_line_id": "1",
+                  "ordered_quantity_base": "5.00",
+                  "remaining_quantity_base": "3.00",
+                  "verified_net_fulfilled_quantity_base": "2.00"
+                }
+              ],
+              "source_record_id": "PO-HT-1",
+              "source_document_no": "HIST-PO-HT-1",
+              "source_lifecycle_state": "partial"
+            }
+          ],
+          "source_event_count": 3
+        },
+        "source_rows": [
+          {
+            "sheet": "分组",
+            "row": 2,
+            "source_id": "HT-G1",
+            "record_id": 1,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "履约记录",
+            "row": 2,
+            "source_id": "SHIP-HT-1",
+            "record_id": 2,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "履约记录",
+            "row": 3,
+            "source_id": "GR-HT-1",
+            "record_id": 3,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "履约记录",
+            "row": 4,
+            "source_id": "SHIP-HT-DONE",
+            "record_id": 4,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "库存盘点",
+            "row": 2,
+            "source_id": "COUNT-HT-1",
+            "record_id": 5,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "采购明细",
+            "row": 2,
+            "source_id": "PO-HT-1:1",
+            "record_id": 6,
+            "target_model": "crm.ArchivedHistoryLine",
+            "target_id": 5
+          },
+          {
+            "sheet": "采购订单",
+            "row": 2,
+            "source_id": "PO-HT-1",
+            "record_id": 7,
+            "target_model": "crm.PurchaseOrder",
+            "target_id": 2
+          },
+          {
+            "sheet": "销售明细",
+            "row": 2,
+            "source_id": "SO-HT-1:1",
+            "record_id": 8,
+            "target_model": "crm.ArchivedHistoryLine",
+            "target_id": 3
+          },
+          {
+            "sheet": "销售明细",
+            "row": 3,
+            "source_id": "SO-HT-DONE:1",
+            "record_id": 9,
+            "target_model": "crm.ArchivedHistoryLine",
+            "target_id": 4
+          },
+          {
+            "sheet": "销售订单",
+            "row": 2,
+            "source_id": "SO-HT-1",
+            "record_id": 10,
+            "target_model": "crm.Order",
+            "target_id": 3
+          },
+          {
+            "sheet": "销售订单",
+            "row": 3,
+            "source_id": "SO-HT-DONE",
+            "record_id": 11,
+            "target_model": "crm.Order",
+            "target_id": 4
+          },
+          {
+            "sheet": "收付款流水",
+            "row": 2,
+            "source_id": "TX-SO-1",
+            "record_id": 12,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "收付款流水",
+            "row": 3,
+            "source_id": "TX-PO-1",
+            "record_id": 13,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "收付款计划",
+            "row": 2,
+            "source_id": "PLAN-SO-1",
+            "record_id": 14,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "收付款计划",
+            "row": 3,
+            "source_id": "PLAN-PO-1",
+            "record_id": 15,
+            "target_model": "",
+            "target_id": null
+          }
+        ],
+        "source_record_count": 15,
+        "customer_count": 1,
+        "order_count": 3,
+        "product_count": 3,
+        "product_states": {
+          "linked": 3
+        },
+        "documents": [
+          {
+            "id": 4,
+            "kind": "sales",
+            "number": "HIST-SO-HT-DONE",
+            "currency": "USD",
+            "status": "historical",
+            "products": [
+              {
+                "id": 9,
+                "source_system": "Legacy synthetic system",
+                "source_number": "SO-HT-DONE:1",
+                "batch": "HT-G1",
+                "group": 1,
+                "application": 1,
+                "kind": "sales",
+                "order_number": "HIST-SO-HT-DONE",
+                "date": "2024-08-01",
+                "code": "",
+                "name": "Historical SKU Name",
+                "specification": "24W",
+                "description": "Historical product description",
+                "category": "",
+                "category_reference": "",
+                "trade_quantity": null,
+                "trade_unit_price": null,
+                "trade_unit": "",
+                "unit_price": "12.000000000000",
+                "unit": "pcs",
+                "quantity": "10.00",
+                "amount": "120.00",
+                "currency": "USD",
+                "sku": {
+                  "id": 2,
+                  "code": "B",
+                  "name": "合成正式商品 B",
+                  "unit": "pcs",
+                  "specification": "24W",
+                  "parameters": {},
+                  "active": true
+                },
+                "status": "linked",
+                "version": 1
+              }
+            ],
+            "shipping": "0.0000",
+            "discount": "0.0000",
+            "total": "120.00",
+            "paid_formal": "0",
+            "open_formal": "0"
+          },
+          {
+            "id": 3,
+            "kind": "sales",
+            "number": "HIST-SO-HT-1",
+            "currency": "USD",
+            "status": "historical",
+            "products": [
+              {
+                "id": 8,
+                "source_system": "Legacy synthetic system",
+                "source_number": "SO-HT-1:1",
+                "batch": "HT-G1",
+                "group": 1,
+                "application": 1,
+                "kind": "sales",
+                "order_number": "HIST-SO-HT-1",
+                "date": "2024-08-01",
+                "code": "",
+                "name": "Historical SKU Name",
+                "specification": "24W",
+                "description": "Historical product description",
+                "category": "",
+                "category_reference": "",
+                "trade_quantity": null,
+                "trade_unit_price": null,
+                "trade_unit": "",
+                "unit_price": "12.000000000000",
+                "unit": "pcs",
+                "quantity": "10.00",
+                "amount": "120.00",
+                "currency": "USD",
+                "sku": {
+                  "id": 2,
+                  "code": "B",
+                  "name": "合成正式商品 B",
+                  "unit": "pcs",
+                  "specification": "24W",
+                  "parameters": {},
+                  "active": true
+                },
+                "status": "linked",
+                "version": 1
+              }
+            ],
+            "shipping": "0.0000",
+            "discount": "0.0000",
+            "total": "120.00",
+            "paid_formal": "0",
+            "open_formal": "0"
+          },
+          {
+            "id": 2,
+            "kind": "purchase",
+            "number": "HIST-PO-HT-1",
+            "currency": "USD",
+            "status": "historical",
+            "products": [
+              {
+                "id": 6,
+                "source_system": "Legacy synthetic system",
+                "source_number": "PO-HT-1:1",
+                "batch": "HT-G1",
+                "group": 1,
+                "application": 1,
+                "kind": "purchase",
+                "order_number": "HIST-PO-HT-1",
+                "date": "2024-07-01",
+                "code": "",
+                "name": "Historical Purchase SKU",
+                "specification": "24W",
+                "description": "Purchase description",
+                "category": "",
+                "category_reference": "",
+                "trade_quantity": null,
+                "trade_unit_price": null,
+                "trade_unit": "",
+                "unit_price": "3.000000000000",
+                "unit": "pcs",
+                "quantity": "5.00",
+                "amount": "15.00000000000000",
+                "currency": "USD",
+                "sku": {
+                  "id": 2,
+                  "code": "B",
+                  "name": "合成正式商品 B",
+                  "unit": "pcs",
+                  "specification": "24W",
+                  "parameters": {},
+                  "active": true
+                },
+                "status": "linked",
+                "version": 1
+              }
+            ],
+            "shipping": "0",
+            "discount": "0",
+            "total": "15.00000000000000",
+            "paid_formal": "0",
+            "open_formal": "0"
+          }
+        ],
+        "currency_totals": {
+          "USD": {
+            "sales_total": "240.00",
+            "purchase_total": "15.00000000000000",
+            "sales_products": "240.00",
+            "purchase_products": "15.00000000000000",
+            "shipping": "0.0000",
+            "discount": "0.0000",
+            "sales_paid_formal": "0",
+            "purchase_paid_formal": "0",
+            "receivable_formal": "0",
+            "payable_formal": "0"
+          }
+        },
+        "source_plans": [
+          {
+            "source_id": "PLAN-SO-1",
+            "snapshot": {
+              "notes": "preserve source plan",
+              "currency": "USD",
+              "due_date": "2024-09-01",
+              "group_id": "HT-G1",
+              "direction": "receivable",
+              "truth_status": "真实",
+              "planned_amount": "100.0000",
+              "settled_amount": "40.0000",
+              "source_plan_id": "PLAN-SO-1",
+              "lifecycle_state": "open",
+              "source_order_id": "SO-HT-1",
+              "voucher_reference": "synthetic://receivable-plan",
+              "source_purchase_id": "",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": "",
+              "settlement_detail_complete": "yes"
+            }
+          },
+          {
+            "source_id": "PLAN-PO-1",
+            "snapshot": {
+              "notes": "preserve source plan",
+              "currency": "USD",
+              "due_date": "2024-09-02",
+              "group_id": "HT-G1",
+              "direction": "payable",
+              "truth_status": "真实",
+              "planned_amount": "15.0000",
+              "settled_amount": "5.0000",
+              "source_plan_id": "PLAN-PO-1",
+              "lifecycle_state": "open",
+              "source_order_id": "",
+              "voucher_reference": "synthetic://payable-plan",
+              "source_purchase_id": "PO-HT-1",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": "",
+              "settlement_detail_complete": "yes"
+            }
+          }
+        ],
+        "source_cash_totals": {
+          "USD": {
+            "income": "40.0000",
+            "expense": "5.0000"
+          }
+        },
+        "source_cash": [
+          {
+            "source_id": "TX-SO-1",
+            "snapshot": {
+              "kind": "customer_receipt",
+              "notes": "source-only payment",
+              "amount": "40.0000",
+              "currency": "USD",
+              "group_id": "HT-G1",
+              "direction": "income",
+              "truth_status": "真实",
+              "customer_code": "HT-C1",
+              "exchange_rate": "1.000000",
+              "source_status": "confirmed",
+              "supplier_code": "",
+              "source_plan_id": "PLAN-SO-1",
+              "transaction_no": "HIST-TX-SO-1",
+              "source_order_id": "SO-HT-1",
+              "source_record_id": "TX-SO-1",
+              "transaction_date": "2024-09-03",
+              "voucher_reference": "synthetic://bank/receipt",
+              "source_purchase_id": "",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": ""
+            },
+            "finance_key": "2442de3b00528e8e8d7e2a65284139dcb8cfc0bc8e66f53a12860e62af4472ed"
+          },
+          {
+            "source_id": "TX-PO-1",
+            "snapshot": {
+              "kind": "supplier_payment",
+              "notes": "source-only payment",
+              "amount": "5.0000",
+              "currency": "USD",
+              "group_id": "HT-G1",
+              "direction": "expense",
+              "truth_status": "真实",
+              "customer_code": "",
+              "exchange_rate": "1.000000",
+              "source_status": "confirmed",
+              "supplier_code": "H1",
+              "source_plan_id": "PLAN-PO-1",
+              "transaction_no": "HIST-TX-PO-1",
+              "source_order_id": "",
+              "source_record_id": "TX-PO-1",
+              "transaction_date": "2024-09-04",
+              "voucher_reference": "synthetic://bank/payment",
+              "source_purchase_id": "PO-HT-1",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": ""
+            },
+            "finance_key": "b6960db5e115a8fa146278468e8ce5bb829639e10f577e16393cac30cf68eb60"
+          }
+        ],
+        "cny_finance_facts": []
+      },
+      {
+        "id": 2,
+        "source_group": "HT-G-ERROR",
+        "status": "blocked",
+        "truth": "真实",
+        "coverage": "complete",
+        "preflight_status_counts": {
+          "阻断": 2,
+          "待人工核实": 1
+        },
+        "preflight_results": [
+          {
+            "row": 3,
+            "sheet": "分组",
+            "status": "阻断",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "关联组内至少一条记录需人工核实。"
+              },
+              {
+                "status": "阻断",
+                "message": "关联组内存在阻断记录，不能作为完整导入组。"
+              }
+            ],
+            "group_id": "HT-G-ERROR",
+            "related_records": [
+              {
+                "row": 4,
+                "sheet": "销售订单",
+                "source_record_id": "SO-HT-BAD"
+              },
+              {
+                "row": 4,
+                "sheet": "销售明细",
+                "source_record_id": "1"
+              }
+            ],
+            "source_record_id": "HT-G-ERROR",
+            "suggested_actions": [
+              "按关联记录逐项核实后再评估整体迁移依赖。",
+              "先修复依赖或停止该关联组；不迁移孤立明细。"
+            ]
+          },
+          {
+            "row": 4,
+            "sheet": "销售订单",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+              },
+              {
+                "status": "警告",
+                "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+              }
+            ],
+            "group_id": "HT-G-ERROR",
+            "related_records": [
+              {
+                "type": "客户",
+                "match": "编码精确匹配",
+                "database_id": 4
+              }
+            ],
+            "source_record_id": "SO-HT-BAD",
+            "suggested_actions": [
+              "补齐全部收付、履约及冲销依赖后再评估。",
+              "保留输入的历史快照，不用当前主档覆盖。",
+              "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+            ]
+          },
+          {
+            "row": 4,
+            "sheet": "销售明细",
+            "status": "阻断",
+            "reasons": [
+              {
+                "status": "阻断",
+                "message": "基础数量：数值必须大于 0。"
+              },
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G-ERROR",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "按原始凭证修正格式、精度或允许值。",
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          }
+        ],
+        "handoffs": {
+          "finance": "not_connected",
+          "inventory": "not_connected",
+          "fulfillment": "not_connected"
+        },
+        "remainder_snapshot": {},
+        "source_rows": [
+          {
+            "sheet": "分组",
+            "row": 3,
+            "source_id": "HT-G-ERROR",
+            "record_id": null,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "销售明细",
+            "row": 4,
+            "source_id": "SO-HT-BAD:1",
+            "record_id": null,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "销售订单",
+            "row": 4,
+            "source_id": "SO-HT-BAD",
+            "record_id": null,
+            "target_model": "",
+            "target_id": null
+          }
+        ],
+        "source_record_count": 0,
+        "customer_count": 0,
+        "order_count": 0,
+        "product_count": 0,
+        "product_states": {},
+        "documents": [],
+        "currency_totals": {},
+        "source_plans": [],
+        "source_cash_totals": {},
+        "source_cash": [],
+        "cny_finance_facts": []
+      }
+    ],
+    "global_fact_counts": {
+      "FinanceFact": 0,
+      "Transaction": 0,
+      "InventoryMovement": 0,
+      "InventoryReservation": 0,
+      "Shipment": 0,
+      "GoodsReceipt": 0
+    },
+    "scope_note": "global_fact_counts are database-wide; compare isolated snapshots only",
+    "unverified": [
+      "group HT-G1: source completeness, conflicts and unposted amounts require review",
+      "group HT-G-ERROR: not executed; no target mapping assumed",
+      "group HT-G-ERROR: source completeness, conflicts and unposted amounts require review"
+    ]
+  },
+  "after_finance": {
+    "application_id": 1,
+    "file": "synthetic-history.xlsx",
+    "file_sha256": "27d397e06afe959d210d8512f2855ce4f435f3ff42e8b9c7210e0936e35e3e11",
+    "source_sha": "fa2fc86672588ac6a67b43991b99e93ed0e0dc7f",
+    "application_status": "submitted",
+    "groups": [
+      {
+        "id": 1,
+        "source_group": "HT-G1",
+        "status": "executed",
+        "truth": "真实",
+        "coverage": "complete",
+        "preflight_status_counts": {
+          "待人工核实": 6,
+          "警告": 5,
+          "通过": 4
+        },
+        "preflight_results": [
+          {
+            "row": 2,
+            "sheet": "分组",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "关联组内至少一条记录需人工核实。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "row": 2,
+                "sheet": "履约记录",
+                "source_record_id": "SHIP-HT-1"
+              },
+              {
+                "row": 3,
+                "sheet": "履约记录",
+                "source_record_id": "GR-HT-1"
+              },
+              {
+                "row": 4,
+                "sheet": "履约记录",
+                "source_record_id": "SHIP-HT-DONE"
+              },
+              {
+                "row": 2,
+                "sheet": "库存盘点",
+                "source_record_id": "COUNT-HT-1"
+              },
+              {
+                "row": 2,
+                "sheet": "采购明细",
+                "source_record_id": "1"
+              },
+              {
+                "row": 2,
+                "sheet": "采购订单",
+                "source_record_id": "PO-HT-1"
+              },
+              {
+                "row": 2,
+                "sheet": "销售明细",
+                "source_record_id": "1"
+              },
+              {
+                "row": 3,
+                "sheet": "销售明细",
+                "source_record_id": "1"
+              },
+              {
+                "row": 2,
+                "sheet": "销售订单",
+                "source_record_id": "SO-HT-1"
+              },
+              {
+                "row": 3,
+                "sheet": "销售订单",
+                "source_record_id": "SO-HT-DONE"
+              },
+              {
+                "row": 2,
+                "sheet": "收付款流水",
+                "source_record_id": "TX-SO-1"
+              },
+              {
+                "row": 3,
+                "sheet": "收付款流水",
+                "source_record_id": "TX-PO-1"
+              },
+              {
+                "row": 2,
+                "sheet": "收付款计划",
+                "source_record_id": "PLAN-SO-1"
+              },
+              {
+                "row": 3,
+                "sheet": "收付款计划",
+                "source_record_id": "PLAN-PO-1"
+              }
+            ],
+            "source_record_id": "HT-G1",
+            "suggested_actions": [
+              "按关联记录逐项核实后再评估整体迁移依赖。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "销售订单",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+              },
+              {
+                "status": "警告",
+                "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "type": "客户",
+                "match": "编码精确匹配",
+                "database_id": 4
+              }
+            ],
+            "source_record_id": "SO-HT-1",
+            "suggested_actions": [
+              "补齐全部收付、履约及冲销依赖后再评估。",
+              "保留输入的历史快照，不用当前主档覆盖。",
+              "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+            ]
+          },
+          {
+            "row": 3,
+            "sheet": "销售订单",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原业务已完成；保留历史事实，不将已结清记录重新生成待办。"
+              },
+              {
+                "status": "警告",
+                "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "type": "客户",
+                "match": "编码精确匹配",
+                "database_id": 4
+              }
+            ],
+            "source_record_id": "SO-HT-DONE",
+            "suggested_actions": [
+              "核对已收付、库存及履约是否完整并保持不重复。",
+              "保留输入的历史快照，不用当前主档覆盖。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "销售明细",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          },
+          {
+            "row": 3,
+            "sheet": "销售明细",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          },
+          {
+            "row": 2,
+            "sheet": "采购订单",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+              },
+              {
+                "status": "警告",
+                "message": "供应商当前主档名称与历史快照不同；两者须分别保留。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "缺少历史供应商快照字段：国家/地区。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [
+              {
+                "type": "供应商",
+                "match": "编码精确匹配",
+                "database_id": 1
+              }
+            ],
+            "source_record_id": "PO-HT-1",
+            "suggested_actions": [
+              "补齐全部收付、履约及冲销依赖后再评估。",
+              "保留输入的历史快照，不用当前主档覆盖。",
+              "仅依据原始历史合同/凭证补充；不得以当前主档回填。",
+              "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "采购明细",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          },
+          {
+            "row": 2,
+            "sheet": "收付款计划",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "PLAN-SO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 3,
+            "sheet": "收付款计划",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "PLAN-PO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 2,
+            "sheet": "收付款流水",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "TX-SO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 3,
+            "sheet": "收付款流水",
+            "status": "通过",
+            "reasons": [],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "TX-PO-1",
+            "suggested_actions": []
+          },
+          {
+            "row": 2,
+            "sheet": "履约记录",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "SHIP-HT-1",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          },
+          {
+            "row": 3,
+            "sheet": "履约记录",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "GR-HT-1",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          },
+          {
+            "row": 4,
+            "sheet": "履约记录",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "SHIP-HT-DONE",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          },
+          {
+            "row": 2,
+            "sheet": "库存盘点",
+            "status": "警告",
+            "reasons": [
+              {
+                "status": "警告",
+                "message": "原记录可归档，库存或履约接续前须核实正式 SKU。"
+              }
+            ],
+            "group_id": "HT-G1",
+            "related_records": [],
+            "source_record_id": "COUNT-HT-1",
+            "suggested_actions": [
+              "接续前核对正式 SKU、单位及来源凭证。"
+            ]
+          }
+        ],
+        "handoffs": {
+          "finance": "pending_review",
+          "inventory": "not_connected",
+          "fulfillment": "not_connected"
+        },
+        "remainder_snapshot": {
+          "sales_orders": [
+            {
+              "lines": [
+                {
+                  "sku_code": "",
+                  "unit_snapshot": "pcs",
+                  "source_line_id": "1",
+                  "ordered_quantity_base": "10.00",
+                  "remaining_quantity_base": "6.00",
+                  "verified_net_fulfilled_quantity_base": "4.00"
+                }
+              ],
+              "source_record_id": "SO-HT-1",
+              "source_document_no": "HIST-SO-HT-1",
+              "source_lifecycle_state": "partial"
+            },
+            {
+              "lines": [
+                {
+                  "sku_code": "",
+                  "unit_snapshot": "pcs",
+                  "source_line_id": "1",
+                  "ordered_quantity_base": "10.00",
+                  "remaining_quantity_base": "0",
+                  "verified_net_fulfilled_quantity_base": "10.00"
+                }
+              ],
+              "source_record_id": "SO-HT-DONE",
+              "source_document_no": "HIST-SO-HT-DONE",
+              "source_lifecycle_state": "completed"
+            }
+          ],
+          "purchase_orders": [
+            {
+              "lines": [
+                {
+                  "sku_code": "",
+                  "unit_snapshot": "pcs",
+                  "source_line_id": "1",
+                  "ordered_quantity_base": "5.00",
+                  "remaining_quantity_base": "3.00",
+                  "verified_net_fulfilled_quantity_base": "2.00"
+                }
+              ],
+              "source_record_id": "PO-HT-1",
+              "source_document_no": "HIST-PO-HT-1",
+              "source_lifecycle_state": "partial"
+            }
+          ],
+          "source_event_count": 3
+        },
+        "source_rows": [
+          {
+            "sheet": "分组",
+            "row": 2,
+            "source_id": "HT-G1",
+            "record_id": 1,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "履约记录",
+            "row": 2,
+            "source_id": "SHIP-HT-1",
+            "record_id": 2,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "履约记录",
+            "row": 3,
+            "source_id": "GR-HT-1",
+            "record_id": 3,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "履约记录",
+            "row": 4,
+            "source_id": "SHIP-HT-DONE",
+            "record_id": 4,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "库存盘点",
+            "row": 2,
+            "source_id": "COUNT-HT-1",
+            "record_id": 5,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "采购明细",
+            "row": 2,
+            "source_id": "PO-HT-1:1",
+            "record_id": 6,
+            "target_model": "crm.ArchivedHistoryLine",
+            "target_id": 5
+          },
+          {
+            "sheet": "采购订单",
+            "row": 2,
+            "source_id": "PO-HT-1",
+            "record_id": 7,
+            "target_model": "crm.PurchaseOrder",
+            "target_id": 2
+          },
+          {
+            "sheet": "销售明细",
+            "row": 2,
+            "source_id": "SO-HT-1:1",
+            "record_id": 8,
+            "target_model": "crm.ArchivedHistoryLine",
+            "target_id": 3
+          },
+          {
+            "sheet": "销售明细",
+            "row": 3,
+            "source_id": "SO-HT-DONE:1",
+            "record_id": 9,
+            "target_model": "crm.ArchivedHistoryLine",
+            "target_id": 4
+          },
+          {
+            "sheet": "销售订单",
+            "row": 2,
+            "source_id": "SO-HT-1",
+            "record_id": 10,
+            "target_model": "crm.Order",
+            "target_id": 3
+          },
+          {
+            "sheet": "销售订单",
+            "row": 3,
+            "source_id": "SO-HT-DONE",
+            "record_id": 11,
+            "target_model": "crm.Order",
+            "target_id": 4
+          },
+          {
+            "sheet": "收付款流水",
+            "row": 2,
+            "source_id": "TX-SO-1",
+            "record_id": 12,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "收付款流水",
+            "row": 3,
+            "source_id": "TX-PO-1",
+            "record_id": 13,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "收付款计划",
+            "row": 2,
+            "source_id": "PLAN-SO-1",
+            "record_id": 14,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "收付款计划",
+            "row": 3,
+            "source_id": "PLAN-PO-1",
+            "record_id": 15,
+            "target_model": "",
+            "target_id": null
+          }
+        ],
+        "source_record_count": 15,
+        "customer_count": 1,
+        "order_count": 3,
+        "product_count": 3,
+        "product_states": {
+          "linked": 3
+        },
+        "documents": [
+          {
+            "id": 4,
+            "kind": "sales",
+            "number": "HIST-SO-HT-DONE",
+            "currency": "USD",
+            "status": "historical",
+            "products": [
+              {
+                "id": 9,
+                "source_system": "Legacy synthetic system",
+                "source_number": "SO-HT-DONE:1",
+                "batch": "HT-G1",
+                "group": 1,
+                "application": 1,
+                "kind": "sales",
+                "order_number": "HIST-SO-HT-DONE",
+                "date": "2024-08-01",
+                "code": "",
+                "name": "Historical SKU Name",
+                "specification": "24W",
+                "description": "Historical product description",
+                "category": "",
+                "category_reference": "",
+                "trade_quantity": null,
+                "trade_unit_price": null,
+                "trade_unit": "",
+                "unit_price": "12.000000000000",
+                "unit": "pcs",
+                "quantity": "10.00",
+                "amount": "120.00",
+                "currency": "USD",
+                "sku": {
+                  "id": 2,
+                  "code": "B",
+                  "name": "合成正式商品 B",
+                  "unit": "pcs",
+                  "specification": "24W",
+                  "parameters": {},
+                  "active": true
+                },
+                "status": "linked",
+                "version": 1
+              }
+            ],
+            "shipping": "0.0000",
+            "discount": "0.0000",
+            "total": "120.00",
+            "paid_formal": "0",
+            "open_formal": "0"
+          },
+          {
+            "id": 3,
+            "kind": "sales",
+            "number": "HIST-SO-HT-1",
+            "currency": "USD",
+            "status": "historical",
+            "products": [
+              {
+                "id": 8,
+                "source_system": "Legacy synthetic system",
+                "source_number": "SO-HT-1:1",
+                "batch": "HT-G1",
+                "group": 1,
+                "application": 1,
+                "kind": "sales",
+                "order_number": "HIST-SO-HT-1",
+                "date": "2024-08-01",
+                "code": "",
+                "name": "Historical SKU Name",
+                "specification": "24W",
+                "description": "Historical product description",
+                "category": "",
+                "category_reference": "",
+                "trade_quantity": null,
+                "trade_unit_price": null,
+                "trade_unit": "",
+                "unit_price": "12.000000000000",
+                "unit": "pcs",
+                "quantity": "10.00",
+                "amount": "120.00",
+                "currency": "USD",
+                "sku": {
+                  "id": 2,
+                  "code": "B",
+                  "name": "合成正式商品 B",
+                  "unit": "pcs",
+                  "specification": "24W",
+                  "parameters": {},
+                  "active": true
+                },
+                "status": "linked",
+                "version": 1
+              }
+            ],
+            "shipping": "0.0000",
+            "discount": "0.0000",
+            "total": "120.00",
+            "paid_formal": "0",
+            "open_formal": "0"
+          },
+          {
+            "id": 2,
+            "kind": "purchase",
+            "number": "HIST-PO-HT-1",
+            "currency": "USD",
+            "status": "historical",
+            "products": [
+              {
+                "id": 6,
+                "source_system": "Legacy synthetic system",
+                "source_number": "PO-HT-1:1",
+                "batch": "HT-G1",
+                "group": 1,
+                "application": 1,
+                "kind": "purchase",
+                "order_number": "HIST-PO-HT-1",
+                "date": "2024-07-01",
+                "code": "",
+                "name": "Historical Purchase SKU",
+                "specification": "24W",
+                "description": "Purchase description",
+                "category": "",
+                "category_reference": "",
+                "trade_quantity": null,
+                "trade_unit_price": null,
+                "trade_unit": "",
+                "unit_price": "3.000000000000",
+                "unit": "pcs",
+                "quantity": "5.00",
+                "amount": "15.00000000000000",
+                "currency": "USD",
+                "sku": {
+                  "id": 2,
+                  "code": "B",
+                  "name": "合成正式商品 B",
+                  "unit": "pcs",
+                  "specification": "24W",
+                  "parameters": {},
+                  "active": true
+                },
+                "status": "linked",
+                "version": 1
+              }
+            ],
+            "shipping": "0",
+            "discount": "0",
+            "total": "15.00000000000000",
+            "paid_formal": "0",
+            "open_formal": "0"
+          }
+        ],
+        "currency_totals": {
+          "USD": {
+            "sales_total": "240.00",
+            "purchase_total": "15.00000000000000",
+            "sales_products": "240.00",
+            "purchase_products": "15.00000000000000",
+            "shipping": "0.0000",
+            "discount": "0.0000",
+            "sales_paid_formal": "0",
+            "purchase_paid_formal": "0",
+            "receivable_formal": "0",
+            "payable_formal": "0"
+          }
+        },
+        "source_plans": [
+          {
+            "source_id": "PLAN-SO-1",
+            "snapshot": {
+              "notes": "preserve source plan",
+              "currency": "USD",
+              "due_date": "2024-09-01",
+              "group_id": "HT-G1",
+              "direction": "receivable",
+              "truth_status": "真实",
+              "planned_amount": "100.0000",
+              "settled_amount": "40.0000",
+              "source_plan_id": "PLAN-SO-1",
+              "lifecycle_state": "open",
+              "source_order_id": "SO-HT-1",
+              "voucher_reference": "synthetic://receivable-plan",
+              "source_purchase_id": "",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": "",
+              "settlement_detail_complete": "yes"
+            }
+          },
+          {
+            "source_id": "PLAN-PO-1",
+            "snapshot": {
+              "notes": "preserve source plan",
+              "currency": "USD",
+              "due_date": "2024-09-02",
+              "group_id": "HT-G1",
+              "direction": "payable",
+              "truth_status": "真实",
+              "planned_amount": "15.0000",
+              "settled_amount": "5.0000",
+              "source_plan_id": "PLAN-PO-1",
+              "lifecycle_state": "open",
+              "source_order_id": "",
+              "voucher_reference": "synthetic://payable-plan",
+              "source_purchase_id": "PO-HT-1",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": "",
+              "settlement_detail_complete": "yes"
+            }
+          }
+        ],
+        "source_cash_totals": {
+          "USD": {
+            "income": "40.0000",
+            "expense": "5.0000"
+          }
+        },
+        "source_cash": [
+          {
+            "source_id": "TX-SO-1",
+            "snapshot": {
+              "kind": "customer_receipt",
+              "notes": "source-only payment",
+              "amount": "40.0000",
+              "currency": "USD",
+              "group_id": "HT-G1",
+              "direction": "income",
+              "truth_status": "真实",
+              "customer_code": "HT-C1",
+              "exchange_rate": "1.000000",
+              "source_status": "confirmed",
+              "supplier_code": "",
+              "source_plan_id": "PLAN-SO-1",
+              "transaction_no": "HIST-TX-SO-1",
+              "source_order_id": "SO-HT-1",
+              "source_record_id": "TX-SO-1",
+              "transaction_date": "2024-09-03",
+              "voucher_reference": "synthetic://bank/receipt",
+              "source_purchase_id": "",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": ""
+            },
+            "finance_key": "2442de3b00528e8e8d7e2a65284139dcb8cfc0bc8e66f53a12860e62af4472ed"
+          },
+          {
+            "source_id": "TX-PO-1",
+            "snapshot": {
+              "kind": "supplier_payment",
+              "notes": "source-only payment",
+              "amount": "5.0000",
+              "currency": "USD",
+              "group_id": "HT-G1",
+              "direction": "expense",
+              "truth_status": "真实",
+              "customer_code": "",
+              "exchange_rate": "1.000000",
+              "source_status": "confirmed",
+              "supplier_code": "H1",
+              "source_plan_id": "PLAN-PO-1",
+              "transaction_no": "HIST-TX-PO-1",
+              "source_order_id": "",
+              "source_record_id": "TX-PO-1",
+              "transaction_date": "2024-09-04",
+              "voucher_reference": "synthetic://bank/payment",
+              "source_purchase_id": "PO-HT-1",
+              "product_category_snapshot": "",
+              "supplier_country_snapshot": ""
+            },
+            "finance_key": "b6960db5e115a8fa146278468e8ce5bb829639e10f577e16393cac30cf68eb60"
+          }
+        ],
+        "cny_finance_facts": [
+          {
+            "id": 1,
+            "source_key": "2442de3b00528e8e8d7e2a65284139dcb8cfc0bc8e66f53a12860e62af4472ed",
+            "amount": "287.43",
+            "direction": "income",
+            "actual_date": "2024-09-03"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "source_group": "HT-G-ERROR",
+        "status": "blocked",
+        "truth": "真实",
+        "coverage": "complete",
+        "preflight_status_counts": {
+          "阻断": 2,
+          "待人工核实": 1
+        },
+        "preflight_results": [
+          {
+            "row": 3,
+            "sheet": "分组",
+            "status": "阻断",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "关联组内至少一条记录需人工核实。"
+              },
+              {
+                "status": "阻断",
+                "message": "关联组内存在阻断记录，不能作为完整导入组。"
+              }
+            ],
+            "group_id": "HT-G-ERROR",
+            "related_records": [
+              {
+                "row": 4,
+                "sheet": "销售订单",
+                "source_record_id": "SO-HT-BAD"
+              },
+              {
+                "row": 4,
+                "sheet": "销售明细",
+                "source_record_id": "1"
+              }
+            ],
+            "source_record_id": "HT-G-ERROR",
+            "suggested_actions": [
+              "按关联记录逐项核实后再评估整体迁移依赖。",
+              "先修复依赖或停止该关联组；不迁移孤立明细。"
+            ]
+          },
+          {
+            "row": 4,
+            "sheet": "销售订单",
+            "status": "待人工核实",
+            "reasons": [
+              {
+                "status": "待人工核实",
+                "message": "原业务部分完成；须按已核实履约和资金明细重建剩余状态。"
+              },
+              {
+                "status": "警告",
+                "message": "客户当前主档名称与历史快照不同；两者须分别保留。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "资料不完整或履约记录待核实，无法确定整单履约状态。"
+              }
+            ],
+            "group_id": "HT-G-ERROR",
+            "related_records": [
+              {
+                "type": "客户",
+                "match": "编码精确匹配",
+                "database_id": 4
+              }
+            ],
+            "source_record_id": "SO-HT-BAD",
+            "suggested_actions": [
+              "补齐全部收付、履约及冲销依赖后再评估。",
+              "保留输入的历史快照，不用当前主档覆盖。",
+              "补齐来源覆盖及有效履约/冲销证据，不将缺失记录推断为已发生或未发生。"
+            ]
+          },
+          {
+            "row": 4,
+            "sheet": "销售明细",
+            "status": "阻断",
+            "reasons": [
+              {
+                "status": "阻断",
+                "message": "基础数量：数值必须大于 0。"
+              },
+              {
+                "status": "警告",
+                "message": "历史商品可先归档，归档后可关联正式 SKU。"
+              },
+              {
+                "status": "待人工核实",
+                "message": "历史产品主分类快照缺失，分类统计将保留为“待核实”。"
+              }
+            ],
+            "group_id": "HT-G-ERROR",
+            "related_records": [],
+            "source_record_id": "1",
+            "suggested_actions": [
+              "按原始凭证修正格式、精度或允许值。",
+              "保留原商品编码、名称及规格。",
+              "仅依据原历史单据补充；不要从当前产品分类回填。"
+            ],
+            "product_link_status": "待关联"
+          }
+        ],
+        "handoffs": {
+          "finance": "not_connected",
+          "inventory": "not_connected",
+          "fulfillment": "not_connected"
+        },
+        "remainder_snapshot": {},
+        "source_rows": [
+          {
+            "sheet": "分组",
+            "row": 3,
+            "source_id": "HT-G-ERROR",
+            "record_id": null,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "销售明细",
+            "row": 4,
+            "source_id": "SO-HT-BAD:1",
+            "record_id": null,
+            "target_model": "",
+            "target_id": null
+          },
+          {
+            "sheet": "销售订单",
+            "row": 4,
+            "source_id": "SO-HT-BAD",
+            "record_id": null,
+            "target_model": "",
+            "target_id": null
+          }
+        ],
+        "source_record_count": 0,
+        "customer_count": 0,
+        "order_count": 0,
+        "product_count": 0,
+        "product_states": {},
+        "documents": [],
+        "currency_totals": {},
+        "source_plans": [],
+        "source_cash_totals": {},
+        "source_cash": [],
+        "cny_finance_facts": []
+      }
+    ],
+    "global_fact_counts": {
+      "FinanceFact": 1,
+      "Transaction": 0,
+      "InventoryMovement": 0,
+      "InventoryReservation": 0,
+      "Shipment": 0,
+      "GoodsReceipt": 0
+    },
+    "scope_note": "global_fact_counts are database-wide; compare isolated snapshots only",
+    "unverified": [
+      "group HT-G1: source completeness, conflicts and unposted amounts require review",
+      "group HT-G-ERROR: not executed; no target mapping assumed",
+      "group HT-G-ERROR: source completeness, conflicts and unposted amounts require review"
+    ]
+  }
+}

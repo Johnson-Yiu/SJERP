@@ -490,10 +490,11 @@ test('historical finance reviews a duplicate and posts only after second-user ap
 
 test('Chrome native page zoom keeps long finance and history records usable', async ({ page, baseURL }) => {
   test.setTimeout(300000)
-  const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8')).long_content
+  const profile = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8'))
+  const fixture = profile.long_content
   test.skip(!fixture, 'Requires the follow-up evidence fixture')
   const results = []
-  const completion = evidenceDir.includes('release-completion-acceptance-02')
+  const completion = profile.completion_profile
   const cookies = await page.context().cookies()
   for (const zoom of [1, 1.25]) {
     const profile = path.join(process.env.ISOLATED_TEST_ROOT, `chrome-native-zoom-${zoom}`)
@@ -664,7 +665,8 @@ test('certificate validation identifies the business field without closing the d
 })
 
 test('completion evidence follows lost receipt, actual refund date and funds review', async ({ page }) => {
-  test.skip(!evidenceDir.includes('release-completion-acceptance-02'), 'Requires the completion fixture')
+  const profile = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8'))
+  test.skip(!profile.completion_profile, 'Requires the completion fixture')
   test.setTimeout(120000)
   const proof = { name: 'synthetic-completion.pdf', mimeType: 'application/pdf', buffer: syntheticVoucherPdf() }
   async function captureState(name, action) {

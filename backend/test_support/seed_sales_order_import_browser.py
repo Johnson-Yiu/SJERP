@@ -84,6 +84,7 @@ fixture = {
     "workbook": workbook_path.name,
 }
 completion_profile = evidence_dir in {completion_evidence_dir, integration_evidence_dir, integration_final_evidence_dir}
+fixture["completion_profile"] = completion_profile
 if evidence_dir == followup_evidence_dir or completion_profile:
     long_customer = Customer.objects.create(
         code="UAT-LONG-CUSTOMER",

@@ -16,6 +16,17 @@ const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
   { name: 'history-product-linking-h2-isolated', file: 'history-product-linking-h2-real.spec.js', codex: true },
+  ...[100, 125].map(zoom => ({
+    name: `history-product-linking-narrow-${zoom}`,
+    file: 'history-product-linking-h2-real.spec.js',
+    codex: true,
+    env: { H2_NATIVE_ZOOM: String(zoom), H2_VIEWPORT_WIDTH: '390' },
+  })),
+  ...['contact-recovery', 'details', 'receipts', 'sku'].map(feature => ({
+    name: `ui-final-state-${feature}-03`,
+    file: `ui-final-state-${feature}-03.spec.js`,
+    codex: true,
+  })),
   { name: 'sales-evidence-01-isolated', file: 'ui-sales-state-evidence-01.spec.js', codex: true },
   { name: 'sales-evidence-01-party-isolated', file: 'ui-sales-state-evidence-01-party.spec.js', codex: true },
   { name: 'product-operations-evidence-01-isolated', file: 'ui-product-operations-state-evidence-01.spec.js', codex: true },
@@ -117,7 +128,7 @@ for (const run of runs) {
   const stderrChunks = []
   const runEnv = { ...process.env }
   for (const key of [
-    'E1_R2_EXTRA', 'E1_R2_WIDTH', 'SALES_PARTY_NATIVE_ZOOM',
+    'E1_R2_EXTRA', 'E1_R2_WIDTH', 'SALES_PARTY_NATIVE_ZOOM', 'H2_NATIVE_ZOOM', 'H2_VIEWPORT_WIDTH', 'H2_EVIDENCE_ROOT',
     'SALES_STATE_JOURNEYS', 'SALES_STATE_SUPPLEMENTAL', 'SALES_STATE_FOCUSED',
     'SALES_STATE_CASES', 'SALES_STATE_SCENARIOS', 'SALES_STATE_SHOTS',
     'SALES_STATE_WIDTH', 'SALES_STATE_ZOOM', 'SALES_STATE_APPLY_QUANTITY',

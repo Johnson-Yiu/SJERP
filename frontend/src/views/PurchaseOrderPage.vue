@@ -16,7 +16,7 @@ import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import PurchaseSupplierPicker from '../components/PurchaseSupplierPicker.vue'
-import { nextTick, computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Eye, PackagePlus, Plus, RefreshCw, Save, X } from 'lucide-vue-next'
 import { listData } from '../api'
@@ -130,25 +130,39 @@ async function openCostAllocation(purchase) {
   }
 }
 const receiptTarget = ref(null), receiptSaving = ref(false)
-const receiptForm = ref({})
+const receiptForm = ref({}), receiptDialog = ref(null)
+let receiptTrigger, receiptWorkbench
 const receiptRemaining = computed(() => Number(receiptTarget.value?.item.remaining_quantity || 0) - baseQuantity(receiptForm.value))
 const receiptSuccess = ref(null)
 const reversalTarget = ref(null), reversalSaving = ref(false), reversalReason = ref('')
-function openReceipt(row, item, trigger) {
+async function openReceipt(row, item, trigger) {
   if (!can('purchases', 'update')) return
-  receiptTarget.value = { row, item, trigger }
+  receiptTrigger = trigger
+  receiptWorkbench = trigger?.closest('.purchase-workbench')
+  receiptTarget.value = { row, item }
   receiptSuccess.value = null
   notice.value = ''
   receiptForm.value = { purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false, specify_location: false, warehouse_type: '自有仓', warehouse: '', lot_reference: '' }
   if (item.trade_unit && Number(item.remaining_quantity) % Number(item.trade_snapshot.factor) === 0) Object.assign(receiptForm.value, { trade_unit: item.trade_unit, trade_snapshot: item.trade_snapshot, quantity: Number(item.remaining_quantity) / Number(item.trade_snapshot.factor), unit_cost: item.trade_unit_price })
   receiptForm.value.unit_cost = compactDecimalInput(receiptForm.value.unit_cost)
   error.value = ''
+  await nextTick()
+  receiptDialog.value?.focus({ preventScroll: true })
 }
-async function closeReceipt() {
-  const trigger = receiptTarget.value?.trigger
+async function finishReceipt() {
+  const trigger = receiptTrigger
+  const workbench = receiptWorkbench
+  receiptTrigger = null
+  receiptWorkbench = null
   receiptTarget.value = null
   await nextTick()
-  if (trigger?.isConnected) trigger.focus({ preventScroll: true })
+  if (trigger?.isConnected && !trigger.disabled) trigger.focus({ preventScroll: true })
+  if (workbench?.isConnected && document.activeElement !== trigger) {
+    workbench.focus({ preventScroll: true })
+  }
+}
+async function closeReceipt() {
+  if (!receiptSaving.value) await finishReceipt()
 }
 async function submitReceipt() {
   if (receiptSaving.value || !receiptForm.value.checked || !can('purchases', 'update')) return
@@ -165,10 +179,10 @@ async function submitReceipt() {
     const requestId = fulfillmentRequestId('receive', purchaseId, payload)
     await api.post(`/purchase-orders/${purchaseId}/receive/`, payload, { headers: { 'Idempotency-Key': requestId } })
     clearFulfillmentRequest('receive', purchaseId)
-    receiptTarget.value = null
     notice.value = ''
     receiptSuccess.value = { purchaseId, message: '验货入库已完成，库存、预留及在途数量已同步。', relatedOrders }
     await load()
+    await finishReceipt()
   } catch (err) { error.value = message(err, '验货入库失败。') } finally { receiptSaving.value = false }
 }
 function openReceiptReversal(row, item, receipt) {
@@ -579,7 +593,7 @@ watch(() => route.query.detail, id => {
 
     <PurchaseDetailModal v-if="expandedId" :key="expandedId" :purchase="detailPurchase" :loading="detailLoading" :error="detailError" :skus="skus" @close="closeDetail" @retry="loadDetail" @confirm="place" @edit="editDraft" @delete="deleteDraft" @cancel="cancelPurchase" @pay="pay" @allocate-cost="openCostAllocation" @receive="openReceipt" @reverse-receipt="openReceiptReversal" @changed="load"><template #feedback><p v-if="notice" class="notice">{{ notice }}</p><p v-if="error" class="form-error">{{ error }}</p><div v-if="receiptSuccess && expandedId === receiptSuccess.purchaseId" class="notice receipt-success" role="status"><span>{{ receiptSuccess.message }}</span><RouterLink v-if="receiptSuccess.relatedOrders.length === 1" class="order-navigation-link" :to="orderDetailLocation(receiptSuccess.relatedOrders[0].id, 'overview', route.fullPath)">查看关联订单 {{ receiptSuccess.relatedOrders[0].order_no }}</RouterLink><div v-else-if="receiptSuccess.relatedOrders.length > 1" class="receipt-success-orders"><span>关联订单：</span><RouterLink v-for="order in receiptSuccess.relatedOrders" :key="order.id" class="order-navigation-link" :to="orderDetailLocation(order.id, 'overview', route.fullPath)">{{ order.order_no }}</RouterLink></div></div></template></PurchaseDetailModal>
     <div v-if="receiptTarget && can('purchases', 'update')" class="receipt-mask">
-      <form class="receipt-dialog goods-receipt-dialog" role="dialog" aria-modal="true" aria-labelledby="receipt-title" @submit.prevent="submitReceipt">
+      <form ref="receiptDialog" class="receipt-dialog goods-receipt-dialog" role="dialog" aria-modal="true" aria-labelledby="receipt-title" tabindex="-1" @keydown.esc.stop.prevent="closeReceipt" @submit.prevent="submitReceipt">
         <header><h3 id="receipt-title">验货合格入库</h3><p>{{ receiptTarget.row.purchase_no }} · {{ receiptTarget.item.sku_code }} / {{ receiptTarget.item.display_name || itemSku(receiptTarget.item)?.display_name_cn || '—' }}</p><p>供应商：{{ supplierPartyName(receiptTarget.row) }}</p></header>
         <div class="receipt-progress"><div><small>下单数量</small><strong>{{ receiptTarget.item.quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>已到货</small><strong>{{ receiptTarget.item.received_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>当前待到</small><strong>{{ receiptTarget.item.remaining_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div></div>
         <p>不合格或拒收数量请写入备注，等待补货后再登记入库。</p>

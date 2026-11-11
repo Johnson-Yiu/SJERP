@@ -42,7 +42,7 @@ const detailInfo = computed(() => {
   const row = movementRecord.value
   const sku = data.value?.sections?.find(section => section.key === 'sku')?.rows?.[0]
   const unit = row.trade_snapshot?.base_unit || sku?.unit || ''
-  return [['流水号',row.movement_no],['日期',row.movement_date],['SKU',row.sku_code || sku?.sku || '—'],['类型',row.type_display],['数量变化',signedMovement(row,unit)],['交易单位 / 登记规格',row.trade_snapshot?.name || '基础单位登记'],['交易数量',row.trade_unit ? `${row.trade_quantity} ${row.trade_snapshot?.unit || ''}` : '—'],['仓库',row.warehouse],['关联订单',(row.related_order_nos || []).join('、') || row.order_no || '—'],['关联单据',row.reference || row.source_no || '—'],['来源',sourceLabels[movementSource(row)] || '未标注'],['备注',row.notes || '—'],['冲销状态',movementStatus(row)],['冲销记录',row.reversal_status || '—'],['超到说明',row.overage_summary || '—'],['单位成本',compactDecimalInput(row.unit_cost)]]
+  return [['流水号',row.movement_no],['日期',row.movement_date],['SKU',row.sku_code || sku?.sku || '—'],['类型',row.type_display],['数量变化',signedMovement(row,unit)],['交易单位 / 登记规格',row.trade_snapshot?.name || '基础单位登记'],['交易数量',row.trade_unit ? `${row.trade_quantity} ${row.trade_snapshot?.unit || ''}` : '—'],['仓库',row.warehouse],['批次',row.lot_reference || '—'],['关联订单',(row.related_order_nos || []).join('、') || row.order_no || '—'],['关联单据',row.reference || row.source_no || '—'],['来源',sourceLabels[movementSource(row)] || '未标注'],['备注',row.notes || '—'],['冲销状态',movementStatus(row)],['冲销记录',row.reversal_status || '—'],['超到说明',row.overage_summary || '—'],['单位成本',compactDecimalInput(row.unit_cost)]]
 })
 const operationLogs = ref([]), operationLogsLoading = ref(false), auditEnabled = ref(false)
 const quickCreate = ref(null)
@@ -159,7 +159,10 @@ async function refreshSkuManagement() {
     emit('changed')
   } catch (e) { console.warn('产品摘要刷新失败', e) }
 }
+let failedDetail
+function retryDetail() { return load(failedDetail?.entity, failedDetail?.id) }
 async function load(entity = currentEntity.value, id = currentId.value) {
+  failedDetail = null
   loading.value = true; error.value = ''
   try {
     const [contextResponse, movementResponse, , supplierResponse, certificateResponse] = await Promise.all([
@@ -176,7 +179,10 @@ async function load(entity = currentEntity.value, id = currentId.value) {
     currentEntity.value = entity; currentId.value = id
     activeTab.value = entity === 'products' ? '__overview' : data.value.sections[0]?.key || ''
     restoreCustomerTab()
-  } catch (e) { error.value = apiErrorMessage(e) } finally { loading.value = false }
+  } catch (e) {
+    failedDetail = { entity, id }
+    error.value = apiErrorMessage(e)
+  } finally { loading.value = false }
 }
 async function loadOperationLogs(entity = currentEntity.value, id = currentId.value) {
   operationLogsLoading.value = true
@@ -391,7 +397,7 @@ watch(() => data.value?.title, title => { if (!props.nestedProductDetail && work
   <div class="modal-backdrop detail-backdrop" :class="{ 'follow-up-detail-backdrop': isFollowUpDetail, 'product-detail-backdrop': isProduct }">
     <article ref="detailArticle" @keydown.esc="closeNestedOnEscape" :role="isProduct ? undefined : 'dialog'" :aria-modal="isProduct ? undefined : 'true'" class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail, 'supplier-detail': isSupplierDetail, 'contact-detail': isContactDetail, 'sku-detail': currentEntity === 'skus', 'certificate-detail': currentEntity === 'product-certificates' }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isSupplierDetail ? '供应商详情' : isContactDetail ? '联系人详情' : isCustomerRoot ? '客户详情' : '关联详情'">
       <button v-if="!isProduct && (loading || error)" class="btn btn-secondary supplier-state-close" @click="requestClose">关闭详情</button><div v-if="loading" role="status" class="detail-loading"><div class="spinner" /><span>正在整理关联数据...</span></div>
-      <div v-else-if="error" role="alert" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
+      <div v-else-if="error" role="alert" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="retryDetail">重试</button></div>
       <template v-else-if="data">
         <template v-if="isFollowUpDetail">
           <header class="follow-up-hero">
@@ -634,7 +640,7 @@ watch(() => data.value?.title, title => { if (!props.nestedProductDetail && work
 
 <style scoped>
 .supplier-detail .detail-identity h2{font-size:var(--text-page);overflow-wrap:anywhere}.supplier-detail .detail-metrics{display:flex;flex-wrap:wrap}.supplier-detail .detail-metrics>div{min-width:150px;flex:1}.supplier-detail .info-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.supplier-detail .info-grid a{overflow-wrap:anywhere;color:#236657}.supplier-payment-info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:18px}.supplier-payment-info article{padding:18px;border:1px solid #dfe8e3;border-radius:12px;background:#fff}.supplier-payment-info article.execution{border-color:#bad8cd;background:#f0f8f4}.supplier-payment-info h3{margin:0;color:#21483d;font-size:var(--text-section)}.supplier-payment-info p{white-space:pre-wrap;overflow-wrap:anywhere;color:#3d5049;line-height:1.6}.supplier-payment-info small{color:#71817b;line-height:1.6}.supplier-relations{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}.supplier-relations p{font-size:var(--text-body);color:#71817b}.supplier-notes{margin-bottom:18px;padding:16px;border:1px solid #dfe8e3;border-radius:12px;background:#fff}.supplier-notes summary{cursor:pointer;color:#21483d;font-size:var(--text-body);font-weight:600}.supplier-notes p{white-space:pre-wrap;overflow-wrap:anywhere;color:#567168;line-height:1.6}.supplier-state-close{margin:20px}@media(max-width:1100px){.supplier-detail .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.supplier-payment-info{grid-template-columns:1fr}.supplier-detail .info-grid{grid-template-columns:1fr}}
-.contact-detail .detail-identity h2{overflow-wrap:anywhere}.contact-detail .detail-subtitle{overflow-wrap:anywhere}.contact-detail .info-grid>div{min-width:0}.contact-detail .info-grid span{overflow-wrap:anywhere}.contact-detail .context-table{min-width:0}
+.contact-detail .detail-identity>div{min-width:0}.contact-detail .detail-badge{flex:none;white-space:nowrap}.contact-detail .detail-identity h2{overflow-wrap:anywhere}.contact-detail .detail-subtitle{overflow-wrap:anywhere}.contact-detail .info-grid>div{min-width:0}.contact-detail .info-grid span{overflow-wrap:anywhere}.contact-detail .context-table{min-width:0}
 .sku-related-nav{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}.sku-related-nav span{font-size:var(--text-caption);color:#64776f}
 :global(body:has(.sku-detail)){overflow:hidden}.sku-detail{min-width:0;max-width:100%}.sku-detail .detail-identity{align-items:start}.sku-detail .detail-identity h2{overflow-wrap:anywhere;min-width:0}.sku-detail .detail-identity>div{min-width:0}
 </style>

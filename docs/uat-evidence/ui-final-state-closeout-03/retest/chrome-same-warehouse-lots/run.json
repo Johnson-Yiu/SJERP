@@ -1,0 +1,84 @@
+{
+  "source": "26c2a7c07da976e2ff792331d1ed84e1042bbf98",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "same-warehouse-two-movements",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "same-warehouse-two-movements-390-125.png"
+    },
+    {
+      "id": "same-warehouse-lot-01",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "same-warehouse-lot-01-390-125.png"
+    },
+    {
+      "id": "same-warehouse-lot-03",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "same-warehouse-lot-03-390-125.png"
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "contact-1366-100.png",
+      "lines": 1,
+      "fits": true,
+      "nestedReturn": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "contact-1440-100.png",
+      "lines": 1,
+      "fits": true,
+      "nestedReturn": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "contact-390-100.png",
+      "lines": 1,
+      "fits": true,
+      "nestedReturn": true
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "contact-1366-125.png",
+      "lines": 1,
+      "fits": true,
+      "nestedReturn": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "contact-1440-125.png",
+      "lines": 1,
+      "fits": true,
+      "nestedReturn": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "contact-390-125.png",
+      "lines": 1,
+      "fits": true,
+      "nestedReturn": true
+    }
+  ]
+}

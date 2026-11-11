@@ -380,12 +380,30 @@ function clearImageSelection() {
   imageClearRequested.value = Boolean(savedImageUrl.value)
   resetImagePicker()
 }
+function updateSavedRow(saved) {
+  if (!saved?.id) return
+  for (const list of [rows, historyRows]) {
+    list.value = list.value.map(row => row.id === saved.id ? { ...row, ...saved } : row)
+  }
+}
 async function uploadImage(skuId, file) {
   const data = new FormData()
   data.append('image', file)
-  return api.post(`/skus/${skuId}/image/`, data)
+  const response = await api.post(`/skus/${skuId}/image/`, data)
+  updateSavedRow(response.data)
 }
-async function clearImage(skuId) { return api.delete(`/skus/${skuId}/image/`) }
+async function clearImage(skuId) {
+  const response = await api.delete(`/skus/${skuId}/image/`)
+  updateSavedRow(response.data)
+}
+async function uploadPendingImages() {
+  const results = await Promise.allSettled(pendingImageSkuIds.value.map(async skuId => {
+    await uploadImage(skuId, selectedImage.value)
+    pendingImageSkuIds.value = pendingImageSkuIds.value.filter(id => id !== skuId)
+  }))
+  const failed = results.find(result => result.status === 'rejected')
+  if (failed) throw failed.reason
+}
 let loadVersion = 0
 let supplierSourcesVersion = 0
 async function load() {
@@ -727,7 +745,8 @@ async function persistSave({ editingRow, editingPreview, parameterChanged, produ
       const specification = parameterChanged || productChanged ? preview.specification : (editingRow?.specification || preview.specification)
       const parameters = parameterChanged || productChanged ? preview.parameterValuesForSku : { ...(editingRow?.parameter_values || preview.parameterValuesForSku), ...ordinaryValues() }
       const salesModel = form.sales_model || null
-      await api.put(`/skus/${editingId.value}/`, { ...shared, ...packagingInput(detail), sales_model: salesModel, description_cn: form.description_cn || preview.description_cn, description_en: translateLightingTerms(form.description_en || preview.description_en), specification, product_details: [cleanDetail(detail)], parameter_values: parameters, identity_change_confirmed: identityChanged })
+      const response = await api.put(`/skus/${editingId.value}/`, { ...shared, ...packagingInput(detail), sales_model: salesModel, description_cn: form.description_cn || preview.description_cn, description_en: translateLightingTerms(form.description_en || preview.description_en), specification, product_details: [cleanDetail(detail)], parameter_values: parameters, identity_change_confirmed: identityChanged })
+      updateSavedRow(response.data)
       guard.markClean()
       try {
         if (imageClearRequested.value) await clearImage(editingId.value)
@@ -749,10 +768,10 @@ async function persistSave({ editingRow, editingPreview, parameterChanged, produ
       guard.markClean()
       const createdRows = created.map((row,index) => ({ row, detail: detailFor(previews[index]) }))
       if (selectedImage.value) {
-        try { await Promise.all(createdRows.map(({ row }) => uploadImage(row.id, selectedImage.value))) }
+        pendingImageSkuIds.value = createdRows.map(({ row }) => row.id)
+        try { await uploadPendingImages() }
         catch (error) {
           pendingImageFailurePrefix.value = 'SKU 已创建，但图片上传失败：'
-          pendingImageSkuIds.value = createdRows.map(({ row }) => row.id)
           editingId.value = createdRows[0]?.row.id || null
           await load()
           await nextTick(); guard.markClean()
@@ -791,7 +810,7 @@ async function save() {
     if (!selectedImage.value) return notify('请选择图片后重试上传，或取消本次编辑。', true)
     saving.value = true
     try {
-      await Promise.all(pendingImageSkuIds.value.map(skuId => uploadImage(skuId, selectedImage.value)))
+      await uploadPendingImages()
       pendingImageSkuIds.value = []
       guard.markClean(); discardModal(); detailRefresh.value++; emit('saved'); notify('SKU 图片已上传'); await load()
     } catch (error) { reportSaveError(error, pendingImageFailurePrefix.value) } finally { saving.value = false }

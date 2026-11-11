@@ -455,22 +455,62 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
     })
 
     if (extension === '7') await scenario('customer-detail-editor-stacking', async () => {
-      await go('/customers?detail=' + fixture.customer)
-      const detail = page.locator('.customer-detail-root')
-      await detail.getByRole('button', { name: '编辑客户', exact: true }).click()
-      const editor = page.getByRole('dialog', { name: '编辑客户' })
-      await expect(editor).toBeVisible()
-      await expect(detail.locator('..')).toHaveAttribute('inert', '')
-      await collect('customer-detail-editor-pointer', async result => {
-        noPageOverflow(result)
-        await editor.getByRole('button', { name: '取消', exact: true }).click({ trial: true })
-        await editor.getByRole('button', { name: '保存客户', exact: true }).click({ trial: true })
-      })
-      await page.setViewportSize({ width: 390, height: 844 })
-      await editor.getByRole('button', { name: '取消', exact: true }).click()
-      await expect(editor).toHaveCount(0)
-      await expect(page.getByRole('dialog', { name: '客户详情' })).toBeVisible()
-      await expect(detail.locator('..')).not.toHaveAttribute('inert', '')
+      const customerList = url => url.pathname === '/api/customers/' && url.searchParams.has('search')
+      const customerDetail = '/api/customers/' + fixture.customer + '/'
+      let releaseList
+      const listHeld = new Promise(resolve => { releaseList = resolve })
+      await page.route(customerList, async route => { await listHeld; await route.abort('failed').catch(() => {}) })
+      try {
+        const listing = page.waitForRequest(request => customerList(new URL(request.url())))
+        await go('/customers?detail=' + fixture.customer)
+        await listing
+        const detail = page.locator('.customer-detail-root')
+        const editor = page.getByRole('dialog', { name: '编辑客户' })
+        const loaded = page.waitForResponse(response => response.url().endsWith(customerDetail))
+        await detail.getByRole('button', { name: '编辑客户', exact: true }).click()
+        const response = await loaded
+        expect(response.status()).toBe(200)
+        const customer = await response.json()
+        await expect(editor.getByRole('textbox').first()).toHaveValue(customer.name)
+        await expect(detail.locator('..')).toHaveAttribute('inert', '')
+        await collect('customer-detail-editor-held-list', async result => {
+          noPageOverflow(result)
+          await editor.getByRole('button', { name: '取消', exact: true }).click({ trial: true })
+          await editor.getByRole('button', { name: '保存客户', exact: true }).click({ trial: true })
+        })
+        await page.setViewportSize({ width: 390, height: 844 })
+        await editor.getByRole('button', { name: '取消', exact: true }).click()
+        await expect(editor).toHaveCount(0)
+        await expect(page.getByRole('dialog', { name: '客户详情' })).toBeVisible()
+        await expect(detail.locator('..')).not.toHaveAttribute('inert', '')
+
+        await page.setViewportSize({ width: 1440, height: 900 })
+        let releaseDetail
+        const detailHeld = new Promise(resolve => { releaseDetail = resolve })
+        await page.route('**' + customerDetail, async route => { await detailHeld; await route.continue() })
+        try {
+          const requested = page.waitForRequest(request => request.url().endsWith(customerDetail))
+          await detail.getByRole('button', { name: '编辑客户', exact: true }).click()
+          await requested
+          await detail.getByRole('button', { name: '关闭详情', exact: true }).click()
+          await expect(detail).toHaveCount(0)
+          const late = page.waitForResponse(reply => reply.url().endsWith(customerDetail))
+          releaseDetail()
+          const lateResponse = await late
+          expect(lateResponse.status()).toBe(200)
+          await lateResponse.finished()
+          await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+          await expect(editor).toHaveCount(0)
+        } finally {
+          releaseDetail()
+          await page.unroute('**' + customerDetail)
+        }
+        results.push({ key: 'customer-detail-edit-held-list-http', status: 200, staleResponseIgnored: true })
+        await save()
+      } finally {
+        releaseList()
+        await page.unroute(customerList)
+      }
     })
 
     if (core) await scenario('follow-up-attachment-retry', async () => {

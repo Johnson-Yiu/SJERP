@@ -40,6 +40,7 @@ test('receipts preserve both units and destinations and inventory movements enfo
     await zoomControl.selectOption(String(zoom), { timeout: 180000 })
     const go = () => page.goto(new URL('/purchase-orders?detail=' + fixture.purchase, baseURL).href, { waitUntil: 'commit', timeout: 240000 })
     async function snap(id, extra = {}) {
+      await expect.poll(() => page.evaluate(() => devicePixelRatio)).toBeCloseTo(zoom, 2)
       const dpr = await page.evaluate(() => devicePixelRatio)
       expect(dpr).toBeCloseTo(zoom, 2)
       const { width, height } = page.viewportSize()

@@ -12,6 +12,14 @@ export async function recordSalesJourneys({ page, settings, baseURL, fixture, cu
   const orderRoute = '/orders?detail=' + fixture.order
   const quoteRoute = '/quotes?detail=' + fixture.quote
   const orderAPI = '/api/orders/' + fixture.order
+  async function revealForCapture(locator) {
+    if (!locator) return
+    await expect(async () => {
+      await locator.scrollIntoViewIfNeeded({ timeout: 5000 })
+      await expect(locator).toBeInViewport({ timeout: 5000 })
+    }).toPass({ timeout: 75000 })
+  }
+
   async function record(id, locator) {
     const requested = process.env.SALES_STATE_SHOTS?.split(',')
     if (requested && !requested.includes(id)) return
@@ -20,7 +28,7 @@ export async function recordSalesJourneys({ page, settings, baseURL, fixture, cu
         .find(([candidate]) => candidate === Number(process.env.SALES_STATE_WIDTH || 1440))
       await page.setViewportSize({ width, height })
       if (width === 390) await expect.poll(() => page.locator('.sidebar').evaluate(sidebar => sidebar.getBoundingClientRect().right), { timeout }).toBeLessThanOrEqual(1)
-      if (locator) await locator.scrollIntoViewIfNeeded({ timeout: 75000 })
+      await revealForCapture(locator)
       await capture(id, width, height, 1)
       await saveIndex()
       await page.setViewportSize({ width: 1440, height: 900 })
@@ -42,7 +50,7 @@ export async function recordSalesJourneys({ page, settings, baseURL, fixture, cu
             timeout,
           }).toBeLessThanOrEqual(1)
         }
-        if (locator) await locator.scrollIntoViewIfNeeded({ timeout: 75000 })
+        await revealForCapture(locator)
         await capture(id, width, height, zoom)
         await saveIndex()
       }

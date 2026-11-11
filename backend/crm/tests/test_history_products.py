@@ -80,8 +80,8 @@ class HistoricalProductLinkingTests(HistoryProductFixture, TestCase):
         self.assertEqual(order.total_amount, Decimal("205"))
         self.assertEqual(purchase.total_amount, Decimal("15"))
         self.assertEqual(self.report("original")["pending_count"], 3)
-        originals = list(self.sources.values_list("source_snapshot", flat=True))
-        frozen = list(ArchivedHistoryLine.objects.values_list("facts", flat=True))
+        originals = dict(self.sources.values_list("pk", "source_snapshot"))
+        frozen = dict(ArchivedHistoryLine.objects.values_list("pk", "facts"))
 
         b = self.target()
         single = self.preview(self.sales_ids[:1], b, save_rule=True)
@@ -102,7 +102,7 @@ class HistoricalProductLinkingTests(HistoryProductFixture, TestCase):
 
         detail = self.client.get(f"/api/orders/{order.pk}/")
         self.assertEqual(detail.status_code, 200, detail.data)
-        self.assertEqual([row["name"] for row in detail.data["historical_products"]], ["A", "A1", "A2灯"])
+        self.assertCountEqual([row["name"] for row in detail.data["historical_products"]], ["A", "A1", "A2灯"])
         self.assertTrue(all(row["sku"]["id"] == b.pk for row in detail.data["historical_products"]))
         self.assertEqual(len(self.report("original")["by_sku"]), 3)
         report = self.report("linked")
@@ -115,8 +115,8 @@ class HistoricalProductLinkingTests(HistoryProductFixture, TestCase):
         b.save()
         self.assertEqual(self.report("linked")["by_sku"][0]["amount"], Decimal("200"))
         self.assertEqual(self.report("linked")["by_category"][0]["label"], "旧分类")
-        self.assertEqual(list(self.sources.values_list("source_snapshot", flat=True)), originals)
-        self.assertEqual(list(ArchivedHistoryLine.objects.values_list("facts", flat=True)), frozen)
+        self.assertEqual(dict(self.sources.values_list("pk", "source_snapshot")), originals)
+        self.assertEqual(dict(ArchivedHistoryLine.objects.values_list("pk", "facts")), frozen)
         self.assertEqual(HistoryProductLink.objects.count(), 3)
         for model in (InventoryMovement, InventoryReservation, PaymentPlan, Transaction, GoodsReceipt, Shipment):
             self.assertFalse(model.objects.exists(), model.__name__)

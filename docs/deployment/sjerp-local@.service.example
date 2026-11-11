@@ -10,6 +10,7 @@ User=sjerp-%i
 Group=sjerp-%i
 WorkingDirectory=/srv/sjerp/%i/release/backend
 EnvironmentFile=/etc/sjerp/%i/runtime.env
+UnsetEnvironment=GUNICORN_CMD_ARGS DJANGO_SETTINGS_MODULE PYTHONHOME PYTHONPATH
 ExecStartPre=/srv/sjerp/%i/venv/bin/python manage.py check_local_runtime
 ExecStart=/srv/sjerp/%i/venv/bin/gunicorn --config /etc/sjerp/%i/gunicorn.conf.py --preload config.wsgi:application
 ExecStartPost=/srv/sjerp/%i/venv/bin/python operations_runtime_http.py

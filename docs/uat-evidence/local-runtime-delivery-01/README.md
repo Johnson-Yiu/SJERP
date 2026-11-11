@@ -23,4 +23,5 @@
 
 - Windows CPython 3.14.5，按后端 lock 安装到本工作树独立 venv，pip check 通过。
 - node --test scripts/start-service.test.mjs 通过 1 项。Django 定向运行 test_local_runtime_http、test_iss018_backup_recovery、test_operations_backup、test_operations_preflight、test_operations_copy、test_operations_retention，56 项中通过 53、平台条件跳过 3、失败 0。首次运行未找到 OpenSSL，加入本机 Git 随附 OpenSSL 的命令级 PATH 后复跑。HTTP 检查使用独立回环临时端口；SQLite 恢复、备份拒绝及监控过期/篡改均复用既有专项。
+- Windows 临时 SQLite 文件仅运行 migrate，客户、供应商、产品、SKU、订单和报价表均为空，媒体目录为空。独立运行配置检查使用保留但未监听的回环端口，拒绝了不可达 PostgreSQL；另外拒绝开发设置和不匹配的实例库名。
 - 远端提交、通用 CI 与专项状态见交付回复。目标环境尚未验收。

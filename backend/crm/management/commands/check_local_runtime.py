@@ -30,6 +30,7 @@ class Command(BaseCommand):
             or expected_media.resolve() != media
             or media == source
             or source in media.parents
+            or media in source.parents
             or not media.is_dir()
             or not os.access(media, os.R_OK | os.W_OK | os.X_OK)
             or settings.MEDIA_STORAGE_BACKEND != "django.core.files.storage.FileSystemStorage"

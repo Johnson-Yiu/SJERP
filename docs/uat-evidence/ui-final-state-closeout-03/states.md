@@ -19,10 +19,10 @@ E1 追加证据来自 `6242c5c3b85efdb3f904c8a4de7b8909a2bedcba`。E2 追加证�
 
 ## 本轮补验索引
 
-产品源码基准为 `e8096616bf227ed242cf837a78fb87fd0736b87c`。补验提交只包含本包测试、合成种子和证据。
+收货和库存取证源码为 `e8096616bf227ed242cf837a78fb87fd0736b87c`。附件遮挡修复及复验源码为 `2eea14b541077db72246af236ca87a44ce79666e`，与前者之间的产品差异限于跟进附件删除错误。
 
 | 状态 | 验证范围 |
 | --- | --- |
-| 跟进附件 | Chrome 六组通过。先上传新版再删除旧版。受控延迟时确认正在保存且按钮禁用；受控删除 400 后旧版保留；真实重试删除，刷新重开后旧版消失、新版唯一，媒体响应字节一致。首次上传后立即重开未读到旧版，复跑以刷新后读回为准。见 [首次记录](follow-on/chrome-contact-recovery/run.json) 和 [复跑](follow-on-attachment-retest/chrome-contact-recovery/run.json)。 |
+| 跟进附件 | Chrome 六组通过。先上传新版再删除旧版。受控延迟时确认正在保存且按钮禁用；受控删除 400 后旧版保留；真实重试删除，刷新重开后旧版消失、新版唯一，媒体响应字节一致。首次上传后立即重开未读到旧版，复跑以刷新后读回为准。见 [首次记录](follow-on/chrome-contact-recovery/run.json) 、[首次通过](follow-on-attachment-retest/chrome-contact-recovery/run.json) 和 [遮挡修复后的复跑](follow-on-attachment-inline/chrome-contact-recovery/run.json)。修复后六组均验证错误提示可见，保存与取消按钮通过真实点击前的可操作检查。 |
 | 收货入口消失 | Chrome 六组通过。受控移除当前采购明细的验货入库按钮，用 Enter 打开、Escape 取消，断言工作台获得实际焦点。首次定位在按钮移除后转到下一明细，复跑限定在原明细内。见 [首次记录](follow-on/chrome-purchase-receipt-combinations/run.json) 和 [复跑](follow-on-receipt-retest/chrome-purchase-receipt-combinations/run.json)。 |
 | 库存流水 | Chrome 通过。订单确认发货生成销售出库，客户退回用库存调整登记并关联订单。覆盖 SKU 无匹配后再搜索选中，六组各有两种详情读回，截图前滚动至关键业务字段并断言进入视口。见 [运行索引](follow-on-sales-retest/chrome-sale-return/run.json)。 |

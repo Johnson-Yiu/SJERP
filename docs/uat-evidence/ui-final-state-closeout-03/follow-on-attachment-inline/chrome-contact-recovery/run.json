@@ -1,0 +1,188 @@
+{
+  "source": "2eea14b541077db72246af236ca87a44ce79666e",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "state": "contact-loading",
+      "png": "contact-loading-100.png",
+      "zoom": 1,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "contact-failed",
+      "png": "contact-failed-100.png",
+      "zoom": 1,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "contact-recovered",
+      "png": "contact-recovered-100.png",
+      "zoom": 1,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "followup-returned",
+      "png": "followup-returned-100.png",
+      "zoom": 1,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "contact-loading",
+      "png": "contact-loading-125.png",
+      "zoom": 1.25,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "contact-failed",
+      "png": "contact-failed-125.png",
+      "zoom": 1.25,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "contact-recovered",
+      "png": "contact-recovered-125.png",
+      "zoom": 1.25,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "followup-returned",
+      "png": "followup-returned-125.png",
+      "zoom": 1.25,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "attachment-upload-pending",
+      "png": "attachment-upload-pending-1366-100.png",
+      "zoom": 1,
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "state": "attachment-delete-failed",
+      "png": "attachment-delete-failed-1366-100.png",
+      "zoom": 1,
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "state": "attachment-replaced-and-reopened",
+      "png": "attachment-replaced-and-reopened-1366-100.png",
+      "zoom": 1,
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "state": "attachment-upload-pending",
+      "png": "attachment-upload-pending-1366-125.png",
+      "zoom": 1.25,
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "state": "attachment-delete-failed",
+      "png": "attachment-delete-failed-1366-125.png",
+      "zoom": 1.25,
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "state": "attachment-replaced-and-reopened",
+      "png": "attachment-replaced-and-reopened-1366-125.png",
+      "zoom": 1.25,
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "state": "attachment-upload-pending",
+      "png": "attachment-upload-pending-1440-100.png",
+      "zoom": 1,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "state": "attachment-delete-failed",
+      "png": "attachment-delete-failed-1440-100.png",
+      "zoom": 1,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "state": "attachment-replaced-and-reopened",
+      "png": "attachment-replaced-and-reopened-1440-100.png",
+      "zoom": 1,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "state": "attachment-upload-pending",
+      "png": "attachment-upload-pending-1440-125.png",
+      "zoom": 1.25,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "state": "attachment-delete-failed",
+      "png": "attachment-delete-failed-1440-125.png",
+      "zoom": 1.25,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "state": "attachment-replaced-and-reopened",
+      "png": "attachment-replaced-and-reopened-1440-125.png",
+      "zoom": 1.25,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "state": "attachment-upload-pending",
+      "png": "attachment-upload-pending-390-100.png",
+      "zoom": 1,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "attachment-delete-failed",
+      "png": "attachment-delete-failed-390-100.png",
+      "zoom": 1,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "attachment-replaced-and-reopened",
+      "png": "attachment-replaced-and-reopened-390-100.png",
+      "zoom": 1,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "attachment-upload-pending",
+      "png": "attachment-upload-pending-390-125.png",
+      "zoom": 1.25,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "attachment-delete-failed",
+      "png": "attachment-delete-failed-390-125.png",
+      "zoom": 1.25,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "state": "attachment-replaced-and-reopened",
+      "png": "attachment-replaced-and-reopened-390-125.png",
+      "zoom": 1.25,
+      "width": 390,
+      "height": 844
+    }
+  ]
+}

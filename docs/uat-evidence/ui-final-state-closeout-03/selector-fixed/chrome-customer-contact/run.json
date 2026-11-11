@@ -1,0 +1,90 @@
+{
+  "source": "d65aca7a5e832a3108e19c1c63e5a5e548ee8542",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "customer-create-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customer-create-pending-1366-100.png"
+    },
+    {
+      "id": "customer-owner-and-contact-readback",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customer-owner-and-contact-readback-1366-100.png"
+    },
+    {
+      "id": "customer-create-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "customer-create-pending-1366-125.png"
+    },
+    {
+      "id": "customer-owner-and-contact-readback",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "customer-owner-and-contact-readback-1366-125.png"
+    },
+    {
+      "id": "customer-create-pending",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "customer-create-pending-1440-100.png"
+    },
+    {
+      "id": "customer-owner-and-contact-readback",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "customer-owner-and-contact-readback-1440-100.png"
+    },
+    {
+      "id": "customer-create-pending",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "customer-create-pending-1440-125.png"
+    },
+    {
+      "id": "customer-owner-and-contact-readback",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "customer-owner-and-contact-readback-1440-125.png"
+    },
+    {
+      "id": "customer-create-pending",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "customer-create-pending-390-100.png"
+    },
+    {
+      "id": "customer-owner-and-contact-readback",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "customer-owner-and-contact-readback-390-100.png"
+    },
+    {
+      "id": "customer-create-pending",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "customer-create-pending-390-125.png"
+    },
+    {
+      "id": "customer-owner-and-contact-readback",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "customer-owner-and-contact-readback-390-125.png"
+    }
+  ]
+}

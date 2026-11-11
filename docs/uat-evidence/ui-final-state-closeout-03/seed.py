@@ -130,4 +130,13 @@ if os.environ.get("CLOSEOUT_SALE_RETURN") == "1":
         sku=skus[0], quantity=25, warehouse="默认仓",
     )
     fixture.update(order=order.pk, order_no=order.order_no, sku_code=skus[0].sku)
+if os.environ.get("CLOSEOUT_CUSTOMER_CONTACT") == "1":
+    from django.contrib.auth import get_user_model
+    from crm.models import EmployeeProfile, OrganizationUnit, Position
+
+    unit = OrganizationUnit.objects.create(name="合成业务部", code="EVID-CLOSEOUT-UNIT")
+    position = Position.objects.create(name="合成业务员", code="EVID-CLOSEOUT-POSITION", unit=unit)
+    user = get_user_model().objects.create_user(username="synthetic-closeout-owner", is_active=False)
+    owner = EmployeeProfile.objects.create(user=user, unit=unit, position=position, display_name="合成负责人")
+    fixture["owner"] = owner.pk
 print(json.dumps(fixture))

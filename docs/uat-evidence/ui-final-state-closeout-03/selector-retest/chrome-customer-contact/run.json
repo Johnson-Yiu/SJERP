@@ -1,0 +1,6 @@
+{
+  "source": "d65aca7a5e832a3108e19c1c63e5a5e548ee8542",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [],
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('dialog', { name: '新建客户' }).locator('.field').filter({ has: getByRole('dialog', { name: '新建客户' }).getByText('负责人', { exact: true }) }).locator('select').locator('option').filter({ hasText: '合成负责人 · 合成业务部' })\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\nTimeout:  30000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByRole('dialog', { name: '新建客户' }).locator('.field').filter({ has: getByRole('dialog', { name: '新建客户' }).getByText('负责人', { exact: true }) }).locator('select').locator('option').filter({ hasText: '合成负责人 · 合成业务部' }) with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '新建客户' }).locator('.field').filter({ has: getByRole('dialog', { name: '新建客户' }).getByText('负责人', { exact: true }) }).locator('select').locator('option').filter({ hasText: '合成负责人 · 合成业务部' })\u001b[22m\n\u001b[2m    62 × locator resolved to 0 elements\u001b[22m\n\u001b[2m       - unexpected value \"0\"\u001b[22m\n"
+}

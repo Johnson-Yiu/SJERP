@@ -1,6 +1,5 @@
 {
-  "testedSource": "387d2f7e0c2cc0ba6efc0096272ef349d3525f5d",
-  "sourceNote": "Chrome was started from this working tree before the commit. The tested spec matches the committed spec.",
+  "sourceNote": "Initial passing rerun used bundled Chromium. The explicit Chrome-channel rerun repeated all eight cases.",
   "cases": [
     {
       "a3Title": "cash event UI previews, registers, and confirms without changing receipt flows",
@@ -154,5 +153,15 @@
         "passed"
       ]
     }
-  ]
+  ],
+  "chromiumSource": "387d2f7e0c2cc0ba6efc0096272ef349d3525f5d",
+  "chromeSource": "8b1cdd42481f37debe41d6d75cd8aa50d4b53edb",
+  "chromeStats": {
+    "startTime": "2026-11-11T05:41:53.608Z",
+    "duration": 47412.623999999996,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
 }

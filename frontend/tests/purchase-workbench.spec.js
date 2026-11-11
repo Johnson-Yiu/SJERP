@@ -6,7 +6,11 @@ import { purchaseArrival, purchaseTasks, receiptProgress } from '../src/utils/pu
 const item = { id: 71, sku: 3, sku_code: 'SKU-3', display_name: '测试灯', quantity: '10', received_quantity: '4', remaining_quantity: '6', unit_price: '2', supplier_name: '历史供应商', supplier_model: 'MODEL-A', supplier_sku_code: 'SOURCE-A', supplier_characteristics_snapshot: { 色温: '3000K' }, trade_snapshot: { base_unit: 'pcs' }, receipts: [{ id: 91, receipt_date: '2026-10-01', quantity: '4', unit_cost: '2', overage_summary: '赠品 1 件' }, { id: 92, receipt_date: '2026-10-02', quantity: '1', unit_cost: '2', reversed_at: '2026-10-03' }] }
 const purchase = { id: 41, purchase_no: 'PO-41', supplier_name: '供应商甲', supplier_name_snapshot: '供应商甲', order_date: '2026-10-01', expected_arrival_date: '2026-10-08', status: 'partial', status_display: '部分到货', currency: 'USD', total_amount: '20', paid_amount: '4', unpaid_amount: '16', items: [item], related_orders: [{ id: 22, order_no: 'SO-22', customer_name: '客户乙' }] }
 const mountDetail = overrides => mount(PurchaseDetailModal, { props: { purchase: { ...purchase, ...overrides } }, global: { stubs: { ContractAmountAdjustments: true, RouterLink: { props: ['to'], template: '<a :href="`/orders?detail=${to.query.detail}`"><slot /></a>' } } } })
-const click = async (wrapper, label) => wrapper.findAll('button').find(button => button.text() === label).trigger('click')
+const click = async (wrapper, label) => {
+  const button = wrapper.findAll('button').find(candidate => candidate.text() === label)
+  await button.trigger('click')
+  return button.element
+}
 
 describe('purchase workbench Phase A', () => {
   it('formats receipt cost without changing raw precision, quantity or reversal targets', async () => {
@@ -20,8 +24,8 @@ describe('purchase workbench Phase A', () => {
     expect(history).not.toContain('6.500000000000')
     expect(history).toContain('赠品 1 件')
     expect(wrapper.text()).toContain('已冲销')
-    await click(wrapper, '验货入库')
-    expect(wrapper.emitted('receive')[0]).toEqual([original, receiptItem])
+    const trigger = await click(wrapper, '验货入库')
+    expect(wrapper.emitted('receive')[0]).toEqual([original, receiptItem, trigger])
     await click(wrapper, '冲销')
     expect(wrapper.emitted('reverse-receipt')[0]).toEqual([original, receiptItem, receipt])
     expect(receipt.unit_cost).toBe('6.500000000000')
@@ -57,8 +61,8 @@ describe('purchase workbench Phase A', () => {
   it('switches todo to receipt and preserves exact receipt and reversal targets', async () => {
     const wrapper = mountDetail()
     await click(wrapper, '查看收货')
-    await click(wrapper, '验货入库')
-    expect(wrapper.emitted('receive')[0]).toEqual([purchase,item])
+    const trigger = await click(wrapper, '验货入库')
+    expect(wrapper.emitted('receive')[0]).toEqual([purchase, item, trigger])
     expect(wrapper.text()).toContain('赠品 1 件')
     expect(wrapper.text()).toContain('已冲销')
     expect(wrapper.findAll('.receipt-history-row button')).toHaveLength(1)

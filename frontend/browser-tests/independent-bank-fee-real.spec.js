@@ -102,10 +102,23 @@ for (const [index, width] of [1440, 390].entries()) {
     expect(registeredResponse.request().postDataJSON().request_key).toBe(previewPayload.request_key)
     const created = await registeredResponse.json()
     expect(created.fee_for).toBeNull()
-    await expect(page.getByRole('button', { name: '确认银行凭证' })).toBeDisabled()
-    await page.getByRole('checkbox', { name: /我已核对银行凭证/ }).check()
-    await page.getByRole('button', { name: '确认银行凭证' }).click()
-    await expect(page.locator('.review-banner')).toContainText('已确认')
+    await expect(page.locator('.cash-row').filter({ hasText: created.event_no })).toContainText('待确认')
+    const confirm = page.getByRole('button', { name: '确认银行凭证', exact: true })
+    const checked = page.getByRole('checkbox', { name: /我已核对银行凭证/ })
+    await expect(confirm).toBeDisabled()
+    await checked.check()
+    await expect(checked).toBeChecked()
+    const confirmation = page.waitForResponse(r =>
+      new URL(r.url()).pathname === '/api/rmb-cash-events/' + created.id + '/confirm/' && r.request().method() === 'POST',
+      { timeout: 15000 })
+    try {
+      await confirm.click()
+      expect((await confirmation).status()).toBe(200)
+      await expect(page.locator('.review-banner')).toContainText('已确认')
+    } catch (error) {
+      await page.screenshot({ path: path.join(evidence, 'screenshots', 'confirmation-not-completed-' + width + '.png') })
+      throw error
+    }
     const proofWidth = await page.locator('.private-bank-proof').evaluate(el => ({ content: el.scrollWidth, width: el.clientWidth }))
     expect(proofWidth.content).toBeLessThanOrEqual(proofWidth.width)
     await page.locator('.review-banner').scrollIntoViewIfNeeded()

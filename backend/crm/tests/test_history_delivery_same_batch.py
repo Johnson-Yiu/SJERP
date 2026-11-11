@@ -37,7 +37,8 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
         for sheet in ('销售明细','采购明细','履约记录','库存盘点'):
             for row in rows[sheet]: row['sku_code'] = ''
         rows['销售明细'][0]['specification_snapshot'] = '24W'
-        rows['采购明细'][0]['specification_snapshot'] = '24W'
+        rows['采购明细'][0]['specification_snapshot'] = '18W'
+        rows['采购明细'][0]['sku_name_snapshot'] = rows['销售明细'][0]['sku_name_snapshot']
         completed = dict(rows['销售订单'][0], source_record_id='SO-HT-DONE', order_no='HIST-SO-HT-DONE', lifecycle_state='completed')
         done_line = dict(rows['销售明细'][0], source_order_id='SO-HT-DONE', source_line_id='1')
         done_event = dict(rows['履约记录'][0], source_event_id='SHIP-HT-DONE', parent_source_id='SO-HT-DONE', quantity_base='10.00')
@@ -104,10 +105,15 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
         sku = SKU.objects.create(product=self.product, sku='B', display_name_cn='合成正式商品 B', specification='24W', unit='pcs')
         ids = list(group.source_records.filter(record_type__in=['销售明细','采购明细']).values_list('pk',flat=True))
         preview = self.client.post('/api/import/history-products/preview/', {'ids':ids,'target':sku.pk,'operation':'link','reason':'核对合成规格'}, format='json')
+        self.assertEqual(preview.status_code,409,preview.data)
+        self.assertEqual(len(preview.data['conflicts']), 1)
+        conflict_preview = preview.data
+        sales_ids = list(group.source_records.filter(record_type='销售明细').values_list('pk', flat=True))
+        preview = self.client.post('/api/import/history-products/preview/', {'ids':sales_ids,'target':sku.pk,'operation':'link','reason':'核对合成规格'}, format='json')
         self.assertEqual(preview.status_code,200,preview.data)
         linked = self.client.post('/api/import/history-products/apply/', {'token':preview.data['token']}, format='json')
         self.assertEqual(linked.status_code,200,linked.data)
-        self.assertEqual(HistoryProductLink.objects.filter(sku=sku).count(),3)
+        self.assertEqual(HistoryProductLink.objects.filter(sku=sku).count(),2)
         self.assertEqual(SKU.objects.count(),1)
         self.assertEqual(sum(m.objects.count() for m in (Transaction,FinanceFact,InventoryMovement,Shipment,GoodsReceipt)),0)
         with CaptureQueriesContext(connection) as queries:
@@ -115,7 +121,8 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertTrue(all(q['sql'].lstrip().upper().startswith('SELECT') for q in queries))
         self.assertEqual(before_finance['groups'][0]['order_count'], 3)
         self.assertEqual(before_finance['groups'][0]['product_count'], 3)
-        self.assertEqual(before_finance['groups'][0]['product_states']['linked'], 3)
+        self.assertEqual(before_finance['groups'][0]['product_states']['linked'], 2)
+        self.assertEqual(before_finance['groups'][0]['product_states']['pending'], 1)
         self.assertEqual(before_finance['groups'][0]['cny_finance_facts'], [])
         maker = get_user_model().objects.create_superuser(username='delivery-maker',password='test-only')
         reviewer = get_user_model().objects.create_superuser(username='delivery-reviewer',password='test-only')
@@ -152,5 +159,5 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
             self.assertTrue(all(row['record_id'] for row in report['groups'][0]['source_rows']))
             if os.environ.get('HISTORY_DELIVERY_SYNTHETIC_REPORT'):
                 with open(os.environ['HISTORY_DELIVERY_SYNTHETIC_REPORT'], 'w', encoding='utf-8') as output:
-                    json.dump({'customer_csv_sha256': hashlib.sha256(content).hexdigest(), 'baseline_counts': baseline, 'after_archive': after_archive, 'after_link': before_finance, 'after_finance': report}, output, cls=DjangoJSONEncoder, ensure_ascii=False, indent=2)
+                    json.dump({'customer_csv_sha256': hashlib.sha256(content).hexdigest(), 'conflict_preview': conflict_preview, 'baseline_counts': baseline, 'after_archive': after_archive, 'after_link': before_finance, 'after_finance': report}, output, cls=DjangoJSONEncoder, ensure_ascii=False, indent=2)
             self.assertEqual(sum(m.objects.count() for m in (Transaction,InventoryMovement,Shipment,GoodsReceipt)),0)

@@ -14,7 +14,7 @@ from test_support.isolated_runtime import verify_isolated_runtime
 verify_isolated_runtime(settings=settings, database_must_exist=True)
 
 from crm.models import (
-    CategoryAttribute, Contact, Customer, FollowUp, HSCode, InventoryMovement, Order, PackagingTemplate, Product,
+    CategoryAttribute, Contact, Customer, FollowUp, HSCode, InventoryMovement, Order, OrderItem, PackagingTemplate, Product,
     ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder,
     PurchaseOrderItem, SKU, SKUPackagingProfile, SKUTradeUnit, Supplier, SupplierSKU,
 )
@@ -122,4 +122,12 @@ if os.environ.get("PRODUCT_OPS_LOTS") == "1" or os.environ.get("CLOSEOUT_CONTACT
             customer=company, contact_id=fixture["closeout_contact"],
             followed_at=timezone.now(), subject="合成跟进回看", content="合成内容",
         ).id
+if os.environ.get("CLOSEOUT_SALE_RETURN") == "1":
+    order = Order.objects.get(order_no="EVID-SO-001")
+    OrderItem.objects.create(order=order, sku=skus[0], sku_code_snapshot=skus[0].sku, quantity=5, unit_price="10")
+    InventoryMovement.objects.create(
+        movement_no="EVID-SALE-STOCK", movement_date=date.today(), type="other_in",
+        sku=skus[0], quantity=25, warehouse="默认仓",
+    )
+    fixture.update(order=order.pk, order_no=order.order_no, sku_code=skus[0].sku)
 print(json.dumps(fixture))

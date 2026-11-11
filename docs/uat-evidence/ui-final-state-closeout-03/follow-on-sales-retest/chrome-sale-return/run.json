@@ -1,0 +1,90 @@
+{
+  "source": "e8096616bf227ed242cf837a78fb87fd0736b87c",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "sales-out",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "sales-out-1366-100.png"
+    },
+    {
+      "id": "customer-return",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customer-return-1366-100.png"
+    },
+    {
+      "id": "sales-out",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "sales-out-1366-125.png"
+    },
+    {
+      "id": "customer-return",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "customer-return-1366-125.png"
+    },
+    {
+      "id": "sales-out",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "sales-out-1440-100.png"
+    },
+    {
+      "id": "customer-return",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "customer-return-1440-100.png"
+    },
+    {
+      "id": "sales-out",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "sales-out-1440-125.png"
+    },
+    {
+      "id": "customer-return",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "customer-return-1440-125.png"
+    },
+    {
+      "id": "sales-out",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "sales-out-390-100.png"
+    },
+    {
+      "id": "customer-return",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "customer-return-390-100.png"
+    },
+    {
+      "id": "sales-out",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "sales-out-390-125.png"
+    },
+    {
+      "id": "customer-return",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "customer-return-390-125.png"
+    }
+  ]
+}

@@ -11,7 +11,8 @@ test("startup applies migrations before it starts Django", async () => {
   assert.ok(managePathAt >= 0, "migration must use backend/manage.py");
   assert.ok(migrateAt >= 0, "startup script must run migrations");
   assert.ok(migrateAt < serverAt, "migrations must complete before Django starts");
-  assert.ok(source.indexOf("A demo port is occupied") < migrateAt, "occupied ports must be refused before migrations");
+  const portGuardAt = source.indexOf("A demo port is occupied");
+  assert.ok(portGuardAt >= 0 && portGuardAt < migrateAt, "occupied ports must be refused before migrations");
   assert.doesNotMatch(source, /taskkill|Stop-Process/i, "the demo launcher must leave other instances alone");
   assert.match(source, /function Wait-ForBackendHealth/, "startup must verify that the API responds, not only that a port is open");
   assert.doesNotMatch(source, /runserver[^\n]*--noreload/, "Django reload must remain enabled for backend changes");

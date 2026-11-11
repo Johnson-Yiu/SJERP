@@ -11,7 +11,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
   const output = path.resolve(process.env.E1_R2_EVIDENCE_DIR)
   const extension = process.env.E1_R2_EXTRA || ''
   const widthFilter = process.env.E1_R2_WIDTH
-  expect(['', '1', '2', '3', '4']).toContain(extension)
+  expect(['', '1', '2', '3', '4', '5', '6', '7']).toContain(extension)
   if (widthFilter) expect(viewports.map(([width]) => String(width))).toContain(widthFilter)
   const core = !extension || extension === '1'
   await mkdir(output, { recursive: true })
@@ -346,6 +346,130 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       await expect(editor.locator('.packing-table-wrap tbody tr')).toHaveCount(2)
       results.push({ key: 'quote-trade-unit-reopened-http', quoteStatus: 201, packagingStatus: 200, cartons: 2, baseQuantity: 10 })
       await save()
+    })
+
+    if (extension === '5') await scenario('trade-shipment-packing-variance', async () => {
+      const orderRoute = '/orders?detail=' + fixture.order
+      const orderAction = suffix => r => r.url().endsWith('/api/orders/' + fixture.order + '/' + suffix + '/') && r.request().method() === 'POST'
+      await go(orderRoute)
+      await button('确认订单').click()
+      const confirmed = page.waitForResponse(orderAction('confirm'))
+      await page.getByTestId('dialog-confirm').click()
+      expect((await confirmed).status()).toBe(200)
+      await go(orderRoute + '&tab=fulfillment')
+      const orderLine = page.getByRole('row').filter({ hasText: 'SYNTH-SALES-SKU-001' })
+      await orderLine.getByRole('button', { name: '确认发货', exact: true }).click()
+      const shipment = page.getByRole('dialog', { name: '确认发货' })
+      const line = shipment.locator('.shipment-batch-line').filter({ hasText: 'SYNTH-SALES-SKU-001' })
+      await expect(shipment.getByText('已选 1 条明细', { exact: true })).toBeVisible()
+      await line.getByLabel('交易单位与包装规格').selectOption(String(fixture.tradeUnit))
+      await line.getByRole('spinbutton', { name: /^发货数量/ }).fill('3')
+      await expect(line.getByText(/交易数量 3 箱，折合 15 pcs/)).toBeVisible()
+      await line.getByLabel(/^超发原因/).selectOption('packing_variance')
+      await collect('trade-shipment-packing-variance', async result => {
+        noPageOverflow(result)
+        await expect(line.getByLabel(/^超发原因/)).toHaveValue('packing_variance')
+      })
+      await shipment.getByRole('button', { name: '确认发货', exact: true }).click()
+      await expect(page.getByText('确认批量超发', { exact: true })).toBeVisible()
+      const shipped = page.waitForResponse(orderAction('ship'))
+      await page.getByTestId('dialog-confirm').click()
+      const response = await shipped
+      expect(response.status(), await response.text()).toBe(201)
+      const shipmentId = (await response.json()).id
+      const stored = await page.request.get('/api/orders/' + fixture.order + '/fulfillment/')
+      expect(stored.status()).toBe(200)
+      const shipmentRecord = (await stored.json()).shipments.find(row => row.id === shipmentId)
+      expect(shipmentRecord.has_overage).toBe(true)
+      expect(shipmentRecord.items.reduce((sum, item) => sum + Number(item.quantity), 0)).toBe(15)
+      expect(shipmentRecord.items.filter(item => item.is_overage).reduce((sum, item) => sum + Number(item.quantity), 0)).toBe(5)
+      await go(orderRoute + '&tab=packing')
+      const card = page.locator('.actual-shipment-card').first()
+      await card.getByRole('button', { name: '新增箱', exact: true }).click()
+      const packing = page.getByRole('dialog', { name: /^新增实际装箱记录/ })
+      await packing.getByLabel('SKU 1', { exact: true }).selectOption({ index: 1 })
+      const quantity = packing.getByLabel('实际装箱数量 1')
+      const packingRequest = r => /\/api\/shipments\/\d+\/packages\/$/.test(r.url()) && r.request().method() === 'POST'
+      async function submitPacking(value, status) {
+        await quantity.fill(value)
+        const submitted = page.waitForResponse(packingRequest)
+        await packing.getByRole('button', { name: '保存实际装箱' }).click()
+        const reply = await submitted
+        expect(reply.status(), await reply.text()).toBe(status)
+      }
+      await submitPacking('1', 400)
+      await expect(packing.getByRole('alert')).toContainText('整数倍')
+      await collect('packing-indivisible-unit', async result => {
+        noPageOverflow(result)
+        await expect(packing.getByRole('alert')).toContainText('整数倍')
+      })
+      await submitPacking('100', 400)
+      await expect(packing.getByRole('alert')).toContainText('累计装箱数量不能超过')
+      await collect('packing-over-quantity', async result => {
+        noPageOverflow(result)
+        await expect(packing.getByRole('alert')).toContainText('累计装箱数量不能超过')
+      })
+      await submitPacking('5', 201)
+      await go(orderRoute + '&tab=packing')
+      await expect(card.locator('.actual-carton-card')).toHaveCount(1)
+      results.push({ key: 'trade-shipment-packing-http', shipment: 201, indivisible: 400, overpack: 400, retry: 201 })
+      await save()
+    })
+
+    if (extension === '6') await scenario('customer-related-quote-child', async () => {
+      await go('/customers?detail=' + fixture.customer)
+      const detail = page.getByRole('dialog', { name: '客户详情' })
+      const quoteTab = detail.locator('.detail-tabs').getByRole('button', { name: /报价/ })
+      await quoteTab.click()
+      const openQuote = detail.getByRole('button', { name: '新建报价', exact: true })
+      await openQuote.click()
+      const editor = page.getByRole('form', { name: '报价编辑器' })
+      const customer = editor.locator('select[required]').first()
+      await expect(customer).toHaveValue(String(fixture.customer))
+      await expect(customer).toBeDisabled()
+      await collect('customer-related-quote-inherited', async result => {
+        noPageOverflow(result)
+        await expect(customer).toHaveValue(String(fixture.customer))
+      })
+      await editor.getByRole('button', { name: '取消', exact: true }).click()
+      await expect(editor).toHaveCount(0)
+      await expect(quoteTab).toHaveClass(/active/)
+      await openQuote.click()
+      await editor.locator('.sku-picker-options label').filter({ hasText: 'SYNTH-SALES-SKU-001' }).getByRole('checkbox').check()
+      const created = page.waitForResponse(r => r.url().endsWith('/api/quotes/') && r.request().method() === 'POST')
+      await editor.getByRole('button', { name: '保存报价', exact: true }).click()
+      const response = await created
+      const data = await response.json()
+      expect(response.status(), JSON.stringify(data)).toBe(201)
+      expect(data.customer).toBe(fixture.customer)
+      await expect(editor).toHaveCount(0)
+      await expect(quoteTab).toHaveClass(/active/)
+      await expect(detail.getByText(data.quote_no, { exact: true })).toBeVisible()
+      await collect('customer-related-quote-return', async result => {
+        noPageOverflow(result)
+        await expect(detail.getByText(data.quote_no, { exact: true })).toBeVisible()
+      })
+      results.push({ key: 'customer-related-quote-http', status: 201, customer: fixture.customer, quote: data.quote_no })
+      await save()
+    })
+
+    if (extension === '7') await scenario('customer-detail-editor-stacking', async () => {
+      await go('/customers?detail=' + fixture.customer)
+      const detail = page.locator('.customer-detail-root')
+      await detail.getByRole('button', { name: '编辑客户', exact: true }).click()
+      const editor = page.getByRole('dialog', { name: '编辑客户' })
+      await expect(editor).toBeVisible()
+      await expect(detail.locator('..')).toHaveAttribute('inert', '')
+      await collect('customer-detail-editor-pointer', async result => {
+        noPageOverflow(result)
+        await editor.getByRole('button', { name: '取消', exact: true }).click({ trial: true })
+        await editor.getByRole('button', { name: '保存客户', exact: true }).click({ trial: true })
+      })
+      await page.setViewportSize({ width: 390, height: 844 })
+      await editor.getByRole('button', { name: '取消', exact: true }).click()
+      await expect(editor).toHaveCount(0)
+      await expect(page.getByRole('dialog', { name: '客户详情' })).toBeVisible()
+      await expect(detail.locator('..')).not.toHaveAttribute('inert', '')
     })
 
     if (core) await scenario('follow-up-attachment-retry', async () => {

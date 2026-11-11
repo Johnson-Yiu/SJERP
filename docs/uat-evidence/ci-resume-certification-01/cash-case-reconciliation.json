@@ -1,0 +1,158 @@
+{
+  "testedSource": "387d2f7e0c2cc0ba6efc0096272ef349d3525f5d",
+  "sourceNote": "Chrome was started from this working tree before the commit. The tested spec matches the committed spec.",
+  "cases": [
+    {
+      "a3Title": "cash event UI previews, registers, and confirms without changing receipt flows",
+      "a3Attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ],
+      "a3FinalTargeted": "passed",
+      "currentTitle": "cash event UI previews, registers, and confirms without changing receipt flows",
+      "currentChrome": [
+        "passed"
+      ]
+    },
+    {
+      "a3Title": "source verification is explicit and any fact change invalidates the preview",
+      "a3Attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ],
+      "a3FinalTargeted": "passed",
+      "currentTitle": "source verification is explicit and any fact change invalidates the preview",
+      "currentChrome": [
+        "passed"
+      ]
+    },
+    {
+      "a3Title": "refresh retains the stable request identity without persisting financial inputs",
+      "a3Attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ],
+      "a3FinalTargeted": "failed",
+      "currentTitle": "refresh discards unsubmitted financial inputs and creates no pending registration",
+      "currentChrome": [
+        "passed"
+      ]
+    },
+    {
+      "a3Title": "in-memory draft survives task switches and explicit abandon clears only after confirmation",
+      "a3Attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ],
+      "a3FinalTargeted": "passed",
+      "currentTitle": "in-memory draft survives task switches and explicit abandon clears only after confirmation",
+      "currentChrome": [
+        "passed"
+      ]
+    },
+    {
+      "a3Title": "changing a 30 allocation to 50 clears verification and requires a fresh preview",
+      "a3Attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ],
+      "a3FinalTargeted": "passed",
+      "currentTitle": "changing a 30 allocation to 50 clears verification and requires a fresh preview",
+      "currentChrome": [
+        "passed"
+      ]
+    },
+    {
+      "a3Title": "expired local draft is removed during page initialization and sensitive evidence is not persisted",
+      "a3Attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: expect(received).toBeNull()",
+            "Received: \"{\\\"saved_at\\\":1794243435134,\\\"form\\\":{\\\"request_key\\\":\\\"EXPIRED-REQUEST\\\",\\\"evidence_sha256\\\":\\\"secret-hash\\\",\\\"evidence_note\\\":\\\"private note\\\"},\\\"allocations\\\":[]}\""
+          ]
+        }
+      ],
+      "a3FinalTargeted": "failed",
+      "currentTitle": "expired legacy draft remains isolated and new unsubmitted evidence is not persisted",
+      "currentChrome": [
+        "passed"
+      ]
+    },
+    {
+      "a3Title": "legacy unscoped financial inputs are removed and never restored into a workspace",
+      "a3Attempts": [
+        {
+          "status": "FAILED",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Error: expect(locator).toBeVisible() failed",
+            "Locator: getByText('旧版浏览器草稿已清理')",
+            "Expected: visible",
+            "Timeout: 15000ms",
+            "Error: element(s) not found",
+            "Call log:",
+            "- Expect \"toBeVisible\" getByText('旧版浏览器草稿已清理') with timeout 15000ms",
+            "- waiting for getByText('旧版浏览器草稿已清理')"
+          ]
+        }
+      ],
+      "a3FinalTargeted": "failed",
+      "currentTitle": "legacy unscoped financial inputs remain available for reconciliation without restoring into a workspace",
+      "currentChrome": [
+        "passed"
+      ]
+    },
+    {
+      "a3Title": "stale source responses cannot overwrite the current currency",
+      "a3Attempts": [
+        {
+          "status": "TIMEDOUT",
+          "run": "4ab1dd1d-e1cc-44d3-8d03-3d45ab53b9ab",
+          "time": "2026-11-10T17:44:18.814Z",
+          "error": [
+            "Test timeout of 150000ms exceeded."
+          ]
+        }
+      ],
+      "a3FinalTargeted": "passed",
+      "currentTitle": "stale source responses cannot overwrite the current currency",
+      "currentChrome": [
+        "passed"
+      ]
+    }
+  ]
+}

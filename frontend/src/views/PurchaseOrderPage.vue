@@ -16,7 +16,7 @@ import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, baseQuantity, tradeLabel, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
 import PurchaseSupplierPicker from '../components/PurchaseSupplierPicker.vue'
-import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import { nextTick, computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Eye, PackagePlus, Plus, RefreshCw, Save, X } from 'lucide-vue-next'
 import { listData } from '../api'
@@ -134,15 +134,21 @@ const receiptForm = ref({})
 const receiptRemaining = computed(() => Number(receiptTarget.value?.item.remaining_quantity || 0) - baseQuantity(receiptForm.value))
 const receiptSuccess = ref(null)
 const reversalTarget = ref(null), reversalSaving = ref(false), reversalReason = ref('')
-function openReceipt(row, item) {
+function openReceipt(row, item, trigger) {
   if (!can('purchases', 'update')) return
-  receiptTarget.value = { row, item }
+  receiptTarget.value = { row, item, trigger }
   receiptSuccess.value = null
   notice.value = ''
   receiptForm.value = { purchase_item: item.id, receipt_date: new Date().toLocaleDateString('en-CA'), quantity: Math.max(0, Number(item.remaining_quantity)), unit_cost: item.unit_price, is_overage: false, overage_reason: '', notes: '', checked: false, specify_location: false, warehouse_type: '自有仓', warehouse: '', lot_reference: '' }
   if (item.trade_unit && Number(item.remaining_quantity) % Number(item.trade_snapshot.factor) === 0) Object.assign(receiptForm.value, { trade_unit: item.trade_unit, trade_snapshot: item.trade_snapshot, quantity: Number(item.remaining_quantity) / Number(item.trade_snapshot.factor), unit_cost: item.trade_unit_price })
   receiptForm.value.unit_cost = compactDecimalInput(receiptForm.value.unit_cost)
   error.value = ''
+}
+async function closeReceipt() {
+  const trigger = receiptTarget.value?.trigger
+  receiptTarget.value = null
+  await nextTick()
+  if (trigger?.isConnected) trigger.focus({ preventScroll: true })
 }
 async function submitReceipt() {
   if (receiptSaving.value || !receiptForm.value.checked || !can('purchases', 'update')) return
@@ -588,7 +594,7 @@ watch(() => route.query.detail, id => {
         <label class="receipt-check"><input v-model="receiptForm.specify_location" type="checkbox"> 指定入库仓库和批次</label>
         <template v-if="receiptForm.specify_location"><label>仓库类型<select v-model="receiptForm.warehouse_type"><option>自有仓</option><option>第三方仓</option></select></label><label>仓库<input v-model="receiptForm.warehouse" maxlength="100" required></label><label>批次或货位（无则留空）<input v-model="receiptForm.lot_reference" maxlength="160"></label></template>
         <p v-if="error" class="error" role="alert">{{ error }}</p>
-        <footer><small>保存后将立即更新：库存、订单预留、采购到货数量、在途数量。</small><div><button type="button" class="btn btn-secondary" :disabled="receiptSaving" @click="receiptTarget = null">取消</button><button class="btn btn-primary" :disabled="receiptSaving || !receiptForm.checked">{{ receiptSaving ? '保存中…' : '确认入库' }}</button></div></footer>
+        <footer><small>保存后将立即更新：库存、订单预留、采购到货数量、在途数量。</small><div><button type="button" class="btn btn-secondary" :disabled="receiptSaving" @click="closeReceipt">取消</button><button class="btn btn-primary" :disabled="receiptSaving || !receiptForm.checked">{{ receiptSaving ? '保存中…' : '确认入库' }}</button></div></footer>
       </form>
     </div>
     <div v-if="reversalTarget && can('purchases', 'update')" class="receipt-mask"><form class="receipt-dialog" role="dialog" aria-modal="true" aria-label="冲销采购入库" @submit.prevent="submitReceiptReversal"><h3>冲销采购入库</h3><p>{{ reversalTarget.row.purchase_no }} · {{ reversalTarget.item.sku_code }} / {{ reversalTarget.item.display_name || '—' }} · 原入库 {{ reversalTarget.receipt.quantity }} {{ itemBaseUnit(reversalTarget.item) }}</p><p class="reversal-effect">冲销后原入库记录保留，库存、预留及到货数量会同步回退。</p><label>冲销原因 *<textarea v-model="reversalReason" maxlength="500" required placeholder="请填写冲销原因"></textarea></label><p v-if="error" class="error">{{ error }}</p><footer><button type="button" class="btn btn-secondary" :disabled="reversalSaving" @click="reversalTarget = null">取消</button><button class="receipt-danger" :disabled="reversalSaving || !reversalReason.trim()">{{ reversalSaving ? '提交中…' : '确认冲销' }}</button></footer></form></div>

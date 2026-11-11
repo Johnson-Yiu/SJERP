@@ -128,9 +128,9 @@ test('receipts preserve both units and destinations and inventory movements enfo
     await form.getByRole('button', { name: '取消', exact: true }).click()
     await expect(form).toHaveCount(0)
     await expect(receiptTrigger).toBeEnabled()
-    const focusReturned = await receiptTrigger.evaluate(element => element === document.activeElement)
+    await expect(receiptTrigger).toBeFocused()
     await receiptTrigger.scrollIntoViewIfNeeded()
-    await snap('purchase-receipt-validation-cancelled', { focusReturned })
+    await snap('purchase-receipt-validation-cancelled', { focusReturned: true })
 
     for (const [index, type, warehouse, lot, unitName] of [
       [1, '自有仓', '合成收货甲仓', 'EVID-RECEIPT-MULTI-A', '10 件／箱'],

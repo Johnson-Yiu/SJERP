@@ -58,7 +58,27 @@ it('automatic parameter abbreviations keep genuine unsaved parameter input prote
 it('SKU pending save blocks close/navigation and submits once, then closes on success',async()=>{await create();const pending=gate();m.api.post.mockReturnValue(pending.promise);const saving=wrapper.vm.save();await flushPromises();await wrapper.vm.closeModal();await router.push('/products');expect(router.currentRoute.value.path).toBe('/skus');expect(wrapper.vm.modalOpen).toBe(true);await wrapper.vm.save();expect(m.api.post).toHaveBeenCalledTimes(1);pending.resolve({data:[{id:1},{id:2}]});await saving;await flushPromises();expect(wrapper.vm.modalOpen).toBe(false);expect(wrapper.emitted('saved')).toHaveLength(1)})
 it('atomic batch rejection keeps all parameters and selection for retry',async()=>{await create();m.api.post.mockRejectedValueOnce(new Error('第三个组合校验失败'));await wrapper.vm.save();expect(wrapper.vm.modalOpen).toBe(true);expect(wrapper.vm.parameterValues['1:power']).toBe('10\n20');expect(wrapper.vm.saveError).toContain('创建 SKU 失败');expect(wrapper.emitted('saved')).toBeUndefined();m.api.post.mockResolvedValueOnce({data:[{id:1},{id:2}]});await wrapper.vm.save();expect(wrapper.emitted('saved')).toHaveLength(1)})
 it('parameter search retains hidden inputs and duplicate/required values block request',async()=>{await create();wrapper.vm.parameterSearch='不存在';await flushPromises();expect(wrapper.vm.visibleCategoryGroups).toHaveLength(0);expect(wrapper.vm.chosenPreviews).toHaveLength(2);wrapper.vm.parameterValues['1:power']='10\n10';await flushPromises();await wrapper.vm.save();expect(wrapper.vm.saveError).toContain('重复');expect(m.api.post).not.toHaveBeenCalled();wrapper.vm.parameterValues['1:power']='';await flushPromises();await wrapper.vm.save();expect(wrapper.vm.toast.text).toContain('必填参数');expect(m.api.post).not.toHaveBeenCalled()})
-it('image failure reports database success and retries image only',async()=>{await create();wrapper.vm.selectedImage=new File(['image'],'test.jpg',{type:'image/jpeg'});m.api.post.mockImplementation(async url=>{if(url==='/skus/batch-create/')return{data:[{id:1},{id:2}]};throw new Error('图片失败')});await wrapper.vm.save();expect(wrapper.vm.modalOpen).toBe(true);expect(wrapper.vm.pendingImageSkuIds).toEqual([1,2]);expect(wrapper.vm.toast.text).toContain('SKU 已创建，但图片上传失败');m.api.post.mockResolvedValue({data:{}});await wrapper.vm.save();expect(m.api.post.mock.calls.filter(([url])=>url==='/skus/batch-create/')).toHaveLength(1);expect(wrapper.vm.modalOpen).toBe(false)})
+it('batch image retry uploads only failed images and does not recreate SKUs', async () => {
+  await create()
+  wrapper.vm.selectedImage = new File(['image'], 'test.jpg', { type: 'image/jpeg' })
+  m.api.post.mockImplementation(async url => {
+    if (url === '/skus/batch-create/') return { data: [{ id: 1 }, { id: 2 }] }
+    if (url === '/skus/2/image/') throw new Error('图片失败')
+    return { data: {} }
+  })
+  await wrapper.vm.save()
+  expect(wrapper.vm.modalOpen).toBe(true)
+  expect(wrapper.vm.pendingImageSkuIds).toEqual([2])
+  expect(wrapper.get('[role="alert"]').text()).toContain('SKU 已创建，图片上传失败。请重试。')
+  expect(wrapper.vm.toast.text).toBe('')
+  m.api.post.mockResolvedValue({ data: {} })
+  await wrapper.vm.save()
+  const requests = m.api.post.mock.calls.map(([url]) => url)
+  expect(requests.filter(url => url === '/skus/batch-create/')).toHaveLength(1)
+  expect(requests.filter(url => url === '/skus/1/image/')).toHaveLength(1)
+  expect(requests.filter(url => url === '/skus/2/image/')).toHaveLength(2)
+  expect(wrapper.vm.modalOpen).toBe(false)
+})
 it('supplier source request keeps input on failure and blocks closing/duplicate submission',async()=>{await create();wrapper.vm.editingId=7;await wrapper.vm.openSupplierSourceCreate();Object.assign(wrapper.vm.supplierSourceForm,{supplier:1,supplier_sku_code:'GA-01',supplier_model:'保留型号'});const pending=gate();m.api.post.mockReturnValue(pending.promise);const operation=wrapper.vm.saveSupplierSource();await flushPromises();await wrapper.vm.requestSupplierSourceClose();await wrapper.vm.saveSupplierSource();expect(wrapper.vm.supplierSourceDialogOpen).toBe(true);expect(m.api.post).toHaveBeenCalledTimes(1);pending.reject(new Error('重复来源'));await operation;expect(wrapper.vm.supplierSourceForm.supplier_model).toBe('保留型号');expect(wrapper.vm.supplierSourceError).toContain('重复来源')})
 it('batch candidate failure preserves selection and busy close is blocked',async()=>{await open(SupplierBatchBindingDrawer);wrapper.vm.selected=[1];const pending=gate();m.api.post.mockReturnValue(pending.promise);const operation=wrapper.vm.save();await flushPromises();await wrapper.vm.requestClose();await wrapper.vm.save();expect(wrapper.emitted('close')).toBeUndefined();expect(m.api.post).toHaveBeenCalledTimes(1);pending.reject(new Error('候选绑定失败'));await operation;expect(wrapper.vm.selected).toEqual([1]);expect(wrapper.vm.error).toContain('失败');m.api.post.mockResolvedValue({data:{}});await wrapper.vm.save();expect(wrapper.emitted('saved')).toHaveLength(1)})
 

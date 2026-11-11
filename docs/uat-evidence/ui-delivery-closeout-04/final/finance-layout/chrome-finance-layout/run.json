@@ -1,0 +1,6 @@
+{
+  "source": "f4531b883163db8fff26d67212e37e33792ae991",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [],
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('row').filter({ hasText: 'EVID-BANK-CLOSEOUT' })\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('row').filter({ hasText: 'EVID-BANK-CLOSEOUT' }) with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('row').filter({ hasText: 'EVID-BANK-CLOSEOUT' })\u001b[22m\n"
+}

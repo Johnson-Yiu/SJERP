@@ -1,0 +1,94 @@
+{
+  "source": "f4531b883163db8fff26d67212e37e33792ae991",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "png": "rmb-cash-events-1440-tail-action.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "metrics": {
+        "dpr": 1.25,
+        "width": 1152,
+        "documentWidth": 1152
+      }
+    },
+    {
+      "png": "rmb-cash-events-1440-detail.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "metrics": {
+        "dpr": 1.25,
+        "width": 1152,
+        "documentWidth": 1152
+      }
+    },
+    {
+      "png": "transactions-1440-tail-action.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "metrics": {
+        "dpr": 1.25,
+        "width": 1152,
+        "documentWidth": 1152
+      }
+    },
+    {
+      "png": "transactions-1440-detail.png",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "metrics": {
+        "dpr": 1.25,
+        "width": 1152,
+        "documentWidth": 1152
+      }
+    },
+    {
+      "png": "rmb-cash-events-390-tail-action.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "dpr": 1.25,
+        "width": 312,
+        "documentWidth": 312
+      }
+    },
+    {
+      "png": "rmb-cash-events-390-detail.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "dpr": 1.25,
+        "width": 312,
+        "documentWidth": 312
+      }
+    },
+    {
+      "png": "transactions-390-tail-action.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "dpr": 1.25,
+        "width": 312,
+        "documentWidth": 312
+      }
+    },
+    {
+      "png": "transactions-390-detail.png",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "dpr": 1.25,
+        "width": 312,
+        "documentWidth": 312
+      }
+    }
+  ]
+}

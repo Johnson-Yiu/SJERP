@@ -1,0 +1,48 @@
+{
+  "source": "6d63aeca2ebe825c3811cf736b4a3e0cef09346e",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "revision-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "revision-pending-1366-100.png"
+    },
+    {
+      "id": "revision-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "revision-pending-1366-125.png"
+    },
+    {
+      "id": "revision-pending",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "revision-pending-1440-100.png"
+    },
+    {
+      "id": "revision-pending",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "revision-pending-1440-125.png"
+    },
+    {
+      "id": "revision-pending",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "revision-pending-390-100.png"
+    },
+    {
+      "id": "revision-pending",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "revision-pending-390-125.png"
+    }
+  ]
+}

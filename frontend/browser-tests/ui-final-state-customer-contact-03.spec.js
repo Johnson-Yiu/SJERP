@@ -54,8 +54,17 @@ test('customer creation selects an employee and preserves nested contacts after 
           await save()
         }
         await go('/customers')
+        const ownerEndpoint = url => url.pathname === '/api/customers/owner-options/'
+        await page.route(ownerEndpoint, route => route.fulfill({ status: 400, json: { detail: '暂时无法读取人员资料' } }))
         await page.getByRole('button', { name: '新建客户', exact: true }).click()
         const editor = page.getByRole('dialog', { name: '新建客户' })
+        const ownerError = editor.getByRole('alert').filter({ hasText: '负责人资料加载失败' })
+        await expect(ownerError).toBeVisible()
+        await ownerError.scrollIntoViewIfNeeded()
+        await capture('customer-owner-options-failed')
+        await page.unroute(ownerEndpoint)
+        await ownerError.getByRole('button', { name: '重新加载', exact: true }).click()
+        await expect(ownerError).toHaveCount(0)
         const employee = editor.locator('.field').filter({ has: page.getByText('负责人', { exact: true }) }).locator('select')
         const name = '合成客户联系人分支-' + width + '-' + zoom * 100
         const contactName = '合成采购联系人'

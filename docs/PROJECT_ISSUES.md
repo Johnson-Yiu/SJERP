@@ -1,14 +1,14 @@
 # SUNJACK-ERP 项目问题台账
 
 > 2026-11-11 起恢复 GitHub Actions。2026-11-05 的暂停约定已失效。新提交正常推送，等待适用工作流结束并处理失败；认证核对最终源码 SHA。下方暂停、未运行及失败均为历史记录。
-> H2、E1-R2、E2-R2、H3、U3 已集成。冻结源码 `7e99a5d394ddc0d96a3af04b74686307f754ca08` 的三个主 CI job 和三个 Linux 运维 job 均通过。[逐例验收、跳过、导出和历史分支补测清单](uat-evidence/ci-resume-certification-01/README.md)
+> H2、E1-R2、E2-R2、H3 和 U3 主体已集成。U3 末两提交的测试与证据由 UI-DELIVERY-CLOSEOUT-04 补接。冻结源码 `7e99a5d394ddc0d96a3af04b74686307f754ca08` 的三个主 CI job 和三个 Linux 运维 job 均通过。[逐例验收、跳过、导出和历史分支补测清单](uat-evidence/ci-resume-certification-01/README.md)
 
 ## UI-DELIVERY-CLOSEOUT-04
 
 | Issue | 状态 | 证据与下一步 |
 | --- | --- | --- |
-| ISS-127 销售草稿被订单详情浮层拦截 | P2 / NEEDS_VERIFICATION | U3 在 390×844／100% 确认点击被浮层拦截。UI 包暂停背景详情。以六组真实保存、重试、未保存和焦点复验结果申请独立复审。 |
-| ISS-128 SKU 图片错误遮挡重试 | P2 / NEEDS_VERIFICATION | U3 在 390×844／125% 截图确认遮挡。UI 包改用表单内提示。以错误仍显示时的真实重试、无重复写入及重开证据申请独立复审。 |
+| ISS-127 销售草稿被订单详情浮层拦截 | P2 / FIXED_PENDING_REVIEW | U3 在 390×844／100% 确认点击被浮层拦截。UI 包暂停背景详情。以六组真实保存、重试、未保存和焦点复验结果申请独立复审。 |
+| ISS-128 SKU 图片错误遮挡重试 | P2 / FIXED_PENDING_REVIEW | U3 在 390×844／125% 截图确认遮挡。UI 包改用表单内提示。以错误仍显示时的真实重试、无重复写入及重开证据申请独立复审。 |
 
 本轮新增两个 Issue，关闭零项。既有状态未作关闭处理。[交付和证据](uat-evidence/ui-delivery-closeout-04/README.md)
 

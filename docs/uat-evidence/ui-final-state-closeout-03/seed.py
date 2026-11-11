@@ -139,4 +139,24 @@ if os.environ.get("CLOSEOUT_CUSTOMER_CONTACT") == "1":
     user = get_user_model().objects.create_user(username="synthetic-closeout-owner", is_active=False)
     owner = EmployeeProfile.objects.create(user=user, unit=unit, position=position, display_name="合成负责人")
     fixture["owner"] = owner.pk
+if os.environ.get("CLOSEOUT_FINANCE_LAYOUT") == "1":
+    from crm.models import CashSourceAllocation, RmbCashEvent, Transaction
+    from crm.services.cash_events import source_snapshot
+
+    source = Transaction.objects.create(
+        transaction_no="EVID-TRANSACTION-CLOSEOUT", transaction_date=date.today(),
+        direction="income", kind="other_income", category="合成其他收入", amount=100,
+        currency="CNY", status="confirmed",
+    )
+    event = RmbCashEvent.objects.create(
+        event_no="EVID-BANK-CLOSEOUT", request_key="evid-bank-closeout",
+        request_hash="a" * 64, request_payload={}, kind="cny_direct", currency="CNY",
+        amount=100, direction="income", bank_date=date.today(), bank_net_amount=100,
+        source_account="synthetic-source", rmb_account="synthetic-bank",
+        bank_reference="EVID-BANK-REF", created_actor={}, status="confirmed",
+        confirmed_at=timezone.now(),
+    )
+    CashSourceAllocation.objects.create(
+        event=event, source=source, amount=100, currency="CNY", source_snapshot=source_snapshot(source),
+    )
 print(json.dumps(fixture))

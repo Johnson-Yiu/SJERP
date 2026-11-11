@@ -54,18 +54,18 @@ test('customer creation selects an employee and preserves nested contacts after 
           await save()
         }
         const ownerEndpoint = url => url.pathname === '/api/customers/owner-options/'
-        await context.route(ownerEndpoint, route => route.fulfill({ status: 400, json: { detail: '暂时无法读取人员资料' } }))
         await go('/customers')
-        const rejectedOptions = page.waitForResponse(response =>
-          ownerEndpoint(new URL(response.url())) && response.status() === 400)
-        await page.getByRole('button', { name: '新建客户', exact: true }).click()
-        await rejectedOptions
+        const createCustomer = page.getByRole('button', { name: '新建客户', exact: true })
+        await expect(createCustomer).toBeVisible()
+        const rejectOwnerOptions = route => route.fulfill({ status: 400, json: { detail: '暂时无法读取人员资料' } })
+        await page.route(ownerEndpoint, rejectOwnerOptions)
+        await createCustomer.click()
         const editor = page.getByRole('dialog', { name: '新建客户' })
         const ownerError = editor.getByRole('alert').filter({ hasText: '负责人资料加载失败' })
         await expect(ownerError).toBeVisible()
         await ownerError.scrollIntoViewIfNeeded()
         await capture('customer-owner-options-failed')
-        await context.unroute(ownerEndpoint)
+        await page.unroute(ownerEndpoint, rejectOwnerOptions)
         const recoveredOptions = page.waitForResponse(response =>
           ownerEndpoint(new URL(response.url())) && response.ok())
         await ownerError.getByRole('button', { name: '重新加载', exact: true }).click()

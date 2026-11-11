@@ -52,19 +52,19 @@ test('sales and purchase drafts recover after a rejected save', async ({ baseURL
         await page.setViewportSize({ width, height })
         for (const [kind, resource, id, saveLabel] of drafts) {
           const detailPath = '/' + resource + '?detail=' + id + (kind === 'sales' ? '&tab=items' : '')
-          await go(detailPath)
           const editTrigger = page.getByRole('button', { name: '编辑草稿', exact: true })
           const editor = page.getByRole('dialog', { name: kind === 'sales' ? '编辑销售订单草稿' : '编辑采购草稿' })
           if (kind === 'purchase') {
             let release
             const held = new Promise(resolve => { release = resolve })
-            const options = url => url.pathname === '/api/supplier-skus/'
+            const options = url => url.pathname === '/api/supplier-skus/' && url.searchParams.has('sku') && url.searchParams.has('supplier')
             await page.route(options, async route => {
               await held
               await route.continue()
             }, { times: 1 })
-            const requested = page.waitForRequest(request => options(new URL(request.url())))
             try {
+              await go(detailPath)
+              const requested = page.waitForRequest(request => options(new URL(request.url())))
               await editTrigger.click()
               await requested
               await expect(editor).toBeHidden()
@@ -72,6 +72,7 @@ test('sales and purchase drafts recover after a rejected save', async ({ baseURL
               release()
             }
           } else {
+            await go(detailPath)
             await editTrigger.click()
           }
           const workbench = page.getByRole('dialog', { name: '订单工作台' })

@@ -125,7 +125,8 @@ test('image failure retains saved SKU IDs for independent retry and reports data
   for (const editing of [false, true]) {
     const { ctx, calls, notices } = await saveContext(editing, true)
     assert.equal(ctx.pendingImageSkuIds.value[0], 7)
-    assert.ok(notices.some(msg => msg.includes(editing ? 'SKU 已更新，但图片上传失败' : 'SKU 已创建，但图片上传失败')))
+    assert.equal(ctx.saveError.value, editing ? 'SKU 已更新，图片上传失败。请重试。' : 'SKU 已创建，图片上传失败。请重试。')
+    assert.deepEqual(notices, [])
     assert.equal(calls.filter(([method]) => method === 'post' || method === 'put').length, 1)
     assert.ok(!calls.some(([method]) => method === 'close'))
     assert.ok(calls.some(([method]) => method === 'clean'))

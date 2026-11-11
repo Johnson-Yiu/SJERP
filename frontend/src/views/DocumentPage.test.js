@@ -88,7 +88,7 @@ test('order editor reports an invalid non-positive line quantity before sending 
   const source = await readFile(componentUrl, 'utf8')
   const save = source.slice(source.indexOf('async function save()'), source.indexOf('async function handleQuoteSaved'))
 
-  assert.match(source, /<form class="modal wide" novalidate @submit\.prevent="save">/)
+  assert.match(source, /<form ref="orderDraftEditor" class="modal wide" [^>]*novalidate @submit\.prevent="save">/)
   assert.match(save, /form\.items\.some\(i => Number\(i\.quantity\) <= 0\)/)
   assert.match(save, /每条 SKU 明细的数量必须大于 0。/)
 })

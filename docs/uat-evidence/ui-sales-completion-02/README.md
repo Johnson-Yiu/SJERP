@@ -2,7 +2,7 @@
 
 - 分支 `codex/ui-sales-completion-02`
 - 已审基线 `43067137d0fba04b0be055e449e55a06dba6d208`
-- 被测产品源码 `f2b9e9a869bb003169057cf1550022326dc2eb04`。本报告及后续浏览器断言与截图仅改测试、证据。可用 `git diff --name-only f2b9e9a869bb003169057cf1550022326dc2eb04 HEAD -- backend frontend/src` 核验源码等价。
+- 被测产品源码 `f2b9e9a869bb003169057cf1550022326dc2eb04`。下文初轮结果绑定该版本。A3 后续发现并修复了客户编辑层级，独立被测源码为 `b52f3edc5c4ea47ed265f86d94ccdce0134b24d6`。见 [A3 复验补充](a3-followup.md)。
 - Actions `NOT_RUN`。全部提交使用 `[skip ci]`。
 
 ## 复现与修复

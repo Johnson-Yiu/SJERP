@@ -46,7 +46,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
     const go = route => page.goto(new URL(route, baseURL).href, { waitUntil: 'commit', timeout: 75000 })
     const button = name => page.getByRole('button', { name, exact: true }).first()
 
-    async function collect(state, check) {
+    async function collect(state, check, focus) {
       for (const zoom of [1, 1.25]) {
         await zoomControl.selectOption(String(zoom))
         for (const [width, height] of viewports) {
@@ -56,6 +56,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
             await page.setViewportSize({ width, height })
             await expect.poll(() => page.evaluate(() => devicePixelRatio), { timeout: 15000 }).toBeCloseTo(zoom, 2)
             if (width === 390) await expect.poll(() => page.locator('.sidebar').evaluate(el => el.getBoundingClientRect().right)).toBeLessThanOrEqual(1)
+            if (focus) await focus.scrollIntoViewIfNeeded()
             const metrics = await page.evaluate(() => {
               const root = document.documentElement
               const initial = window.scrollX
@@ -369,7 +370,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       await collect('trade-shipment-packing-variance', async result => {
         noPageOverflow(result)
         await expect(line.getByLabel(/^超发原因/)).toHaveValue('packing_variance')
-      })
+      }, line.getByLabel(/^超发原因/))
       await shipment.getByRole('button', { name: '确认发货', exact: true }).click()
       await expect(page.getByText('确认批量超发', { exact: true })).toBeVisible()
       const shipped = page.waitForResponse(orderAction('ship'))
@@ -402,13 +403,13 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       await collect('packing-indivisible-unit', async result => {
         noPageOverflow(result)
         await expect(packing.getByRole('alert')).toContainText('整数倍')
-      })
+      }, packing.getByRole('alert'))
       await submitPacking('100', 400)
       await expect(packing.getByRole('alert')).toContainText('累计装箱数量不能超过')
       await collect('packing-over-quantity', async result => {
         noPageOverflow(result)
         await expect(packing.getByRole('alert')).toContainText('累计装箱数量不能超过')
-      })
+      }, packing.getByRole('alert'))
       await submitPacking('5', 201)
       await go(orderRoute + '&tab=packing')
       await expect(card.locator('.actual-carton-card')).toHaveCount(1)
@@ -448,7 +449,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       await collect('customer-related-quote-return', async result => {
         noPageOverflow(result)
         await expect(detail.getByText(data.quote_no, { exact: true })).toBeVisible()
-      })
+      }, detail.getByText(data.quote_no, { exact: true }))
       results.push({ key: 'customer-related-quote-http', status: 201, customer: fixture.customer, quote: data.quote_no })
       await save()
     })

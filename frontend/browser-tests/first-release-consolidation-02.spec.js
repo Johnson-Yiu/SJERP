@@ -47,16 +47,14 @@ test('finance navigation and historical preflight CSV work in isolated Chrome', 
   expect(sidebar.open).toBe(false)
   await page.screenshot({ path: path.join(evidenceDir, 'bank-funds-390.png'), fullPage: true })
 
-  await page.evaluate(async () => {
-    await fetch('/api/session/csrf/', { credentials: 'same-origin' })
-    const csrf = document.cookie.split('; ').find(value => value.startsWith('csrftoken='))?.split('=')[1] || ''
-    document.body.innerHTML = `<main><h1>历史资料只读预检验收</h1><form method="post" action="/api/import/history-preflight/?report=csv" enctype="multipart/form-data"><input type="hidden" name="csrfmiddlewaretoken" value="${csrf}"><label>选择合成历史工作簿<input type="file" name="file" accept=".xlsx" required></label><button type="submit">预检并下载 CSV</button></form></main>`
-  })
-  await page.locator('input[type="file"][name="file"]').setInputFiles(path.join(evidenceDir, 'synthetic-history-preflight.xlsx'))
+  await page.goto('/history-preflight')
+  await page.locator('input[type="file"]').setInputFiles(path.join(evidenceDir, 'synthetic-history-preflight.xlsx'))
+  await page.getByRole('button', { name: '开始预检', exact: true }).click()
+  await expect(page.locator('.preflight-summary')).toContainText('synthetic-history-preflight.xlsx')
   const responsePromise = page.waitForResponse(response =>
-    new URL(response.url()).pathname === '/api/import/history-preflight/' && response.request().method() === 'POST')
+    new URL(response.url()).searchParams.get('report') === 'csv' && response.request().method() === 'POST')
   const downloadPromise = page.waitForEvent('download')
-  await page.getByRole('button', { name: '预检并下载 CSV', exact: true }).click()
+  await page.getByRole('button', { name: '下载 CSV 清单', exact: true }).click()
   const [response, download] = await Promise.all([responsePromise, downloadPromise])
   expect(response.status()).toBe(200)
   expect(response.headers()['content-type']).toContain('text/csv')

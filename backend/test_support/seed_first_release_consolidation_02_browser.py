@@ -11,7 +11,7 @@ import django
 django.setup()
 
 from django.conf import settings
-from openpyxl import load_workbook
+from openpyxl import Workbook
 
 from crm.history_import_preflight import SHEET_SCHEMAS
 from crm.models import Customer, Product, SKU
@@ -19,7 +19,6 @@ from test_support.isolated_runtime import verify_isolated_runtime
 
 
 verify_isolated_runtime(settings=settings, database_must_exist=True)
-root = Path(__file__).resolve().parents[2]
 evidence = Path(os.environ["FIRST_RELEASE_CONSOLIDATION_EVIDENCE_DIR"])
 evidence.mkdir(parents=True, exist_ok=True)
 customer, _ = Customer.objects.get_or_create(
@@ -64,14 +63,15 @@ rows = {
     }],
 }
 
-template_path = root / "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/ISS-121-history-import-template.xlsx"
-workbook = load_workbook(template_path, data_only=False)
+workbook = Workbook()
+workbook.active.title = "使用说明"
+workbook.active.append(["合成验收，只读预检"])
 try:
-    for sheet_name, records in rows.items():
-        columns = SHEET_SCHEMAS[sheet_name]
-        for row_number, record in enumerate(records, start=2):
-            for column_number, column in enumerate(columns, start=1):
-                workbook[sheet_name].cell(row=row_number, column=column_number, value=record.get(column["key"]))
+    for sheet_name, columns in SHEET_SCHEMAS.items():
+        sheet = workbook.create_sheet(sheet_name)
+        sheet.append([column["label"] for column in columns])
+        for record in rows.get(sheet_name, []):
+            sheet.append([record.get(column["key"]) for column in columns])
     workbook.save(evidence / "synthetic-history-preflight.xlsx")
 finally:
     workbook.close()

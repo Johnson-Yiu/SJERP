@@ -21,7 +21,8 @@ describe('purchase workbench Phase A', () => {
     expect(history).toContain('赠品 1 件')
     expect(wrapper.text()).toContain('已冲销')
     await click(wrapper, '验货入库')
-    expect(wrapper.emitted('receive')[0]).toEqual([original, receiptItem])
+    const trigger = wrapper.findAll('button').find(button => button.text() === '验货入库').element
+    expect(wrapper.emitted('receive')[0]).toEqual([original, receiptItem, trigger])
     await click(wrapper, '冲销')
     expect(wrapper.emitted('reverse-receipt')[0]).toEqual([original, receiptItem, receipt])
     expect(receipt.unit_cost).toBe('6.500000000000')
@@ -58,7 +59,8 @@ describe('purchase workbench Phase A', () => {
     const wrapper = mountDetail()
     await click(wrapper, '查看收货')
     await click(wrapper, '验货入库')
-    expect(wrapper.emitted('receive')[0]).toEqual([purchase,item])
+    const trigger = wrapper.findAll('button').find(button => button.text() === '验货入库').element
+    expect(wrapper.emitted('receive')[0]).toEqual([purchase,item, trigger])
     expect(wrapper.text()).toContain('赠品 1 件')
     expect(wrapper.text()).toContain('已冲销')
     expect(wrapper.findAll('.receipt-history-row button')).toHaveLength(1)

@@ -31,4 +31,9 @@ SKU 图片上传及清除错误六组均通过。在提示仍位于视口时可�
 并行补测见 [财务布局](final/finance-retest/chrome-finance-layout/run.json) 和 [首跑记录](final/finance-layout/chrome-finance-layout/run.json)。另在同一产品源码上运行现有工作区集成专项，4 项通过，包括独立草稿、会话状态及客户上下文。最终候选 Actions 见[分支运行列表](https://github.com/Johnson-Yiu/SJERP/actions?query=branch%3Acodex%2Fui-delivery-closeout-04)。
 
 
-[浏览器 CI 失败归因及原始证据](ci-43007744664/README.md)。本次改动限于测试和证据，产品源码与 `c21a1060cb99bdf6bda33a07c7ba01b990f4878f` 相同。账户对账 390×844 原生 125% 通过真实隔离后台的账户建立、凭证上传、记账、余额与事实查看、凭证入口、展开详情和 CSV。保留原标准两组并加入独立原生缩放模式。[账户详情截图](ci-repair/account/account-native/account-detail-390-125.png) · [仍待核销状态](remaining.md)
+[浏览器 CI 失败归因及原始证据](ci-43007744664/README.md)。浏览器 CI 的客户故障注入修复限于测试和证据。采购草稿状态续验发现单独的初始化时序缺陷。账户对账 390×844 原生 125% 通过真实隔离后台的账户建立、凭证上传、记账、余额与事实查看、凭证入口、展开详情和 CSV。保留原标准两组并加入独立原生缩放模式。[账户详情截图](ci-repair/account-viewport/account-native/account-detail-390-125.png) · [仍待核销状态](remaining.md)
+
+采购草稿原失败证据见 [U3 未保存尝试](../ui-final-state-closeout-03/draft-recovery-retest/chrome-draft-recovery/run.json)。供货选项异步加载完成时建立初始基线，旧顺序在编辑器已经可用时才建立基线。新顺序先完成选项加载、确认当前仍是同一草稿及详情，再建立基线并打开编辑器。回归用例延迟供货选项响应，确认初始化期间编辑器未开放，再验证继续编辑、放弃与重开读回。
+
+
+在固定产品源码 `d22a30954bf2d69fa9f45b875dddad594d8df8bf` 上，订单及采购草稿的六组均通过。采购未保存确认和数量读回已核销。最终证据提交与该产品树一致。[修后运行](ci-repair/draft-final/chrome-draft-recovery/run.json)

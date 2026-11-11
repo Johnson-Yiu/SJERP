@@ -13,3 +13,5 @@ ISS007 附件配置 3/3 通过。跟进正文成功、附件失败时，测试�
 [交易单位发货、包装尾差与装箱纠正](shipment-variance-complete/run.json)通过。390×844 原生 100%／125% 选择三箱，真实发货 201，回读总发货 15 pcs、超发 5 pcs。装箱填写 1 件触发整包装限制，填写 100 件触发累计装箱超过发货，均为真实 400。改为 5 件后真实 201，重开只有一条实际装箱。客户追加超发、其他选择器与其余桌面缩放仍待验。首次失败索引见 [仓库](shipment-variance/run.json)、[默认仓](shipment-variance-retry/run.json)、[批量预选](shipment-variance-final/run.json)、[装箱数量](shipment-variance-verified/run.json)。最终测试使用默认仓真实库存、单明细发货以及分别命中两条校验的数量。
 
 `E1_R2_EXTRA=5`、`6`、`7` 分别重跑发货与装箱、关联报价、客户编辑层级。完整状态缺项继续参见 [E1-R2 清单](README.md)。
+
+后续同源码复跑将 [装箱提示与操作](shipment-variance-visible/run.json) 及 [关联报价回到的记录](related-quote-visible/run.json) 滚动到截图范围，原运行继续保留。

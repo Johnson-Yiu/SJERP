@@ -1,4 +1,5 @@
 import tempfile
+import hashlib
 import os
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -134,5 +135,5 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
             self.assertTrue(all(row['record_id'] for row in report['groups'][0]['source_rows']))
             if os.environ.get('HISTORY_DELIVERY_SYNTHETIC_REPORT'):
                 with open(os.environ['HISTORY_DELIVERY_SYNTHETIC_REPORT'], 'w', encoding='utf-8') as output:
-                    json.dump({'baseline_counts': baseline, 'after_archive': after_archive, 'after_link': before_finance, 'after_finance': report}, output, cls=DjangoJSONEncoder, ensure_ascii=False, indent=2)
+                    json.dump({'customer_csv_sha256': hashlib.sha256(content).hexdigest(), 'baseline_counts': baseline, 'after_archive': after_archive, 'after_link': before_finance, 'after_finance': report}, output, cls=DjangoJSONEncoder, ensure_ascii=False, indent=2)
             self.assertEqual(sum(m.objects.count() for m in (Transaction,InventoryMovement,Shipment,GoodsReceipt)),0)

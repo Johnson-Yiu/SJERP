@@ -425,6 +425,7 @@ async function openHistoricalFinance(page, baseURL) {
 test('historical finance reviews a duplicate and posts only after second-user approval', async ({ browser, baseURL }) => {
   test.setTimeout(180000)
   const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8')).history_finance
+  if (['followup', 'completion'].includes(process.env.SALES_ORDER_IMPORT_PROFILE)) expect(fixture).toBeTruthy()
   test.skip(!fixture, 'Requires the follow-up historical finance fixture')
   const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } })
   try {
@@ -492,6 +493,7 @@ test('Chrome native page zoom keeps long finance and history records usable', as
   test.setTimeout(300000)
   const profile = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8'))
   const fixture = profile.long_content
+  if (['followup', 'completion'].includes(process.env.SALES_ORDER_IMPORT_PROFILE)) expect(fixture).toBeTruthy()
   test.skip(!fixture, 'Requires the follow-up evidence fixture')
   const results = []
   const completion = profile.completion_profile
@@ -666,6 +668,7 @@ test('certificate validation identifies the business field without closing the d
 
 test('completion evidence follows lost receipt, actual refund date and funds review', async ({ page }) => {
   const profile = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8'))
+  if (process.env.SALES_ORDER_IMPORT_PROFILE === 'completion') expect(profile.completion_profile).toBe(true)
   test.skip(!profile.completion_profile, 'Requires the completion fixture')
   test.setTimeout(120000)
   const proof = { name: 'synthetic-completion.pdf', mimeType: 'application/pdf', buffer: syntheticVoucherPdf() }

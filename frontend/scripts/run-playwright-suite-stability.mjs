@@ -74,7 +74,12 @@ const dedicatedRuns = [
   { name: 'workspace-tabs-isolated', file: 'workspace-tabs-real.spec.js' },
   { name: 'workspace-integration-isolated', file: 'workspace-integration-real.spec.js', codex: true },
   { name: 'first-release-consolidation-isolated', file: 'first-release-consolidation-02.spec.js', codex: true },
-  { name: 'sales-order-import-isolated', file: 'sales-order-import-real.spec.js', codex: true },
+  ...['base', 'followup', 'completion'].map(profile => ({
+    name: `sales-order-import-${profile}-isolated`,
+    file: 'sales-order-import-real.spec.js',
+    codex: true,
+    env: { SALES_ORDER_IMPORT_PROFILE: profile },
+  })),
   { name: 'historical-orders-02-isolated', file: 'historical-orders-fix-02.spec.js' },
   { name: 'historical-orders-03-isolated', file: 'historical-orders-fix-03.spec.js' },
   { name: 'recipient-snapshot-isolated', file: 'iss029-recipient-snapshot.spec.js' },
@@ -132,7 +137,7 @@ for (const run of runs) {
     'SALES_STATE_JOURNEYS', 'SALES_STATE_SUPPLEMENTAL', 'SALES_STATE_FOCUSED',
     'SALES_STATE_CASES', 'SALES_STATE_SCENARIOS', 'SALES_STATE_SHOTS',
     'SALES_STATE_WIDTH', 'SALES_STATE_ZOOM', 'SALES_STATE_APPLY_QUANTITY',
-    'PRODUCT_OPS_FOLLOWUP', 'PRODUCT_OPS_PRIORITY_ZOOM',
+    'PRODUCT_OPS_FOLLOWUP', 'PRODUCT_OPS_PRIORITY_ZOOM', 'SALES_ORDER_IMPORT_PROFILE',
   ]) delete runEnv[key]
   Object.assign(runEnv, run.env)
   runEnv.PRODUCT_OPS_CANDIDATE_SHA = source

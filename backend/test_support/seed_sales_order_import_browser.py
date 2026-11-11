@@ -94,9 +94,17 @@ fixture = {
     "invalid_sku": "UAT-UNKNOWN-SKU",
     "workbook": workbook_path.name,
 }
-completion_profile = evidence_dir in {completion_evidence_dir, integration_evidence_dir, integration_final_evidence_dir}
+profile = os.environ.get("SALES_ORDER_IMPORT_PROFILE")
+if profile is None:
+    if evidence_dir in {completion_evidence_dir, integration_evidence_dir, integration_final_evidence_dir}:
+        profile = "completion"
+    else:
+        profile = "followup" if evidence_dir == followup_evidence_dir else "base"
+if profile not in {"base", "followup", "completion"}:
+    raise SystemExit(f"Unknown sales import browser profile: {profile!r}")
+completion_profile = profile == "completion"
 fixture["completion_profile"] = completion_profile
-if evidence_dir == followup_evidence_dir or completion_profile:
+if profile in {"followup", "completion"}:
     long_customer = Customer.objects.create(
         code="UAT-LONG-CUSTOMER",
         name="North-West International Lighting and Architectural Project Procurement Services, Distribution and Customer Care Group",

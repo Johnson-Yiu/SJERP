@@ -3,6 +3,11 @@
 > 2026-11-11 起恢复 GitHub Actions。2026-11-05 的暂停约定已失效。新提交正常推送，等待适用工作流结束并处理失败；认证核对最终源码 SHA。下方暂停、未运行及失败均为历史记录。
 > H2、E1-R2、E2-R2、H3、U3 已集成。冻结源码 `7e99a5d394ddc0d96a3af04b74686307f754ca08` 的三个主 CI job 和三个 Linux 运维 job 均通过。[逐例验收、跳过、导出和历史分支补测清单](uat-evidence/ci-resume-certification-01/README.md)
 
+
+## UI-DELIVERY-CLOSEOUT-04
+
+从共同基线 `f3b7242e77752b6cc5b72425bcc3df2fa938de61` 接入 U3 补交的四个专项及历史证据。销售草稿焦点与层叠和 SKU 图片错误纳入 ISS-127、ISS-128。并行分支核销结果与最终候选认证见[交付记录](uat-evidence/ui-delivery-closeout-04/README.md)。
+
 ## 2026-11-11 A2 与 H1 集成验收
 
 A2 财务恢复和历史更正与 H1 归档、关联、报表已在 H1 分支集成，迁移按 0128 → 0129 → 0130 前向通过。SQLite、Node、Vitest 与构建已通过，PostgreSQL 全量原始错误与最终定向通过分别保留。E1/E2 受影响入口和 A2/H1 真实 Chrome 专项证据已补录。通用浏览器回归仍有失败，候选处于待独立复审和补验阶段。GitHub Actions 为 `NOT_RUN`。[集成记录](uat-evidence/history-product-sku-linking-01/A2-INTEGRATION.md)

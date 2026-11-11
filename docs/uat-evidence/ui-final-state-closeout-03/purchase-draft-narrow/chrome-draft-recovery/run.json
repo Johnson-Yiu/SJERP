@@ -1,0 +1,20 @@
+{
+  "source": "39a5c63f2991a775796c8829d293e6b38951e209",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "purchase-draft-pending",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "purchase-draft-pending-390-100.png"
+    },
+    {
+      "id": "purchase-draft-pending",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "purchase-draft-pending-390-125.png"
+    }
+  ]
+}

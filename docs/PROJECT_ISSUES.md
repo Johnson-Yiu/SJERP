@@ -3,6 +3,15 @@
 > 2026-11-11 起恢复 GitHub Actions。2026-11-05 的暂停约定已失效。新提交正常推送，等待适用工作流结束并处理失败；认证核对最终源码 SHA。下方暂停、未运行及失败均为历史记录。
 > H2、E1-R2、E2-R2、H3、U3 已集成。冻结源码 `7e99a5d394ddc0d96a3af04b74686307f754ca08` 的三个主 CI job 和三个 Linux 运维 job 均通过。[逐例验收、跳过、导出和历史分支补测清单](uat-evidence/ci-resume-certification-01/README.md)
 
+## UI-DELIVERY-CLOSEOUT-04
+
+| Issue | 状态 | 证据与下一步 |
+| --- | --- | --- |
+| ISS-127 销售草稿被订单详情浮层拦截 | P2 / NEEDS_VERIFICATION | U3 在 390×844／100% 确认点击被浮层拦截。UI 包暂停背景详情。以六组真实保存、重试、未保存和焦点复验结果申请独立复审。 |
+| ISS-128 SKU 图片错误遮挡重试 | P2 / NEEDS_VERIFICATION | U3 在 390×844／125% 截图确认遮挡。UI 包改用表单内提示。以错误仍显示时的真实重试、无重复写入及重开证据申请独立复审。 |
+
+本轮新增两个 Issue，关闭零项。既有状态未作关闭处理。[交付和证据](uat-evidence/ui-delivery-closeout-04/README.md)
+
 ## 2026-11-11 A2 与 H1 集成核对
 
 H1 独立分支已接收远端 A2 冻结源码与交付证据。SQLite 全量通过，PostgreSQL 全量的上传夹具错误及定向复跑的连接清理已修正，最终定向 5/5。Node、Vitest、构建及 A2、H1、E1/E2 定向证据已归档。通用浏览器主组 231 通过、54 失败、1 跳过、3 未运行。关联 ISS-006、ISS-007、ISS-105、ISS-121 的复跑和未验边界见[集成记录](uat-evidence/history-product-sku-linking-01/A2-INTEGRATION.md)。ISS-007 的报价 PI 图片快照仍待核实。保留现有问题状态和计数，等待独立复审。

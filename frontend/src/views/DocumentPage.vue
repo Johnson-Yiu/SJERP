@@ -14,7 +14,7 @@ import { defaultExchangeRate, skuDefaultPrice, currencyHint, salesRateError, cha
 import { compactDecimalInput } from '../utils/decimalInput'
 import TradeUnitPicker from '../components/TradeUnitPicker.vue'
 import { fromTradeLine, tradePayload, withDefaultTradeUnit, restoreTradeLines } from '../utils/tradeUnits'
-import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Plus, Search, Pencil, Trash2, FileX2, X, MinusCircle, Download, ChevronDown, ChevronRight, FolderOpen, FileText, FilePenLine, Eye, Clock3, CircleCheck, CircleDollarSign, RotateCcw } from 'lucide-vue-next'
 
@@ -65,6 +65,8 @@ const hasSkuContext = computed(() => isOrder.value && Boolean(skuContextId(route
 const activeSkuContextLabel = computed(() => skuContextLabel(rows.value, route.query.sku))
 const quoteDetailId = ref(null), orderDetailId = ref(null)
 const returnToOrderDetailId = ref(null)
+const orderDraftEditor = ref(null), orderDetailWorkbench = ref(null)
+let orderEditTrigger = null
 const orderWorkbenchRefresh = ref(0)
 const quoteEditorOpen = ref(false), quoteEditorQuote = ref(null)
 let savedQuoteForClose = null
@@ -202,7 +204,22 @@ function setOrderLeadTimeDays() {
   form.expected_ship_date = addDays(form.order_date, orderLeadTimeDays.value)
 }
 const closeEditor = () => guard.requestClose(discardEditor)
-function discardEditor() { sourceQuoteRequest += 1; sourceQuoteLoading.value = false; open.value = false; returnToOrderDetailId.value = null; void clearModalRoute(router, route) }
+async function restoreOrderEditFocus() {
+  const trigger = orderEditTrigger
+  orderEditTrigger = null
+  if (!trigger) return
+  await nextTick()
+  if (trigger.isConnected) trigger.focus({ preventScroll: true })
+  else orderDetailWorkbench.value?.focusWorkbench()
+}
+async function discardEditor() {
+  sourceQuoteRequest += 1
+  sourceQuoteLoading.value = false
+  open.value = false
+  returnToOrderDetailId.value = null
+  await clearModalRoute(router, route)
+  await restoreOrderEditFocus()
+}
 async function closeQuoteEditor() {
   quoteEditorOpen.value = false
   const saved = savedQuoteForClose
@@ -290,6 +307,7 @@ async function save() {
     }
     if (detailId && returnToOrderDetailId.value) orderWorkbenchRefresh.value += 1
     returnToOrderDetailId.value = null
+    await restoreOrderEditFocus()
   } catch (e) { notify(e.message, true) } finally { saving.value = false }
 }
 async function handleQuoteSaved(row) {
@@ -523,9 +541,13 @@ async function editRelatedOrder() {
     await edit(row, { closeDetail: false })
   } catch (error) { notify(`无法读取订单最新数据：${error.message}`, true) }
 }
-async function handleOrderEdit() {
-  if (isOrder.value) await editRelatedOrder()
-  else notify('请前往订单管理编辑订单。')
+async function handleOrderEdit(trigger) {
+  if (!isOrder.value) return notify('请前往订单管理编辑订单。')
+  await editRelatedOrder()
+  if (!open.value) return
+  orderEditTrigger = trigger
+  await nextTick()
+  orderDraftEditor.value?.focus({ preventScroll: true })
 }
 watch(() => props.type, () => { load(); loadQuoteCustomerOptions() })
 watch(() => route.query.search, () => {
@@ -562,7 +584,7 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
       </table></div>
     </div>
 
-    <div v-if="open && isOrder" class="modal-backdrop"><form class="modal wide" novalidate @submit.prevent="save">
+    <div v-if="open && isOrder" class="modal-backdrop"><form ref="orderDraftEditor" class="modal wide" role="dialog" aria-modal="true" :aria-label="editingId ? '编辑销售订单草稿' : '新建销售订单草稿'" tabindex="-1" novalidate @submit.prevent="save">
       <div class="modal-head"><div><h3>{{ editingId ? '编辑' : '新建' }}{{ isOrder ? '订单' : '报价' }}</h3><small v-if="editingId">{{ rows.find(row => row.id === editingId)?.order_no }}</small></div><button type="button" class="mini-btn" @click="closeEditor"><X :size="17" /></button></div>
       <div class="modal-body">
         <div class="form-grid">
@@ -600,7 +622,7 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
       <QuoteDetailModal v-if="quoteDetailId" :id="quoteDetailId" :refresh-key="workbenchRefresh" @close="closeDocumentDetail" @revise="reviseFromDetail" @status-updated="handleQuoteStatusUpdated" @create-order="openOrderDraft" @open-order="openOrderDetail" />
     </Transition>
     <Transition name="detail-drawer" appear>
-      <OrderDetailModal v-if="orderDetailId" :id="orderDetailId" :refresh-key="orderWorkbenchRefresh" @close="closeDocumentDetail" @edit="handleOrderEdit" @open-quote="openSourceQuote" />
+      <OrderDetailModal v-if="orderDetailId" ref="orderDetailWorkbench" :suspended="open && Boolean(returnToOrderDetailId)" :id="orderDetailId" :refresh-key="orderWorkbenchRefresh" @close="closeDocumentDetail" @edit="handleOrderEdit" @open-quote="openSourceQuote" />
     </Transition>
     <QuoteRiskNotice v-if="quoteRiskOpen" :risks="quoteRiskRows" :risk-check-unavailable="quoteRiskCheckUnavailable" @cancel="cancelRiskExport" @continue="continueRiskExport" />
     <div v-if="toast.show" class="toast" :class="{ error: toast.error }">{{ toast.message }}</div>

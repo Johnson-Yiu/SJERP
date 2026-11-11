@@ -1,0 +1,21 @@
+{
+  "source": "39a5c63f2991a775796c8829d293e6b38951e209",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "sales-draft-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "sales-draft-pending-1366-100.png"
+    },
+    {
+      "id": "purchase-draft-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "purchase-draft-pending-1366-100.png"
+    }
+  ],
+  "failure": "locator.click: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: '未保存修改' }).getByRole('button', { name: '继续编辑', exact: true })\u001b[22m\n"
+}

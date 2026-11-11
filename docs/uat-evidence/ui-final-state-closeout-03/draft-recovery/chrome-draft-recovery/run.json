@@ -1,0 +1,21 @@
+{
+  "source": "39a5c63f2991a775796c8829d293e6b38951e209",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "sales-draft-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "sales-draft-pending-1366-100.png"
+    },
+    {
+      "id": "purchase-draft-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "purchase-draft-pending-1366-100.png"
+    }
+  ],
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('dialog', { name: '编辑采购草稿' }).getByPlaceholder('采购数量').first()\nExpected: \u001b[32m\"31\"\u001b[39m\nReceived: \u001b[31m\"31\u001b[7m.00\u001b[27m\"\u001b[39m\nTimeout:  30000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" getByRole('dialog', { name: '编辑采购草稿' }).getByPlaceholder('采购数量').first() with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '编辑采购草稿' }).getByPlaceholder('采购数量').first()\u001b[22m\n\u001b[2m    62 × locator resolved to <input min=\"0.01\" step=\"0.01\" required=\"\" type=\"number\" data-v-8967c8ba=\"\" placeholder=\"采购数量\"/>\u001b[22m\n\u001b[2m       - unexpected value \"31.00\"\u001b[22m\n"
+}

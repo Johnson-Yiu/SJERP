@@ -94,6 +94,11 @@ const dedicatedRuns = [
     env: { SALES_PARTY_NATIVE_ZOOM: '1.25' },
   })),
   { name: 'party-replacement-order-isolated', file: 'party-replacement-real.spec.js' },
+  ...['customer-contact', 'draft-recovery', 'revision-recovery', 'sku-recovery'].map(scenario => ({
+    name: `ui-final-state-${scenario}-isolated`,
+    file: `ui-final-state-${scenario}-03.spec.js`,
+    codex: true,
+  })),
 ]
 
 const source = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repositoryRoot, encoding: 'utf8' }).trim()

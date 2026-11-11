@@ -1,0 +1,44 @@
+H1 source: 85a2b96b5a7b48d015e22a800b4c60e6ae83b857
+initdb: error: could not create restricted token: error code 87
+initdb: error: could not re-execute with restricted token: error code 3
+The files belonging to this database system will be owned by user "CodexSandboxOffline".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+creating directory C:/Users/Johnson/AppData/Local/Temp/sunjack-h1-pg-wiydsawj/cluster ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... windows
+selecting default "max_connections" ... 100
+selecting default "shared_buffers" ... 128MB
+selecting default time zone ... Asia/Shanghai
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    ^"C^:^\Users^\Johnson^\AppData^\Local^\Temp^\sunjack^-iss018^-pg17^-d26bfa744cf54322af03ea964e90089f^\pgsql^\bin^\pg^_ctl^" -D ^"C^:^\Users^\Johnson^\AppData^\Local^\Temp^\sunjack^-h1^-pg^-wiydsawj^\cluster^" -l logfile start
+
+pg_ctl: could not create restricted token: error code 87
+pg_ctl: could not start server: error code 3
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\docs\uat-evidence\history-product-sku-linking-01\run-postgres.py", line 72, in <module>
+    main()
+    ~~~~^^
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\docs\uat-evidence\history-product-sku-linking-01\run-postgres.py", line 47, in main
+    pg("pg_ctl", "-D", cluster, "-l", root / "server.log", "-o", f"-h 127.0.0.1 -p {port}", "-w", "start")
+    ~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\docs\uat-evidence\history-product-sku-linking-01\run-postgres.py", line 34, in pg
+    return subprocess.run([str(args.postgres_bin / (name + (".exe" if os.name == "nt" else ""))), *map(str, options)],
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          check=check, env=os.environ)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-iss018-pg17-d26bfa744cf54322af03ea964e90089f\\pgsql\\bin\\pg_ctl.exe', '-D', 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-h1-pg-wiydsawj\\cluster', '-l', 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-h1-pg-wiydsawj\\server.log', '-o', '-h 127.0.0.1 -p 11982', '-w', 'start']' returned non-zero exit status 1.

@@ -1,0 +1,134 @@
+Creating test database for alias 'default'...
+
+..Conflict: /api/import/history-products/preview/
+Conflict: /api/import/history-products/apply/
+Bad Request: /api/import/history-products/preview/
+...Conflict: /api/import/history-products/preview/
+Bad Request: /api/import/history-products/preview/
+Conflict: /api/import/history-products/preview/
+Conflict: /api/import/history-products/preview/
+.Bad Request: /api/import/history-takeovers/2/groups/2/execute/
+.Bad Request: /api/import/history-takeovers/1/groups/1/resolve-master/
+...Bad Request: /api/orders/1/
+Bad Request: /api/purchase-orders/1/
+..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+..Bad Request: /api/import/history-takeovers/1/groups/1/correction-review/
+..Bad Request: /api/import/history-takeovers/1/groups/1/review/
+.Not Found: /api/import/history-takeovers/2/
+Not Found: /api/import/history-takeovers/2/review-report.csv
+Conflict: /api/import/history-takeovers/
+.Bad Request: /api/import/history-takeovers/1/groups/1/execute/
+Bad Request: /api/import/history-takeovers/2/groups/2/review/
+Bad Request: /api/import/history-takeovers/3/groups/3/review/
+..Bad Request: /api/import/history-takeovers/2/groups/3/review/
+Bad Request: /api/import/history-takeovers/2/groups/3/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/resolve-master/
+Bad Request: /api/import/history-takeovers/3/groups/4/review/
+..........Conflict: /api/import/history-products/preview/
+FConflict: /api/import/history-products/preview/
+FConflict: /api/import/history-products/preview/
+FsConflict: /api/import/history-products/preview/
+FConflict: /api/import/history-products/preview/
+FConflict: /api/import/history-products/preview/
+FConflict: /api/import/history-products/preview/
+FConflict: /api/import/history-products/preview/
+FConflict: /api/import/history-products/preview/
+F...Bad Request: /api/import/history-preflight/
+..Bad Request: /api/import/history-preflight/
+Bad Request: /api/import/history-preflight/
+.........Content Too Large: /api/import/history-preflight/
+......Content Too Large: /api/import/history-preflight/
+........Bad Request: /api/import/history-takeovers/
+.Bad Request: /api/import/history-takeovers/
+Bad Request: /api/import/history-takeovers/
+.Bad Request: /api/import/history-takeovers/
+..s.sssss
+======================================================================
+FAIL: test_balance_only_requires_explicit_amount_and_never_guesses (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_balance_only_requires_explicit_amount_and_never_guesses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\crm\tests\test_history_operational_contracts.py", line 48, in setUp
+    self.assertEqual(preview.status_code, 200, preview.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 200 : {'conflicts': [{'id': 3, 'source_system': 'Legacy synthetic system', 'source_number': 'SO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'sales', 'order_number': 'HIST-SO-HT-1', 'date': '2024-08-01', 'code': 'HT-S1', 'name': 'Historical SKU Name', 'specification': '', 'description': 'Historical product description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '12.000000000000', 'unit': 'pcs', 'quantity': '10.00', 'amount': '120.00', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}, {'id': 5, 'source_system': 'Legacy synthetic system', 'source_number': 'PO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'purchase', 'order_number': 'HIST-PO-HT-1', 'date': '2024-07-01', 'code': 'HT-S1', 'name': 'Historical Purchase SKU', 'specification': '', 'description': 'Purchase description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '3.000000000000', 'unit': 'pcs', 'quantity': '5.00', 'amount': '15.00000000000000', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}]}
+
+======================================================================
+FAIL: test_failure_rolls_back_links_drafts_and_plans (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_failure_rolls_back_links_drafts_and_plans)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\crm\tests\test_history_operational_contracts.py", line 48, in setUp
+    self.assertEqual(preview.status_code, 200, preview.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 200 : {'conflicts': [{'id': 3, 'source_system': 'Legacy synthetic system', 'source_number': 'SO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'sales', 'order_number': 'HIST-SO-HT-1', 'date': '2024-08-01', 'code': 'HT-S1', 'name': 'Historical SKU Name', 'specification': '', 'description': 'Historical product description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '12.000000000000', 'unit': 'pcs', 'quantity': '10.00', 'amount': '120.00', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}, {'id': 5, 'source_system': 'Legacy synthetic system', 'source_number': 'PO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'purchase', 'order_number': 'HIST-PO-HT-1', 'date': '2024-07-01', 'code': 'HT-S1', 'name': 'Historical Purchase SKU', 'specification': '', 'description': 'Purchase description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '3.000000000000', 'unit': 'pcs', 'quantity': '5.00', 'amount': '15.00000000000000', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}]}
+
+======================================================================
+FAIL: test_group_balance_stock_receipt_shipment_and_later_settlement (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_group_balance_stock_receipt_shipment_and_later_settlement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\crm\tests\test_history_operational_contracts.py", line 48, in setUp
+    self.assertEqual(preview.status_code, 200, preview.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 200 : {'conflicts': [{'id': 3, 'source_system': 'Legacy synthetic system', 'source_number': 'SO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'sales', 'order_number': 'HIST-SO-HT-1', 'date': '2024-08-01', 'code': 'HT-S1', 'name': 'Historical SKU Name', 'specification': '', 'description': 'Historical product description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '12.000000000000', 'unit': 'pcs', 'quantity': '10.00', 'amount': '120.00', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}, {'id': 5, 'source_system': 'Legacy synthetic system', 'source_number': 'PO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'purchase', 'order_number': 'HIST-PO-HT-1', 'date': '2024-07-01', 'code': 'HT-S1', 'name': 'Historical Purchase SKU', 'specification': '', 'description': 'Purchase description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '3.000000000000', 'unit': 'pcs', 'quantity': '5.00', 'amount': '15.00000000000000', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}]}
+
+======================================================================
+FAIL: test_manual_movements_respect_opening_stock_location (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_manual_movements_respect_opening_stock_location)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\crm\tests\test_history_operational_contracts.py", line 48, in setUp
+    self.assertEqual(preview.status_code, 200, preview.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 200 : {'conflicts': [{'id': 3, 'source_system': 'Legacy synthetic system', 'source_number': 'SO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'sales', 'order_number': 'HIST-SO-HT-1', 'date': '2024-08-01', 'code': 'HT-S1', 'name': 'Historical SKU Name', 'specification': '', 'description': 'Historical product description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '12.000000000000', 'unit': 'pcs', 'quantity': '10.00', 'amount': '120.00', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}, {'id': 5, 'source_system': 'Legacy synthetic system', 'source_number': 'PO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'purchase', 'order_number': 'HIST-PO-HT-1', 'date': '2024-07-01', 'code': 'HT-S1', 'name': 'Historical Purchase SKU', 'specification': '', 'description': 'Purchase description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '3.000000000000', 'unit': 'pcs', 'quantity': '5.00', 'amount': '15.00000000000000', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}]}
+
+======================================================================
+FAIL: test_pending_shared_costs_must_use_formal_cost_workflow_before_placement (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_pending_shared_costs_must_use_formal_cost_workflow_before_placement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\crm\tests\test_history_operational_contracts.py", line 48, in setUp
+    self.assertEqual(preview.status_code, 200, preview.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 200 : {'conflicts': [{'id': 3, 'source_system': 'Legacy synthetic system', 'source_number': 'SO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'sales', 'order_number': 'HIST-SO-HT-1', 'date': '2024-08-01', 'code': 'HT-S1', 'name': 'Historical SKU Name', 'specification': '', 'description': 'Historical product description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '12.000000000000', 'unit': 'pcs', 'quantity': '10.00', 'amount': '120.00', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}, {'id': 5, 'source_system': 'Legacy synthetic system', 'source_number': 'PO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'purchase', 'order_number': 'HIST-PO-HT-1', 'date': '2024-07-01', 'code': 'HT-S1', 'name': 'Historical Purchase SKU', 'specification': '', 'description': 'Purchase description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '3.000000000000', 'unit': 'pcs', 'quantity': '5.00', 'amount': '15.00000000000000', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}]}
+
+======================================================================
+FAIL: test_reversal_audit_failure_rolls_back_all_changes (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_reversal_audit_failure_rolls_back_all_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\crm\tests\test_history_operational_contracts.py", line 48, in setUp
+    self.assertEqual(preview.status_code, 200, preview.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 200 : {'conflicts': [{'id': 3, 'source_system': 'Legacy synthetic system', 'source_number': 'SO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'sales', 'order_number': 'HIST-SO-HT-1', 'date': '2024-08-01', 'code': 'HT-S1', 'name': 'Historical SKU Name', 'specification': '', 'description': 'Historical product description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '12.000000000000', 'unit': 'pcs', 'quantity': '10.00', 'amount': '120.00', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}, {'id': 5, 'source_system': 'Legacy synthetic system', 'source_number': 'PO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'purchase', 'order_number': 'HIST-PO-HT-1', 'date': '2024-07-01', 'code': 'HT-S1', 'name': 'Historical Purchase SKU', 'specification': '', 'description': 'Purchase description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '3.000000000000', 'unit': 'pcs', 'quantity': '5.00', 'amount': '15.00000000000000', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}]}
+
+======================================================================
+FAIL: test_reversal_is_idempotent_and_preserves_records (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_reversal_is_idempotent_and_preserves_records)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\crm\tests\test_history_operational_contracts.py", line 48, in setUp
+    self.assertEqual(preview.status_code, 200, preview.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 200 : {'conflicts': [{'id': 3, 'source_system': 'Legacy synthetic system', 'source_number': 'SO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'sales', 'order_number': 'HIST-SO-HT-1', 'date': '2024-08-01', 'code': 'HT-S1', 'name': 'Historical SKU Name', 'specification': '', 'description': 'Historical product description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '12.000000000000', 'unit': 'pcs', 'quantity': '10.00', 'amount': '120.00', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}, {'id': 5, 'source_system': 'Legacy synthetic system', 'source_number': 'PO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'purchase', 'order_number': 'HIST-PO-HT-1', 'date': '2024-07-01', 'code': 'HT-S1', 'name': 'Historical Purchase SKU', 'specification': '', 'description': 'Purchase description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '3.000000000000', 'unit': 'pcs', 'quantity': '5.00', 'amount': '15.00000000000000', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}]}
+
+======================================================================
+FAIL: test_reversal_rejects_formal_downstream_work (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_reversal_rejects_formal_downstream_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\crm\tests\test_history_operational_contracts.py", line 48, in setUp
+    self.assertEqual(preview.status_code, 200, preview.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 200 : {'conflicts': [{'id': 3, 'source_system': 'Legacy synthetic system', 'source_number': 'SO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'sales', 'order_number': 'HIST-SO-HT-1', 'date': '2024-08-01', 'code': 'HT-S1', 'name': 'Historical SKU Name', 'specification': '', 'description': 'Historical product description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '12.000000000000', 'unit': 'pcs', 'quantity': '10.00', 'amount': '120.00', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}, {'id': 5, 'source_system': 'Legacy synthetic system', 'source_number': 'PO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'purchase', 'order_number': 'HIST-PO-HT-1', 'date': '2024-07-01', 'code': 'HT-S1', 'name': 'Historical Purchase SKU', 'specification': '', 'description': 'Purchase description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '3.000000000000', 'unit': 'pcs', 'quantity': '5.00', 'amount': '15.00000000000000', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}]}
+
+======================================================================
+FAIL: test_unlink_invalidates_unexecuted_contract_approval (crm.tests.test_history_operational_contracts.HistoricalOperationalContractTests.test_unlink_invalidates_unexecuted_contract_approval)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\backend\crm\tests\test_history_operational_contracts.py", line 48, in setUp
+    self.assertEqual(preview.status_code, 200, preview.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 200 : {'conflicts': [{'id': 3, 'source_system': 'Legacy synthetic system', 'source_number': 'SO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'sales', 'order_number': 'HIST-SO-HT-1', 'date': '2024-08-01', 'code': 'HT-S1', 'name': 'Historical SKU Name', 'specification': '', 'description': 'Historical product description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '12.000000000000', 'unit': 'pcs', 'quantity': '10.00', 'amount': '120.00', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}, {'id': 5, 'source_system': 'Legacy synthetic system', 'source_number': 'PO-HT-1:1', 'batch': 'HT-G1', 'group': 1, 'application': 1, 'kind': 'purchase', 'order_number': 'HIST-PO-HT-1', 'date': '2024-07-01', 'code': 'HT-S1', 'name': 'Historical Purchase SKU', 'specification': '', 'description': 'Purchase description', 'category': '', 'category_reference': '', 'trade_quantity': None, 'trade_unit_price': None, 'trade_unit': '', 'unit_price': '3.000000000000', 'unit': 'pcs', 'quantity': '5.00', 'amount': '15.00000000000000', 'currency': 'USD', 'sku': None, 'status': 'pending', 'version': 0, 'reason': '基础单位或规格资料不足或不一致，请先标记待核实。'}]}
+
+----------------------------------------------------------------------
+Ran 79 tests in 252.415s
+
+FAILED (failures=9, skipped=7)
+Destroying test database for alias 'default'...
+
+Found 79 test(s).
+System check identified no issues (0 silenced).

@@ -70,20 +70,35 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
   await page.goto('/historical-orders')
   const analysis = page.locator('.analysis-card')
   const grouping = analysis.getByLabel('商品口径')
-  await expect(analysis.getByRole('heading', { name: '历史原文' })).toBeVisible()
+  const sales = analysis.locator('.analysis-detail-section').filter({
+    has: page.getByRole('heading', { name: '历史销售明细', exact: true }),
+  })
+  await expect(sales.getByRole('heading', { name: '历史原文' })).toBeVisible()
   await grouping.selectOption('linked')
-  await expect(analysis.getByRole('heading', { name: '按关联 SKU 归集' })).toBeVisible()
+  await expect(sales.getByRole('heading', { name: '按关联 SKU 归集' })).toBeVisible()
+  await sales.getByRole('heading', { name: '按关联 SKU 归集' }).scrollIntoViewIfNeeded()
   await capture('linked-analysis')
 
-  await page.route('**/api/reports/historical/**', route => route.fulfill({ status: 503, json: { detail: '合成网络失败，等待重试' } }), { times: 1 })
+  const originalReport = url => url.pathname === '/api/reports/historical/' && url.searchParams.get('grouping') === 'original'
+  let injectedFailures = 0
+  await page.route(originalReport, route => {
+    injectedFailures += 1
+    return route.fulfill({ status: 503, json: { detail: '合成网络失败，等待重试' } })
+  }, { times: 6 })
+  const failedReport = page.waitForResponse(response => originalReport(new URL(response.url())))
   await grouping.selectOption('original')
-  await expect(analysis.getByRole('alert')).toHaveText('服务器暂时不可用，请稍后重试。')
+  expect((await failedReport).status()).toBe(503)
+  await expect(analysis.getByRole('alert')).toHaveText('服务器暂时不可用，请稍后重试。', { timeout: 20_000 })
+  expect(injectedFailures).toBe(6)
+  await analysis.getByRole('alert').scrollIntoViewIfNeeded()
+  await capture('analysis-error')
   await analysis.getByRole('button', { name: '刷新分析' }).click()
-  await expect(analysis.getByRole('heading', { name: '历史原文' })).toBeVisible()
+  await expect(sales.getByRole('heading', { name: '历史原文' })).toBeVisible()
+  await sales.getByRole('heading', { name: '历史原文' }).scrollIntoViewIfNeeded()
   await capture('original-analysis-recovered')
   await writeFile(path.join(output, 'chrome-checks.json'), JSON.stringify({
     chrome: browser.version(), viewport: page.viewportSize(), nativeZoom: '100%',
     sourceSha: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
-    backend: 'isolated SQLite and media root; only 503 analysis recovery response injected',
+    backend: 'isolated SQLite and media root; six HTTP 503 responses simulate a failed analysis read through the app retry limit',
   }, null, 2))
 })

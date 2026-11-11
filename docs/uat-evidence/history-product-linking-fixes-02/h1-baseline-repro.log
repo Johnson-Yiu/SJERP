@@ -1,0 +1,83 @@
+Creating test database for alias 'default'...
+
+EFFConflict: /api/import/history-products/preview/
+Conflict: /api/import/history-products/preview/
+FBad Request: /api/import/history-takeovers/1/groups/1/resolve-master/
+FFF
+======================================================================
+ERROR: test_candidate_rule_is_visible_without_binding_and_respects_current_specification (crm.tests.test_history_products.HistoricalProductLinkingTests.test_candidate_rule_is_visible_without_binding_and_respects_current_specification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\local-data\h2-baseline-repro\backend\crm\tests\test_history_products.py", line 197, in test_candidate_rule_is_visible_without_binding_and_respects_current_specification
+    row = next(item for item in group.preflight_result["results"] if item.get("product_candidates"))
+StopIteration
+
+======================================================================
+FAIL: test_fifty_rounded_lines_match_preview_export_analysis_and_order (crm.tests.test_history_products.HistoricalProductLinkingTests.test_fifty_rounded_lines_match_preview_export_analysis_and_order)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\local-data\h2-baseline-repro\backend\crm\tests\test_history_products.py", line 230, in test_fifty_rounded_lines_match_preview_export_analysis_and_order
+    self.assertEqual(preview.data["amounts"], {"CNY": Decimal("17.00")})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: defaultdict(<class 'decimal.Decimal'>, {'CNY': Decimal('16.75000000000000')}) != {'CNY': Decimal('17.00')}
+
+======================================================================
+FAIL: test_list_query_count_is_bounded_and_export_uses_same_filters (crm.tests.test_history_products.HistoricalProductLinkingTests.test_list_query_count_is_bounded_and_export_uses_same_filters)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\local-data\h2-baseline-repro\backend\crm\tests\test_history_products.py", line 265, in test_list_query_count_is_bounded_and_export_uses_same_filters
+    self.assertLessEqual(len(large), 8)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 505 not less than or equal to 8
+
+======================================================================
+FAIL: test_missing_specification_needs_evidence_and_audits_development_identity (crm.tests.test_history_products.HistoricalProductLinkingTests.test_missing_specification_needs_evidence_and_audits_development_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\local-data\h2-baseline-repro\backend\crm\tests\test_history_products.py", line 172, in test_missing_specification_needs_evidence_and_audits_development_identity
+    self.assertEqual(self.preview([source.pk], b, verified_specification="24 W").status_code, 400)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 409 != 400
+
+======================================================================
+FAIL: test_same_original_and_confirmed_sku_agree_and_mapping_can_be_cleared (crm.tests.test_history_takeover.HistoricalSourceIdentityTests.test_same_original_and_confirmed_sku_agree_and_mapping_can_be_cleared)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\local-data\h2-baseline-repro\backend\crm\tests\test_history_takeover.py", line 200, in test_same_original_and_confirmed_sku_agree_and_mapping_can_be_cleared
+    self.assertEqual(response.status_code, 200, response.data)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 400 != 200 : {'detail': '已选 SKU 不可用或与历史基础单位、规格不一致，请重新核实。'}
+
+======================================================================
+FAIL: test_link_and_rebind_archived_inventory_without_bypassing_approval (crm.tests.test_history_operational_inventory.ArchivedUnknownInventoryLinkTests.test_link_and_rebind_archived_inventory_without_bypassing_approval)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\local-data\h2-baseline-repro\backend\crm\tests\test_history_operational_inventory.py", line 132, in test_link_and_rebind_archived_inventory_without_bypassing_approval
+    self.assertEqual([row["id"] for row in result.data["results"]], [source.pk])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [] != [12]
+
+Second list contains 1 additional elements.
+First extra element 0:
+12
+
+- []
++ [12]
+
+======================================================================
+FAIL: test_upgrade_empty_rollback_and_protect_archive_rules_and_audit (crm.tests.test_history_product_migration.HistoricalProductMigrationTests.test_upgrade_empty_rollback_and_protect_archive_rules_and_audit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\Codex项目\森爵照明管理系统\.task-worktrees\history-product-linking-fixes-02\local-data\h2-baseline-repro\backend\crm\tests\test_history_product_migration.py", line 42, in test_upgrade_empty_rollback_and_protect_archive_rules_and_audit
+    with self.assertRaisesRegex(IrreversibleError, "不能降级"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: IrreversibleError not raised
+
+----------------------------------------------------------------------
+Ran 7 tests in 98.257s
+
+FAILED (failures=6, errors=1)
+Destroying test database for alias 'default'...
+
+Found 7 test(s).
+System check identified no issues (0 silenced).

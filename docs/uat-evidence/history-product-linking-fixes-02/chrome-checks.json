@@ -1,0 +1,10 @@
+{
+  "chrome": "156.0.8078.80",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "nativeZoom": "100%",
+  "sourceSha": "a90beef504df546c8b2fd1e4a0de126230eaff97",
+  "backend": "isolated SQLite and media root; six HTTP 503 responses simulate a failed analysis read through the app retry limit"
+}

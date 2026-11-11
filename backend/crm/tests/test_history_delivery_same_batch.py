@@ -1,8 +1,14 @@
 import tempfile
+import os
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+from crm.management.commands.reconcile_history_import import reconcile
 from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
+from django.test.utils import CaptureQueriesContext
+from django.db import connection
 from crm.tests.test_history_takeover import HistoryTakeoverFixtureMixin
 from crm.history_takeover import execute_group
 from crm.history_product_models import ArchivedHistoryLine, HistoryProductLink
@@ -27,16 +33,33 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
             for row in rows[sheet]: row['sku_code'] = ''
         rows['销售明细'][0]['specification_snapshot'] = '24W'
         rows['采购明细'][0]['specification_snapshot'] = '24W'
+        completed = dict(rows['销售订单'][0], source_record_id='SO-HT-DONE', order_no='HIST-SO-HT-DONE', lifecycle_state='completed')
+        done_line = dict(rows['销售明细'][0], source_order_id='SO-HT-DONE', source_line_id='1')
+        done_event = dict(rows['履约记录'][0], source_event_id='SHIP-HT-DONE', parent_source_id='SO-HT-DONE', quantity_base='10.00')
+        rows['销售订单'].append(completed)
+        rows['销售明细'].append(done_line)
+        rows['履约记录'].append(done_event)
+        bad_group = dict(rows['分组'][0], group_id='HT-G-ERROR')
+        bad_order = dict(rows['销售订单'][0], group_id='HT-G-ERROR', source_record_id='SO-HT-BAD', order_no='HIST-SO-HT-BAD')
+        bad_line = dict(rows['销售明细'][0], group_id='HT-G-ERROR', source_order_id='SO-HT-BAD', quantity_base='-1')
+        rows['分组'].append(bad_group)
+        rows['销售订单'].append(bad_order)
+        rows['销售明细'].append(bad_line)
         workbook = self.workbook_bytes(rows)
         def submit():
             return self.client.post("/api/import/history-takeovers/", {"file": SimpleUploadedFile("synthetic-history.xlsx", workbook)}, format="multipart")
         submitted = submit()
         self.assertEqual(submitted.status_code, 201, submitted.data)
         application = HistoryTakeoverApplication.objects.get(pk=submitted.data["id"])
-        group = application.groups.get()
+        group = application.groups.get(source_group_id='HT-G1')
+        bad = application.groups.get(source_group_id='HT-G-ERROR')
+        self.assertNotEqual(bad.preflight_result['status'], '通过')
         dup = submit()
         self.assertEqual(dup.status_code, 200, dup.data)
         self.assertTrue(dup.data['duplicate_submission_reused'])
+        bad_url = f'/api/import/history-takeovers/{application.pk}/groups/{bad.pk}/'
+        bad_review = self.client.post(bad_url+'review/', {'decision':'approve','note':'合成错误','confirm_manual':True}, format='json')
+        self.assertNotEqual(bad_review.status_code, 200)
         url = f'/api/import/history-takeovers/{application.pk}/groups/{group.pk}/'
         reviewed = self.client.post(url+'review/', {'decision':'approve','note':'核对合成凭证','confirm_manual':True}, format='json')
         self.assertEqual(reviewed.status_code, 200, reviewed.data)
@@ -47,21 +70,40 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
         with patch('crm.history_takeover.ArchivedHistoryLine.objects.create', side_effect=fail_purchase):
             with self.assertRaisesRegex(RuntimeError, 'synthetic failure'): execute_group(group, self.admin)
         self.assertEqual(Order.objects.count()+PurchaseOrder.objects.count(), 0)
+        baseline = {m.__name__: m.objects.count() for m in (Transaction,FinanceFact,InventoryMovement,Shipment,GoodsReceipt)}
         result = self.client.post(url+'execute/', {}, format='json')
         self.assertEqual(result.status_code, 200, result.data)
         self.assertTrue(self.client.post(url+'execute/', {}, format='json').data['idempotent_replay'])
+        changed_rows = self.source_rows()
+        changed_rows['分组'][0]['notes'] = 'different file, same source identities'
+        changed = self.upload_application(changed_rows, filename='duplicate-source.xlsx')
+        self.assertEqual(changed.status_code, 201, changed.data)
+        duplicate_app = HistoryTakeoverApplication.objects.get(pk=changed.data['id'])
+        duplicate_group = duplicate_app.groups.get()
+        duplicate_url = f'/api/import/history-takeovers/{duplicate_app.pk}/groups/{duplicate_group.pk}/'
+        duplicate_review = self.client.post(duplicate_url+'review/', {'decision':'approve','note':'合成重复来源核对','confirm_manual':True}, format='json')
+        self.assertNotEqual(duplicate_review.status_code, 200)
         self.assertEqual(SKU.objects.count(), 0)
-        self.assertEqual(ArchivedHistoryLine.objects.count(), 2)
+        self.assertEqual(ArchivedHistoryLine.objects.count(), 3)
         self.assertEqual(sum(m.objects.count() for m in (Transaction,FinanceFact,InventoryMovement,Shipment,GoodsReceipt)),0)
+        after_archive = reconcile(application, os.environ.get('HISTORY_DELIVERY_SOURCE_SHA', 'uncommitted-test'))
+        self.assertEqual(after_archive['global_fact_counts']['FinanceFact'], 0)
         sku = SKU.objects.create(product=self.product, sku='B', display_name_cn='合成正式商品 B', specification='24W', unit='pcs')
         ids = list(group.source_records.filter(record_type__in=['销售明细','采购明细']).values_list('pk',flat=True))
         preview = self.client.post('/api/import/history-products/preview/', {'ids':ids,'target':sku.pk,'operation':'link','reason':'核对合成规格'}, format='json')
         self.assertEqual(preview.status_code,200,preview.data)
         linked = self.client.post('/api/import/history-products/apply/', {'token':preview.data['token']}, format='json')
         self.assertEqual(linked.status_code,200,linked.data)
-        self.assertEqual(HistoryProductLink.objects.filter(sku=sku).count(),2)
+        self.assertEqual(HistoryProductLink.objects.filter(sku=sku).count(),3)
         self.assertEqual(SKU.objects.count(),1)
         self.assertEqual(sum(m.objects.count() for m in (Transaction,FinanceFact,InventoryMovement,Shipment,GoodsReceipt)),0)
+        with CaptureQueriesContext(connection) as queries:
+            before_finance = reconcile(application, os.environ.get('HISTORY_DELIVERY_SOURCE_SHA', 'uncommitted-test'))
+        self.assertTrue(all(q['sql'].lstrip().upper().startswith('SELECT') for q in queries))
+        self.assertEqual(before_finance['groups'][0]['order_count'], 3)
+        self.assertEqual(before_finance['groups'][0]['product_count'], 3)
+        self.assertEqual(before_finance['groups'][0]['product_states']['linked'], 3)
+        self.assertEqual(before_finance['groups'][0]['cny_finance_facts'], [])
         maker = get_user_model().objects.create_superuser(username='delivery-maker',password='test-only')
         reviewer = get_user_model().objects.create_superuser(username='delivery-reviewer',password='test-only')
         with tempfile.TemporaryDirectory(prefix='delivery-media-') as media, override_settings(MEDIA_ROOT=media):
@@ -75,4 +117,12 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
             fact = bridge.advance_source(group.pk, source.pk, 'post', maker, voucher_checked=True)
             self.assertEqual(bridge.advance_source(group.pk, source.pk, 'post', maker, voucher_checked=True).pk,fact.pk)
             self.assertEqual(FinanceFact.objects.count(),1)
+            report = reconcile(application, os.environ.get('HISTORY_DELIVERY_SOURCE_SHA', 'uncommitted-test'))
+            self.assertEqual(len(report['groups'][0]['cny_finance_facts']), 1)
+            self.assertEqual(report['groups'][0]['cny_finance_facts'][0]['amount'], fact.amount)
+            self.assertEqual(report['groups'][0]['currency_totals']['USD']['sales_total'], Order.objects.get(order_no='HIST-SO-HT-1').total_amount + Order.objects.get(order_no='HIST-SO-HT-DONE').total_amount)
+            self.assertTrue(all(row['record_id'] for row in report['groups'][0]['source_rows']))
+            if os.environ.get('HISTORY_DELIVERY_SYNTHETIC_REPORT'):
+                with open(os.environ['HISTORY_DELIVERY_SYNTHETIC_REPORT'], 'w', encoding='utf-8') as output:
+                    json.dump({'baseline_counts': baseline, 'after_archive': after_archive, 'after_link': before_finance, 'after_finance': report}, output, cls=DjangoJSONEncoder, ensure_ascii=False, indent=2)
             self.assertEqual(sum(m.objects.count() for m in (Transaction,InventoryMovement,Shipment,GoodsReceipt)),0)

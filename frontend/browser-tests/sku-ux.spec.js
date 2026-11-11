@@ -5,7 +5,7 @@ const existing={id:7,sku:'SKU-F7',sku_code:'SKU-F7',product:1,product_name:produ
 function gate(){let resolve;const promise=new Promise(r=>{resolve=r});return{promise,resolve}}
 async function setup(page){const state={rows:[existing,{...existing,id:8,sku:'SKU-OFF',sku_code:'SKU-OFF',display_name_cn:'停用样本',active:false}],writes:[],gate:gate(),readonly:false,sources:[{id:1,sku:7,supplier:1,supplier_name:'供应商长名称'.repeat(6),supplier_sku_code:'GA-01',supplier_model:'供应商长型号'.repeat(7),purchase_price:'12.50',currency:'USD',moq:10,is_active:true,is_preferred:false},{id:2,sku:7,supplier:2,supplier_name:'供应商二',supplier_sku_code:'GB-01',purchase_price:'13.5',currency:'USD',is_active:true}]}
 await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname,method=route.request().method()
-if(path==='/api/session/current-operator/')return route.fulfill({json:state.readonly?{name:'Readonly fixture',rbac_enforcement:true,permissions:{skus:{view:true},products:{view:true},inventory:{view:true},suppliers:{view:true}}}:{name:'Isolated developer',development_superadmin:true,has_all_permissions:true}})
+if(path==='/api/session/current-operator/')return route.fulfill({json:state.readonly?{name:'Readonly fixture',authenticated:true,rbac_enforcement:true,permissions:{skus:{view:true},products:{view:true},inventory:{view:true},suppliers:{view:true}}}:{name:'Isolated developer',development_superadmin:true,has_all_permissions:true}})
 if(path==='/api/products/')return route.fulfill({json:[product]})
 if(path==='/api/categories/tree/')return route.fulfill({json:[{id:1,name:'照明',attributes,effective_attributes:attributes}]})
 if(path==='/api/suppliers/')return route.fulfill({json:[{id:1,name:state.sources[0].supplier_name},{id:2,name:'供应商二'}]})

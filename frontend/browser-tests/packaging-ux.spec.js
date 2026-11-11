@@ -4,7 +4,7 @@ const skus=[1,2].map(id=>({id,sku:`SKU-${id}`,sku_code:`SKU-${id}`,display_name_
 function gate(){let resolve;const promise=new Promise(r=>{resolve=r});return{promise,resolve}}
 async function setup(page){const state={templates:[template],units:[5,10,50].map((factor,i)=>({id:i+1,sku:1,sku_code:'SKU-1',name:`${factor}米卷`,unit:'卷',factor:String(factor),base_unit:'m',active:true,is_default:factor===10,allow_fraction:false})),writes:[],pending:null,readonly:false,failLoad:false}
  await page.route('**/api/**',async route=>{const path=new URL(route.request().url()).pathname,method=route.request().method()
-  if(path==='/api/session/current-operator/')return route.fulfill({json:state.readonly?{rbac_enforcement:true,permissions:{packaging:{view:true},trade_units:{view:true},skus:{view:true},suppliers:{view:true}}}:{development_superadmin:true,has_all_permissions:true}})
+  if(path==='/api/session/current-operator/')return route.fulfill({json:state.readonly?{authenticated:true,rbac_enforcement:true,permissions:{packaging:{view:true},trade_units:{view:true},skus:{view:true},suppliers:{view:true}}}:{development_superadmin:true,has_all_permissions:true}})
   if(path==='/api/skus/')return route.fulfill({json:skus})
   if(path==='/api/suppliers/')return route.fulfill({json:[{id:1,name:template.supplier_name}]})
   if(method==='GET'&&path==='/api/packaging-templates/')return state.failLoad?route.fulfill({status:403,json:{detail:'模板暂不可用'}}):route.fulfill({json:state.templates})

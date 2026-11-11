@@ -7,7 +7,7 @@ import { chromium, expect, test } from '@playwright/test'
 test('product parameter survives save and reopen and shared sales/history chrome stays aligned', async ({ baseURL }) => {
   test.setTimeout(2400000)
   const evidence = path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT)
-  const output = path.join(evidence, 'chrome-parameter-cross-check')
+  const output = path.join(evidence, 'chrome-customer-edit')
   await mkdir(output, { recursive: true })
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
   const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [fileURLToPath(new URL('../../docs/uat-evidence/ui-product-operations-completion-02/seed.py', import.meta.url))], {
@@ -86,6 +86,20 @@ test('product parameter survives save and reopen and shared sales/history chrome
         }))
         await snap(id, zoom, metrics)
         expect(metrics.workspaceTop).toBeCloseTo(metrics.topbarBottom, 0)
+        if (route === '/customers') {
+          await page.getByRole('row').filter({ hasText: '合成采购成本归属客户' }).click()
+          const detail = page.getByRole('dialog', { name: '客户详情' })
+          const edit = detail.getByRole('button', { name: '编辑客户', exact: true })
+          await expect(edit).toBeInViewport()
+          await snap('customer-detail-edit-action', zoom)
+          await edit.click()
+          const editor = page.locator('.customer-editor')
+          await expect(editor.getByRole('heading', { name: '编辑客户' })).toBeVisible()
+          await expect(editor.getByPlaceholder('输入客户名称')).toHaveValue('合成采购成本归属客户')
+          await snap('customer-detail-edit-opened', zoom)
+          await editor.getByRole('button', { name: '取消', exact: true }).click()
+          await expect(editor).toHaveCount(0)
+        }
       }
     }
   } catch (error) {

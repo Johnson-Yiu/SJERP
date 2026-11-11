@@ -64,3 +64,9 @@ node frontend/scripts/run-isolated-browser-tests.mjs --business-test ui-product-
 - **库存详情缺少批次或货位标识**。在库存流水中按仓库名筛出同 SKU 的两条不同批次，打开第一条后，抽屉能展示流水号和仓库，但不显示已有批次。候选位置为 `EntityDetailModal.vue` 的库存 `detailInfo` 字段映射。影响同仓多批次的界面辨识。 [原始失败](chrome-same-warehouse-lot-label-missing/run.json) · [两条真实流水详情、接口批次与缺失截图](chrome-same-warehouse-lots/run.json)
 
 以上问题保留供独立复审。批次号搜索沿用现有产品范围。
+
+## 冻结源码补验
+
+在 A3 冻结源码 `92c15b65e495012f203496698bd8fb8af9ef3d17` 的独立工作树，使用 Chrome 真实后端验证 390×844、原生 125%。合成库存流水分别标记为销售出库、退货入库和采购入库，三个系统自动来源在列表均只可打开详情，编辑和冲销入口不可用。手工流水允许打开冲销确认，原因为空时确认按钮禁用。填写原因后真实接口返回 201。原流水标记已冲销，自动生成的冲销流水与原流水均无编辑或再次冲销入口。[库存来源操作](chrome-inventory-source-actions/run.json)
+
+采购组合的首次环境尝试在 Chrome 设置页超时。[保留的环境记录](chrome-purchase-receipt-combinations-environment-first/run.json)

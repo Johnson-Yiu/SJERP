@@ -1,0 +1,46 @@
+{
+  "source": "92c15b65e495012f203496698bd8fb8af9ef3d17",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "inventory-source-shipment",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-source-shipment-390-125.png"
+    },
+    {
+      "id": "inventory-source-return",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-source-return-390-125.png"
+    },
+    {
+      "id": "inventory-source-receipt",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-source-receipt-390-125.png"
+    },
+    {
+      "id": "manual-movement-reversal-confirmation",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "manual-movement-reversal-confirmation-390-125.png"
+    },
+    {
+      "id": "manual-movement-and-reversal-readonly",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "manual-movement-and-reversal-readonly-390-125.png"
+    }
+  ]
+}

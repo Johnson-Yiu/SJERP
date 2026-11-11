@@ -1,0 +1,6 @@
+{
+  "source": "809c946b2a6768e0ada5e4cbd88bb0195329e08c",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [],
+  "failure": "locator.click: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: '采购工作台' }).getByRole('button', { name: '分配采购成本 / 公共费用', exact: true })\u001b[22m\n"
+}

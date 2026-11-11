@@ -102,6 +102,24 @@ test('customer creation selects an employee and preserves nested contacts after 
         await expect(contact).toBeVisible()
         await contact.scrollIntoViewIfNeeded()
         await capture('customer-owner-and-contact-readback')
+        await detail.getByRole('button', { name: '新增联系人', exact: true }).click()
+        const related = page.locator('form.related-create-modal').filter({ has: page.getByRole('heading', { name: '新增联系人', exact: true }) })
+        const contactField = label => related.locator('.field').filter({ has: page.locator('label').filter({ hasText: label }) })
+        const relatedCustomer = contactField('所属客户').locator('select')
+        await expect(relatedCustomer).toHaveValue(String(id))
+        await expect(relatedCustomer).toBeDisabled()
+        const nestedName = '合成详情新增联系人'
+        await contactField('姓名').locator('input').fill(nestedName)
+        const nestedResponse = page.waitForResponse(r => new URL(r.url()).pathname === '/api/contacts/' && r.request().method() === 'POST')
+        await related.getByRole('button', { name: '保存', exact: true }).click()
+        const nested = await nestedResponse
+        expect(nested.status(), await nested.text()).toBe(201)
+        expect((await nested.json()).customer).toBe(id)
+        await expect(related).toHaveCount(0)
+        const returnedContact = detail.getByText(nestedName, { exact: true }).first()
+        await expect(returnedContact).toBeVisible()
+        await expect(async () => { await returnedContact.scrollIntoViewIfNeeded(); await expect(returnedContact).toBeInViewport({ timeout: 2000 }) }).toPass({ timeout: 15000 })
+        await capture('customer-related-contact-returned')
       }
     }
   } catch (error) {

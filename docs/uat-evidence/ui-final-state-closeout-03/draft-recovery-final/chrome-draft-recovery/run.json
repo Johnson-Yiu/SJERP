@@ -1,0 +1,63 @@
+{
+  "source": "39a5c63f2991a775796c8829d293e6b38951e209",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "sales-draft-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "sales-draft-pending-1366-100.png"
+    },
+    {
+      "id": "purchase-draft-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "purchase-draft-pending-1366-100.png"
+    },
+    {
+      "id": "sales-draft-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "sales-draft-pending-1366-125.png"
+    },
+    {
+      "id": "purchase-draft-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "purchase-draft-pending-1366-125.png"
+    },
+    {
+      "id": "sales-draft-pending",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "sales-draft-pending-1440-100.png"
+    },
+    {
+      "id": "purchase-draft-pending",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "purchase-draft-pending-1440-100.png"
+    },
+    {
+      "id": "sales-draft-pending",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "sales-draft-pending-1440-125.png"
+    },
+    {
+      "id": "purchase-draft-pending",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "purchase-draft-pending-1440-125.png"
+    }
+  ],
+  "failure": "locator.click: Timeout 90000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '保存销售订单草稿', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button data-v-dfaf05d4=\"\" class=\"btn btn-primary\">保存销售订单草稿</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label data-v-90089d51=\"\">…</label> from <div data-v-39de5d98=\"\" class=\"modal-backdrop detail-backdrop\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <label data-v-90089d51=\"\">…</label> from <div data-v-39de5d98=\"\" class=\"modal-backdrop detail-backdrop\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    156 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m        - element is visible, enabled and stable\u001b[22m\n\u001b[2m        - scrolling into view if needed\u001b[22m\n\u001b[2m        - done scrolling\u001b[22m\n\u001b[2m        - <label data-v-90089d51=\"\">…</label> from <div data-v-39de5d98=\"\" class=\"modal-backdrop detail-backdrop\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m      - retrying click action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n"
+}

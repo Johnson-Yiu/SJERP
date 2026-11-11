@@ -1,21 +1,63 @@
-import { test, expect } from '@playwright/test'
+import { test as base, expect, chromium } from '@playwright/test'
 import { execFileSync } from 'node:child_process'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
-test.use({ channel: 'chrome', viewport: { width: 1440, height: 900 } })
+const nativeZoom = Number(process.env.H2_NATIVE_ZOOM || 100)
+const test = base.extend({
+  context: async ({ context, baseURL, viewport }, use) => {
+    if (nativeZoom === 100) {
+      await use(context)
+      return
+    }
+    const profile = await mkdtemp(path.join(process.env.ISOLATED_TEST_ROOT, 'h2-chrome-'))
+    try {
+      const chrome = await chromium.launchPersistentContext(profile, { channel: 'chrome', baseURL, viewport })
+      try {
+        await chrome.addCookies((await context.storageState()).cookies)
+        const settings = chrome.pages()[0]
+        await settings.setViewportSize({ width: 1440, height: 900 })
+        await settings.goto('chrome://settings/appearance')
+        await settings.getByRole('combobox', { name: /网页缩放|Page zoom/ }).selectOption({ label: `${nativeZoom}%` })
+        await use(chrome)
+      } finally {
+        await chrome.close()
+      }
+    } finally {
+      await rm(profile, { recursive: true, force: true })
+    }
+  },
+})
+
+test.use({ channel: 'chrome', viewport: { width: Number(process.env.H2_VIEWPORT_WIDTH || 1440), height: 900 } })
 
 test('H2 controlled candidate selection, specification recovery, audit, analysis and CSV', async ({ page, browser }, info) => {
   test.setTimeout(300_000)
   page.setDefaultTimeout(30_000)
   const output = process.env.H2_EVIDENCE_ROOT || info.outputPath('h2')
   await mkdir(output, { recursive: true })
-  const capture = name => page.screenshot({ path: path.join(output, name + '.png') })
+  const capture = async name => {
+    const destination = path.join(output, name + '.png')
+    if (nativeZoom === 100) {
+      await page.screenshot({ path: destination })
+      return
+    }
+    const session = await page.context().newCDPSession(page)
+    try {
+      const screenshot = await session.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+      await writeFile(destination, Buffer.from(screenshot.data, 'base64'))
+    } finally {
+      await session.detach()
+    }
+  }
   const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [
     path.resolve('../docs/uat-evidence/history-product-linking-fixes-02/seed-browser.py'),
   ], { cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8' }).trim().split('\n').at(-1))
 
   await page.goto('/history-takeover?application=' + fixture.candidate)
+  const effective = await page.evaluate(() => ({ width: innerWidth, scale: devicePixelRatio }))
+  expect(effective.scale).toBeCloseTo(nativeZoom / 100)
+  expect(Math.abs(effective.width - page.viewportSize().width / effective.scale)).toBeLessThan(2)
   await page.getByRole('button', { name: /H2-CANDIDATE/ }).click()
   const choose = page.getByRole('button', { name: '选用此候选' })
   await expect(choose).toBeVisible()
@@ -26,6 +68,8 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
   await expect(page.getByLabel('选择现有对象')).toHaveValue('B')
   await expect(page.getByRole('button', { name: '保存关联并重新预检' })).toBeDisabled()
   await page.getByLabel('关联依据').fill('已与合成旧单的型号和规格核对')
+  await page.getByLabel('关联依据').scrollIntoViewIfNeeded()
+  await capture('candidate-selected')
   const saveMapping = page.waitForResponse(response => response.url().includes('/resolve-master/') && response.request().method() === 'POST')
   await page.getByRole('button', { name: '保存关联并重新预检' }).click()
   expect((await saveMapping).status()).toBe(200)
@@ -97,7 +141,7 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
   await sales.getByRole('heading', { name: '历史原文' }).scrollIntoViewIfNeeded()
   await capture('original-analysis-recovered')
   await writeFile(path.join(output, 'chrome-checks.json'), JSON.stringify({
-    chrome: browser.version(), viewport: page.viewportSize(), nativeZoom: '100%',
+    chrome: browser.version(), viewport: page.viewportSize(), nativeZoom: `${nativeZoom}%`, effective,
     sourceSha: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     backend: 'isolated SQLite and media root; six HTTP 503 responses simulate a failed analysis read through the app retry limit',
   }, null, 2))

@@ -1,0 +1,548 @@
+{
+  "source": "a36dd39425f00252414a9f012d910caef9660614",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "key": "quote-revision-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-revision-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ]
+    },
+    {
+      "key": "quote-revision-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-revision-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ]
+    },
+    {
+      "key": "quote-pi-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "quote-pi-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": null,
+          "right": 1345.65625
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.65625
+        }
+      ],
+      "snapshot": {
+        "imageOrigin": "http://127.0.0.1:4750",
+        "frameOrigin": "http://127.0.0.1:4750",
+        "width": 48
+      }
+    },
+    {
+      "key": "quote-pi-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "quote-pi-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table quote-table",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.2500734329224
+        },
+        {
+          "className": "clickable-row quote-tree-row quote-root-row",
+          "right": 1345.2500734329224
+        },
+        {
+          "className": null,
+          "right": 1345.25
+        }
+      ],
+      "snapshot": {
+        "imageOrigin": "http://127.0.0.1:4750",
+        "frameOrigin": "http://127.0.0.1:4750",
+        "width": 48
+      }
+    },
+    {
+      "key": "order-badge-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "order-badge-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1332.390625
+        },
+        {
+          "className": null,
+          "right": 1332.390625
+        },
+        {
+          "className": null,
+          "right": 1332.390625
+        },
+        {
+          "className": null,
+          "right": 1332.390625
+        },
+        {
+          "className": null,
+          "right": 1332.390625
+        },
+        {
+          "className": "clickable-row",
+          "right": 1332.390625
+        }
+      ],
+      "badgeLines": 1
+    },
+    {
+      "key": "order-badge-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "order-badge-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1331.3750734329224
+        },
+        {
+          "className": null,
+          "right": 1331.3750734329224
+        },
+        {
+          "className": null,
+          "right": 1331.3750734329224
+        },
+        {
+          "className": null,
+          "right": 1331.3750734329224
+        },
+        {
+          "className": "clickable-row",
+          "right": 1331.3750734329224
+        },
+        {
+          "className": "clickable-row",
+          "right": 1331.3750734329224
+        }
+      ],
+      "badgeLines": 1
+    },
+    {
+      "key": "order-cancel-required-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "order-cancel-required-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1332.390625
+        },
+        {
+          "className": null,
+          "right": 1332.390625
+        },
+        {
+          "className": null,
+          "right": 1332.390625
+        },
+        {
+          "className": null,
+          "right": 1332.390625
+        },
+        {
+          "className": null,
+          "right": 1332.390625
+        },
+        {
+          "className": "clickable-row",
+          "right": 1332.390625
+        }
+      ]
+    },
+    {
+      "key": "order-cancel-required-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "order-cancel-required-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1331.3750734329224
+        },
+        {
+          "className": null,
+          "right": 1331.3750734329224
+        },
+        {
+          "className": null,
+          "right": 1331.3750734329224
+        },
+        {
+          "className": null,
+          "right": 1331.3750734329224
+        },
+        {
+          "className": "clickable-row",
+          "right": 1331.3750734329224
+        },
+        {
+          "className": "clickable-row",
+          "right": 1331.3750734329224
+        }
+      ]
+    },
+    {
+      "key": "order-cancelled-read-only-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "order-cancelled-read-only-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": "clickable-row",
+          "right": 1318.390625
+        }
+      ]
+    },
+    {
+      "key": "order-cancelled-read-only-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "order-cancelled-read-only-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": "data-table order-list-table",
+          "right": 1318.1750001907349
+        },
+        {
+          "className": null,
+          "right": 1318.1750001907349
+        },
+        {
+          "className": null,
+          "right": 1318.1750001907349
+        }
+      ]
+    },
+    {
+      "key": "order-completed-read-only-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "order-completed-read-only-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": "clickable-row",
+          "right": 1318.390625
+        }
+      ]
+    },
+    {
+      "key": "order-completed-read-only-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "order-completed-read-only-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": "data-table order-list-table",
+          "right": 1318.1750001907349
+        },
+        {
+          "className": null,
+          "right": 1318.1750001907349
+        },
+        {
+          "className": null,
+          "right": 1318.1750001907349
+        }
+      ]
+    },
+    {
+      "key": "follow-up-upload-error-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "follow-up-upload-error-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table follow-up-list-table",
+          "right": 1348
+        },
+        {
+          "className": null,
+          "right": 1348
+        },
+        {
+          "className": null,
+          "right": 1348
+        },
+        {
+          "className": null,
+          "right": 1348
+        },
+        {
+          "className": "clickable-row",
+          "right": 1348
+        },
+        {
+          "className": null,
+          "right": 1238
+        }
+      ]
+    },
+    {
+      "key": "follow-up-upload-error-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "follow-up-upload-error-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table follow-up-list-table",
+          "right": 1347.8000001907349
+        },
+        {
+          "className": null,
+          "right": 1347.8000001907349
+        },
+        {
+          "className": null,
+          "right": 1347.8000001907349
+        },
+        {
+          "className": null,
+          "right": 1347.8000001907349
+        },
+        {
+          "className": "clickable-row",
+          "right": 1347.8000001907349
+        },
+        {
+          "className": null,
+          "right": 1237.7999877929688
+        }
+      ]
+    },
+    {
+      "key": "follow-up-reopened-http",
+      "status": 200,
+      "bytes": 24,
+      "attachmentCount": 1
+    }
+  ],
+  "failures": [
+    {
+      "key": "quote-editor",
+      "error": "locator.selectOption: Timeout 75000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('settings-appearance-page select').filter({ has: locator('option[value=\"1.25\"]') })\u001b[22m\n"
+    }
+  ]
+}

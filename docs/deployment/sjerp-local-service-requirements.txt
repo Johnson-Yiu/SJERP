@@ -1,0 +1,3 @@
+# Local Linux service dependencies. Install after backend/requirements.lock.
+gunicorn==27.0.0
+packaging==26.2

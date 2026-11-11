@@ -1,0 +1,21 @@
+{
+  "browser": "156.0.8078.80",
+  "zoom": 1.25,
+  "quoteId": 1,
+  "requester": 2,
+  "reviewer": 3,
+  "reject": 200,
+  "withdraw": 200,
+  "status": [
+    {
+      "id": 2,
+      "status": "withdrawn",
+      "actor": 2
+    },
+    {
+      "id": 1,
+      "status": "rejected",
+      "actor": 3
+    }
+  ]
+}

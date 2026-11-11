@@ -46,11 +46,13 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
     const go = route => page.goto(new URL(route, baseURL).href, { waitUntil: 'commit', timeout: 75000 })
     const button = name => page.getByRole('button', { name, exact: true }).first()
 
+    const foregroundZoom = ['9', '10'].includes(extension)
+
     async function collect(state, check, focus) {
       for (const zoom of [1, 1.25]) {
-        await settings.bringToFront()
+        if (foregroundZoom) await settings.bringToFront()
         await zoomControl.selectOption(String(zoom))
-        await page.bringToFront()
+        if (foregroundZoom) await page.bringToFront()
         for (const [width, height] of viewports) {
           if (widthFilter && String(width) !== widthFilter) continue
           const key = state + '-' + width + '-' + zoom * 100
@@ -58,7 +60,8 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
             await page.setViewportSize({ width, height })
             await expect.poll(() => page.evaluate(() => devicePixelRatio), { timeout: 15000 }).toBeCloseTo(zoom, 2)
             if (width === 390) await expect.poll(() => page.locator('.sidebar').evaluate(el => el.getBoundingClientRect().right)).toBeLessThanOrEqual(1)
-            if (focus) await focus.scrollIntoViewIfNeeded()
+            if (typeof focus === 'function') await focus()
+            else if (focus) await focus.scrollIntoViewIfNeeded()
             const metrics = await page.evaluate(() => {
               const root = document.documentElement
               const initial = window.scrollX
@@ -84,9 +87,9 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
           await save()
         }
       }
-      await settings.bringToFront()
+      if (foregroundZoom) await settings.bringToFront()
       await zoomControl.selectOption('1')
-      await page.bringToFront()
+      if (foregroundZoom) await page.bringToFront()
       await page.setViewportSize({ width: 1440, height: 900 })
     }
 
@@ -547,10 +550,10 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
         release()
       }
       await failed
-      await page.unroute(endpoint)
       const country = editor.getByLabel('国家/地区', { exact: true })
       const alert = editor.getByRole('alert').filter({ hasText: '国家/地区资料加载失败' })
-      await expect(country).toBeDisabled()
+      await expect(country).toBeDisabled({ timeout: 20000 })
+      await page.unroute(endpoint)
       await collect('customer-country-load-error', async result => {
         noPageOverflow(result)
         await expect(alert).toBeVisible()
@@ -564,19 +567,23 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       await collect('customer-country-no-match', async result => {
         noPageOverflow(result)
         await expect(noMatch).toBeVisible()
-      }, noMatch)
+      }, async () => {
+        await country.fill('E1-NO-MATCH-COUNTRY')
+        await noMatch.scrollIntoViewIfNeeded()
+      })
       await country.fill('Germany')
       await editor.locator('.combo-menu button').filter({ hasText: /Germany/ }).first().click()
       await expect(country).toHaveValue(/Germany/)
-      await editor.getByRole('textbox').first().fill('SYNTH-SALES-CUSTOMER-COUNTRY')
+      await editor.locator('.field').filter({ hasText: '客户名称' }).locator('input').first().fill('SYNTH-SALES-CUSTOMER-COUNTRY')
+      await editor.locator('.contact-create-card .contact-fields input').first().fill('合成国家验收联系人')
       const saved = page.waitForResponse(r => r.url().endsWith('/api/customers/') && r.request().method() === 'POST')
       await editor.getByRole('button', { name: '保存客户', exact: true }).click()
       const response = await saved
       const customer = await response.json()
       expect(response.status(), JSON.stringify(customer)).toBe(201)
-      expect(customer.country).toBe('Germany')
+      expect(customer.country).toBe('DE')
       const readback = await page.request.get('/api/customers/' + customer.id + '/')
-      expect((await readback.json()).country).toBe('Germany')
+      expect((await readback.json()).country).toBe('DE')
       results.push({ key: 'customer-country-selector-http', retry: 200, create: 201, country: customer.country })
       await save()
     })

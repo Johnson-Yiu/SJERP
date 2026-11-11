@@ -10,7 +10,7 @@ ISS007 附件配置 3/3 通过。跟进正文成功、附件失败时，测试�
 
 [客户编辑层级](customer-detail-editor-verified/run.json)通过。独立运行先在桌面打开编辑，再在 390×844 的两个原生缩放确认保存和取消按钮可命中。实际取消后回到同一客户详情，底层恢复可交互。被测产品提交为 b52f3edc5c4ea47ed265f86d94ccdce0134b24d6。直接从窄屏打开编辑还依赖 E2 的入口恢复，需要 A3 组合候选的严格 C08 复验。保留 [首次运行的取消超时](customer-detail-editor/run.json)。
 
-[交易单位发货、包装尾差与装箱纠正](shipment-variance-complete/run.json)通过。390×844 原生 100%／125% 选择三箱，真实发货 201，回读总发货 15 pcs、超发 5 pcs。装箱填写 1 件触发整包装限制，填写 100 件触发累计装箱超过发货，均为真实 400。改为 5 件后真实 201，重开只有一条实际装箱。客户追加超发、其他选择器与其余桌面缩放仍待验。首次失败索引见 [仓库](shipment-variance/run.json)、[默认仓](shipment-variance-retry/run.json)、[批量预选](shipment-variance-final/run.json)、[装箱数量](shipment-variance-verified/run.json)。最终测试使用默认仓真实库存、单明细发货以及分别命中两条校验的数量。
+[交易单位发货、包装尾差与装箱纠正](shipment-variance-complete/run.json)通过。390×844 原生 100%／125% 选择三箱，真实发货 201，回读总发货 15 pcs、超发 5 pcs。装箱填写 1 件触发整包装限制，填写 100 件触发累计装箱超过发货，均为真实 400。改为 5 件后真实 201，重开只有一条实际装箱。其余选择器及装箱异常的桌面缩放仍待验。首次失败索引见 [仓库](shipment-variance/run.json)、[默认仓](shipment-variance-retry/run.json)、[批量预选](shipment-variance-final/run.json)、[装箱数量](shipment-variance-verified/run.json)。最终测试使用默认仓真实库存、单明细发货以及分别命中两条校验的数量。
 
 `E1_R2_EXTRA=5`、`6`、`7` 分别重跑发货与装箱、关联报价、客户编辑层级。完整状态缺项继续参见 [E1-R2 清单](README.md)。
 
@@ -24,4 +24,12 @@ A3 的严格 C08 在首次恢复入口后曾于 125% 点击无响应。该次日
 
 [客户追加超发](customer-addon-retry/run.json)通过。独立真实 Chrome 156.0.8078.80 在 1366×768、1440×900、390×844 各原生 100% 和 125% 核对超发原因。发货请求含客户追加，真实后端 201，重读确认 3 箱折合 15 件，其中超发 5 件。首次因隔离 Django 身份检查未能连接而终止，未执行浏览器业务步骤。
 
-报价主体在 125% 取得 [拒绝、撤回](lifecycle-125/lifecycle/http-results.json) 与 [独立审批替换及关联草稿](replacement-125/replacement-quote/http-results.json) 的真实后端结果和截图。两条用例均以浏览器 DPR 1.25 验证原生缩放，拒绝、撤回、审批、草稿生成及 PI 回读均完成。两个运行器最终因关闭独立 Chrome 会话超时返回失败，其中一条在清理时另报临时资料目录锁。记录为业务步骤通过、用例运行失败。原始终态和未通过原因均保留。
+报价主体在 125% 取得 [拒绝、撤回](lifecycle-125/lifecycle/http-results.json) 与 [独立审批替换及关联草稿](replacement-125/replacement-quote/http-results.json) 的真实后端结果和截图。两条用例均以浏览器 DPR 1.25 验证原生缩放，拒绝、撤回、审批、草稿生成及 PI 回读均完成。两个首次运行器最终因关闭独立 Chrome 会话超时返回失败，其中一条在清理时另报临时资料目录锁。记录为业务步骤通过、用例运行失败。原始终态和未通过原因均保留。
+
+[跟进联系人选择和返回](follow-up-contact-selector-final/run.json)通过。390×844 两档原生缩放覆盖客户切换时清除关联联系人、无联系人时选择框只有占位项、重新选择后真实 200 保存和重开，以及从跟进进入联系人详情后返回原记录。首次和第二次启动均在全局登录等待阶段超时，未执行该用例。125% 截图中，长客户名旁的“主联系人”徽章仍会换成多行。见 [失败日志摘录](supplemental-failure-excerpts.txt)。
+
+[国家选择器恢复及保存](customer-country-selector-saved/run.json)通过。390×844 原生 100%／125% 验证资料请求未返回时表单待出现、网络失败时提示和禁用、手动重试真实 200、无匹配，以及选择 Germany / DE 后创建 201 和重读 DE。故障拦截覆盖客户端自动重试，真实保存使用新客户及必填联系人。先前网络拦截、Chrome 设置等待和缺少合成联系人的失败索引保留。
+
+[拒绝与撤回 125% 重跑](lifecycle-125-retry/lifecycle/http-results.json)以 1/1 通过并正常清理。两条首次运行的失败摘录保留。
+
+[主体替换 125% 重跑](replacement-125-retry/replacement-quote/http-results.json)以 1/1 通过并正常清理。独立申请、审批、草稿创建和真实 PI 读回均完成。以上测试与证据提交保持 E1 产品源码等价。

@@ -8,13 +8,13 @@ const mocks = vi.hoisted(() => ({ api: { get: vi.fn(), post: vi.fn() }, listAll:
 vi.mock('../src/api', () => ({ api: mocks.api, listAll: mocks.listAll, listData: response => response.data }))
 let wrapper
 afterEach(() => { wrapper?.unmount(); vi.clearAllMocks() })
-async function openReceipt({ reversal = false } = {}) {
+async function openReceipt({ reversal = false, attachTo } = {}) {
   const purchase = { id: 41, purchase_no: 'UX-PO-41', supplier: 9, status: 'ordered', currency: 'CNY', items: [{ id: 71, sku: 3, sku_code: 'UX-SKU', quantity: '10', received_quantity: reversal ? '2' : '0', remaining_quantity: reversal ? '8' : '10', unit_price: '2', receipts: reversal ? [{ id: 91, quantity: '2', unit_cost: '2', receipt_date: '2026-11-04' }] : [] }], related_orders: [] }
   mocks.listAll.mockImplementation(async url => url === '/purchase-orders/' ? [purchase] : url === '/skus/' ? [{ id: 3, sku_code: 'UX-SKU', unit: 'pcs', trade_units: [] }] : [])
   mocks.api.get.mockResolvedValue({ data: purchase })
   const router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/purchase-orders', component: PurchaseOrderPage }] })
   await router.push('/purchase-orders?detail=41')
-  wrapper = mount(PurchaseOrderPage, { global: { plugins: [router], directives: { 'money-input': {} }, stubs: { PurchasePaymentModal: true, PurchaseCostAllocationModal: true } } })
+  wrapper = mount(PurchaseOrderPage, { attachTo, global: { plugins: [router], directives: { 'money-input': {} }, stubs: { PurchasePaymentModal: true, PurchaseCostAllocationModal: true } } })
   await flushPromises()
   for (const label of ['收货', reversal ? '冲销' : '验货入库']) {
     await wrapper.findAll('button').find(b => b.text() === label).trigger('click')
@@ -65,4 +65,24 @@ it('keeps a pending reversal visible and sends only one request', async () => {
   expect(wrapper.get('form.receipt-dialog .btn-secondary').attributes('disabled')).toBeDefined()
   resolve({ data: {} }); await flushPromises()
   expect(wrapper.find('form.receipt-dialog').exists()).toBe(false)
+})
+
+it('restores receipt focus after success and falls back to the workbench when the trigger is disabled', async () => {
+  await openReceipt({ attachTo: document.body })
+  const workbench = wrapper.get('.purchase-workbench').element
+  const trigger = wrapper.get('.receipt-heading button').element
+  expect(document.activeElement).toBe(wrapper.get('.goods-receipt-dialog').element)
+
+  mocks.api.post.mockResolvedValueOnce({ data: {} })
+  await wrapper.get('.goods-receipt-dialog').trigger('submit')
+  await flushPromises()
+  expect(document.activeElement).toBe(trigger)
+
+  await wrapper.get('.receipt-heading button').trigger('click')
+  await flushPromises()
+  trigger.disabled = true
+  await wrapper.get('.goods-receipt-dialog').trigger('keydown', { key: 'Escape' })
+  await flushPromises()
+  expect(wrapper.find('.goods-receipt-dialog').exists()).toBe(false)
+  expect(document.activeElement).toBe(workbench)
 })

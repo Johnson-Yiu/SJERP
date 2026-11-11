@@ -1,7 +1,7 @@
 PostgreSQL 17.11, isolated temporary cluster and dedicated test database
-Source commit: fa2fc86672588ac6a67b43991b99e93ed0e0dc7f
+Source commit: 973b022c4e1f8d90f867562f5966e52aa3345246
 Test: crm.tests.test_history_delivery_same_batch.DeliverySameBatchTests.test_customer_archive_link_and_finance
-Result: 1 test, OK, 0 skipped (4.325 seconds)
-Expected 400 responses: malformed source group review and duplicate source review.
+Result: 1 test, OK, 0 skipped (4.500 seconds)
+Expected 400 responses: malformed source group review duplicate source review and specification conflict preview.
 Test databases remaining: []
 Cluster cleanup: complete

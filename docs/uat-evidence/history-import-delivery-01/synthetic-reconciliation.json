@@ -1,5 +1,38 @@
 {
   "customer_csv_sha256": "b7f946c8e4907874422ae046116a0dc43f2031ca4cc39e232c89020fa1685361",
+  "conflict_preview": {
+    "conflicts": [
+      {
+        "id": 6,
+        "source_system": "Legacy synthetic system",
+        "source_number": "PO-HT-1:1",
+        "batch": "HT-G1",
+        "group": 1,
+        "application": 1,
+        "kind": "purchase",
+        "order_number": "HIST-PO-HT-1",
+        "date": "2024-07-01",
+        "code": "",
+        "name": "Historical SKU Name",
+        "specification": "18W",
+        "description": "Purchase description",
+        "category": "",
+        "category_reference": "",
+        "trade_quantity": null,
+        "trade_unit_price": null,
+        "trade_unit": "",
+        "unit_price": "3.000000000000",
+        "unit": "pcs",
+        "quantity": "5.00",
+        "amount": "15.00000000000000",
+        "currency": "USD",
+        "sku": null,
+        "status": "pending",
+        "version": 0,
+        "reason": "基础单位或规格资料不足或不一致，请先标记待核实。"
+      }
+    ]
+  },
   "baseline_counts": {
     "Transaction": 0,
     "FinanceFact": 0,
@@ -10,8 +43,8 @@
   "after_archive": {
     "application_id": 1,
     "file": "synthetic-history.xlsx",
-    "file_sha256": "27d397e06afe959d210d8512f2855ce4f435f3ff42e8b9c7210e0936e35e3e11",
-    "source_sha": "fa2fc86672588ac6a67b43991b99e93ed0e0dc7f",
+    "file_sha256": "91312bc99d5d24d666ba633f85cc4ab8e90c89eff04b86a9d3e01df2f72aefc4",
+    "source_sha": "973b022c4e1f8d90f867562f5966e52aa3345246",
     "application_status": "submitted",
     "groups": [
       {
@@ -680,8 +713,8 @@
                 "order_number": "HIST-PO-HT-1",
                 "date": "2024-07-01",
                 "code": "",
-                "name": "Historical Purchase SKU",
-                "specification": "24W",
+                "name": "Historical SKU Name",
+                "specification": "18W",
                 "description": "Purchase description",
                 "category": "",
                 "category_reference": "",
@@ -994,8 +1027,8 @@
   "after_link": {
     "application_id": 1,
     "file": "synthetic-history.xlsx",
-    "file_sha256": "27d397e06afe959d210d8512f2855ce4f435f3ff42e8b9c7210e0936e35e3e11",
-    "source_sha": "fa2fc86672588ac6a67b43991b99e93ed0e0dc7f",
+    "file_sha256": "91312bc99d5d24d666ba633f85cc4ab8e90c89eff04b86a9d3e01df2f72aefc4",
+    "source_sha": "973b022c4e1f8d90f867562f5966e52aa3345246",
     "application_status": "submitted",
     "groups": [
       {
@@ -1559,7 +1592,8 @@
         "order_count": 3,
         "product_count": 3,
         "product_states": {
-          "linked": 3
+          "linked": 2,
+          "pending": 1
         },
         "documents": [
           {
@@ -1680,8 +1714,8 @@
                 "order_number": "HIST-PO-HT-1",
                 "date": "2024-07-01",
                 "code": "",
-                "name": "Historical Purchase SKU",
-                "specification": "24W",
+                "name": "Historical SKU Name",
+                "specification": "18W",
                 "description": "Purchase description",
                 "category": "",
                 "category_reference": "",
@@ -1693,17 +1727,9 @@
                 "quantity": "5.00",
                 "amount": "15.00000000000000",
                 "currency": "USD",
-                "sku": {
-                  "id": 2,
-                  "code": "B",
-                  "name": "合成正式商品 B",
-                  "unit": "pcs",
-                  "specification": "24W",
-                  "parameters": {},
-                  "active": true
-                },
-                "status": "linked",
-                "version": 1
+                "sku": null,
+                "status": "pending",
+                "version": 0
               }
             ],
             "shipping": "0",
@@ -2002,8 +2028,8 @@
   "after_finance": {
     "application_id": 1,
     "file": "synthetic-history.xlsx",
-    "file_sha256": "27d397e06afe959d210d8512f2855ce4f435f3ff42e8b9c7210e0936e35e3e11",
-    "source_sha": "fa2fc86672588ac6a67b43991b99e93ed0e0dc7f",
+    "file_sha256": "91312bc99d5d24d666ba633f85cc4ab8e90c89eff04b86a9d3e01df2f72aefc4",
+    "source_sha": "973b022c4e1f8d90f867562f5966e52aa3345246",
     "application_status": "submitted",
     "groups": [
       {
@@ -2567,7 +2593,8 @@
         "order_count": 3,
         "product_count": 3,
         "product_states": {
-          "linked": 3
+          "linked": 2,
+          "pending": 1
         },
         "documents": [
           {
@@ -2688,8 +2715,8 @@
                 "order_number": "HIST-PO-HT-1",
                 "date": "2024-07-01",
                 "code": "",
-                "name": "Historical Purchase SKU",
-                "specification": "24W",
+                "name": "Historical SKU Name",
+                "specification": "18W",
                 "description": "Purchase description",
                 "category": "",
                 "category_reference": "",
@@ -2701,17 +2728,9 @@
                 "quantity": "5.00",
                 "amount": "15.00000000000000",
                 "currency": "USD",
-                "sku": {
-                  "id": 2,
-                  "code": "B",
-                  "name": "合成正式商品 B",
-                  "unit": "pcs",
-                  "specification": "24W",
-                  "parameters": {},
-                  "active": true
-                },
-                "status": "linked",
-                "version": 1
+                "sku": null,
+                "status": "pending",
+                "version": 0
               }
             ],
             "shipping": "0",

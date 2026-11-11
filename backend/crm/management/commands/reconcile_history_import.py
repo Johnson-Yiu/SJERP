@@ -66,6 +66,16 @@ def reconcile(application, source_sha):
                     bucket['discount'] += doc.discount
         statuses = Counter(row['status'] for row in products)
         cash_sources = [r for r in records.values() if r.record_type == '收付款流水']
+        plan_sources = [r for r in records.values() if r.record_type == '收付款计划']
+        source_cash_totals = {}
+        for record in cash_sources:
+            original = record.source_snapshot.get('source', {})
+            code = original.get('currency') or '待核实'
+            direction = original.get('direction') or '待核实'
+            value = original.get('amount')
+            if value not in (None, ''):
+                totals = source_cash_totals.setdefault(code, {})
+                totals[direction] = totals.get(direction, Decimal(0)) + Decimal(str(value))
         facts = list(FinanceFact.objects.filter(source_system=SOURCE_SYSTEM,
                          source_key__in=[_source_key(r) for r in cash_sources]).values(
                              'id', 'source_key', 'amount', 'direction', 'actual_date'))
@@ -79,6 +89,8 @@ def reconcile(application, source_sha):
             'remainder_snapshot': group.remainder_snapshot, 'source_rows': mappings, 'source_record_count': len(records), 'customer_count': len(customers),
             'order_count': len(documents), 'product_count': len(products), 'product_states': dict(statuses),
             'documents': documents, 'currency_totals': currency,
+            'source_plans': [{'source_id': r.source_record_id, 'snapshot': r.source_snapshot.get('source', {})} for r in plan_sources],
+            'source_cash_totals': source_cash_totals,
             'source_cash': [{'source_id': r.source_record_id, 'snapshot': r.source_snapshot.get('source', {}),
                              'finance_key': _source_key(r)} for r in cash_sources],
             'cny_finance_facts': facts})

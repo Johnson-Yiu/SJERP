@@ -127,6 +127,8 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
             self.assertEqual(FinanceFact.objects.count(),1)
             report = reconcile(application, os.environ.get('HISTORY_DELIVERY_SOURCE_SHA', 'uncommitted-test'))
             self.assertEqual(len(report['groups'][0]['cny_finance_facts']), 1)
+            self.assertEqual(len(report['groups'][0]['source_plans']), 2)
+            self.assertEqual(report['groups'][0]['source_cash_totals']['USD']['income'], 40)
             self.assertEqual(report['groups'][0]['cny_finance_facts'][0]['amount'], fact.amount)
             self.assertEqual(report['groups'][0]['currency_totals']['USD']['sales_total'], Order.objects.get(order_no='HIST-SO-HT-1').total_amount + Order.objects.get(order_no='HIST-SO-HT-DONE').total_amount)
             self.assertTrue(all(row['record_id'] for row in report['groups'][0]['source_rows']))

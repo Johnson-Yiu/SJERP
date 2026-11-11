@@ -159,7 +159,10 @@ async function refreshSkuManagement() {
     emit('changed')
   } catch (e) { console.warn('产品摘要刷新失败', e) }
 }
+let failedDetail
+function retryDetail() { return load(failedDetail?.entity, failedDetail?.id) }
 async function load(entity = currentEntity.value, id = currentId.value) {
+  failedDetail = null
   loading.value = true; error.value = ''
   try {
     const [contextResponse, movementResponse, , supplierResponse, certificateResponse] = await Promise.all([
@@ -176,7 +179,10 @@ async function load(entity = currentEntity.value, id = currentId.value) {
     currentEntity.value = entity; currentId.value = id
     activeTab.value = entity === 'products' ? '__overview' : data.value.sections[0]?.key || ''
     restoreCustomerTab()
-  } catch (e) { error.value = apiErrorMessage(e) } finally { loading.value = false }
+  } catch (e) {
+    failedDetail = { entity, id }
+    error.value = apiErrorMessage(e)
+  } finally { loading.value = false }
 }
 async function loadOperationLogs(entity = currentEntity.value, id = currentId.value) {
   operationLogsLoading.value = true
@@ -391,7 +397,7 @@ watch(() => data.value?.title, title => { if (!props.nestedProductDetail && work
   <div class="modal-backdrop detail-backdrop" :class="{ 'follow-up-detail-backdrop': isFollowUpDetail, 'product-detail-backdrop': isProduct }">
     <article ref="detailArticle" @keydown.esc="closeNestedOnEscape" :role="isProduct ? undefined : 'dialog'" :aria-modal="isProduct ? undefined : 'true'" class="detail-modal" :class="{ 'follow-up-detail-modal': isFollowUpDetail, 'product-detail-modal': isProduct, 'customer-detail-root': isCustomerRoot, 'movement-detail': isMovementDetail, 'supplier-detail': isSupplierDetail, 'contact-detail': isContactDetail, 'sku-detail': currentEntity === 'skus', 'certificate-detail': currentEntity === 'product-certificates' }" :aria-label="isFollowUpDetail ? '跟进详情' : isMovementDetail ? '库存流水详情' : isSupplierDetail ? '供应商详情' : isContactDetail ? '联系人详情' : isCustomerRoot ? '客户详情' : '关联详情'">
       <button v-if="!isProduct && (loading || error)" class="btn btn-secondary supplier-state-close" @click="requestClose">关闭详情</button><div v-if="loading" role="status" class="detail-loading"><div class="spinner" /><span>正在整理关联数据...</span></div>
-      <div v-else-if="error" role="alert" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load()">重试</button></div>
+      <div v-else-if="error" role="alert" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="retryDetail">重试</button></div>
       <template v-else-if="data">
         <template v-if="isFollowUpDetail">
           <header class="follow-up-hero">

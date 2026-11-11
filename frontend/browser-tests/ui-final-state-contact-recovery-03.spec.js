@@ -53,13 +53,13 @@ test('contact detail recovers from a delayed failure and returns to its follow-u
       const contact = page.getByRole('dialog', { name: '联系人详情' })
       try {
         await followUp.getByRole('button', { name: /合成采购联系人/ }).click()
-        await expect(contact.getByRole('status')).toContainText('正在整理关联数据')
+        await expect(followUp.locator('.detail-loading')).toContainText('正在整理关联数据')
         await screenshot('contact-loading')
       } finally { release() }
-      await expect(contact.getByRole('alert')).toContainText('详情加载失败')
+      await expect(followUp.getByRole('alert')).toContainText('详情加载失败')
       await screenshot('contact-failed')
       const retrieved = page.waitForResponse(r => contactEndpoint(new URL(r.url())) && r.ok())
-      await contact.getByRole('button', { name: '重试' }).click()
+      await followUp.getByRole('button', { name: '重试' }).click()
       expect((await retrieved).status()).toBe(200)
       await expect(contact.getByText('主联系人', { exact: true }).first()).toBeVisible()
       await screenshot('contact-recovered')

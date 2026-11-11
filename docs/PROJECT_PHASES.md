@@ -1,5 +1,7 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+> 2026-11-11 起恢复 GitHub Actions。2026-11-05 的暂停约定已失效。新提交正常推送，等待适用工作流结束并处理失败；认证核对最终源码 SHA。下方暂停、未运行及失败均为历史记录。
+
 ## 2026-11-11 A2 与 H1 集成验收
 
 A2 财务恢复和历史更正与 H1 归档、关联、报表已在 H1 分支集成，迁移按 0128 → 0129 → 0130 前向通过。SQLite、Node、Vitest 与构建已通过，PostgreSQL 全量原始错误与最终定向通过分别保留。E1/E2 受影响入口和 A2/H1 真实 Chrome 专项证据已补录。通用浏览器回归仍有失败，候选处于待独立复审和补验阶段。GitHub Actions 为 `NOT_RUN`。[集成记录](uat-evidence/history-product-sku-linking-01/A2-INTEGRATION.md)

@@ -106,7 +106,7 @@ jobs:
         run: node --test tests/detail-drawer-typography.spec.js
       - name: Frontend Vitest tests
         working-directory: frontend
-        run: npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js
+        run: npx --no-install vitest run tests src/components/CashEventEntryForm.spec.js src/components/PurchasePaymentModal.spec.js src/components/HistoryProductLinking.spec.js --environment jsdom --exclude tests/detail-drawer-typography.spec.js
       - name: Install Chrome channel for ISS-028/035 regression
         working-directory: frontend
         run: npx playwright install --with-deps chrome

@@ -296,7 +296,10 @@ async function save() {
     const detailId = returnToOrderDetailId.value || (isOrder.value ? response.data.id : null)
     open.value = false
     notify('单据已保存')
-    if (workspaceNavigation.workspace && detailId && !origin) {
+    if (returnToOrderDetailId.value) {
+      orderWorkbenchRefresh.value += 1
+      await load()
+    } else if (workspaceNavigation.workspace && detailId && !origin) {
       const detail = withDocumentDetailQuery(route, detailId)
       await workspaceNavigation.adoptObject({ ...detail, query: withoutModalActionQuery(detail.query) })
       await load()
@@ -305,7 +308,6 @@ async function save() {
       await load()
       if (detailId && !origin) await router.push(withDocumentDetailQuery(route, detailId))
     }
-    if (detailId && returnToOrderDetailId.value) orderWorkbenchRefresh.value += 1
     returnToOrderDetailId.value = null
     await restoreOrderEditFocus()
   } catch (e) { notify(e.message, true) } finally { saving.value = false }

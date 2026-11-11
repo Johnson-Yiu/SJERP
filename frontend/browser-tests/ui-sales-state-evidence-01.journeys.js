@@ -160,7 +160,7 @@ export async function recordSalesJourneys({ page, settings, baseURL, fixture, cu
       if (uploadIntercepted) await aborted
       await page.unroute(pattern, handler)
     }
-    const error = dialog.getByText(/附件上传失败.*重试上传/).first()
+    const error = dialog.getByText('跟进记录已保存，附件上传失败。请点击“保存跟进”重试。', { exact: true })
     await visible(error)
     await record('C05-upload-failed', error)
     await mutate('C05-upload-retry-http', p => p === '/api/follow-ups/' + fixture.followUp + '/attachments/', () => button('保存跟进').click())
@@ -340,7 +340,13 @@ export async function recordSalesJourneys({ page, settings, baseURL, fixture, cu
   await scenario('C10-reminder', async () => {
     await go('/new-product-reminders?customer=' + customer.id)
     await button('记录新品需求').click()
-    await page.getByLabel('所找产品').fill('Synthetic pendant light for a long commercial procurement brief')
+    const editor = page.getByRole('region', { name: '新品需求详情' })
+    await editor.getByLabel('查找客户', { exact: true }).fill(customer.name)
+    await editor.getByRole('button', { name: '查找客户', exact: true }).click()
+    const customerField = editor.getByLabel('客户', { exact: true })
+    await customerField.selectOption(String(customer.id))
+    await expect(customerField).toHaveValue(String(customer.id))
+    await editor.getByLabel('所找产品').fill('Synthetic pendant light for a long commercial procurement brief')
     const saved = await mutate('C10-save-http', p => p === '/api/new-product-reminders/', () => button('保存需求').click(), 201)
     const { id } = await saved.json()
     await visible(button('作废'))

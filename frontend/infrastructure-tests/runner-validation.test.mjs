@@ -92,6 +92,7 @@ function runProcess(command, args, options) {
   }
   const child = spawn(command, args, {
     ...spawnOptions,
+    detached: process.platform !== 'win32',
     windowsHide: true,
     stdio: ['ignore', 'pipe', 'pipe'],
   })

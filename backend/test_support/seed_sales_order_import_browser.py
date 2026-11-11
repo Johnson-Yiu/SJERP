@@ -21,7 +21,8 @@ verify_isolated_runtime(settings=settings, database_must_exist=True)
 if connection.vendor != "sqlite":
     raise SystemExit("The browser fixture may only seed the isolated SQLite database.")
 
-evidence_dir = Path(os.environ.get("SALES_ORDER_IMPORT_EVIDENCE_DIR", "")).resolve()
+evidence_path = Path(os.environ.get("SALES_ORDER_IMPORT_EVIDENCE_DIR", ""))
+evidence_dir = evidence_path.resolve()
 expected_evidence_dir = (
     repo_root / "docs" / "uat-evidence" / "sales-order-import-01" / "browser" / "sales-order-import-real.spec"
 ).resolve()
@@ -31,7 +32,17 @@ followup_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-integrat
 completion_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-completion-acceptance-02" / "browser" / "sales-order-import-real.spec").resolve()
 integration_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-integration-acceptance-03" / "browser" / "sales-order-import-real.spec").resolve()
 integration_final_evidence_dir = (repo_root / "docs" / "uat-evidence" / "release-integration-acceptance-03" / "final-runs" / "chrome" / "browser" / "sales-order-import-real.spec").resolve()
-if evidence_dir not in {integration_final_evidence_dir, integration_evidence_dir, completion_evidence_dir, expected_evidence_dir, review_evidence_dir, release_evidence_dir, followup_evidence_dir} or evidence_dir.is_symlink():
+allowed_evidence_dirs = {
+    integration_final_evidence_dir, integration_evidence_dir, completion_evidence_dir,
+    expected_evidence_dir, review_evidence_dir, release_evidence_dir, followup_evidence_dir,
+}
+configured_root = os.environ.get("ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT")
+if configured_root:
+    approved_root = (repo_root / "docs" / "uat-evidence").resolve()
+    run_root = Path(configured_root).resolve()
+    if run_root != approved_root and run_root.is_relative_to(approved_root):
+        allowed_evidence_dirs.add(run_root / "browser" / "sales-order-import-real.spec")
+if evidence_path.is_symlink() or evidence_dir not in allowed_evidence_dirs:
     raise SystemExit("The sales import browser fixture must use its allowlisted evidence directory.")
 evidence_dir.mkdir(parents=True, exist_ok=True)
 

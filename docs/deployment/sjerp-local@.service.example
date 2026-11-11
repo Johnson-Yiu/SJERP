@@ -1,0 +1,20 @@
+# Template only. Provision with a reviewed instance-specific drop-in before use.
+[Unit]
+Description=SJERP application instance %i
+After=network.target
+
+[Service]
+Type=notify
+NotifyAccess=main
+User=sjerp-%i
+Group=sjerp-%i
+WorkingDirectory=/srv/sjerp/%i/release/backend
+EnvironmentFile=/etc/sjerp/%i/runtime.env
+ExecStartPre=/srv/sjerp/%i/venv/bin/python manage.py check_local_runtime
+ExecStart=/srv/sjerp/%i/venv/bin/gunicorn --config /etc/sjerp/%i/gunicorn.conf.py --preload config.wsgi:application
+ExecStartPost=/srv/sjerp/%i/venv/bin/python operations_runtime_http.py
+TimeoutStartSec=60
+TimeoutStopSec=45
+KillMode=mixed
+UMask=0077
+NoNewPrivileges=true

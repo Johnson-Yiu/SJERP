@@ -4,7 +4,7 @@
 
 ## 预验收
 
-H3/U3 尚未完成和推送，当前工作属于预验收。
+以下为接收 H3/U3 前的历史预验收记录。
 
 | 源码 | 工作流 | 已核对结果 |
 | --- | --- | --- |
@@ -15,7 +15,7 @@ H3/U3 尚未完成和推送，当前工作属于预验收。
 | `8b1cdd42481f37debe41d6d75cd8aa50d4b53edb` | [Linux operations acceptance](https://github.com/Johnson-Yiu/SJERP/actions/runs/42967610334) | 三个 job 均成功 |
 | `8b1cdd42481f37debe41d6d75cd8aa50d4b53edb` | [CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42967610341) | Frontend Node 步骤通过；Vitest 836 通过、2 失败，浏览器步骤未运行 |
 
-[远端分支快照](remote-heads.tsv)、[Actions 记录](actions-runs.jsonl)和[分支清单](branch-inventory.csv)按远端分支头及精确 SHA 对照。无匹配运行表示当前快照中未查到该分支头的运行，另列同 SHA 异分支运行和带跳过指令的原提交。祖先关系来自 Git 提交图。242 个分支头中，105 个是候选祖先，2 个接收了已审来源及缺失增量，20 个与候选祖先完整文件树相同，27 个为等价非合并补丁序列，88 个仍需核对替代关系和交付范围。最终认证 SHA 和 run/job 列待实测填写。
+[远端分支快照](remote-heads.tsv)、[Actions 记录](actions-runs.jsonl)和[分支清单](branch-inventory.csv)按远端分支头及精确 SHA 对照。无匹配运行表示当前快照中未查到该分支头的运行，另列同 SHA 异分支运行和带跳过指令的原提交。祖先关系来自 Git 提交图。242 个分支头中，105 个是候选祖先，2 个接收了已审来源及缺失增量，20 个与候选祖先完整文件树相同，27 个为等价非合并补丁序列，88 个仍需核对替代关系和交付范围。另按 2026-11-04 起的远端提交逐条列出原始 CI、等价补丁或已知替代关系。[逐提交清单](recent-commit-inventory.csv)
 
 旧资金草稿缺少可证明的账号及表单归属，现行行为保留旧记录并提示人工核对。旧草稿不会作为重试载荷。账号范围内的当前已提交待核对记录可重放原载荷。浏览器测试以网络请求为证据，后端使用真实数据库断言幂等。历史 A3 的 24 条逐例非通过记录以及后续 P2B 定向三项失败保留在[原报告](../release-integration-acceptance-03/README.md)。
 
@@ -25,10 +25,22 @@ E2 采购收货原证据记录了取消后焦点未恢复。修复后将焦点�
 
 验货入库事件携带原触发按钮以恢复焦点。CI 中两个组件断言发现事件已增加该参数，定向更新后 11/11 通过，仍严格核对原采购对象和明细。Linux Node 步骤的静默子进程修复后，CI 已能完成 Node 并进入 Vitest。
 
-E1 扩展 8、9、10 和 E2 库存操作、组合收货均在隔离库的真实 Chrome 预验收通过。严格刷新模式通过。销售旅程首次严格执行发现两段附件用例复用同名样本，重试场景改用独立文件并断言重开后只新增一条。此修复以重跑结果核对。
+E1 扩展 8、9、10 和 E2 库存操作、组合收货均在隔离库的真实 Chrome 预验收通过。严格刷新模式通过。销售旅程首次严格执行发现两段附件用例复用同名样本，重试场景改用独立文件并断言重开后只新增一条。后续修正恢复顺序和控件定位，真实 Chrome 严格旅程通过，228 张截图，0 项未完成。
 
 PG17 首轮两项失败分别为归档商品清单的未声明排序，以及会话认证挑战下匿名请求的预期。测试保留商品项、数量、关联及汇总断言，并明确断言匿名 401 和 Session 挑战。两项在本地 SQLite 定向通过，PG17 待相应新候选验证。GitHub 隔离浏览器组使用每个隔离运行随机生成的临时测试凭据。
 
 实际下载专项在真实 Chrome 8/8 通过。核对销售订单导入模板的工作簿结构、错误 CSV 的 BOM 与 SKU 提示、历史预检 CSV 的最新批次，以及财务 CSV 的核准非现金抵减行。保留四个合成样本和 SHA-256。[导出校验](preflight-export-manifest.json)
 
 完整打印成品及分页继续按原延期处理。
+
+
+## H3 和 U3 集成
+
+- H3 接收 `ab8c8a62451f4a0b8ae61811d8c354bfd30d5146`，原分支 [CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42965318197)。
+- U3 接收 `e8096616bf227ed242cf837a78fb87fd0736b87c`，原分支 [CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42965642393)。
+- 初次合并冻结点 `17ecdcb8af94779e43c75c5adefb03de07d3c6b7` 采用 U3 的采购收货焦点和键盘处理，同时断言触发按钮、采购对象和收货明细。集成定向 Vitest 30/30，H3 390px 在 100% 和 125% 的 Chrome 验收均通过，U3 联系人恢复、详情及批次、SKU 和收货四项独立运行均通过。[截图和实际导出](integrated-chrome-samples/manifest.json)
+- 初次合并 [CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42969289222) 的 Backend 和 PostgreSQL 17 通过，Frontend 的 Node SKU 图片重试旧夹具失败，Vitest 与 Playwright 步骤未执行。[Linux 专项](https://github.com/Johnson-Yiu/SJERP/actions/runs/42969289251) 三项通过。
+- 修正 SKU Node 夹具后 `85e2bcb8c6bfcbe31024f431d318bcb71c17a03b` 通过 [Linux 专项](https://github.com/Johnson-Yiu/SJERP/actions/runs/42969691020) 三项。[主 CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42969690828) 已确认绑定此 SHA。
+
+
+合并后的本地全量诊断记录到 390px 资金台账下载在 HTTP 200 后取消。延长 Blob URL 的保留时间后，真实 Chrome 在 1440px 和 390px 均完成下载并验证 CSV。浏览器截图写入本次运行证据目录，历史报告图片已恢复为提交中的原样。原有成品打印用例移用本次隔离运行的短路径，Windows Chrome 已能启动，但实际 PDF 生成仍未验证，保留原延期范围及失败日志。

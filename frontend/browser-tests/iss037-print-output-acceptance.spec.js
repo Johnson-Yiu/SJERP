@@ -71,12 +71,13 @@ test('saved PI permits printing after resources load on narrow screen', async ({
 })
 
 for (const [label, width, headers = false] of [['complete', 1440], ['complete', 1440, true], ['complete', 390], ['multipage', 1440], ['optional-empty', 1440]]) {
-test(`Chrome UI print to PDF ${label} ${width}px headers=${headers}`, async ({ baseURL }, testInfo) => {
+test(`Chrome UI print to PDF ${label} ${width}px headers=${headers}`, async ({ baseURL }) => {
   const artifactName = `ui-formal-${label}-${width}-headers-${headers}`
   const sample = formalFixture.samples.find(item => item.label === label)
   expect(sample.status).toBe('sent')
-  const profile = testInfo.outputPath('chrome-profile')
-  const output = testInfo.outputPath('print-output')
+  const printRoot = fs.mkdtempSync(path.join(process.env.ISOLATED_TEST_ROOT, 'pi-print-'))
+  const profile = path.join(printRoot, 'profile')
+  const output = path.join(printRoot, 'output')
   fs.mkdirSync(path.join(profile, 'Default'), { recursive: true })
   fs.mkdirSync(output, { recursive: true })
   fs.writeFileSync(path.join(profile, 'Default', 'Preferences'), JSON.stringify({

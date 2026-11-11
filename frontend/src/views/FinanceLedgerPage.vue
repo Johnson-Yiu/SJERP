@@ -146,7 +146,8 @@ async function downloadCsv() {
     const response = await api.get('/finance-ledger/facts/', { params: { ...period, export: 'csv' }, responseType: 'blob' })
     const url = URL.createObjectURL(response.data), link = document.createElement('a')
     link.href = url; link.download = 'account-cash-facts.csv'; document.body.appendChild(link); link.click()
-    setTimeout(() => { link.remove(); URL.revokeObjectURL(url) }, 1000)
+    link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 30_000)
   })
 }
 onMounted(async () => {

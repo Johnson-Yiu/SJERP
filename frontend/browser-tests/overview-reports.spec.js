@@ -41,7 +41,7 @@ test('saved local chart configurations survive reload, reorder, remove and undo'
  await page.locator('.saved-block').first().getByRole('button',{name:'移除',exact:true}).click();await expect(page.locator('.saved-block')).toHaveCount(1);await page.getByRole('button',{name:'撤销移除',exact:true}).click();await expect(page.locator('.saved-block')).toHaveCount(2)
  await page.locator('.saved-block').first().getByRole('button',{name:'载入查询',exact:true}).click();await expect(page.getByRole('combobox',{name:'统计维度',exact:true})).toHaveValue('customer')
 })
-test('CSV export keeps the last submitted filters while the form has an unsaved draft',async({page})=>{
+test('CSV export keeps the last submitted filters while the form has an unsaved draft',async({page},info)=>{
  await page.setViewportSize({width:1440,height:1000})
  const state=await mockApi(page);await page.goto('/reports')
  await page.getByRole('combobox',{name:'报表预设',exact:true}).selectOption('sales-customer')
@@ -65,7 +65,7 @@ test('CSV export keeps the last submitted filters while the form has an unsaved 
  const exportRequest=state.reportRequests.at(-1)
  expect(exportRequest.get('filter_customer')).toBe('1')
  expect(exportRequest.get('filter_customer')).not.toBe('2')
- await page.screenshot({path:'../docs/uat-evidence/r1-prelaunch-consolidation-20261104/closeout-logs/reports-unsaved-filter-1440.png',fullPage:true})
+ await page.screenshot({path:info.outputPath('reports-unsaved-filter-1440.png'),fullPage:true})
 })
 test('drill and previous-analysis return preserve actual period and browser navigation restores URL',async({page})=>{
  await mockApi(page);await page.goto('/reports');await page.getByRole('combobox',{name:'报表预设',exact:true}).selectOption('sales-customer');await page.getByRole('textbox',{name:'开始日期',exact:true}).fill('2026-09-01');await page.getByRole('button',{name:'查询报表',exact:true}).click();await expect(page).toHaveURL(/date_from=2026-09-01/)

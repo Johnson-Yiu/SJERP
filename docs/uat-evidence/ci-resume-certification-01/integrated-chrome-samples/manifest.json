@@ -1,0 +1,35 @@
+{
+  "source": "17ecdcb8af94779e43c75c5adefb03de07d3c6b7",
+  "samples": [
+    {
+      "file": "contact-recovered-125.png",
+      "bytes": 78249,
+      "sha256": "5b5d4734025085d5a53d866f06dcac1aec289630d507e09721b08f07e32805f3"
+    },
+    {
+      "file": "history-products-390-100.csv",
+      "bytes": 756,
+      "sha256": "4b399dc70358315d5c7c8f7db88b244b7058ce025fe5c061557fcd950976bb95",
+      "dataRows": 4,
+      "totals": {
+        "USD": "15.00",
+        "CNY": "200.00"
+      }
+    },
+    {
+      "file": "history-products-390-125.csv",
+      "bytes": 756,
+      "sha256": "4b399dc70358315d5c7c8f7db88b244b7058ce025fe5c061557fcd950976bb95",
+      "dataRows": 4,
+      "totals": {
+        "USD": "15.00",
+        "CNY": "200.00"
+      }
+    },
+    {
+      "file": "purchase-receipt-validation-cancelled-390-125.png",
+      "bytes": 58170,
+      "sha256": "9c8fa12ec848011f25b1b8acb89514154c5139e58b2c93fe82ad4b8afff44aad"
+    }
+  ]
+}

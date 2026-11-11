@@ -6,7 +6,7 @@ async function blockOptionalGoogleFonts(page) {
   await page.route('https://fonts.gstatic.com/**', route => route.abort())
 }
 
-test('separate manager and employee sessions share only the published query definition', async ({ browser }) => {
+test('separate manager and employee sessions share only the published query definition', async ({ browser }, info) => {
   const sharedState = { templates: [], nextId: 1 }
   const managerContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
   const manager = await managerContext.newPage()
@@ -34,7 +34,7 @@ test('separate manager and employee sessions share only the published query defi
   await expect(employee).toHaveURL(/shared_template=1/)
   await employee.getByRole('button', { name: '保存为图表块', exact: true }).click()
   await expect(employee.locator('.saved-block')).toHaveCount(1)
-  await employee.screenshot({ path: '../docs/uat-evidence/iss-042-shared-reports/employee-700px.png', fullPage: true })
+  await employee.screenshot({ path: info.outputPath('employee-700px.png'), fullPage: true })
 
   await manager.locator('.template-card').getByRole('button', { name: '编辑', exact: true }).click()
   await manager.locator('.template-editor input').first().fill('团队销售模板（已更新）')
@@ -44,9 +44,9 @@ test('separate manager and employee sessions share only the published query defi
   await manager.locator('.template-card').getByRole('button', { name: '操作记录', exact: true }).click()
   await expect(manager.locator('.template-history')).toContainText('操作记录')
   await manager.locator('.template-history').getByRole('button', { name: '关闭', exact: true }).click()
-  await manager.screenshot({ path: '../docs/uat-evidence/iss-042-shared-reports/manager-1440px.png', fullPage: true })
+  await manager.screenshot({ path: info.outputPath('manager-1440px.png'), fullPage: true })
   await manager.setViewportSize({ width: 1024, height: 1000 })
-  await manager.screenshot({ path: '../docs/uat-evidence/iss-042-shared-reports/manager-1024px.png', fullPage: true })
+  await manager.screenshot({ path: info.outputPath('manager-1024px.png'), fullPage: true })
 
   sharedState.conflictNext = 'unpublish'
   await manager.locator('.template-card').getByRole('button', { name: '取消发布', exact: true }).click()
@@ -68,6 +68,6 @@ test('separate manager and employee sessions share only the published query defi
   await employee.reload()
   await expect(employee.locator('.template-card')).toHaveCount(0)
   await expect(employee.locator('.saved-block')).toHaveCount(1)
-  await employee.screenshot({ path: '../docs/uat-evidence/iss-042-shared-reports/employee-700px-after-delete.png', fullPage: true })
+  await employee.screenshot({ path: info.outputPath('employee-700px-after-delete.png'), fullPage: true })
   await managerContext.close(); await employeeContext.close()
 })

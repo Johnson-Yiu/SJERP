@@ -1,7 +1,5 @@
 import { test, expect } from '@playwright/test'
-import path from 'node:path'
 
-const evidenceDir = path.resolve(process.cwd(), '../docs/uat-evidence/iss-039-integration')
 
 const purchase = {
   id: 1,
@@ -91,7 +89,7 @@ async function mockPurchaseApi(page, role) {
   return requests
 }
 
-test('ISS-039 authorized procurement can restore and edit a cross-order allocation without sales data', async ({ page }) => {
+test('ISS-039 authorized procurement can restore and edit a cross-order allocation without sales data', async ({ page }, info) => {
   await page.setViewportSize({ width: 1440, height: 1000 })
   const requests = await mockPurchaseApi(page, 'authorized')
   await page.goto('/purchase-orders?detail=1')
@@ -110,21 +108,21 @@ test('ISS-039 authorized procurement can restore and edit a cross-order allocati
   await expect(modal.locator('select').nth(1)).toContainText('ISS039-SO-B')
   expect(requests.some(request => request.path === '/api/orders/')).toBe(false)
   expect(requests.some(request => request.path === '/api/purchase-orders/cost-allocation-orders/')).toBe(true)
-  await page.screenshot({ path: path.join(evidenceDir, 'authorized-1440px.png'), fullPage: true })
+  await page.screenshot({ path: info.outputPath('authorized-1440px.png'), fullPage: true })
 
   await page.getByRole('button', { name: '保存成本分配' }).click()
   await expect(modal).toContainText('已保存的成本分摊结果')
   await page.reload()
   await expect(page.getByRole('heading', { name: /ISS039-PO-001/ })).toBeVisible()
-  await page.screenshot({ path: path.join(evidenceDir, 'authorized-refresh-1440px.png'), fullPage: true })
+  await page.screenshot({ path: info.outputPath('authorized-refresh-1440px.png'), fullPage: true })
 
   await page.setViewportSize({ width: 700, height: 1000 })
   await page.getByRole('button', { name: '分配采购成本 / 公共费用' }).click()
   await expect(page.locator('.cost-modal')).toContainText('ISS039-SO-A')
-  await page.screenshot({ path: path.join(evidenceDir, 'authorized-700px.png'), fullPage: true })
+  await page.screenshot({ path: info.outputPath('authorized-700px.png'), fullPage: true })
 })
 
-test('ISS-039 read-only procurement is refused by the candidate API and has no edit action', async ({ page }) => {
+test('ISS-039 read-only procurement is refused by the candidate API and has no edit action', async ({ page }, info) => {
   await page.setViewportSize({ width: 1440, height: 1000 })
   const requests = await mockPurchaseApi(page, 'readonly')
   await page.goto('/purchase-orders?detail=1')
@@ -136,14 +134,14 @@ test('ISS-039 read-only procurement is refused by the candidate API and has no e
   })
   expect(refusal).toEqual({ status: 403, body: { detail: '需要采购修改权限才能选择成本归属订单。' } })
   expect(requests.some(request => request.path === '/api/orders/')).toBe(false)
-  await page.screenshot({ path: path.join(evidenceDir, 'readonly-1440px.png'), fullPage: true })
+  await page.screenshot({ path: info.outputPath('readonly-1440px.png'), fullPage: true })
 })
 
-test('ISS-039 no-permission role cannot restore the purchase URL', async ({ page }) => {
+test('ISS-039 no-permission role cannot restore the purchase URL', async ({ page }, info) => {
   await page.setViewportSize({ width: 700, height: 1000 })
   await mockPurchaseApi(page, 'none')
   await page.goto('/purchase-orders?detail=1')
   await expect(page).toHaveURL(/\/access-denied\?from=\/purchase-orders\?detail=1/)
   await expect(page.getByRole('heading', { name: '没有此页面的访问权限' })).toBeVisible()
-  await page.screenshot({ path: path.join(evidenceDir, 'no-permission-700px.png'), fullPage: true })
+  await page.screenshot({ path: info.outputPath('no-permission-700px.png'), fullPage: true })
 })

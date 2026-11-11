@@ -616,6 +616,7 @@ async function runProfile(selection) {
       'FIRST_RELEASE_CONSOLIDATION_EVIDENCE_DIR',
       'SALES_ORDER_IMPORT_EVIDENCE_DIR',
       'SUPPLIER_UX_EVIDENCE_DIR',
+      'UX_COPY_EVIDENCE_DIR',
     ]
     for (const name of evidenceEnvironmentNames) {
       env[name] = path.join(evidenceRoot, 'browser', name.toLowerCase())

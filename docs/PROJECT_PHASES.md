@@ -1,7 +1,7 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
 > 2026-11-11 起恢复 GitHub Actions。2026-11-05 的暂停约定已失效。新提交正常推送，等待适用工作流结束并处理失败；认证核对最终源码 SHA。下方暂停、未运行及失败均为历史记录。
-> CI 恢复预验收的精确 SHA、运行和历史补测清单见[CI 恢复与补测](uat-evidence/ci-resume-certification-01/README.md)。H3/U3 推送并集成后执行最终认证。
+> CI 恢复预验收的精确 SHA、运行和历史补测清单见[CI 恢复与补测](uat-evidence/ci-resume-certification-01/README.md)。H3/U3 已集成，源码候选及各项验证结果以该记录的完整 SHA 为准。
 
 ## 2026-11-11 A2 与 H1 集成验收
 

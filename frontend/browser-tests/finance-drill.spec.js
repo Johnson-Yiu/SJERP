@@ -1,7 +1,4 @@
 import { test, expect } from '@playwright/test'
-import { fileURLToPath } from 'node:url'
-
-const evidenceDir = fileURLToPath(new URL('../../docs/uat-evidence/iss-048-finance-drill/', import.meta.url))
 
 const dashboard = {
   period: { date_from: '2026-10-01', date_to: '2026-10-23' },
@@ -39,7 +36,7 @@ async function mockApi(page) {
 }
 
 for (const width of [1440, 700]) {
-  test(`finance dashboard composition drill desktop and narrow ${width}px`, async ({ page }) => {
+  test(`finance dashboard composition drill desktop and narrow ${width}px`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 1000 })
     await mockApi(page)
     await page.goto('/finance?date_from=2026-10-01&date_to=2026-10-23')
@@ -49,12 +46,12 @@ for (const width of [1440, 700]) {
     await expect(page.locator('.finance-drill-panel')).toContainText('¥1,234.50')
     await expect(page.locator('.finance-drill-panel a[href="/orders?detail=7"]')).toBeVisible()
     await page.waitForTimeout(width === 700 ? 500 : 100)
-    await page.screenshot({ path: `${evidenceDir}finance-drill-${width}.png`, fullPage: true })
+    await page.screenshot({ path: info.outputPath(`finance-drill-${width}.png`), fullPage: true })
     await page.getByRole('button', { name: '收起明细', exact: true }).click()
     await expect(page.locator('.finance-drill-panel')).toHaveCount(0)
     await page.getByRole('button', { name: '查看构成明细', exact: true }).last().click()
     await expect(page.locator('.actual-cash-events')).toBeInViewport()
     await page.waitForTimeout(width === 700 ? 500 : 100)
-    await page.screenshot({ path: `${evidenceDir}finance-bank-events-${width}.png`, fullPage: true })
+    await page.screenshot({ path: info.outputPath(`finance-bank-events-${width}.png`), fullPage: true })
   })
 }

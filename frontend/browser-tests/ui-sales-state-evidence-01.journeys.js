@@ -117,15 +117,17 @@ export async function recordSalesJourneys({ page, settings, baseURL, fixture, cu
   })
 
   await scenario('C05-attachment-failure', async () => {
+    const retryFiles = files.map(file => ({ ...file, name: 'retry-' + file.name }))
     await go('/follow-ups?search=SYNTH-SALES')
     const row = page.getByRole('row').filter({ hasText: 'SYNTH-SALES 附件与重开' })
     const edit = row.getByRole('button', { name: '编辑跟进记录' })
     await edit.click()
     const dialog = page.getByRole('dialog', { name: '编辑跟进记录' })
-    await dialog.locator('input[type="file"]').setInputFiles(files)
-    const remove = dialog.locator('.follow-up-attachment-editor-item').filter({ hasText: files[0].name })
+    const previousCount = await dialog.locator('.follow-up-attachment-editor-item.saved').count()
+    await dialog.locator('input[type="file"]').setInputFiles(retryFiles)
+    const remove = dialog.locator('.follow-up-attachment-editor-item').filter({ hasText: retryFiles[0].name })
     await remove.getByRole('button', { name: /移除/ }).click()
-    await expect(dialog.getByText(files[0].name, { exact: true })).toHaveCount(0)
+    await expect(dialog.getByText(retryFiles[0].name, { exact: true })).toHaveCount(0)
 
     const pattern = '**/api/follow-ups/' + fixture.followUp + '/attachments/'
     let release
@@ -165,9 +167,11 @@ export async function recordSalesJourneys({ page, settings, baseURL, fixture, cu
     await expect(dialog).toHaveCount(0, { timeout })
     await edit.click()
     const saved = dialog.locator('.follow-up-attachment-editor-item.saved')
-    await expect(saved).toHaveCount(1, { timeout })
-    await expect(saved).toContainText(files[1].name)
-    await record('C05-upload-retry-reopened', saved)
+    await expect(saved).toHaveCount(previousCount + 1, { timeout })
+    await expect(saved.filter({ hasText: retryFiles[0].name })).toHaveCount(0)
+    const retried = saved.filter({ hasText: retryFiles[1].name })
+    await expect(retried).toHaveCount(1)
+    await record('C05-upload-retry-reopened', retried)
   })
 
   await scenario('O04-confirm', async () => {

@@ -9,7 +9,7 @@ H3/U3 尚未完成和推送，当前工作属于预验收。
 | 源码 | 工作流 | 已核对结果 |
 | --- | --- | --- |
 | `608e12039875e92b2edec22c692f702c7200d819` | [Linux operations acceptance](https://github.com/Johnson-Yiu/SJERP/actions/runs/42963735784) | media-fence、postgres-role-receipts、nginx-private-media 均成功 |
-| `608e12039875e92b2edec22c692f702c7200d819` | [CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42963735974) | Backend 成功；PG17 和 Frontend 尚无已核对终态 |
+| `608e12039875e92b2edec22c692f702c7200d819` | [CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42963735974) | Backend 成功；PG17 1,746 通过、35 跳过、2 失败；Frontend 尚无已核对终态 |
 | `387d2f7e0c2cc0ba6efc0096272ef349d3525f5d` | [Linux operations acceptance](https://github.com/Johnson-Yiu/SJERP/actions/runs/42965389360) | 三个 job 均成功 |
 | `387d2f7e0c2cc0ba6efc0096272ef349d3525f5d` | [CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42965389358) | 已验证由本次分支推送触发，尚无已核对终态 |
 
@@ -17,8 +17,12 @@ H3/U3 尚未完成和推送，当前工作属于预验收。
 
 旧资金草稿缺少可证明的账号及表单归属，现行行为保留旧记录并提示人工核对。旧草稿不会作为重试载荷。账号范围内的当前已提交待核对记录可重放原载荷。浏览器测试以网络请求为证据，后端使用真实数据库断言幂等。历史 A3 的 24 条逐例非通过记录以及后续 P2B 定向三项失败保留在[原报告](../release-integration-acceptance-03/README.md)。
 
-本地 Vitest 91 套件、838 项全部通过。真实 Chrome 的 P2B 回归 8/8 通过，包含首次提交响应丢失后按原请求重放、放弃后新表单使用新键、旧草稿跨账号不自动恢复和零自动写入。[逐例对照](cash-case-reconciliation.json)
+本地 Vitest 91 套件、838 项全部通过。Node 首轮 196 通过、1 失败，旧工作流契约只接受原 Vitest 命令。同步三套件要求后全量 197/197。真实 Chrome 的 P2B 回归 8/8 通过，包含首次提交响应丢失后按原请求重放、放弃后新表单使用新键、旧草稿跨账号不自动恢复和零自动写入。[逐例对照](cash-case-reconciliation.json)
 
 E2 采购收货原证据记录了取消后焦点未恢复。修复后将焦点返回「验货入库」按钮，并将浏览器观测改为必过断言。真实 Chrome 156 在隔离库跑通组合收货、验证失败取消、重复提交保护和冲销，人工复看 390×844、125% 截图。[焦点截图](purchase-receipt-focus-390-125.png)
+
+E1 扩展 8、9、10 和 E2 库存操作、组合收货均在隔离库的真实 Chrome 预验收通过。严格刷新模式通过。销售旅程首次严格执行发现两段附件用例复用同名样本，重试场景改用独立文件并断言重开后只新增一条。此修复以重跑结果核对。
+
+PG17 首轮两项失败分别为归档商品清单的未声明排序，以及会话认证挑战下匿名请求的预期。测试保留商品项、数量、关联及汇总断言，并明确断言匿名 401 和 Session 挑战。两项在本地 SQLite 定向通过，PG17 待相应新候选验证。GitHub 隔离浏览器组使用每个隔离运行随机生成的临时测试凭据。
 
 完整打印成品及分页继续按原延期处理。

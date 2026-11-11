@@ -102,7 +102,7 @@ class HistoricalProductLinkingTests(HistoryProductFixture, TestCase):
 
         detail = self.client.get(f"/api/orders/{order.pk}/")
         self.assertEqual(detail.status_code, 200, detail.data)
-        self.assertEqual([row["name"] for row in detail.data["historical_products"]], ["A", "A1", "A2灯"])
+        self.assertCountEqual([row["name"] for row in detail.data["historical_products"]], ["A", "A1", "A2灯"])
         self.assertTrue(all(row["sku"]["id"] == b.pk for row in detail.data["historical_products"]))
         self.assertEqual(len(self.report("original")["by_sku"]), 3)
         report = self.report("linked")

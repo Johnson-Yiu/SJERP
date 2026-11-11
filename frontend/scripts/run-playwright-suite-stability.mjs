@@ -1,4 +1,5 @@
 import { execFileSync, spawn } from 'node:child_process'
+import { randomBytes } from 'node:crypto'
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -39,6 +40,16 @@ const dedicatedRuns = [
     codex: true,
     env: { [`SALES_STATE_${mode}`]: '1' },
   })),
+  {
+    name: 'sales-state-apply-quantity',
+    file: 'ui-sales-state-evidence-01.spec.js',
+    codex: true,
+    env: {
+      SALES_STATE_JOURNEYS: '1',
+      SALES_STATE_APPLY_QUANTITY: '1',
+      SALES_STATE_SCENARIOS: 'O04-confirm,O06-quantity',
+    },
+  },
   ...['1', 'refresh', 'lifecycle', 'verify', 'priority', 'candidate', 'priority-standard'].map(mode => ({
     name: `product-operations-state-${mode}`,
     file: 'ui-product-operations-state-evidence-01.spec.js',
@@ -109,7 +120,7 @@ for (const run of runs) {
     'E1_R2_EXTRA', 'E1_R2_WIDTH', 'SALES_PARTY_NATIVE_ZOOM',
     'SALES_STATE_JOURNEYS', 'SALES_STATE_SUPPLEMENTAL', 'SALES_STATE_FOCUSED',
     'SALES_STATE_CASES', 'SALES_STATE_SCENARIOS', 'SALES_STATE_SHOTS',
-    'SALES_STATE_WIDTH', 'SALES_STATE_ZOOM',
+    'SALES_STATE_WIDTH', 'SALES_STATE_ZOOM', 'SALES_STATE_APPLY_QUANTITY',
     'PRODUCT_OPS_FOLLOWUP', 'PRODUCT_OPS_PRIORITY_ZOOM',
   ]) delete runEnv[key]
   Object.assign(runEnv, run.env)
@@ -118,6 +129,10 @@ for (const run of runs) {
   runEnv.ISOLATED_PLAYWRIGHT_JSON = '1'
   runEnv.A3_STRICT_BROWSER_EVIDENCE = '1'
   runEnv.ISOLATED_CODEX_TEST_SUPERADMIN = run.codex ? '1' : '0'
+  if (run.codex && process.env.GITHUB_ACTIONS === 'true') {
+    runEnv.ERP_TEST_USERNAME = 'codex'
+    runEnv.ERP_TEST_PASSWORD = randomBytes(24).toString('base64url')
+  }
   const child = spawn(process.execPath, [runnerPath, ...run.args], {
     cwd: frontendRoot,
     env: runEnv,

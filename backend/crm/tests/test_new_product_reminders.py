@@ -7,8 +7,10 @@ from django.core.exceptions import ValidationError as ModelValidationError
 from django.test import TestCase, TransactionTestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
+from crm.authentication import SessionAuthenticationWithChallenge
 from crm.models import (Customer, Contact, FollowUp, NewProductReminder, OperationLog, Product,
     OrganizationUnit, Position, EmployeeProfile, AccessRole, RolePermission)
+from crm.new_product_reminders import ReminderViewSet
 
 
 class ReminderTests(TestCase):
@@ -140,7 +142,10 @@ class ReminderTests(TestCase):
         self.customer.owner_profile = profile; self.customer.save()
         own = NewProductReminder.objects.create(customer=self.customer, requirement="shared", created_by="test", contact=self.contact, product=self.product)
         foreign = NewProductReminder.objects.create(customer=self.other, requirement="shared", created_by="test")
-        self.assertEqual(self.client.get('/api/new-product-reminders/').status_code, 403)
+        with patch.object(ReminderViewSet, "authentication_classes", [SessionAuthenticationWithChallenge]):
+            anonymous = self.client.get('/api/new-product-reminders/')
+            self.assertEqual(anonymous.status_code, 401, anonymous.data)
+            self.assertEqual(anonymous["WWW-Authenticate"], "Session")
         self.client.force_authenticate(user)
         for params in ({}, {"search":"shared"}, {"tag":"新品提醒","search":"shared"}):
             data = self.client.get('/api/new-product-reminders/', params).data

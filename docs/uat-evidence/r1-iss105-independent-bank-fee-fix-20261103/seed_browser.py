@@ -10,7 +10,7 @@ django.setup()
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from test_support.isolated_runtime import verify_isolated_runtime
-from crm.models import Transaction, RmbCashEvent, CashSourceAllocation
+from crm.models import Transaction, RmbCashEvent, CashSourceAllocation, FinanceAccount
 from crm.services.finance import record_transaction
 
 verify_isolated_runtime(settings=settings, database_must_exist=True)
@@ -22,6 +22,12 @@ if len(sys.argv) > 1:
     event_ids = list(CashSourceAllocation.objects.filter(source_id__in=ids).values_list("event_id", flat=True))
     print(json.dumps({"source_rows": source_rows, "events": list(RmbCashEvent.objects.filter(pk__in=event_ids).order_by("pk").values()), "allocations": list(CashSourceAllocation.objects.filter(source_id__in=ids).order_by("pk").values())}, cls=DjangoJSONEncoder))
     sys.exit(0)
+for code, currency in (("SYNTH_FX", "USD"), ("SYNTH_CNY", "CNY")):
+    FinanceAccount.objects.get_or_create(code=code, defaults={
+        "name": f"合成 {currency} 银行账户", "currency": currency, "account_type": "bank",
+        "ownership": "own", "ownership_reason": "隔离验收合成账户",
+    })
+
 prefix = "SYNTH-FEE-" + uuid4().hex[:8].upper()
 rows = []
 names = []

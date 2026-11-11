@@ -20,9 +20,9 @@ export async function uploadBankVoucherViaApi(page, sources) {
 }
 
 export async function uploadBankVoucherThroughUi(page) {
-  await page.getByLabel('银行私有凭证文件', { exact: true }).setInputFiles(file())
+  await page.getByLabel('银行凭证文件', { exact: true }).setInputFiles(file())
   const response = page.waitForResponse(r => r.url().endsWith('/api/rmb-cash-events/voucher-upload/') && r.request().method() === 'POST')
-  await page.getByRole('button', { name: '上传银行私有凭证', exact: true }).click()
+  await page.getByRole('button', { name: '上传并校验凭证', exact: true }).click()
   expect((await response).status()).toBe(201)
-  await expect(page.getByText(/文件已绑定：#/)).toBeVisible()
+  await expect(page.getByText(/凭证已上传：/)).toBeVisible()
 }

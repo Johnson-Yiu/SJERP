@@ -10,7 +10,7 @@ from django.test import TestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from django.db import connection
 from crm.tests.test_history_takeover import HistoryTakeoverFixtureMixin
-from crm.history_takeover import execute_group
+from crm.history_takeover import execute_group, _truth_rows, TakeoverRuleError
 from crm.history_product_models import ArchivedHistoryLine, HistoryProductLink
 from crm.models import Customer, SKU, Order, PurchaseOrder, Transaction, FinanceFact, InventoryMovement, Shipment, GoodsReceipt, HistoryTakeoverApplication
 from crm import history_operational_finance as bridge
@@ -46,6 +46,12 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
         rows['销售订单'].append(bad_order)
         rows['销售明细'].append(bad_line)
         workbook = self.workbook_bytes(rows)
+        if os.environ.get('HISTORY_DELIVERY_SOURCE_WORKBOOK'):
+            with open(os.environ['HISTORY_DELIVERY_SOURCE_WORKBOOK'], 'wb') as output:
+                output.write(workbook)
+        if os.environ.get('HISTORY_DELIVERY_CUSTOMER_CSV'):
+            with open(os.environ['HISTORY_DELIVERY_CUSTOMER_CSV'], 'wb') as output:
+                output.write(content)
         def submit():
             return self.client.post("/api/import/history-takeovers/", {"file": SimpleUploadedFile("synthetic-history.xlsx", workbook)}, format="multipart")
         submitted = submit()
@@ -80,6 +86,8 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual(changed.status_code, 201, changed.data)
         duplicate_app = HistoryTakeoverApplication.objects.get(pk=changed.data['id'])
         duplicate_group = duplicate_app.groups.get()
+        with self.assertRaisesMessage(TakeoverRuleError, '来源记录已由其他承接批次登记'):
+            _truth_rows(duplicate_group)
         duplicate_url = f'/api/import/history-takeovers/{duplicate_app.pk}/groups/{duplicate_group.pk}/'
         duplicate_review = self.client.post(duplicate_url+'review/', {'decision':'approve','note':'合成重复来源核对','confirm_manual':True}, format='json')
         self.assertNotEqual(duplicate_review.status_code, 200)

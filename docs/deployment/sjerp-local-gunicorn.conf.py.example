@@ -1,0 +1,7 @@
+# Install outside the release tree and protect with the same ACL as runtime.env.
+import os
+
+bind = "127.0.0.1:" + os.environ["SJERP_HTTP_PORT"]
+workers = 2
+graceful_timeout = 30
+errorlog = "-"

@@ -1,0 +1,34 @@
+{
+  "source": "1f4a2dcc05bd7183621b95eaf4e9c45b14912b1b",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "same-warehouse-two-movements",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "same-warehouse-two-movements-390-125.png"
+    },
+    {
+      "id": "same-warehouse-lot-01",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "same-warehouse-lot-01-390-125.png",
+      "lotFromApi": "EVID-LOT-20261110-A-01",
+      "lotShownInDrawer": false
+    },
+    {
+      "id": "same-warehouse-lot-03",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "same-warehouse-lot-03-390-125.png",
+      "lotFromApi": "EVID-LOT-20261110-A-03",
+      "lotShownInDrawer": false
+    }
+  ]
+}

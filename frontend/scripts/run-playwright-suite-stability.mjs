@@ -24,7 +24,7 @@ const dedicatedRuns = [
   { name: 'product-operations-parameter-02-isolated', file: 'ui-product-operations-parameter-02.spec.js', codex: true },
   { name: 'workspace-tabs-isolated', file: 'workspace-tabs-real.spec.js' },
   { name: 'workspace-integration-isolated', file: 'workspace-integration-real.spec.js', codex: true },
-  { name: 'first-release-consolidation-isolated', file: 'first-release-consolidation-02.spec.js' },
+  { name: 'first-release-consolidation-isolated', file: 'first-release-consolidation-02.spec.js', codex: true },
   { name: 'sales-order-import-isolated', file: 'sales-order-import-real.spec.js', codex: true },
   { name: 'historical-orders-02-isolated', file: 'historical-orders-fix-02.spec.js' },
   { name: 'historical-orders-03-isolated', file: 'historical-orders-fix-03.spec.js' },

@@ -118,7 +118,14 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
             const customerList = url => url.pathname === '/api/customers/' && url.searchParams.has('search')
             if (action === 'failure') await page.route(customerList, route => route.abort('failed'))
             await page.goto(new URL(route, baseURL).href, { timeout: 100000 })
-            if (action === 'button') {
+            if (id === 'C08') {
+              const detail = page.getByRole('dialog', { name: '客户详情', exact: true })
+              await expect(detail.getByRole('button', { name: '关闭详情', exact: true })).toBeVisible()
+              await detail.getByRole('button', { name: '编辑客户', exact: true }).click()
+              const editor = page.getByRole('dialog', { name: '编辑客户', exact: true })
+              await expect(editor).toBeVisible({ timeout: 30000 })
+              await expect(editor.getByLabel('客户名称')).toHaveValue(customer.name)
+            } else if (action === 'button') {
               await page.getByRole('button', { name: label, exact: true }).first().click({ timeout: 25000 })
               await expect(page.locator(target).first()).toBeVisible({ timeout: 20000 })
             } else if (action === 'failure') {
@@ -146,6 +153,12 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
               }).toBeLessThanOrEqual(1)
             }
             await capture(id, width, height, zoom)
+            if (id === 'C08') {
+              const editor = page.getByRole('dialog', { name: '编辑客户', exact: true })
+              await editor.getByRole('button', { name: '取消', exact: true }).click()
+              await expect(editor).toHaveCount(0)
+              await expect(page.getByRole('dialog', { name: '客户详情', exact: true })).toBeVisible()
+            }
             if (id === 'Q02R') {
               const overflow = await page.evaluate(() => {
                 window.scrollTo(10000, 0)

@@ -437,10 +437,17 @@ test('browser CI invokes the isolated suite and keeps run evidence under an isol
   const chromiumInstall = frontend.indexOf('run: npx playwright install --with-deps chromium')
   assert.ok(chromiumInstall >= 0)
   assert.ok(frontend.indexOf('run: npm ci') < chromiumInstall)
+  const vitestCommand = [
+    'npx --no-install vitest run tests',
+    'src/components/CashEventEntryForm.spec.js',
+    'src/components/PurchasePaymentModal.spec.js',
+    'src/components/HistoryProductLinking.spec.js',
+    '--environment jsdom --exclude tests/detail-drawer-typography.spec.js',
+  ].join(' ')
   for (const command of [
     'npm run test:unit',
     'node --test tests/detail-drawer-typography.spec.js',
-    'npx --no-install vitest run tests --environment jsdom --exclude tests/detail-drawer-typography.spec.js',
+    vitestCommand,
     'npm run test:browser',
     'npm run build',
   ]) {

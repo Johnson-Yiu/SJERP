@@ -1,0 +1,438 @@
+{
+  "source": "ea7715bf85b3ea16a1d67e189bda619d20cb91ad",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "resource": "customers",
+      "state": "loading",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customers-loading-1366-100.png"
+    },
+    {
+      "resource": "customers",
+      "state": "rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customers-rejected-1366-100.png"
+    },
+    {
+      "resource": "customers",
+      "state": "empty",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customers-empty-1366-100.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "loading",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "quotes-loading-1366-100.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "quotes-rejected-1366-100.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "empty",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "quotes-empty-1366-100.png"
+    },
+    {
+      "resource": "orders",
+      "state": "loading",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "orders-loading-1366-100.png"
+    },
+    {
+      "resource": "orders",
+      "state": "rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "orders-rejected-1366-100.png"
+    },
+    {
+      "resource": "orders",
+      "state": "empty",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "orders-empty-1366-100.png"
+    },
+    {
+      "resource": "customers",
+      "state": "loading",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "customers-loading-1366-125.png"
+    },
+    {
+      "resource": "customers",
+      "state": "rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "customers-rejected-1366-125.png"
+    },
+    {
+      "resource": "customers",
+      "state": "empty",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "customers-empty-1366-125.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "loading",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "quotes-loading-1366-125.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "quotes-rejected-1366-125.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "empty",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "quotes-empty-1366-125.png"
+    },
+    {
+      "resource": "orders",
+      "state": "loading",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "orders-loading-1366-125.png"
+    },
+    {
+      "resource": "orders",
+      "state": "rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "orders-rejected-1366-125.png"
+    },
+    {
+      "resource": "orders",
+      "state": "empty",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "png": "orders-empty-1366-125.png"
+    },
+    {
+      "resource": "customers",
+      "state": "loading",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "customers-loading-1440-100.png"
+    },
+    {
+      "resource": "customers",
+      "state": "rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "customers-rejected-1440-100.png"
+    },
+    {
+      "resource": "customers",
+      "state": "empty",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "customers-empty-1440-100.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "loading",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "quotes-loading-1440-100.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "quotes-rejected-1440-100.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "empty",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "quotes-empty-1440-100.png"
+    },
+    {
+      "resource": "orders",
+      "state": "loading",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "orders-loading-1440-100.png"
+    },
+    {
+      "resource": "orders",
+      "state": "rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "orders-rejected-1440-100.png"
+    },
+    {
+      "resource": "orders",
+      "state": "empty",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "png": "orders-empty-1440-100.png"
+    },
+    {
+      "resource": "customers",
+      "state": "loading",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "customers-loading-1440-125.png"
+    },
+    {
+      "resource": "customers",
+      "state": "rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "customers-rejected-1440-125.png"
+    },
+    {
+      "resource": "customers",
+      "state": "empty",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "customers-empty-1440-125.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "loading",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "quotes-loading-1440-125.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "quotes-rejected-1440-125.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "empty",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "quotes-empty-1440-125.png"
+    },
+    {
+      "resource": "orders",
+      "state": "loading",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "orders-loading-1440-125.png"
+    },
+    {
+      "resource": "orders",
+      "state": "rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "orders-rejected-1440-125.png"
+    },
+    {
+      "resource": "orders",
+      "state": "empty",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "png": "orders-empty-1440-125.png"
+    },
+    {
+      "resource": "customers",
+      "state": "loading",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "customers-loading-390-100.png"
+    },
+    {
+      "resource": "customers",
+      "state": "rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "customers-rejected-390-100.png"
+    },
+    {
+      "resource": "customers",
+      "state": "empty",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "customers-empty-390-100.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "loading",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "quotes-loading-390-100.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "quotes-rejected-390-100.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "empty",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "quotes-empty-390-100.png"
+    },
+    {
+      "resource": "orders",
+      "state": "loading",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "orders-loading-390-100.png"
+    },
+    {
+      "resource": "orders",
+      "state": "rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "orders-rejected-390-100.png"
+    },
+    {
+      "resource": "orders",
+      "state": "empty",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "png": "orders-empty-390-100.png"
+    },
+    {
+      "resource": "customers",
+      "state": "loading",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "customers-loading-390-125.png"
+    },
+    {
+      "resource": "customers",
+      "state": "rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "customers-rejected-390-125.png"
+    },
+    {
+      "resource": "customers",
+      "state": "empty",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "customers-empty-390-125.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "loading",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "quotes-loading-390-125.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "quotes-rejected-390-125.png"
+    },
+    {
+      "resource": "quotes",
+      "state": "empty",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "quotes-empty-390-125.png"
+    },
+    {
+      "resource": "orders",
+      "state": "loading",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "orders-loading-390-125.png"
+    },
+    {
+      "resource": "orders",
+      "state": "rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "orders-rejected-390-125.png"
+    },
+    {
+      "resource": "orders",
+      "state": "empty",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "png": "orders-empty-390-125.png"
+    }
+  ]
+}

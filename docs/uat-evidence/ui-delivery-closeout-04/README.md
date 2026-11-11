@@ -37,3 +37,11 @@ SKU 图片上传及清除错误六组均通过。在提示仍位于视口时可�
 
 
 在固定产品源码 `d22a30954bf2d69fa9f45b875dddad594d8df8bf` 上，订单及采购草稿的六组均通过。采购未保存确认和数量读回已核销。最终证据提交与该产品树一致。[修后运行](ci-repair/draft-final/chrome-draft-recovery/run.json)
+
+
+O1 已核对远端并接收固定来源 `a2c59a2138390a1c1fe5578e664a933e3149ae01` 的两个提交。Windows 启动入口 Node 检查通过，隔离 Django 定向测试 11 项中 10 通过、1 项需要真实 PostgreSQL。启动和运维入口进入独立复审，目标 Linux 的 systemd 生命周期、正式卷与恢复仍待目标环境。D1 尚无已核验的约定远端分支和固定提交。现有 Linux 工作流已匹配 U4 分支。[O1 交付](../local-runtime-delivery-01/README.md)
+
+主 CI 43050190935 第一次运行在 Playwright Chromium 安装依赖时无法解析 Ubuntu 软件源，前端单元、浏览器和构建未执行。已对 `21c938acac5898b0d26522533c6abdec42350f48` 的同一运行重跑失败前端作业，保留原日志。先前 43007744664 的故障注入时序及修复见原归档。后续候选结果按提交核对。[首次 DNS 失败](https://github.com/Johnson-Yiu/SJERP/actions/runs/43050190935/job/130624837744) · [同 SHA 重跑](https://github.com/Johnson-Yiu/SJERP/actions/runs/43050190935/attempts/2)
+
+
+在产品源码 `ea7715bf85b3ea16a1d67e189bda619d20cb91ad` 上补齐客户、报价及订单列表六组初载、受控错误及真实空库，并补齐收货校验失败取消的六组。最后的测试与证据提交与此产品树一致。前端定向组件 55 项及构建通过。[列表运行记录](continuation/lists/chrome-list-load/run.json) · [收货运行记录](continuation/receipts/chrome-purchase-receipt-combinations/run.json) · [原 DNS 日志摘录](ci-43050190935-apt-dns.txt)

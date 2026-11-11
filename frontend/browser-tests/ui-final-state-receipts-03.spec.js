@@ -120,18 +120,22 @@ test('receipts preserve both units and destinations and inventory movements enfo
       await form.getByLabel(/批次或货位/).fill(lot)
       await form.getByLabel(/已核对型号/).check()
     }
-    await prepare('自有仓', '合成收货甲仓', 'EVID-RECEIPT-MULTI-A')
-    await page.route('**/receive/', route => route.fulfill({ status: 400, json: { detail: '合成校验错误，请重新核对' } }), { times: 1 })
-    const failed = result('/receive/')
-    await submit.click()
-    expect((await failed).status()).toBe(400)
-    await expect(form).toContainText('合成校验错误，请重新核对')
-    await expect(form.getByLabel('仓库', { exact: true })).toHaveValue('合成收货甲仓')
-    await snap('purchase-receipt-validation', { method: 'single controlled 400, no backend write' })
-    await form.getByRole('button', { name: '取消', exact: true }).click()
-    await expect(form).toHaveCount(0)
-    await expect(receiptTrigger).toBeEnabled()
-    await expect(receiptTrigger).toBeFocused()
+    async function verifyRejectedReceipt() {
+      await prepare('自有仓', '合成收货甲仓', 'EVID-RECEIPT-MULTI-A')
+      await page.route('**/receive/', route => route.fulfill({ status: 400, json: { detail: '合成校验错误，请重新核对' } }), { times: 1 })
+      const failed = result('/receive/')
+      await submit.click()
+      expect((await failed).status()).toBe(400)
+      await expect(form).toContainText('合成校验错误，请重新核对')
+      await expect(form.getByLabel('仓库', { exact: true })).toHaveValue('合成收货甲仓')
+      await snap('purchase-receipt-validation', { method: 'single controlled 400, no backend write' })
+      await form.getByRole('button', { name: '取消', exact: true }).click()
+      await expect(form).toHaveCount(0)
+      await expect(receiptTrigger).toBeEnabled()
+      await expect(receiptTrigger).toBeFocused()
+      await snap('purchase-receipt-rejected-cancelled', { focusReturned: true })
+    }
+    await verifyRejectedReceipt()
     await receiptTrigger.press("Enter")
     await expect(form).toBeFocused()
     await page.keyboard.press("Escape")
@@ -144,6 +148,7 @@ test('receipts preserve both units and destinations and inventory movements enfo
         await page.setViewportSize({ width, height })
         await go()
         await workbench.getByText('收货', { exact: true }).click()
+        if (width !== 390 || zoom !== 1.25) await verifyRejectedReceipt()
         await receiptTrigger.press('Enter')
         await expect(form).toBeFocused()
         await receiptTrigger.evaluate(element => element.remove())
@@ -161,6 +166,8 @@ test('receipts preserve both units and destinations and inventory movements enfo
     await receiptTrigger.scrollIntoViewIfNeeded()
     await snap('purchase-receipt-validation-cancelled', { focusReturned })
 
+    const rejectedReceiptWrites = receiptWrites
+    expect(rejectedReceiptWrites).toBe(6)
     for (const [index, type, warehouse, lot, unitName] of [
       [1, '自有仓', '合成收货甲仓', 'EVID-RECEIPT-MULTI-A', '10 件／箱'],
       [2, '第三方仓', '合成收货乙仓', 'EVID-RECEIPT-MULTI-B', '20 件／大箱'],
@@ -172,7 +179,7 @@ test('receipts preserve both units and destinations and inventory movements enfo
       const saved = result('/receive/')
       try {
         await submit.evaluate(button => { button.click(); button.click() })
-        await expect.poll(() => receiptWrites).toBe(index + 1)
+        await expect.poll(() => receiptWrites).toBe(rejectedReceiptWrites + index)
         await expect(form.getByRole('button', { name: /入库中|提交中|保存中/ })).toBeDisabled()
         await snap('purchase-receipt-pending-' + index, { method: 'temporarily held outgoing POST, then forwarded to real Django' })
       } finally {
@@ -181,7 +188,7 @@ test('receipts preserve both units and destinations and inventory movements enfo
       const receipt = await saved
       expect(receipt.status(), await receipt.text()).toBe(201)
       await expect(form).toHaveCount(0)
-      expect(receiptWrites).toBe(index + 1)
+      expect(receiptWrites).toBe(rejectedReceiptWrites + index)
       await expect(workbench.locator('.receipt-history-row')).toHaveCount(index)
     }
     const purchase = await page.request.get(new URL('/api/purchase-orders/' + fixture.purchase + '/', baseURL).href)

@@ -49,3 +49,8 @@ PG17 首轮两项失败分别为归档商品清单的未声明排序，以及会
 二次核对远端后，冻结时接收 H3 `1c478b0aa298d53ffca03a38d4200b0d122b27ea` 和 U3 `d65aca7a5e832a3108e19c1c63e5a5e548ee8542`。H3 将原始快照不变性按主键对照。U3 增加附件删除失败后继续编辑、采购焦点回退和销售退货回读。新增销售退货用例由独立配置执行。[远端快照](remote-heads-after-h3-u3.tsv)
 
 `3adcc61afa9318fc0b86c45e4308cf866f9173eb` 的真实 Chrome 导出专项 8/8，四份实际样本留档。[样本及校验](final-exports-3adcc61a/manifest.json)
+
+
+`1afd122e7060e8c7007f54914ba2f01f1c975f8c` 的最新 U3 联系人及附件失败恢复、销售退货、采购收货三个真实 Chrome 专项通过。H3/U3 集成定向 Vitest 30/30、后端定向 2/2。[附件失败窄屏截图](integrated-chrome-samples/attachment-delete-failed-390-125.png)
+
+ISS-007 报价导出也复现了下载取消。延长报价 Blob URL 的保留时间后，真实 Chrome 完成报价及订单图片快照链路并重新下载带图片的 XLSX。[文件校验](integrated-chrome-samples/quote-download-check.json)

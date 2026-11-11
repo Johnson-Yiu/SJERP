@@ -1,3 +1,4 @@
+import { downloadBlob } from './utils/downloadBlob.js'
 import { sessionEpoch, notifyWorkspaceWrite, notifySessionBoundary } from './workspaceSession.js'
 import axios from 'axios'
 import { apiErrorMessage } from './utils/apiErrors.js'
@@ -65,25 +66,11 @@ export async function listAll(url, config = {}) {
 
 export async function downloadQuoteExport(id, quoteNo, config = {}) {
   const response = await api.get(`/quotes/${id}/export/`, { ...config, responseType: 'blob', timeout: 120000 })
-  const url = URL.createObjectURL(response.data)
-  const anchor = document.createElement('a')
-  anchor.href = url
-  anchor.download = `${quoteNo}.xlsx`
-  document.body.appendChild(anchor)
-  anchor.click()
-  anchor.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 30_000)
+  downloadBlob(response.data, `${quoteNo}.xlsx`)
 }
 
 export async function downloadPackingListExport(id, shipmentNo, config = {}) {
   const response = await api.get(`/shipments/${id}/export-packing-list/`, { ...config, responseType: 'blob', timeout: 120000 })
-  const url = URL.createObjectURL(response.data)
-  const anchor = document.createElement('a')
-  anchor.href = url
-  anchor.download = `PackingList-${shipmentNo || id}.xlsx`
-  document.body.appendChild(anchor)
-  anchor.click()
-  anchor.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 0)
+  downloadBlob(response.data, `PackingList-${shipmentNo || id}.xlsx`)
 }
 

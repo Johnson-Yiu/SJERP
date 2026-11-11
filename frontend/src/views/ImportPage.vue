@@ -1,4 +1,5 @@
 <script setup>
+import { downloadBlob } from '../utils/downloadBlob.js'
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api } = useWorkspaceApi()
 import { computed, inject, onMounted, onBeforeUnmount, ref, watch } from 'vue'
@@ -112,14 +113,7 @@ function clearOrderPreview() {
   orderResult.value = null; orderError.value = ''; orderPhase.value = orderFile.value ? 'selected' : 'idle'
 }
 function downloadCsv(text, filename) {
-  const url = URL.createObjectURL(new Blob(['\ufeff' + text], { type: 'text/csv;charset=utf-8' }))
-  const link = document.createElement('a'); link.href = url; link.download = filename; link.click()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
-}
-function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob), link = document.createElement('a')
-  link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
+  downloadBlob(new Blob(['\ufeff' + text], { type: 'text/csv;charset=utf-8' }), filename)
 }
 function downloadTemplate() {
   if (templateLoading.value || !headers.value.length) return

@@ -15,7 +15,7 @@
 | `8b1cdd42481f37debe41d6d75cd8aa50d4b53edb` | [Linux operations acceptance](https://github.com/Johnson-Yiu/SJERP/actions/runs/42967610334) | 三个 job 均成功 |
 | `8b1cdd42481f37debe41d6d75cd8aa50d4b53edb` | [CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/42967610341) | Frontend Node 步骤通过；Vitest 836 通过、2 失败，浏览器步骤未运行 |
 
-[远端分支快照](remote-heads.tsv)、[Actions 记录](actions-runs.jsonl)和[分支清单](branch-inventory.csv)按远端分支头及精确 SHA 对照。无匹配运行表示当前快照中未查到该分支头的运行，另列同 SHA 异分支运行和带跳过指令的原提交。祖先关系来自 Git 提交图。242 个分支头中，105 个是候选祖先，2 个接收了已审来源及缺失增量，20 个与候选祖先完整文件树相同，27 个为等价非合并补丁序列，88 个仍需核对替代关系和交付范围。另按 2026-11-04 起的远端提交逐条列出原始 CI、等价补丁或已知替代关系。[逐提交清单](recent-commit-inventory.csv)
+[远端分支快照](remote-heads.tsv)、[Actions 记录](actions-runs.jsonl)和[分支清单](branch-inventory.csv)按远端分支头及精确 SHA 对照。无匹配运行表示当前快照中未查到该分支头的运行，另列同 SHA 异分支运行和带跳过指令的原提交。祖先关系来自 Git 提交图。242 个分支头中，105 个是候选祖先，2 个接收了已审来源及缺失增量，20 个与候选祖先完整文件树相同，27 个为等价非合并补丁序列，25 个仅包含历史证据，6 个分支所改的非证据路径与候选一致，57 个仍需核对差异和交付范围。另按 2026-11-04 起的远端提交逐条列出原始 CI、等价补丁或已知替代关系。[逐提交清单](recent-commit-inventory.csv)
 
 旧资金草稿缺少可证明的账号及表单归属，现行行为保留旧记录并提示人工核对。旧草稿不会作为重试载荷。账号范围内的当前已提交待核对记录可重放原载荷。浏览器测试以网络请求为证据，后端使用真实数据库断言幂等。历史 A3 的 24 条逐例非通过记录以及后续 P2B 定向三项失败保留在[原报告](../release-integration-acceptance-03/README.md)。
 
@@ -54,3 +54,6 @@ PG17 首轮两项失败分别为归档商品清单的未声明排序，以及会
 `1afd122e7060e8c7007f54914ba2f01f1c975f8c` 的最新 U3 联系人及附件失败恢复、销售退货、采购收货三个真实 Chrome 专项通过。H3/U3 集成定向 Vitest 30/30、后端定向 2/2。[附件失败窄屏截图](integrated-chrome-samples/attachment-delete-failed-390-125.png)
 
 ISS-007 报价导出也复现了下载取消。延长报价 Blob URL 的保留时间后，真实 Chrome 完成报价及订单图片快照链路并重新下载带图片的 XLSX。[文件校验](integrated-chrome-samples/quote-download-check.json)
+
+
+导入模板下载也复现了同类取消。现将导入、报价、装箱单、财务和历史报表的下载统一复用同一 Blob 保存逻辑，保留各自的文件名、内容及过期请求保护。修复后本地 Vitest 841/841、Vite 构建、真实 Chrome 销售导入与实际导出 8/8。

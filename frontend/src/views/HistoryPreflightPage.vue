@@ -1,4 +1,5 @@
 <script setup>
+import { downloadBlob } from '../utils/downloadBlob.js'
 import { computed, ref, onBeforeUnmount } from 'vue'
 import { AlertTriangle, ArrowRight, CircleHelp, Download, FileUp } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
@@ -74,16 +75,7 @@ async function downloadCsv() {
   try {
     const response = await api.post('/import/history-preflight/?report=csv', formData(workbook), { responseType: 'blob' })
     if (!alive || version !== selectionVersion || file.value !== workbook || previewFile.value !== workbook) return
-    const url = URL.createObjectURL(response.data)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = 'history-preflight.csv'
-    document.body.appendChild(anchor)
-    anchor.click()
-    setTimeout(() => {
-      anchor.remove()
-      URL.revokeObjectURL(url)
-    }, 1000)
+    downloadBlob(response.data, 'history-preflight.csv')
   } catch (e) {
     if (alive && version === selectionVersion && file.value === workbook && previewFile.value === workbook) {
       error.value = e.message || 'CSV 下载失败，请重试。'

@@ -1,4 +1,5 @@
 <script setup>
+import { downloadBlob } from '../utils/downloadBlob.js'
 import FinanceBusinessSelector from '../components/FinanceBusinessSelector.vue'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { useWorkspaceNavigation } from '../composables/useWorkspaceNavigation'
@@ -144,10 +145,7 @@ async function upload() {
 async function downloadCsv() {
   await run(async () => {
     const response = await api.get('/finance-ledger/facts/', { params: { ...period, export: 'csv' }, responseType: 'blob' })
-    const url = URL.createObjectURL(response.data), link = document.createElement('a')
-    link.href = url; link.download = 'account-cash-facts.csv'; document.body.appendChild(link); link.click()
-    link.remove()
-    setTimeout(() => URL.revokeObjectURL(url), 30_000)
+    downloadBlob(response.data, 'account-cash-facts.csv')
   })
 }
 onMounted(async () => {

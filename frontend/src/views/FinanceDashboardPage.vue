@@ -1,4 +1,5 @@
 <script setup>
+import { downloadBlob } from '../utils/downloadBlob.js'
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api } = useWorkspaceApi()
 import { BOOK_RMB_NOTE } from '../utils/financeBasis.js'
@@ -137,9 +138,7 @@ async function exportReport() {
   exportError.value = ''; notice.value = ''
   try {
     const response = await api.get('/finance-dashboard/', { params: { date_from: period.date_from, date_to: period.date_to, export: 'csv' }, responseType: 'blob' })
-    const url = URL.createObjectURL(response.data)
-    const anchor = document.createElement('a'); anchor.href = url; anchor.download = `账面收支参考-${period.date_from}-${period.date_to}.csv`; anchor.click()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    downloadBlob(response.data, `账面收支参考-${period.date_from}-${period.date_to}.csv`)
     notice.value = 'CSV 已开始下载。'
   } catch (err) { exportError.value = apiErrorMessage(err) || '导出失败，请稍后重试。' } finally { exporting.value = false }
 }
@@ -149,8 +148,7 @@ async function exportActualCash() {
   actualCashExporting.value = true; actualCashExportError.value = ''; notice.value = ''
   try {
     const response = await api.get('/actual-rmb-cash/', { params: { date_from: period.date_from, date_to: period.date_to, export: 'csv' }, responseType: 'blob' })
-    const url = URL.createObjectURL(response.data), anchor = document.createElement('a')
-    anchor.href = url; anchor.download = `银行实际人民币资金-${period.date_from}-${period.date_to}.csv`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
+    downloadBlob(response.data, `银行实际人民币资金-${period.date_from}-${period.date_to}.csv`)
     notice.value = '银行实际资金 CSV 已开始下载。'
   } catch (err) { actualCashExportError.value = apiErrorMessage(err) || '银行实际资金导出失败，请稍后重试。' } finally { actualCashExporting.value = false }
 }

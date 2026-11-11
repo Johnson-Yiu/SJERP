@@ -1,4 +1,5 @@
 <script setup>
+import { downloadBlob } from '../utils/downloadBlob.js'
 import HistoryProductLinking from "../components/HistoryProductLinking.vue"
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
@@ -314,9 +315,7 @@ async function downloadTemplate() {
   templateLoading.value = true; error.value = ''
   try {
     const response = await api.get('/import/history-takeovers/template/', { responseType: 'blob' })
-    const url = URL.createObjectURL(response.data)
-    const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'history-takeover-template-v2.xlsx'; anchor.click()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    downloadBlob(response.data, 'history-takeover-template-v2.xlsx')
   } catch (e) { error.value = e.message }
   finally { templateLoading.value = false }
 }

@@ -1,4 +1,5 @@
 <script setup>
+import { downloadBlob } from '../../utils/downloadBlob.js'
 import { useWorkspaceApi } from '../../composables/useWorkspaceApi'
 const { api } = useWorkspaceApi()
 import { BOOK_RMB_NOTE } from '../../utils/financeBasis.js'
@@ -92,9 +93,7 @@ async function exportCsv() {
   exporting.value = true; exportError.value = ''; exportNotice.value = ''
   try {
     const response = await api.get('/reports/data/', { params: { ...exportParams, export: 'csv' }, responseType: 'blob' })
-    const url = URL.createObjectURL(response.data), anchor = document.createElement('a')
-    anchor.href = url; anchor.download = exportName; anchor.click()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    downloadBlob(response.data, exportName)
     if (exportSequence === sequence) exportNotice.value = 'CSV 已生成，请查看浏览器下载。'
   } catch (err) { if (exportSequence === sequence) exportError.value = apiErrorMessage(err) || '导出失败，请重试。' }
   finally { exporting.value = false }

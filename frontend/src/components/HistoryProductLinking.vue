@@ -1,4 +1,5 @@
 <script setup>
+import { downloadBlob } from '../utils/downloadBlob.js'
 import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 import { accessState } from '../accessControl'
@@ -118,14 +119,7 @@ async function download() {
   try {
     const { data } = await api.get(root + 'export/', { params: applied.value, responseType: 'blob' })
     if (generation !== session) return
-    const url = URL.createObjectURL(data)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = '历史商品明细.csv'
-    document.body.append(anchor)
-    anchor.click()
-    anchor.remove()
-    setTimeout(() => URL.revokeObjectURL(url), 30000)
+    downloadBlob(data, '历史商品明细.csv')
   } catch {
     if (generation === session) error.value = '导出失败，请重试。'
   }

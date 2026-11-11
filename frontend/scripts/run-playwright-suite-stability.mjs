@@ -15,6 +15,8 @@ const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
+  { name: 'finance-closeout-standard', file: 'finance-closeout.spec.js' },
+  { name: 'finance-closeout-native-125', file: 'finance-closeout.spec.js', env: { U4_ACCOUNT_NATIVE_ZOOM: '1' } },
   { name: 'history-product-linking-h2-isolated', file: 'history-product-linking-h2-real.spec.js', codex: true },
   ...[100, 125].map(zoom => ({
     name: `history-product-linking-narrow-${zoom}`,

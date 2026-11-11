@@ -1,0 +1,243 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+      "/home/runner/work/SJERP/SJERP/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "/home/runner/work/SJERP/SJERP/frontend/playwright.isolated.config.js"
+    ],
+    "configFile": "/home/runner/work/SJERP/SJERP/frontend/playwright.isolated.config.js",
+    "rootDir": "/home/runner/work/SJERP/SJERP/frontend/browser-tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": "/home/runner/work/SJERP/SJERP/frontend/browser-tests/helpers/codex-auth.global-setup.js",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/Johnson-Yiu/SJERP/commit/c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+        "commitHash": "c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+        "buildHref": "https://github.com/Johnson-Yiu/SJERP/actions/runs/43007744664"
+      },
+      "gitCommit": {
+        "shortHash": "c21a106",
+        "hash": "c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+        "subject": "Record native Chrome results and complete the delivery ledger",
+        "body": "Record native Chrome results and complete the delivery ledger\n",
+        "author": {
+          "name": "Johnson",
+          "email": "Johnsonyao@sunjack.cn",
+          "time": 1794394487000
+        },
+        "committer": {
+          "name": "Johnson",
+          "email": "Johnsonyao@sunjack.cn",
+          "time": 1794394487000
+        },
+        "branch": "codex/ui-delivery-closeout-04"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/SJERP/SJERP/docs/uat-evidence/ci-43007744664-1/ui-final-state-customer-contact-isolated/artifacts/2b3a6ac6-d18f-49da-b91e-83a1afe409aa",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/Johnson-Yiu/SJERP/commit/c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+            "commitHash": "c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+            "buildHref": "https://github.com/Johnson-Yiu/SJERP/actions/runs/43007744664"
+          },
+          "gitCommit": {
+            "shortHash": "c21a106",
+            "hash": "c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+            "subject": "Record native Chrome results and complete the delivery ledger",
+            "body": "Record native Chrome results and complete the delivery ledger\n",
+            "author": {
+              "name": "Johnson",
+              "email": "Johnsonyao@sunjack.cn",
+              "time": 1794394487000
+            },
+            "committer": {
+              "name": "Johnson",
+              "email": "Johnsonyao@sunjack.cn",
+              "time": 1794394487000
+            },
+            "branch": "codex/ui-delivery-closeout-04"
+          },
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/runner/work/SJERP/SJERP/frontend/browser-tests",
+        "testIgnore": [],
+        "testMatch": [
+          "ui-final-state-customer-contact-03.spec.js"
+        ],
+        "timeout": 150000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/runner/work/SJERP/SJERP/docs/uat-evidence/ci-43007744664-1/ui-final-state-customer-contact-isolated/artifacts/2b3a6ac6-d18f-49da-b91e-83a1afe409aa",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/Johnson-Yiu/SJERP/commit/c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+            "commitHash": "c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+            "buildHref": "https://github.com/Johnson-Yiu/SJERP/actions/runs/43007744664"
+          },
+          "gitCommit": {
+            "shortHash": "c21a106",
+            "hash": "c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+            "subject": "Record native Chrome results and complete the delivery ledger",
+            "body": "Record native Chrome results and complete the delivery ledger\n",
+            "author": {
+              "name": "Johnson",
+              "email": "Johnsonyao@sunjack.cn",
+              "time": 1794394487000
+            },
+            "committer": {
+              "name": "Johnson",
+              "email": "Johnsonyao@sunjack.cn",
+              "time": 1794394487000
+            },
+            "branch": "codex/ui-delivery-closeout-04"
+          },
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/runner/work/SJERP/SJERP/frontend/browser-tests",
+        "snapshotDir": "/home/runner/work/SJERP/SJERP/frontend/browser-tests",
+        "testIgnore": [],
+        "testMatch": "ui-final-state-customer-contact-03.spec.js",
+        "timeout": 150000,
+        "use": {
+          "baseURL": "http://127.0.0.1:43251",
+          "browserName": "chromium",
+          "storageState": "/tmp/sunjack-r1-repair-06-nIJy6N/codex-auth.json"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/home/runner/work/SJERP/SJERP/docs/uat-evidence/ci-43007744664-1/ui-final-state-customer-contact-isolated/artifacts/2b3a6ac6-d18f-49da-b91e-83a1afe409aa/playwright-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "ui-final-state-customer-contact-03.spec.js",
+      "file": "ui-final-state-customer-contact-03.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "customer creation selects an employee and preserves nested contacts after a rejected save",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 2400000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 38324,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' })\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' }) with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' })\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' }) with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' })\u001b[22m\n\n    at /home/runner/work/SJERP/SJERP/frontend/browser-tests/ui-final-state-customer-contact-03.spec.js:62:34",
+                    "location": {
+                      "file": "/home/runner/work/SJERP/SJERP/frontend/browser-tests/ui-final-state-customer-contact-03.spec.js",
+                      "column": 34,
+                      "line": 62
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 60 |\u001b[39m         \u001b[36mconst\u001b[39m editor \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'dialog'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'新建客户'\u001b[39m })\n \u001b[90m 61 |\u001b[39m         \u001b[36mconst\u001b[39m ownerError \u001b[33m=\u001b[39m editor\u001b[33m.\u001b[39mgetByRole(\u001b[32m'alert'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[32m'负责人资料加载失败'\u001b[39m })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 62 |\u001b[39m         \u001b[36mawait\u001b[39m expect(ownerError)\u001b[33m.\u001b[39mtoBeVisible()\n \u001b[90m    |\u001b[39m                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 63 |\u001b[39m         \u001b[36mawait\u001b[39m ownerError\u001b[33m.\u001b[39mscrollIntoViewIfNeeded()\n \u001b[90m 64 |\u001b[39m         \u001b[36mawait\u001b[39m capture(\u001b[32m'customer-owner-options-failed'\u001b[39m)\n \u001b[90m 65 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39munroute(ownerEndpoint)\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/runner/work/SJERP/SJERP/frontend/browser-tests/ui-final-state-customer-contact-03.spec.js",
+                        "column": 34,
+                        "line": 62
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' })\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' }) with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' })\u001b[22m\n\n\n  60 |         const editor = page.getByRole('dialog', { name: '新建客户' })\n  61 |         const ownerError = editor.getByRole('alert').filter({ hasText: '负责人资料加载失败' })\n> 62 |         await expect(ownerError).toBeVisible()\n     |                                  ^\n  63 |         await ownerError.scrollIntoViewIfNeeded()\n  64 |         await capture('customer-owner-options-failed')\n  65 |         await page.unroute(ownerEndpoint)\n    at /home/runner/work/SJERP/SJERP/frontend/browser-tests/ui-final-state-customer-contact-03.spec.js:62:34"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T12:04:35.507Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/runner/work/SJERP/SJERP/docs/uat-evidence/ci-43007744664-1/ui-final-state-customer-contact-isolated/artifacts/2b3a6ac6-d18f-49da-b91e-83a1afe409aa/ui-final-state-customer-co-c12be-tacts-after-a-rejected-save/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/runner/work/SJERP/SJERP/frontend/browser-tests/ui-final-state-customer-contact-03.spec.js",
+                    "column": 34,
+                    "line": 62
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "dc349dd6d6b5c0dd5498-74210894265b818e0a00",
+          "file": "ui-final-state-customer-contact-03.spec.js",
+          "line": 9,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-11T12:04:32.394Z",
+    "duration": 41495.969,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

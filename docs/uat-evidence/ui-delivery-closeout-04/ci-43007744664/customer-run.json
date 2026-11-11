@@ -1,0 +1,35 @@
+{
+  "source": "c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+  "browser": "Chrome/157.0.8103.50",
+  "states": [
+    {
+      "id": "customer-owner-options-failed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customer-owner-options-failed-1366-100.png"
+    },
+    {
+      "id": "customer-create-pending",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customer-create-pending-1366-100.png"
+    },
+    {
+      "id": "customer-owner-and-contact-readback",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customer-owner-and-contact-readback-1366-100.png"
+    },
+    {
+      "id": "customer-related-contact-returned",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "png": "customer-related-contact-returned-1366-100.png"
+    }
+  ],
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' })\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' }) with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '新建客户' }).getByRole('alert').filter({ hasText: '负责人资料加载失败' })\u001b[22m\n"
+}

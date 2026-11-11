@@ -17,7 +17,7 @@
 - [首次标签回退失败](draft-recovery/chrome-draft-recovery/run.json)
 - [逐项状态及剩余清单](remaining.md)
 
-并行包提交 `0bc7ad307c50ebae1c54269348bd941705d136ff` 的 17 个证据文件已接入。38 项结论保留，账户对账通过只覆盖其原视口。银行资金记录与财务流水在 1440×900、390×844 原生 125% 补验通过，实际尾列详情按钮可点击，文档无横向溢出。首跑缺少资金来源关联导致合成事件不可见，补齐真实来源快照后重跑。银行入口是否改名保留为业务待决。[分支核销报告](../branch-coverage-closeout-01/README.md)
+并行包提交 `0bc7ad307c50ebae1c54269348bd941705d136ff` 的 17 个证据文件已接入。38 项结论保留，账户对账通过只覆盖其原视口。银行资金记录与财务流水在 1440×900、390×844 原生 125% 补验通过，实际尾列详情按钮可点击，文档无横向溢出。首跑缺少资金来源关联导致合成事件不可见，补齐真实来源快照后重跑。银行入口保持「银行资金记录」，未执行可选改名。[分支核销报告](../branch-coverage-closeout-01/README.md)
 
 先行候选 `6d63aeca2ebe825c3811cf736b4a3e0cef09346e` 的三个 Linux 专项通过，主 CI 的前端单测阶段失败。调整旧的表单与提示断言后，本地 Node 全量 197 项通过。后续 CI 以新候选自己的运行记录为准。[先行主 CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/43005568492) · [先行 Linux 专项](https://github.com/Johnson-Yiu/SJERP/actions/runs/43005568481)
 
@@ -29,3 +29,6 @@ SKU 图片上传及清除错误六组均通过。在提示仍位于视口时可�
 
 
 并行补测见 [财务布局](final/finance-retest/chrome-finance-layout/run.json) 和 [首跑记录](final/finance-layout/chrome-finance-layout/run.json)。另在同一产品源码上运行现有工作区集成专项，4 项通过，包括独立草稿、会话状态及客户上下文。最终候选 Actions 见[分支运行列表](https://github.com/Johnson-Yiu/SJERP/actions?query=branch%3Acodex%2Fui-delivery-closeout-04)。
+
+
+[浏览器 CI 失败归因及原始证据](ci-43007744664/README.md)。本次改动限于测试和证据，产品源码与 `c21a1060cb99bdf6bda33a07c7ba01b990f4878f` 相同。账户对账 390×844 原生 125% 通过真实隔离后台的账户建立、凭证上传、记账、余额与事实查看、凭证入口、展开详情和 CSV。保留原标准两组并加入独立原生缩放模式。[账户详情截图](ci-repair/account/account-native/account-detail-390-125.png) · [仍待核销状态](remaining.md)

@@ -1,14 +1,34 @@
-import { test, expect } from '@playwright/test'
+import { chromium, test as base, expect } from '@playwright/test'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { syntheticVoucherPdf } from './helpers/bank-voucher.js'
 
+const native = process.env.U4_ACCOUNT_NATIVE_ZOOM === '1'
+const test = native ? base.extend({
+  page: async ({}, use) => {
+    const context = await chromium.launchPersistentContext(
+      path.join(process.env.ISOLATED_TEST_ROOT, 'account-native-chrome'),
+      { channel: 'chrome', viewport: { width: 390, height: 844 } },
+    )
+    try {
+      const settings = context.pages()[0]
+      await settings.goto('chrome://settings/appearance')
+      await settings.locator('settings-appearance-page select')
+        .filter({ has: settings.locator('option[value="1.25"]') }).selectOption('1.25')
+      await use(await context.newPage())
+    } finally {
+      await context.close()
+    }
+  },
+}) : base
 test.use({ channel: 'chrome' })
-const root = process.env.FINANCE_CLOSEOUT_EVIDENCE || (process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
+const root = (native && process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
+  ? path.join(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'account-native')
+  : process.env.FINANCE_CLOSEOUT_EVIDENCE) || (process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT
   ? path.join(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'browser', 'finance-closeout')
   : '../docs/uat-evidence/finance-closeout-batch-20261104/browser')
 
-for (const width of [1440, 390]) test(`real account ledger at ${width}px`, async ({ page }) => {
+for (const width of (native ? [390] : [1440, 390])) test(`real account ledger at ${width}px`, async ({ page }) => {
   test.setTimeout(150000)
   await fs.mkdir(root, { recursive: true })
   const records = [], errors = []
@@ -18,8 +38,9 @@ for (const width of [1440, 390]) test(`real account ledger at ${width}px`, async
     try { records.push({ url: new URL(response.url()).pathname, method: response.request().method(), status: response.status(), body: await response.json() }) } catch { /* Actual file downloads are saved separately. */ }
   })
   const suffix = `${width}-${Date.now()}`
-  await page.setViewportSize({ width, height: 1050 })
-  await page.goto('/finance-ledger')
+  await page.setViewportSize({ width, height: native ? 844 : 1050 })
+  await page.goto(native ? new URL('/finance-ledger', process.env.ISOLATED_PLAYWRIGHT_BASE_URL).href : '/finance-ledger')
+  if (native) expect(await page.evaluate(() => devicePixelRatio)).toBeCloseTo(1.25, 2)
   await expect(page.locator('.ledger-page').getByRole('heading', { name: '账户余额与对账', exact: true })).toBeVisible()
   await page.getByRole('button', { name: '账户与映射', exact: true }).click()
   await page.getByLabel('受控标识', { exact: true }).fill(`SYNTH-${suffix}`)
@@ -78,13 +99,20 @@ for (const width of [1440, 390]) test(`real account ledger at ${width}px`, async
   expect(csv).toContain(`SYNTH-ROW-${suffix}`)
   expect(csv).toContain('123.45')
   const dimensions = await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth }))
-  expect(dimensions.document).toBeLessThanOrEqual(width)
+  expect(dimensions.document).toBeLessThanOrEqual(native ? dimensions.viewport : width)
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.screenshot({ path: path.join(root, `account-facts-${width}.png`), fullPage: true })
   const factId = (await fact.getAttribute('id')).replace('fact-', '')
-  await page.goto(`/finance-ledger?fact=${factId}`)
+  await page.goto(new URL(`/finance-ledger?fact=${factId}`, page.url()).href)
   await expect(page.getByLabel('开始日期', { exact: true })).toHaveValue('2026-01-02')
   await expect(page.locator(`#fact-${factId}`)).toBeVisible()
+  if (native) {
+    await expect(page.locator(`#fact-${factId}`).getByRole('link', { name: /凭证/ })).toBeVisible()
+    await expect(page.locator('article').filter({ hasText: `合成验收银行-${suffix}` }).first()).toContainText('余额：')
+    await page.locator(`#fact-${factId}`).getByText('凭证摘要与历史分类', { exact: true }).click()
+    await expect(page.locator(`#fact-${factId} details`)).toHaveAttribute('open', '')
+    await page.screenshot({ path: path.join(root, 'account-detail-390-125.png'), fullPage: true })
+  }
   expect(errors).toEqual([])
   await fs.writeFile(path.join(root, `http-${width}.json`), JSON.stringify({ records, dimensions, errors }, null, 2))
 })

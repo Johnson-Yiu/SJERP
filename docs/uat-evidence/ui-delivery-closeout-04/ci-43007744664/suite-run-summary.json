@@ -1,0 +1,1194 @@
+{
+  "source": "c21a1060cb99bdf6bda33a07c7ba01b990f4878f",
+  "allPassed": false,
+  "runs": [
+    {
+      "name": "business-suite",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--all-business-tests",
+        "--exclude-business-test",
+        "iss022-moq-real.spec.js",
+        "--exclude-business-test",
+        "iss028-035-category-schema.spec.js",
+        "--exclude-business-test",
+        "iss055-customer-404-real.spec.js",
+        "--exclude-business-test",
+        "iss006-frontend-storage-chrome.spec.js",
+        "--exclude-business-test",
+        "iss007-attachment-real.spec.js",
+        "--exclude-business-test",
+        "iss007-image-snapshot-real.spec.js",
+        "--exclude-business-test",
+        "shared-report-templates.spec.js",
+        "--exclude-business-test",
+        "quote-editor-mobile-actions.spec.js",
+        "--exclude-business-test",
+        "history-product-linking-h2-real.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-contact-recovery-03.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-details-03.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-receipts-03.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-sku-03.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-sale-return-03.spec.js",
+        "--exclude-business-test",
+        "ui-sales-state-evidence-01.spec.js",
+        "--exclude-business-test",
+        "ui-sales-state-evidence-01-party.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-state-evidence-01.spec.js",
+        "--exclude-business-test",
+        "ui-sales-completion-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-completion-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-prefix-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-parameter-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-carton-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-category-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-sku-lifecycle-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-supplier-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-lots-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-inventory-actions-02.spec.js",
+        "--exclude-business-test",
+        "ui-product-operations-receipts-02.spec.js",
+        "--exclude-business-test",
+        "workspace-tabs-real.spec.js",
+        "--exclude-business-test",
+        "workspace-integration-real.spec.js",
+        "--exclude-business-test",
+        "first-release-consolidation-02.spec.js",
+        "--exclude-business-test",
+        "sales-order-import-real.spec.js",
+        "--exclude-business-test",
+        "historical-orders-fix-02.spec.js",
+        "--exclude-business-test",
+        "historical-orders-fix-03.spec.js",
+        "--exclude-business-test",
+        "iss029-recipient-snapshot.spec.js",
+        "--exclude-business-test",
+        "party-order-purchase-real.spec.js",
+        "--exclude-business-test",
+        "party-replacement-acceptance-20261106.spec.js",
+        "--exclude-business-test",
+        "party-replacement-po-real.spec.js",
+        "--exclude-business-test",
+        "party-replacement-quote-real.spec.js",
+        "--exclude-business-test",
+        "party-lifecycle-real.spec.js",
+        "--exclude-business-test",
+        "party-replacement-real.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-customer-contact-03.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-draft-recovery-03.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-revision-recovery-03.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-sku-recovery-03.spec.js",
+        "--exclude-business-test",
+        "ui-final-state-finance-layout-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/business-suite.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/business-suite.stderr.log"
+    },
+    {
+      "name": "shared-report-templates-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "shared-report-templates.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/shared-report-templates-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/shared-report-templates-isolated.stderr.log"
+    },
+    {
+      "name": "quote-editor-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "quote-editor-mobile-actions.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/quote-editor-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/quote-editor-isolated.stderr.log"
+    },
+    {
+      "name": "iss006-storage-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss006-frontend-storage-chrome.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/iss006-storage-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/iss006-storage-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-attachment-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss007-attachment-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/iss007-attachment-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/iss007-attachment-isolated.stderr.log"
+    },
+    {
+      "name": "iss007-image-snapshot-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss007-image-snapshot-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/iss007-image-snapshot-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/iss007-image-snapshot-isolated.stderr.log"
+    },
+    {
+      "name": "iss022-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss022-moq-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/iss022-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/iss022-isolated.stderr.log"
+    },
+    {
+      "name": "iss028-035-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss028-035-category-schema.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/iss028-035-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/iss028-035-isolated.stderr.log"
+    },
+    {
+      "name": "iss055-rbac",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss055-customer-404-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/iss055-rbac.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/iss055-rbac.stderr.log"
+    },
+    {
+      "name": "history-product-linking-h2-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "history-product-linking-h2-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/history-product-linking-h2-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/history-product-linking-h2-isolated.stderr.log"
+    },
+    {
+      "name": "history-product-linking-narrow-100",
+      "mode": {
+        "H2_NATIVE_ZOOM": "100",
+        "H2_VIEWPORT_WIDTH": "390"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "history-product-linking-h2-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/history-product-linking-narrow-100.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/history-product-linking-narrow-100.stderr.log"
+    },
+    {
+      "name": "history-product-linking-narrow-125",
+      "mode": {
+        "H2_NATIVE_ZOOM": "125",
+        "H2_VIEWPORT_WIDTH": "390"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "history-product-linking-h2-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/history-product-linking-narrow-125.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/history-product-linking-narrow-125.stderr.log"
+    },
+    {
+      "name": "ui-final-state-contact-recovery-03",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-contact-recovery-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-contact-recovery-03.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-contact-recovery-03.stderr.log"
+    },
+    {
+      "name": "ui-final-state-details-03",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-details-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-details-03.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-details-03.stderr.log"
+    },
+    {
+      "name": "ui-final-state-receipts-03",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-receipts-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-receipts-03.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-receipts-03.stderr.log"
+    },
+    {
+      "name": "ui-final-state-sku-03",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-sku-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-sku-03.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-sku-03.stderr.log"
+    },
+    {
+      "name": "ui-final-state-sale-return-03",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-sale-return-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-sale-return-03.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-sale-return-03.stderr.log"
+    },
+    {
+      "name": "sales-evidence-01-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-evidence-01-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-evidence-01-isolated.stderr.log"
+    },
+    {
+      "name": "sales-evidence-01-party-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-state-evidence-01-party.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-evidence-01-party-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-evidence-01-party-isolated.stderr.log"
+    },
+    {
+      "name": "product-operations-evidence-01-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-evidence-01-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-evidence-01-isolated.stderr.log"
+    },
+    {
+      "name": "sales-completion-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-02-isolated.stderr.log"
+    },
+    {
+      "name": "product-operations-completion-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-completion-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-completion-02-isolated.stderr.log"
+    },
+    {
+      "name": "product-operations-prefix-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-prefix-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-prefix-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-prefix-02-isolated.stderr.log"
+    },
+    {
+      "name": "product-operations-parameter-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-parameter-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-parameter-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-parameter-02-isolated.stderr.log"
+    },
+    {
+      "name": "product-operations-carton-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-carton-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-carton-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-carton-02-isolated.stderr.log"
+    },
+    {
+      "name": "product-operations-category-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-category-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-category-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-category-02-isolated.stderr.log"
+    },
+    {
+      "name": "product-operations-sku-lifecycle-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-sku-lifecycle-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-sku-lifecycle-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-sku-lifecycle-02-isolated.stderr.log"
+    },
+    {
+      "name": "product-operations-supplier-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-supplier-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-supplier-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-supplier-02-isolated.stderr.log"
+    },
+    {
+      "name": "product-operations-lots-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-lots-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-lots-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-lots-02-isolated.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-1",
+      "mode": {
+        "E1_R2_EXTRA": "1"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-1.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-1.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-2",
+      "mode": {
+        "E1_R2_EXTRA": "2"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-2.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-2.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-3",
+      "mode": {
+        "E1_R2_EXTRA": "3"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-3.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-3.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-4",
+      "mode": {
+        "E1_R2_EXTRA": "4"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-4.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-4.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-5",
+      "mode": {
+        "E1_R2_EXTRA": "5"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-5.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-5.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-6",
+      "mode": {
+        "E1_R2_EXTRA": "6"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-6.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-6.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-7",
+      "mode": {
+        "E1_R2_EXTRA": "7"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-7.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-7.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-8",
+      "mode": {
+        "E1_R2_EXTRA": "8"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-8.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-8.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-9",
+      "mode": {
+        "E1_R2_EXTRA": "9"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-9.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-9.stderr.log"
+    },
+    {
+      "name": "sales-completion-extra-10",
+      "mode": {
+        "E1_R2_EXTRA": "10"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-completion-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-10.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-completion-extra-10.stderr.log"
+    },
+    {
+      "name": "sales-state-journeys",
+      "mode": {
+        "SALES_STATE_JOURNEYS": "1"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-state-journeys.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-state-journeys.stderr.log"
+    },
+    {
+      "name": "sales-state-supplemental",
+      "mode": {
+        "SALES_STATE_SUPPLEMENTAL": "1"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-state-supplemental.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-state-supplemental.stderr.log"
+    },
+    {
+      "name": "sales-state-focused",
+      "mode": {
+        "SALES_STATE_FOCUSED": "1"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-state-focused.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-state-focused.stderr.log"
+    },
+    {
+      "name": "sales-state-apply-quantity",
+      "mode": {
+        "SALES_STATE_JOURNEYS": "1",
+        "SALES_STATE_APPLY_QUANTITY": "1",
+        "SALES_STATE_SCENARIOS": "O04-confirm,O06-quantity"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-sales-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-state-apply-quantity.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-state-apply-quantity.stderr.log"
+    },
+    {
+      "name": "product-operations-state-1",
+      "mode": {
+        "PRODUCT_OPS_FOLLOWUP": "1"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-1.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-1.stderr.log"
+    },
+    {
+      "name": "product-operations-state-refresh",
+      "mode": {
+        "PRODUCT_OPS_FOLLOWUP": "refresh"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-refresh.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-refresh.stderr.log"
+    },
+    {
+      "name": "product-operations-state-lifecycle",
+      "mode": {
+        "PRODUCT_OPS_FOLLOWUP": "lifecycle"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-lifecycle.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-lifecycle.stderr.log"
+    },
+    {
+      "name": "product-operations-state-verify",
+      "mode": {
+        "PRODUCT_OPS_FOLLOWUP": "verify"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-verify.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-verify.stderr.log"
+    },
+    {
+      "name": "product-operations-state-priority",
+      "mode": {
+        "PRODUCT_OPS_FOLLOWUP": "priority"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-priority.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-priority.stderr.log"
+    },
+    {
+      "name": "product-operations-state-candidate",
+      "mode": {
+        "PRODUCT_OPS_FOLLOWUP": "candidate"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-candidate.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-candidate.stderr.log"
+    },
+    {
+      "name": "product-operations-state-priority-standard",
+      "mode": {
+        "PRODUCT_OPS_FOLLOWUP": "priority",
+        "PRODUCT_OPS_PRIORITY_ZOOM": "100"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-state-evidence-01.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-priority-standard.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-state-priority-standard.stderr.log"
+    },
+    {
+      "name": "product-operations-inventory-actions-02",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-inventory-actions-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-inventory-actions-02.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-inventory-actions-02.stderr.log"
+    },
+    {
+      "name": "product-operations-receipts-02",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-product-operations-receipts-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-receipts-02.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/product-operations-receipts-02.stderr.log"
+    },
+    {
+      "name": "workspace-tabs-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "workspace-tabs-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/workspace-tabs-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/workspace-tabs-isolated.stderr.log"
+    },
+    {
+      "name": "workspace-integration-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "workspace-integration-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/workspace-integration-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/workspace-integration-isolated.stderr.log"
+    },
+    {
+      "name": "first-release-consolidation-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "first-release-consolidation-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/first-release-consolidation-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/first-release-consolidation-isolated.stderr.log"
+    },
+    {
+      "name": "sales-order-import-base-isolated",
+      "mode": {
+        "SALES_ORDER_IMPORT_PROFILE": "base"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "sales-order-import-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-order-import-base-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-order-import-base-isolated.stderr.log"
+    },
+    {
+      "name": "sales-order-import-followup-isolated",
+      "mode": {
+        "SALES_ORDER_IMPORT_PROFILE": "followup"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "sales-order-import-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-order-import-followup-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-order-import-followup-isolated.stderr.log"
+    },
+    {
+      "name": "sales-order-import-completion-isolated",
+      "mode": {
+        "SALES_ORDER_IMPORT_PROFILE": "completion"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "sales-order-import-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/sales-order-import-completion-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/sales-order-import-completion-isolated.stderr.log"
+    },
+    {
+      "name": "historical-orders-02-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "historical-orders-fix-02.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/historical-orders-02-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/historical-orders-02-isolated.stderr.log"
+    },
+    {
+      "name": "historical-orders-03-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "historical-orders-fix-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/historical-orders-03-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/historical-orders-03-isolated.stderr.log"
+    },
+    {
+      "name": "recipient-snapshot-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "iss029-recipient-snapshot.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/recipient-snapshot-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/recipient-snapshot-isolated.stderr.log"
+    },
+    {
+      "name": "party-order-purchase-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "party-order-purchase-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/party-order-purchase-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/party-order-purchase-isolated.stderr.log"
+    },
+    {
+      "name": "party-replacement-acceptance-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "party-replacement-acceptance-20261106.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-acceptance-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-acceptance-isolated.stderr.log"
+    },
+    {
+      "name": "party-replacement-po-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "party-replacement-po-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-po-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-po-isolated.stderr.log"
+    },
+    {
+      "name": "party-replacement-quote-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "party-replacement-quote-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-quote-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-quote-isolated.stderr.log"
+    },
+    {
+      "name": "party-lifecycle-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "party-lifecycle-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/party-lifecycle-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/party-lifecycle-isolated.stderr.log"
+    },
+    {
+      "name": "party-lifecycle-real-native-125",
+      "mode": {
+        "SALES_PARTY_NATIVE_ZOOM": "1.25"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "party-lifecycle-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/party-lifecycle-real-native-125.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/party-lifecycle-real-native-125.stderr.log"
+    },
+    {
+      "name": "party-replacement-quote-real-native-125",
+      "mode": {
+        "SALES_PARTY_NATIVE_ZOOM": "1.25"
+      },
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "party-replacement-quote-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-quote-real-native-125.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-quote-real-native-125.stderr.log"
+    },
+    {
+      "name": "party-replacement-order-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "party-replacement-real.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-order-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/party-replacement-order-isolated.stderr.log"
+    },
+    {
+      "name": "ui-final-state-customer-contact-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-customer-contact-03.spec.js"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-customer-contact-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-customer-contact-isolated.stderr.log"
+    },
+    {
+      "name": "ui-final-state-draft-recovery-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-draft-recovery-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-draft-recovery-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-draft-recovery-isolated.stderr.log"
+    },
+    {
+      "name": "ui-final-state-revision-recovery-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-revision-recovery-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-revision-recovery-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-revision-recovery-isolated.stderr.log"
+    },
+    {
+      "name": "ui-final-state-sku-recovery-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-sku-recovery-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-sku-recovery-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-sku-recovery-isolated.stderr.log"
+    },
+    {
+      "name": "ui-final-state-finance-layout-isolated",
+      "mode": {},
+      "command": [
+        "/opt/hostedtoolcache/node/22.23.4/x64/bin/node",
+        "/home/runner/work/SJERP/SJERP/frontend/scripts/run-isolated-browser-tests.mjs",
+        "--business-test",
+        "ui-final-state-finance-layout-03.spec.js"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-finance-layout-isolated.stdout.log",
+      "stderr": "docs/uat-evidence/ci-43007744664-1/logs/ui-final-state-finance-layout-isolated.stderr.log"
+    }
+  ]
+}

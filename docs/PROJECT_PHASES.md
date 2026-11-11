@@ -6,6 +6,9 @@
 
 ## UI-DELIVERY-CLOSEOUT-04
 
+续办记录已归档 CI 43007744664 的唯一浏览器失败及修复。账户对账 390×844 原生 125% 专项通过，银行入口维持现名。剩余操作和视口按状态表继续核销。[CI 归因](uat-evidence/ui-delivery-closeout-04/ci-43007744664/README.md) · [状态表](uat-evidence/ui-delivery-closeout-04/remaining.md)
+
+
 从共同基线 `f3b7242e77752b6cc5b72425bcc3df2fa938de61` 接入 U3 补交的四个专项及历史证据。销售草稿焦点与层叠和 SKU 图片错误纳入 ISS-127、ISS-128。并行分支核销结果与最终候选认证见[交付记录](uat-evidence/ui-delivery-closeout-04/README.md)。
 
 ## 2026-11-11 A2 与 H1 集成验收

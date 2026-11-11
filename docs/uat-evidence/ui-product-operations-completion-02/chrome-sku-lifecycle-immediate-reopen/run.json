@@ -1,0 +1,40 @@
+{
+  "source": "7e54e649e85aeb7f6580802770a13882c5978528",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "sku-batch-submitting",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-batch-submitting-390-125.png",
+      "method": "temporarily held outgoing POST, then forwarded to real backend"
+    },
+    {
+      "id": "sku-duplicate-combinations",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-duplicate-combinations-390-125.png"
+    },
+    {
+      "id": "sku-initial-selected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-initial-selected-390-125.png"
+    },
+    {
+      "id": "sku-replacement-selected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-replacement-selected-390-125.png"
+    }
+  ],
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('dialog', { name: '编辑 SKU' }).locator('.sku-image-picker img')\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" getByRole('dialog', { name: '编辑 SKU' }).locator('.sku-image-picker img') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '编辑 SKU' }).locator('.sku-image-picker img')\u001b[22m\n\u001b[2m    13 × locator resolved to 1 element\u001b[22m\n\u001b[2m       - unexpected value \"1\"\u001b[22m\n"
+}

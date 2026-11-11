@@ -1,0 +1,55 @@
+{
+  "source": "7e54e649e85aeb7f6580802770a13882c5978528",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "supplier-preferred-switched",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "supplier-preferred-switched-390-125.png"
+    },
+    {
+      "id": "purchase-source-currency-mismatch",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-source-currency-mismatch-390-125.png"
+    },
+    {
+      "id": "purchase-source-price-filled",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-source-price-filled-390-125.png"
+    },
+    {
+      "id": "purchase-source-persisted",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-source-persisted-390-125.png",
+      "httpStatus": 201
+    },
+    {
+      "id": "trade-stop-confirmation",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "trade-stop-confirmation-390-125.png"
+    },
+    {
+      "id": "trade-stopped-purchase-snapshot-reopened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "trade-stopped-purchase-snapshot-reopened-390-125.png"
+    }
+  ]
+}

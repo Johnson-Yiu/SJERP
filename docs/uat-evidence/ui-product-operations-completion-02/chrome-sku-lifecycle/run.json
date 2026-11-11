@@ -1,0 +1,55 @@
+{
+  "source": "ae33b6e560b7986cbb4d9419028cf993e2489ae7",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "sku-batch-submitting",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-batch-submitting-390-125.png",
+      "method": "temporarily held outgoing POST, then forwarded to real backend"
+    },
+    {
+      "id": "sku-duplicate-combinations",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-duplicate-combinations-390-125.png"
+    },
+    {
+      "id": "sku-initial-selected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-initial-selected-390-125.png"
+    },
+    {
+      "id": "sku-replacement-selected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-replacement-selected-390-125.png"
+    },
+    {
+      "id": "sku-image-removed-reopened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-image-removed-reopened-390-125.png"
+    },
+    {
+      "id": "sku-version-empty-after-image-only",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-version-empty-after-image-only-390-125.png"
+    }
+  ]
+}

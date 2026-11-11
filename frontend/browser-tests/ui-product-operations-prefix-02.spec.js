@@ -9,7 +9,7 @@ test('prefix preview, cancellation, server refusal and apply preserve SKU identi
   const root = process.env.ISOLATED_TEST_ROOT
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
   const evidence = path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT)
-  const output = path.join(evidence, 'chrome-prefix-verified')
+  const output = path.join(evidence, 'chrome-prefix-version')
   await mkdir(output, { recursive: true })
   const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [fileURLToPath(new URL('../../docs/uat-evidence/ui-product-operations-completion-02/seed.py', import.meta.url))], {
     cwd: path.resolve('../backend'), encoding: 'utf8', env: { ...process.env, PRODUCT_OPS_PREFIX: '1' },
@@ -92,6 +92,18 @@ test('prefix preview, cancellation, server refusal and apply preserve SKU identi
     expect(await loadSku()).toMatchObject({ sku: original.sku, sales_model: expect.stringMatching(/^EVIDNEW/) })
     await expect(row).toContainText('EVIDNEW')
     await snap('prefix-apply-saved', 1.25, 390, 844)
+    await page.goto(new URL('/skus', baseURL).href, { waitUntil: 'commit', timeout: 100000 })
+    const changedSku = page.getByRole('row').filter({ hasText: original.sku })
+    const [history] = await Promise.all([
+      page.waitForResponse(r => r.url().endsWith('/api/skus/' + fixture.sku + '/versions/'), { timeout: 75000 }),
+      changedSku.getByRole('button', { name: '历史版本', exact: true }).click(),
+    ])
+    expect(history.ok()).toBeTruthy()
+    expect((await history.json()).some(version => version.sales_model_snapshot === original.sales_model)).toBeTruthy()
+    const versions = page.getByRole('dialog', { name: 'SKU 历史版本' })
+    await expect(versions).toContainText(original.sales_model)
+    await versions.getByText(original.sales_model, { exact: true }).scrollIntoViewIfNeeded()
+    await snap('sku-version-preserves-old-model', 1.25, 390, 844)
   } catch (error) {
     failure = String(error.message)
     throw error

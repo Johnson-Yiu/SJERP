@@ -1,0 +1,103 @@
+{
+  "source": "7e54e649e85aeb7f6580802770a13882c5978528",
+  "browser": "Chrome/156.0.8078.80",
+  "api": "real isolated Django",
+  "states": [
+    {
+      "id": "prefix-refused",
+      "httpStatus": 400
+    },
+    {
+      "id": "prefix-refused",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "prefix-refused-1440-100.png"
+    },
+    {
+      "id": "prefix-preview",
+      "httpStatus": 200
+    },
+    {
+      "id": "prefix-preview",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "prefix-preview-1366-100.png"
+    },
+    {
+      "id": "prefix-preview",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "prefix-preview-1440-100.png"
+    },
+    {
+      "id": "prefix-preview",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "prefix-preview-390-100.png"
+    },
+    {
+      "id": "prefix-preview",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "prefix-preview-1366-125.png"
+    },
+    {
+      "id": "prefix-preview",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "prefix-preview-1440-125.png"
+    },
+    {
+      "id": "prefix-preview",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "prefix-preview-390-125.png"
+    },
+    {
+      "id": "prefix-cancel-keeps-editor",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "prefix-cancel-keeps-editor-390-125.png"
+    },
+    {
+      "id": "prefix-preview-again",
+      "httpStatus": 200
+    },
+    {
+      "id": "prefix-apply",
+      "httpStatus": 200
+    },
+    {
+      "id": "prefix-apply-saved",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "prefix-apply-saved-390-125.png"
+    },
+    {
+      "id": "sku-version-preserves-old-model",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sku-version-preserves-old-model-390-125.png"
+    }
+  ]
+}

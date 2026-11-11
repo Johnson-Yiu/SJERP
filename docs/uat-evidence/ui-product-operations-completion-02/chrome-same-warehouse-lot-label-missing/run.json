@@ -1,0 +1,15 @@
+{
+  "source": "7e54e649e85aeb7f6580802770a13882c5978528",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "same-warehouse-two-movements",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "same-warehouse-two-movements-390-125.png"
+    }
+  ],
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: '库存流水详情' }).getByText('EVID-LOT-20261110-A-01', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('dialog', { name: '库存流水详情' }).getByText('EVID-LOT-20261110-A-01', { exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '库存流水详情' }).getByText('EVID-LOT-20261110-A-01', { exact: true })\u001b[22m\n"
+}

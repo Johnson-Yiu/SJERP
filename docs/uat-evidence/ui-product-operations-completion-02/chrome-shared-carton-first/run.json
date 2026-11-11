@@ -1,0 +1,6 @@
+{
+  "source": "7e54e649e85aeb7f6580802770a13882c5978528",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [],
+  "failure": "locator.selectOption: Error: strict mode violation: getByRole('dialog', { name: '编辑包装模板' }).getByLabel('尾货策略') resolved to 2 elements:\n    1) <button type=\"button\" data-v-0e80659f=\"\" aria-label=\"查看尾货策略说明\" class=\"policy-help-trigger\">?</button> aka getByRole('button', { name: '查看尾货策略说明' })\n    2) <select aria-label=\"尾货策略\" data-v-0e80659f=\"\">…</select> aka getByLabel('尾货策略', { exact: true })\n\nCall log:\n\u001b[2m  - waiting for getByRole('dialog', { name: '编辑包装模板' }).getByLabel('尾货策略')\u001b[22m\n"
+}

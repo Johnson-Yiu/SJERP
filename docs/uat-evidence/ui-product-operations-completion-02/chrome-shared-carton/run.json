@@ -1,0 +1,22 @@
+{
+  "source": "ae33b6e560b7986cbb4d9419028cf993e2489ae7",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "carton-linked-change-confirmation",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "carton-linked-change-confirmation-390-125.png"
+    },
+    {
+      "id": "carton-tail-policy-reopened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "carton-tail-policy-reopened-390-125.png"
+    }
+  ]
+}

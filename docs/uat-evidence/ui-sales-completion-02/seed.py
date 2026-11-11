@@ -56,7 +56,7 @@ for index in range(1, 5):
     )
     InventoryMovement.objects.create(
         movement_no=f"SYNTH-SALES-STOCK-{index:03d}", movement_date=date(2026, 11, 10),
-        type="other_in", sku=sku, quantity=100, warehouse="Synthetic warehouse",
+        type="other_in", sku=sku, quantity=100, warehouse="默认仓",
     )
     fields = {
         "sku": sku, "sku_code_snapshot": sku.sku, "quantity": index * 10, "unit_price": "12.50",

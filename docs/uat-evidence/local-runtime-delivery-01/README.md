@@ -25,3 +25,9 @@
 - node --test scripts/start-service.test.mjs 通过 1 项。Django 定向运行 test_local_runtime_http、test_iss018_backup_recovery、test_operations_backup、test_operations_preflight、test_operations_copy、test_operations_retention，56 项中通过 53、平台条件跳过 3、失败 0。首次运行未找到 OpenSSL，加入本机 Git 随附 OpenSSL 的命令级 PATH 后复跑。HTTP 检查使用独立回环临时端口；SQLite 恢复、备份拒绝及监控过期/篡改均复用既有专项。
 - Windows 临时 SQLite 文件仅运行 migrate，客户、供应商、产品、SKU、订单和报价表均为空，媒体目录为空。独立运行配置检查使用保留但未监听的回环端口，拒绝了不可达 PostgreSQL；另外拒绝开发设置和不匹配的实例库名。
 - 远端提交、通用 CI 与专项状态见交付回复。目标环境尚未验收。
+
+## 运行链路复验
+
+本包状态为运行准备已实现，目标环境运行链路待验。一次性 GitHub Linux 演练复用 postgres-role-receipts 作业的所有权校验和合成 PG17 集群。新增脚本从交付的 unit 渲染两份临时实例，只替换 runner 路径和 Unix 运行身份。实例使用各自数据库、数据库角色、媒体目录和回环端口；runner Unix 身份共用。临时 unit 不注册开机启动，退出时清理。既有联合恢复脚本在同一 job 校验合成数据库和附件。
+
+管理员安装独立服务依赖清单中的固定 Gunicorn，配置实际主机、HTTPS、数据库及媒体权限。业务人员使用管理员交付的 HTTPS 地址。需要 U4 在最终集成 SHA 调度既有 Linux 专项，并在公共台账保留真实主机、HTTPS、实际媒体 ACL、独立备份目标和调度待验。

@@ -33,6 +33,7 @@ from crm.services.operations_postgres import MaintenanceBackup, database_state, 
 from crm.services.operations_receipt import _canonical, _openssl, public_key_fingerprint
 from crm.services.operations_retention import prune_verified
 from crm.services.operations_monitor import check_backup_freshness
+from linux_runtime_acceptance import exercise_runtime
 
 
 def command(*arguments, **kwargs):
@@ -183,6 +184,7 @@ def main():
             before = database_state(db)
             system = db.execute("SELECT system_identifier::text FROM pg_control_system()").fetchone()[0]
             assert db.execute("SELECT rolsuper,rolcreatedb FROM pg_roles WHERE rolname=current_user").fetchone() == (False, True)
+        exercise_runtime(root, admin, database, maint, runtime, port, backend)
         runtime_connection = psycopg.connect(**{**options, "user": runtime}, autocommit=True)
         assert runtime_connection.execute("SELECT current_user").fetchone()[0] == runtime
         assert runtime_connection.execute("SELECT tableowner FROM pg_tables WHERE tablename='crm_operationlog'").fetchone()[0] == maint

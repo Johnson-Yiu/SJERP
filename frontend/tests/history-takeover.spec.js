@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import HistoryTakeoverPage from '../src/views/HistoryTakeoverPage.vue'
 import { setAccessOperator } from '../src/accessControl'
+import { dialogState, resolveDialog } from '../src/dialogs'
 
 const mocks = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn() }))
 vi.mock('../src/api', () => ({ api: mocks }))
@@ -142,12 +143,12 @@ describe('controlled history takeover UI', () => {
     mocks.post.mockResolvedValue({ data: {} })
     const wrapper = mount(HistoryTakeoverPage)
     await flushPromises()
+    await wrapper.findAll('label').find(item => item.text().includes('原资料行号')).find('input').setValue('2')
     await wrapper.findAll('label').find(item => item.text().includes('搜索现有对象')).find('input').setValue('合成客户')
     await flushPromises()
     const selected = wrapper.findAll('label').find(item => item.text().includes('选择现有对象')).find('select')
     expect(selected.text()).toContain('合成客户甲 · C-001')
     await selected.setValue('C-001')
-    await wrapper.findAll('label').find(item => item.text().includes('原资料行号')).find('input').setValue('2')
     await wrapper.findAll('label').find(item => item.text().includes('关联依据')).find('input').setValue('已对照历史合同')
     await wrapper.findAll('button').find(item => item.text().includes('保存关联并重新预检')).trigger('click')
     await flushPromises()
@@ -156,6 +157,110 @@ describe('controlled history takeover UI', () => {
     })
     expect(wrapper.text()).not.toContain('customer_code')
     expect(wrapper.text()).not.toContain('target_code')
+    wrapper.unmount()
+  })
+
+  it('discards mappings across applications and groups, ignores stale searches, and retries a new manual selection', async () => {
+    const first = detail()
+    const second = { ...detail(), id: 32, source_file_name: '乙.xlsx' }
+    second.groups.push({ ...detail().groups[0], id: 42, source_group_id: '乙第二组' })
+    first.groups[0].preflight_result.results[0].product_candidates = [
+      { id: 1, code: 'B', name: '甲候选', specification: '24W', unit: 'pcs' },
+    ]
+    let finishSearch
+    mocks.get.mockImplementation(async (url, options) => {
+      if (url === '/import/history-takeovers/') return { data: { results: [summary(first), summary(second)] } }
+      if (url === '/import/history-takeovers/31/') return { data: first }
+      if (url === '/import/history-takeovers/32/') return { data: second }
+      if (options.params.search === '甲') return new Promise(resolve => { finishSearch = resolve })
+      return { data: { results: [{ id: 2, sku: 'C', name: '乙人工选择' }] } }
+    })
+    mocks.post.mockRejectedValueOnce(new Error('暂时失败')).mockResolvedValueOnce({ data: {} })
+    const wrapper = mount(HistoryTakeoverPage)
+    await flushPromises()
+    const field = (label, tag = 'input') => wrapper.findAll('label').find(item => item.text().includes(label)).get(tag)
+    const button = label => wrapper.findAll('button').find(item => item.text().includes(label))
+    const save = () => button('保存关联并重新预检')
+    const reason = () => field('关联依据')
+    const chooseManually = async () => {
+      await field('原资料行号').setValue('2')
+      await field('对象类型', 'select').setValue('sku')
+      await field('搜索现有对象').setValue('乙')
+      await flushPromises()
+      await field('选择现有对象', 'select').setValue('C')
+      await reason().setValue('乙来源已核实')
+    }
+    await button('选用此候选').trigger('click')
+    await reason().setValue('甲来源中已核实')
+    await field('搜索现有对象').setValue('甲')
+    await button('乙.xlsx').trigger('click')
+    expect(dialogState.current.title).toBe('未保存修改')
+    resolveDialog(false)
+    await flushPromises()
+    expect(reason().element.value).toBe('甲来源中已核实')
+    await button('乙.xlsx').trigger('click')
+    resolveDialog(true)
+    await flushPromises()
+    finishSearch({ data: { results: [{ id: 1, sku: 'B', name: '迟到的甲结果' }] } })
+    await flushPromises()
+    expect(field('搜索现有对象').element.value).toBe('')
+    expect(field('选择现有对象', 'select').text()).not.toContain('迟到的甲结果')
+    expect(reason().element.value).toBe('')
+    expect(save().element.disabled).toBe(true)
+    await chooseManually()
+    await button('乙第二组').trigger('click')
+    resolveDialog(true)
+    await flushPromises()
+    expect(reason().element.value).toBe('')
+    expect(save().element.disabled).toBe(true)
+    expect(mocks.post).not.toHaveBeenCalled()
+    await chooseManually()
+    await save().trigger('click')
+    await flushPromises()
+    expect(reason().element.value).toBe('乙来源已核实')
+    await save().trigger('click')
+    await flushPromises()
+    const payload = { sheet: '销售订单', row: 2, field: 'sku_code', target_code: 'C', note: '乙来源已核实' }
+    expect(mocks.post.mock.calls).toEqual(Array.from({ length: 2 }, () => [
+      '/import/history-takeovers/32/groups/42/resolve-master/', payload,
+    ]))
+    expect(wrapper.get('.takeover-group-tab.active').text()).toContain('乙第二组')
+    expect(save().element.disabled).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('ignores an old application detail and a save readback after navigation', async () => {
+    const first = detail()
+    const second = { ...detail(), id: 32, source_file_name: '乙.xlsx' }
+    const third = { ...detail(), id: 33, source_file_name: '丙.xlsx' }
+    first.groups[0].preflight_result.results[0].product_candidates = [{ id: 1, code: 'B', name: '甲候选' }]
+    let finishDetail, finishReadback
+    mocks.get.mockImplementation(async url => {
+      if (url === '/import/history-takeovers/') return { data: { results: [first, second, third].map(summary) } }
+      if (url === '/import/history-takeovers/31/') {
+        if (mocks.post.mock.calls.length) return new Promise(resolve => { finishReadback = resolve })
+        return { data: first }
+      }
+      if (url === '/import/history-takeovers/32/') return new Promise(resolve => { finishDetail = resolve })
+      return { data: third }
+    })
+    mocks.post.mockResolvedValue({ data: {} })
+    const wrapper = mount(HistoryTakeoverPage)
+    await flushPromises()
+    const button = label => wrapper.findAll('button').find(item => item.text().includes(label))
+    await button('选用此候选').trigger('click')
+    await wrapper.findAll('label').find(item => item.text().includes('关联依据')).get('input').setValue('甲来源已核实')
+    await button('保存关联并重新预检').trigger('click')
+    await flushPromises()
+    expect(finishReadback).toBeTypeOf('function')
+    await button('乙.xlsx').trigger('click')
+    await button('丙.xlsx').trigger('click')
+    await flushPromises()
+    finishDetail({ data: second })
+    finishReadback({ data: first })
+    await flushPromises()
+    expect(wrapper.get('.takeover-list-item.active').text()).toContain('丙.xlsx')
+    expect(wrapper.findAll('label').find(item => item.text().includes('关联依据')).get('input').element.value).toBe('')
     wrapper.unmount()
   })
 

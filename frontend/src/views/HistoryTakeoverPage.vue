@@ -1,6 +1,7 @@
 <script setup>
 import HistoryProductLinking from "../components/HistoryProductLinking.vue"
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 const { api } = useWorkspaceApi()
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -21,9 +22,9 @@ async function openInventoryProductLinking() {
   productsPanel.value?.querySelector('summary')?.focus()
 }
 async function openProductSource(id, group) {
-  await loadApplication(id)
-  if (selected.value?.id === id && selected.value.groups?.some(row => row.id === group)) selectedGroupId.value = group
-  document.getElementById('history-source-application')?.scrollIntoView({ block: 'start' })
+  if (await openApplication(id, group)) {
+    document.getElementById('history-source-application')?.scrollIntoView?.({ block: 'start' })
+  }
 }
 const selected = ref(null)
 const fileInput = ref(null)
@@ -34,13 +35,21 @@ const templateLoading = ref(false)
 const error = ref('')
 const note = ref('')
 const confirmManual = ref(false)
-const mapping = ref({ sheet: '销售订单', row: '', field: 'customer_code', target_code: '', note: '' })
+const emptyMapping = () => ({ sheet: '销售订单', row: '', field: 'customer_code', target_code: '', note: '' })
+const mapping = ref(emptyMapping())
+const mappingOwner = ref(null)
+const mappingGuard = useUnsavedChangesGuard({ data: () => [mapping.value.target_code, mapping.value.note] })
+mappingGuard.markClean()
 const mappingKind = ref('customer')
 const masterSearch = ref('')
 const masterOptions = ref([])
 const masterLoading = ref(false)
 const mappingPanel = ref(null)
 let masterSearchVersion = 0
+let navigationVersion = 0
+let detailVersion = 0
+let listVersion = 0
+const openingApplication = ref(false)
 const newCorrection = () => ({
   kind: 'late_fact', occurred_at: '', reason: '', source_record_id: '',
   source_document_no: '', voucher_reference: '', description: '',
@@ -167,6 +176,48 @@ watch(selectedGroupId, () => {
 })
 const reviewResults = computed(() => selectedGroup.value?.preflight_result?.results || [])
 const sourceItems = computed(() => Object.entries(selectedGroup.value?.source_rows || {}).flatMap(([sheet, rows]) => rows.map(item => ({ sheet, ...item }))))
+const mappingIdentity = computed(() => {
+  const source = sourceItems.value.find(item => item.sheet === mapping.value.sheet && Number(item.row) === Number(mapping.value.row))
+  if (!source) return null
+  return JSON.stringify([selected.value.id, selected.value.source_sha256, selectedGroup.value.id,
+    source.sheet, Number(source.row), source.data, mapping.value.field])
+})
+const ownsMapping = computed(() => Boolean(mappingIdentity.value && mappingOwner.value === mappingIdentity.value))
+
+function clearMasterSearch() {
+  masterSearchVersion++
+  masterSearch.value = ''
+  masterOptions.value = []
+  masterLoading.value = false
+}
+
+watch(mappingIdentity, () => {
+  mappingOwner.value = null
+  mapping.value.target_code = ''
+  mapping.value.note = ''
+  clearMasterSearch()
+  mappingGuard.markClean()
+}, { flush: 'sync' })
+
+function resetMapping() {
+  mapping.value = emptyMapping()
+  mappingKind.value = 'customer'
+  mappingOwner.value = null
+  clearMasterSearch()
+  mappingGuard.markClean()
+}
+
+async function selectGroup(id) {
+  if (id === selectedGroupId.value || openingApplication.value) return
+  const applicationId = selected.value?.id
+  await mappingGuard.requestClose(() => {
+    if (openingApplication.value || selected.value?.id !== applicationId || !groups.value.some(group => group.id === id)) return
+    navigationVersion++
+    selectedGroupId.value = id
+    resetMapping()
+    error.value = ''
+  })
+}
 const openOrders = computed(() => {
   const summary = selectedGroup.value?.remainder_snapshot
   return [...(summary?.sales_orders || []), ...(summary?.purchase_orders || [])]
@@ -174,68 +225,88 @@ const openOrders = computed(() => {
 
 async function openRouteSource() {
   const id = Number(route?.query?.application)
-  await loadApplications(id || undefined)
   const group = Number(route?.query?.group)
-  if (id && selected.value?.id === id && selected.value.groups?.some(row => row.id === group)) selectedGroupId.value = group
+  await loadApplications(id || undefined, group)
 }
 onMounted(openRouteSource)
 watch(() => [route?.query?.application, route?.query?.group], ([id, group]) => {
   if (Number(id) > 0) openProductSource(Number(id), Number(group))
 })
 
-async function loadApplications(preferredId = selected.value?.id) {
+async function loadApplications(preferredId = selected.value?.id, group = selectedGroupId.value) {
+  const request = ++listVersion
+  const navigation = navigationVersion
   loading.value = true; error.value = ''
   try {
     const response = await api.get('/import/history-takeovers/')
+    if (request !== listVersion || navigation !== navigationVersion) return
     applications.value = response.data.results || []
     const id = preferredId || applications.value[0]?.id
-    if (id) await loadApplication(id)
+    if (id) await loadApplication(id, group)
     else selected.value = null
-  } catch (e) { error.value = e.message }
-  finally { loading.value = false }
+  } catch (e) { if (request === listVersion && navigation === navigationVersion) error.value = e.message }
+  finally { if (request === listVersion) loading.value = false }
 }
 
-async function loadApplication(id) {
+async function openApplication(id, group = selected.value?.id === id ? selectedGroupId.value : null) {
+  if (!openingApplication.value && selected.value?.id === id && group === selectedGroupId.value) return true
+  let opened = false
+  await mappingGuard.requestClose(async () => {
+    const navigation = ++navigationVersion
+    openingApplication.value = true
+    resetMapping()
+    error.value = ''
+    try { opened = await loadApplication(id, group) }
+    finally { if (navigation === navigationVersion) openingApplication.value = false }
+  })
+  return opened
+}
+
+async function loadApplication(id, group = selectedGroupId.value) {
+  const request = ++detailVersion
+  const navigation = navigationVersion
+  const isCurrent = () => request === detailVersion && navigation === navigationVersion
   try {
     const response = await api.get(`/import/history-takeovers/${id}/`)
+    if (!isCurrent()) return
     selected.value = response.data
-    selectedGroupId.value = response.data.groups?.[0]?.id || null
+    selectedGroupId.value = response.data.groups?.find(row => row.id === group)?.id ?? response.data.groups?.[0]?.id ?? null
     if (applications.value.length) {
       const index = applications.value.findIndex(item => item.id === id)
       if (index >= 0) applications.value[index] = { ...applications.value[index], ...response.data }
     }
-  } catch (e) { error.value = e.message }
+    return true
+  } catch (e) { if (isCurrent()) error.value = e.message }
 }
 
 function chooseFile(event) { file.value = event.target.files?.[0] || null; error.value = '' }
 
 async function searchMasters() {
   const request = ++masterSearchVersion
+  const identity = mappingIdentity.value
   const kind = mappingKind.value
   const query = masterSearch.value.trim()
+  mapping.value.target_code = ''
   masterOptions.value = []
   masterLoading.value = false
-  if (!query || query.length < 1) return
+  if (!query || openingApplication.value) return
+  const isCurrent = () => request === masterSearchVersion && identity === mappingIdentity.value
   masterLoading.value = true
   try {
     const response = await api.get(masterResources[kind], { params: { search: query } })
-    if (request !== masterSearchVersion || kind !== mappingKind.value) return
+    if (!isCurrent()) return
     const rows = response.data?.results || response.data || []
     masterOptions.value = rows.slice(0, 50).filter(item => kind === 'sku' ? item.sku : item.code)
   } catch (e) {
-    if (request === masterSearchVersion) error.value = `读取现有${kind === 'customer' ? '客户' : kind === 'supplier' ? '供应商' : 'SKU'}失败：${e.message}`
+    if (isCurrent()) error.value = `读取现有${kind === 'customer' ? '客户' : kind === 'supplier' ? '供应商' : 'SKU'}失败：${e.message}`
   } finally {
-    if (request === masterSearchVersion) masterLoading.value = false
+    if (isCurrent()) masterLoading.value = false
   }
 }
 
 function changeMappingKind() {
   mapping.value.field = mappingFields[mappingKind.value]
-  mapping.value.target_code = ''
-  masterSearch.value = ''
-  masterOptions.value = []
-  masterLoading.value = false
-  masterSearchVersion++
+  clearMasterSearch()
 }
 
 async function downloadTemplate() {
@@ -264,14 +335,18 @@ async function submitApplication() {
 }
 
 async function groupAction(group, action, payload = {}) {
-  if (saving.value) return
+  if (saving.value || openingApplication.value) return
   if (action === 'execute' && !window.confirm(`将仅承接“${group.source_group_id}”组的历史分析单据。资金、库存和履约不会写入正式流水。继续执行？`)) return
   saving.value = true; error.value = ''
+  const id = selected.value.id
+  const navigation = navigationVersion
   try {
-    await api.post(`/import/history-takeovers/${selected.value.id}/groups/${group.id}/${action}/`, payload)
-    await loadApplications(selected.value.id)
+    await api.post(`/import/history-takeovers/${id}/groups/${group.id}/${action}/`, payload)
+    if (navigation !== navigationVersion) return
+    if (action === 'resolve-master') resetMapping()
+    await loadApplications(id, group.id)
     return true
-  } catch (e) { error.value = e.message }
+  } catch (e) { if (navigation === navigationVersion) error.value = e.message }
   finally { saving.value = false }
 }
 
@@ -430,20 +505,23 @@ function review(group, decision) {
 }
 
 function addMasterResolution(clear = false) {
+  if (!ownsMapping.value || !mapping.value.note.trim() || (!clear && !mapping.value.target_code)) return
   groupAction(selectedGroup.value, 'resolve-master', {
     ...mapping.value, row: Number(mapping.value.row), ...(clear === true ? { target_code: '', clear: true } : {}),
   })
 }
 function chooseProductCandidate(result, candidate) {
-  masterSearchVersion += 1
-  masterLoading.value = false
+  if (openingApplication.value || saving.value || !reviewResults.value.includes(result)) return
   mappingKind.value = 'sku'
+  mapping.value = { sheet: result.sheet, row: result.row, field: 'sku_code', target_code: '', note: '' }
+  clearMasterSearch()
   masterOptions.value = [candidate]
   masterSearch.value = candidate.code
-  mapping.value = { sheet: result.sheet, row: result.row, field: 'sku_code', target_code: candidate.code, note: '' }
+  mapping.value.target_code = candidate.code
+  mappingOwner.value = mappingIdentity.value
   if (mappingPanel.value) {
     mappingPanel.value.open = true
-    mappingPanel.value.scrollIntoView({ block: 'nearest' })
+    mappingPanel.value.scrollIntoView?.({ block: 'nearest' })
   }
 }
 
@@ -495,7 +573,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 
     <details v-if="canReview && canApply" ref="productsPanel" :open="showProducts" @toggle="showProducts = $event.target.open">
       <summary>历史商品关联</summary>
-      <HistoryProductLinking v-if="showProducts" @open-source="openProductSource" @saved="selected && loadApplication(selected.id)" />
+      <HistoryProductLinking v-if="showProducts" @open-source="openProductSource" @saved="selected && !openingApplication && loadApplication(selected.id)" />
     </details>
     <section v-if="!canApply" class="takeover-alert" role="alert"><AlertTriangle :size="18" />当前账号缺少历史承接申请权限或相关业务查看范围。</section>
     <section v-if="error" class="takeover-alert" role="alert"><AlertTriangle :size="18" />{{ error }}</section>
@@ -511,10 +589,10 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 
     <div class="takeover-columns">
       <aside class="takeover-list panel">
-        <div class="takeover-list-head"><h3><History :size="18" />申请记录</h3><button class="takeover-text-button" :disabled="loading" @click="loadApplications()">刷新</button></div>
+        <div class="takeover-list-head"><h3><History :size="18" />申请记录</h3><button class="takeover-text-button" :disabled="loading || openingApplication" @click="loadApplications()">刷新</button></div>
         <p v-if="loading && !applications.length" class="takeover-empty">正在读取申请…</p>
         <p v-else-if="!applications.length" class="takeover-empty">还没有历史承接申请</p>
-        <button v-for="application in applications" :key="application.id" class="takeover-list-item" :class="{ active: selected?.id === application.id }" @click="loadApplication(application.id)">
+        <button v-for="application in applications" :key="application.id" class="takeover-list-item" :class="{ active: selected?.id === application.id }" @click="openApplication(application.id)">
           <strong>{{ application.source_file_name }}</strong><span>{{ statusLabel(application.status) }} · {{ application.groups?.length || 0 }} 组</span>
         </button>
       </aside>
@@ -534,7 +612,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
         <p class="takeover-caution">预检状态：{{ reviewStatusLabel(selected.preflight_summary?.overall_status) }}。审核前须核实真实性、来源凭证、主档依赖和关联冲突。来源关联组编号用于回查原资料并核对同组记录。</p>
 
         <div class="takeover-groups">
-          <button v-for="group in selected.groups" :key="group.id" class="takeover-group-tab" :class="{ active: selectedGroupId === group.id }" @click="selectedGroupId = group.id">
+          <button v-for="group in selected.groups" :key="group.id" class="takeover-group-tab" :class="{ active: selectedGroupId === group.id }" :disabled="openingApplication" @click="selectGroup(group.id)">
             {{ group.source_group_id }} <em>{{ statusLabel(group.status) }}</em>
           </button>
         </div>
@@ -552,7 +630,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             </div>
           </div>
 
-          <details ref="mappingPanel" class="takeover-resolution" v-if="canReview && !['executed', 'rejected', 'withdrawn'].includes(selectedGroup.status)">
+          <details ref="mappingPanel" class="takeover-resolution" v-if="canReview && !openingApplication && !['executed', 'rejected', 'withdrawn'].includes(selectedGroup.status)">
             <summary><span class="takeover-step-number">03</span>修正问题 · 关联现有主档</summary>
             <p>仅选择已存在的客户、供应商或 SKU；不会自动新建主档。修正后需重新审核。</p>
             <div class="takeover-form-grid">
@@ -561,11 +639,11 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
               <label>原资料行号<input v-model="mapping.row" type="number" min="2" /></label>
               <label>对象类型<select v-model="mappingKind" @change="changeMappingKind"><option value="customer">客户</option><option value="supplier">供应商</option><option value="sku">SKU</option></select></label>
               <label>搜索现有对象<input v-model="masterSearch" :placeholder="mappingKind === 'sku' ? '输入 SKU 编号或名称' : '输入名称或业务编号'" @input="searchMasters" /></label>
-              <label class="wide">选择现有对象<select v-model="mapping.target_code" :disabled="masterLoading || !masterOptions.length"><option value="">{{ masterLoading ? '正在查找…' : masterOptions.length ? '请选择匹配对象' : '先搜索现有对象' }}</option><option v-for="item in masterOptions" :key="item.id" :value="item.code || item.sku">{{ masterLabel(item) }}</option></select></label>
-              <label class="wide">关联依据<input v-model="mapping.note" /></label>
+              <label class="wide">选择现有对象<select v-model="mapping.target_code" :disabled="saving || !mappingIdentity || masterLoading || !masterOptions.length" @change="mappingOwner = mappingIdentity"><option value="">{{ masterLoading ? '正在查找…' : masterOptions.length ? '请选择匹配对象' : '先搜索现有对象' }}</option><option v-for="item in masterOptions" :key="item.id" :value="item.code || item.sku">{{ masterLabel(item) }}</option></select></label>
+              <label class="wide">关联依据<input v-model="mapping.note" :disabled="saving || !mappingIdentity" @input="mappingOwner = mappingIdentity" /></label>
             </div>
-            <button class="takeover-secondary" :disabled="saving || !mapping.row || !mapping.target_code || !mapping.note" @click="addMasterResolution()">保存关联并重新预检</button>
-            <button class="takeover-secondary" :disabled="saving || !mapping.row || !mapping.note || !selectedGroup.resolution_map?.[`${mapping.sheet}:${Number(mapping.row)}:${mapping.field}`]" @click="addMasterResolution(true)">清除关联并重新预检</button>
+            <button class="takeover-secondary" :disabled="saving || !ownsMapping || !mapping.target_code || !mapping.note.trim()" @click="addMasterResolution()">保存关联并重新预检</button>
+            <button class="takeover-secondary" :disabled="saving || !ownsMapping || !mapping.note.trim() || !selectedGroup.resolution_map?.[`${mapping.sheet}:${Number(mapping.row)}:${mapping.field}`]" @click="addMasterResolution(true)">清除关联并重新预检</button>
           </details>
 
           <div v-if="selectedGroup.remainder_snapshot?.sales_orders?.length || selectedGroup.remainder_snapshot?.purchase_orders?.length" class="takeover-remainder">

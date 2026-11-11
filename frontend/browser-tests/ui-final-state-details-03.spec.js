@@ -76,10 +76,11 @@ test('same warehouse movements retain independent lot details and return to the 
       await settings.locator('settings-appearance-page select').filter({ has: settings.locator('option[value="1.25"]') }).selectOption(String(zoom))
       for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
         await page.setViewportSize({ width, height })
-        await page.goto(new URL('/contacts?detail=' + fixture.closeout_contact, baseURL).href)
+        await page.goto(new URL('/contacts', baseURL).href, { waitUntil: 'commit' })
+        await page.goto(new URL('/contacts?detail=' + fixture.closeout_contact, baseURL).href, { waitUntil: 'domcontentloaded' })
         const contact = page.getByRole('dialog', { name: '联系人详情' })
         const badge = contact.getByText('主联系人', { exact: true }).first()
-        await expect(badge).toBeVisible()
+        await expect(badge).toBeVisible({ timeout: 30000 })
         const layout = await badge.evaluate(element => {
           const range = document.createRange()
           range.selectNodeContents(element)

@@ -14,7 +14,7 @@ from test_support.isolated_runtime import verify_isolated_runtime
 verify_isolated_runtime(settings=settings, database_must_exist=True)
 
 from crm.models import (
-    CategoryAttribute, Contact, Customer, HSCode, InventoryMovement, Order, PackagingTemplate, Product,
+    CategoryAttribute, Contact, Customer, FollowUp, HSCode, InventoryMovement, Order, PackagingTemplate, Product,
     ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder,
     PurchaseOrderItem, SKU, SKUPackagingProfile, SKUTradeUnit, Supplier, SupplierSKU,
 )
@@ -114,7 +114,12 @@ if os.environ.get("PRODUCT_OPS_INVENTORY_SOURCES") == "1":
             sku=skus[0], quantity=2, warehouse_type="自有仓", warehouse="合成一号仓",
             source_type=source, source_no=f"EVID-{source.upper()}", is_automatic=True,
         )
-if os.environ.get("PRODUCT_OPS_LOTS") == "1":
+if os.environ.get("PRODUCT_OPS_LOTS") == "1" or os.environ.get("CLOSEOUT_CONTACT_RECOVERY") == "1":
     company = Customer.objects.create(code="EVID-CLOSEOUT", name="华南商业照明工程供应链及跨区域采购服务中心" * 4)
     fixture["closeout_contact"] = Contact.objects.create(customer=company, name="合成采购联系人", is_primary=True).id
+    if os.environ.get("CLOSEOUT_CONTACT_RECOVERY") == "1":
+        fixture["closeout_followup"] = FollowUp.objects.create(
+            customer=company, contact_id=fixture["closeout_contact"],
+            followed_at=timezone.now(), subject="合成跟进回看", content="合成内容",
+        ).id
 print(json.dumps(fixture))

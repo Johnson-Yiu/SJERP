@@ -29,3 +29,11 @@ GitHub 将 `Johnson-Yiu/SUNJACK-ERP` 解析至 `Johnson-Yiu/SJERP`；目标分�
 本次独立 SQLite 测试库另运行以下四项，4 项通过：`test_group_balance_stock_receipt_shipment_and_later_settlement`、`test_archive_with_empty_master_then_link_single_and_batch`、`test_failure_in_later_business_write_rolls_back_the_whole_group`、`test_explicit_amount_review_post_and_idempotent_replay`。测试使用不同夹具和事务，不能合并表述成同一批次的贯通对账。当前 Python 环境缺 PostgreSQL 驱动，旧 PostgreSQL 专用虚拟环境指向已不存在的 Python；本次 PostgreSQL 验证未运行。参考其他任务的历史演练记录不能替代本基线试导。
 
 仍须补齐：客户 CSV 到历史订单的同批次试导、重复来源及组内错误与安全重试、各币种及运费折扣核对、来源行映射和不应发生的库存履约变化、可复用只读核对程序、合成资金实际到账对应凭证、最终 CI。未取得真实文件，不代表真实文件已适配或通过验收。
+
+## 2026-11-12 同批次回归进展（仍未完成）
+
+新增 `crm.tests.test_history_delivery_same_batch`：客户 CSV 预览/执行后，以同一组来源申请归档；原正式 SKU 为空；注入归档中途异常并确认事务回滚，原组重试、重复执行幂等；创建 B 并关联两条历史商品；归档和关联阶段正式资金、库存及履约计数均为零；随后用合成凭证和分离的审核人将源收款对应实际人民币 287.43 受控入账并验证重复入账幂等。样例源流水原币 USD 40。工作簿文件字节保持相同验证重复提交复用。SQLite 与项目隔离 PostgreSQL 17.11 运行器各 1 项通过，PostgreSQL 测试库及临时集群清理完成。此测试中的“真实”标记是隔离测试对审核条件的模拟，不是实际业务真实性声明。
+
+未覆盖：完成订单、重复来源但文件内容不同、组内错误、完整来源映射及只读报告、实际完整对账输出。未取得真实文件。本地使用锁定依赖的专用虚拟环境；本次仍非最终交付。
+
+先前 `dde7ef452363e9398cce86303fe69608393e5230` 的 CI：backend 与 backend-postgres 成功；frontend 在安装 Chromium 系统依赖阶段因 Ubuntu 软件源 DNS 解析失败，未运行前端测试（run 43060984382）。

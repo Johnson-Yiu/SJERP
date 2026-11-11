@@ -76,4 +76,3 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
             self.assertEqual(bridge.advance_source(group.pk, source.pk, 'post', maker, voucher_checked=True).pk,fact.pk)
             self.assertEqual(FinanceFact.objects.count(),1)
             self.assertEqual(sum(m.objects.count() for m in (Transaction,InventoryMovement,Shipment,GoodsReceipt)),0)
-

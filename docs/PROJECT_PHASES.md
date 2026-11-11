@@ -896,3 +896,7 @@ AST 审计 backend 测试文件及浏览器 seeder 共 92 个 Supplier 创建/�
 B2 `96ad680c` 与 D2 `3e925910` 已在独立分支接入。旧收款与退款测试按实际契约复验，历史迁移测试改用一次性数据库。原生 Chrome 实测补修财务流水溢出、历史承接页头和更正表单，并复验待确认提交恢复、实际退款日期与资金复核。[集成验收报告](uat-evidence/release-completion-acceptance-02/README.md) 分别列出本轮结果、按差异关联的既有三入口升级和恢复证据，以及正式环境与真实资料待办。GitHub Actions 为 `NOT_RUN`。正式部署和正式导入未执行。
 
 最终业务提交 `d836ba21` 补齐操作身份清理与权限就绪绑定，保留旧更正补充资料。隔离 PostgreSQL 全量 1771 项、38 跳过、0 失败、0 错误。早期原生 Chrome 结果按对应提交保留，最终候选浏览器结果单列，提交独立复审。
+
+### 2026-11-11 RELEASE-INTEGRATION-ACCEPTANCE-03
+
+A3 集成 H2 历史商品关联、E1-R2 销售界面、E2-R2 产品运营补修。A3 恢复 H1 原始运行缺失的 11 张图，并归档实际下载及其合计校验。SQLite 与真实 PostgreSQL 17 全量均通过。Chrome 首轮和各项复跑分别保留，剩余失败、待验状态和正式历史导入条件见 [A3 集成验收](uat-evidence/release-integration-acceptance-03/README.md)。GitHub Actions 为 `NOT_RUN`，当前交付等待独立复审。

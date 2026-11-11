@@ -1,0 +1,91 @@
+{
+  "source": "92c15b65e495012f203496698bd8fb8af9ef3d17",
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/156.0.8078.80",
+    "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "jsVersion": "15.6.75.27"
+  },
+  "strictMatrixResults": 72,
+  "results": [
+    {
+      "id": "C08",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "cssWidth": 1366,
+      "cssHeight": 768,
+      "dpr": 1,
+      "documentWidth": 1366,
+      "topbarBottom": 82,
+      "workspaceTop": 82,
+      "file": "C08-1366-100.png"
+    },
+    {
+      "id": "C08",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "cssWidth": 1440,
+      "cssHeight": 900,
+      "dpr": 1,
+      "documentWidth": 1440,
+      "topbarBottom": 82,
+      "workspaceTop": 82,
+      "file": "C08-1440-100.png"
+    },
+    {
+      "id": "C08",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "cssWidth": 390,
+      "cssHeight": 844,
+      "dpr": 1,
+      "documentWidth": 390,
+      "topbarBottom": 70,
+      "workspaceTop": 70,
+      "file": "C08-390-100.png"
+    },
+    {
+      "id": "C08",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "cssWidth": 1093,
+      "cssHeight": 614,
+      "dpr": 1.25,
+      "documentWidth": 1093,
+      "topbarBottom": 82,
+      "workspaceTop": 82,
+      "file": "C08-1366-125.png"
+    },
+    {
+      "id": "C08",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "cssWidth": 1152,
+      "cssHeight": 720,
+      "dpr": 1.25,
+      "documentWidth": 1152,
+      "topbarBottom": 82,
+      "workspaceTop": 82,
+      "file": "C08-1440-125.png"
+    },
+    {
+      "id": "C08",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "cssWidth": 312,
+      "cssHeight": 675,
+      "dpr": 1.25,
+      "documentWidth": 312,
+      "topbarBottom": 70,
+      "workspaceTop": 70,
+      "file": "C08-390-125.png"
+    }
+  ]
+}

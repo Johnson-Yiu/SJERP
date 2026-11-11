@@ -1,0 +1,3 @@
+pg_control version number:            1700
+Database cluster state:               shut down
+postmaster.pid present: False

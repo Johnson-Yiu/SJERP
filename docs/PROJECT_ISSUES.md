@@ -729,3 +729,13 @@ R1-POSTGRES-TEST-ISOLATION-01 从 `2e25b743884123d7ae5599c89586988a12791bf4` 新
 已审基线 `1e45e42c` 上接入 B2 `96ad680c` 和 D2 `3e925910`。ISS-105、ISS-108 的作废审计、实际退款日期与同账号恢复由本轮回归覆盖。ISS-018 的隔离恢复证据与正式环境的媒体权限、异地副本、调度验收分别记录。真实历史资料和首发独立复审继续待验。既有 Issue 状态和原版本证据保留，当前结果见 [集成验收报告](uat-evidence/release-completion-acceptance-02/README.md)。
 
 ISS-105、ISS-108 补充两个反例，分别为旧响应清理新操作及权限刷新中打开页面后持续无法提交。业务提交 `d836ba21` 的实际组件交错与权限刷新回归通过，PostgreSQL 全量 0 失败、0 错误，保留独立复审状态。
+
+### 2026-11-11 RELEASE-INTEGRATION-ACCEPTANCE-03
+
+H2 历史商品关联、E1-R2 销售界面、E2-R2 产品运营补修已在独立 A3 分支集成。历史关联、迁移保护、报表和下载证据归入 ISS-121 的补充复审。正式资料导入、部署权限、异地备份和调度仍待验。测试基线、最终产品 SHA、原失败逐项结果和剩余状态见 [A3 集成验收](uat-evidence/release-integration-acceptance-03/README.md)。
+
+| 问题 | 状态 | 复现及影响 | 验收和复审 |
+| --- | --- | --- | --- |
+| ISS-124 窄屏客户详情编辑 | P1 / FIXED_PENDING_REVIEW | 390px 原生 100%／125% 下入口曾隐藏。显示后，抽屉挡住编辑按钮区域。客户详情和客户列表响应交错时，编辑点击还可能被忽略。 | E2 恢复入口，E1 修复表单层级和客户资料读取。独立 Chrome 覆盖可点击、填充、取消和旧响应隔离。[E1 证据](uat-evidence/ui-sales-completion-02/a3-followup.md) |
+| ISS-125 SKU 图片删除后立即重开 | P2 / NEEDS_VERIFICATION | 删除请求成功，刷新后确认为空。列表刷新完成前，立即重开一度显示上一张图。 | 复审列表刷新与抽屉缓存同步，并复核重开时不显示已删除图片。[E2 证据](uat-evidence/ui-product-operations-completion-02/README.md) |
+| ISS-126 库存流水详情缺少批次标识 | P2 / NEEDS_VERIFICATION | 同仓两条流水可以分别打开，接口返回不同批次。抽屉缺少批次展示，不能凭详情核对批次。 | 复审批次字段的显示条件和不同来源的历史兼容性。[同仓批次证据](uat-evidence/ui-product-operations-completion-02/chrome-same-warehouse-lots/run.json) |

@@ -40,7 +40,9 @@ test('finance pending submission and ambiguous retry preserve identity and guard
   await expect(warning).toContainText(writes[0].transaction_no)
   await warning.getByRole('button', { name: '返回核对', exact: true }).click()
   await expect(form.getByLabel('原币金额', { exact: true })).toHaveValue('12.34')
-  await expect(form.getByRole('alert')).toContainText(writes[0].transaction_no)
+  await form.getByRole('button', { name: '取消', exact: true }).click()
+  await expect(warning).toContainText(writes[0].transaction_no)
+  await warning.getByRole('button', { name: '返回核对', exact: true }).click()
   const dialogSeen = new Promise(resolve => page.once('dialog', async dialog => { expect(dialog.type()).toBe('beforeunload'); await dialog.dismiss(); resolve() }))
   await page.reload({ timeout: 3000 }).catch(() => {})
   await dialogSeen

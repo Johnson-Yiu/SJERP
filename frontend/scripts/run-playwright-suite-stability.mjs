@@ -60,6 +60,12 @@ const dedicatedRuns = [
   { name: 'party-replacement-acceptance-isolated', file: 'party-replacement-acceptance-20261106.spec.js' },
   { name: 'party-replacement-po-isolated', file: 'party-replacement-po-real.spec.js' },
   { name: 'party-replacement-quote-isolated', file: 'party-replacement-quote-real.spec.js' },
+  { name: 'party-lifecycle-isolated', file: 'party-lifecycle-real.spec.js' },
+  ...['party-lifecycle-real.spec.js', 'party-replacement-quote-real.spec.js'].map(file => ({
+    name: file.replace('.spec.js', '-native-125'),
+    file,
+    env: { SALES_PARTY_NATIVE_ZOOM: '1.25' },
+  })),
   { name: 'party-replacement-order-isolated', file: 'party-replacement-real.spec.js' },
 ]
 
@@ -98,7 +104,15 @@ const summary = []
 for (const run of runs) {
   const stdoutChunks = []
   const stderrChunks = []
-  const runEnv = { ...process.env, ...run.env }
+  const runEnv = { ...process.env }
+  for (const key of [
+    'E1_R2_EXTRA', 'E1_R2_WIDTH', 'SALES_PARTY_NATIVE_ZOOM',
+    'SALES_STATE_JOURNEYS', 'SALES_STATE_SUPPLEMENTAL', 'SALES_STATE_FOCUSED',
+    'SALES_STATE_CASES', 'SALES_STATE_SCENARIOS', 'SALES_STATE_SHOTS',
+    'SALES_STATE_WIDTH', 'SALES_STATE_ZOOM',
+    'PRODUCT_OPS_FOLLOWUP', 'PRODUCT_OPS_PRIORITY_ZOOM',
+  ]) delete runEnv[key]
+  Object.assign(runEnv, run.env)
   runEnv.PRODUCT_OPS_CANDIDATE_SHA = source
   runEnv.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT = path.join(reportRoot, run.name)
   runEnv.ISOLATED_PLAYWRIGHT_JSON = '1'

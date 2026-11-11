@@ -11,7 +11,7 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
   const output = path.resolve(process.env.E1_R2_EVIDENCE_DIR)
   const extension = process.env.E1_R2_EXTRA || ''
   const widthFilter = process.env.E1_R2_WIDTH
-  expect(['', '1', '2', '3', '4', '5', '6', '7']).toContain(extension)
+  expect(['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']).toContain(extension)
   if (widthFilter) expect(viewports.map(([width]) => String(width))).toContain(widthFilter)
   const core = !extension || extension === '1'
   await mkdir(output, { recursive: true })
@@ -48,7 +48,9 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
 
     async function collect(state, check, focus) {
       for (const zoom of [1, 1.25]) {
+        await settings.bringToFront()
         await zoomControl.selectOption(String(zoom))
+        await page.bringToFront()
         for (const [width, height] of viewports) {
           if (widthFilter && String(width) !== widthFilter) continue
           const key = state + '-' + width + '-' + zoom * 100
@@ -82,7 +84,9 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
           await save()
         }
       }
+      await settings.bringToFront()
       await zoomControl.selectOption('1')
+      await page.bringToFront()
       await page.setViewportSize({ width: 1440, height: 900 })
     }
 
@@ -349,7 +353,8 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       await save()
     })
 
-    if (extension === '5') await scenario('trade-shipment-packing-variance', async () => {
+    if (['5', '8'].includes(extension)) await scenario('trade-shipment-overage', async () => {
+      const reason = extension === '8' ? 'customer_addon' : 'packing_variance'
       const orderRoute = '/orders?detail=' + fixture.order
       const orderAction = suffix => r => r.url().endsWith('/api/orders/' + fixture.order + '/' + suffix + '/') && r.request().method() === 'POST'
       await go(orderRoute)
@@ -366,10 +371,10 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       await line.getByLabel('交易单位与包装规格').selectOption(String(fixture.tradeUnit))
       await line.getByRole('spinbutton', { name: /^发货数量/ }).fill('3')
       await expect(line.getByText(/交易数量 3 箱，折合 15 pcs/)).toBeVisible()
-      await line.getByLabel(/^超发原因/).selectOption('packing_variance')
-      await collect('trade-shipment-packing-variance', async result => {
+      await line.getByLabel(/^超发原因/).selectOption(reason)
+      await collect('trade-shipment-' + reason, async result => {
         noPageOverflow(result)
-        await expect(line.getByLabel(/^超发原因/)).toHaveValue('packing_variance')
+        await expect(line.getByLabel(/^超发原因/)).toHaveValue(reason)
       }, line.getByLabel(/^超发原因/))
       await shipment.getByRole('button', { name: '确认发货', exact: true }).click()
       await expect(page.getByText('确认批量超发', { exact: true })).toBeVisible()
@@ -384,6 +389,14 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
       expect(shipmentRecord.has_overage).toBe(true)
       expect(shipmentRecord.items.reduce((sum, item) => sum + Number(item.quantity), 0)).toBe(15)
       expect(shipmentRecord.items.filter(item => item.is_overage).reduce((sum, item) => sum + Number(item.quantity), 0)).toBe(5)
+      if (reason === 'customer_addon') {
+        const payload = response.request().postDataJSON()
+        expect(payload.items).toHaveLength(1)
+        expect(payload.items[0].overage_reason).toBe('customer_addon')
+        results.push({ key: 'customer-overage-http', status: 201, shipped: 15, overage: 5 })
+        await save()
+        return
+      }
       await go(orderRoute + '&tab=packing')
       const card = page.locator('.actual-shipment-card').first()
       await card.getByRole('button', { name: '新增箱', exact: true }).click()
@@ -511,6 +524,106 @@ test('sales fixes on real Chrome with native page zoom', async ({ baseURL }) => 
         releaseList()
         await page.unroute(customerList)
       }
+    })
+
+    if (extension === '9') await scenario('customer-country-selector-recovery', async () => {
+      const endpoint = url => url.pathname === '/api/customers/country-catalog/'
+      let release
+      const held = new Promise(resolve => { release = resolve })
+      await page.route(endpoint, async route => { await held; await route.abort('failed') })
+      const requested = page.waitForRequest(r => endpoint(new URL(r.url())))
+      const failed = page.waitForEvent('requestfailed', r => endpoint(new URL(r.url())))
+      const editor = page.getByRole('dialog', { name: '新建客户' })
+      try {
+        await go('/customers')
+        await button('新建客户').click()
+        await requested
+        await expect(editor).toHaveCount(0)
+        await collect('customer-country-loading', async result => {
+          noPageOverflow(result)
+          await expect(editor).toHaveCount(0)
+        })
+      } finally {
+        release()
+      }
+      await failed
+      await page.unroute(endpoint)
+      const country = editor.getByLabel('国家/地区', { exact: true })
+      const alert = editor.getByRole('alert').filter({ hasText: '国家/地区资料加载失败' })
+      await expect(country).toBeDisabled()
+      await collect('customer-country-load-error', async result => {
+        noPageOverflow(result)
+        await expect(alert).toBeVisible()
+      }, alert)
+      const retry = page.waitForResponse(r => r.url().includes('/customers/country-catalog/'))
+      await alert.getByRole('button', { name: '重新加载', exact: true }).click()
+      expect((await retry).status()).toBe(200)
+      await expect(country).toBeEnabled()
+      await country.fill('E1-NO-MATCH-COUNTRY')
+      const noMatch = editor.getByText('暂无匹配选项', { exact: true })
+      await collect('customer-country-no-match', async result => {
+        noPageOverflow(result)
+        await expect(noMatch).toBeVisible()
+      }, noMatch)
+      await country.fill('Germany')
+      await editor.locator('.combo-menu button').filter({ hasText: /Germany/ }).first().click()
+      await expect(country).toHaveValue(/Germany/)
+      await editor.getByRole('textbox').first().fill('SYNTH-SALES-CUSTOMER-COUNTRY')
+      const saved = page.waitForResponse(r => r.url().endsWith('/api/customers/') && r.request().method() === 'POST')
+      await editor.getByRole('button', { name: '保存客户', exact: true }).click()
+      const response = await saved
+      const customer = await response.json()
+      expect(response.status(), JSON.stringify(customer)).toBe(201)
+      expect(customer.country).toBe('Germany')
+      const readback = await page.request.get('/api/customers/' + customer.id + '/')
+      expect((await readback.json()).country).toBe('Germany')
+      results.push({ key: 'customer-country-selector-http', retry: 200, create: 201, country: customer.country })
+      await save()
+    })
+
+    if (extension === '10') await scenario('follow-up-contact-selector', async () => {
+      await go('/follow-ups?search=SYNTH-SALES')
+      const row = page.getByRole('row').filter({ hasText: 'SYNTH-SALES 附件与重开' })
+      await row.getByRole('button', { name: '编辑跟进记录' }).click()
+      const editor = page.getByRole('dialog', { name: '编辑跟进记录' })
+      const customer = editor.getByLabel('客户', { exact: true })
+      const contact = editor.getByLabel('联系人', { exact: true })
+      await expect(customer).toHaveValue(String(fixture.customer))
+      await contact.selectOption(String(fixture.contact))
+      await customer.selectOption(String(fixture.emptyCustomer))
+      await expect(contact).toHaveValue('')
+      await expect(contact.locator('option')).toHaveCount(1)
+      await collect('follow-up-contact-empty', async result => {
+        noPageOverflow(result)
+        await expect(contact.locator('option')).toHaveCount(1)
+      }, contact)
+      await customer.selectOption(String(fixture.customer))
+      await contact.selectOption(String(fixture.contact))
+      await collect('follow-up-contact-selected', async result => {
+        noPageOverflow(result)
+        await expect(contact).toHaveValue(String(fixture.contact))
+      }, contact)
+      const saved = page.waitForResponse(r => r.url().endsWith('/api/follow-ups/' + fixture.followUp + '/') && r.request().method() === 'PUT')
+      await editor.getByRole('button', { name: '保存跟进', exact: true }).click()
+      const response = await saved
+      expect(response.status(), await response.text()).toBe(200)
+      await go('/follow-ups?search=SYNTH-SALES')
+      await row.getByRole('button', { name: '编辑跟进记录' }).click()
+      await expect(contact).toHaveValue(String(fixture.contact))
+      await editor.getByRole('button', { name: '取消', exact: true }).click()
+      await go('/follow-ups?detail=' + fixture.followUp)
+      const parent = page.getByRole('dialog', { name: '跟进详情' })
+      await parent.getByRole('button', { name: /合成销售联系人/ }).click()
+      const nested = page.getByRole('dialog', { name: '联系人详情' })
+      const back = nested.getByRole('button', { name: /^返回/ })
+      await collect('follow-up-related-contact-child', async result => {
+        noPageOverflow(result)
+        await expect(nested).toContainText('合成销售联系人')
+      }, back)
+      await back.click()
+      await expect(parent.getByRole('button', { name: /合成销售联系人/ })).toBeVisible()
+      results.push({ key: 'follow-up-contact-selector-http', update: 200, contact: fixture.contact, nestedReturn: true })
+      await save()
     })
 
     if (core) await scenario('follow-up-attachment-retry', async () => {

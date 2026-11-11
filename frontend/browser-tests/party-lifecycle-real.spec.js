@@ -2,11 +2,12 @@ import { test, expect } from '@playwright/test'
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
+import { partyContext, verifyPartyZoom } from './sales-party-native-zoom.js'
 
 test.use({ channel: 'chrome' })
 
 test('two authenticated staff reject, reapply and withdraw with saved history', async ({ browser, baseURL }) => {
-  test.setTimeout(90000)
+  test.setTimeout(process.env.SALES_PARTY_NATIVE_ZOOM === '1.25' ? 900000 : 90000)
   expect(process.env.ISOLATED_TEST_RUN_ID).toBeTruthy()
   const root = path.resolve('../docs/uat-evidence/party-version-closeout-20261105')
   const seed = spawnSync(process.env.ISOLATED_TEST_PYTHON, [path.join(root, 'seed_party_flow.py')], {
@@ -26,8 +27,8 @@ test('two authenticated staff reject, reapply and withdraw with saved history', 
     await expect(auth).not.toHaveURL(/\/admin\/login/)
     await auth.close()
   }
-  const requester = await browser.newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 1440, height: 900 } })
-  const reviewer = await browser.newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 390, height: 844 } })
+  const requester = await partyContext(browser, { width: 1440, height: 900 }, 'lifecycle-requester')
+  const reviewer = await partyContext(browser, { width: 390, height: 844 }, 'lifecycle-reviewer')
   try {
     await login(requester, fixture.first_username)
     await login(reviewer, fixture.second_username)
@@ -40,6 +41,7 @@ test('two authenticated staff reject, reapply and withdraw with saved history', 
     expect((await markedSent).status()).toBe(200)
     async function open(p) {
       await p.goto(url)
+      await verifyPartyZoom(p)
       await p.getByRole('button', { name: '主体更正' }).click()
       await expect(p.locator('#party-address')).toBeVisible()
     }
@@ -78,11 +80,10 @@ test('two authenticated staff reject, reapply and withdraw with saved history', 
     expect(historyResponse.status()).toBe(200)
     const history = await historyResponse.json()
     expect(history.requests.map(item => item.status).sort()).toEqual(['rejected', 'withdrawn'])
-    fs.writeFileSync(path.join(evidence, 'http-results.json'), JSON.stringify({ quoteId: fixture.id,
+    fs.writeFileSync(path.join(evidence, 'http-results.json'), JSON.stringify({ browser: browser.version(), zoom: Number(process.env.SALES_PARTY_NATIVE_ZOOM || 1), quoteId: fixture.id,
       requester: fixture.first_id, reviewer: fixture.second_id, reject: 200, withdraw: 200,
       status: history.requests.map(item => ({ id: item.id, status: item.status, actor: item.terminal_event.actor_id })) }, null, 2))
   } finally {
-    await requester.close()
-    await reviewer.close()
+    await Promise.all([requester.close(), reviewer.close()])
   }
 })

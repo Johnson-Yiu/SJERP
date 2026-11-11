@@ -2,10 +2,11 @@ import { test, expect } from '@playwright/test'
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
+import { partyContext, verifyPartyZoom } from './sales-party-native-zoom.js'
 
 test.use({ channel: 'chrome', viewport: { width: 390, height: 844 } })
 test('synthetic quote replacement uses independent approval and synthetic saved template', async ({ browser, baseURL }) => {
-  test.setTimeout(180000)
+  test.setTimeout(process.env.SALES_PARTY_NATIVE_ZOOM === '1.25' ? 900000 : 180000)
   const root = path.resolve('../docs/uat-evidence/party-version-closeout-02')
   const seed = spawnSync(process.env.ISOLATED_TEST_PYTHON, [path.join(root, 'seed_replacement_quote_browser.py')], { cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8' })
   expect(seed.status, seed.stderr).toBe(0)
@@ -13,7 +14,7 @@ test('synthetic quote replacement uses independent approval and synthetic saved 
   const evidence = path.resolve(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'replacement-quote')
   fs.mkdirSync(evidence, { recursive: true })
   const apiBase = process.env.ISOLATED_PLAYWRIGHT_API_BASE_URL
-  const a = await browser.newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 1440, height: 900 } }), b = await browser.newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 390, height: 844 } })
+  const a = await partyContext(browser, { width: 1440, height: 900 }, 'replacement-requester'), b = await partyContext(browser, { width: 390, height: 844 }, 'replacement-reviewer')
   async function login(context, username) {
     const p = await context.newPage(); await p.goto(`${apiBase}/admin/login/`)
     await p.locator('[name="username"]').fill(username); await p.locator('[name="password"]').fill('synthetic-only-password')
@@ -21,6 +22,7 @@ test('synthetic quote replacement uses independent approval and synthetic saved 
   }
   async function open(context) {
     const p = await context.newPage(); await p.goto(new URL(`/quotes?detail=${fixture.quote}`, baseURL).toString())
+    await verifyPartyZoom(p)
     await p.getByRole('button', { name: '主体更正' }).click()
     await expect(p.locator('.party-change-panel')).toContainText('主体变更申请')
     return p
@@ -59,6 +61,6 @@ test('synthetic quote replacement uses independent approval and synthetic saved 
     expect(saved.buyer_country_snapshot).toBe('')
     const pi = await reviewer.request.get(`${apiBase}/api/quotes/${result.result_quote_id}/pi-data/`)
     expect(pi.status()).toBe(200); expect((await pi.json()).seller.name).toBe('Synthetic Seller')
-    fs.writeFileSync(path.join(evidence, 'http-results.json'), JSON.stringify({ proposal: 201, approval: 200, created: response.status(), pi: pi.status(), result_quote_id: result.result_quote_id }, null, 2))
-  } finally { await a.close(); await b.close() }
+    fs.writeFileSync(path.join(evidence, 'http-results.json'), JSON.stringify({ browser: browser.version(), zoom: Number(process.env.SALES_PARTY_NATIVE_ZOOM || 1), proposal: 201, approval: 200, created: response.status(), pi: pi.status(), result_quote_id: result.result_quote_id }, null, 2))
+  } finally { await Promise.all([a.close(), b.close()]) }
 })

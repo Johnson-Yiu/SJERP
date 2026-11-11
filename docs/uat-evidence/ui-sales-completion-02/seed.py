@@ -17,7 +17,7 @@ import django
 django.setup()
 
 from crm.models import (
-    Customer, FollowUp, InventoryMovement, Order, OrderItem, PackagingTemplate,
+    Contact, Customer, FollowUp, InventoryMovement, Order, OrderItem, PackagingTemplate,
     Product, Quote, QuoteItem, SKU, SKUTradeUnit, Supplier, SupplierSKU,
 )
 from django.conf import settings
@@ -91,8 +91,14 @@ OrderItem.objects.create(
     sku_code_snapshot=procurement_sku.sku, quantity=15, unit_price="12.50",
 )
 
+related = {}
+if os.environ.get("E1_R2_EXTRA") == "10":
+    contact = Contact.objects.create(customer=customer, name="合成销售联系人")
+    empty_customer = Customer.objects.create(code="E1-R2-EMPTY", name="合成无联系人客户", country="Germany")
+    related = {"contact": contact.pk, "emptyCustomer": empty_customer.pk}
+
 print(json.dumps({
     "customer": customer.pk, "quote": quote.pk, "order": order.pk,
     "completedOrder": completed_order.pk, "procurementOrder": procurement_order.pk,
-    "tradeUnit": trade.pk, "carton": carton.pk, "followUp": follow_up.pk, "lines": 4,
+    "tradeUnit": trade.pk, "carton": carton.pk, "followUp": follow_up.pk, "lines": 4, **related,
 }))

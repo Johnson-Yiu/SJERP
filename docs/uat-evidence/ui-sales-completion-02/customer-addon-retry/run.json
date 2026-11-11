@@ -1,0 +1,235 @@
+{
+  "source": "5c9cdb088db1773a69a488158d381e3949ec8eee",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "key": "trade-shipment-customer_addon-1366-100",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "file": "trade-shipment-customer_addon-1366-100.png",
+      "dpr": 1,
+      "clientWidth": 1366,
+      "scrollWidth": 1366,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1588.390625
+        },
+        {
+          "className": null,
+          "right": 1588.390625
+        },
+        {
+          "className": null,
+          "right": 1588.390625
+        },
+        {
+          "className": null,
+          "right": 1588.390625
+        },
+        {
+          "className": null,
+          "right": 1588.390625
+        },
+        {
+          "className": "clickable-row",
+          "right": 1588.390625
+        }
+      ]
+    },
+    {
+      "key": "trade-shipment-customer_addon-1440-100",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "file": "trade-shipment-customer_addon-1440-100.png",
+      "dpr": 1,
+      "clientWidth": 1440,
+      "scrollWidth": 1440,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1588.390625
+        },
+        {
+          "className": null,
+          "right": 1588.390625
+        },
+        {
+          "className": null,
+          "right": 1588.390625
+        },
+        {
+          "className": null,
+          "right": 1588.390625
+        },
+        {
+          "className": null,
+          "right": 1588.390625
+        },
+        {
+          "className": "clickable-row",
+          "right": 1588.390625
+        }
+      ]
+    },
+    {
+      "key": "trade-shipment-customer_addon-390-100",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "file": "trade-shipment-customer_addon-390-100.png",
+      "dpr": 1,
+      "clientWidth": 390,
+      "scrollWidth": 390,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": "data-table order-list-table",
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": null,
+          "right": 1318.390625
+        },
+        {
+          "className": "clickable-row",
+          "right": 1318.390625
+        }
+      ]
+    },
+    {
+      "key": "trade-shipment-customer_addon-1366-125",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "file": "trade-shipment-customer_addon-1366-125.png",
+      "dpr": 1.25,
+      "clientWidth": 1093,
+      "scrollWidth": 1093,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": null,
+          "right": 1588.175048828125
+        },
+        {
+          "className": null,
+          "right": 1588.175048828125
+        },
+        {
+          "className": null,
+          "right": 1588.175048828125
+        },
+        {
+          "className": null,
+          "right": 1588.175048828125
+        },
+        {
+          "className": "data-table order-list-table",
+          "right": 1588.1750183105469
+        },
+        {
+          "className": null,
+          "right": 1588.1750183105469
+        }
+      ]
+    },
+    {
+      "key": "trade-shipment-customer_addon-1440-125",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "file": "trade-shipment-customer_addon-1440-125.png",
+      "dpr": 1.25,
+      "clientWidth": 1152,
+      "scrollWidth": 1152,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": null,
+          "right": 1588.175048828125
+        },
+        {
+          "className": null,
+          "right": 1588.175048828125
+        },
+        {
+          "className": null,
+          "right": 1588.175048828125
+        },
+        {
+          "className": null,
+          "right": 1588.175048828125
+        },
+        {
+          "className": "data-table order-list-table",
+          "right": 1588.1750183105469
+        },
+        {
+          "className": null,
+          "right": 1588.1750183105469
+        }
+      ]
+    },
+    {
+      "key": "trade-shipment-customer_addon-390-125",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "file": "trade-shipment-customer_addon-390-125.png",
+      "dpr": 1.25,
+      "clientWidth": 312,
+      "scrollWidth": 312,
+      "horizontalMovement": 0,
+      "outside": [
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": null,
+          "right": 1318.175048828125
+        },
+        {
+          "className": "data-table order-list-table",
+          "right": 1318.1750001907349
+        },
+        {
+          "className": null,
+          "right": 1318.1750001907349
+        }
+      ]
+    },
+    {
+      "key": "customer-overage-http",
+      "status": 201,
+      "shipped": 15,
+      "overage": 5
+    }
+  ],
+  "failures": []
+}

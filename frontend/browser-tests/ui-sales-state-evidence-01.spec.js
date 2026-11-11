@@ -102,6 +102,9 @@ test('sales state evidence in an owned Google Chrome profile', async ({ baseURL 
     if (journey) {
       await recordSalesJourneys({ page, settings, baseURL, fixture, customer, capture, results, saveIndex })
       expect(results.some(result => result.file)).toBe(true)
+      if (process.env.A3_STRICT_BROWSER_EVIDENCE === '1') {
+        expect(results.filter(result => result.outcome === 'uncaptured')).toEqual([])
+      }
       return
     }
     await settings.goto('chrome://settings/appearance', { waitUntil: 'domcontentloaded' })

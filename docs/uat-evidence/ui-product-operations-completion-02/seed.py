@@ -69,7 +69,8 @@ purchase = PurchaseOrder.objects.create(
     status="draft", currency="USD", exchange_rate="7.2",
 )
 for index, sku in enumerate(skus, 1):
-    PurchaseOrderItem.objects.create(purchase_order=purchase, sku=sku, quantity=index * 10, unit_price="4")
+    quantity = 40 if index == 1 and os.environ.get("PRODUCT_OPS_RECEIPT_COMBINATIONS") == "1" else index * 10
+    PurchaseOrderItem.objects.create(purchase_order=purchase, sku=sku, quantity=quantity, unit_price="4")
 customer = Customer.objects.create(code="EVID-C001", name="合成采购成本归属客户", country="US")
 for index in (1, 2):
     Order.objects.create(
@@ -106,4 +107,11 @@ if os.environ.get("PRODUCT_OPS_LOTS") == "1":
         sku=skus[0], quantity=15, warehouse_type="自有仓", warehouse="合成一号仓",
         lot_reference="EVID-LOT-20261110-A-03",
     )
+if os.environ.get("PRODUCT_OPS_INVENTORY_SOURCES") == "1":
+    for source, direction in (("shipment", "sale_out"), ("return", "return_in"), ("receipt", "purchase_in")):
+        InventoryMovement.objects.create(
+            movement_no=f"EVID-INV-{source.upper()}", movement_date=date.today(), type=direction,
+            sku=skus[0], quantity=2, warehouse_type="自有仓", warehouse="合成一号仓",
+            source_type=source, source_no=f"EVID-{source.upper()}", is_automatic=True,
+        )
 print(json.dumps(fixture))

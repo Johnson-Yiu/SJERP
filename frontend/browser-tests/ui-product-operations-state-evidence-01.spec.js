@@ -327,7 +327,10 @@ test('product operations evidence with real Chrome and the isolated API', async 
       await expect(pane.getByText('EVID-P001', { exact: true })).toBeVisible()
       await capture('product-load-recovered', 1.25, 390, 844)
     })
-    if (refreshOnly) return
+    if (refreshOnly) {
+      expect(gaps).toEqual([])
+      return
+    }
     if (!lifecycle) await attempt('product-category-and-unsaved', async () => {
       await open('/products', 'products')
       await page.getByRole('button', { name: '新建产品', exact: true }).click()

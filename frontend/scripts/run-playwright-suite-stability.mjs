@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process'
+import { execFileSync, spawn } from 'node:child_process'
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -27,6 +27,28 @@ const dedicatedRuns = [
   { name: 'product-operations-sku-lifecycle-02-isolated', file: 'ui-product-operations-sku-lifecycle-02.spec.js', codex: true },
   { name: 'product-operations-supplier-02-isolated', file: 'ui-product-operations-supplier-02.spec.js', codex: true },
   { name: 'product-operations-lots-02-isolated', file: 'ui-product-operations-lots-02.spec.js', codex: true },
+  ...Array.from({ length: 10 }, (_, index) => ({
+    name: `sales-completion-extra-${index + 1}`,
+    file: 'ui-sales-completion-02.spec.js',
+    codex: true,
+    env: { E1_R2_EXTRA: String(index + 1) },
+  })),
+  ...['JOURNEYS', 'SUPPLEMENTAL', 'FOCUSED'].map(mode => ({
+    name: `sales-state-${mode.toLowerCase()}`,
+    file: 'ui-sales-state-evidence-01.spec.js',
+    codex: true,
+    env: { [`SALES_STATE_${mode}`]: '1' },
+  })),
+  ...['1', 'refresh', 'lifecycle', 'verify', 'priority', 'candidate', 'priority-standard'].map(mode => ({
+    name: `product-operations-state-${mode}`,
+    file: 'ui-product-operations-state-evidence-01.spec.js',
+    codex: true,
+    env: mode === 'priority-standard'
+      ? { PRODUCT_OPS_FOLLOWUP: 'priority', PRODUCT_OPS_PRIORITY_ZOOM: '100' }
+      : { PRODUCT_OPS_FOLLOWUP: mode },
+  })),
+  { name: 'product-operations-inventory-actions-02', file: 'ui-product-operations-inventory-actions-02.spec.js', codex: true },
+  { name: 'product-operations-receipts-02', file: 'ui-product-operations-receipts-02.spec.js', codex: true },
   { name: 'workspace-tabs-isolated', file: 'workspace-tabs-real.spec.js' },
   { name: 'workspace-integration-isolated', file: 'workspace-integration-real.spec.js', codex: true },
   { name: 'first-release-consolidation-isolated', file: 'first-release-consolidation-02.spec.js', codex: true },
@@ -41,6 +63,8 @@ const dedicatedRuns = [
   { name: 'party-replacement-order-isolated', file: 'party-replacement-real.spec.js' },
 ]
 
+const source = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repositoryRoot, encoding: 'utf8' }).trim()
+
 const runs = [
   {
     name: 'business-suite',
@@ -54,7 +78,7 @@ const runs = [
       '--exclude-business-test', 'iss007-image-snapshot-real.spec.js',
       '--exclude-business-test', 'shared-report-templates.spec.js',
       '--exclude-business-test', 'quote-editor-mobile-actions.spec.js',
-      ...dedicatedRuns.flatMap(run => ['--exclude-business-test', run.file]),
+      ...[...new Set(dedicatedRuns.map(run => run.file))].flatMap(file => ['--exclude-business-test', file]),
     ],
   },
   { name: 'shared-report-templates-isolated', args: ['--business-test', 'shared-report-templates.spec.js'] },
@@ -74,8 +98,9 @@ const summary = []
 for (const run of runs) {
   const stdoutChunks = []
   const stderrChunks = []
-  const runEnv = { ...process.env }
-  runEnv.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT = reportRoot
+  const runEnv = { ...process.env, ...run.env }
+  runEnv.PRODUCT_OPS_CANDIDATE_SHA = source
+  runEnv.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT = path.join(reportRoot, run.name)
   runEnv.ISOLATED_PLAYWRIGHT_JSON = '1'
   runEnv.A3_STRICT_BROWSER_EVIDENCE = '1'
   runEnv.ISOLATED_CODEX_TEST_SUPERADMIN = run.codex ? '1' : '0'
@@ -106,6 +131,7 @@ for (const run of runs) {
   ])
   summary.push({
     name: run.name,
+    mode: run.env ?? {},
     command: [process.execPath, runnerPath, ...run.args],
     exitCode: code,
     signal,
@@ -116,6 +142,6 @@ for (const run of runs) {
 
 const allPassed = summary.every(run => run.exitCode === 0 && !run.signal)
 const summaryPath = path.join(reportRoot, 'suite-run-summary.json')
-await writeFile(summaryPath, `${JSON.stringify({ allPassed, runs: summary }, null, 2)}\n`, 'utf8')
+await writeFile(summaryPath, `${JSON.stringify({ source, allPassed, runs: summary }, null, 2)}\n`, 'utf8')
 console.log(`Playwright suite stability: ${allPassed ? 'passed' : 'failed'}; summary ${summaryPath}`)
 if (!allPassed) process.exitCode = 1

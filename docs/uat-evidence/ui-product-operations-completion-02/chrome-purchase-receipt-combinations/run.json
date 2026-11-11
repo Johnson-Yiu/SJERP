@@ -1,0 +1,158 @@
+{
+  "source": "92c15b65e495012f203496698bd8fb8af9ef3d17",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "purchase-two-order-allocations",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-two-order-allocations-390-125.png"
+    },
+    {
+      "id": "purchase-receipt-validation",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-receipt-validation-390-125.png",
+      "method": "single controlled 400, no backend write"
+    },
+    {
+      "id": "purchase-receipt-validation-cancelled",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-receipt-validation-cancelled-390-125.png",
+      "focusReturned": false
+    },
+    {
+      "id": "purchase-receipt-pending-1",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-receipt-pending-1-390-125.png",
+      "method": "temporarily held outgoing POST, then forwarded to real Django"
+    },
+    {
+      "id": "purchase-receipt-pending-2",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-receipt-pending-2-390-125.png",
+      "method": "temporarily held outgoing POST, then forwarded to real Django"
+    },
+    {
+      "id": "purchase-receipt-two-destinations",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-receipt-two-destinations-390-125.png"
+    },
+    {
+      "id": "inventory-automatic-receipt-readonly",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "inventory-automatic-receipt-readonly-390-100.png"
+    },
+    {
+      "id": "inventory-automatic-receipt-readonly",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-automatic-receipt-readonly-390-125.png"
+    },
+    {
+      "id": "inventory-automatic-receipt-readonly",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "inventory-automatic-receipt-readonly-1366-100.png"
+    },
+    {
+      "id": "inventory-automatic-receipt-readonly",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-automatic-receipt-readonly-1366-125.png"
+    },
+    {
+      "id": "inventory-automatic-receipt-readonly",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "inventory-automatic-receipt-readonly-1440-100.png"
+    },
+    {
+      "id": "inventory-automatic-receipt-readonly",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-automatic-receipt-readonly-1440-125.png"
+    },
+    {
+      "id": "inventory-receipt-relation-tab-0",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-receipt-relation-tab-0-390-125.png",
+      "label": "关联 SKU 1"
+    },
+    {
+      "id": "inventory-receipt-relation-tab-1",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-receipt-relation-tab-1-390-125.png",
+      "label": "所属产品 1"
+    },
+    {
+      "id": "inventory-receipt-relation-tab-2",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-receipt-relation-tab-2-390-125.png",
+      "label": "关联订单 0"
+    },
+    {
+      "id": "inventory-receipt-relation-tab-3",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-receipt-relation-tab-3-390-125.png",
+      "label": "流水操作日志 0"
+    },
+    {
+      "id": "purchase-reversal-source-only",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "purchase-reversal-source-only-390-125.png"
+    },
+    {
+      "id": "inventory-reversal-and-original-readonly",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "inventory-reversal-and-original-readonly-390-125.png"
+    }
+  ]
+}

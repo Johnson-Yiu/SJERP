@@ -1,0 +1,19 @@
+主体拒绝／撤回 125%
+    Test timeout of 240000ms exceeded.
+  1 failed
+Error: EBUSY: resource busy or locked, unlink '[临时运行目录]/sales-party-lifecycle-reviewer\lockfile'
+
+主体替换 125%
+    Test timeout of 300000ms exceeded.
+  1 failed
+
+客户追加首跑
+Error: Django API identity check failed: fetch failed.
+
+联系人选择器首次
+TimeoutError: page.waitForResponse: Timeout 30000ms exceeded while waiting for event "response"
+   at helpers\codex-auth.global-setup.js:20
+
+联系人选择器第二次
+TimeoutError: page.waitForResponse: Timeout 30000ms exceeded while waiting for event "response"
+   at helpers\codex-auth.global-setup.js:20

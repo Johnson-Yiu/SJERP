@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test'
 import { syntheticVoucherPdf } from './helpers/bank-voucher.js'
 
-// MOCKED_TEST: UI sequencing and stable-key presentation; real database/browser evidence is kept in the P2-B evidence folder.
+// MOCKED_TEST: UI sequencing and request replay; real database/browser evidence is kept in the P2-B evidence folder.
 test('cash event UI previews, registers, and confirms without changing receipt flows', async ({ page }) => {
   let status = 'pending'
+  const registrations = []
+  const facts = new Map()
   const event = () => ({
     id: 91, event_no: 'P2B-EVENT-MOCK-01', request_key: 'P2B-REQUEST-MOCK-01', kind: 'fx_settlement', currency: 'USD', amount: '100.0000', direction: 'income', bank_date: '2026-10-19', bank_net_amount: '705.00', fee_mode: 'none', fee_amount: '0.00', source_account: 'SYNTH-FX-01', rmb_account: 'SYNTH-CNY-01', bank_reference: 'P2B-MOCK-BANK-01', evidence_reference: 'P2B-MOCK-VOUCHER-01', evidence_sha256: 'a'.repeat(64), evidence_note: 'mock voucher checked', private_voucher: 1, status, confirmed_at: status === 'confirmed' ? '2026-10-19T02:00:00Z' : null, sources: [{ transaction_id: 1, amount: '30.0000', currency: 'USD', snapshot: { transaction_no: 'P2B-SYNTH-T', exchange_rate: '7.100000' } }, { transaction_id: 2, amount: '70.0000', currency: 'USD', snapshot: { transaction_no: 'P2B-SYNTH-T-SPLIT', exchange_rate: '7.100000' } }], reference_amount: '710.00', net_minus_reference_information_only: '-5.00', note: '仅人工凭证确认事实；含扣费不再次扣减净额。', quoted_rate: '7.100000', fee_for: null,
   })
@@ -19,7 +21,15 @@ test('cash event UI previews, registers, and confirms without changing receipt f
     if (path === '/api/rmb-cash-events/preview/') return route.fulfill({ json: { source_total: '100.00', bank_net_amount: '705.00', confirmed: false, sources: [] } })
     if (path === '/api/rmb-cash-events/voucher-upload/') return route.fulfill({ status: 201, json: { id: 1, name: 'synthetic-bank.pdf', sha256: 'a'.repeat(64) } })
     if (path === '/api/rmb-cash-events/91/duplicate-candidates/') return route.fulfill({ json: { count: 0, items: [], restricted: false, token: 'empty' } })
-    if (path === '/api/rmb-cash-events/' && route.request().method() === 'POST') return route.fulfill({ status: 201, json: event() })
+    if (path === '/api/rmb-cash-events/' && route.request().method() === 'POST') {
+      const payload = route.request().postDataJSON()
+      registrations.push(payload)
+      if (!facts.has(payload.request_key)) {
+        facts.set(payload.request_key, { ...event(), event_no: payload.event_no, request_key: payload.request_key })
+      }
+      if (registrations.length === 1) return route.abort('failed')
+      return route.fulfill({ status: 200, json: facts.get(payload.request_key) })
+    }
     if (path === '/api/rmb-cash-events/91/confirm/') { status = 'confirmed'; return route.fulfill({ json: event() }) }
     return route.fulfill({ json: [] })
   })
@@ -46,7 +56,15 @@ test('cash event UI previews, registers, and confirms without changing receipt f
   await page.getByRole('button', { name: '预览结汇信息' }).click()
   await expect(page.locator('.preview-box')).toContainText('来源合计 USD 100.00')
   await page.getByRole('button', { name: '登记待确认结汇' }).click()
+  await expect(page.getByRole('button', { name: '按原内容核对' })).toBeVisible()
+  await page.reload()
+  await page.getByRole('button', { name: '新增资金事件' }).click()
+  await page.getByRole('button', { name: '按原内容核对' }).click()
   await expect(page.locator('.review-banner')).toContainText('待确认')
+  expect(registrations).toHaveLength(2)
+  expect(registrations[0].request_key).toBeTruthy()
+  expect(registrations[1]).toEqual(registrations[0])
+  expect(facts.size).toBe(1)
   await expect(page.getByRole('button', { name: '确认银行凭证' })).toBeDisabled()
   await page.getByRole('checkbox', { name: /我已核对银行凭证/ }).check()
   await page.getByRole('button', { name: '确认银行凭证' }).click()
@@ -87,7 +105,7 @@ test('source verification is explicit and any fact change invalidates the previe
   await expect(page.getByRole('button', { name: '预览结汇信息' })).toBeVisible()
 })
 
-test('refresh retains the stable request identity without persisting financial inputs', async ({ page }) => {
+test('refresh discards unsubmitted financial inputs and creates no pending registration', async ({ page }) => {
   await page.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname
     if (path === '/api/session/current-operator/') return route.fulfill({ json: { development_superadmin: true, has_all_permissions: true } })
@@ -100,14 +118,12 @@ test('refresh retains the stable request identity without persisting financial i
   })
   await page.goto('/rmb-cash-events', { waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: '新增资金事件' }).click()
-  const requestKey = await page.getByLabel('稳定请求键').inputValue()
   await page.getByLabel('扣费前兑换额（CNY）').fill('705.00')
   await page.reload()
   await page.getByRole('button', { name: '新增资金事件' }).click()
-  await expect(page.getByLabel('稳定请求键')).toHaveValue(requestKey)
   await expect(page.getByLabel('扣费前兑换额（CNY）')).toHaveValue('')
-  const stored = await page.evaluate(() => Object.values(sessionStorage).join('\n'))
-  expect(stored).toContain(requestKey)
+  const stored = await page.evaluate(() => [...Object.values(localStorage), ...Object.values(sessionStorage)].join('\n'))
+  expect(stored).not.toContain('705.00')
   expect(stored).not.toContain('bank_net_amount')
   expect(await page.evaluate(() => localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1'))).toBeNull()
 })
@@ -181,7 +197,7 @@ test('changing a 30 allocation to 50 clears verification and requires a fresh pr
   expect(previewCalls).toBe(2)
 })
 
-test('expired local draft is removed during page initialization and sensitive evidence is not persisted', async ({ page }) => {
+test('expired legacy draft remains isolated and new unsubmitted evidence is not persisted', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('sunjack:r1-fin-p2-b:cash-event-draft:v1', JSON.stringify({
       saved_at: Date.now() - 25 * 60 * 60 * 1000,
@@ -201,21 +217,19 @@ test('expired local draft is removed during page initialization and sensitive ev
   })
   await page.goto('/rmb-cash-events', { waitUntil: 'domcontentloaded' })
   await expect(page.getByRole('button', { name: '新增资金事件', exact: true })).toBeVisible()
-  expect(await page.evaluate(() => localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1'))).toBeNull()
   await page.getByRole('button', { name: '新增资金事件' }).click()
+  await expect(page.getByText('此浏览器留有旧版待核对记录。', { exact: false })).toBeVisible()
   await page.getByLabel('扣费前兑换额（CNY）').fill('705.00')
   await page.getByLabel('核对说明').fill('private-browser-evidence-never-persist')
-  const raw = await page.evaluate(() => Object.entries(sessionStorage).find(([key]) => key.startsWith('sunjack:cash-event:request-identity:v1:'))?.[1])
-  const identity = JSON.parse(raw)
-  expect(Object.keys(identity).sort()).toEqual(['attempted', 'event_no', 'request_key', 'saved_at'])
-  expect(identity).not.toHaveProperty('form')
-  expect(identity).not.toHaveProperty('allocations')
-  expect(raw).not.toContain('bank_net_amount')
-  expect(raw).not.toContain('private-browser-evidence-never-persist')
-  expect(await page.evaluate(() => localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1'))).toBeNull()
+  const stored = await page.evaluate(() => ({
+    legacy: JSON.parse(localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1')),
+    values: [...Object.values(localStorage), ...Object.values(sessionStorage)].join('\n'),
+  }))
+  expect(stored.legacy.form.request_key).toBe('EXPIRED-REQUEST')
+  expect(stored.values).not.toContain('private-browser-evidence-never-persist')
 })
 
-test('legacy unscoped financial inputs are removed and never restored into a workspace', async ({ page }) => {
+test('legacy unscoped financial inputs remain available for reconciliation without restoring into a workspace', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('sunjack:r1-fin-p2-b:cash-event-draft:v1', JSON.stringify({
       version: 1,
@@ -239,14 +253,18 @@ test('legacy unscoped financial inputs are removed and never restored into a wor
   })
   await page.goto('/rmb-cash-events', { waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: '新增资金事件' }).click()
-  await expect(page.getByText('旧版浏览器草稿已清理', { exact: false })).toBeVisible()
-  expect(await page.evaluate(() => localStorage.getItem('sunjack:r1-fin-p2-b:cash-event-draft:v1'))).toBeNull()
-  await expect(page.getByLabel('稳定请求键')).not.toHaveValue('LEGACY-REQUEST')
+  await expect(page.getByText('此浏览器留有旧版待核对记录。', { exact: false })).toBeVisible()
+  await expect(page.getByRole('button', { name: '按原内容核对' })).toHaveCount(0)
   await expect(page.getByLabel('扣费前兑换额（CNY）')).toHaveValue('')
   await expect(page.getByLabel('凭证引用')).toHaveValue('')
-  const stored = await page.evaluate(() => [...Object.values(localStorage), ...Object.values(sessionStorage)].join('\n'))
-  expect(stored).not.toContain('legacy-secret-voucher')
-  expect(stored).not.toContain('legacy private note')
+  const stored = await page.evaluate(() => {
+    const key = 'sunjack:r1-fin-p2-b:cash-event-draft:v1'
+    const legacy = JSON.parse(localStorage.getItem(key))
+    return { legacy, copies: [...Object.entries(localStorage), ...Object.entries(sessionStorage)].filter(([name, value]) => name !== key && value.includes('LEGACY-REQUEST')) }
+  })
+  expect(stored.legacy.form.evidence_reference).toBe('legacy-secret-voucher')
+  expect(stored.copies).toEqual([])
+  expect(stored.legacy.form.evidence_note).toBe('legacy private note')
 })
 
 test('stale source responses cannot overwrite the current currency', async ({ page }) => {

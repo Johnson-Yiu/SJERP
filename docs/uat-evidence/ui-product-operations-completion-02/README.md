@@ -64,3 +64,17 @@ node frontend/scripts/run-isolated-browser-tests.mjs --business-test ui-product-
 - **库存详情缺少批次或货位标识**。在库存流水中按仓库名筛出同 SKU 的两条不同批次，打开第一条后，抽屉能展示流水号和仓库，但不显示已有批次。候选位置为 `EntityDetailModal.vue` 的库存 `detailInfo` 字段映射。影响同仓多批次的界面辨识。 [原始失败](chrome-same-warehouse-lot-label-missing/run.json) · [两条真实流水详情、接口批次与缺失截图](chrome-same-warehouse-lots/run.json)
 
 以上问题保留供独立复审。批次号搜索沿用现有产品范围。
+
+## 冻结源码补验
+
+在 A3 冻结源码 `92c15b65e495012f203496698bd8fb8af9ef3d17` 的独立工作树，使用 Chrome 真实后端验证 390×844、原生 125%。合成库存流水分别标记为销售出库、退货入库和采购入库，三个系统自动来源在列表均只可打开详情，编辑和冲销入口不可用。手工流水允许打开冲销确认，原因为空时确认按钮禁用。填写原因后真实接口返回 201。原流水标记已冲销，自动生成的冲销流水与原流水均无编辑或再次冲销入口。[库存来源操作](chrome-inventory-source-actions/run.json)
+
+采购组合的首次环境尝试在 Chrome 设置页超时。[保留的环境记录](chrome-purchase-receipt-combinations-environment-first/run.json)
+
+采购组合补验保留另两次原始尝试。E2 本地源码首轮尝试在草稿态查找仅正式下单后出现的成本分配按钮。A3 冻结源码随后成功下单，真实成本接口拒绝超出实际采购数量的合成分配。第二轮读回采购数量后仍复现拒绝。脚本当时在异步载入成本表单前检查旧归属行，漏删了默认库存归属。后续明确等待成本表单出现后再清除旧归属。[草稿入口尝试](chrome-purchase-receipt-sources/run.json) · [真实数量校验拒绝](chrome-purchase-receipt-combinations-allocation-rejected/run.json) · [旧归属行仍存在时的拒绝](chrome-purchase-receipt-combinations-allocation-rejected-second/run.json)
+
+确认等待表单载入后，两张销售订单的成本归属通过真实保存和接口读回。该轮随后在“仓库类型”选择器定位时超时，已调整测试定位。[成本归属通过与后续定位失败](chrome-purchase-receipt-combinations-location-selector/run.json)
+
+同一张已下单采购单保存了两张销售订单的成本归属。通过两次真实收货分别将一箱 10 件收至自有仓、一大箱 20 件收至第三方仓。两次均回读采购记录和生成的库存流水，核对仓库、批次、交易数量及基础数量。每次短暂拦截出站请求，连续触发两次点击，观察提交中禁用，再将唯一请求转发真实后端。两笔收货分别返回 201。已下单采购单无草稿编辑按钮。单次受控 400 保留入库字段，取消可关闭表单且入口可重新打开。取消后键盘焦点未回到“验货入库”，保留为待独立复审问题。[采购组合和取消后焦点](chrome-purchase-receipt-combinations/run.json)
+
+真实收货生成的库存流水在六组视口和原生缩放下均可打开详情及关闭，窄屏可点击四个关联标签。库存列表无自动流水的编辑或冲销入口。采购工作台的实际冲销成功后，库存原记录与冲销流水均无编辑或再次冲销入口。[库存抽屉、关联标签与采购来源冲销](chrome-purchase-receipt-combinations/run.json)

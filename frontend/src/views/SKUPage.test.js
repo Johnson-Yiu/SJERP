@@ -81,7 +81,7 @@ async function saveContext(editing = false, imageFails = false, salesModel = '',
   const detail = { packaging_template: 12, carton_quantity: 50, unit_weight: 0.15 }
   const preview = { specification: '12W', parameterValuesForSku: { power: '12W' }, description_cn: 'Light' }
   const ctx = {
-    api: { put: async (...args) => { calls.push(['put', ...args]) }, post: async (...args) => { calls.push(['post', ...args]); return { data: [{ id: 7 }] } } },
+    api: { put: async (...args) => { calls.push(['put', ...args]); return { data: { id: 7 } } }, post: async (...args) => { calls.push(['post', ...args]); return { data: [{ id: 7 }] } } },
     guard: { markClean: () => calls.push(['clean']) }, nextTick: async () => {},
     saveError: { value: '' }, saving: { value: false }, editingId: { value: editing ? 7 : null },
     form: { product: 1, unit: 'pcs', currency: 'USD', active: true, sales_model: salesModel }, salesModelAbbreviations: {},
@@ -89,13 +89,16 @@ async function saveContext(editing = false, imageFails = false, salesModel = '',
     cleanDetail: () => ({ carton_quantity: 50 }), ordinaryValues: () => ({}), translateLightingTerms: v => v,
     selectedImage: { value: imageFails ? {} : null }, imageClearRequested: { value: false }, pendingImageSkuIds: { value: [] }, pendingImageFailurePrefix: { value: "" },
     skuOptionsReady: { value: true },
+    rows: { value: [] }, historyRows: { value: [] },
     uploadImage: async () => { if (imageFails) throw new Error('network failed') },
     load: async () => {}, closeModal: () => calls.push(['close']), emit: () => {},
     notify: msg => notices.push(msg), reportSaveError: (error, prefix) => { ctx.saveError.value = prefix + error.message; notices.push(ctx.saveError.value) },
   }
   const helper = source.slice(source.indexOf('function packagingInput('), source.indexOf('async function openVersions'))
   const persist = source.slice(source.indexOf('async function persistSave('), source.indexOf('async function confirmIdentitySave'))
-  runInNewContext(helper + persist + ';this.persistSave = persistSave', ctx)
+  const savedRow = source.slice(source.indexOf('function updateSavedRow('), source.indexOf('async function uploadImage('))
+  const pendingImages = source.slice(source.indexOf('async function uploadPendingImages('), source.indexOf('let loadVersion'))
+  runInNewContext(helper + savedRow + pendingImages + persist + ';this.persistSave = persistSave', ctx)
   await ctx.persistSave({ editingRow: { specification: '12W', parameter_values: {} }, parameterChanged, productChanged: false, identityChanged: false })
   return { ctx, calls, notices }
 }

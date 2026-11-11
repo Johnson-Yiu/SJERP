@@ -258,6 +258,18 @@ def main():
         # A real independent mount process changes the kernel state while the
         # actual pg_dump is running. Only the timing hook is instrumented: the
         # filesystem verifier itself and all database operations remain real.
+        def wait_for_disconnected_clients():
+            # pg_dump and the closed runtime client can exit before PostgreSQL
+            # has removed their server-side sessions. Keep the backup gate intact.
+            deadline = time.monotonic() + 10
+            while time.monotonic() < deadline:
+                if not admin.execute(
+                    "SELECT 1 FROM pg_stat_activity WHERE datname = %s", (database,)
+                ).fetchone():
+                    return
+                time.sleep(0.1)
+            raise AssertionError("Owned source database did not become idle")
+
         original_tool = service.tool
         for fault in ("remount", "changed-file"):
             hook_fired = []
@@ -271,6 +283,7 @@ def main():
                         command("sudo", "mount", "-o", "remount,ro", media)
                 return result
             service.tool = interrupted
+            wait_for_disconnected_clients()
             rejected_path = root / (fault + ".zip")
             try:
                 service.backup(media_root=media, destination=rejected_path)

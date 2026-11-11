@@ -1,5 +1,9 @@
 import tempfile
 import hashlib
+import io
+import subprocess
+from pathlib import Path
+from django.core.management import call_command
 import os
 import json
 from django.core.serializers.json import DjangoJSONEncoder
@@ -127,6 +131,19 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
             self.assertEqual(bridge.advance_source(group.pk, source.pk, 'post', maker, voucher_checked=True).pk,fact.pk)
             self.assertEqual(FinanceFact.objects.count(),1)
             report = reconcile(application, os.environ.get('HISTORY_DELIVERY_SOURCE_SHA', 'uncommitted-test'))
+            original_path = Path(media) / 'source.xlsx'
+            original_path.write_bytes(workbook)
+            current_sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+            # The command refuses dirty source; simulate the recorded clean source in this
+            # transactional test while still exercising digest and argument handling.
+            with patch('crm.management.commands.reconcile_history_import.subprocess.check_output', side_effect=[current_sha + '\n', '']):
+                out = io.StringIO()
+                call_command('reconcile_history_import', application.pk, source_sha=current_sha, source_file=str(original_path), stdout=out)
+                self.assertEqual(json.loads(out.getvalue())['file_sha256'], application.source_sha256)
+            original_path.write_bytes(b'wrong file')
+            with patch('crm.management.commands.reconcile_history_import.subprocess.check_output', side_effect=[current_sha + '\n', '']):
+                with self.assertRaisesMessage(ValueError, 'does not match'):
+                    call_command('reconcile_history_import', application.pk, source_sha=current_sha, source_file=str(original_path), stdout=io.StringIO())
             self.assertEqual(len(report['groups'][0]['cny_finance_facts']), 1)
             self.assertEqual(len(report['groups'][0]['source_plans']), 2)
             self.assertEqual(report['groups'][0]['source_cash_totals']['USD']['income'], 40)

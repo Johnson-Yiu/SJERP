@@ -1,0 +1,95 @@
+{
+  "source": "41e88660a292026449bbe1bd944e6744f93c7cf8",
+  "browser": "Chrome/156.0.8078.80",
+  "api": "real isolated Django",
+  "states": [
+    {
+      "id": "parameter-post",
+      "status": 201
+    },
+    {
+      "id": "parameter-reopened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "parameter-reopened-390-125.png"
+    },
+    {
+      "id": "sales-customers",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "sales-customers-390-100.png",
+      "topbarBottom": 70,
+      "workspaceTop": 70,
+      "cssWidth": 390
+    },
+    {
+      "id": "customer-detail-edit-action",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "customer-detail-edit-action-390-100.png"
+    },
+    {
+      "id": "customer-detail-edit-opened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "customer-detail-edit-opened-390-100.png"
+    },
+    {
+      "id": "history-analysis",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "history-analysis-390-100.png",
+      "topbarBottom": 70,
+      "workspaceTop": 70,
+      "cssWidth": 390
+    },
+    {
+      "id": "sales-customers",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "sales-customers-390-125.png",
+      "topbarBottom": 70,
+      "workspaceTop": 70,
+      "cssWidth": 312
+    },
+    {
+      "id": "customer-detail-edit-action",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "customer-detail-edit-action-390-125.png"
+    },
+    {
+      "id": "customer-detail-edit-opened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "customer-detail-edit-opened-390-125.png"
+    },
+    {
+      "id": "history-analysis",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "history-analysis-390-125.png",
+      "topbarBottom": 70,
+      "workspaceTop": 70,
+      "cssWidth": 312
+    }
+  ]
+}

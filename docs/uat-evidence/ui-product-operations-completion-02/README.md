@@ -42,3 +42,12 @@ node frontend/scripts/run-isolated-browser-tests.mjs --business-test ui-product-
 - **中间失败**保留。型号前缀首个样本缺少旧产品前缀，随后两个样本缺少参与销售型号生成的参数或缩写。参数首轮在保存自动打开的详情后直接点被覆盖的列表按钮，第二轮关闭详情后仍未返回独立参数列表。最终分别补齐合成前缀属性和明确重开参数列表。[前缀第一轮](chrome-prefix/run.json) · [前缀第二轮](chrome-prefix-final/run.json) · [前缀第三轮](chrome-prefix-third/run.json) · [参数第一轮](chrome-parameter-first/run.json) · [参数第二轮](chrome-parameter-second/run.json)
 
 型号前缀和产品参数只修改了隔离数据库里的合成资料。参数运行记录对应 `9083414b469257cb608f5d83d67d5684579058e6`，相对最终产品源码 `df1a32e0a2631fb14ce5e370ef4c9b14444a0de8` 的差异只有本包脚本和证据。产品代码等价可以用 `git diff df1a32e0 9083414b -- frontend/src backend` 复核。
+
+## A3 复审后补验
+
+- **客户详情编辑**。H1 的窄屏样式隐藏“编辑客户”。E2 保留这一个客户主操作，其余详情动作维持原有布局。单独验证 E2 修复时，入口已可点击且表单带回正确客户，原详情却仍挡住“取消”。E1 将表单移至详情上方并在编辑期间停用底层抽屉。组合源码 `41e88660a292026449bbe1bd944e6744f93c7cf8` 的 ResourcePage 与 E1 `b52f3edc5c4ea47ed265f86d94ccdce0134b24d6` 同文件内容。真实 Chrome 390×844 原生 100%／125% 均实测点击入口、回填及取消关闭。 [原始选择器失败](chrome-customer-edit-first/run.json) · [E2 单独复现遮挡](chrome-customer-edit-obscured/run.json) · [组合修复通过](chrome-customer-edit-combined/run.json)
+- **共用抽屉回归**。客户编辑入口修复后的产品详情及嵌套证书仍通过六组视口与缩放。 [复验索引](chrome-customer-edit-product-regression/run.json)
+- **SKU 历史版本**。更新产品型号前缀后，从原 SKU 打开历史版本。真实接口和页面均展示修改前的销售型号，SKU 编码不变。 [版本回显](chrome-prefix-version/run.json)
+- **分类**。将无产品引用的合成分类拖至新父级后，重新加载核对持久化父级与继承属性只读。拖动子分类内两个自有属性后查看重排预览，确认并重新加载核对顺序。使用 DOM 拖放事件触发真实后端。 [分类重排](chrome-category-order/run.json)
+- **供应来源和采购回填**。保存供应型号和参考价，切换同一 SKU 首选来源并核对旧首选撤销。采购单 CNY 与供应来源 USD 不一致时提示且留空，切换 USD 后明确选定档案回填 8.50，保存真实草稿并读回供应来源和单价。 [采购回填](chrome-supplier-purchase/run.json)
+- **模拟浏览器用例**。A3 原记录中的 SKU 和包装只读失败，均由模拟会话少了 authenticated 字段导致。补齐字段后原 SKU 17 条、包装 9 条通过，原业务断言保留。真实后端证据见各自索引。GitHub Actions 为 NOT_RUN。

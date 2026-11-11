@@ -1,0 +1,16 @@
+{
+  "source": "7e54e649e85aeb7f6580802770a13882c5978528",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "category-inherits-new-parent",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "category-inherits-new-parent-390-125.png",
+      "method": "DOM drag events, real Django reorder"
+    }
+  ],
+  "failure": "locator.dispatchEvent: JSHandles can be evaluated only in the context they were created!\nCall log:\n\u001b[2m  - waiting for locator('.config-panel').getByRole('row').filter({ hasText: '灯罩形式' }).locator('.attribute-drag-handle')\u001b[22m\n"
+}

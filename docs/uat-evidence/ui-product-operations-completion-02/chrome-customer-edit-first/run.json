@@ -1,0 +1,39 @@
+{
+  "source": "13f5becd5ce737631412bf0d7ef683b37788709d",
+  "browser": "Chrome/156.0.8078.80",
+  "api": "real isolated Django",
+  "states": [
+    {
+      "id": "parameter-post",
+      "status": 201
+    },
+    {
+      "id": "parameter-reopened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "parameter-reopened-390-125.png"
+    },
+    {
+      "id": "sales-customers",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "sales-customers-390-100.png",
+      "topbarBottom": 70,
+      "workspaceTop": 70,
+      "cssWidth": 390
+    },
+    {
+      "id": "customer-detail-edit-action",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "png": "customer-detail-edit-action-390-100.png"
+    }
+  ],
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: '编辑客户' })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('dialog', { name: '编辑客户' }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '编辑客户' })\u001b[22m\n"
+}

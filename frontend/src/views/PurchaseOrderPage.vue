@@ -318,9 +318,12 @@ async function editDraft(row) {
     })),
   }
   activeSkuId.value = String(draft.value.items[0]?.sku || '')
-  supplierSkuOptions.value = {}; notice.value = ''; error.value = ''; openCreate.value = true
-  await Promise.all(draft.value.items.map(loadSupplierSkuOptions))
+  supplierSkuOptions.value = {}; notice.value = ''; error.value = ''
+  const currentDraft = draft.value
+  await Promise.all(currentDraft.items.map(loadSupplierSkuOptions))
+  if (draft.value !== currentDraft || String(expandedId.value) !== String(row.id)) return
   guard.markClean()
+  openCreate.value = true
 }
 const closeCreate = () => guard.requestClose(discardCreate)
 function discardCreate({ keepRoute = false } = {}) { openCreate.value = false; routeCreateOpen.value = false; routeCreateSignature = ''; if (!keepRoute) void clearModalRoute(router, route) }

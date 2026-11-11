@@ -54,8 +54,26 @@ test('sales and purchase drafts recover after a rejected save', async ({ baseURL
           const detailPath = '/' + resource + '?detail=' + id + (kind === 'sales' ? '&tab=items' : '')
           await go(detailPath)
           const editTrigger = page.getByRole('button', { name: '编辑草稿', exact: true })
-          await editTrigger.click()
-          const editor = page.getByRole('dialog', { name: '编辑销售订单草稿' })
+          const editor = page.getByRole('dialog', { name: kind === 'sales' ? '编辑销售订单草稿' : '编辑采购草稿' })
+          if (kind === 'purchase') {
+            let release
+            const held = new Promise(resolve => { release = resolve })
+            const options = url => url.pathname === '/api/supplier-skus/'
+            await page.route(options, async route => {
+              await held
+              await route.continue()
+            }, { times: 1 })
+            const requested = page.waitForRequest(request => options(new URL(request.url())))
+            try {
+              await editTrigger.click()
+              await requested
+              await expect(editor).toBeHidden()
+            } finally {
+              release()
+            }
+          } else {
+            await editTrigger.click()
+          }
           const workbench = page.getByRole('dialog', { name: '订单工作台' })
           if (kind === 'sales') {
             await expect(editor).toBeFocused()
@@ -119,22 +137,22 @@ test('sales and purchase drafts recover after a rejected save', async ({ baseURL
           await editTrigger.click()
           const storedValue = () => expect.poll(async () => Number(await field.inputValue())).toBe(Number(newValue))
           await storedValue()
+          const unsaved = String(Number(newValue) + 50)
+          await field.fill(unsaved)
+          const cancel = editor.getByRole('button', { name: '取消', exact: true })
+          await cancel.click()
+          await page.getByRole('button', { name: '继续编辑', exact: true }).click()
+          await expect(field).toHaveValue(unsaved)
+          if (kind === 'sales') await expect(workbench).toBeHidden()
+          await cancel.click()
+          await page.getByRole('button', { name: '放弃修改', exact: true }).click()
+          await expect(editor).toBeHidden()
           if (kind === 'sales') {
-            const unsaved = String(Number(newValue) + 50)
-            await field.fill(unsaved)
-            const cancel = editor.getByRole('button', { name: '取消', exact: true })
-            await cancel.click()
-            await page.getByRole('button', { name: '继续编辑', exact: true }).click()
-            await expect(field).toHaveValue(unsaved)
-            await expect(workbench).toBeHidden()
-            await cancel.click()
-            await page.getByRole('button', { name: '放弃修改', exact: true }).click()
-            await expect(editor).toBeHidden()
             await expect(editTrigger).toBeFocused()
             await expect.poll(() => new URL(page.url()).searchParams.get('tab')).toBe('items')
-            await editTrigger.click()
-            await storedValue()
           }
+          await editTrigger.click()
+          await storedValue()
           page.off('request', recordWrite)
           expect(writes).toHaveLength(1)
 

@@ -38,7 +38,8 @@ test('contact detail recovers from a delayed failure and returns to its follow-u
       const screenshot = async state => {
         expect(await page.evaluate(() => devicePixelRatio)).toBeCloseTo(zoom, 2)
         const png = state + '-' + zoom * 100 + '.png'
-        await page.screenshot({ path: path.join(output, png) })
+        const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+        await writeFile(path.join(output, png), Buffer.from(data, 'base64'))
         results.push({ state, png, zoom, width: 390, height: 844 })
       }
       let release
@@ -75,7 +76,8 @@ test('contact detail recovers from a delayed failure and returns to its follow-u
         const screenshot = async state => {
           expect(await page.evaluate(() => devicePixelRatio)).toBeCloseTo(zoom, 2)
           const png = state + '-' + suffix + '.png'
-          await page.screenshot({ path: path.join(output, png) })
+          const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+        await writeFile(path.join(output, png), Buffer.from(data, 'base64'))
           results.push({ state, png, zoom, width, height })
         }
         const row = page.locator('.follow-up-list-table tbody tr').filter({ hasText: '合成跟进回看' })
@@ -115,7 +117,10 @@ test('contact detail recovers from a delayed failure and returns to its follow-u
         try {
           await save.click()
           await Promise.race([intercepted, replacement])
-          await expect(dialog.getByRole('button', { name: '保存中…', exact: true })).toBeDisabled()
+          const pending = dialog.getByRole('button', { name: '保存中…', exact: true })
+          await expect(pending).toBeDisabled()
+          await pending.scrollIntoViewIfNeeded()
+          await expect(pending).toBeInViewport()
           await screenshot('attachment-upload-pending')
         } finally { release() }
         expect((await replacement).ok()).toBeTruthy()
@@ -129,8 +134,11 @@ test('contact detail recovers from a delayed failure and returns to its follow-u
         await page.route(url => url.pathname.startsWith(uploadPath) && url.pathname !== uploadPath,
           route => route.fulfill({ status: 400, json: { detail: '合成删除失败，请重试' } }), { times: 1 })
         await remove()
-        await expect(page.locator('.toast')).toContainText('合成删除失败，请重试')
+        const error = dialog.getByRole('alert').filter({ hasText: '附件删除失败，请重试。' })
+        await expect(error).toBeInViewport()
         await expect(saved(oldName)).toHaveCount(1)
+        await save.click({ trial: true })
+        await dialog.getByRole('button', { name: '取消', exact: true }).click({ trial: true })
         await screenshot('attachment-delete-failed')
         await remove()
         await expect(saved(oldName)).toHaveCount(0)

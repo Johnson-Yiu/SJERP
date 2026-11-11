@@ -31,7 +31,7 @@ test('finance pending submission and ambiguous retry preserve identity and guard
   expect(writes).toHaveLength(1)
   release()
   await expect(form.getByRole('alert')).toContainText('记账结果尚未确认')
-  await form.getByRole('button', { name: '保存', exact: true }).click()
+  await form.getByRole('button', { name: '按原编号重试', exact: true }).click()
   await expect(form).toContainText('编号重复不代表本次保存成功')
   expect(writes).toHaveLength(2)
   expect(writes[0]).toEqual(writes[1])

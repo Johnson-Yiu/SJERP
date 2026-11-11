@@ -45,13 +45,13 @@ for (const width of [1440, 390]) test(`authenticated finance closure and reconci
   }
   const post = obj => call('post', { id: obj.id, voucher_checked: true })
   const approve = async obj => { await signIn('reviewer'); const result = await call('approve', { id: obj.id }); await signIn('maker'); return result }
-  const opening = await make({ kind: 'opening', actual_date: '2026-02-01', amount: '1000.00' })
+  const opening = await make({ kind: 'opening', actual_date: '2026-02-01', amount: '1000.00', reason: `合成期初核对-${suffix}` })
   await call('approve', { id: opening.id }, 400)
   await call('post', { id: opening.id, voucher_checked: true }, 400)
   await signIn('reviewer')
   await page.goto('/finance-ledger')
   await page.getByRole('button', { name: '登记与复核', exact: true }).click()
-  const openingCard = page.locator('article').filter({ hasText: `指令 #${opening.id} ·` })
+  const openingCard = page.locator('article').filter({ hasText: opening.payload.reason })
   const approvalResponse = page.waitForResponse(r => r.url().endsWith('/api/finance-ledger/approve/') && r.request().method() === 'POST')
   await openingCard.getByRole('button', { name: '另一人复核', exact: true }).click()
   const approvedHttp = await approvalResponse
@@ -80,12 +80,12 @@ for (const width of [1440, 390]) test(`authenticated finance closure and reconci
   await call('reviews', { account: bank.id, date_from: '2026-02-01', date_to: '2026-02-28', voucher: proof.id, statement_balance: '950.00', completed: true, reason: '合成银行月末核对' }, 201)
   await page.goto('/finance-ledger')
   await page.getByRole('button', { name: '账户核对', exact: true }).click()
-  await expect(page.locator('article').filter({ hasText: `账户 #${bank.id} ·` })).toContainText('核对完成')
+  await expect(page.locator('article').filter({ hasText: `合成核对银行-${width} ·` })).toContainText('核对完成')
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.screenshot({ path: path.join(root, `reconciliation-completed-${width}.png`), fullPage: true })
   await post(await make({ actual_date: '2026-02-08', amount: '1.00', nature: 'interest' }))
   await page.getByRole('button', { name: '刷新', exact: true }).click()
-  await expect(page.locator('article').filter({ hasText: `账户 #${bank.id} ·` })).toContainText('需重新核对')
+  await expect(page.locator('article').filter({ hasText: `合成核对银行-${width} ·` })).toContainText('需重新核对')
   await expect(page.getByRole('button', { name: '刷新', exact: true })).toBeEnabled()
   await page.evaluate(async () => {
     window.scrollTo(0, 0)

@@ -61,6 +61,6 @@ node frontend/scripts/run-isolated-browser-tests.mjs --business-test ui-product-
 ## 待独立复审
 
 - **SKU 图片删除后立即重开可能显示旧图**。390×844、原生 125% 下给新 SKU 上传和替换图片，保存时清除图片。真实 DELETE 成功且 SKU 详情接口已无图。列表刷新尚未完成时立即重开编辑，旧预览仍显示。候选位置为 `SKUPage.vue` 的 `persistSave` 成功分支先关闭编辑器再加载列表，以及 `openEdit` 从列表行读取图片。影响同页快速重开的编辑预览。 [原始失败和图片写入截图](chrome-sku-lifecycle-immediate-reopen/run.json)
-- **库存详情缺少批次或货位标识**。在库存流水中按仓库名筛出同 SKU 的两条不同批次，打开第一条后，抽屉能展示流水号和仓库，但不显示已有批次。候选位置为 `EntityDetailModal.vue` 的库存 `detailInfo` 字段映射。影响同仓多批次的界面辨识。 [原始失败](chrome-same-warehouse-lot-label-missing/run.json)
+- **库存详情缺少批次或货位标识**。在库存流水中按仓库名筛出同 SKU 的两条不同批次，打开第一条后，抽屉能展示流水号和仓库，但不显示已有批次。候选位置为 `EntityDetailModal.vue` 的库存 `detailInfo` 字段映射。影响同仓多批次的界面辨识。 [原始失败](chrome-same-warehouse-lot-label-missing/run.json) · [两条真实流水详情、接口批次与缺失截图](chrome-same-warehouse-lots/run.json)
 
 以上问题保留供独立复审。批次号搜索沿用现有产品范围。

@@ -51,3 +51,16 @@ node frontend/scripts/run-isolated-browser-tests.mjs --business-test ui-product-
 - **分类**。将无产品引用的合成分类拖至新父级后，重新加载核对持久化父级与继承属性只读。拖动子分类内两个自有属性后查看重排预览，确认并重新加载核对顺序。使用 DOM 拖放事件触发真实后端。 [分类重排](chrome-category-order/run.json)
 - **供应来源和采购回填**。保存供应型号和参考价，切换同一 SKU 首选来源并核对旧首选撤销。采购单 CNY 与供应来源 USD 不一致时提示且留空，切换 USD 后明确选定档案回填 8.50，保存真实草稿并读回供应来源和单价。 [采购回填](chrome-supplier-purchase/run.json)
 - **模拟浏览器用例**。A3 原记录中的 SKU 和包装只读失败，均由模拟会话少了 authenticated 字段导致。补齐字段后原 SKU 17 条、包装 9 条通过，原业务断言保留。真实后端证据见各自索引。GitHub Actions 为 NOT_RUN。
+
+- **分类覆盖**。在子分类新增同名属性，重开后只显示子分类自有且可编辑的属性，真实接口中的有效属性也指向新记录。 [继承覆盖](chrome-category-override/run.json)
+- **共享箱规和尾货策略**。共享箱规关联两个已验证 SKU，改为人工处理尾货时出现影响确认。确认后两条 SKU 保留箱规关联，但原验证失效。重开读回新策略。 [共享箱规](chrome-shared-carton/run.json)
+- **交易规格停用**。采购草稿保存两箱、每箱 10 件及每箱 85 USD。读回基础数量 20、基础单价 8.50 USD 与交易快照。停用该规格后，旧采购草稿仍可打开并保留原换算快照，选择器标记为历史规格。 [采购和交易快照](chrome-supplier-purchase-trade/run.json)
+
+- **SKU 动态组合和图片**。暂停出站请求观察提交中禁用，随后转发真实后端，一次保存 4 个不同 SKU。重新打开确认同样四组均归为已存在。上传并更换两张合成图片，每次读回新图片，清除后真实接口无图，刷新再进入编辑也无预览。图片修改未新增商业身份版本。 [SKU 组合和图片](chrome-sku-lifecycle/run.json)
+
+## 待独立复审
+
+- **SKU 图片删除后立即重开可能显示旧图**。390×844、原生 125% 下给新 SKU 上传和替换图片，保存时清除图片。真实 DELETE 成功且 SKU 详情接口已无图。列表刷新尚未完成时立即重开编辑，旧预览仍显示。候选位置为 `SKUPage.vue` 的 `persistSave` 成功分支先关闭编辑器再加载列表，以及 `openEdit` 从列表行读取图片。影响同页快速重开的编辑预览。 [原始失败和图片写入截图](chrome-sku-lifecycle-immediate-reopen/run.json)
+- **库存详情缺少批次或货位标识**。在库存流水中按仓库名筛出同 SKU 的两条不同批次，打开第一条后，抽屉能展示流水号和仓库，但不显示已有批次。候选位置为 `EntityDetailModal.vue` 的库存 `detailInfo` 字段映射。影响同仓多批次的界面辨识。 [原始失败](chrome-same-warehouse-lot-label-missing/run.json)
+
+以上问题保留供独立复审。批次号搜索沿用现有产品范围。

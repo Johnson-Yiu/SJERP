@@ -7,6 +7,7 @@ import django
 
 django.setup()
 from django.conf import settings
+from django.utils import timezone
 
 from test_support.isolated_runtime import verify_isolated_runtime
 
@@ -15,7 +16,7 @@ verify_isolated_runtime(settings=settings, database_must_exist=True)
 from crm.models import (
     CategoryAttribute, Customer, HSCode, InventoryMovement, Order, PackagingTemplate, Product,
     ProductCategory, ProductCertificate, ProductParameter, PurchaseOrder,
-    PurchaseOrderItem, SKU, SKUTradeUnit, Supplier, SupplierSKU,
+    PurchaseOrderItem, SKU, SKUPackagingProfile, SKUTradeUnit, Supplier, SupplierSKU,
 )
 
 supplier = Supplier.objects.create(code="EVID-S001", name="合成供应商｜森爵照明跨区域灯具及安装配件测试样本")
@@ -23,7 +24,7 @@ root = ProductCategory.objects.create(name="合成灯具")
 category = ProductCategory.objects.create(name="轨道灯与安装配件", parent=root)
 for index, name in enumerate(("色温", "发光角度", "外壳颜色")):
     CategoryAttribute.objects.create(
-        category=category, name=name, key=name, include_in_sku=True, include_in_sales_model=index == 0, sort_order=index
+        category=category, name=name, key=name, include_in_sku=True, include_in_sales_model=index == 0 and os.environ.get("PRODUCT_OPS_SKU_LIFECYCLE") != "1", sort_order=index
     )
 product = Product.objects.create(
     code="EVID-P001", name="合成长名称｜商业展厅用低眩光可调角度模块化轨道灯及其多场景安装配件组合",
@@ -36,7 +37,7 @@ if os.environ.get("PRODUCT_OPS_FOLLOWUP") == "lifecycle":
     Product.objects.create(code="EVID-P002", name="合成灯具配件", category=category)
 ProductParameter.objects.create(product=product, name="标称功率", value="24", unit="W")
 ProductCertificate.objects.create(product=product, name="合成测试证书", certificate_no="EVID-CERT-001")
-PackagingTemplate.objects.create(
+template = PackagingTemplate.objects.create(
     name="合成长箱规｜商业展厅轨道灯及配件混合装运",
     supplier=supplier, carton_length=80, carton_width=40, carton_height=35,
 )
@@ -83,4 +84,26 @@ if os.environ.get("PRODUCT_OPS_FOLLOWUP") == "priority":
     )
     PurchaseOrderItem.objects.create(purchase_order=cancel_purchase, sku=skus[0], quantity=5, unit_price="4")
     fixture["cancel_purchase"] = cancel_purchase.pk
+if os.environ.get("PRODUCT_OPS_CATEGORY") == "1":
+    target = ProductCategory.objects.create(name="合成目标分类")
+    moved = ProductCategory.objects.create(name="合成待移动分类", parent=root)
+    fixture["category_move"] = moved.pk
+    fixture["category_target"] = target.pk
+    CategoryAttribute.objects.create(category=target, name="外壳工艺", key="外壳工艺", include_in_sku=True)
+    for order, name in enumerate(("接线方式", "灯罩形式")):
+        CategoryAttribute.objects.create(category=moved, name=name, key=name, include_in_sku=True, sort_order=order)
+if os.environ.get("PRODUCT_OPS_PACKAGING") == "1":
+    fixture["template"] = template.pk
+    fixture["packaged_skus"] = [sku.pk for sku in skus[:2]]
+    for sku in skus[:2]:
+        SKUPackagingProfile.objects.create(
+            sku=sku, packaging_template=template, unit_net_weight="0.2",
+            qty_per_carton_override=10, carton_tare_weight_override="1.5", verified_at=timezone.now(),
+        )
+if os.environ.get("PRODUCT_OPS_LOTS") == "1":
+    InventoryMovement.objects.create(
+        movement_no="EVID-IM-0003", movement_date=date.today(), type="adjust_in",
+        sku=skus[0], quantity=15, warehouse_type="自有仓", warehouse="合成一号仓",
+        lot_reference="EVID-LOT-20261110-A-03",
+    )
 print(json.dumps(fixture))

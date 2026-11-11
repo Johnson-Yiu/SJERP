@@ -1,0 +1,40 @@
+{
+  "source": "ae33b6e560b7986cbb4d9419028cf993e2489ae7",
+  "browser": "Chrome/156.0.8078.80",
+  "states": [
+    {
+      "id": "category-inherits-new-parent",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "category-inherits-new-parent-390-125.png",
+      "method": "DOM drag events, real Django reorder"
+    },
+    {
+      "id": "category-attribute-reorder-preview",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "category-attribute-reorder-preview-390-125.png",
+      "method": "DOM drag events, real Django preview"
+    },
+    {
+      "id": "category-attribute-order-reopened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "category-attribute-order-reopened-390-125.png"
+    },
+    {
+      "id": "category-override-reopened",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "png": "category-override-reopened-390-125.png"
+    }
+  ]
+}

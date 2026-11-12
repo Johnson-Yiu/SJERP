@@ -47,6 +47,7 @@ const previewTemplate = ref(null)
 const saving = ref(false)
 const savedQuote = ref(null)
 const errorMessage = ref('')
+const editorForm = ref(null)
 const exportError = ref('')
 const riskNoticeOpen = ref(false)
 const riskRows = ref([])
@@ -245,9 +246,27 @@ async function selectCustomer() {
     if (contact) prefill({ recipient_name: contact.name, buyer_email: contact.email || '', buyer_phone: contact.phone || '' })
   } catch { /* Keep the editable recipient values, including explicit blanks. */ }
 }
+function focusLineField(index, label) {
+  const input = editorForm.value?.querySelectorAll('.quote-line-row')[index]?.querySelector(`input[aria-label="${label}"]`)
+  input?.focus({ preventScroll: true })
+  input?.scrollIntoView({ block: 'center', inline: 'nearest' })
+}
+
+function quoteSaveError(error) {
+  const modelError = Object.entries(error.data?.items ?? {}).find(([index, item]) =>
+    /^\d+$/.test(index) && Array.isArray(item?.sales_model_snapshot) && item.sales_model_snapshot.length)
+  if (!modelError) return error.message
+  const [index, item] = modelError
+  focusLineField(Number(index), '报价型号')
+  return `第 ${Number(index) + 1} 条商品 · 报价型号：${item.sales_model_snapshot.join('；')}`
+}
 function validate() {
   if (salesRateError(draft)) return salesRateError(draft)
-  if (draft.items.some(item => item.unit_price === '' || item.unit_price == null || Number(item.unit_price) < 0)) return '请填写每条 SKU 的本次售价。'
+  const invalidPrice = draft.items.findIndex(item => item.unit_price === '' || item.unit_price == null || Number(item.unit_price) < 0)
+  if (invalidPrice !== -1) {
+    focusLineField(invalidPrice, '单价')
+    return `第 ${invalidPrice + 1} 条商品 · 单价：请填写有效单价。`
+  }
   if (!draft.customer) return '请选择客户。'
   if (props.mode === 'revise' && !draft.revision_summary.trim()) return '请简要说明本次修改的内容。'
   if (draft.quote_date && draft.valid_until && draft.valid_until < draft.quote_date) return '有效期不能早于报价日期。'
@@ -360,7 +379,7 @@ async function save(shouldExport = false) {
     if (!shouldExport) { finishSavedQuote(); return }
     await prepareQuoteExport(response.data)
     if (!riskNoticeOpen.value) await exportSavedQuote(response.data)
-  } catch (error) { errorMessage.value = error.message }
+  } catch (error) { errorMessage.value = error.data?.items ? quoteSaveError(error) : error.message }
   finally { saving.value = false }
 }
 async function retryExport() {
@@ -377,7 +396,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
 
 <template>
   <div class="modal-backdrop quote-editor-backdrop">
-    <form class="modal wide quote-editor-modal" aria-label="报价编辑器" @submit.prevent="save(false)">
+    <form ref="editorForm" class="modal wide quote-editor-modal" aria-label="报价编辑器" @submit.prevent="save(false)">
       <div class="modal-head"><div><h3>{{ mode === 'revise' ? '创建报价修订版' : '新建报价单' }}</h3><small>{{ mode === 'revise' ? `基于 ${quote.quote_no} 创建修订版；原报价保留。` : '报价单草稿' }}</small></div><button type="button" class="mini-btn" aria-label="关闭报价编辑器" @click="requestClose"><X :size="17" /></button></div>
       <div class="modal-body">
         <div v-if="errorMessage" class="quote-message error">{{ errorMessage }}</div>
@@ -437,6 +456,7 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
 .quote-line-header{border-radius:10px 10px 0 0}
 .quote-line-row{position:relative}
 .quote-line-row:focus-within{z-index:20}
+.quote-editor-modal > .modal-head,.quote-editor-modal > .modal-foot{z-index:21}
 .quote-line-header,.quote-line-row{grid-template-columns:1.7fr 1fr .55fr .7fr 1.7fr .75fr 34px}
 .quote-sku{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--text-body);color:#294a41}
 .sku-selection-panel{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(270px,.85fr);height:268px;margin:0 0 14px;border:1px solid #dbe5df;border-radius:10px;overflow:hidden;background:#fff}.sku-picker-list{display:flex;flex-direction:column;min-width:0;border-right:1px solid #e4ece7}.sku-picker-head{padding:11px;border-bottom:1px solid #e8efeb}.sku-picker-head strong{display:block;margin-bottom:8px;font-size:var(--text-body)}.sku-picker-filters{display:grid;grid-template-columns:minmax(0,1fr) 130px;gap:7px}.sku-picker-head input,.sku-picker-head select{width:100%;border:1px solid #d7e1dc;border-radius:7px;padding:8px 10px;background:#fff;font-size:var(--text-body)}.sku-picker-options{flex:1 1 auto;min-height:0;overflow:auto}.sku-picker-options label{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 11px;cursor:pointer;border-bottom:1px solid #f0f4f1}.sku-picker-options label:hover,.sku-picker-options label.active{background:#eff8f4}.sku-picker-options input{margin:0}.sku-picker-options b,.sku-picker-options small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sku-picker-options b{font-size:var(--text-body);color:#23473d}.sku-picker-options small{margin-top:2px;color:#81908a;font-size:var(--text-caption)}.sku-picker-options .sku-identifiers{display:flex;gap:12px}.sku-picker-options .sku-identifiers span{min-width:0;overflow:hidden;text-overflow:ellipsis}.sku-picker-options em{font-style:normal;color:#436d60;font-size:var(--text-body)}.sku-picker-options p,.sku-picker-preview>p{margin:0;padding:18px;color:#81908a;font-size:var(--text-body)}.sku-picker-preview{padding:14px;background:#f7fbf9}.sku-picker-preview>small{display:block;color:#799087;font-size:var(--text-caption)}.sku-picker-preview>strong{display:block;margin:4px 0 10px;color:#1d4d40;font-size:var(--text-section)}.sku-picker-preview dl{margin:0 0 11px}.sku-picker-preview dl div{display:grid;grid-template-columns:105px 1fr;gap:8px;margin-top:5px;font-size:var(--text-body)}.sku-picker-preview dt{color:#7a8983}.sku-picker-preview dd{margin:0;color:#38564d}.sku-picker-preview label{display:block;color:#526d64;font-size:var(--text-body)}.sku-picker-preview textarea{display:block;width:100%;min-height:54px;margin-top:5px;border:1px solid #b8d3c7;border-radius:7px;padding:7px;resize:vertical;font:inherit;font-size:var(--text-body)}.quote-items-empty{margin:0 0 12px;padding:12px;border:1px dashed #cddbd4;border-radius:8px;text-align:center;color:#82918b;font-size:var(--text-body)}
@@ -445,7 +465,10 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
 /* Keep the SKU list scrollbar visible instead of relying on overlay scrollbars. */
 .sku-picker-options{overflow-y:scroll;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#91afa3 #edf4f0}.sku-picker-options::-webkit-scrollbar{width:10px}.sku-picker-options::-webkit-scrollbar-track{background:#edf4f0;border-left:1px solid #dce9e2}.sku-picker-options::-webkit-scrollbar-thumb{background:#91afa3;border:2px solid #edf4f0;border-radius:999px}.sku-picker-options::-webkit-scrollbar-thumb:hover{background:#5e8978}
 .sku-picker-list{min-height:0;overflow:hidden}.sku-picker-options{height:0;flex:1 1 0}
-@media(max-width:720px){.sku-selection-panel{grid-template-columns:1fr}.sku-picker-list{border-right:0;border-bottom:1px solid #e4ece7}}
+@media(max-width:720px){
+  .sku-selection-panel{grid-template-columns:minmax(0,1fr);grid-template-rows:190px auto;height:auto}
+  .quote-editor-modal{scroll-padding-block:90px 150px}
+}
 @media(max-width:560px){.sku-picker-filters{grid-template-columns:1fr}.sku-picker-options .sku-identifiers{display:block}.sku-picker-options .sku-identifiers span{display:block}}
 .currency-hint{display:block!important;white-space:normal!important;overflow:visible!important;color:#8b602c!important;font-size:var(--text-caption);line-height:1.5;margin-top:5px}
 </style>

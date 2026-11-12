@@ -1,0 +1,149 @@
+{
+  "source": "37a53bc6da13ebfabe1307c8a1a0dcb5c078f907",
+  "results": [
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "reject",
+      "file": "reject-1366-100.png",
+      "status": 200
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "apply",
+      "file": "apply-1366-100.png",
+      "status": 200
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "invalidate",
+      "file": "invalidate-1366-100.png",
+      "status": 200
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "replace",
+      "file": "replace-1366-100.png",
+      "status": 200
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "apply",
+      "file": "apply-1440-100.png",
+      "status": 200
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "invalidate",
+      "file": "invalidate-1440-100.png",
+      "status": 200
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "apply",
+      "file": "apply-390-100.png",
+      "status": 200
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "invalidate",
+      "file": "invalidate-390-100.png",
+      "status": 200
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "reject",
+      "file": "reject-1366-125.png",
+      "status": 200
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "apply",
+      "file": "apply-1366-125.png",
+      "status": 200
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "invalidate",
+      "file": "invalidate-1366-125.png",
+      "status": 200
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "replace",
+      "file": "replace-1366-125.png",
+      "status": 200
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "apply",
+      "file": "apply-1440-125.png",
+      "status": 200
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "invalidate",
+      "file": "invalidate-1440-125.png",
+      "status": 200
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "apply",
+      "file": "apply-390-125.png",
+      "status": 200
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "browser": "Chrome/156.0.8078.80",
+      "action": "invalidate",
+      "file": "invalidate-390-125.png",
+      "status": 200
+    }
+  ]
+}

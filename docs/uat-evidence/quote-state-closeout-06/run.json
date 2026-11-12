@@ -1,0 +1,492 @@
+{
+  "source": "e1cda3a9fa8fd401509fa77d1e6c78a0166a85d9",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "search": true,
+      "stock": true,
+      "price": true,
+      "model": true,
+      "party": {
+        "draft": true,
+        "proposal": 201,
+        "withdrawal": 200,
+        "invalidation": 200
+      },
+      "workbooks": [
+        {
+          "file": "1366-100-v0.xlsx",
+          "bytes": 10224,
+          "sha256": "efe5fb4d00e1455086fdba279c63966ed2ad3c11df96def723255b5bfa5964e6",
+          "quote": "SJ20261112DE001",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 289.75,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 3,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 39.75
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 0,
+          "requests": 2
+        },
+        {
+          "file": "1366-100-v1.xlsx",
+          "bytes": 10200,
+          "sha256": "a526c0be8b006ad1ecd77a5488222b325c2f506505d9705e7237c36c7c39941f",
+          "quote": "SJ20261112DE001-1",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 303,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 4,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 53
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 1,
+          "requests": 2
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "search": true,
+      "stock": true,
+      "price": true,
+      "model": true,
+      "party": {
+        "draft": true,
+        "proposal": 201,
+        "withdrawal": 200,
+        "invalidation": 200
+      },
+      "workbooks": [
+        {
+          "file": "1440-100-v0.xlsx",
+          "bytes": 10224,
+          "sha256": "5f89ac885e82d36078de2a33c2942c34af4c3bb1896ea8b3e4a6538c53a551a4",
+          "quote": "SJ20261112DE002",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 289.75,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 3,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 39.75
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 0,
+          "requests": 2
+        },
+        {
+          "file": "1440-100-v1.xlsx",
+          "bytes": 10199,
+          "sha256": "6daf5fd81d7b7ef058e73cecbf7d7c3758059a309378be1f73ad5e1bc264e9ef",
+          "quote": "SJ20261112DE002-1",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 303,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 4,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 53
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 1,
+          "requests": 2
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "search": true,
+      "stock": true,
+      "price": true,
+      "model": true,
+      "party": {
+        "draft": true,
+        "proposal": 201,
+        "withdrawal": 200,
+        "invalidation": 200
+      },
+      "workbooks": [
+        {
+          "file": "390-100-v0.xlsx",
+          "bytes": 10224,
+          "sha256": "749414a578c2c72d6b30006e3ddefee6632b73fbc0ce5301d48f27b2e586358e",
+          "quote": "SJ20261112DE003",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 289.75,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 3,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 39.75
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 0,
+          "requests": 2
+        },
+        {
+          "file": "390-100-v1.xlsx",
+          "bytes": 10200,
+          "sha256": "366ff02fddc9292c657d7561481bbc1af68118f0807d11c21c65a953e5ebc2de",
+          "quote": "SJ20261112DE003-1",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 303,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 4,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 53
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 1,
+          "requests": 2
+        }
+      ]
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "search": true,
+      "stock": true,
+      "price": true,
+      "model": true,
+      "party": {
+        "draft": true,
+        "proposal": 201,
+        "withdrawal": 200,
+        "invalidation": 200
+      },
+      "workbooks": [
+        {
+          "file": "1366-125-v0.xlsx",
+          "bytes": 10224,
+          "sha256": "ef048f7005b877445004ae7fac32674108202d982d5032facf301791f6f2541d",
+          "quote": "SJ20261112DE004",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 289.75,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 3,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 39.75
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 0,
+          "requests": 2
+        },
+        {
+          "file": "1366-125-v1.xlsx",
+          "bytes": 10201,
+          "sha256": "fac9c21aac504015249e3cd2c8e5ad01c835be043d17299d717b8360204731f6",
+          "quote": "SJ20261112DE004-1",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 303,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 4,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 53
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 1,
+          "requests": 2
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "search": true,
+      "stock": true,
+      "price": true,
+      "model": true,
+      "party": {
+        "draft": true,
+        "proposal": 201,
+        "withdrawal": 200,
+        "invalidation": 200
+      },
+      "workbooks": [
+        {
+          "file": "1440-125-v0.xlsx",
+          "bytes": 10225,
+          "sha256": "4926d41ef75ffe0730d283054e48f5d950de48d9adf47e6d342cd529bb2e6fc6",
+          "quote": "SJ20261112DE005",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 289.75,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 3,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 39.75
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 0,
+          "requests": 2
+        },
+        {
+          "file": "1440-125-v1.xlsx",
+          "bytes": 10200,
+          "sha256": "1b5bf2a8f85dc6369984f616b4b6773720722676c3baf729768b9e60d72f7ebc",
+          "quote": "SJ20261112DE005-1",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 303,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 4,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 53
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 1,
+          "requests": 2
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "search": true,
+      "stock": true,
+      "price": true,
+      "model": true,
+      "party": {
+        "draft": true,
+        "proposal": 201,
+        "withdrawal": 200,
+        "invalidation": 200
+      },
+      "workbooks": [
+        {
+          "file": "390-125-v0.xlsx",
+          "bytes": 10226,
+          "sha256": "2798f199f340fc80ffef8f1081aa259659374bd4d74e74822e8d3d6e7acc4179",
+          "quote": "SJ20261112DE006",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 289.75,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 3,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 39.75
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 0,
+          "requests": 2
+        },
+        {
+          "file": "390-125-v1.xlsx",
+          "bytes": 10199,
+          "sha256": "b61500fa2496f1147c1b98edc3e9822af8f8ef693b5fcd80a2330b5f2c7abaee",
+          "quote": "SJ20261112DE006-1",
+          "buyer": "Q6 Synthetic Buyer",
+          "seller_matches_snapshot": true,
+          "currency": "USD",
+          "total": 303,
+          "items": [
+            {
+              "C": "Q6-BOX-CORRECTED",
+              "D": "Q6 Synthetic Lamp\nQ6 Box: 1 box = 10.00 pcs; Total 20.00 pcs",
+              "J": 2,
+              "K": "box",
+              "L": 125,
+              "M": 250
+            },
+            {
+              "C": "Q6-EACH-MODEL",
+              "D": "Q6 Synthetic Lamp",
+              "J": 4,
+              "K": "pcs",
+              "L": 13.25,
+              "M": 53
+            }
+          ],
+          "template_sha256": "71eed1948490acaacfaa2eff04760adddead926bbf361ab32f33dcd1cc45a4af",
+          "revision": 1,
+          "requests": 2
+        }
+      ]
+    }
+  ]
+}

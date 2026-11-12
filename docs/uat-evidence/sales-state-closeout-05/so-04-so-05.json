@@ -1,0 +1,462 @@
+{
+  "source": "3048697fdba660390fe9361fa12ac8517a170fb1",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "draftParty": "so-04-draft-party-1366-100.png",
+      "formalParty": "so-04-formal-party-1366-100.png",
+      "cancelled": "so-05-reversed-1366-100.png",
+      "reopened": "so-05-packing-reopened-1366-100.png",
+      "before": {
+        "shipment": 1,
+        "status": "confirmed",
+        "order": 13,
+        "orderStatus": "shipped",
+        "reason": "",
+        "cartons": [
+          {
+            "id": 1,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 2,
+          "number": "SH-1BA5BFC2D4884059",
+          "quantity": "2.00"
+        },
+        "reversal": null,
+        "reversalCount": 0,
+        "stock": {
+          "actual_quantity": "88",
+          "reserved_quantity": "15",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "after": {
+        "shipment": 1,
+        "status": "cancelled",
+        "order": 13,
+        "orderStatus": "confirmed",
+        "reason": "S5 合成装箱发货冲销",
+        "cartons": [
+          {
+            "id": 1,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 2,
+          "number": "SH-1BA5BFC2D4884059",
+          "quantity": "2.00"
+        },
+        "reversal": {
+          "id": 8,
+          "type": "adjust_in",
+          "order": 13,
+          "source": "SH-31A07C05498A4329",
+          "reference": "SH-1BA5BFC2D4884059",
+          "quantity": "2.00",
+          "sameLocation": true
+        },
+        "reversalCount": 1,
+        "stock": {
+          "actual_quantity": "90",
+          "reserved_quantity": "17",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "duplicate": 400
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "draftParty": "so-04-draft-party-1440-100.png",
+      "formalParty": "so-04-formal-party-1440-100.png",
+      "cancelled": "so-05-reversed-1440-100.png",
+      "reopened": "so-05-packing-reopened-1440-100.png",
+      "before": {
+        "shipment": 2,
+        "status": "confirmed",
+        "order": 14,
+        "orderStatus": "shipped",
+        "reason": "",
+        "cartons": [
+          {
+            "id": 2,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 3,
+          "number": "SH-879405E805354F78",
+          "quantity": "2.00"
+        },
+        "reversal": null,
+        "reversalCount": 0,
+        "stock": {
+          "actual_quantity": "90",
+          "reserved_quantity": "17",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "after": {
+        "shipment": 2,
+        "status": "cancelled",
+        "order": 14,
+        "orderStatus": "confirmed",
+        "reason": "S5 合成装箱发货冲销",
+        "cartons": [
+          {
+            "id": 2,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 3,
+          "number": "SH-879405E805354F78",
+          "quantity": "2.00"
+        },
+        "reversal": {
+          "id": 9,
+          "type": "adjust_in",
+          "order": 14,
+          "source": "SH-878EA5C042F944EB",
+          "reference": "SH-879405E805354F78",
+          "quantity": "2.00",
+          "sameLocation": true
+        },
+        "reversalCount": 1,
+        "stock": {
+          "actual_quantity": "92",
+          "reserved_quantity": "19",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "duplicate": 400
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "draftParty": "so-04-draft-party-390-100.png",
+      "formalParty": "so-04-formal-party-390-100.png",
+      "cancelled": "so-05-reversed-390-100.png",
+      "reopened": "so-05-packing-reopened-390-100.png",
+      "before": {
+        "shipment": 3,
+        "status": "confirmed",
+        "order": 15,
+        "orderStatus": "shipped",
+        "reason": "",
+        "cartons": [
+          {
+            "id": 3,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 4,
+          "number": "SH-461B59FCB7604C45",
+          "quantity": "2.00"
+        },
+        "reversal": null,
+        "reversalCount": 0,
+        "stock": {
+          "actual_quantity": "92",
+          "reserved_quantity": "19",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "after": {
+        "shipment": 3,
+        "status": "cancelled",
+        "order": 15,
+        "orderStatus": "confirmed",
+        "reason": "S5 合成装箱发货冲销",
+        "cartons": [
+          {
+            "id": 3,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 4,
+          "number": "SH-461B59FCB7604C45",
+          "quantity": "2.00"
+        },
+        "reversal": {
+          "id": 10,
+          "type": "adjust_in",
+          "order": 15,
+          "source": "SH-9EF63D7DE04F463A",
+          "reference": "SH-461B59FCB7604C45",
+          "quantity": "2.00",
+          "sameLocation": true
+        },
+        "reversalCount": 1,
+        "stock": {
+          "actual_quantity": "94",
+          "reserved_quantity": "21",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "duplicate": 400
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "draftParty": "so-04-draft-party-1366-125.png",
+      "formalParty": "so-04-formal-party-1366-125.png",
+      "cancelled": "so-05-reversed-1366-125.png",
+      "reopened": "so-05-packing-reopened-1366-125.png",
+      "before": {
+        "shipment": 4,
+        "status": "confirmed",
+        "order": 16,
+        "orderStatus": "shipped",
+        "reason": "",
+        "cartons": [
+          {
+            "id": 4,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 5,
+          "number": "SH-1EFCB359BA604839",
+          "quantity": "2.00"
+        },
+        "reversal": null,
+        "reversalCount": 0,
+        "stock": {
+          "actual_quantity": "94",
+          "reserved_quantity": "21",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "after": {
+        "shipment": 4,
+        "status": "cancelled",
+        "order": 16,
+        "orderStatus": "confirmed",
+        "reason": "S5 合成装箱发货冲销",
+        "cartons": [
+          {
+            "id": 4,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 5,
+          "number": "SH-1EFCB359BA604839",
+          "quantity": "2.00"
+        },
+        "reversal": {
+          "id": 11,
+          "type": "adjust_in",
+          "order": 16,
+          "source": "SH-866B0A13A77C48C8",
+          "reference": "SH-1EFCB359BA604839",
+          "quantity": "2.00",
+          "sameLocation": true
+        },
+        "reversalCount": 1,
+        "stock": {
+          "actual_quantity": "96",
+          "reserved_quantity": "23",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "duplicate": 400
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "draftParty": "so-04-draft-party-1440-125.png",
+      "formalParty": "so-04-formal-party-1440-125.png",
+      "cancelled": "so-05-reversed-1440-125.png",
+      "reopened": "so-05-packing-reopened-1440-125.png",
+      "before": {
+        "shipment": 5,
+        "status": "confirmed",
+        "order": 17,
+        "orderStatus": "shipped",
+        "reason": "",
+        "cartons": [
+          {
+            "id": 5,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 6,
+          "number": "SH-3B1BF570FDAA4A12",
+          "quantity": "2.00"
+        },
+        "reversal": null,
+        "reversalCount": 0,
+        "stock": {
+          "actual_quantity": "96",
+          "reserved_quantity": "23",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "after": {
+        "shipment": 5,
+        "status": "cancelled",
+        "order": 17,
+        "orderStatus": "confirmed",
+        "reason": "S5 合成装箱发货冲销",
+        "cartons": [
+          {
+            "id": 5,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 6,
+          "number": "SH-3B1BF570FDAA4A12",
+          "quantity": "2.00"
+        },
+        "reversal": {
+          "id": 12,
+          "type": "adjust_in",
+          "order": 17,
+          "source": "SH-5F75A75D1BE745D6",
+          "reference": "SH-3B1BF570FDAA4A12",
+          "quantity": "2.00",
+          "sameLocation": true
+        },
+        "reversalCount": 1,
+        "stock": {
+          "actual_quantity": "98",
+          "reserved_quantity": "25",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "duplicate": 400
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "draftParty": "so-04-draft-party-390-125.png",
+      "formalParty": "so-04-formal-party-390-125.png",
+      "cancelled": "so-05-reversed-390-125.png",
+      "reopened": "so-05-packing-reopened-390-125.png",
+      "before": {
+        "shipment": 6,
+        "status": "confirmed",
+        "order": 18,
+        "orderStatus": "shipped",
+        "reason": "",
+        "cartons": [
+          {
+            "id": 6,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 7,
+          "number": "SH-608B41CD322E4346",
+          "quantity": "2.00"
+        },
+        "reversal": null,
+        "reversalCount": 0,
+        "stock": {
+          "actual_quantity": "98",
+          "reserved_quantity": "25",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "after": {
+        "shipment": 6,
+        "status": "cancelled",
+        "order": 18,
+        "orderStatus": "confirmed",
+        "reason": "S5 合成装箱发货冲销",
+        "cartons": [
+          {
+            "id": 6,
+            "quantities": [
+              "2.00"
+            ]
+          }
+        ],
+        "outbound": {
+          "id": 7,
+          "number": "SH-608B41CD322E4346",
+          "quantity": "2.00"
+        },
+        "reversal": {
+          "id": 13,
+          "type": "adjust_in",
+          "order": 18,
+          "source": "SH-06B643BDDE554799",
+          "reference": "SH-608B41CD322E4346",
+          "quantity": "2.00",
+          "sameLocation": true
+        },
+        "reversalCount": 1,
+        "stock": {
+          "actual_quantity": "100",
+          "reserved_quantity": "27",
+          "available_quantity": "73",
+          "in_transit_quantity": "0"
+        }
+      },
+      "duplicate": 400
+    }
+  ]
+}

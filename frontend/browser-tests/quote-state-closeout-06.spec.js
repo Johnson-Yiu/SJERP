@@ -174,9 +174,11 @@ test('Q6 quote search, validation and workbook download', async ({ baseURL }) =>
           await expect(detail.getByText(/当前报价状态不可操作/)).toBeVisible()
           await expect(detail.getByRole('button', { name: '提交更正申请' })).toBeDisabled()
           await capture('party-draft')
-          const marked = page.waitForResponse(response => new URL(response.url()).pathname === `/api/quotes/${quote.id}/mark-sent/` && response.request().method() === 'POST')
-          await detail.getByRole('button', { name: '标记为已发送' }).click()
-          expect((await marked).status()).toBe(200)
+          const [marked] = await Promise.all([
+            page.waitForResponse(response => new URL(response.url()).pathname === `/api/quotes/${quote.id}/mark-sent/` && response.request().method() === 'POST'),
+            detail.getByRole('button', { name: '标记为已发送' }).click(),
+          ])
+          expect(marked.status()).toBe(200)
           await detail.getByRole('button', { name: '主体更正', exact: true }).click()
           await detail.locator('#party-address').fill('Q6 Synthetic Corrected Address')
           await detail.getByLabel('原因', { exact: true }).fill('Q6 correction reason')

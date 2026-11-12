@@ -1,0 +1,450 @@
+{
+  "source": "46738366350c5f494e3fa62b2b209385fb8f340b",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "status": "draft",
+      "number": "S5-SO-DRAFT-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-draft-1366-100.png"
+    },
+    {
+      "status": "confirmed",
+      "number": "S5-SO-CONFIRMED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-confirmed-1366-100.png"
+    },
+    {
+      "status": "production",
+      "number": "S5-SO-PRODUCTION-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-production-1366-100.png"
+    },
+    {
+      "status": "shipped",
+      "number": "S5-SO-SHIPPED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-shipped-1366-100.png"
+    },
+    {
+      "status": "completed",
+      "number": "S5-SO-COMPLETED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-completed-1366-100.png"
+    },
+    {
+      "status": "cancelled",
+      "number": "S5-SO-CANCELLED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-cancelled-1366-100.png"
+    },
+    {
+      "state": "SO-04-load-failed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "so-04-load-failed-1366-100.png"
+    },
+    {
+      "state": "QUO-04-recovered",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "quo-04-loaded-1366-100.png"
+    },
+    {
+      "status": "draft",
+      "number": "S5-SO-DRAFT-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "screenshot": "so-01-draft-1440-100.png"
+    },
+    {
+      "status": "confirmed",
+      "number": "S5-SO-CONFIRMED-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "screenshot": "so-01-confirmed-1440-100.png"
+    },
+    {
+      "status": "production",
+      "number": "S5-SO-PRODUCTION-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "screenshot": "so-01-production-1440-100.png"
+    },
+    {
+      "status": "shipped",
+      "number": "S5-SO-SHIPPED-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "screenshot": "so-01-shipped-1440-100.png"
+    },
+    {
+      "status": "completed",
+      "number": "S5-SO-COMPLETED-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "screenshot": "so-01-completed-1440-100.png"
+    },
+    {
+      "status": "cancelled",
+      "number": "S5-SO-CANCELLED-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "screenshot": "so-01-cancelled-1440-100.png"
+    },
+    {
+      "state": "SO-04-load-failed",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "screenshot": "so-04-load-failed-1440-100.png"
+    },
+    {
+      "state": "QUO-04-recovered",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "screenshot": "quo-04-loaded-1440-100.png"
+    },
+    {
+      "status": "draft",
+      "number": "S5-SO-DRAFT-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "screenshot": "so-01-draft-390-100.png"
+    },
+    {
+      "status": "confirmed",
+      "number": "S5-SO-CONFIRMED-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "screenshot": "so-01-confirmed-390-100.png"
+    },
+    {
+      "status": "production",
+      "number": "S5-SO-PRODUCTION-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "screenshot": "so-01-production-390-100.png"
+    },
+    {
+      "status": "shipped",
+      "number": "S5-SO-SHIPPED-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "screenshot": "so-01-shipped-390-100.png"
+    },
+    {
+      "status": "completed",
+      "number": "S5-SO-COMPLETED-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "screenshot": "so-01-completed-390-100.png"
+    },
+    {
+      "status": "cancelled",
+      "number": "S5-SO-CANCELLED-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "screenshot": "so-01-cancelled-390-100.png"
+    },
+    {
+      "state": "SO-04-load-failed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "screenshot": "so-04-load-failed-390-100.png"
+    },
+    {
+      "state": "QUO-04-recovered",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "screenshot": "quo-04-loaded-390-100.png"
+    },
+    {
+      "status": "draft",
+      "number": "S5-SO-DRAFT-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "screenshot": "so-01-draft-1366-125.png"
+    },
+    {
+      "status": "confirmed",
+      "number": "S5-SO-CONFIRMED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "screenshot": "so-01-confirmed-1366-125.png"
+    },
+    {
+      "status": "production",
+      "number": "S5-SO-PRODUCTION-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "screenshot": "so-01-production-1366-125.png"
+    },
+    {
+      "status": "shipped",
+      "number": "S5-SO-SHIPPED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "screenshot": "so-01-shipped-1366-125.png"
+    },
+    {
+      "status": "completed",
+      "number": "S5-SO-COMPLETED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "screenshot": "so-01-completed-1366-125.png"
+    },
+    {
+      "status": "cancelled",
+      "number": "S5-SO-CANCELLED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "screenshot": "so-01-cancelled-1366-125.png"
+    },
+    {
+      "state": "SO-04-load-failed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "screenshot": "so-04-load-failed-1366-125.png"
+    },
+    {
+      "state": "QUO-04-recovered",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "screenshot": "quo-04-loaded-1366-125.png"
+    },
+    {
+      "status": "draft",
+      "number": "S5-SO-DRAFT-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "screenshot": "so-01-draft-1440-125.png"
+    },
+    {
+      "status": "confirmed",
+      "number": "S5-SO-CONFIRMED-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "screenshot": "so-01-confirmed-1440-125.png"
+    },
+    {
+      "status": "production",
+      "number": "S5-SO-PRODUCTION-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "screenshot": "so-01-production-1440-125.png"
+    },
+    {
+      "status": "shipped",
+      "number": "S5-SO-SHIPPED-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "screenshot": "so-01-shipped-1440-125.png"
+    },
+    {
+      "status": "completed",
+      "number": "S5-SO-COMPLETED-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "screenshot": "so-01-completed-1440-125.png"
+    },
+    {
+      "status": "cancelled",
+      "number": "S5-SO-CANCELLED-LONG-REFERENCE",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "screenshot": "so-01-cancelled-1440-125.png"
+    },
+    {
+      "state": "SO-04-load-failed",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "screenshot": "so-04-load-failed-1440-125.png"
+    },
+    {
+      "state": "QUO-04-recovered",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "screenshot": "quo-04-loaded-1440-125.png"
+    },
+    {
+      "status": "draft",
+      "number": "S5-SO-DRAFT-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "screenshot": "so-01-draft-390-125.png"
+    },
+    {
+      "status": "confirmed",
+      "number": "S5-SO-CONFIRMED-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "screenshot": "so-01-confirmed-390-125.png"
+    },
+    {
+      "status": "production",
+      "number": "S5-SO-PRODUCTION-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "screenshot": "so-01-production-390-125.png"
+    },
+    {
+      "status": "shipped",
+      "number": "S5-SO-SHIPPED-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "screenshot": "so-01-shipped-390-125.png"
+    },
+    {
+      "status": "completed",
+      "number": "S5-SO-COMPLETED-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "screenshot": "so-01-completed-390-125.png"
+    },
+    {
+      "status": "cancelled",
+      "number": "S5-SO-CANCELLED-LONG-REFERENCE",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "screenshot": "so-01-cancelled-390-125.png"
+    },
+    {
+      "state": "SO-04-load-failed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "screenshot": "so-04-load-failed-390-125.png"
+    },
+    {
+      "state": "QUO-04-recovered",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "screenshot": "quo-04-loaded-390-125.png"
+    }
+  ]
+}

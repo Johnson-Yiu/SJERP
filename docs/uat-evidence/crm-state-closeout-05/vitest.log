@@ -1,0 +1,7 @@
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/crm-state-closeout-05/frontend
+
+
+ Test Files  6 passed (6)
+      Tests  53 passed (53)
+   Start at  12:24:36
+   Duration  18.54s (transform 2.77s, setup 2.64s, import 4.72s, tests 2.67s, environment 24.74s)

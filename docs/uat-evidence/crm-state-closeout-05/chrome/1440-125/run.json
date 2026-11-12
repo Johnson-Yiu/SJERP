@@ -1,0 +1,179 @@
+{
+  "source": "0c463f6d739d07c14eca50ae4cce9135171b9cf1",
+  "width": 1440,
+  "height": 900,
+  "zoom": 1.25,
+  "states": [
+    {
+      "id": "CRM-01",
+      "screenshots": [
+        {
+          "filename": "CRM-01-customer.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "CRM-02",
+      "screenshots": [
+        {
+          "filename": "CRM-02-pending.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-02-rejected.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-02-saved.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "CRM-03",
+      "screenshots": [
+        {
+          "filename": "CRM-03-customer.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-03-nested.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-03-returned.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-03-failure.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "FAIL",
+      "error": "Error: CRM-03 return focus: {\"inside\":false,\"tag\":\"BODY\",\"role\":null}\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: true\nReceived: false"
+    },
+    {
+      "id": "CRM-04",
+      "screenshots": [
+        {
+          "filename": "CRM-04-pending.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-04-rejected.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-04-saved.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "CRM-05",
+      "screenshots": [
+        {
+          "filename": "CRM-05-follow-up.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-05-contact.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "NPD-01",
+      "screenshots": [
+        {
+          "filename": "NPD-01-pending.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "NPD-01-rejected.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "NPD-01-saved.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "NPD-02",
+      "screenshots": [
+        {
+          "filename": "NPD-02-stale.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        },
+        {
+          "filename": "NPD-02-latest.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "NPD-03",
+      "screenshots": [
+        {
+          "filename": "NPD-03-void.png",
+          "width": 1152,
+          "height": 720,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    }
+  ]
+}

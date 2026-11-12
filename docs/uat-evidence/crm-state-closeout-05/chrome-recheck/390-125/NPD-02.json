@@ -1,0 +1,27 @@
+{
+  "source": "0c463f6d739d07c14eca50ae4cce9135171b9cf1",
+  "width": 390,
+  "height": 844,
+  "zoom": 1.25,
+  "states": [
+    {
+      "id": "NPD-02",
+      "screenshots": [
+        {
+          "filename": "NPD-02-stale.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        },
+        {
+          "filename": "NPD-02-latest.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    }
+  ]
+}

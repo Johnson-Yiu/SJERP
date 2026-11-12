@@ -1,0 +1,606 @@
+{
+  "source": "f05474e39509bbe785d50b49dd44c99b4d96d25f",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "state": "SO-03-rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "so-03-audit-rejected-1366-100.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-audit",
+      "confirmId": 7,
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "before": {
+        "status": "draft",
+        "line": 13,
+        "sku": 1,
+        "quote": 1,
+        "updated": "2026-11-12T10:19:29.929483+00:00",
+        "reservation": [],
+        "plans": [],
+        "audit": [],
+        "movements": []
+      },
+      "after": {
+        "status": "confirmed",
+        "line": 13,
+        "sku": 1,
+        "quote": 3,
+        "updated": "2026-11-12T10:19:42.247200+00:00",
+        "reservation": [
+          {
+            "id": 7,
+            "sku_id": 1,
+            "quantity": "2.00"
+          }
+        ],
+        "plans": [
+          {
+            "id": 1,
+            "direction": "receivable",
+            "currency": "CNY",
+            "status": "open",
+            "planned_amount": "60.0000",
+            "settled_amount": "0.0000",
+            "notes": "默认尾款"
+          }
+        ],
+        "audit": [
+          {
+            "id": 1,
+            "action": "custom",
+            "action_label": "确认销售订单",
+            "operator__username": "codex",
+            "after_data": {
+              "id": 7,
+              "order_no": "S5-CONFIRM-1",
+              "customer": 1,
+              "customer_name_snapshot": "S5 合成商业展厅照明采购及设施维护服务有限公司",
+              "customer_country_snapshot": "",
+              "customer_address_snapshot": "",
+              "customer_contact_name_snapshot": "",
+              "customer_phone_snapshot": "",
+              "customer_email_snapshot": "",
+              "quote": 3,
+              "order_date": "2026-11-12",
+              "expected_ship_date": null,
+              "tail_goods_policy": "SAME_CARTON",
+              "status": "confirmed",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "shipping_fee": "0.0000",
+              "discount": "0.0000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": "",
+              "quantity_change_version": 0
+            },
+            "metadata": {
+              "quote_id": 3,
+              "quote_no": "S5-QUO-DETAIL-LONG-REFERENCE-1"
+            }
+          }
+        ],
+        "movements": []
+      },
+      "duplicate": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "so-03-audit-confirmed-1366-100.png",
+      "rejected": 400,
+      "confirmed": 200
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "screenshot": "so-03-audit-rejected-1440-100.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-audit",
+      "confirmId": 8,
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1440,
+      "before": {
+        "status": "draft",
+        "line": 14,
+        "sku": 1,
+        "quote": 1,
+        "updated": "2026-11-12T10:19:29.938918+00:00",
+        "reservation": [],
+        "plans": [],
+        "audit": [],
+        "movements": []
+      },
+      "after": {
+        "status": "confirmed",
+        "line": 14,
+        "sku": 1,
+        "quote": 4,
+        "updated": "2026-11-12T10:19:52.805958+00:00",
+        "reservation": [
+          {
+            "id": 15,
+            "sku_id": 1,
+            "quantity": "2.00"
+          }
+        ],
+        "plans": [
+          {
+            "id": 2,
+            "direction": "receivable",
+            "currency": "CNY",
+            "status": "open",
+            "planned_amount": "60.0000",
+            "settled_amount": "0.0000",
+            "notes": "默认尾款"
+          }
+        ],
+        "audit": [
+          {
+            "id": 2,
+            "action": "custom",
+            "action_label": "确认销售订单",
+            "operator__username": "codex",
+            "after_data": {
+              "id": 8,
+              "order_no": "S5-CONFIRM-2",
+              "customer": 1,
+              "customer_name_snapshot": "S5 合成商业展厅照明采购及设施维护服务有限公司",
+              "customer_country_snapshot": "",
+              "customer_address_snapshot": "",
+              "customer_contact_name_snapshot": "",
+              "customer_phone_snapshot": "",
+              "customer_email_snapshot": "",
+              "quote": 4,
+              "order_date": "2026-11-12",
+              "expected_ship_date": null,
+              "tail_goods_policy": "SAME_CARTON",
+              "status": "confirmed",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "shipping_fee": "0.0000",
+              "discount": "0.0000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": "",
+              "quantity_change_version": 0
+            },
+            "metadata": {
+              "quote_id": 4,
+              "quote_no": "S5-QUO-DETAIL-LONG-REFERENCE-2"
+            }
+          }
+        ],
+        "movements": []
+      },
+      "duplicate": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "screenshot": "so-03-audit-confirmed-1440-100.png",
+      "rejected": 400,
+      "confirmed": 200
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "screenshot": "so-03-audit-rejected-390-100.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-audit",
+      "confirmId": 9,
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 390,
+      "before": {
+        "status": "draft",
+        "line": 15,
+        "sku": 1,
+        "quote": 1,
+        "updated": "2026-11-12T10:19:29.947834+00:00",
+        "reservation": [],
+        "plans": [],
+        "audit": [],
+        "movements": []
+      },
+      "after": {
+        "status": "confirmed",
+        "line": 15,
+        "sku": 1,
+        "quote": 5,
+        "updated": "2026-11-12T10:19:58.352085+00:00",
+        "reservation": [
+          {
+            "id": 24,
+            "sku_id": 1,
+            "quantity": "2.00"
+          }
+        ],
+        "plans": [
+          {
+            "id": 3,
+            "direction": "receivable",
+            "currency": "CNY",
+            "status": "open",
+            "planned_amount": "60.0000",
+            "settled_amount": "0.0000",
+            "notes": "默认尾款"
+          }
+        ],
+        "audit": [
+          {
+            "id": 3,
+            "action": "custom",
+            "action_label": "确认销售订单",
+            "operator__username": "codex",
+            "after_data": {
+              "id": 9,
+              "order_no": "S5-CONFIRM-3",
+              "customer": 1,
+              "customer_name_snapshot": "S5 合成商业展厅照明采购及设施维护服务有限公司",
+              "customer_country_snapshot": "",
+              "customer_address_snapshot": "",
+              "customer_contact_name_snapshot": "",
+              "customer_phone_snapshot": "",
+              "customer_email_snapshot": "",
+              "quote": 5,
+              "order_date": "2026-11-12",
+              "expected_ship_date": null,
+              "tail_goods_policy": "SAME_CARTON",
+              "status": "confirmed",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "shipping_fee": "0.0000",
+              "discount": "0.0000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": "",
+              "quantity_change_version": 0
+            },
+            "metadata": {
+              "quote_id": 5,
+              "quote_no": "S5-QUO-DETAIL-LONG-REFERENCE-3"
+            }
+          }
+        ],
+        "movements": []
+      },
+      "duplicate": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "screenshot": "so-03-audit-confirmed-390-100.png",
+      "rejected": 400,
+      "confirmed": 200
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "screenshot": "so-03-audit-rejected-1366-125.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-audit",
+      "confirmId": 10,
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1093,
+      "before": {
+        "status": "draft",
+        "line": 16,
+        "sku": 1,
+        "quote": 1,
+        "updated": "2026-11-12T10:19:29.956591+00:00",
+        "reservation": [],
+        "plans": [],
+        "audit": [],
+        "movements": []
+      },
+      "after": {
+        "status": "confirmed",
+        "line": 16,
+        "sku": 1,
+        "quote": 6,
+        "updated": "2026-11-12T10:20:03.978589+00:00",
+        "reservation": [
+          {
+            "id": 34,
+            "sku_id": 1,
+            "quantity": "2.00"
+          }
+        ],
+        "plans": [
+          {
+            "id": 4,
+            "direction": "receivable",
+            "currency": "CNY",
+            "status": "open",
+            "planned_amount": "60.0000",
+            "settled_amount": "0.0000",
+            "notes": "默认尾款"
+          }
+        ],
+        "audit": [
+          {
+            "id": 4,
+            "action": "custom",
+            "action_label": "确认销售订单",
+            "operator__username": "codex",
+            "after_data": {
+              "id": 10,
+              "order_no": "S5-CONFIRM-4",
+              "customer": 1,
+              "customer_name_snapshot": "S5 合成商业展厅照明采购及设施维护服务有限公司",
+              "customer_country_snapshot": "",
+              "customer_address_snapshot": "",
+              "customer_contact_name_snapshot": "",
+              "customer_phone_snapshot": "",
+              "customer_email_snapshot": "",
+              "quote": 6,
+              "order_date": "2026-11-12",
+              "expected_ship_date": null,
+              "tail_goods_policy": "SAME_CARTON",
+              "status": "confirmed",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "shipping_fee": "0.0000",
+              "discount": "0.0000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": "",
+              "quantity_change_version": 0
+            },
+            "metadata": {
+              "quote_id": 6,
+              "quote_no": "S5-QUO-DETAIL-LONG-REFERENCE-4"
+            }
+          }
+        ],
+        "movements": []
+      },
+      "duplicate": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "screenshot": "so-03-audit-confirmed-1366-125.png",
+      "rejected": 400,
+      "confirmed": 200
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "screenshot": "so-03-audit-rejected-1440-125.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-audit",
+      "confirmId": 11,
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 1152,
+      "before": {
+        "status": "draft",
+        "line": 17,
+        "sku": 1,
+        "quote": 1,
+        "updated": "2026-11-12T10:19:29.966332+00:00",
+        "reservation": [],
+        "plans": [],
+        "audit": [],
+        "movements": []
+      },
+      "after": {
+        "status": "confirmed",
+        "line": 17,
+        "sku": 1,
+        "quote": 7,
+        "updated": "2026-11-12T10:20:20.905544+00:00",
+        "reservation": [
+          {
+            "id": 45,
+            "sku_id": 1,
+            "quantity": "2.00"
+          }
+        ],
+        "plans": [
+          {
+            "id": 5,
+            "direction": "receivable",
+            "currency": "CNY",
+            "status": "open",
+            "planned_amount": "60.0000",
+            "settled_amount": "0.0000",
+            "notes": "默认尾款"
+          }
+        ],
+        "audit": [
+          {
+            "id": 5,
+            "action": "custom",
+            "action_label": "确认销售订单",
+            "operator__username": "codex",
+            "after_data": {
+              "id": 11,
+              "order_no": "S5-CONFIRM-5",
+              "customer": 1,
+              "customer_name_snapshot": "S5 合成商业展厅照明采购及设施维护服务有限公司",
+              "customer_country_snapshot": "",
+              "customer_address_snapshot": "",
+              "customer_contact_name_snapshot": "",
+              "customer_phone_snapshot": "",
+              "customer_email_snapshot": "",
+              "quote": 7,
+              "order_date": "2026-11-12",
+              "expected_ship_date": null,
+              "tail_goods_policy": "SAME_CARTON",
+              "status": "confirmed",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "shipping_fee": "0.0000",
+              "discount": "0.0000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": "",
+              "quantity_change_version": 0
+            },
+            "metadata": {
+              "quote_id": 7,
+              "quote_no": "S5-QUO-DETAIL-LONG-REFERENCE-5"
+            }
+          }
+        ],
+        "movements": []
+      },
+      "duplicate": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "screenshot": "so-03-audit-confirmed-1440-125.png",
+      "rejected": 400,
+      "confirmed": 200
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "screenshot": "so-03-audit-rejected-390-125.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-audit",
+      "confirmId": 12,
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "dpr": 1.25,
+      "cssWidth": 312,
+      "before": {
+        "status": "draft",
+        "line": 18,
+        "sku": 1,
+        "quote": 1,
+        "updated": "2026-11-12T10:19:29.975624+00:00",
+        "reservation": [],
+        "plans": [],
+        "audit": [],
+        "movements": []
+      },
+      "after": {
+        "status": "confirmed",
+        "line": 18,
+        "sku": 1,
+        "quote": 8,
+        "updated": "2026-11-12T10:20:26.730364+00:00",
+        "reservation": [
+          {
+            "id": 57,
+            "sku_id": 1,
+            "quantity": "2.00"
+          }
+        ],
+        "plans": [
+          {
+            "id": 6,
+            "direction": "receivable",
+            "currency": "CNY",
+            "status": "open",
+            "planned_amount": "60.0000",
+            "settled_amount": "0.0000",
+            "notes": "默认尾款"
+          }
+        ],
+        "audit": [
+          {
+            "id": 6,
+            "action": "custom",
+            "action_label": "确认销售订单",
+            "operator__username": "codex",
+            "after_data": {
+              "id": 12,
+              "order_no": "S5-CONFIRM-6",
+              "customer": 1,
+              "customer_name_snapshot": "S5 合成商业展厅照明采购及设施维护服务有限公司",
+              "customer_country_snapshot": "",
+              "customer_address_snapshot": "",
+              "customer_contact_name_snapshot": "",
+              "customer_phone_snapshot": "",
+              "customer_email_snapshot": "",
+              "quote": 8,
+              "order_date": "2026-11-12",
+              "expected_ship_date": null,
+              "tail_goods_policy": "SAME_CARTON",
+              "status": "confirmed",
+              "currency": "CNY",
+              "exchange_rate": "1.000000",
+              "shipping_fee": "0.0000",
+              "discount": "0.0000",
+              "notes": "",
+              "cancelled_at": null,
+              "cancellation_reason": "",
+              "quantity_change_version": 0
+            },
+            "metadata": {
+              "quote_id": 8,
+              "quote_no": "S5-QUO-DETAIL-LONG-REFERENCE-6"
+            }
+          }
+        ],
+        "movements": []
+      },
+      "duplicate": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "screenshot": "so-03-audit-confirmed-390-125.png",
+      "rejected": 400,
+      "confirmed": 200
+    }
+  ]
+}

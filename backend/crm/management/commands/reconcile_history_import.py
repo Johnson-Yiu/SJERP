@@ -1,7 +1,7 @@
 """Read-only reconciliation of a single historical takeover application."""
 from collections import Counter
 from decimal import Decimal
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 import subprocess
@@ -100,6 +100,30 @@ def reconcile(application, source_sha):
     return result
 
 
+def verify_source_checkout(expected_sha):
+    if len(expected_sha) != 40 or any(c not in '0123456789abcdef' for c in expected_sha):
+        raise CommandError('源码 SHA 必须是完整的 40 位小写十六进制提交号。')
+
+    # Anchor Git to the loaded command, even when manage.py was invoked by absolute path.
+    root = Path(__file__).resolve().parents[4]
+
+    def git(*args):
+        return subprocess.check_output(['git', *args], cwd=root, text=True, stderr=subprocess.PIPE).strip()
+
+    try:
+        if Path(git('rev-parse', '--show-toplevel')).resolve() != root:
+            raise CommandError('无法确认实际运行代码所在的 Git 工作树根目录。')
+        actual_sha = git('rev-parse', 'HEAD')
+        dirty = git('status', '--porcelain', '--untracked-files=all', '--', 'backend', 'templates')
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise CommandError('无法读取实际运行代码所在的 Git 工作树，请确认 Git 和项目检出可用。') from error
+
+    if actual_sha != expected_sha:
+        raise CommandError(f'源码 SHA 不匹配，当前工作树为 {actual_sha}。')
+    if dirty:
+        raise CommandError('backend 或 templates 有未提交、已暂存或未跟踪的改动，请使用干净的源码工作树。')
+
+
 class Command(BaseCommand):
     help = 'Output a read-only historical application reconciliation as JSON.'
     def add_arguments(self, parser):
@@ -108,14 +132,15 @@ class Command(BaseCommand):
         parser.add_argument('--source-file', required=True, help='original source workbook path')
     def handle(self, *args, **options):
         sha = options['source_sha']
-        if len(sha) != 40 or any(c not in '0123456789abcdef' for c in sha):
-            raise ValueError('source SHA must be a full lowercase 40-character commit SHA')
-        actual = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
-        dirty = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=all', '--', 'backend', 'templates'], text=True).strip()
-        if actual != sha or dirty:
-            raise ValueError('source SHA mismatch or tracked working tree is dirty')
-        app = HistoryTakeoverApplication.objects.get(pk=options['application_id'])
-        digest = hashlib.sha256(Path(options['source_file']).read_bytes()).hexdigest()
+        verify_source_checkout(sha)
+        try:
+            app = HistoryTakeoverApplication.objects.get(pk=options['application_id'])
+        except HistoryTakeoverApplication.DoesNotExist as error:
+            raise CommandError('找不到指定的历史承接申请。') from error
+        try:
+            digest = hashlib.sha256(Path(options['source_file']).read_bytes()).hexdigest()
+        except OSError as error:
+            raise CommandError('无法读取原始工作簿，请检查文件路径和读取权限。') from error
         if digest != app.source_sha256:
-            raise ValueError('source workbook SHA-256 does not match application')
+            raise CommandError('原始工作簿 SHA-256 与申请记录不匹配。')
         self.stdout.write(json.dumps(reconcile(app, sha), cls=DjangoJSONEncoder, ensure_ascii=False, indent=2))

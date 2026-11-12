@@ -1,12 +1,16 @@
+from contextlib import chdir
+from decimal import Decimal
 import tempfile
 import hashlib
 import io
 import subprocess
 from pathlib import Path
 from django.core.management import call_command
+from django.core.management.base import CommandError
 import os
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from crm.management.commands import reconcile_history_import
 from crm.management.commands.reconcile_history_import import reconcile
 from unittest.mock import patch
 from django.contrib.auth import get_user_model
@@ -39,7 +43,8 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
         rows['销售明细'][0]['specification_snapshot'] = '24W'
         rows['采购明细'][0]['specification_snapshot'] = '18W'
         rows['采购明细'][0]['sku_name_snapshot'] = rows['销售明细'][0]['sku_name_snapshot']
-        completed = dict(rows['销售订单'][0], source_record_id='SO-HT-DONE', order_no='HIST-SO-HT-DONE', lifecycle_state='completed')
+        rows['销售订单'][0].update(shipping_fee='7.25', discount='2.10')
+        completed = dict(rows['销售订单'][0], source_record_id='SO-HT-DONE', order_no='HIST-SO-HT-DONE', lifecycle_state='completed', currency='EUR', shipping_fee='3.40', discount='1.15')
         done_line = dict(rows['销售明细'][0], source_order_id='SO-HT-DONE', source_line_id='1')
         done_event = dict(rows['履约记录'][0], source_event_id='SHIP-HT-DONE', parent_source_id='SO-HT-DONE', quantity_base='10.00')
         rows['销售订单'].append(completed)
@@ -138,26 +143,98 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
             self.assertEqual(bridge.advance_source(group.pk, source.pk, 'post', maker, voucher_checked=True).pk,fact.pk)
             self.assertEqual(FinanceFact.objects.count(),1)
             report = reconcile(application, os.environ.get('HISTORY_DELIVERY_SOURCE_SHA', 'uncommitted-test'))
-            original_path = Path(media) / 'source.xlsx'
-            original_path.write_bytes(workbook)
-            current_sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
-            # The command refuses dirty source; simulate the recorded clean source in this
-            # transactional test while still exercising digest and argument handling.
-            with patch('crm.management.commands.reconcile_history_import.subprocess.check_output', side_effect=[current_sha + '\n', '']):
+            if os.environ.get('HISTORY_DELIVERY_VERIFY_CHECKOUT') == '1':
+                original_path = Path(media) / 'source.xlsx'
+                original_path.write_bytes(workbook)
                 out = io.StringIO()
-                call_command('reconcile_history_import', application.pk, source_sha=current_sha, source_file=str(original_path), stdout=out)
+                call_command('reconcile_history_import', application.pk,
+                             source_sha=os.environ['HISTORY_DELIVERY_SOURCE_SHA'],
+                             source_file=str(original_path), stdout=out)
                 self.assertEqual(json.loads(out.getvalue())['file_sha256'], application.source_sha256)
-            original_path.write_bytes(b'wrong file')
-            with patch('crm.management.commands.reconcile_history_import.subprocess.check_output', side_effect=[current_sha + '\n', '']):
-                with self.assertRaisesMessage(ValueError, 'does not match'):
-                    call_command('reconcile_history_import', application.pk, source_sha=current_sha, source_file=str(original_path), stdout=io.StringIO())
             self.assertEqual(len(report['groups'][0]['cny_finance_facts']), 1)
             self.assertEqual(len(report['groups'][0]['source_plans']), 2)
             self.assertEqual(report['groups'][0]['source_cash_totals']['USD']['income'], 40)
             self.assertEqual(report['groups'][0]['cny_finance_facts'][0]['amount'], fact.amount)
-            self.assertEqual(report['groups'][0]['currency_totals']['USD']['sales_total'], Order.objects.get(order_no='HIST-SO-HT-1').total_amount + Order.objects.get(order_no='HIST-SO-HT-DONE').total_amount)
+            totals = report['groups'][0]['currency_totals']
+            self.assertEqual(set(totals), {'USD', 'EUR'})
+            # Each sales line is 10 × 12. Purchase is 5 × 3 in USD.
+            keys = ('sales_products', 'shipping', 'discount', 'sales_total', 'purchase_total')
+            for currency, expected in (
+                ('USD', ('120.00', '7.25', '2.10', '125.15', '15.00')),
+                ('EUR', ('120.00', '3.40', '1.15', '122.25', '0.00')),
+            ):
+                self.assertEqual(tuple(totals[currency][key] for key in keys), tuple(map(Decimal, expected)))
+            sales = {doc['currency']: doc for doc in report['groups'][0]['documents'] if doc['kind'] == 'sales'}
+            self.assertEqual(Decimal(sales['USD']['total']), Decimal('125.15'))
+            self.assertEqual(Decimal(sales['EUR']['total']), Decimal('122.25'))
             self.assertTrue(all(row['record_id'] for row in report['groups'][0]['source_rows']))
             if os.environ.get('HISTORY_DELIVERY_SYNTHETIC_REPORT'):
                 with open(os.environ['HISTORY_DELIVERY_SYNTHETIC_REPORT'], 'w', encoding='utf-8') as output:
                     json.dump({'customer_csv_sha256': hashlib.sha256(content).hexdigest(), 'conflict_preview': conflict_preview, 'baseline_counts': baseline, 'after_archive': after_archive, 'after_link': before_finance, 'after_finance': report}, output, cls=DjangoJSONEncoder, ensure_ascii=False, indent=2)
             self.assertEqual(sum(m.objects.count() for m in (Transaction,InventoryMovement,Shipment,GoodsReceipt)),0)
+
+    def test_reconciliation_checks_loaded_worktree_and_workbook(self):
+        workbook = self.workbook_bytes(self.source_rows())
+        response = self.client.post('/api/import/history-takeovers/', {
+            'file': SimpleUploadedFile('source.xlsx', workbook),
+        }, format='multipart')
+        self.assertEqual(response.status_code, 201, response.data)
+        command = 'crm/management/commands/reconcile_history_import.py'
+        with tempfile.TemporaryDirectory(prefix='reconciliation-git-') as directory:
+            temp = Path(directory)
+            repo = temp / 'project'
+            repo.mkdir()
+            source = temp / 'original.xlsx'
+            source.write_bytes(workbook)
+
+            def git(root, *args):
+                return subprocess.check_output(['git', '-C', str(root), *args], text=True,
+                                               stderr=subprocess.STDOUT).strip()
+
+            git(repo, 'init')
+            backend = repo / 'backend' / command
+            template = repo / 'templates' / 'source.txt'
+            for file in (backend, template):
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_text('original\n', encoding='utf-8')
+            git(repo, 'add', 'backend', 'templates')
+            git(repo, '-c', 'user.name=Test', '-c', 'user.email=test@example.invalid',
+                'commit', '-m', 'Synthetic checkout')
+            sha = git(repo, 'rev-parse', 'HEAD')
+            linked = temp / 'linked'
+            git(repo, 'worktree', 'add', '--detach', str(linked), sha)
+            self.assertTrue((linked / '.git').is_file())
+
+            def run(checkout, caller, expected_sha=sha, error=None):
+                out = io.StringIO()
+                with patch.object(reconcile_history_import, '__file__', str(checkout / 'backend' / command)), chdir(caller):
+                    args = dict(source_sha=expected_sha, source_file=str(source), stdout=out)
+                    if error:
+                        with self.assertRaisesMessage(CommandError, error):
+                            call_command('reconcile_history_import', response.data['id'], **args)
+                        self.assertEqual(out.getvalue(), '')
+                    else:
+                        call_command('reconcile_history_import', response.data['id'], **args)
+                        report = json.loads(out.getvalue())
+                        self.assertEqual(report['source_sha'], sha)
+                        self.assertEqual(report['file_sha256'], hashlib.sha256(workbook).hexdigest())
+
+            for checkout in (repo, linked):
+                for caller in (checkout, checkout / 'backend', temp, linked if checkout == repo else repo):
+                    run(checkout, caller)
+            for file in (backend, template):
+                relative = str(file.relative_to(repo))
+                file.write_text('changed\n', encoding='utf-8')
+                for caller in (repo, repo / 'backend', linked):
+                    run(repo, caller, error='有未提交')
+                run(linked, repo)
+                git(repo, 'add', '--', relative)
+                run(repo, repo / 'backend', error='有未提交')
+                git(repo, 'restore', '--staged', '--worktree', '--', relative)
+                untracked = file.with_name('untracked.txt')
+                untracked.write_text('untracked\n', encoding='utf-8')
+                run(repo, repo / 'backend', error='有未提交')
+                untracked.unlink()
+            run(repo, repo / 'backend', expected_sha='0' * 40, error='源码 SHA 不匹配')
+            source.write_bytes(b'wrong file')
+            run(repo, repo / 'backend', error='与申请记录不匹配')

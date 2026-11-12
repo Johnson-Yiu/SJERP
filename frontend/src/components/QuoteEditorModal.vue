@@ -379,7 +379,7 @@ async function save(shouldExport = false) {
     if (!shouldExport) { finishSavedQuote(); return }
     await prepareQuoteExport(response.data)
     if (!riskNoticeOpen.value) await exportSavedQuote(response.data)
-  } catch (error) { errorMessage.value = quoteSaveError(error) }
+  } catch (error) { errorMessage.value = error.data?.items ? quoteSaveError(error) : error.message }
   finally { saving.value = false }
 }
 async function retryExport() {

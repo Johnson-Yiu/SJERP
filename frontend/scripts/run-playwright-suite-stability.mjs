@@ -15,6 +15,11 @@ const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
+  { name: 'sales-state-closeout-05-audit', file: 'sales-state-closeout-05.spec.js', codex: true, args: ['--audit-sales-test'] },
+  ...['sales-state-closeout-05-create', 'sales-state-closeout-05-packing',
+    'quote-state-closeout-06', 'quote-state-closeout-06-review'].map(scenario => ({
+    name: scenario + '-isolated', file: scenario + '.spec.js', codex: true,
+  })),
   { name: 'u4-editor-guards-isolated', file: 'ui-u4-editor-guards.spec.js', codex: true },
   { name: 'crm-state-closeout-05-isolated', file: 'crm-state-closeout-05.spec.js', codex: true },
   { name: 'ui-final-state-list-load-isolated', file: 'ui-final-state-list-load-04.spec.js', codex: true },
@@ -132,7 +137,7 @@ const runs = [
   { name: 'iss022-isolated', args: ['--business-test', 'iss022-moq-real.spec.js'] },
   { name: 'iss028-035-isolated', args: ['--business-test', 'iss028-035-category-schema.spec.js'] },
   { name: 'iss055-rbac', args: ['--business-test', 'iss055-customer-404-real.spec.js'] },
-  ...dedicatedRuns.map(run => ({ ...run, args: ['--business-test', run.file] })),
+  ...dedicatedRuns.map(run => ({ ...run, args: run.args || ['--business-test', run.file] })),
 ]
 
 await mkdir(logsRoot, { recursive: true })

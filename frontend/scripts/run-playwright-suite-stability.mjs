@@ -15,6 +15,7 @@ const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
+  { name: 'u4-editor-guards-isolated', file: 'ui-u4-editor-guards.spec.js', codex: true },
   { name: 'crm-state-closeout-05-isolated', file: 'crm-state-closeout-05.spec.js', codex: true },
   { name: 'ui-final-state-list-load-isolated', file: 'ui-final-state-list-load-04.spec.js', codex: true },
   { name: 'finance-closeout-standard', file: 'finance-closeout.spec.js' },

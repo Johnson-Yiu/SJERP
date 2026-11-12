@@ -118,7 +118,7 @@ test('Q6 quote search, validation and workbook download', async ({ baseURL }) =>
           const risk = page.getByRole('dialog', { name: '导出前风险提示' })
           const downloads = path.join(evidence, 'downloads')
           await mkdir(downloads, { recursive: true })
-          async function exportVersion(version, failFirst) {
+          async function exportVersion(version) {
             const endpoint = url => url.pathname === `/api/quotes/${version.id}/export/`
             let requests = 0
             const count = request => {
@@ -131,7 +131,7 @@ test('Q6 quote search, validation and workbook download', async ({ baseURL }) =>
               await risk.getByRole('button', { name: '暂不导出' }).click()
               await expect(risk).toHaveCount(0)
               expect(requests).toBe(0)
-              if (failFirst) {
+              {
                 await page.route(endpoint, route => route.request().method() === 'GET'
                   ? route.fulfill({ status: 400, json: { detail: 'Q6 合成导出故障' } })
                   : route.continue())
@@ -140,13 +140,14 @@ test('Q6 quote search, validation and workbook download', async ({ baseURL }) =>
                   await risk.getByRole('button', { name: '了解风险，继续导出' }).click()
                   await expect(detail.getByText('Q6 合成导出故障')).toBeVisible()
                   expect(requests).toBe(1)
-                  await capture('export-rejected')
+                  await capture(`export-v${version.revision_no}-rejected`)
                 } finally {
                   await page.unroute(endpoint)
                 }
               }
               await exportButton.click()
-              await capture(failFirst ? 'revision-export-risk' : 'original-export-risk')
+              await expect(risk).toBeVisible()
+            await capture(version.revision_no ? 'revision-export-risk' : 'original-export-risk')
               const downloaded = page.waitForEvent('download')
               const exported = page.waitForResponse(response => endpoint(new URL(response.url())) && response.request().method() === 'GET')
               await risk.getByRole('button', { name: '了解风险，继续导出' }).click()
@@ -169,7 +170,6 @@ test('Q6 quote search, validation and workbook download', async ({ baseURL }) =>
             }
           }
           expect(quote.revision_no).toBe(0)
-          const original = await exportVersion(quote, false)
           await detail.getByRole('button', { name: '主体更正', exact: true }).click()
           await expect(detail.getByText(/当前报价状态不可操作/)).toBeVisible()
           await expect(detail.getByRole('button', { name: '提交更正申请' })).toBeDisabled()
@@ -179,6 +179,7 @@ test('Q6 quote search, validation and workbook download', async ({ baseURL }) =>
             detail.getByRole('button', { name: '标记为已发送' }).click(),
           ])
           expect(marked.status()).toBe(200)
+          const original = await exportVersion(quote)
           await detail.getByRole('button', { name: '主体更正', exact: true }).click()
           await detail.locator('#party-address').fill('Q6 Synthetic Corrected Address')
           await detail.getByLabel('原因', { exact: true }).fill('Q6 correction reason')
@@ -220,7 +221,7 @@ test('Q6 quote search, validation and workbook download', async ({ baseURL }) =>
           expect(revision.revision_no).toBe(1)
           await page.goto(new URL(`/quotes?detail=${revision.id}`, baseURL).href, { waitUntil: 'domcontentloaded' })
           await expect(detail).toContainText(revision.quote_no)
-          const revisedWorkbook = await exportVersion(revision, true)
+          const revisedWorkbook = await exportVersion(revision)
           expect(revisedWorkbook.quote).not.toBe(original.quote)
           expect(revisedWorkbook.total).not.toBe(original.total)
           expect(revisedWorkbook.template_sha256).toBe(original.template_sha256)

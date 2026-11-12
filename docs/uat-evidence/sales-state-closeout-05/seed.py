@@ -1,6 +1,8 @@
 """Seed isolated S5 sales list cases."""
 import json
+import sys
 from datetime import date
+from decimal import Decimal
 
 import django
 
@@ -47,7 +49,25 @@ for index in range(6):
     )
     OrderItem.objects.create(order=draft, sku=sku, quantity=2, unit_price=30)
     confirm_orders.append(draft.pk)
+packing_orders = []
+if "--packing" in sys.argv:
+    from crm.services.fulfillment import confirm_shipment
+    from crm.services.order_lifecycle import confirm_order
+
+    for index in range(6):
+        draft = Order.objects.create(
+            order_no=f"S5-PACK-{index + 1}", customer=customer,
+            order_date=date.today(), currency="CNY", exchange_rate=1,
+        )
+        line = OrderItem.objects.create(order=draft, sku=sku, quantity=2, unit_price=30)
+        order = confirm_order(draft)
+        shipment = confirm_shipment(order, {
+            "shipment_date": date.today(),
+            "items": [{"order_item": line.pk, "quantity": Decimal("2")}],
+        })
+        packing_orders.append({"order": order.pk, "shipment": shipment.pk, "number": shipment.shipment_no})
+
 print(json.dumps({
-    "orders": orders, "identifiers": identifiers, "quote": quote.pk,
-    "previousQuote": previous_quote.pk, "confirmOrders": confirm_orders,
+    "customer": customer.pk, "sku": sku.pk, "orders": orders, "identifiers": identifiers, "quote": quote.pk,
+    "packingOrders": packing_orders, "previousQuote": previous_quote.pk, "confirmOrders": confirm_orders,
 }))

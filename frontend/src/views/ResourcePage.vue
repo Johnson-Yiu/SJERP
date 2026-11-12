@@ -182,6 +182,7 @@ const contactDuplicateError = ref('')
 const contactDuplicateHint = computed(() => isContactPage.value ? duplicateContactHint(contactDuplicateRows.value, form, editingId.value) : '')
 const contactDuplicateMatches = computed(() => isContactPage.value ? findDuplicateContactMatches(contactDuplicateRows.value, form, editingId.value) : [])
 const toast = reactive({ show: false, message: '', error: false })
+const customerContactSaveError = ref('')
 let searchTimer, toastTimer
 let routeActionVersion = 0
 let contactDuplicateRequest = 0
@@ -553,6 +554,7 @@ async function loadCurrentOperator() {
   return currentOperator.value
 }
 function resetForm() {
+  customerContactSaveError.value = ''
   followUpSaveAttempted.value = false
   props.config.fields.forEach(([name, , type, , extra]) => {
     const supplierDefault = props.config.endpoint === 'suppliers' && !editingId.value
@@ -720,6 +722,7 @@ async function save() {
   if (!can(accessModule.value, editingId.value ? 'update' : 'create')) return
   if (saving.value) return
   clearToast()
+  customerContactSaveError.value = ''
   attachmentSaveError.value = ''
   attachmentDeleteError.value = ''
   parameterSaveError.value = ''; certificateSaveError.value=''
@@ -768,7 +771,8 @@ async function save() {
     if (isCertificatePage.value) certificateSaveError.value=certificateError(e)
     if (isParameterPage.value) parameterSaveError.value = /product, group, name/.test(apiErrorMessage(e)) ? '该产品的同一分组下已存在这个参数名称，请修改名称或分组。' : apiErrorMessage(e)
     if (isSupplierPage.value) { supplierSaveError.value = apiErrorMessage(e); if (e.response?.data?.code || /重复|二字代码/.test(e.message || '')) supplierCodeServerError.value = Array.isArray(e.response?.data?.code) ? e.response.data.code.join('；') : e.message }
-    notify(isCertificatePage.value ? certificateSaveError.value : isParameterPage.value ? parameterSaveError.value : e.message, true)
+    if (isCustomerPage.value || isContactPage.value) customerContactSaveError.value = apiErrorMessage(e)
+    else notify(isCertificatePage.value ? certificateSaveError.value : isParameterPage.value ? parameterSaveError.value : e.message, true)
   } finally { saving.value = false }
 }
 async function handleInventoryMovementCreated(records) {
@@ -1050,7 +1054,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 
 
       </div>
-      <div class="modal-foot" :class="{ 'follow-up-attachment-failed': isFollowUpPage && (attachmentSaveError || attachmentDeleteError) }"><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><p v-if="isFollowUpPage && attachmentSaveError" class="follow-up-validation" role="alert">{{ attachmentSaveError }}</p><p v-if="isFollowUpPage && attachmentDeleteError" class="follow-up-validation" role="alert">{{ attachmentDeleteError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
+      <div class="modal-foot" :class="{ 'follow-up-attachment-failed': isFollowUpPage && (attachmentSaveError || attachmentDeleteError), 'customer-contact-save-failed': customerContactSaveError }"><p v-if="customerContactSaveError" class="customer-contact-save-error" role="alert">{{ customerContactSaveError }}</p><p v-if="isFollowUpPage && followUpSaveAttempted && followUpScheduleError" class="follow-up-validation" role="alert">{{ followUpScheduleError }}</p><p v-if="isFollowUpPage && attachmentSaveError" class="follow-up-validation" role="alert">{{ attachmentSaveError }}</p><p v-if="isFollowUpPage && attachmentDeleteError" class="follow-up-validation" role="alert">{{ attachmentDeleteError }}</p><button type="button" class="btn btn-secondary" :disabled="saving" @click="closeModal">取消</button><button v-if="can(accessModule, editingId ? 'update' : 'create')" class="btn btn-primary" :disabled="saving || !optionsReady || (isSupplierPage && !!supplierCodeError)">{{ saving ? '保存中…' : saveLabel }}</button></div>
     </form></div>
 
     <Transition name="detail-drawer" appear>
@@ -1071,6 +1075,7 @@ onMounted(() => { void load(); if (isMovementPage.value) void loadMovementSkus()
 .follow-up-schedule .field-help { flex-basis: 100%; margin: 0; }
 
 .customer-detail-editor-backdrop{z-index:61}
+.customer-contact-save-failed{flex-wrap:wrap}.customer-contact-save-error{flex:0 0 100%;margin:0;color:#a12319;overflow-wrap:anywhere}
 .customer-editor .form-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .customer-editor textarea{min-height:58px;height:58px}
 .customer-editor .modal-body{padding-bottom:24px}.optional-heading{margin:24px 0 16px;font-size:var(--text-section)}

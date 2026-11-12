@@ -108,7 +108,7 @@ def verify_source_checkout(expected_sha):
     root = Path(__file__).resolve().parents[4]
 
     def git(*args):
-        return subprocess.check_output(['git', *args], cwd=root, text=True, stderr=subprocess.PIPE).strip()
+        return subprocess.check_output(['git', *args], cwd=root, encoding='utf-8', stderr=subprocess.PIPE).strip()
 
     try:
         if Path(git('rev-parse', '--show-toplevel')).resolve() != root:

@@ -182,7 +182,7 @@ class DeliverySameBatchTests(HistoryTakeoverFixtureMixin, TestCase):
         command = 'crm/management/commands/reconcile_history_import.py'
         with tempfile.TemporaryDirectory(prefix='reconciliation-git-') as directory:
             temp = Path(directory)
-            repo = temp / 'project'
+            repo = temp / '合成项目'
             repo.mkdir()
             source = temp / 'original.xlsx'
             source.write_bytes(workbook)

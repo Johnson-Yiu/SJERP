@@ -68,3 +68,7 @@
 INV-01 的采购入库来源已补验。Chrome 156.0.8078.80 在六组原生缩放中逐一滚动并切换四个可见标签，关闭后回到原筛选列表，再打开同一流水核对批次。产品源码为 46738366350c5f494e3fa62b2b209385fb8f340b，浏览器测试包含本轮新增矩阵。关联子详情返回和其他来源的缺失组合仍待核销。[运行记录](inventory-matrix/chrome-purchase-receipt-combinations/run.json)
 
 C5 来源矩阵保留 CRM-03 六组焦点失败。U4 修复后，候选 1dff4f7219f5e440ea9bc086a9a7af36a49379fa 的独立 C5 矩阵随主 CI 通过。[修前矩阵](../crm-state-closeout-05/matrix.md) · [修后主 CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/43155666882) · [Linux 专项](https://github.com/Johnson-Yiu/SJERP/actions/runs/43155666889)
+
+S5 已接收 3048697fdba660390fe9361fa12ac8517a170fb1 的订单确认拒绝恢复与部分验收证据。SO 系列由 S5 接续，QUO-01～04 由 Q6 接续。SKU-01、PKG-01、INV-01 由 P6 接续。P6 可沿用 29cfaf7b8c54da900178a007af9aec5139a2e34b 的采购入库六组截图与测试。SKU／包装草稿测试和两次运行产物仍在 U4 本地工作树的 ui-u4-editor-guards.spec.js 及 editor-guards、editor-guards-retry 目录，验收尚未完成。
+
+S5 审计入口从 frontend 执行 node scripts/run-isolated-browser-tests.mjs --audit-sales-test。沿用隔离 codex 凭据配置。此参数只选择 sales-state-closeout-05.spec.js，并通过直连 Django 与 Vite 代理核对实际审计设置。普通入口保持原行为。

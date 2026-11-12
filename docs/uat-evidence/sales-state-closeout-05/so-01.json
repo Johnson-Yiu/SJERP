@@ -1,5 +1,5 @@
 {
-  "source": "46738366350c5f494e3fa62b2b209385fb8f340b",
+  "source": "fd5d19429f54ca117065385fa251c33f4cfce75b",
   "browser": "Chrome/156.0.8078.80",
   "results": [
     {
@@ -70,11 +70,35 @@
       "screenshot": "so-04-load-failed-1366-100.png"
     },
     {
+      "state": "SO-04-late-response",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "so-04-late-response-1366-100.png"
+    },
+    {
       "state": "QUO-04-recovered",
       "width": 1366,
       "height": 768,
       "zoom": 1,
       "screenshot": "quo-04-loaded-1366-100.png"
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "so-03-rejected-1366-100.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "so-03-confirmed-1366-100.png",
+      "rejected": 400,
+      "confirmed": 200
     },
     {
       "status": "draft",
@@ -144,11 +168,35 @@
       "screenshot": "so-04-load-failed-1440-100.png"
     },
     {
+      "state": "SO-04-late-response",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "screenshot": "so-04-late-response-1440-100.png"
+    },
+    {
       "state": "QUO-04-recovered",
       "width": 1440,
       "height": 900,
       "zoom": 1,
       "screenshot": "quo-04-loaded-1440-100.png"
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "screenshot": "so-03-rejected-1440-100.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1,
+      "screenshot": "so-03-confirmed-1440-100.png",
+      "rejected": 400,
+      "confirmed": 200
     },
     {
       "status": "draft",
@@ -218,11 +266,35 @@
       "screenshot": "so-04-load-failed-390-100.png"
     },
     {
+      "state": "SO-04-late-response",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "screenshot": "so-04-late-response-390-100.png"
+    },
+    {
       "state": "QUO-04-recovered",
       "width": 390,
       "height": 844,
       "zoom": 1,
       "screenshot": "quo-04-loaded-390-100.png"
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "screenshot": "so-03-rejected-390-100.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "screenshot": "so-03-confirmed-390-100.png",
+      "rejected": 400,
+      "confirmed": 200
     },
     {
       "status": "draft",
@@ -292,11 +364,35 @@
       "screenshot": "so-04-load-failed-1366-125.png"
     },
     {
+      "state": "SO-04-late-response",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "screenshot": "so-04-late-response-1366-125.png"
+    },
+    {
       "state": "QUO-04-recovered",
       "width": 1366,
       "height": 768,
       "zoom": 1.25,
       "screenshot": "quo-04-loaded-1366-125.png"
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "screenshot": "so-03-rejected-1366-125.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "screenshot": "so-03-confirmed-1366-125.png",
+      "rejected": 400,
+      "confirmed": 200
     },
     {
       "status": "draft",
@@ -366,11 +462,35 @@
       "screenshot": "so-04-load-failed-1440-125.png"
     },
     {
+      "state": "SO-04-late-response",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "screenshot": "so-04-late-response-1440-125.png"
+    },
+    {
       "state": "QUO-04-recovered",
       "width": 1440,
       "height": 900,
       "zoom": 1.25,
       "screenshot": "quo-04-loaded-1440-125.png"
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "screenshot": "so-03-rejected-1440-125.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 1440,
+      "height": 900,
+      "zoom": 1.25,
+      "screenshot": "so-03-confirmed-1440-125.png",
+      "rejected": 400,
+      "confirmed": 200
     },
     {
       "status": "draft",
@@ -440,11 +560,35 @@
       "screenshot": "so-04-load-failed-390-125.png"
     },
     {
+      "state": "SO-04-late-response",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "screenshot": "so-04-late-response-390-125.png"
+    },
+    {
       "state": "QUO-04-recovered",
       "width": 390,
       "height": 844,
       "zoom": 1.25,
       "screenshot": "quo-04-loaded-390-125.png"
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "screenshot": "so-03-rejected-390-125.png",
+      "rejected": 400
+    },
+    {
+      "state": "SO-03-confirmed",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "screenshot": "so-03-confirmed-390-125.png",
+      "rejected": 400,
+      "confirmed": 200
     }
   ]
 }

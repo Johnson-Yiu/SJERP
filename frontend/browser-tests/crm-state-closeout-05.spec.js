@@ -332,7 +332,7 @@ for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
       test.skip(process.env.ISOLATED_PLAYWRIGHT_TEST_FILE !== spec, 'Dedicated C5 seed and browser profile require the isolated runner.')
       test.setTimeout(900000)
       const root = process.env.ISOLATED_TEST_ROOT
-      const output = path.join(evidence, process.env.C5_CASE ? 'chrome-recheck' : 'chrome', `${width}-${zoom * 100}`)
+      const output = path.join(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT || evidence, process.env.C5_CASE ? 'chrome-recheck' : 'chrome', `${width}-${zoom * 100}`)
       await mkdir(output, { recursive: true })
       const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
       const states = []

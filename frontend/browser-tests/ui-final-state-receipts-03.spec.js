@@ -225,18 +225,28 @@ test('receipts preserve both units and destinations and inventory movements enfo
         await snap('inventory-automatic-receipt-readonly')
       }
     }
-    await page.setViewportSize({ width: 390, height: 844 })
-    const tabs = detail.locator('.detail-tabs button')
-    await expect(tabs.first()).toBeVisible()
-    for (const [index, tab] of (await tabs.all()).entries()) {
-      const label = (await tab.innerText()).trim()
-      await tab.click()
-      await expect(tab).toHaveClass(/active/)
-      await tab.scrollIntoViewIfNeeded()
-      await snap('inventory-receipt-relation-tab-' + index, { label })
+    for (const size of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+      await page.setViewportSize(size)
+      for (const scale of [1, 1.25]) {
+        zoom = scale
+        await zoomControl.selectOption(String(zoom), { timeout: 180000 })
+        const tabs = detail.locator('.detail-tabs button')
+        await expect(tabs.first()).toBeVisible()
+        for (const [index, tab] of (await tabs.all()).entries()) {
+          const label = (await tab.innerText()).trim()
+          await tab.scrollIntoViewIfNeeded()
+          await tab.click()
+          await expect(tab).toHaveClass(/active/)
+          await snap('inventory-receipt-relation-tab-' + index, { label })
+        }
+        await detail.getByRole('button', { name: '关闭详情' }).click()
+        await expect(detail).toHaveCount(0)
+        await expect(automatic).toBeVisible()
+        await automatic.getByTitle('查看详情', { exact: true }).click()
+        await expect(detail.getByText('EVID-RECEIPT-MULTI-A', { exact: true })).toBeVisible()
+      }
     }
     await detail.getByRole('button', { name: '关闭详情' }).click()
-    await expect(detail).toHaveCount(0)
 
     await go()
     await workbench.getByText('收货', { exact: true }).click()

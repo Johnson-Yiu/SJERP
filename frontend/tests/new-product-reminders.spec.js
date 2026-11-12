@@ -3,6 +3,7 @@ import { createRouter, createMemoryHistory } from 'vue-router'
 import { beforeEach, describe, it, expect, vi } from 'vitest'
 import Reminders from '../src/components/NewProductReminders.vue'
 import { api } from '../src/api'
+import { resolveDialog } from '../src/dialogs'
 vi.mock('../src/api', () => ({ api: { get: vi.fn(), post: vi.fn(), patch: vi.fn() } }))
 const record = { id: 7, customer: 2, customer_name: '合成客户', requirement: '壁灯', specification: 'IP65', other_requirements: '', version: 1, created_by: '开发超级管理员（非实名员工）', created_at: '2026-11-05', voided_at: null }
 async function render(query = '') {
@@ -67,11 +68,25 @@ describe('new product requirements', () => {
     const {wrapper} = await render('?detail=7')
     await wrapper.findAll('button').find(b=>b.text()==='修改需求').trigger('click')
     await wrapper.find('.editor textarea').setValue('新要求')
-    api.patch.mockRejectedValue(new Error('记录已变更，请重新打开后再操作。'))
+    api.patch.mockRejectedValue(Object.assign(new Error('记录已变更，请重新打开后再操作。'), { status: 409 }))
     await wrapper.find('.editor form').trigger('submit'); await flushPromises()
     expect(api.patch).toHaveBeenCalledWith('/new-product-reminders/7/',expect.objectContaining({version:1,requirement:'新要求'}))
     expect(wrapper.find('[role=alert]').text()).toContain('记录已变更')
     expect(wrapper.find('.editor textarea').element.value).toBe('新要求')
+    expect(wrapper.find('.editor button[type=submit], .editor .btn-primary').attributes('disabled')).toBeDefined()
+    await wrapper.find('.editor form').trigger('submit')
+    expect(api.patch).toHaveBeenCalledTimes(1)
+    const latest = wrapper.findAll('button').find(button => button.text() === '查看最新版本')
+    await latest.trigger('click')
+    resolveDialog(false)
+    await flushPromises()
+    expect(wrapper.find('.editor textarea').element.value).toBe('新要求')
+    api.get.mockResolvedValueOnce({ data: { ...record, specification: 'IP67', version: 2 } })
+      .mockResolvedValueOnce({ data: [] })
+    await latest.trigger('click')
+    resolveDialog(true)
+    await flushPromises()
+    expect(wrapper.find('.editor').text()).toContain('IP67')
     wrapper.unmount()
   })
 })

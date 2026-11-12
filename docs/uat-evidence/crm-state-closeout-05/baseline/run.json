@@ -1,0 +1,156 @@
+{
+  "source": "46738366350c5f494e3fa62b2b209385fb8f340b",
+  "width": 390,
+  "height": 844,
+  "zoom": 1.25,
+  "states": [
+    {
+      "id": "CRM-01",
+      "screenshots": [
+        {
+          "filename": "CRM-01-customer.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "CRM-02",
+      "screenshots": [
+        {
+          "filename": "CRM-02-pending.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-02-rejected.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-02-saved.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "CRM-03",
+      "screenshots": [
+        {
+          "filename": "CRM-03-customer.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-03-nested.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-03-returned.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "CRM-04",
+      "screenshots": [
+        {
+          "filename": "CRM-04-pending.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-04-rejected.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        },
+        {
+          "filename": "CRM-04-saved.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "CRM-05",
+      "screenshots": [
+        {
+          "filename": "CRM-05-failure.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        }
+      ],
+      "result": "FAIL",
+      "error": "TimeoutError: locator.selectOption: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('.workspace-pane[aria-hidden=\"false\"]').getByRole('dialog', { name: '新建跟进记录', exact: true }).getByLabel('客户', { exact: true })\n    - locator resolved to <select disabled required=\"\" aria-label=\"客户\" data-v-05d91905=\"\">…</select>\n  - attempting select option action\n    2 × waiting for element to be visible and enabled\n      - element is not enabled\n    - retrying select option action\n    - waiting 20ms\n    2 × waiting for element to be visible and enabled\n      - element is not enabled\n    - retrying select option action\n      - waiting 100ms\n    19 × waiting for element to be visible and enabled\n       - element is not enabled\n     - retrying select option action\n       - waiting 500ms\n",
+      "browser": "Chrome/156.0.8078.80"
+    },
+    {
+      "id": "NPD-01",
+      "screenshots": [
+        {
+          "filename": "NPD-01-failure.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        }
+      ],
+      "result": "FAIL",
+      "error": "TimeoutError: locator.selectOption: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('.workspace-pane[aria-hidden=\"false\"]').getByRole('region', { name: '新品需求详情' }).getByLabel('客户', { exact: true })\n",
+      "browser": "Chrome/156.0.8078.80"
+    },
+    {
+      "id": "NPD-02",
+      "screenshots": [
+        {
+          "filename": "NPD-02-stale.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        },
+        {
+          "filename": "NPD-02-latest.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    },
+    {
+      "id": "NPD-03",
+      "screenshots": [
+        {
+          "filename": "NPD-03-void.png",
+          "width": 312,
+          "height": 675,
+          "dpr": 1.25
+        }
+      ],
+      "browser": "Chrome/156.0.8078.80",
+      "result": "PASS"
+    }
+  ]
+}

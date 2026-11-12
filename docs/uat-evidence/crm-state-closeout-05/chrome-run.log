@@ -1,0 +1,1390 @@
+Isolation run de0c8754-2792-4d44-bbfa-d32939bb5eea; API 127.0.0.1:12072; Vite 127.0.0.1:12074
+Isolated SQLite: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-I94bxN\db.sqlite3
+Isolated MEDIA_ROOT: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-I94bxN\media
+Playwright selection: crm-state-closeout-05.spec.js
+Isolated identity: authenticated codex test superuser
+[isolation] Pre-migration isolation verification
+{'runId': 'de0c8754-2792-4d44-bbfa-d32939bb5eea', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-I94bxN\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-I94bxN\\media', 'rbacEnforcement': False}
+[isolation] Pre-migration isolation verification: passed
+[isolation] Django system check
+System check identified no issues (0 silenced).
+[isolation] Django system check: passed
+[isolation] Isolated database migrations
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, crm, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying crm.0001_initial... OK
+  Applying crm.0002_inventorymovement_productcertificate_and_more... OK
+  Applying crm.0003_customer_sales_stages... OK
+  Applying crm.0004_organization_and_permissions... OK
+  Applying crm.0005_alter_followup_subject... OK
+  Applying crm.0006_customercodesequence... OK
+  Applying crm.0007_alter_productcategory_options_productcategory_parent_and_more... OK
+  Applying crm.0008_productcodesequence_product_additional_categories... OK
+  Applying crm.0009_product_hs_code_product_name_en... OK
+  Applying crm.0010_sku_parameter_values_product_details... OK
+  Applying crm.0011_quote_pi_fields_and_sku_image... OK
+  Applying crm.0012_quote_saved_pi_snapshots... OK
+  Applying crm.0013_quoteimportantnote... OK
+  Applying crm.0014_quote_parent_and_revision_summary... OK
+  Applying crm.0015_quoteimportantnote_deactivation_audit... OK
+  Applying crm.0016_trade_fulfillment... OK
+  Applying crm.0017_product_suppliers... OK
+  Applying crm.0018_finance_operating_ledger... OK
+  Applying crm.0019_transaction_allocated_amount... OK
+  Applying crm.0020_contract_change_request... OK
+  Applying crm.0021_skucodesequence_orderitem_description_snapshot_and_more... OK
+  Applying crm.0021_packagingtemplate_packingplan_packingplancarton_and_more... OK
+  Applying crm.0022_merge_20260823_2351... OK
+  Applying crm.0023_categoryattribute_include_in_sales_model... OK
+  Applying crm.0024_product_sales_model_prefix_and_sku_abbreviations... OK
+  Applying crm.0025_packagingtemplate_supplier... OK
+  Applying crm.0026_packagingtemplate_auto_code_and_legacy_qty... OK
+  Applying crm.0027_remove_legacy_model_from_sku_product_details... OK
+  Applying crm.0028_remove_legacy_dimensions_from_sku_product_details... OK
+  Applying crm.0029_quote_child_revision_counter... OK
+  Applying crm.0029_backfill_sku_internal_identity... OK
+  Applying crm.0030_merge_sku_identity_and_quote_counter... OK
+  Applying crm.0031_correct_sku_identity_from_specification... OK
+  Applying crm.0032_currency_amount_precision... OK
+  Applying crm.0033_sku_safety_history... OK
+  Applying crm.0034_purchaseorderitem_supplier_barcode_snapshot_and_more... OK
+  Applying crm.0035_sku_display_name_key_sku_sku_display_name_key_unique... OK
+  Applying crm.0036_followupattachment... OK
+  Applying crm.0037_sku_identity_safety... OK
+  Applying crm.0038_supplier_code_remove_default_currency... OK
+  Applying crm.0039_categoryattribute_required... OK
+  Applying crm.0040_purchaseorder_order_optional... OK
+  Applying crm.0041_inventorymovement_related_orders... OK
+  Applying crm.0042_alter_inventorymovement_type... OK
+  Applying crm.0043_alter_transaction_kind... OK
+  Applying crm.0044_operationlog... OK
+  Applying crm.0045_trade_finance_safety... OK
+  Applying crm.0046_purchaseorder_additional_costs_and_more... OK
+  Applying crm.0047_remove_purchasecostallocation_cost_allocation_target_valid_and_more... OK
+  Applying crm.0048_reporting_geography... OK
+  Applying crm.0049_supplier_main_products... OK
+  Applying crm.0050_supplier_store_url... OK
+  Applying crm.0051_remove_packagingtemplate_mixed_pack_allowed_and_more... OK
+  Applying crm.0052_alter_packingplancarton_partial_carton_policy_snapshot... OK
+  Applying crm.0053_hs_code_catalog... OK
+  Applying crm.0054_sku_plans_supplier_capabilities... OK
+  Applying crm.0055_freeze_existing_sku_parameters... OK
+  Applying crm.0056_purchase_source_characteristics_snapshot... OK
+  Applying crm.0057_sku_name_separator... OK
+  Applying crm.0058_order_item_supplier_allocation... OK
+  Applying crm.0059_supplier_supply_categories... OK
+  Applying crm.0060_product_combination_rules... OK
+  Applying crm.0061_sales_rules... OK
+  Applying crm.0062_sku_trade_units... OK
+  Applying crm.0063_trade_unit_base_snapshots... OK
+  Applying crm.0064_goods_receipt_reversal... OK
+  Applying crm.0065_shipment_reversal... OK
+  Applying crm.0066_transaction_void_metadata... OK
+  Applying crm.0067_order_purchase_cancellation_lifecycle... OK
+  Applying crm.0068_documentnumbersequence... OK
+  Applying crm.0069_backfill_purchase_cost_allocations... OK
+  Applying crm.0070_shipmentitem_overage_reversal_links... OK
+  Applying crm.0071_paymentplan_cancelled_zero_amount... OK
+  Applying crm.0072_supplier_payment_terms... OK
+  Applying crm.0073_followup_next_follow_up_mode... OK
+  Applying crm.0074_functional_rbac_modules... OK
+  Applying crm.0075_alter_rolepermission_can_view... OK
+  Applying crm.0076_customer_owner_profile... OK
+  Applying crm.0077_rmb_cash_events... OK
+  Applying crm.0078_historical_contract_scope... OK
+  Applying crm.0079_shared_report_template... OK
+  Applying crm.0080_formal_party_snapshots... OK
+  Applying crm.0081_transaction_rmb_reference_label... OK
+  Applying crm.0081_supplier_lifecycle... OK
+  Applying crm.0081_product_certificate_private_file... OK
+  Applying crm.0082_merge_iss026_iss107_iss017... OK
+  Applying crm.0083_customer_supplier_preference... OK
+  Applying crm.0084_alter_orderitem_supplier_allocation_scope_and_source... OK
+  Applying crm.0085_order_quantity_adjustment... OK
+  Applying crm.0086_purchase_moq_exception... OK
+  Applying crm.0087_amount_calculation_compatibility... OK
+  Applying crm.0088_operationlog_append_only... OK
+  Applying crm.0089_operationlog_operator_protect... OK
+  Applying crm.0091_csv_import_audit... OK
+  Applying crm.0090_fulfillment_idempotency... OK
+  Applying crm.0092_merge_fulfillment_and_csv_audit... OK
+  Applying crm.0093_csv_import_preview_audit... OK
+  Applying crm.0094_csv_import_audit_truncate_guard... OK
+  Applying crm.0090_fulfillment_request_idempotency... OK
+  Applying crm.0095_merge_fulfillment_idempotency... OK
+  Applying crm.0096_rmbcashevent_bank_counterparty_and_more... OK
+  Applying crm.0096_quote_pi_template_snapshots... OK
+  Applying crm.0097_merge_quote_and_cash_review... OK
+  Applying crm.0098_finance_accounts... OK
+  Applying crm.0099_finance_closeout_workflows... OK
+  Applying crm.0100_finance_legacy_fact_links... OK
+  Applying crm.0101_finance_historical_transfer_links... OK
+  Applying crm.0102_bank_private_voucher_binding... OK
+  Applying crm.0098_history_takeover_workflow... OK
+  Applying crm.0103_merge_finance_and_history... OK
+  Applying crm.0104_historical_inventory_baseline... OK
+  Applying crm.0105_historical_operational_contract... OK
+  Applying crm.0106_historical_purchase_balance_mode... OK
+  Applying crm.0107_inventory_movement_location... OK
+  Applying crm.0108_history_append_only_truncate... OK
+  Applying crm.0109_quote_buyer_country_snapshot... OK
+  Applying crm.0110_party_version... OK
+  Applying crm.0111_quote_buyer_tax_id... OK
+  Applying crm.0112_party_quote_application... OK
+  Applying crm.0113_party_request_lifecycle... OK
+  Applying crm.0114_party_document_version... OK
+  Applying crm.0109_new_product_reminders... OK
+  Applying crm.0115_party_replacement... OK
+  Applying crm.0116_party_document_details_storage... OK
+  Applying crm.0117_party_details_draft_guard... OK
+  Applying crm.0118_merge_party_reminders... OK
+  Applying crm.0109_finance_transaction_unified_entry... OK
+  Applying crm.0110_remove_rmbcashevent_cash_event_net_positive_and_more... OK
+  Applying crm.0111_financeplanwriteoff... OK
+  Applying crm.0119_merge_finance_and_party... OK
+  Applying crm.0120_finance_actual_receipt_and_writeoff_correction... OK
+  Applying crm.0121_reconcile_legacy_fee_allocation_cash... OK
+  Applying crm.0110_sales_order_import_sources... OK
+  Applying crm.0119_merge_sales_order_import... OK
+  Applying crm.0122_merge_sales_and_finance_review... OK
+  Applying crm.0119_merge_20261108_1834... OK
+  Applying crm.0120_advanceallocation_cash_amount_and_more... OK
+  Applying crm.0123_merge_finance_receipt_histories... OK
+  Applying crm.0124_finance_bank_fact_match... OK
+  Applying crm.0125_finance_receipt_refund... OK
+  Applying crm.0126_finance_cash_confirmation... OK
+  Applying crm.0127_finance_bank_return_allocation... OK
+  Applying crm.0123_sku_cost_snapshots... OK
+  Applying crm.0123_history_reporting_snapshots... OK
+  Applying crm.0128_merge_release_integration... OK
+  Applying crm.0129_historical_product_linking... OK
+  Applying crm.0130_history_product_candidate_rules... OK
+  Applying sessions.0001_initial... OK
+[isolation] Isolated database migrations: passed
+[isolation] Migration completeness check
+[isolation] Migration completeness check: passed
+[isolation] Post-migration isolation verification
+{'runId': 'de0c8754-2792-4d44-bbfa-d32939bb5eea', 'database': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-I94bxN\\db.sqlite3', 'mediaRoot': 'C:\\Users\\Johnson\\AppData\\Local\\Temp\\sunjack-r1-repair-06-I94bxN\\media', 'rbacEnforcement': False}
+[isolation] Post-migration isolation verification: passed
+[isolation] Allowlisted synthetic fixture seed (seed_isolated_codex_superadmin.py)
+Isolated codex superuser seeded; credentials omitted.
+[isolation] Allowlisted synthetic fixture seed (seed_isolated_codex_superadmin.py): passed
+[isolated Django API] Performing system checks...
+
+[isolated Django API] System check identified no issues (0 silenced).
+[isolated Django API] November 12, 2026 - 12:21:08
+Django version 6.0.9, using settings 'test_support.isolated_settings'
+Starting development server at http://127.0.0.1:12072/
+Quit the server with CTRL-BREAK.
+
+[isolated Django API] WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+[isolation] Direct Django API identity, SQLite path, and MEDIA_ROOT: passed
+[isolated Django API] [12/Nov/2026 12:21:08] "GET /api/__test__/isolation/[ephemeral-run-token]/ HTTP/1.1" 200 326
+[isolated Vite]
+  VITE v8.3.5  ready in 474 ms
+
+[isolated Vite]   ➜  Local:   http://127.0.0.1:12074/
+[isolation] Vite identity: passed
+[isolated Django API] [12/Nov/2026 12:21:09] "GET /api/__test__/isolation/[ephemeral-run-token]/ HTTP/1.1" 200 326
+[isolation] Vite /api proxy identity, SQLite path, and MEDIA_ROOT: passed
+[isolation] Playwright suite
+[isolated Vite] 12:21:10 [vite] (client) [optimizer] bundling dependencies...
+[isolated Django API] [12/Nov/2026 12:21:14] "GET /api/session/current-operator/ HTTP/1.1" 200 2826
+[isolated Django API] [12/Nov/2026 12:21:14] "GET /api/session/csrf/ HTTP/1.1" 200 44
+[isolated Django API] [12/Nov/2026 12:21:15] "POST /api/session/login/ HTTP/1.1" 200 44
+[isolated Django API] [12/Nov/2026 12:21:15] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:15] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+Isolated Chrome session: authenticated codex superuser; dev identity off; RBAC unchanged/off for this test database.
+
+Running 6 tests using 1 worker
+
+(node:15788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [12/Nov/2026 12:21:18] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:19] "GET /api/context/customers/1/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:21:19] "GET /api/operation-logs/?entity=crm.customer&object_id=1&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:21:19] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 941
+[isolated Django API] [12/Nov/2026 12:21:19] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:19] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:23] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:24] "GET /api/context/customers/3/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:21:24] "GET /api/operation-logs/?entity=crm.customer&object_id=3&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:21:24] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 1831
+[isolated Django API] [12/Nov/2026 12:21:24] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:24] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:24] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:24] "GET /api/customers/country-catalog/?page=1 HTTP/1.1" 200 28721
+[isolated Django API] [12/Nov/2026 12:21:24] "GET /api/customers/sources/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:24] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:25] "PUT /api/customers/3/ HTTP/1.1" 200 454
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 1841
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/operation-logs/?entity=crm.customer&object_id=3&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/context/customers/3/ HTTP/1.1" 200 3025
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/customers/3/ HTTP/1.1" 200 454
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/customers/?search=C5-1366-100-CRM-02%20%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A%20%E5%B7%B2%E6%9B%B4%E6%96%B0 HTTP/1.1" 200 506
+[isolated Django API] [12/Nov/2026 12:21:25] "GET /api/customers/4/ HTTP/1.1" 200 444
+[isolated Django API] [12/Nov/2026 12:21:26] "GET /api/contacts/3/ HTTP/1.1" 200 347
+[isolated Django API] [12/Nov/2026 12:21:28] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:30] "GET /api/operation-logs/?entity=crm.customer&object_id=5&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:21:30] "GET /api/context/customers/5/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:21:30] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 2731
+[isolated Django API] [12/Nov/2026 12:21:30] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:30] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:31] "GET /api/context/contacts/5/ HTTP/1.1" 200 2055
+[isolated Django API] [12/Nov/2026 12:21:31] "GET /api/operation-logs/?entity=crm.contact&object_id=5&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:21:31] "GET /api/context/customers/5/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:21:31] "GET /api/operation-logs/?entity=crm.customer&object_id=5&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:21:37] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:37] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 2765
+[isolated Django API] [12/Nov/2026 12:21:37] "GET /api/customers/?page=1 HTTP/1.1" 200 3621
+[isolated Django API] [12/Nov/2026 12:21:38] "GET /api/customers/?page=1 HTTP/1.1" 200 3621
+[isolated Django API] [12/Nov/2026 12:21:38] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 2765
+[isolated Django API] [12/Nov/2026 12:21:38] "GET /api/customers/?page=1 HTTP/1.1" 200 3621
+[isolated Django API] [12/Nov/2026 12:21:38] "GET /api/contacts/?customer=7&page=1 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:21:38] "POST /api/contacts/ HTTP/1.1" 201 352
+[isolated Django API] [12/Nov/2026 12:21:39] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:39] "GET /api/context/contacts/9/ HTTP/1.1" 200 1431
+[isolated Django API] [12/Nov/2026 12:21:39] "GET /api/operation-logs/?entity=crm.contact&object_id=9&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:21:39] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 3118
+[isolated Django API] [12/Nov/2026 12:21:39] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:39] "GET /api/customers/?page=1 HTTP/1.1" 200 3621
+[isolated Django API] [12/Nov/2026 12:21:39] "GET /api/contacts/?search=C5-1366-100-CRM-04%20A%20%E9%95%BF%E5%90%8D%E7%A7%B0%E5%9B%BD%E9%99%85%E7%85%A7%E6%98%8E%E9%87%87%E8%B4%AD%E4%B8%8E%E9%A1%B9%E7%9B%AE%E5%8D%8F%E8%B0%83%E8%81%94%E7%B3%BB%E4%BA%BA%20%E4%BF%AE%E6%AD%A3 HTTP/1.1" 200 404
+[isolated Django API] [12/Nov/2026 12:21:39] "GET /api/contacts/9/ HTTP/1.1" 200 352
+[isolated Django API] [12/Nov/2026 12:21:43] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/follow-ups/?customer=9&search=&page=1 HTTP/1.1" 200 637
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/customers/?page=1 HTTP/1.1" 200 4513
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 3798
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/customers/?page=1 HTTP/1.1" 200 4513
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/customers/?page=1 HTTP/1.1" 200 4513
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 3798
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/customers/?page=1 HTTP/1.1" 200 4513
+[isolated Django API] [12/Nov/2026 12:21:44] "GET /api/contacts/?customer=10&page=1 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:21:45] "GET /api/contacts/?page=1 HTTP/1.1" 200 3798
+[isolated Django API] [12/Nov/2026 12:21:45] "GET /api/customers/?page=1 HTTP/1.1" 200 4513
+[isolated Django API] [12/Nov/2026 12:21:45] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:21:45] "GET /api/follow-ups/?customer=9&search=&page=1 HTTP/1.1" 200 637
+[isolated Django API] [12/Nov/2026 12:21:45] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:21:45] "GET /api/customers/?page=1 HTTP/1.1" 200 4513
+[isolated Django API] [12/Nov/2026 12:21:45] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:21:45] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:55] "GET /api/new-product-reminders/?customer=11 HTTP/1.1" 200 536
+[isolated Django API] [12/Nov/2026 12:21:57] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:21:57] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=11 HTTP/1.1" 200 536
+[isolated Django API] [12/Nov/2026 12:21:58] "GET /api/customers/?search= HTTP/1.1" 200 5405
+[isolated Django API] [12/Nov/2026 12:21:58] "GET /api/contacts/?customer=11 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:21:58] "GET /api/customers/?search=C5-1366-100-NPD-01+%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A HTTP/1.1" 200 497
+[isolated Django API] [12/Nov/2026 12:21:58] "GET /api/contacts/?customer=11 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:21:58] "POST /api/new-product-reminders/ HTTP/1.1" 201 486
+[isolated Django API] [12/Nov/2026 12:21:59] "GET /api/new-product-reminders/?customer=11 HTTP/1.1" 200 1023
+[isolated Django API] [12/Nov/2026 12:21:59] "GET /api/new-product-reminders/7/history/ HTTP/1.1" 200 425
+[isolated Django API] [12/Nov/2026 12:21:59] "GET /api/new-product-reminders/7/ HTTP/1.1" 200 486
+[isolated Django API] [12/Nov/2026 12:21:59] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=11 HTTP/1.1" 200 1023
+[isolated Django API] [12/Nov/2026 12:21:59] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=11 HTTP/1.1" 200 1023
+[isolated Django API] [12/Nov/2026 12:22:06] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:06] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 3938
+[isolated Django API] [12/Nov/2026 12:22:07] "GET /api/new-product-reminders/8/ HTTP/1.1" 200 484
+[isolated Django API] [12/Nov/2026 12:22:07] "GET /api/new-product-reminders/8/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:09] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:10] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 3938
+[isolated Django API] [12/Nov/2026 12:22:10] "GET /api/new-product-reminders/8/ HTTP/1.1" 200 484
+[isolated Django API] [12/Nov/2026 12:22:10] "GET /api/new-product-reminders/8/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:12] "GET /api/contacts/?customer=13 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:22:12] "GET /api/contacts/?customer=13 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:22:13] "PATCH /api/new-product-reminders/8/ HTTP/1.1" 200 499
+[isolated Django API] [12/Nov/2026 12:22:13] "GET /api/new-product-reminders/8/history/ HTTP/1.1" 200 699
+[isolated Django API] [12/Nov/2026 12:22:13] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 3953
+[isolated Django API] Conflict: /api/new-product-reminders/8/
+[isolated Django API] [12/Nov/2026 12:22:13] "PATCH /api/new-product-reminders/8/ HTTP/1.1" 409 61
+[isolated Django API] [12/Nov/2026 12:22:13] "GET /api/new-product-reminders/8/ HTTP/1.1" 200 499
+[isolated Django API] [12/Nov/2026 12:22:13] "GET /api/new-product-reminders/8/history/ HTTP/1.1" 200 699
+[isolated Django API] [12/Nov/2026 12:22:13] "GET /api/new-product-reminders/8/ HTTP/1.1" 200 499
+[isolated Django API] [12/Nov/2026 12:22:13] "PATCH /api/new-product-reminders/8/ HTTP/1.1" 200 499
+[isolated Django API] [12/Nov/2026 12:22:13] "GET /api/new-product-reminders/8/history/ HTTP/1.1" 200 1412
+[isolated Django API] [12/Nov/2026 12:22:13] "GET /api/new-product-reminders/8/ HTTP/1.1" 200 499
+[isolated Django API] [12/Nov/2026 12:22:13] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 3953
+[isolated Django API] [12/Nov/2026 12:22:19] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:19] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 4438
+[isolated Django API] [12/Nov/2026 12:22:19] "GET /api/new-product-reminders/9/ HTTP/1.1" 200 484
+[isolated Django API] [12/Nov/2026 12:22:19] "GET /api/new-product-reminders/9/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:20] "GET /api/new-product-reminders/9/ HTTP/1.1" 200 484
+[isolated Django API] [12/Nov/2026 12:22:20] "POST /api/new-product-reminders/9/void/ HTTP/1.1" 200 557
+[isolated Django API] [12/Nov/2026 12:22:20] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 3953
+[isolated Django API] [12/Nov/2026 12:22:21] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:21] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=void&page=1 HTTP/1.1" 200 609
+[isolated Django API] [12/Nov/2026 12:22:21] "GET /api/new-product-reminders/9/history/ HTTP/1.1" 200 757
+[isolated Django API] [12/Nov/2026 12:22:21] "GET /api/new-product-reminders/9/ HTTP/1.1" 200 557
+[isolated Django API] [12/Nov/2026 12:22:21] "GET /api/new-product-reminders/9/ HTTP/1.1" 200 557
+  x  1 browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1366×768 Chrome 100% (1.1m)
+(node:41576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [12/Nov/2026 12:22:27] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:28] "GET /api/operation-logs/?entity=crm.customer&object_id=17&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:22:28] "GET /api/context/customers/17/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:22:28] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 8081
+[isolated Django API] [12/Nov/2026 12:22:28] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:28] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/context/customers/19/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/operation-logs/?entity=crm.customer&object_id=19&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 8973
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/customers/country-catalog/?page=1 HTTP/1.1" 200 28721
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/customers/sources/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:36] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:38] "PUT /api/customers/19/ HTTP/1.1" 200 455
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 8983
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/context/customers/19/ HTTP/1.1" 200 3032
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/operation-logs/?entity=crm.customer&object_id=19&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/customers/19/ HTTP/1.1" 200 455
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/customers/?search=C5-1366-125-CRM-02%20%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A%20%E5%B7%B2%E6%9B%B4%E6%96%B0 HTTP/1.1" 200 507
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/customers/20/ HTTP/1.1" 200 445
+[isolated Django API] [12/Nov/2026 12:22:39] "GET /api/contacts/20/ HTTP/1.1" 200 349
+[isolated Django API] [12/Nov/2026 12:22:43] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:45] "GET /api/context/customers/21/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:22:45] "GET /api/operation-logs/?entity=crm.customer&object_id=21&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:22:45] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 9875
+[isolated Django API] [12/Nov/2026 12:22:45] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:45] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:45] "GET /api/context/contacts/22/ HTTP/1.1" 200 2061
+[isolated Django API] [12/Nov/2026 12:22:45] "GET /api/operation-logs/?entity=crm.contact&object_id=22&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:22:46] "GET /api/context/customers/21/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:22:46] "GET /api/operation-logs/?entity=crm.customer&object_id=21&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:22:50] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:50] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 8568
+[isolated Django API] [12/Nov/2026 12:22:50] "GET /api/customers/?page=1 HTTP/1.1" 200 10767
+[isolated Django API] [12/Nov/2026 12:22:50] "GET /api/customers/?page=1 HTTP/1.1" 200 10767
+[isolated Django API] [12/Nov/2026 12:22:50] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 8568
+[isolated Django API] [12/Nov/2026 12:22:50] "GET /api/customers/?page=1 HTTP/1.1" 200 10767
+[isolated Django API] [12/Nov/2026 12:22:50] "GET /api/contacts/?customer=23&page=1 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:22:51] "POST /api/contacts/ HTTP/1.1" 201 354
+[isolated Django API] [12/Nov/2026 12:22:52] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:52] "GET /api/context/contacts/26/ HTTP/1.1" 200 1433
+[isolated Django API] [12/Nov/2026 12:22:52] "GET /api/operation-logs/?entity=crm.contact&object_id=26&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:22:52] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 8923
+[isolated Django API] [12/Nov/2026 12:22:52] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:52] "GET /api/customers/?page=1 HTTP/1.1" 200 10767
+[isolated Django API] [12/Nov/2026 12:22:52] "GET /api/contacts/?search=C5-1366-125-CRM-04%20A%20%E9%95%BF%E5%90%8D%E7%A7%B0%E5%9B%BD%E9%99%85%E7%85%A7%E6%98%8E%E9%87%87%E8%B4%AD%E4%B8%8E%E9%A1%B9%E7%9B%AE%E5%8D%8F%E8%B0%83%E8%81%94%E7%B3%BB%E4%BA%BA%20%E4%BF%AE%E6%AD%A3 HTTP/1.1" 200 406
+[isolated Django API] [12/Nov/2026 12:22:52] "GET /api/contacts/26/ HTTP/1.1" 200 354
+[isolated Django API] [12/Nov/2026 12:22:57] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:22:57] "GET /api/follow-ups/?customer=25&search=&page=1 HTTP/1.1" 200 639
+[isolated Django API] [12/Nov/2026 12:22:57] "GET /api/customers/?page=1 HTTP/1.1" 200 11659
+[isolated Django API] [12/Nov/2026 12:22:57] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:22:57] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:57] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 9603
+[isolated Django API] [12/Nov/2026 12:22:57] "GET /api/customers/?page=1 HTTP/1.1" 200 11659
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/customers/?page=1 HTTP/1.1" 200 11659
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 9603
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/customers/?page=1 HTTP/1.1" 200 11659
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/contacts/?customer=26&page=1 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/contacts/?page=1 HTTP/1.1" 200 9603
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/customers/?page=1 HTTP/1.1" 200 11659
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/follow-ups/?customer=25&search=&page=1 HTTP/1.1" 200 639
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/customers/?page=1 HTTP/1.1" 200 11659
+[isolated Django API] [12/Nov/2026 12:22:58] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:03] "GET /api/new-product-reminders/?customer=27 HTTP/1.1" 200 537
+[isolated Django API] [12/Nov/2026 12:23:03] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=27 HTTP/1.1" 200 537
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/customers/?search= HTTP/1.1" 200 12551
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/contacts/?customer=27 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/customers/?search=C5-1366-125-NPD-01+%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A HTTP/1.1" 200 497
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/contacts/?customer=27 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:23:04] "POST /api/new-product-reminders/ HTTP/1.1" 201 487
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/new-product-reminders/16/history/ HTTP/1.1" 200 426
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/new-product-reminders/?customer=27 HTTP/1.1" 200 1025
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/new-product-reminders/16/ HTTP/1.1" 200 487
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=27 HTTP/1.1" 200 1025
+[isolated Django API] [12/Nov/2026 12:23:04] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=27 HTTP/1.1" 200 1025
+[isolated Django API] [12/Nov/2026 12:23:10] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:11] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 7854
+[isolated Django API] [12/Nov/2026 12:23:11] "GET /api/new-product-reminders/17/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:23:11] "GET /api/new-product-reminders/17/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:17] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:17] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 7854
+[isolated Django API] [12/Nov/2026 12:23:18] "GET /api/new-product-reminders/17/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:23:18] "GET /api/new-product-reminders/17/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:19] "GET /api/contacts/?customer=29 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:23:20] "GET /api/contacts/?customer=29 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:23:21] "PATCH /api/new-product-reminders/17/ HTTP/1.1" 200 500
+[isolated Django API] Conflict: /api/new-product-reminders/17/
+[isolated Django API] [12/Nov/2026 12:23:21] "PATCH /api/new-product-reminders/17/ HTTP/1.1" 409 61
+[isolated Django API] [12/Nov/2026 12:23:22] "GET /api/new-product-reminders/17/history/ HTTP/1.1" 200 701
+[isolated Django API] [12/Nov/2026 12:23:22] "GET /api/new-product-reminders/17/history/ HTTP/1.1" 200 701
+[isolated Django API] [12/Nov/2026 12:23:22] "GET /api/new-product-reminders/17/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:23:22] "GET /api/new-product-reminders/17/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:23:22] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 7869
+[isolated Django API] [12/Nov/2026 12:23:23] "PATCH /api/new-product-reminders/17/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:23:23] "GET /api/new-product-reminders/17/history/ HTTP/1.1" 200 1416
+[isolated Django API] [12/Nov/2026 12:23:23] "GET /api/new-product-reminders/17/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:23:23] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 7869
+[isolated Django API] [12/Nov/2026 12:23:29] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:29] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 8355
+[isolated Django API] [12/Nov/2026 12:23:29] "GET /api/new-product-reminders/18/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:23:29] "GET /api/new-product-reminders/18/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:30] "GET /api/new-product-reminders/18/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:23:30] "POST /api/new-product-reminders/18/void/ HTTP/1.1" 200 558
+[isolated Django API] [12/Nov/2026 12:23:31] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 7869
+[isolated Django API] [12/Nov/2026 12:23:32] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:32] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=void&page=1 HTTP/1.1" 200 1168
+[isolated Django API] [12/Nov/2026 12:23:32] "GET /api/new-product-reminders/18/ HTTP/1.1" 200 558
+[isolated Django API] [12/Nov/2026 12:23:32] "GET /api/new-product-reminders/18/history/ HTTP/1.1" 200 759
+[isolated Django API] [12/Nov/2026 12:23:33] "GET /api/new-product-reminders/18/ HTTP/1.1" 200 558
+  x  2 browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1366×768 Chrome 125% (1.2m)
+(node:2268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [12/Nov/2026 12:23:38] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:41] "GET /api/context/customers/33/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:23:41] "GET /api/operation-logs/?entity=crm.customer&object_id=33&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:23:41] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 15227
+[isolated Django API] [12/Nov/2026 12:23:41] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:41] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:50] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:50] "GET /api/context/customers/35/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:23:51] "GET /api/operation-logs/?entity=crm.customer&object_id=35&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:23:51] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 16119
+[isolated Django API] [12/Nov/2026 12:23:51] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:51] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:51] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:51] "GET /api/customers/country-catalog/?page=1 HTTP/1.1" 200 28721
+[isolated Django API] [12/Nov/2026 12:23:51] "GET /api/customers/sources/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:51] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:51] "PUT /api/customers/35/ HTTP/1.1" 200 455
+[isolated Django API] [12/Nov/2026 12:23:52] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:52] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 16129
+[isolated Django API] [12/Nov/2026 12:23:52] "GET /api/context/customers/35/ HTTP/1.1" 200 3032
+[isolated Django API] [12/Nov/2026 12:23:52] "GET /api/operation-logs/?entity=crm.customer&object_id=35&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:23:52] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:53] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:53] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:53] "GET /api/customers/35/ HTTP/1.1" 200 455
+[isolated Django API] [12/Nov/2026 12:23:53] "GET /api/customers/?search=C5-1440-100-CRM-02%20%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A%20%E5%B7%B2%E6%9B%B4%E6%96%B0 HTTP/1.1" 200 507
+[isolated Django API] [12/Nov/2026 12:23:53] "GET /api/customers/36/ HTTP/1.1" 200 445
+[isolated Django API] [12/Nov/2026 12:23:53] "GET /api/contacts/37/ HTTP/1.1" 200 349
+[isolated Django API] [12/Nov/2026 12:23:57] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:23:58] "GET /api/context/customers/37/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:23:58] "GET /api/operation-logs/?entity=crm.customer&object_id=37&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:23:58] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 17021
+[isolated Django API] [12/Nov/2026 12:23:58] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:58] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:23:58] "GET /api/context/contacts/39/ HTTP/1.1" 200 2061
+[isolated Django API] [12/Nov/2026 12:23:58] "GET /api/operation-logs/?entity=crm.contact&object_id=39&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:23:59] "GET /api/operation-logs/?entity=crm.customer&object_id=37&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:23:59] "GET /api/context/customers/37/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:24:03] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:03] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 14373
+[isolated Django API] [12/Nov/2026 12:24:03] "GET /api/customers/?page=1 HTTP/1.1" 200 17913
+[isolated Django API] [12/Nov/2026 12:24:03] "GET /api/customers/?page=1 HTTP/1.1" 200 17913
+[isolated Django API] [12/Nov/2026 12:24:03] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 14373
+[isolated Django API] [12/Nov/2026 12:24:03] "GET /api/customers/?page=1 HTTP/1.1" 200 17913
+[isolated Django API] [12/Nov/2026 12:24:04] "GET /api/contacts/?customer=39&page=1 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:24:04] "POST /api/contacts/ HTTP/1.1" 201 354
+[isolated Django API] [12/Nov/2026 12:24:04] "GET /api/context/contacts/43/ HTTP/1.1" 200 1433
+[isolated Django API] [12/Nov/2026 12:24:04] "GET /api/operation-logs/?entity=crm.contact&object_id=43&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:24:05] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:05] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 14728
+[isolated Django API] [12/Nov/2026 12:24:05] "GET /api/context/contacts/43/ HTTP/1.1" 200 1433
+[isolated Django API] [12/Nov/2026 12:24:05] "GET /api/operation-logs/?entity=crm.contact&object_id=43&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:24:05] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:05] "GET /api/customers/?page=1 HTTP/1.1" 200 17913
+[isolated Django API] [12/Nov/2026 12:24:06] "GET /api/contacts/?search=C5-1440-100-CRM-04%20A%20%E9%95%BF%E5%90%8D%E7%A7%B0%E5%9B%BD%E9%99%85%E7%85%A7%E6%98%8E%E9%87%87%E8%B4%AD%E4%B8%8E%E9%A1%B9%E7%9B%AE%E5%8D%8F%E8%B0%83%E8%81%94%E7%B3%BB%E4%BA%BA%20%E4%BF%AE%E6%AD%A3 HTTP/1.1" 200 406
+[isolated Django API] [12/Nov/2026 12:24:06] "GET /api/contacts/43/ HTTP/1.1" 200 354
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/follow-ups/?customer=41&search=&page=1 HTTP/1.1" 200 639
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/customers/?page=1 HTTP/1.1" 200 18805
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 15408
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/customers/?page=1 HTTP/1.1" 200 18805
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/customers/?page=1 HTTP/1.1" 200 18805
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 15408
+[isolated Django API] [12/Nov/2026 12:24:10] "GET /api/customers/?page=1 HTTP/1.1" 200 18805
+[isolated Django API] [12/Nov/2026 12:24:11] "GET /api/contacts/?customer=42&page=1 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:24:11] "GET /api/contacts/?page=1 HTTP/1.1" 200 15408
+[isolated Django API] [12/Nov/2026 12:24:11] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:24:11] "GET /api/follow-ups/?customer=41&search=&page=1 HTTP/1.1" 200 639
+[isolated Django API] [12/Nov/2026 12:24:11] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:11] "GET /api/customers/?page=1 HTTP/1.1" 200 18805
+[isolated Django API] [12/Nov/2026 12:24:11] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:24:11] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:11] "GET /api/customers/?page=1 HTTP/1.1" 200 18805
+[isolated Django API] [12/Nov/2026 12:24:15] "GET /api/new-product-reminders/?customer=43 HTTP/1.1" 200 537
+[isolated Django API] [12/Nov/2026 12:24:17] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:17] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=43 HTTP/1.1" 200 537
+[isolated Django API] [12/Nov/2026 12:24:17] "GET /api/customers/?search= HTTP/1.1" 200 19697
+[isolated Django API] [12/Nov/2026 12:24:17] "GET /api/contacts/?customer=43 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:24:17] "GET /api/customers/?search=C5-1440-100-NPD-01+%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A HTTP/1.1" 200 497
+[isolated Django API] [12/Nov/2026 12:24:17] "GET /api/contacts/?customer=43 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:24:18] "POST /api/new-product-reminders/ HTTP/1.1" 201 487
+[isolated Django API] [12/Nov/2026 12:24:18] "GET /api/new-product-reminders/25/history/ HTTP/1.1" 200 426
+[isolated Django API] [12/Nov/2026 12:24:18] "GET /api/new-product-reminders/?customer=43 HTTP/1.1" 200 1025
+[isolated Django API] [12/Nov/2026 12:24:18] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=43 HTTP/1.1" 200 1025
+[isolated Django API] [12/Nov/2026 12:24:18] "GET /api/new-product-reminders/25/ HTTP/1.1" 200 487
+[isolated Django API] [12/Nov/2026 12:24:18] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=43 HTTP/1.1" 200 1025
+[isolated Django API] [12/Nov/2026 12:24:23] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:23] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 11769
+[isolated Django API] [12/Nov/2026 12:24:23] "GET /api/new-product-reminders/26/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:24:23] "GET /api/new-product-reminders/26/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:23] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:23] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 11769
+[isolated Django API] [12/Nov/2026 12:24:23] "GET /api/new-product-reminders/26/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:23] "GET /api/new-product-reminders/26/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:24:24] "GET /api/contacts/?customer=45 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:24:24] "GET /api/contacts/?customer=45 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:24:25] "PATCH /api/new-product-reminders/26/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:24:25] "GET /api/new-product-reminders/26/history/ HTTP/1.1" 200 702
+[isolated Django API] [12/Nov/2026 12:24:25] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 11784
+[isolated Django API] Conflict: /api/new-product-reminders/26/
+[isolated Django API] [12/Nov/2026 12:24:25] "PATCH /api/new-product-reminders/26/ HTTP/1.1" 409 61
+[isolated Django API] [12/Nov/2026 12:24:25] "GET /api/new-product-reminders/26/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:24:25] "GET /api/new-product-reminders/26/history/ HTTP/1.1" 200 702
+[isolated Django API] [12/Nov/2026 12:24:25] "GET /api/new-product-reminders/26/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:24:26] "PATCH /api/new-product-reminders/26/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:24:26] "GET /api/new-product-reminders/26/history/ HTTP/1.1" 200 1418
+[isolated Django API] [12/Nov/2026 12:24:26] "GET /api/new-product-reminders/26/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:24:26] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 11784
+[isolated Django API] [12/Nov/2026 12:24:32] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:32] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 12270
+[isolated Django API] [12/Nov/2026 12:24:32] "GET /api/new-product-reminders/27/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:24:32] "GET /api/new-product-reminders/27/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:33] "GET /api/new-product-reminders/27/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:24:33] "POST /api/new-product-reminders/27/void/ HTTP/1.1" 200 558
+[isolated Django API] [12/Nov/2026 12:24:34] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:34] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=void&page=1 HTTP/1.1" 200 1727
+[isolated Django API] [12/Nov/2026 12:24:34] "GET /api/new-product-reminders/27/ HTTP/1.1" 200 558
+[isolated Django API] [12/Nov/2026 12:24:34] "GET /api/new-product-reminders/27/history/ HTTP/1.1" 200 760
+[isolated Django API] [12/Nov/2026 12:24:35] "GET /api/new-product-reminders/27/ HTTP/1.1" 200 558
+  x  3 browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1440×900 Chrome 100% (1.0m)
+(node:47628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [12/Nov/2026 12:24:39] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:40] "GET /api/context/customers/49/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:24:40] "GET /api/operation-logs/?entity=crm.customer&object_id=49&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:24:41] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22373
+[isolated Django API] [12/Nov/2026 12:24:41] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:41] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/context/customers/51/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/operation-logs/?entity=crm.customer&object_id=51&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22425
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 985
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/customers/country-catalog/?page=1 HTTP/1.1" 200 28721
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:46] "GET /api/customers/sources/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:47] "PUT /api/customers/51/ HTTP/1.1" 200 455
+[isolated Django API] [12/Nov/2026 12:24:47] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:47] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22435
+[isolated Django API] [12/Nov/2026 12:24:47] "GET /api/operation-logs/?entity=crm.customer&object_id=51&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:24:47] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:47] "GET /api/context/customers/51/ HTTP/1.1" 200 3032
+[isolated Django API] [12/Nov/2026 12:24:47] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:47] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:48] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 985
+[isolated Django API] [12/Nov/2026 12:24:48] "GET /api/customers/51/ HTTP/1.1" 200 455
+[isolated Django API] [12/Nov/2026 12:24:48] "GET /api/customers/?search=C5-1440-125-CRM-02%20%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A%20%E5%B7%B2%E6%9B%B4%E6%96%B0 HTTP/1.1" 200 507
+[isolated Django API] [12/Nov/2026 12:24:48] "GET /api/customers/52/ HTTP/1.1" 200 445
+[isolated Django API] [12/Nov/2026 12:24:48] "GET /api/contacts/54/ HTTP/1.1" 200 349
+[isolated Django API] [12/Nov/2026 12:24:51] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:52] "GET /api/context/customers/53/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:24:52] "GET /api/operation-logs/?entity=crm.customer&object_id=53&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:24:52] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22427
+[isolated Django API] [12/Nov/2026 12:24:52] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:52] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:24:52] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 1885
+[isolated Django API] [12/Nov/2026 12:24:53] "GET /api/context/contacts/56/ HTTP/1.1" 200 2061
+[isolated Django API] [12/Nov/2026 12:24:53] "GET /api/operation-logs/?entity=crm.contact&object_id=56&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:24:53] "GET /api/context/customers/53/ HTTP/1.1" 200 3002
+[isolated Django API] [12/Nov/2026 12:24:53] "GET /api/operation-logs/?entity=crm.customer&object_id=53&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/customers/?page=1 HTTP/1.1" 200 22421
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 3207
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/customers/?page=2 HTTP/1.1" 200 2767
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/customers/?page=1 HTTP/1.1" 200 22421
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/customers/?page=1 HTTP/1.1" 200 22421
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 3207
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/customers/?page=2 HTTP/1.1" 200 2767
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/customers/?page=2 HTTP/1.1" 200 2767
+[isolated Django API] [12/Nov/2026 12:24:58] "GET /api/contacts/?customer=55&page=1 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:24:59] "POST /api/contacts/ HTTP/1.1" 201 354
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/operation-logs/?entity=crm.contact&object_id=60&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/context/contacts/60/ HTTP/1.1" 200 1433
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 3562
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/customers/?page=1 HTTP/1.1" 200 22421
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/customers/?page=2 HTTP/1.1" 200 2767
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/contacts/?search=C5-1440-125-CRM-04%20A%20%E9%95%BF%E5%90%8D%E7%A7%B0%E5%9B%BD%E9%99%85%E7%85%A7%E6%98%8E%E9%87%87%E8%B4%AD%E4%B8%8E%E9%A1%B9%E7%9B%AE%E5%8D%8F%E8%B0%83%E8%81%94%E7%B3%BB%E4%BA%BA%20%E4%BF%AE%E6%AD%A3 HTTP/1.1" 200 406
+[isolated Django API] [12/Nov/2026 12:25:00] "GET /api/contacts/60/ HTTP/1.1" 200 354
+[isolated Django API] [12/Nov/2026 12:25:04] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:04] "GET /api/follow-ups/?customer=57&search=&page=1 HTTP/1.1" 200 639
+[isolated Django API] [12/Nov/2026 12:25:04] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:25:04] "GET /api/customers/?page=1 HTTP/1.1" 200 22423
+[isolated Django API] [12/Nov/2026 12:25:04] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:04] "GET /api/customers/?page=2 HTTP/1.1" 200 3657
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/customers/?page=1 HTTP/1.1" 200 22423
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 4242
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/customers/?page=2 HTTP/1.1" 200 3657
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/customers/?page=1 HTTP/1.1" 200 22423
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/customers/?page=2 HTTP/1.1" 200 3657
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/customers/?page=1 HTTP/1.1" 200 22423
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 4242
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/customers/?page=2 HTTP/1.1" 200 3657
+[isolated Django API] [12/Nov/2026 12:25:05] "GET /api/contacts/?customer=58&page=1 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/contacts/?page=1 HTTP/1.1" 200 17106
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/customers/?page=1 HTTP/1.1" 200 22423
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/follow-ups/?customer=57&search=&page=1 HTTP/1.1" 200 639
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/contacts/?page=2 HTTP/1.1" 200 4234
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/customers/?page=1 HTTP/1.1" 200 22423
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/customers/?page=2 HTTP/1.1" 200 3657
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:06] "GET /api/customers/?page=2 HTTP/1.1" 200 3657
+[isolated Django API] [12/Nov/2026 12:25:09] "GET /api/new-product-reminders/?customer=59 HTTP/1.1" 200 537
+[isolated Django API] [12/Nov/2026 12:25:10] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:10] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=59 HTTP/1.1" 200 537
+[isolated Django API] [12/Nov/2026 12:25:10] "GET /api/customers/?search= HTTP/1.1" 200 22432
+[isolated Django API] [12/Nov/2026 12:25:10] "GET /api/contacts/?customer=59 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:25:10] "GET /api/customers/?search=C5-1440-125-NPD-01+%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A HTTP/1.1" 200 497
+[isolated Django API] [12/Nov/2026 12:25:10] "GET /api/contacts/?customer=59 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:25:11] "POST /api/new-product-reminders/ HTTP/1.1" 201 487
+[isolated Django API] [12/Nov/2026 12:25:11] "GET /api/new-product-reminders/?customer=59 HTTP/1.1" 200 1025
+[isolated Django API] [12/Nov/2026 12:25:11] "GET /api/new-product-reminders/34/history/ HTTP/1.1" 200 427
+[isolated Django API] [12/Nov/2026 12:25:11] "GET /api/new-product-reminders/34/ HTTP/1.1" 200 487
+[isolated Django API] [12/Nov/2026 12:25:11] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=59 HTTP/1.1" 200 1025
+[isolated Django API] [12/Nov/2026 12:25:11] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=59 HTTP/1.1" 200 1025
+[isolated Django API] [12/Nov/2026 12:25:15] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:15] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 15684
+[isolated Django API] [12/Nov/2026 12:25:15] "GET /api/new-product-reminders/35/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:25:15] "GET /api/new-product-reminders/35/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:16] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:16] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 15684
+[isolated Django API] [12/Nov/2026 12:25:16] "GET /api/new-product-reminders/35/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:25:16] "GET /api/new-product-reminders/35/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:17] "GET /api/contacts/?customer=61 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:25:17] "GET /api/contacts/?customer=61 HTTP/1.1" 200 391
+[isolated Django API] [12/Nov/2026 12:25:17] "PATCH /api/new-product-reminders/35/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:25:17] "GET /api/new-product-reminders/35/history/ HTTP/1.1" 200 702
+[isolated Django API] [12/Nov/2026 12:25:17] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 15699
+[isolated Django API] Conflict: /api/new-product-reminders/35/
+[isolated Django API] [12/Nov/2026 12:25:17] "PATCH /api/new-product-reminders/35/ HTTP/1.1" 409 61
+[isolated Django API] [12/Nov/2026 12:25:18] "GET /api/new-product-reminders/35/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:25:18] "GET /api/new-product-reminders/35/history/ HTTP/1.1" 200 702
+[isolated Django API] [12/Nov/2026 12:25:18] "GET /api/new-product-reminders/35/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:25:18] "PATCH /api/new-product-reminders/35/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:25:18] "GET /api/new-product-reminders/35/ HTTP/1.1" 200 500
+[isolated Django API] [12/Nov/2026 12:25:18] "GET /api/new-product-reminders/35/history/ HTTP/1.1" 200 1418
+[isolated Django API] [12/Nov/2026 12:25:18] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 15699
+[isolated Django API] [12/Nov/2026 12:25:21] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:21] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 16185
+[isolated Django API] [12/Nov/2026 12:25:22] "GET /api/new-product-reminders/36/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:25:22] "GET /api/new-product-reminders/36/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:22] "GET /api/new-product-reminders/36/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:25:22] "POST /api/new-product-reminders/36/void/ HTTP/1.1" 200 558
+[isolated Django API] [12/Nov/2026 12:25:23] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:23] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=void&page=1 HTTP/1.1" 200 2286
+[isolated Django API] [12/Nov/2026 12:25:23] "GET /api/new-product-reminders/36/ HTTP/1.1" 200 558
+[isolated Django API] [12/Nov/2026 12:25:23] "GET /api/new-product-reminders/36/history/ HTTP/1.1" 200 760
+[isolated Django API] [12/Nov/2026 12:25:23] "GET /api/new-product-reminders/36/ HTTP/1.1" 200 558
+  x  4 browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1440×900 Chrome 125% (47.9s)
+(node:44576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [12/Nov/2026 12:25:27] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:28] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:28] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22428
+[isolated Django API] [12/Nov/2026 12:25:28] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:28] "GET /api/operation-logs/?entity=crm.customer&object_id=65&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:25:28] "GET /api/context/customers/65/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:25:28] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 7232
+[isolated Django API] [12/Nov/2026 12:25:32] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:32] "GET /api/operation-logs/?entity=crm.customer&object_id=67&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:25:32] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:32] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:32] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22424
+[isolated Django API] [12/Nov/2026 12:25:32] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:32] "GET /api/context/customers/67/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:25:32] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 8124
+[isolated Django API] [12/Nov/2026 12:25:33] "GET /api/customers/country-catalog/?page=1 HTTP/1.1" 200 28721
+[isolated Django API] [12/Nov/2026 12:25:33] "GET /api/customers/sources/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:33] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:33] "PUT /api/customers/67/ HTTP/1.1" 200 453
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22434
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/operation-logs/?entity=crm.customer&object_id=67&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/context/customers/67/ HTTP/1.1" 200 3025
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 8124
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/customers/67/ HTTP/1.1" 200 453
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/customers/?search=C5-390-100-CRM-02%20%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A%20%E5%B7%B2%E6%9B%B4%E6%96%B0 HTTP/1.1" 200 505
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/customers/68/ HTTP/1.1" 200 443
+[isolated Django API] [12/Nov/2026 12:25:34] "GET /api/contacts/71/ HTTP/1.1" 200 347
+[isolated Django API] [12/Nov/2026 12:25:36] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/operation-logs/?entity=crm.customer&object_id=69&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/context/customers/69/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22420
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 9026
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/context/contacts/73/ HTTP/1.1" 200 2053
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/operation-logs/?entity=crm.contact&object_id=73&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/operation-logs/?entity=crm.customer&object_id=69&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:25:38] "GET /api/context/customers/69/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/customers/?page=1 HTTP/1.1" 200 22408
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 8996
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/customers/?page=2 HTTP/1.1" 200 9910
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/customers/?page=1 HTTP/1.1" 200 22408
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 8996
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/customers/?page=1 HTTP/1.1" 200 22408
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/customers/?page=2 HTTP/1.1" 200 9910
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/customers/?page=2 HTTP/1.1" 200 9910
+[isolated Django API] [12/Nov/2026 12:25:42] "GET /api/contacts/?customer=71&page=1 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:25:43] "POST /api/contacts/ HTTP/1.1" 201 352
+[isolated Django API] [12/Nov/2026 12:25:43] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:44] "GET /api/context/contacts/77/ HTTP/1.1" 200 1428
+[isolated Django API] [12/Nov/2026 12:25:44] "GET /api/operation-logs/?entity=crm.contact&object_id=77&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:25:44] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:25:44] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:44] "GET /api/customers/?page=1 HTTP/1.1" 200 22408
+[isolated Django API] [12/Nov/2026 12:25:44] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 9349
+[isolated Django API] [12/Nov/2026 12:25:44] "GET /api/customers/?page=2 HTTP/1.1" 200 9910
+[isolated Django API] [12/Nov/2026 12:25:44] "GET /api/contacts/?search=C5-390-100-CRM-04%20A%20%E9%95%BF%E5%90%8D%E7%A7%B0%E5%9B%BD%E9%99%85%E7%85%A7%E6%98%8E%E9%87%87%E8%B4%AD%E4%B8%8E%E9%A1%B9%E7%9B%AE%E5%8D%8F%E8%B0%83%E8%81%94%E7%B3%BB%E4%BA%BA%20%E4%BF%AE%E6%AD%A3 HTTP/1.1" 200 404
+[isolated Django API] [12/Nov/2026 12:25:44] "GET /api/contacts/77/ HTTP/1.1" 200 352
+[isolated Django API] [12/Nov/2026 12:25:47] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:47] "GET /api/follow-ups/?customer=73&search=&page=1 HTTP/1.1" 200 636
+[isolated Django API] [12/Nov/2026 12:25:47] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:25:47] "GET /api/customers/?page=1 HTTP/1.1" 200 22404
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/customers/?page=2 HTTP/1.1" 200 10802
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/customers/?page=1 HTTP/1.1" 200 22404
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 10025
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/customers/?page=2 HTTP/1.1" 200 10802
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/customers/?page=1 HTTP/1.1" 200 22404
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/customers/?page=1 HTTP/1.1" 200 22404
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/customers/?page=2 HTTP/1.1" 200 10802
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 10025
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/customers/?page=2 HTTP/1.1" 200 10802
+[isolated Django API] [12/Nov/2026 12:25:48] "GET /api/contacts/?customer=74&page=1 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/contacts/?page=1 HTTP/1.1" 200 17106
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/follow-ups/?customer=73&search=&page=1 HTTP/1.1" 200 636
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/customers/?page=1 HTTP/1.1" 200 22404
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/contacts/?page=2 HTTP/1.1" 200 10017
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/customers/?page=2 HTTP/1.1" 200 10802
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/customers/?page=1 HTTP/1.1" 200 22404
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:49] "GET /api/customers/?page=2 HTTP/1.1" 200 10802
+[isolated Django API] [12/Nov/2026 12:25:52] "GET /api/new-product-reminders/?customer=75 HTTP/1.1" 200 535
+[isolated Django API] [12/Nov/2026 12:25:53] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:53] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=75 HTTP/1.1" 200 535
+[isolated Django API] [12/Nov/2026 12:25:53] "GET /api/contacts/?customer=75 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:25:53] "GET /api/customers/?search= HTTP/1.1" 200 22408
+[isolated Django API] [12/Nov/2026 12:25:53] "GET /api/contacts/?customer=75 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:25:53] "GET /api/customers/?search=C5-390-100-NPD-01+%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A HTTP/1.1" 200 495
+[isolated Django API] [12/Nov/2026 12:25:54] "POST /api/new-product-reminders/ HTTP/1.1" 201 485
+[isolated Django API] [12/Nov/2026 12:25:54] "GET /api/new-product-reminders/43/history/ HTTP/1.1" 200 426
+[isolated Django API] [12/Nov/2026 12:25:54] "GET /api/new-product-reminders/?customer=75 HTTP/1.1" 200 1021
+[isolated Django API] [12/Nov/2026 12:25:54] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=75 HTTP/1.1" 200 1021
+[isolated Django API] [12/Nov/2026 12:25:54] "GET /api/new-product-reminders/43/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:25:54] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=75 HTTP/1.1" 200 1021
+[isolated Django API] [12/Nov/2026 12:25:58] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:58] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 19583
+[isolated Django API] [12/Nov/2026 12:25:58] "GET /api/new-product-reminders/44/ HTTP/1.1" 200 483
+[isolated Django API] [12/Nov/2026 12:25:58] "GET /api/new-product-reminders/44/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:58] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:25:58] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 19583
+[isolated Django API] [12/Nov/2026 12:25:58] "GET /api/new-product-reminders/44/ HTTP/1.1" 200 483
+[isolated Django API] [12/Nov/2026 12:25:58] "GET /api/new-product-reminders/44/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:25:59] "GET /api/contacts/?customer=77 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:25:59] "GET /api/contacts/?customer=77 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:25:59] "PATCH /api/new-product-reminders/44/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:25:59] "GET /api/new-product-reminders/44/history/ HTTP/1.1" 200 700
+[isolated Django API] [12/Nov/2026 12:25:59] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 19598
+[isolated Django API] Conflict: /api/new-product-reminders/44/
+[isolated Django API] [12/Nov/2026 12:25:59] "PATCH /api/new-product-reminders/44/ HTTP/1.1" 409 61
+[isolated Django API] [12/Nov/2026 12:26:00] "GET /api/new-product-reminders/44/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:26:00] "GET /api/new-product-reminders/44/history/ HTTP/1.1" 200 700
+[isolated Django API] [12/Nov/2026 12:26:00] "GET /api/new-product-reminders/44/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:26:00] "PATCH /api/new-product-reminders/44/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:26:00] "GET /api/new-product-reminders/44/history/ HTTP/1.1" 200 1414
+[isolated Django API] [12/Nov/2026 12:26:00] "GET /api/new-product-reminders/44/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:26:03] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:03] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 20082
+[isolated Django API] [12/Nov/2026 12:26:04] "GET /api/new-product-reminders/45/ HTTP/1.1" 200 483
+[isolated Django API] [12/Nov/2026 12:26:04] "GET /api/new-product-reminders/45/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:04] "GET /api/new-product-reminders/45/ HTTP/1.1" 200 483
+[isolated Django API] [12/Nov/2026 12:26:04] "POST /api/new-product-reminders/45/void/ HTTP/1.1" 200 556
+[isolated Django API] [12/Nov/2026 12:26:04] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 19598
+[isolated Django API] [12/Nov/2026 12:26:05] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:05] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=void&page=1 HTTP/1.1" 200 2843
+[isolated Django API] [12/Nov/2026 12:26:05] "GET /api/new-product-reminders/45/ HTTP/1.1" 200 556
+[isolated Django API] [12/Nov/2026 12:26:05] "GET /api/new-product-reminders/45/history/ HTTP/1.1" 200 758
+[isolated Django API] [12/Nov/2026 12:26:05] "GET /api/new-product-reminders/45/ HTTP/1.1" 200 556
+  x  5 browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 390×844 Chrome 100% (41.5s)
+(node:21064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[isolated Django API] [12/Nov/2026 12:26:08] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:10] "GET /api/operation-logs/?entity=crm.customer&object_id=81&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:26:10] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:10] "GET /api/context/customers/81/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:26:10] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:10] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22396
+[isolated Django API] [12/Nov/2026 12:26:10] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 14378
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/operation-logs/?entity=crm.customer&object_id=83&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22392
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/context/customers/83/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 15270
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/customers/sources/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/customers/country-catalog/?page=1 HTTP/1.1" 200 28721
+[isolated Django API] [12/Nov/2026 12:26:14] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:15] "PUT /api/customers/83/ HTTP/1.1" 200 453
+[isolated Django API] [12/Nov/2026 12:26:15] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22402
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/operation-logs/?entity=crm.customer&object_id=83&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/context/customers/83/ HTTP/1.1" 200 3025
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22402
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 15270
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/customers/83/ HTTP/1.1" 200 453
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/customers/?search=C5-390-125-CRM-02%20%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A%20%E5%B7%B2%E6%9B%B4%E6%96%B0 HTTP/1.1" 200 505
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/customers/84/ HTTP/1.1" 200 443
+[isolated Django API] [12/Nov/2026 12:26:16] "GET /api/contacts/88/ HTTP/1.1" 200 347
+[isolated Django API] [12/Nov/2026 12:26:18] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:20] "GET /api/operation-logs/?entity=crm.customer&object_id=85&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:26:20] "GET /api/context/customers/85/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:26:20] "GET /api/customers/?search=&page=1 HTTP/1.1" 200 22388
+[isolated Django API] [12/Nov/2026 12:26:20] "GET /api/customers/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:20] "GET /api/customers/country-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:20] "GET /api/customers/?search=&page=2 HTTP/1.1" 200 16172
+[isolated Django API] [12/Nov/2026 12:26:20] "GET /api/context/contacts/90/ HTTP/1.1" 200 2053
+[isolated Django API] [12/Nov/2026 12:26:20] "GET /api/operation-logs/?entity=crm.contact&object_id=90&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:26:21] "GET /api/operation-logs/?entity=crm.customer&object_id=85&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:26:21] "GET /api/context/customers/85/ HTTP/1.1" 200 2995
+[isolated Django API] [12/Nov/2026 12:26:24] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:24] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:26:24] "GET /api/customers/?page=1 HTTP/1.1" 200 22376
+[isolated Django API] [12/Nov/2026 12:26:24] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 14767
+[isolated Django API] [12/Nov/2026 12:26:24] "GET /api/customers/?page=2 HTTP/1.1" 200 17056
+[isolated Django API] [12/Nov/2026 12:26:25] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:26:25] "GET /api/customers/?page=1 HTTP/1.1" 200 22376
+[isolated Django API] [12/Nov/2026 12:26:25] "GET /api/customers/?page=1 HTTP/1.1" 200 22376
+[isolated Django API] [12/Nov/2026 12:26:25] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 14767
+[isolated Django API] [12/Nov/2026 12:26:25] "GET /api/customers/?page=2 HTTP/1.1" 200 17056
+[isolated Django API] [12/Nov/2026 12:26:25] "GET /api/customers/?page=2 HTTP/1.1" 200 17056
+[isolated Django API] [12/Nov/2026 12:26:25] "GET /api/contacts/?customer=87&page=1 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:26:25] "POST /api/contacts/ HTTP/1.1" 201 352
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/context/contacts/94/ HTTP/1.1" 200 1428
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/operation-logs/?entity=crm.contact&object_id=94&ordering=-created_at HTTP/1.1" 200 52
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/customers/?page=1 HTTP/1.1" 200 22376
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 15120
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/customers/?page=2 HTTP/1.1" 200 17056
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/contacts/?search=C5-390-125-CRM-04%20A%20%E9%95%BF%E5%90%8D%E7%A7%B0%E5%9B%BD%E9%99%85%E7%85%A7%E6%98%8E%E9%87%87%E8%B4%AD%E4%B8%8E%E9%A1%B9%E7%9B%AE%E5%8D%8F%E8%B0%83%E8%81%94%E7%B3%BB%E4%BA%BA%20%E4%BF%AE%E6%AD%A3 HTTP/1.1" 200 404
+[isolated Django API] [12/Nov/2026 12:26:26] "GET /api/contacts/94/ HTTP/1.1" 200 352
+[isolated Django API] [12/Nov/2026 12:26:30] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:30] "GET /api/follow-ups/?customer=89&search=&page=1 HTTP/1.1" 200 636
+[isolated Django API] [12/Nov/2026 12:26:30] "GET /api/customers/?page=1 HTTP/1.1" 200 22372
+[isolated Django API] [12/Nov/2026 12:26:30] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:26:30] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:30] "GET /api/customers/?page=2 HTTP/1.1" 200 17948
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 15796
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=1 HTTP/1.1" 200 22372
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=2 HTTP/1.1" 200 17948
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=1 HTTP/1.1" 200 22372
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/contacts/?search=&page=1 HTTP/1.1" 200 17114
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=2 HTTP/1.1" 200 17948
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=1 HTTP/1.1" 200 22372
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/contacts/?search=&page=2 HTTP/1.1" 200 15796
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=2 HTTP/1.1" 200 17948
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/contacts/?customer=90&page=1 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/contacts/?page=1 HTTP/1.1" 200 17106
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=1 HTTP/1.1" 200 22372
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/follow-ups/owner-options/?page=1 HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/follow-ups/?customer=89&search=&page=1 HTTP/1.1" 200 636
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/contacts/?page=2 HTTP/1.1" 200 15788
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/follow-ups/methods/?page=1 HTTP/1.1" 200 220
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=1 HTTP/1.1" 200 22372
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=2 HTTP/1.1" 200 17948
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:31] "GET /api/customers/?page=2 HTTP/1.1" 200 17948
+[isolated Django API] [12/Nov/2026 12:26:35] "GET /api/new-product-reminders/?customer=91 HTTP/1.1" 200 535
+[isolated Django API] [12/Nov/2026 12:26:36] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:36] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=91 HTTP/1.1" 200 535
+[isolated Django API] [12/Nov/2026 12:26:36] "GET /api/contacts/?customer=91 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:26:36] "GET /api/customers/?search= HTTP/1.1" 200 22376
+[isolated Django API] [12/Nov/2026 12:26:36] "GET /api/contacts/?customer=91 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:26:36] "GET /api/customers/?search=C5-390-125-NPD-01+%E5%90%88%E6%88%90%E5%AE%A2%E6%88%B7A HTTP/1.1" 200 495
+[isolated Django API] [12/Nov/2026 12:26:37] "POST /api/new-product-reminders/ HTTP/1.1" 201 485
+[isolated Django API] [12/Nov/2026 12:26:37] "GET /api/new-product-reminders/52/history/ HTTP/1.1" 200 426
+[isolated Django API] [12/Nov/2026 12:26:37] "GET /api/new-product-reminders/?customer=91 HTTP/1.1" 200 1021
+[isolated Django API] [12/Nov/2026 12:26:37] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=91 HTTP/1.1" 200 1021
+[isolated Django API] [12/Nov/2026 12:26:37] "GET /api/new-product-reminders/52/ HTTP/1.1" 200 485
+[isolated Django API] [12/Nov/2026 12:26:37] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1&customer=91 HTTP/1.1" 200 1021
+[isolated Django API] [12/Nov/2026 12:26:42] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:42] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:42] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 23482
+[isolated Django API] [12/Nov/2026 12:26:42] "GET /api/new-product-reminders/53/ HTTP/1.1" 200 483
+[isolated Django API] [12/Nov/2026 12:26:42] "GET /api/new-product-reminders/53/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:42] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 23482
+[isolated Django API] [12/Nov/2026 12:26:42] "GET /api/new-product-reminders/53/ HTTP/1.1" 200 483
+[isolated Django API] [12/Nov/2026 12:26:42] "GET /api/new-product-reminders/53/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:43] "GET /api/contacts/?customer=93 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:26:43] "GET /api/contacts/?customer=93 HTTP/1.1" 200 389
+[isolated Django API] [12/Nov/2026 12:26:43] "PATCH /api/new-product-reminders/53/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:26:43] "GET /api/new-product-reminders/53/history/ HTTP/1.1" 200 700
+[isolated Django API] Conflict: /api/new-product-reminders/53/
+[isolated Django API] [12/Nov/2026 12:26:43] "PATCH /api/new-product-reminders/53/ HTTP/1.1" 409 61
+[isolated Django API] [12/Nov/2026 12:26:43] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 23497
+[isolated Django API] [12/Nov/2026 12:26:44] "GET /api/new-product-reminders/53/history/ HTTP/1.1" 200 700
+[isolated Django API] [12/Nov/2026 12:26:44] "GET /api/new-product-reminders/53/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:26:44] "GET /api/new-product-reminders/53/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:26:44] "PATCH /api/new-product-reminders/53/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:26:44] "GET /api/new-product-reminders/53/ HTTP/1.1" 200 498
+[isolated Django API] [12/Nov/2026 12:26:44] "GET /api/new-product-reminders/53/history/ HTTP/1.1" 200 1414
+[isolated Django API] [12/Nov/2026 12:26:49] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:49] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 23981
+[isolated Django API] [12/Nov/2026 12:26:49] "GET /api/new-product-reminders/54/ HTTP/1.1" 200 483
+[isolated Django API] [12/Nov/2026 12:26:49] "GET /api/new-product-reminders/54/history/ HTTP/1.1" 200 2
+[isolated Django API] [12/Nov/2026 12:26:50] "GET /api/new-product-reminders/54/ HTTP/1.1" 200 483
+[isolated Django API] [12/Nov/2026 12:26:50] "POST /api/new-product-reminders/54/void/ HTTP/1.1" 200 556
+[isolated Django API] [12/Nov/2026 12:26:50] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=active&page=1 HTTP/1.1" 200 23497
+[isolated Django API] [12/Nov/2026 12:26:51] "GET /api/session/current-operator/ HTTP/1.1" 200 2667
+[isolated Django API] [12/Nov/2026 12:26:51] "GET /api/new-product-reminders/?tag=%E6%96%B0%E5%93%81%E6%8F%90%E9%86%92&state=void&page=1 HTTP/1.1" 200 3400
+[isolated Django API] [12/Nov/2026 12:26:51] "GET /api/new-product-reminders/54/ HTTP/1.1" 200 556
+[isolated Django API] [12/Nov/2026 12:26:51] "GET /api/new-product-reminders/54/history/ HTTP/1.1" 200 758
+[isolated Django API] [12/Nov/2026 12:26:51] "GET /api/new-product-reminders/54/ HTTP/1.1" 200 556
+  x  6 browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 390×844 Chrome 125% (45.3s)
+
+
+  1) browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1366×768 Chrome 100% ─────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 39
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "browser": "Chrome/156.0.8078.80",
+    +     "error": "Error: CRM-03 return focus: {\"inside\":false,\"tag\":\"BODY\",\"role\":null}
+    +
+    + expect(received).toBe(expected) // Object.is equality
+    +
+    + Expected: true
+    + Received: false",
+    +     "id": "CRM-03",
+    +     "result": "FAIL",
+    +     "screenshots": Array [
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-customer.png",
+    +         "height": 768,
+    +         "width": 1366,
+    +       },
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-nested.png",
+    +         "height": 768,
+    +         "width": 1366,
+    +       },
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-returned.png",
+    +         "height": 768,
+    +         "width": 1366,
+    +       },
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-failure.png",
+    +         "height": 768,
+    +         "width": 1366,
+    +       },
+    +     ],
+    +   },
+    + ]
+
+      379 |           states.push(entry)
+      380 |           await writeFile(path.join(output, process.env.C5_CASE ? `${id}.json` : 'run.json'), JSON.stringify({ source, width, height, zoom, states }, null, 2) + '\n')
+    > 381 |         }
+          |          ^
+      382 |       }
+      383 |       expect(states.filter(row => row.result !== 'PASS')).toEqual([])
+      384 |     })
+        at D:\Codex项目\森爵照明管理系统\.worktrees\crm-state-closeout-05\frontend\browser-tests\crm-state-closeout-05.spec.js:381:59
+
+    Error Context: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-I94bxN\evidence\artifacts\de0c8754-2792-4d44-bbfa-d32939bb5eea\crm-state-closeout-05-C5-CRM-states-at-1366×768-Chrome-100-\error-context.md
+
+  2) browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1366×768 Chrome 125% ─────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 39
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "browser": "Chrome/156.0.8078.80",
+    +     "error": "Error: CRM-03 return focus: {\"inside\":false,\"tag\":\"BODY\",\"role\":null}
+    +
+    + expect(received).toBe(expected) // Object.is equality
+    +
+    + Expected: true
+    + Received: false",
+    +     "id": "CRM-03",
+    +     "result": "FAIL",
+    +     "screenshots": Array [
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-customer.png",
+    +         "height": 614,
+    +         "width": 1093,
+    +       },
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-nested.png",
+    +         "height": 614,
+    +         "width": 1093,
+    +       },
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-returned.png",
+    +         "height": 614,
+    +         "width": 1093,
+    +       },
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-failure.png",
+    +         "height": 614,
+    +         "width": 1093,
+    +       },
+    +     ],
+    +   },
+    + ]
+
+      379 |           await context.close()
+      380 |           states.push(entry)
+    > 381 |           await writeFile(path.join(output, process.env.C5_CASE ? `${id}.json` : 'run.json'), JSON.stringify({ source, width, height, zoom, states }, null, 2) + '\n')
+          |                                                           ^
+      382 |         }
+      383 |       }
+      384 |       expect(states).toHaveLength(process.env.C5_CASE ? 1 : Object.keys(scenarios).length)
+        at D:\Codex项目\森爵照明管理系统\.worktrees\crm-state-closeout-05\frontend\browser-tests\crm-state-closeout-05.spec.js:381:59
+
+    Error Context: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-I94bxN\evidence\artifacts\de0c8754-2792-4d44-bbfa-d32939bb5eea\crm-state-closeout-05-C5-CRM-states-at-1366×768-Chrome-125-\error-context.md
+
+  3) browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1440×900 Chrome 100% ─────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 39
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "browser": "Chrome/156.0.8078.80",
+    +     "error": "Error: CRM-03 return focus: {\"inside\":false,\"tag\":\"BODY\",\"role\":null}
+    +
+    + expect(received).toBe(expected) // Object.is equality
+    +
+    + Expected: true
+    + Received: false",
+    +     "id": "CRM-03",
+    +     "result": "FAIL",
+    +     "screenshots": Array [
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-customer.png",
+    +         "height": 900,
+    +         "width": 1440,
+    +       },
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-nested.png",
+    +         "height": 900,
+    +         "width": 1440,
+    +       },
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-returned.png",
+    +         "height": 900,
+    +         "width": 1440,
+    +       },
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-failure.png",
+    +         "height": 900,
+    +         "width": 1440,
+    +       },
+    +     ],
+    +   },
+    + ]
+
+      379 |           await context.close()
+      380 |           states.push(entry)
+    > 381 |           await writeFile(path.join(output, process.env.C5_CASE ? `${id}.json` : 'run.json'), JSON.stringify({ source, width, height, zoom, states }, null, 2) + '\n')
+          |                                                           ^
+      382 |         }
+      383 |       }
+      384 |       expect(states).toHaveLength(process.env.C5_CASE ? 1 : Object.keys(scenarios).length)
+        at D:\Codex项目\森爵照明管理系统\.worktrees\crm-state-closeout-05\frontend\browser-tests\crm-state-closeout-05.spec.js:381:59
+
+    Error Context: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-I94bxN\evidence\artifacts\de0c8754-2792-4d44-bbfa-d32939bb5eea\crm-state-closeout-05-C5-CRM-states-at-1440×900-Chrome-100-\error-context.md
+
+  4) browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1440×900 Chrome 125% ─────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 39
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "browser": "Chrome/156.0.8078.80",
+    +     "error": "Error: CRM-03 return focus: {\"inside\":false,\"tag\":\"BODY\",\"role\":null}
+    +
+    + expect(received).toBe(expected) // Object.is equality
+    +
+    + Expected: true
+    + Received: false",
+    +     "id": "CRM-03",
+    +     "result": "FAIL",
+    +     "screenshots": Array [
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-customer.png",
+    +         "height": 720,
+    +         "width": 1152,
+    +       },
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-nested.png",
+    +         "height": 720,
+    +         "width": 1152,
+    +       },
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-returned.png",
+    +         "height": 720,
+    +         "width": 1152,
+    +       },
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-failure.png",
+    +         "height": 720,
+    +         "width": 1152,
+    +       },
+    +     ],
+    +   },
+    + ]
+
+      383 |       }
+      384 |       expect(states).toHaveLength(process.env.C5_CASE ? 1 : Object.keys(scenarios).length)
+    > 385 |       expect(states.filter(row => row.result !== 'PASS')).toEqual([])
+          |                                                           ^
+      386 |     })
+      387 |   }
+      388 | }
+        at D:\Codex项目\森爵照明管理系统\.worktrees\crm-state-closeout-05\frontend\browser-tests\crm-state-closeout-05.spec.js:385:59
+
+    Error Context: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-I94bxN\evidence\artifacts\de0c8754-2792-4d44-bbfa-d32939bb5eea\crm-state-closeout-05-C5-CRM-states-at-1440×900-Chrome-125-\error-context.md
+
+  5) browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 390×844 Chrome 100% ──────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 39
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "browser": "Chrome/156.0.8078.80",
+    +     "error": "Error: CRM-03 return focus: {\"inside\":false,\"tag\":\"BODY\",\"role\":null}
+    +
+    + expect(received).toBe(expected) // Object.is equality
+    +
+    + Expected: true
+    + Received: false",
+    +     "id": "CRM-03",
+    +     "result": "FAIL",
+    +     "screenshots": Array [
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-customer.png",
+    +         "height": 844,
+    +         "width": 390,
+    +       },
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-nested.png",
+    +         "height": 844,
+    +         "width": 390,
+    +       },
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-returned.png",
+    +         "height": 844,
+    +         "width": 390,
+    +       },
+    +       Object {
+    +         "dpr": 1,
+    +         "filename": "CRM-03-failure.png",
+    +         "height": 844,
+    +         "width": 390,
+    +       },
+    +     ],
+    +   },
+    + ]
+
+      383 |       }
+      384 |       expect(states).toHaveLength(process.env.C5_CASE ? 1 : Object.keys(scenarios).length)
+    > 385 |       expect(states.filter(row => row.result !== 'PASS')).toEqual([])
+          |                                                           ^
+      386 |     })
+      387 |   }
+      388 | }
+        at D:\Codex项目\森爵照明管理系统\.worktrees\crm-state-closeout-05\frontend\browser-tests\crm-state-closeout-05.spec.js:385:59
+
+    Error Context: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-I94bxN\evidence\artifacts\de0c8754-2792-4d44-bbfa-d32939bb5eea\crm-state-closeout-05-C5-CRM-states-at-390×844-Chrome-100-\error-context.md
+
+  6) browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 390×844 Chrome 125% ──────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 39
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "browser": "Chrome/156.0.8078.80",
+    +     "error": "Error: CRM-03 return focus: {\"inside\":false,\"tag\":\"BODY\",\"role\":null}
+    +
+    + expect(received).toBe(expected) // Object.is equality
+    +
+    + Expected: true
+    + Received: false",
+    +     "id": "CRM-03",
+    +     "result": "FAIL",
+    +     "screenshots": Array [
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-customer.png",
+    +         "height": 675,
+    +         "width": 312,
+    +       },
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-nested.png",
+    +         "height": 675,
+    +         "width": 312,
+    +       },
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-returned.png",
+    +         "height": 675,
+    +         "width": 312,
+    +       },
+    +       Object {
+    +         "dpr": 1.25,
+    +         "filename": "CRM-03-failure.png",
+    +         "height": 675,
+    +         "width": 312,
+    +       },
+    +     ],
+    +   },
+    + ]
+
+      383 |       }
+      384 |       expect(states).toHaveLength(process.env.C5_CASE ? 1 : Object.keys(scenarios).length)
+    > 385 |       expect(states.filter(row => row.result !== 'PASS')).toEqual([])
+          |                                                           ^
+      386 |     })
+      387 |   }
+      388 | }
+        at D:\Codex项目\森爵照明管理系统\.worktrees\crm-state-closeout-05\frontend\browser-tests\crm-state-closeout-05.spec.js:385:59
+
+    Error Context: C:\Users\Johnson\AppData\Local\Temp\sunjack-r1-repair-06-I94bxN\evidence\artifacts\de0c8754-2792-4d44-bbfa-d32939bb5eea\crm-state-closeout-05-C5-CRM-states-at-390×844-Chrome-125-\error-context.md
+
+  6 failed
+    browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1366×768 Chrome 100% ──────
+    browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1366×768 Chrome 125% ──────
+    browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1440×900 Chrome 100% ──────
+    browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 1440×900 Chrome 125% ──────
+    browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 390×844 Chrome 100% ───────
+    browser-tests\crm-state-closeout-05.spec.js:328:5 › C5 CRM states at 390×844 Chrome 125% ───────
+[isolation] Owned API and Vite process trees stopped; both ports are released.
+Removed only this run's marked temporary database and MEDIA_ROOT.
+Error: Isolated Playwright suite exited with code 1.
+    at runCommand (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/crm-state-closeout-05/frontend/scripts/run-isolated-browser-tests.mjs:176:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async runStage (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/crm-state-closeout-05/frontend/scripts/run-isolated-browser-tests.mjs:181:3)
+    at async runProfile (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/crm-state-closeout-05/frontend/scripts/run-isolated-browser-tests.mjs:722:7)
+    at async executeProfiles (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/crm-state-closeout-05/frontend/scripts/run-isolated-browser-tests.mjs:759:11)
+    at async main (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/crm-state-closeout-05/frontend/scripts/run-isolated-browser-tests.mjs:767:3)
+AggregateError: 1 isolated profile(s) failed.
+    at executeProfiles (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/crm-state-closeout-05/frontend/scripts/run-isolated-browser-tests.mjs:763:30)
+    at async main (file:///D:/Codex%E9%A1%B9%E7%9B%AE/%E6%A3%AE%E7%88%B5%E7%85%A7%E6%98%8E%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/.worktrees/crm-state-closeout-05/frontend/scripts/run-isolated-browser-tests.mjs:767:3)

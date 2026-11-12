@@ -135,6 +135,15 @@ test('customer creation selects an employee and preserves nested contacts after 
         await expect(returnedContact).toBeVisible()
         await expect(async () => { await returnedContact.scrollIntoViewIfNeeded(); await expect(returnedContact).toBeInViewport({ timeout: 2000 }) }).toPass({ timeout: 15000 })
         await capture('customer-related-contact-returned')
+        const contactTrigger = detail.getByRole('row').filter({ hasText: nestedName })
+          .getByRole('button', { name: /查看.*详情/ })
+        await contactTrigger.click()
+        const contactDetail = page.getByRole('dialog', { name: '联系人详情' })
+        await expect(contactDetail.getByText(nestedName, { exact: true }).first()).toBeVisible()
+        await contactDetail.locator('.detail-back').click()
+        await expect(contactTrigger).toBeFocused()
+        await expect(detail.locator('.detail-tabs .active')).toContainText('联系人')
+        await capture('customer-related-contact-focus-restored')
       }
     }
   } catch (error) {

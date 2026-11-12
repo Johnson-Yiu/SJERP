@@ -8,6 +8,7 @@ const route = useRoute(), router = useRouter()
 const { api } = useWorkspaceApi()
 const rows = ref([]), count = ref(0), loading = ref(false), busy = ref(false), error = ref(''), feedback = ref('')
 const selected = ref(null), editing = ref(false), history = ref([]), voiding = ref(false), reason = ref('')
+const saveError = ref(''), staleVersion = ref(false)
 const customers = ref([]), customerSearch = ref(''), contacts = ref([]), products = ref([]), productSearch = ref('')
 const search = ref(route.query.search || ''), state = ref(route.query.state || 'active')
 const form = reactive({ customer: '', follow_up: null, contact: null, product: null, requirement: '', specification: '', other_requirements: '' })
@@ -43,6 +44,7 @@ watch(() => form.customer, async id => {
 async function open(id) {
   if (!await guard.requestClose(() => { editing.value = false })) return
   const seq = ++detailSequence
+  saveError.value = ''; staleVersion.value = false
   error.value = ''; feedback.value = ''; selected.value = null; history.value = []; voiding.value = false
   try {
     const [record, events] = await Promise.all([api.get(`/new-product-reminders/${id}/`), api.get(`/new-product-reminders/${id}/history/`)])
@@ -51,16 +53,19 @@ async function open(id) {
 }
 async function start() {
   if (!await guard.requestClose(() => { editing.value = false })) return
+  saveError.value = ''; staleVersion.value = false
   ++detailSequence; selected.value = null; history.value = []; error.value = ''; feedback.value = ''; voiding.value = false
   Object.assign(form, { customer: route.query.customer || '', follow_up: route.query.follow_up ? Number(route.query.follow_up) : null, contact: null, product: null, requirement: '', specification: '', other_requirements: '' })
   requestKey = crypto.randomUUID(); editing.value = true; guard.markClean(); await findCustomers()
 }
 function edit() {
+  saveError.value = ''; staleVersion.value = false
   Object.keys(form).forEach(k => { form[k] = selected.value[k] ?? null }); editing.value = true; guard.markClean()
 }
 async function save() {
-  if (busy.value) return
-  busy.value = true; error.value = ''
+  if (busy.value || staleVersion.value) return
+  busy.value = true; error.value = ''; saveError.value = ''; staleVersion.value = false
+  const editingExisting = Boolean(selected.value)
   try {
     const payload = { ...form, customer: Number(form.customer), contact: form.contact || null, product: form.product || null }
     if (!can('contacts', 'view')) delete payload.contact
@@ -73,7 +78,12 @@ async function save() {
     await load()
     busy.value = false
     await router.replace({ query: { ...route.query, detail: data.id } })
-  } catch (e) { error.value = e.message }
+  } catch (e) {
+    if (editing.value) {
+      saveError.value = e.message
+      staleVersion.value = editingExisting && e.status === 409
+    } else error.value = e.message
+  }
   finally { busy.value = false }
 }
 async function confirmVoid() {
@@ -120,7 +130,8 @@ watch(() => route.query, async () => {
         <label>所找产品<textarea v-model="form.requirement" required maxlength="12000" /></label><label>规格<textarea v-model="form.specification" maxlength="12000" /></label><label>其他要求<textarea v-model="form.other_requirements" maxlength="12000" /></label>
         <label v-if="can('contacts','view')">联系人（可选）<select v-model="form.contact"><option :value="null">不关联</option><option v-for="c in contacts" :key="c.id" :value="c.id">{{ c.name }}</option></select></label>
         <template v-if="can('products','view')"><label>查找已有产品（可选）<input v-model="productSearch" /></label><button type="button" @click="findProducts">查找产品</button><label>关联产品<select v-model="form.product"><option :value="null">不关联</option><option v-if="form.product && !products.some(p => p.id === form.product)" :value="form.product">已关联产品 #{{ form.product }}</option><option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option></select></label></template>
-        <div class="actions"><button class="btn btn-primary" :disabled="!writable">{{ busy ? '正在保存…' : '保存需求' }}</button><button type="button" class="btn btn-secondary" @click="guard.requestClose(() => editing=false)">取消</button></div></fieldset>
+        <p v-if="saveError" class="reminder-save-error" role="alert">{{ saveError }}</p>
+        <div class="actions"><button class="btn btn-primary" :disabled="!writable || staleVersion">{{ busy ? '正在保存…' : '保存需求' }}</button><button v-if="staleVersion" type="button" class="btn btn-secondary" @click="open(selected.id)">查看最新版本</button><button type="button" class="btn btn-secondary" @click="guard.requestClose(() => editing=false)">取消</button></div></fieldset>
       </form>
       <template v-else-if="selected">
         <div :class="{voided:selected.voided_at}"><strong>{{ selected.customer_name }}</strong><p v-if="selected.voided_at"><strong>已作废</strong> · {{ selected.void_reason }}<br>{{ selected.voided_by }} · {{ displayTime(selected.voided_at) }}</p><p>{{ selected.requirement }}</p><p>规格：{{ selected.specification || '—' }}</p><p>其他要求：{{ selected.other_requirements || '—' }}</p><p>记录人：{{ selected.created_by }} · {{ displayTime(selected.created_at) }}</p></div>
@@ -132,5 +143,6 @@ watch(() => route.query, async () => {
   </section>
 </template>
 <style scoped>
+.reminder-save-error{color:#a12319}
 .reminders{max-width:1100px;margin:auto;color:#243749}.reminder-header,.filters,.actions,.pager{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.reminder-header{justify-content:space-between}h2{margin:0}.reminder-header p{color:#617183}.filters,.editor{padding:20px;background:white;border:1px solid #dce3eb;border-radius:12px;margin:20px 0}.grow{flex:1;min-width:180px}label{display:grid;gap:6px;font-size:14px;margin:8px 0}input,select,textarea{padding:10px;border:1px solid #c4cfd9;border-radius:6px;max-width:100%;min-width:0;background:white;color:#243749}textarea{min-height:80px;resize:vertical}.requirement{padding:18px;margin:12px 0;background:white;border:1px solid #dce3eb;border-radius:10px;overflow-wrap:anywhere}.requirement p,.editor p{white-space:pre-wrap;overflow-wrap:anywhere}.requirement a{margin:12px}.voided{background:#f1f2f4;color:#707780}.badge{font-size:12px;background:#e7f1f4;padding:3px 8px;border-radius:4px}fieldset{border:0;padding:0;min-width:0}.pager{justify-content:center}button,a{touch-action:manipulation}details{margin:14px 0}summary{cursor:pointer;overflow-wrap:anywhere}a{color:#176b85}button{cursor:pointer}button:disabled{cursor:default;opacity:.55}@media(max-width:500px){.filters,.editor{padding:14px}.filters label{width:100%}.grow{min-width:0}.reminder-header{align-items:start}.requirement a{display:inline-block;margin:12px 0}.actions{gap:14px}}
 </style>

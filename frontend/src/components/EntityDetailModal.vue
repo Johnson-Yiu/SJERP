@@ -192,6 +192,9 @@ async function loadOperationLogs(entity = currentEntity.value, id = currentId.va
     operationLogs.value = []
   } finally { operationLogsLoading.value = false }
 }
+function relationKey(row) {
+  return JSON.stringify([row._target_entity || activeSection.value?.entity, row._target_id || row.id])
+}
 async function drill(row) {
   const targetEntity = row._target_entity || activeSection.value?.entity
   const targetId = row._target_id || row.id
@@ -204,13 +207,25 @@ async function drill(row) {
     productDrawer.value = { entity: targetEntity, id: targetId }
     return
   }
-  stack.value.push({ entity: currentEntity.value, id: currentId.value, title: data.value.title })
+  stack.value.push({ entity: currentEntity.value, id: currentId.value, title: data.value.title,
+    tab: activeTab.value, relation: relationKey(row) })
   await load(targetEntity, targetId)
 }
 const back = () => unsavedScope.requestClose(backClean)
 async function backClean() {
   const previous = stack.value.pop()
-  if (previous) await load(previous.entity, previous.id)
+  if (!previous) return
+  await load(previous.entity, previous.id)
+  if (!error.value && currentEntity.value === previous.entity && currentId.value === previous.id &&
+      data.value?.sections.some(section => section.key === previous.tab)) {
+    activeTab.value = previous.tab
+  }
+  await nextTick()
+  const article = detailArticle.value
+  const trigger = Array.from(article?.querySelectorAll('[data-relation-key]') || [])
+    .find(button => button.dataset.relationKey === previous.relation)
+  const focusTarget = trigger || article?.querySelector('.detail-close, .supplier-state-close')
+  focusTarget?.focus()
 }
 function sectionRowId(key) {
   const row = data.value?.sections?.find(section => section.key === key)?.rows?.[0]
@@ -497,7 +512,7 @@ watch(() => data.value?.title, title => { if (!props.nestedProductDetail && work
             <div v-else-if="activeSection" class="context-table-wrap">
               <div v-if="!visibleSectionRows.length" class="context-empty"><Rows3 :size="27" /><strong>{{ isSkuSection && skuQuery ? '未找到匹配的 SKU' : currentEntity === 'customers' ? ({ followups: '暂无跟进记录', quotes: '暂无报价', orders: '暂无订单', contacts: '暂无联系人', sold_items: '暂无成交商品记录', cash: '暂无财务流水' }[activeSection.key] || `暂无${activeSection.title}`) : `暂无${activeSection.title}` }}</strong><p v-if="currentEntity !== 'customers' && !isMovementDetail && canManage">{{ isSkuSection && skuQuery ? '请调整关键词后重试。' : '点击右上角新增关联记录。' }}</p></div>
               <table v-else class="context-table" :class="{ 'followup-table': activeSection.key === 'followups', 'sku-context-table': isSkuSection, 'multi-select-table': skuMultiSelect }"><thead><tr><th v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect" class="selection-cell"><label class="selection-check"><input type="checkbox" :checked="allSkuSelected" @click.stop @change="toggleAllSkuSelection" /><CheckSquare :size="15" /></label></th><th v-for="column in activeSection.columns" :key="column[0]">{{ column[1] }}</th><th></th></tr></thead><tbody>
-                <tr v-for="(row,index) in visibleSectionRows" :key="row.id || index" :class="{ 'inactive-row': isSkuSection && !row.active }" @click="!skuMultiSelect && drill(row)"><td v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect" class="selection-cell"><label class="selection-check" :class="{ restore: !row.active }" @click.stop><input type="checkbox" :checked="selectedSkuIds.includes(row.id)" @change="toggleSkuSelection(row.id)" /><CheckSquare :size="15" /></label></td><td v-for="(column,colIndex) in activeSection.columns" :key="column[0]" :class="{ primary: colIndex === 0, 'excerpt-cell': column[2] === 'excerpt' }"><CertificateExpiryBadge v-if="column[2] === 'certificate-expiry'" :certificate="row" /><span v-else-if="isSupplierDetail && activeSection.entity === 'purchase-orders' && column[0] === 'status'" class="ctx-status">{{ row.status_display || format(row.status, column[2]) }}</span><span v-else :class="valueClass(column[2], row[column[0]])" :title="column[2] === 'excerpt' ? String(row[column[0]] || '') : undefined">{{ format(row[column[0]], column[2]) }}</span></td><td class="drill-cell"><button v-if="!skuMultiSelect" class="context-drill" :aria-label="`查看 ${row.sku || '记录'} 详情`" @click.stop="drill(row)"><ChevronRight :size="17" /></button></td></tr>
+                <tr v-for="(row,index) in visibleSectionRows" :key="row.id || index" :class="{ 'inactive-row': isSkuSection && !row.active }" @click="!skuMultiSelect && drill(row)"><td v-if="isSkuSection && canBulkDeleteSku && skuMultiSelect" class="selection-cell"><label class="selection-check" :class="{ restore: !row.active }" @click.stop><input type="checkbox" :checked="selectedSkuIds.includes(row.id)" @change="toggleSkuSelection(row.id)" /><CheckSquare :size="15" /></label></td><td v-for="(column,colIndex) in activeSection.columns" :key="column[0]" :class="{ primary: colIndex === 0, 'excerpt-cell': column[2] === 'excerpt' }"><CertificateExpiryBadge v-if="column[2] === 'certificate-expiry'" :certificate="row" /><span v-else-if="isSupplierDetail && activeSection.entity === 'purchase-orders' && column[0] === 'status'" class="ctx-status">{{ row.status_display || format(row.status, column[2]) }}</span><span v-else :class="valueClass(column[2], row[column[0]])" :title="column[2] === 'excerpt' ? String(row[column[0]] || '') : undefined">{{ format(row[column[0]], column[2]) }}</span></td><td class="drill-cell"><button v-if="!skuMultiSelect" class="context-drill" :data-relation-key="relationKey(row)" :aria-label="`查看 ${row.sku || '记录'} 详情`" @click.stop="drill(row)"><ChevronRight :size="17" /></button></td></tr>
               </tbody></table>
             </div>
           </section>

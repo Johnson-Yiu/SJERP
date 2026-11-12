@@ -45,3 +45,13 @@ O1 已核对远端并接收固定来源 `a2c59a2138390a1c1fe5578e664a933e3149ae0
 
 
 在产品源码 `ea7715bf85b3ea16a1d67e189bda619d20cb91ad` 上补齐客户、报价及订单列表六组初载、受控错误及真实空库，并补齐收货校验失败取消的六组。最后的测试与证据提交与此产品树一致。前端定向组件 55 项及构建通过。[列表运行记录](continuation/lists/chrome-list-load/run.json) · [收货运行记录](continuation/receipts/chrome-purchase-receipt-combinations/run.json) · [原 DNS 日志摘录](ci-43050190935-apt-dns.txt)
+
+## 对账源码保护复验
+
+原实现用调用目录解析 Git 路径限定。临时仓库中修改 backend/runtime.py 后，根目录运行原检查返回 M backend/runtime.py，从 backend 运行返回空。修复从已加载命令文件定位工作树根目录，核对 Git 根目录与完整 HEAD，并拒绝相关未提交、暂存及未跟踪文件。真实临时 Git 回归包含中文目录、独立 worktree、从另一工作树调用、错误 SHA 和错误工作簿。失败时命令不输出 JSON。
+
+合成源两张销售单各含 10 × 12.00，商品小计各为 120.00。USD 运费 7.25、折扣 2.10、订单合计 125.15，USD 采购合计 15.00。EUR 运费 3.40、折扣 1.15、订单合计 122.25，EUR 无采购。预期值直接按合成工作簿计算。未结余额、库存及剩余履约尚未显式接续。真实资料与目标环境仍待验。
+
+此前候选的三个主 CI 和三个 Linux 专项均已完成并通过。该结果归属旧候选，本次改动需重新认证。[主 CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/43089346018) · [Linux 专项](https://github.com/Johnson-Yiu/SJERP/actions/runs/43089345930)
+
+源码 84518024835fe7527894140831526e8427f91b8b 的 SQLite 定向回归 2/2 通过。从 backend 实际执行 manage.py reconcile_history_import，使用单独的临时 SQLite 和媒体目录。CLI 烟测申请仅保存工作簿身份，因此输出不含已执行分组；同批次金额和正式事实边界由独立的试导测试覆盖。工作簿 SHA-256 为 1caa0937e9eb01a63cc3a922d1bd8a2fbf5fb4adef36940dbdcb068048f4dc41。[工作簿](reconciliation/source.xlsx) · [CLI 输出](reconciliation/cli.json) · [合成试导报告](reconciliation/batch.json)

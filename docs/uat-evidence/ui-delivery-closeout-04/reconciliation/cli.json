@@ -1,0 +1,18 @@
+{
+  "application_id": 1,
+  "file": "source.xlsx",
+  "file_sha256": "1caa0937e9eb01a63cc3a922d1bd8a2fbf5fb4adef36940dbdcb068048f4dc41",
+  "source_sha": "84518024835fe7527894140831526e8427f91b8b",
+  "application_status": "submitted",
+  "groups": [],
+  "global_fact_counts": {
+    "FinanceFact": 0,
+    "Transaction": 0,
+    "InventoryMovement": 0,
+    "InventoryReservation": 0,
+    "Shipment": 0,
+    "GoodsReceipt": 0
+  },
+  "scope_note": "global_fact_counts are database-wide; compare isolated snapshots only",
+  "unverified": []
+}

@@ -751,3 +751,5 @@ H2 历史商品关联、E1-R2 销售界面、E2-R2 产品运营补修已在独�
 | ISS-124 窄屏客户详情编辑 | P1 / FIXED_PENDING_REVIEW | 390px 原生 100%／125% 下入口曾隐藏。显示后，抽屉挡住编辑按钮区域。客户详情和客户列表响应交错时，编辑点击还可能被忽略。 | E2 恢复入口，E1 修复表单层级和客户资料读取。独立 Chrome 覆盖可点击、填充、取消和旧响应隔离。[E1 证据](uat-evidence/ui-sales-completion-02/a3-followup.md) |
 | ISS-125 SKU 图片删除后立即重开 | P2 / NEEDS_VERIFICATION | 删除请求成功，刷新后确认为空。列表刷新完成前，立即重开一度显示上一张图。 | 复审列表刷新与抽屉缓存同步，并复核重开时不显示已删除图片。[E2 证据](uat-evidence/ui-product-operations-completion-02/README.md) |
 | ISS-126 库存流水详情缺少批次标识 | P2 / NEEDS_VERIFICATION | 同仓两条流水可以分别打开，接口返回不同批次。抽屉缺少批次展示，不能凭详情核对批次。 | 复审批次字段的显示条件和不同来源的历史兼容性。[同仓批次证据](uat-evidence/ui-product-operations-completion-02/chrome-same-warehouse-lots/run.json) |
+
+对账命令从 backend 启动时漏检源码修改，已定位为 Git 路径限定使用调用者目录。修复及真实临时仓库回归已接入 U4，等待独立复审。D1 合成试导与多币种检查保留真实资料、未结余额、库存和剩余履约的待验边界。[U4 证据与状态](uat-evidence/ui-delivery-closeout-04/README.md)

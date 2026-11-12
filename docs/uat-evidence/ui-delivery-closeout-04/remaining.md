@@ -61,9 +61,9 @@
 | SO-03 | 确认订单挂起、拒绝后重试，回读确认结果；M | 尚未完成 |
 | SO-04 | 订单工作台加载失败重试并核对主体资料分支；M | 尚未完成 |
 | SO-05 | 装箱冲销后重新打开并核对原记录和冲销结果；M | 尚未完成 |
-| SKU-01 | SKU 加载错误恢复，键盘操作，未保存继续及放弃；M | 尚未完成 |
-| PKG-01 | 包装加载错误恢复，键盘操作，未保存继续及放弃；M | 尚未完成 |
-| INV-01 | 从库存详情打开可用关联标签，核对来源、返回和滚动；M | 尚未完成 |
+| SKU-01 | SKU 加载错误恢复，键盘操作，未保存继续及放弃；M | 通过（统一候选 Chrome） |
+| PKG-01 | 包装加载错误恢复，键盘操作，未保存继续及放弃；M | 通过（统一候选 Chrome） |
+| INV-01 | 从库存详情打开可用关联标签，核对来源、返回和滚动；M | 通过（统一候选 Chrome） |
 
 INV-01 的采购入库来源已补验。Chrome 156.0.8078.80 在六组原生缩放中逐一滚动并切换四个可见标签，关闭后回到原筛选列表，再打开同一流水核对批次。产品源码为 46738366350c5f494e3fa62b2b209385fb8f340b，浏览器测试包含本轮新增矩阵。关联子详情返回和其他来源的缺失组合仍待核销。[运行记录](inventory-matrix/chrome-purchase-receipt-combinations/run.json)
 
@@ -74,3 +74,5 @@ S5 已接收 3048697fdba660390fe9361fa12ac8517a170fb1 的订单确认拒绝恢�
 S5 审计入口从 frontend 执行 node scripts/run-isolated-browser-tests.mjs --audit-sales-test。沿用隔离 codex 凭据配置。此参数只选择 sales-state-closeout-05.spec.js，并通过直连 Django 与 Vite 代理核对实际审计设置。普通入口保持原行为。
 
 统一候选接收 S5 0f73688d92c70543e050e617ac636a9cc58bd2b2、Q6 598717617be8de95fcaeb03426693f1efc71808a、P6 8ac8fab5a08f7c170adb3514108dd3ba01a56ff3。S5 和 Q6 来源证据见各包 README。P6 的 SKU／包装编辑器六组通过，SKU 行内按钮修复有模板回归，实际按键补验仍待完成。INV-01 继续沿用采购入库标签六组，其他来源和关联子详情返回仍待验。统一候选 CI 单独核销。
+
+统一产品源码 fbabd29688ae99d43cec172413fb74729b416e17 的 Chrome 补验通过。SKU 行内历史按钮使用 Enter，未触发整行详情。SKU 和包装各六组验证加载恢复、继续编辑和放弃。出库、退回、入库三种来源各六组从关联 SKU 子详情返回原流水、原标签和入口焦点；手工调整及冲销只读限制通过。[键盘及编辑器](final-keyboard/chrome-u4-editor-guards/run.json) · [库存来源](final-inventory/chrome-inventory-source-actions/run.json)

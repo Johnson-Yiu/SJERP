@@ -59,6 +59,15 @@ test('SKU and packaging recover from load failure and preserve keyboard draft ch
           const recovered = page.waitForResponse(response => matches(new URL(response.url())) && response.ok())
           await retry.press('Enter')
           await recovered
+          if (url === '/skus') {
+            const row = page.locator('.sku-data-row').first()
+            await row.getByRole('button', { name: '历史版本', exact: true }).press('Enter')
+            const history = page.getByRole('dialog', { name: 'SKU 历史版本' })
+            await expect(history).toBeVisible()
+            await expect(page).not.toHaveURL(/[?&]detail=/)
+            await history.getByRole('button', { name: '关闭历史版本' }).press('Enter')
+            await expect(history).toHaveCount(0)
+          }
           const trigger = page.getByRole('button', { name: title, exact: true })
           await trigger.press('Enter')
           const editor = page.getByRole('dialog', { name: url === '/skus' ? title : '新建包装模板' })

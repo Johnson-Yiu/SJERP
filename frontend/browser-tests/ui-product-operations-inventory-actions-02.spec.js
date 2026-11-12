@@ -33,32 +33,52 @@ test('inventory automatic sources and reversal entries are read-only while manua
     browser = (await cdp.send('Browser.getVersion')).product
     expect(browser).toMatch(/^Chrome\//)
     await settings.goto('chrome://settings/appearance', { waitUntil: 'commit', timeout: 240000 })
-    await settings.locator('settings-appearance-page select').filter({ has: settings.locator('option[value="1.25"]') }).selectOption('1.25', { timeout: 180000 })
+    const zoomControl = settings.locator('settings-appearance-page select').filter({ has: settings.locator('option[value="1.25"]') })
+    let zoom = 1.25
+    await zoomControl.selectOption(String(zoom), { timeout: 180000 })
     const go = () => page.goto(new URL('/inventory-movements?search=' + encodeURIComponent('合成一号仓'), baseURL).href, { waitUntil: 'commit', timeout: 240000 })
     async function snap(id, extra = {}) {
+      await expect.poll(() => page.evaluate(() => devicePixelRatio)).toBeCloseTo(zoom, 2)
       const dpr = await page.evaluate(() => devicePixelRatio)
-      expect(dpr).toBeCloseTo(1.25, 2)
-      const png = id + '-390-125.png'
+      expect(dpr).toBeCloseTo(zoom, 2)
+      const { width, height } = page.viewportSize()
+      const png = id + '-' + width + '-' + zoom * 100 + '.png'
       const { data } = await cdp.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
       await writeFile(path.join(output, png), Buffer.from(data, 'base64'))
-      states.push({ id, width: 390, height: 844, zoom: 1.25, dpr, png, ...extra })
+      states.push({ id, width, height, zoom, dpr, png, ...extra })
       await save()
     }
     await go()
     const rows = page.locator('.workspace-pane[aria-hidden="false"] tbody tr')
     const detail = page.getByRole('dialog', { name: '库存流水详情' })
-    for (const source of ['SHIPMENT', 'RETURN', 'RECEIPT']) {
-      const movementNo = 'EVID-INV-' + source
-      const row = rows.filter({ hasText: movementNo })
-      await expect(row).toContainText('系统自动')
-      await expect(row.getByTitle('编辑', { exact: true })).toHaveCount(0)
-      await expect(row.getByTitle('冲销', { exact: true })).toHaveCount(0)
-      await row.getByTitle('查看详情', { exact: true }).click()
-      await expect(detail).toContainText(movementNo)
-      await expect(detail.getByRole('button', { name: '编辑主档', exact: true })).toHaveCount(0)
-      await snap('inventory-source-' + source.toLowerCase())
-      await detail.getByRole('button', { name: '关闭详情' }).click()
-      await expect(detail).toHaveCount(0)
+    for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
+      await page.setViewportSize({ width, height })
+      for (const scale of [1, 1.25]) {
+        zoom = scale
+        await zoomControl.selectOption(String(zoom))
+        for (const source of ['SHIPMENT', 'RETURN', 'RECEIPT']) {
+          const movementNo = 'EVID-INV-' + source
+          const row = rows.filter({ hasText: movementNo })
+          await expect(row).toContainText('系统自动')
+          await expect(row.getByTitle('编辑', { exact: true })).toHaveCount(0)
+          await expect(row.getByTitle('冲销', { exact: true })).toHaveCount(0)
+          await row.getByTitle('查看详情', { exact: true }).click()
+          await expect(detail).toContainText(movementNo)
+          await expect(detail.getByRole('button', { name: '编辑主档', exact: true })).toHaveCount(0)
+          const tab = detail.getByRole('button', { name: /关联 SKU/ })
+          await tab.click()
+          const relatedSku = detail.locator('.context-drill').first()
+          await relatedSku.click()
+          const child = page.getByRole('dialog', { name: '关联详情' })
+          await child.getByRole('button', { name: '返回 ' + movementNo, exact: true }).click()
+          await expect(detail).toContainText(movementNo)
+          await expect(tab).toHaveClass(/active/)
+          await expect(relatedSku).toBeFocused()
+          await snap('inventory-source-' + source.toLowerCase())
+          await detail.getByRole('button', { name: '关闭详情' }).click()
+          await expect(detail).toHaveCount(0)
+        }
+      }
     }
 
     const row = rows.filter({ hasText: 'EVID-IM-0001' }).filter({ hasNotText: '冲销生成' })

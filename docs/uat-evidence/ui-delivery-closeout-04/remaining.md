@@ -72,3 +72,5 @@ C5 来源矩阵保留 CRM-03 六组焦点失败。U4 修复后，候选 1dff4f72
 S5 已接收 3048697fdba660390fe9361fa12ac8517a170fb1 的订单确认拒绝恢复与部分验收证据。SO 系列由 S5 接续，QUO-01～04 由 Q6 接续。SKU-01、PKG-01、INV-01 由 P6 接续。P6 可沿用 29cfaf7b8c54da900178a007af9aec5139a2e34b 的采购入库六组截图与测试。SKU／包装草稿测试和两次运行产物仍在 U4 本地工作树的 ui-u4-editor-guards.spec.js 及 editor-guards、editor-guards-retry 目录，验收尚未完成。
 
 S5 审计入口从 frontend 执行 node scripts/run-isolated-browser-tests.mjs --audit-sales-test。沿用隔离 codex 凭据配置。此参数只选择 sales-state-closeout-05.spec.js，并通过直连 Django 与 Vite 代理核对实际审计设置。普通入口保持原行为。
+
+统一候选接收 S5 0f73688d92c70543e050e617ac636a9cc58bd2b2、Q6 598717617be8de95fcaeb03426693f1efc71808a、P6 8ac8fab5a08f7c170adb3514108dd3ba01a56ff3。S5 和 Q6 来源证据见各包 README。P6 的 SKU／包装编辑器六组通过，SKU 行内按钮修复有模板回归，实际按键补验仍待完成。INV-01 继续沿用采购入库标签六组，其他来源和关联子详情返回仍待验。统一候选 CI 单独核销。

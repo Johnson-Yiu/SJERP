@@ -753,3 +753,5 @@ H2 历史商品关联、E1-R2 销售界面、E2-R2 产品运营补修已在独�
 | ISS-126 库存流水详情缺少批次标识 | P2 / NEEDS_VERIFICATION | 同仓两条流水可以分别打开，接口返回不同批次。抽屉缺少批次展示，不能凭详情核对批次。 | 复审批次字段的显示条件和不同来源的历史兼容性。[同仓批次证据](uat-evidence/ui-product-operations-completion-02/chrome-same-warehouse-lots/run.json) |
 
 对账命令从 backend 启动时漏检源码修改，已定位为 Git 路径限定使用调用者目录。修复及真实临时仓库回归已接入 U4，等待独立复审。D1 合成试导与多币种检查保留真实资料、未结余额、库存和剩余履约的待验边界。[U4 证据与状态](uat-evidence/ui-delivery-closeout-04/README.md)
+
+U4 已接收 S5、Q6、P6 的固定交付。库存其他来源、关联子详情返回及 SKU 行内按键仍待验，统一候选 CI 单独核销。[逐项状态和来源](uat-evidence/ui-delivery-closeout-04/remaining.md)

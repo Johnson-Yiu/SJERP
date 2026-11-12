@@ -1,0 +1,96 @@
+{
+  "source": "c4650798c9fa24a88f1588aa606d35e17fa1e6d0",
+  "browser": "Chrome/156.0.8078.80",
+  "results": [
+    {
+      "status": "draft",
+      "number": "S5-SO-DRAFT-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-draft-1366-100.png"
+    },
+    {
+      "status": "confirmed",
+      "number": "S5-SO-CONFIRMED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-confirmed-1366-100.png"
+    },
+    {
+      "status": "production",
+      "number": "S5-SO-PRODUCTION-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-production-1366-100.png"
+    },
+    {
+      "status": "shipped",
+      "number": "S5-SO-SHIPPED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-shipped-1366-100.png"
+    },
+    {
+      "status": "completed",
+      "number": "S5-SO-COMPLETED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-completed-1366-100.png"
+    },
+    {
+      "status": "cancelled",
+      "number": "S5-SO-CANCELLED-LONG-REFERENCE",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "dpr": 1,
+      "cssWidth": 1366,
+      "screenshot": "so-01-cancelled-1366-100.png"
+    },
+    {
+      "state": "SO-04-load-failed",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "so-04-load-failed-1366-100.png"
+    },
+    {
+      "state": "SO-04-late-response",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "so-04-late-response-1366-100.png"
+    },
+    {
+      "state": "QUO-04-recovered",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "quo-04-loaded-1366-100.png"
+    },
+    {
+      "state": "SO-03-rejected",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "screenshot": "so-03-rejected-1366-100.png",
+      "rejected": 400
+    }
+  ],
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeEnabled\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: '订单工作台' }).getByRole('button', { name: '确认订单', exact: true })\nExpected: enabled\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeEnabled\" getByRole('dialog', { name: '订单工作台' }).getByRole('button', { name: '确认订单', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: '订单工作台' }).getByRole('button', { name: '确认订单', exact: true })\u001b[22m\n"
+}

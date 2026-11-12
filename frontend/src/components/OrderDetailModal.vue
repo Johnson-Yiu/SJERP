@@ -74,6 +74,7 @@ const canViewPayments = computed(() => can('finance', 'view') && can('transactio
 const settlement = computed(() => canViewPayments.value ? workbench.value?.payment_summary?.settlement : null)
 const receivableReview = computed(() => canViewPayments.value && receivableNeedsReview(order.value, workbench.value?.payment_summary))
 const lifecycleNotice = ref('')
+const lifecycleError = ref('')
 const canViewReceivable = computed(() => {
   if (!canViewPayments.value) return false
   const balance = Number(workbench.value?.payment_summary?.balance_amount)
@@ -391,10 +392,10 @@ async function lifecycleAction(path, confirmation) {
   if (!can('orders', 'update')) return
   if (lifecycleSaving.value || (confirmation && !await confirmDialog({ title: '确认订单操作', message: confirmation, confirmText: '确认继续', danger: true }))) return
   lifecycleSaving.value = true
-  error.value = ''
+  lifecycleError.value = ''
   lifecycleNotice.value = ''
   try { await api.post(`/orders/${props.id}/${path}/`); await load(); if (!error.value && path === 'complete') lifecycleNotice.value = '履约已完成，未收款项继续保留。' }
-  catch (err) { error.value = err.message }
+  catch (err) { lifecycleError.value = err.message }
   finally { lifecycleSaving.value = false }
 }
 function openCancellation() { cancellationReason.value = ''; error.value = ''; cancelOpen.value = true }
@@ -457,6 +458,7 @@ async function procurementDraftsCreated(result) {
 }
 async function load() {
   lifecycleNotice.value = ''
+  lifecycleError.value = ''
   actualPackingCache.value = {}
   loading.value = true
   error.value = ''
@@ -564,6 +566,7 @@ watch(() => order.value?.order_no, title => { if (workspace && title) { workspac
           <nav class="workbench-tabs" aria-label="订单工作台分页"><button v-for="tab in tabs" :key="tab[0]" :class="{ active: activeTab === tab[0] }" @click="activeTab = tab[0]">{{ tab[1] }}</button></nav>
 
           <p v-if="lifecycleNotice" class="fulfillment-helper" role="status">{{ lifecycleNotice }}</p>
+          <p v-if="lifecycleError" class="error" role="alert">{{ lifecycleError }}</p>
           <section v-if="activeTab === 'overview'" class="workbench-grid">
             <PartyDetailsPanel v-if="can('customers', 'view')" :key="JSON.stringify(order.effective_party)" kind="order" :id="order.id" :status="order.status" :can-edit="can('orders', 'update') && !order.historical_only" />
             <article v-if="formalParty" class="workbench-card party-snapshot-card"><h3>原始交易主体快照</h3><p v-if="partySnapshotRows.length">正式确认时保存的主体资料；后续客户主档修改不会覆盖。更正后的有效版本请查看主体版本。</p><p v-else class="muted">历史主体未记录，以下不使用当前主档补造历史事实。</p><dl v-if="partySnapshotRows.length" class="data-list compact"><template v-for="[label, value] in partySnapshotRows" :key="label"><dt>{{ label }}</dt><dd>{{ value || '未记录' }}</dd></template></dl><p v-if="!partySnapshotRows.length && order.customer_name" class="party-reference">当前主档参考：{{ order.customer_name }}</p></article>

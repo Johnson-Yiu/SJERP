@@ -328,6 +328,9 @@ export function assertApiIdentity(actual, expected, label) {
     if (typeof actual?.[field] !== 'string' || typeof expected?.[field] !== 'string'
       || !samePath(actual[field], expected[field])) mismatches.push(field)
   }
+  if (expected?.auditLogEnabled !== undefined && actual?.auditLogEnabled !== expected.auditLogEnabled) {
+    mismatches.push('auditLogEnabled')
+  }
   if (expected?.rbacEnforcement !== undefined && actual?.rbacEnforcement !== expected.rbacEnforcement) {
     mismatches.push('rbacEnforcement')
   }
@@ -352,6 +355,10 @@ export async function verifyProxiedApiIdentity(viteServer, baseURL, directIdenti
 
 export async function resolvePlaywrightSelection(userArgs) {
   const args = userArgs[0] === '--' ? userArgs.slice(1) : userArgs
+  if (args.length === 1 && args[0] === '--audit-sales-test') {
+    const selection = await resolvePlaywrightSelection(['--business-test', 'sales-state-closeout-05.spec.js'])
+    return { ...selection, auditEnabled: true }
+  }
   if (args.length === 0) return { businessTest: null, businessSuite: false }
   if (args[0] === '--all-business-tests') {
     if (args.length === 1) return { businessTest: '*', businessSuite: true, excludedBusinessTests: [] }
@@ -565,7 +572,7 @@ async function runProfile(selection) {
       ...authEnvironment,
       APP_STAGE: 'development',
       DJANGO_DEBUG: '1',
-      AUDIT_LOG_ENABLED: '0',
+      AUDIT_LOG_ENABLED: selection.auditEnabled === true ? '1' : '0',
       MEDIA_STORAGE_BACKEND: 'django.core.files.storage.FileSystemStorage',
       DJANGO_SETTINGS_MODULE: 'test_support.isolated_settings',
       DATABASE_URL: sqliteDatabaseUrl(databasePath),
@@ -700,6 +707,7 @@ async function runProfile(selection) {
         database: databasePath,
         mediaRoot,
         rbacEnforcement: rbacTestMode,
+        auditLogEnabled: selection.auditEnabled === true,
       }
       const identityOptions = env.A3_STRICT_BROWSER_EVIDENCE === '1' ? { timeoutMs: 150000 } : undefined
       const apiIdentity = await waitForIdentity(apiServer, apiIdentityUrl, { runId, token }, 'Django API', identityOptions)

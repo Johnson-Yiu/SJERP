@@ -134,5 +134,6 @@ def verify_isolated_runtime(environ=None, settings=None, *, database_must_exist=
         "token": env["ISOLATED_TEST_TOKEN"],
         "database": str(expected_database),
         "mediaRoot": str(expected_media),
+        "auditLogEnabled": bool(getattr(settings, "AUDIT_LOG_ENABLED", False)),
         "rbacEnforcement": bool(getattr(settings, "RBAC_ENFORCEMENT", False)) if settings is not None else False,
     }

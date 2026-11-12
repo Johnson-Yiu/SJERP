@@ -561,3 +561,14 @@ test('two independent worktree runtimes can start concurrently without sharing p
     await rm(parent, { recursive: true, force: false })
   }
 })
+
+test('sales audit is explicit and verified against the API runtime', async () => {
+  const selection = await resolvePlaywrightSelection(['--audit-sales-test'])
+  assert.deepEqual(selection, {
+    businessTest: 'sales-state-closeout-05.spec.js', businessSuite: false, auditEnabled: true,
+  })
+  const normal = await resolvePlaywrightSelection(['--business-test', selection.businessTest])
+  assert.equal(normal.auditEnabled, undefined)
+  await assert.rejects(resolvePlaywrightSelection(['--audit-sales-test', '--all-business-tests']))
+  assert.throws(() => assertApiIdentity({ auditLogEnabled: false }, { auditLogEnabled: true }, 'API'), /auditLogEnabled/)
+})

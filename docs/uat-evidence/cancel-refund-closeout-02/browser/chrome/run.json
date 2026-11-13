@@ -1,0 +1,2572 @@
+{
+  "browser": "Chrome/156.0.8078.80",
+  "fixture": {
+    "paid": {
+      "order": 1,
+      "number": "SO-CLOSE-paid",
+      "receipt": 1,
+      "receiptNo": "FIN-2A64928F63B74FF5"
+    },
+    "partial": {
+      "order": 2,
+      "number": "SO-CLOSE-partial",
+      "receipt": 2,
+      "receiptNo": "FIN-D11772391EEB4421"
+    },
+    "void": {
+      "order": 3,
+      "number": "SO-CLOSE-void",
+      "receipt": 3,
+      "receiptNo": "FIN-3DF902CDACE6494C"
+    },
+    "correction": {
+      "order": 4,
+      "number": "SO-CLOSE-correction",
+      "receipt": 4,
+      "receiptNo": "FIN-33E9DD07CFE74585"
+    }
+  },
+  "events": [
+    {
+      "url": "/api/transactions/1/refund-cash/",
+      "status": 201,
+      "request": {
+        "actual_date": "2026-11-14",
+        "order": 1,
+        "amount": 100,
+        "reason": "合成实际原币退款凭证 normal-100",
+        "voucher": 1
+      },
+      "response": {
+        "refunds": [
+          {
+            "id": 5,
+            "transaction_no": "FIN-2C07FD11C9364398",
+            "amount": "100.00",
+            "currency": "USD",
+            "actual_date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "url": "/api/orders/1/cancel/",
+      "status": 200,
+      "request": {
+        "reason": "合成取消后按原收款分次退款",
+        "settle_refund": true
+      },
+      "response": {
+        "id": 1,
+        "items": [
+          {
+            "id": 1,
+            "sku": 1,
+            "sku_code": "A-CLOSE-SKU",
+            "sales_model": "",
+            "model": "",
+            "product_name": "合成验收灯具",
+            "display_name": "合成验收灯具",
+            "description": "合成验收灯具",
+            "unit": "pcs",
+            "quantity": "100.00",
+            "unit_price": "10.0000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "",
+            "amount": "1000.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "合成取消退款验收客户",
+        "customer_country": "",
+        "quote_no": "QT-CLOSE-paid",
+        "source_quote_no": "QT-CLOSE-paid",
+        "status_display": "已取消",
+        "total_amount": "0.00",
+        "base_amount": "1000.00",
+        "approved_change_amount": "-1000.00",
+        "paid_amount": "900.00",
+        "balance_amount": 0,
+        "receivable_state": "cancelled",
+        "created_at": "2026-11-14T01:59:49.774737+08:00",
+        "updated_at": "2026-11-14T02:00:29.180242+08:00",
+        "order_no": "SO-CLOSE-paid",
+        "customer_name_snapshot": "合成取消退款验收客户",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-14",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "cancelled",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "1.000000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": "2026-11-14T02:00:29.178494+08:00",
+        "cancellation_reason": "合成取消后按原收款分次退款",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": 1,
+        "effective_party": {
+          "name": "合成取消退款验收客户",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      }
+    },
+    {
+      "url": "/api/transactions/1/refund-cash/",
+      "status": 201,
+      "request": {
+        "actual_date": "2026-11-14",
+        "order": 1,
+        "amount": 400,
+        "reason": "合成实际原币退款凭证 cancel-400",
+        "voucher": 2
+      },
+      "response": {
+        "refunds": [
+          {
+            "id": 6,
+            "transaction_no": "FIN-CD5A63BF30A44620",
+            "amount": "400.00",
+            "currency": "USD",
+            "actual_date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "url": "/api/transactions/1/refund-cash/",
+      "status": 201,
+      "request": {
+        "actual_date": "2026-11-14",
+        "order": 1,
+        "amount": 500,
+        "reason": "合成实际原币退款凭证 cancel-500",
+        "voucher": 3
+      },
+      "response": {
+        "refunds": [
+          {
+            "id": 7,
+            "transaction_no": "FIN-1270479D1A3A4C88",
+            "amount": "500.00",
+            "currency": "USD",
+            "actual_date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "url": "/api/orders/2/cancel/",
+      "status": 400,
+      "request": {
+        "reason": "部分已发订单应当保留背景与原因",
+        "settle_refund": true
+      },
+      "response": {
+        "detail": "订单已有有效发货记录，不能直接取消。"
+      }
+    },
+    {
+      "url": "/api/orders/2/quantity-adjustments/preview/",
+      "status": 200,
+      "request": {
+        "version": 0,
+        "terminate_remaining": true,
+        "request_key": "a1374000-76f1-4a54-a415-f5a058ab3af6",
+        "reason": "合成部分履约终止，保留已发40件",
+        "items": [
+          {
+            "order_item": 2,
+            "new_quantity": 40
+          },
+          {
+            "order_item": 3,
+            "new_quantity": 0
+          }
+        ]
+      },
+      "response": {
+        "order": 2,
+        "order_no": "SO-CLOSE-partial",
+        "status": "confirmed",
+        "version": 0,
+        "reason_required": true,
+        "lines": [
+          {
+            "order_item": 2,
+            "sku": 1,
+            "sku_code": "A-CLOSE-SKU",
+            "sales_model": "",
+            "display_name": "合成验收灯具",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "100.00",
+            "new_quantity": "40.00",
+            "quantity_delta": "-60.00",
+            "old_amount": "1000.00",
+            "new_amount": "400.00",
+            "amount_delta": "-600.00",
+            "shipped_quantity": "40",
+            "before": {
+              "order_item": 2,
+              "group_key": "2:1",
+              "sku_code": "A-CLOSE-SKU",
+              "base_unit": "pcs",
+              "ordered_quantity": "100.00",
+              "shipped_quantity": "40",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "60.00",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 2,
+              "group_key": "2:1",
+              "sku_code": "A-CLOSE-SKU",
+              "base_unit": "pcs",
+              "ordered_quantity": "40.00",
+              "shipped_quantity": "40",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            }
+          },
+          {
+            "order_item": 3,
+            "sku": 2,
+            "sku_code": "A-CLOSE-ZERO",
+            "sales_model": "",
+            "display_name": "合成验收灯具 · A-CLOSE-ZERO",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "20.00",
+            "new_quantity": "0.00",
+            "quantity_delta": "-20.00",
+            "old_amount": "200.00",
+            "new_amount": "0.00",
+            "amount_delta": "-200.00",
+            "shipped_quantity": "0",
+            "before": {
+              "order_item": 3,
+              "group_key": "2:2",
+              "sku_code": "A-CLOSE-ZERO",
+              "base_unit": "pcs",
+              "ordered_quantity": "20.00",
+              "shipped_quantity": "0",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "20.00",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 3,
+              "group_key": "2:2",
+              "sku_code": "A-CLOSE-ZERO",
+              "base_unit": "pcs",
+              "ordered_quantity": "0.00",
+              "shipped_quantity": "0",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            }
+          }
+        ],
+        "financial": {
+          "currency": "USD",
+          "before_total": "1200.0000",
+          "after_total": "400.0000",
+          "amount_delta": "-800.0000",
+          "paid_amount": "1000.0000",
+          "planned_amount": "1200.0000",
+          "settled_amount": "1000.0000",
+          "fee_credit_amount": "0.0000",
+          "receivable_reduction_amount": "0.0000",
+          "outstanding_before": "200.0000",
+          "outstanding_after": "-600.0000"
+        },
+        "warnings": [
+          "数量减少超过未结应收计划余额。请先在财务流水从原收款登记实际退款；如含非现金抵减或我方手续费，请先核对对应核销记录，再重新预览。"
+        ],
+        "blocking_reasons": [
+          "数量减少超过未结应收计划余额。请先在财务流水从原收款登记实际退款；如含非现金抵减或我方手续费，请先核对对应核销记录，再重新预览。"
+        ],
+        "can_submit": false,
+        "financial_visible": true,
+        "procurement_visible": true
+      }
+    },
+    {
+      "url": "/api/transactions/2/refund-cash/",
+      "status": 201,
+      "request": {
+        "actual_date": "2026-11-14",
+        "order": 2,
+        "amount": 600,
+        "reason": "合成实际原币退款凭证 partial-before-terminate-600",
+        "voucher": 4
+      },
+      "response": {
+        "refunds": [
+          {
+            "id": 8,
+            "transaction_no": "FIN-27A0B228738145C4",
+            "amount": "600.00",
+            "currency": "USD",
+            "actual_date": "2026-11-14"
+          }
+        ]
+      }
+    },
+    {
+      "url": "/api/orders/2/quantity-adjustments/preview/",
+      "status": 200,
+      "request": {
+        "version": 0,
+        "terminate_remaining": true,
+        "request_key": "50015509-9458-4b6b-a3af-7d864cc5928d",
+        "reason": "实际退回超出履约金额后终止余项",
+        "items": [
+          {
+            "order_item": 2,
+            "new_quantity": 40
+          },
+          {
+            "order_item": 3,
+            "new_quantity": 0
+          }
+        ]
+      },
+      "response": {
+        "order": 2,
+        "order_no": "SO-CLOSE-partial",
+        "status": "confirmed",
+        "version": 0,
+        "reason_required": true,
+        "lines": [
+          {
+            "order_item": 2,
+            "sku": 1,
+            "sku_code": "A-CLOSE-SKU",
+            "sales_model": "",
+            "display_name": "合成验收灯具",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "100.00",
+            "new_quantity": "40.00",
+            "quantity_delta": "-60.00",
+            "old_amount": "1000.00",
+            "new_amount": "400.00",
+            "amount_delta": "-600.00",
+            "shipped_quantity": "40",
+            "before": {
+              "order_item": 2,
+              "group_key": "2:1",
+              "sku_code": "A-CLOSE-SKU",
+              "base_unit": "pcs",
+              "ordered_quantity": "100.00",
+              "shipped_quantity": "40",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "60.00",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 2,
+              "group_key": "2:1",
+              "sku_code": "A-CLOSE-SKU",
+              "base_unit": "pcs",
+              "ordered_quantity": "40.00",
+              "shipped_quantity": "40",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            }
+          },
+          {
+            "order_item": 3,
+            "sku": 2,
+            "sku_code": "A-CLOSE-ZERO",
+            "sales_model": "",
+            "display_name": "合成验收灯具 · A-CLOSE-ZERO",
+            "base_unit": "pcs",
+            "trade_unit": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            },
+            "old_trade_quantity": null,
+            "new_trade_quantity": null,
+            "old_quantity": "20.00",
+            "new_quantity": "0.00",
+            "quantity_delta": "-20.00",
+            "old_amount": "200.00",
+            "new_amount": "0.00",
+            "amount_delta": "-200.00",
+            "shipped_quantity": "0",
+            "before": {
+              "order_item": 3,
+              "group_key": "2:2",
+              "sku_code": "A-CLOSE-ZERO",
+              "base_unit": "pcs",
+              "ordered_quantity": "20.00",
+              "shipped_quantity": "0",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "20.00",
+              "procurement_excess_quantity": "0"
+            },
+            "after": {
+              "order_item": 3,
+              "group_key": "2:2",
+              "sku_code": "A-CLOSE-ZERO",
+              "base_unit": "pcs",
+              "ordered_quantity": "0.00",
+              "shipped_quantity": "0",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            }
+          }
+        ],
+        "financial": {
+          "currency": "USD",
+          "before_total": "1200.0000",
+          "after_total": "400.0000",
+          "amount_delta": "-800.0000",
+          "paid_amount": "400.0000",
+          "planned_amount": "1200.0000",
+          "settled_amount": "400.0000",
+          "fee_credit_amount": "0.0000",
+          "receivable_reduction_amount": "0.0000",
+          "outstanding_before": "800.0000",
+          "outstanding_after": "0.0000"
+        },
+        "warnings": [],
+        "blocking_reasons": [],
+        "can_submit": true,
+        "financial_visible": true,
+        "procurement_visible": true
+      }
+    },
+    {
+      "url": "/api/orders/2/quantity-adjustments/",
+      "status": 201,
+      "request": {
+        "version": 0,
+        "terminate_remaining": true,
+        "request_key": "50015509-9458-4b6b-a3af-7d864cc5928d",
+        "reason": "实际退回超出履约金额后终止余项",
+        "items": [
+          {
+            "order_item": 2,
+            "new_quantity": 40
+          },
+          {
+            "order_item": 3,
+            "new_quantity": 0
+          }
+        ]
+      },
+      "response": {
+        "adjustment": {
+          "id": 1,
+          "order": 2,
+          "order_no": "SO-CLOSE-partial",
+          "operator": 1,
+          "operator_name": "codex",
+          "request_key": "50015509-9458-4b6b-a3af-7d864cc5928d",
+          "reason": "实际退回超出履约金额后终止余项",
+          "created_at": "2026-11-13T18:00:56.204903Z",
+          "before_total_amount": "1200.0000",
+          "after_total_amount": "400.0000",
+          "amount_delta": "-800.0000",
+          "financial_visible": true,
+          "procurement_visible": true,
+          "lines": [
+            {
+              "order_item": 2,
+              "sku": 1,
+              "sku_code": "A-CLOSE-SKU",
+              "sales_model": "",
+              "display_name": "合成验收灯具",
+              "base_unit": "pcs",
+              "trade_unit": null,
+              "trade_snapshot": {
+                "unit": "pcs",
+                "base_unit": "pcs",
+                "factor": "1",
+                "name": ""
+              },
+              "old_trade_quantity": null,
+              "new_trade_quantity": null,
+              "old_quantity": "100.00",
+              "new_quantity": "40.00",
+              "quantity_delta": "-60.00",
+              "old_amount": "1000.00",
+              "new_amount": "400.00",
+              "amount_delta": "-600.00",
+              "shipped_quantity": "40",
+              "before": {
+                "order_item": 2,
+                "group_key": "2:1",
+                "sku_code": "A-CLOSE-SKU",
+                "base_unit": "pcs",
+                "ordered_quantity": "100.00",
+                "shipped_quantity": "40",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "60.00",
+                "procurement_excess_quantity": "0"
+              },
+              "after": {
+                "order_item": 2,
+                "group_key": "2:1",
+                "sku_code": "A-CLOSE-SKU",
+                "base_unit": "pcs",
+                "ordered_quantity": "40.00",
+                "shipped_quantity": "40",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "0",
+                "procurement_excess_quantity": "0"
+              }
+            },
+            {
+              "order_item": 3,
+              "sku": 2,
+              "sku_code": "A-CLOSE-ZERO",
+              "sales_model": "",
+              "display_name": "合成验收灯具 · A-CLOSE-ZERO",
+              "base_unit": "pcs",
+              "trade_unit": null,
+              "trade_snapshot": {
+                "unit": "pcs",
+                "base_unit": "pcs",
+                "factor": "1",
+                "name": ""
+              },
+              "old_trade_quantity": null,
+              "new_trade_quantity": null,
+              "old_quantity": "20.00",
+              "new_quantity": "0.00",
+              "quantity_delta": "-20.00",
+              "old_amount": "200.00",
+              "new_amount": "0.00",
+              "amount_delta": "-200.00",
+              "shipped_quantity": "0",
+              "before": {
+                "order_item": 3,
+                "group_key": "2:2",
+                "sku_code": "A-CLOSE-ZERO",
+                "base_unit": "pcs",
+                "ordered_quantity": "20.00",
+                "shipped_quantity": "0",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "20.00",
+                "procurement_excess_quantity": "0"
+              },
+              "after": {
+                "order_item": 3,
+                "group_key": "2:2",
+                "sku_code": "A-CLOSE-ZERO",
+                "base_unit": "pcs",
+                "ordered_quantity": "0.00",
+                "shipped_quantity": "0",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "0",
+                "procurement_excess_quantity": "0"
+              }
+            }
+          ],
+          "impact": {
+            "operator_kind": "authenticated",
+            "preview": {
+              "order": 2,
+              "order_no": "SO-CLOSE-partial",
+              "status": "confirmed",
+              "version": 0,
+              "reason_required": true,
+              "lines": [
+                {
+                  "order_item": 2,
+                  "sku": 1,
+                  "sku_code": "A-CLOSE-SKU",
+                  "sales_model": "",
+                  "display_name": "合成验收灯具",
+                  "base_unit": "pcs",
+                  "trade_unit": null,
+                  "trade_snapshot": {
+                    "unit": "pcs",
+                    "base_unit": "pcs",
+                    "factor": "1",
+                    "name": ""
+                  },
+                  "old_trade_quantity": null,
+                  "new_trade_quantity": null,
+                  "old_quantity": "100.00",
+                  "new_quantity": "40.00",
+                  "quantity_delta": "-60.00",
+                  "old_amount": "1000.00",
+                  "new_amount": "400.00",
+                  "amount_delta": "-600.00",
+                  "shipped_quantity": "40",
+                  "before": {
+                    "order_item": 2,
+                    "group_key": "2:1",
+                    "sku_code": "A-CLOSE-SKU",
+                    "base_unit": "pcs",
+                    "ordered_quantity": "100.00",
+                    "shipped_quantity": "40",
+                    "purchased_quantity": "0",
+                    "received_quantity": "0",
+                    "in_transit_quantity": "0",
+                    "to_procure_quantity": "60.00",
+                    "procurement_excess_quantity": "0"
+                  },
+                  "after": {
+                    "order_item": 2,
+                    "group_key": "2:1",
+                    "sku_code": "A-CLOSE-SKU",
+                    "base_unit": "pcs",
+                    "ordered_quantity": "40.00",
+                    "shipped_quantity": "40",
+                    "purchased_quantity": "0",
+                    "received_quantity": "0",
+                    "in_transit_quantity": "0",
+                    "to_procure_quantity": "0",
+                    "procurement_excess_quantity": "0"
+                  }
+                },
+                {
+                  "order_item": 3,
+                  "sku": 2,
+                  "sku_code": "A-CLOSE-ZERO",
+                  "sales_model": "",
+                  "display_name": "合成验收灯具 · A-CLOSE-ZERO",
+                  "base_unit": "pcs",
+                  "trade_unit": null,
+                  "trade_snapshot": {
+                    "unit": "pcs",
+                    "base_unit": "pcs",
+                    "factor": "1",
+                    "name": ""
+                  },
+                  "old_trade_quantity": null,
+                  "new_trade_quantity": null,
+                  "old_quantity": "20.00",
+                  "new_quantity": "0.00",
+                  "quantity_delta": "-20.00",
+                  "old_amount": "200.00",
+                  "new_amount": "0.00",
+                  "amount_delta": "-200.00",
+                  "shipped_quantity": "0",
+                  "before": {
+                    "order_item": 3,
+                    "group_key": "2:2",
+                    "sku_code": "A-CLOSE-ZERO",
+                    "base_unit": "pcs",
+                    "ordered_quantity": "20.00",
+                    "shipped_quantity": "0",
+                    "purchased_quantity": "0",
+                    "received_quantity": "0",
+                    "in_transit_quantity": "0",
+                    "to_procure_quantity": "20.00",
+                    "procurement_excess_quantity": "0"
+                  },
+                  "after": {
+                    "order_item": 3,
+                    "group_key": "2:2",
+                    "sku_code": "A-CLOSE-ZERO",
+                    "base_unit": "pcs",
+                    "ordered_quantity": "0.00",
+                    "shipped_quantity": "0",
+                    "purchased_quantity": "0",
+                    "received_quantity": "0",
+                    "in_transit_quantity": "0",
+                    "to_procure_quantity": "0",
+                    "procurement_excess_quantity": "0"
+                  }
+                }
+              ],
+              "financial": {
+                "currency": "USD",
+                "before_total": "1200.0000",
+                "after_total": "400.0000",
+                "amount_delta": "-800.0000",
+                "paid_amount": "400.0000",
+                "planned_amount": "1200.0000",
+                "settled_amount": "400.0000",
+                "fee_credit_amount": "0.0000",
+                "receivable_reduction_amount": "0.0000",
+                "outstanding_before": "800.0000",
+                "outstanding_after": "0.0000"
+              },
+              "warnings": [],
+              "blocking_reasons": [],
+              "can_submit": true,
+              "terminate_remaining": true,
+              "financial_visible": true,
+              "procurement_visible": true
+            },
+            "warnings": [],
+            "after_metrics": [
+              {
+                "order_item": 2,
+                "group_key": "2:1",
+                "sku_code": "A-CLOSE-SKU",
+                "base_unit": "pcs",
+                "ordered_quantity": "40.00",
+                "shipped_quantity": "40",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "0",
+                "procurement_excess_quantity": "0"
+              },
+              {
+                "order_item": 3,
+                "group_key": "2:2",
+                "sku_code": "A-CLOSE-ZERO",
+                "base_unit": "pcs",
+                "ordered_quantity": "0.00",
+                "shipped_quantity": "0.00",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "0",
+                "procurement_excess_quantity": "0"
+              }
+            ],
+            "payment_plan_delta": "-800.0000",
+            "order_status": "completed"
+          }
+        },
+        "replayed": false,
+        "preview": {
+          "order": 2,
+          "order_no": "SO-CLOSE-partial",
+          "status": "confirmed",
+          "version": 1,
+          "reason_required": true,
+          "lines": [
+            {
+              "order_item": 2,
+              "sku": 1,
+              "sku_code": "A-CLOSE-SKU",
+              "sales_model": "",
+              "display_name": "合成验收灯具",
+              "base_unit": "pcs",
+              "trade_unit": null,
+              "trade_snapshot": {
+                "unit": "pcs",
+                "base_unit": "pcs",
+                "factor": "1",
+                "name": ""
+              },
+              "old_trade_quantity": null,
+              "new_trade_quantity": null,
+              "old_quantity": "100.00",
+              "new_quantity": "40.00",
+              "quantity_delta": "-60.00",
+              "old_amount": "1000.00",
+              "new_amount": "400.00",
+              "amount_delta": "-600.00",
+              "shipped_quantity": "40",
+              "before": {
+                "order_item": 2,
+                "group_key": "2:1",
+                "sku_code": "A-CLOSE-SKU",
+                "base_unit": "pcs",
+                "ordered_quantity": "100.00",
+                "shipped_quantity": "40",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "60.00",
+                "procurement_excess_quantity": "0"
+              },
+              "after": {
+                "order_item": 2,
+                "group_key": "2:1",
+                "sku_code": "A-CLOSE-SKU",
+                "base_unit": "pcs",
+                "ordered_quantity": "40.00",
+                "shipped_quantity": "40",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "0",
+                "procurement_excess_quantity": "0"
+              }
+            },
+            {
+              "order_item": 3,
+              "sku": 2,
+              "sku_code": "A-CLOSE-ZERO",
+              "sales_model": "",
+              "display_name": "合成验收灯具 · A-CLOSE-ZERO",
+              "base_unit": "pcs",
+              "trade_unit": null,
+              "trade_snapshot": {
+                "unit": "pcs",
+                "base_unit": "pcs",
+                "factor": "1",
+                "name": ""
+              },
+              "old_trade_quantity": null,
+              "new_trade_quantity": null,
+              "old_quantity": "20.00",
+              "new_quantity": "0.00",
+              "quantity_delta": "-20.00",
+              "old_amount": "200.00",
+              "new_amount": "0.00",
+              "amount_delta": "-200.00",
+              "shipped_quantity": "0",
+              "before": {
+                "order_item": 3,
+                "group_key": "2:2",
+                "sku_code": "A-CLOSE-ZERO",
+                "base_unit": "pcs",
+                "ordered_quantity": "20.00",
+                "shipped_quantity": "0",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "20.00",
+                "procurement_excess_quantity": "0"
+              },
+              "after": {
+                "order_item": 3,
+                "group_key": "2:2",
+                "sku_code": "A-CLOSE-ZERO",
+                "base_unit": "pcs",
+                "ordered_quantity": "0.00",
+                "shipped_quantity": "0",
+                "purchased_quantity": "0",
+                "received_quantity": "0",
+                "in_transit_quantity": "0",
+                "to_procure_quantity": "0",
+                "procurement_excess_quantity": "0"
+              }
+            }
+          ],
+          "financial": {
+            "currency": "USD",
+            "before_total": "1200.0000",
+            "after_total": "400.0000",
+            "amount_delta": "-800.0000",
+            "paid_amount": "400.0000",
+            "planned_amount": "1200.0000",
+            "settled_amount": "400.0000",
+            "fee_credit_amount": "0.0000",
+            "receivable_reduction_amount": "0.0000",
+            "outstanding_before": "800.0000",
+            "outstanding_after": "0.0000"
+          },
+          "warnings": [],
+          "blocking_reasons": [],
+          "can_submit": true,
+          "terminate_remaining": true,
+          "after_metrics": [
+            {
+              "order_item": 2,
+              "group_key": "2:1",
+              "sku_code": "A-CLOSE-SKU",
+              "base_unit": "pcs",
+              "ordered_quantity": "40.00",
+              "shipped_quantity": "40",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            },
+            {
+              "order_item": 3,
+              "group_key": "2:2",
+              "sku_code": "A-CLOSE-ZERO",
+              "base_unit": "pcs",
+              "ordered_quantity": "0.00",
+              "shipped_quantity": "0.00",
+              "purchased_quantity": "0",
+              "received_quantity": "0",
+              "in_transit_quantity": "0",
+              "to_procure_quantity": "0",
+              "procurement_excess_quantity": "0"
+            }
+          ],
+          "financial_visible": true,
+          "procurement_visible": true
+        }
+      }
+    },
+    {
+      "url": "/api/orders/3/cancel/",
+      "status": 200,
+      "request": {
+        "reason": "合成取消后验证允许的更正不复活应收",
+        "settle_refund": true
+      },
+      "response": {
+        "id": 3,
+        "items": [
+          {
+            "id": 4,
+            "sku": 1,
+            "sku_code": "A-CLOSE-SKU",
+            "sales_model": "",
+            "model": "",
+            "product_name": "合成验收灯具",
+            "display_name": "合成验收灯具",
+            "description": "合成验收灯具",
+            "unit": "pcs",
+            "quantity": "100.00",
+            "unit_price": "10.0000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "",
+            "amount": "1000.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "合成取消退款验收客户",
+        "customer_country": "",
+        "quote_no": "QT-CLOSE-void",
+        "source_quote_no": "QT-CLOSE-void",
+        "status_display": "已取消",
+        "total_amount": "0.00",
+        "base_amount": "1000.00",
+        "approved_change_amount": "-1000.00",
+        "paid_amount": "50.00",
+        "balance_amount": 0,
+        "receivable_state": "cancelled",
+        "created_at": "2026-11-14T01:59:50.492907+08:00",
+        "updated_at": "2026-11-14T02:01:02.773005+08:00",
+        "order_no": "SO-CLOSE-void",
+        "customer_name_snapshot": "合成取消退款验收客户",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-14",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "cancelled",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "1.000000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": "2026-11-14T02:01:02.772291+08:00",
+        "cancellation_reason": "合成取消后验证允许的更正不复活应收",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": 4,
+        "effective_party": {
+          "name": "合成取消退款验收客户",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      }
+    },
+    {
+      "url": "/api/transactions/3/void/",
+      "status": 200,
+      "request": {
+        "reason": "合成取消订单原收款更正作废"
+      },
+      "response": {
+        "id": 3,
+        "supplier_name": "",
+        "purchase_no": "",
+        "allocations": [
+          {
+            "id": "plan-3",
+            "plan": 3,
+            "contract_no": "SO-CLOSE-void",
+            "order": 3,
+            "purchase_order": null,
+            "amount": "50.0000",
+            "remaining_amount": "0.0000",
+            "is_active": false
+          }
+        ],
+        "customer_name": "合成取消退款验收客户",
+        "order_no": "SO-CLOSE-void",
+        "direction_display": "收入",
+        "status_display": "已作废",
+        "rmb_amount": "50.0000",
+        "allocation_capacity": "50.0000",
+        "unallocated_amount": "0",
+        "remitted_amount_display": "50.0000",
+        "fee_evidence_name": "",
+        "fee_evidence_sha256": "",
+        "cash_settlements": [],
+        "writeoffs": [],
+        "receipt_adjustment_rows": [],
+        "fx_available_amount": "0",
+        "refundable_cash_amount": "0",
+        "receipt_refunds": [],
+        "created_at": "2026-11-14T01:59:50.571953+08:00",
+        "updated_at": "2026-11-14T02:01:05.673233+08:00",
+        "transaction_no": "FIN-3DF902CDACE6494C",
+        "transaction_date": "2026-11-14",
+        "direction": "income",
+        "category": "",
+        "amount": "50.0000",
+        "currency": "USD",
+        "exchange_rate": "1.000000",
+        "allocated_amount": "0.0000",
+        "remittance_amount": "50.0000",
+        "bank_fee_amount": "0.0000",
+        "fee_responsibility": "",
+        "fee_reason": "",
+        "settlement_amount": "50.0000",
+        "request_hash": "",
+        "reference_rate_missing": false,
+        "kind": "customer_receipt",
+        "status": "cancelled",
+        "voided_at": "2026-11-14T02:01:05.673117+08:00",
+        "void_reason": "合成取消订单原收款更正作废",
+        "payment_method": "",
+        "reference": "",
+        "notes": "",
+        "split_from": null,
+        "fee_evidence": null,
+        "customer": 1,
+        "supplier": null,
+        "order": 3,
+        "purchase_order": null,
+        "plan": 3,
+        "replaces": null
+      }
+    },
+    {
+      "url": "/api/orders/4/cancel/",
+      "status": 200,
+      "request": {
+        "reason": "合成取消后验证允许的更正不复活应收",
+        "settle_refund": true
+      },
+      "response": {
+        "id": 4,
+        "items": [
+          {
+            "id": 5,
+            "sku": 1,
+            "sku_code": "A-CLOSE-SKU",
+            "sales_model": "",
+            "model": "",
+            "product_name": "合成验收灯具",
+            "display_name": "合成验收灯具",
+            "description": "合成验收灯具",
+            "unit": "pcs",
+            "quantity": "100.00",
+            "unit_price": "10.0000",
+            "cost_price": "0.0000",
+            "cost_currency_snapshot": "",
+            "amount": "1000.00",
+            "notes": "",
+            "supplier_sku": null,
+            "supplier_name": "",
+            "supplier_model": "",
+            "supplier_sku_code": "",
+            "supplier_barcode": "",
+            "supplier_allocation": null,
+            "trade_unit": null,
+            "trade_quantity": null,
+            "trade_unit_price": null,
+            "trade_snapshot": {
+              "unit": "pcs",
+              "base_unit": "pcs",
+              "factor": "1",
+              "name": ""
+            }
+          }
+        ],
+        "customer_name": "合成取消退款验收客户",
+        "customer_country": "",
+        "quote_no": "QT-CLOSE-correction",
+        "source_quote_no": "QT-CLOSE-correction",
+        "status_display": "已取消",
+        "total_amount": "0.00",
+        "base_amount": "1000.00",
+        "approved_change_amount": "-1000.00",
+        "paid_amount": "999.00",
+        "balance_amount": 0,
+        "receivable_state": "cancelled",
+        "created_at": "2026-11-14T01:59:51.074215+08:00",
+        "updated_at": "2026-11-14T02:01:09.795720+08:00",
+        "order_no": "SO-CLOSE-correction",
+        "customer_name_snapshot": "合成取消退款验收客户",
+        "customer_country_snapshot": "",
+        "customer_address_snapshot": "",
+        "customer_contact_name_snapshot": "",
+        "customer_phone_snapshot": "",
+        "customer_email_snapshot": "",
+        "order_date": "2026-11-14",
+        "expected_ship_date": null,
+        "tail_goods_policy": "SAME_CARTON",
+        "status": "cancelled",
+        "historical_only": false,
+        "currency": "USD",
+        "exchange_rate": "1.000000",
+        "shipping_fee": "0.0000",
+        "discount": "0.0000",
+        "notes": "",
+        "cancelled_at": "2026-11-14T02:01:09.795114+08:00",
+        "cancellation_reason": "合成取消后验证允许的更正不复活应收",
+        "quantity_change_version": 0,
+        "customer": 1,
+        "quote": 5,
+        "effective_party": {
+          "name": "合成取消退款验收客户",
+          "country": "",
+          "address": "",
+          "contact": "",
+          "phone": "",
+          "email": ""
+        }
+      }
+    },
+    {
+      "url": "/api/transactions/4/writeoff-corrections/",
+      "status": 201,
+      "request": {
+        "writeoff": 1,
+        "amount": 1,
+        "reason": "合成取消订单后撤销错误非现金抵减",
+        "request_key": "WOF-CORR-2007868c-27fb-48d8-b8bd-e9f4f02887d0"
+      },
+      "response": {
+        "id": 1,
+        "writeoff": 1,
+        "amount": "1.0000",
+        "reason": "合成取消订单后撤销错误非现金抵减",
+        "actor": {
+          "kind": "authenticated_user",
+          "action": "correct_receivable_writeoff",
+          "user_id": 1
+        },
+        "created_at": "2026-11-13T18:01:12.453586Z"
+      }
+    }
+  ],
+  "captures": [
+    {
+      "name": "refund-before-submit",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 497,
+        "y": 150,
+        "width": 620,
+        "height": 602,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 786,
+        "clientHeight": 602
+      },
+      "file": "refund-before-submit-1366-100.png"
+    },
+    {
+      "name": "refund-before-submit",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 774,
+        "y": 214,
+        "width": 620,
+        "height": 786,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 786,
+        "clientHeight": 786
+      },
+      "file": "refund-before-submit-1920-100.png"
+    },
+    {
+      "name": "refund-before-submit",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 16,
+        "y": 147,
+        "width": 358,
+        "height": 681,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 809,
+        "clientHeight": 681
+      },
+      "file": "refund-before-submit-390-100.png"
+    },
+    {
+      "name": "refund-before-submit",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 360.3999938964844,
+        "y": 149,
+        "width": 620,
+        "height": 449.3999938964844,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 782,
+        "clientHeight": 449
+      },
+      "file": "refund-before-submit-1366-125.png"
+    },
+    {
+      "name": "refund-before-submit",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 582,
+        "y": 149,
+        "width": 620,
+        "height": 699,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 782,
+        "clientHeight": 699
+      },
+      "file": "refund-before-submit-1920-125.png"
+    },
+    {
+      "name": "refund-before-submit",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 16,
+        "y": 146,
+        "width": 280,
+        "height": 513.2000122070312,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 805,
+        "clientHeight": 513
+      },
+      "file": "refund-before-submit-390-125.png"
+    },
+    {
+      "name": "normal-refund-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 286,
+        "y": 134,
+        "width": 1080,
+        "height": 634,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 2660,
+        "clientHeight": 634
+      },
+      "file": "normal-refund-after-1366-100.png"
+    },
+    {
+      "name": "normal-refund-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 840,
+        "y": 134,
+        "width": 1080,
+        "height": 946,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 2660,
+        "clientHeight": 946
+      },
+      "file": "normal-refund-after-1920-100.png"
+    },
+    {
+      "name": "normal-refund-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 0,
+        "y": 131,
+        "width": 390,
+        "height": 713,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 3562,
+        "clientHeight": 713
+      },
+      "file": "normal-refund-after-390-100.png"
+    },
+    {
+      "name": "normal-refund-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 248,
+        "y": 133,
+        "width": 844.7999877929688,
+        "height": 481.3999938964844,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 3027,
+        "clientHeight": 481
+      },
+      "file": "normal-refund-after-1366-125.png"
+    },
+    {
+      "name": "normal-refund-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 456,
+        "y": 133,
+        "width": 1080,
+        "height": 731,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 2654,
+        "clientHeight": 731
+      },
+      "file": "normal-refund-after-1920-125.png"
+    },
+    {
+      "name": "normal-refund-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 0,
+        "y": 130,
+        "width": 312,
+        "height": 545.2000122070312,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 3863,
+        "clientHeight": 545
+      },
+      "file": "normal-refund-after-390-125.png"
+    },
+    {
+      "name": "cancel-before-submit",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 423,
+        "y": 207.796875,
+        "width": 520,
+        "height": 352.390625,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 352,
+        "clientHeight": 352
+      },
+      "file": "cancel-before-submit-1366-100.png"
+    },
+    {
+      "name": "cancel-before-submit",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 700,
+        "y": 363.796875,
+        "width": 520,
+        "height": 352.390625,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 352,
+        "clientHeight": 352
+      },
+      "file": "cancel-before-submit-1920-100.png"
+    },
+    {
+      "name": "cancel-before-submit",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 15.59375,
+        "y": 235.296875,
+        "width": 358.796875,
+        "height": 373.390625,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 373,
+        "clientHeight": 373
+      },
+      "file": "cancel-before-submit-390-100.png"
+    },
+    {
+      "name": "cancel-before-submit",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 286.3999938964844,
+        "y": 131.40000915527344,
+        "width": 520,
+        "height": 351.6000061035156,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 352,
+        "clientHeight": 352
+      },
+      "file": "cancel-before-submit-1366-125.png"
+    },
+    {
+      "name": "cancel-before-submit",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 508,
+        "y": 256.20001220703125,
+        "width": 520,
+        "height": 351.6000061035156,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 352,
+        "clientHeight": 352
+      },
+      "file": "cancel-before-submit-1920-125.png"
+    },
+    {
+      "name": "cancel-before-submit",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 12.475000381469727,
+        "y": 151.3000030517578,
+        "width": 287.0375061035156,
+        "height": 372.6000061035156,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 373,
+        "clientHeight": 373
+      },
+      "file": "cancel-before-submit-390-125.png"
+    },
+    {
+      "name": "cancel-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 286,
+        "y": 134,
+        "width": 1080,
+        "height": 634,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 2232,
+        "clientHeight": 634
+      },
+      "file": "cancel-after-1366-100.png"
+    },
+    {
+      "name": "cancel-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 840,
+        "y": 134,
+        "width": 1080,
+        "height": 946,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 2232,
+        "clientHeight": 946
+      },
+      "file": "cancel-after-1920-100.png"
+    },
+    {
+      "name": "cancel-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 0,
+        "y": 131,
+        "width": 390,
+        "height": 713,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 3234,
+        "clientHeight": 713
+      },
+      "file": "cancel-after-390-100.png"
+    },
+    {
+      "name": "cancel-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 248,
+        "y": 133,
+        "width": 844.7999877929688,
+        "height": 481.3999938964844,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 2587,
+        "clientHeight": 481
+      },
+      "file": "cancel-after-1366-125.png"
+    },
+    {
+      "name": "cancel-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 456,
+        "y": 133,
+        "width": 1080,
+        "height": 731,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 2227,
+        "clientHeight": 731
+      },
+      "file": "cancel-after-1920-125.png"
+    },
+    {
+      "name": "cancel-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 0,
+        "y": 130,
+        "width": 312,
+        "height": 545.2000122070312,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 3492,
+        "clientHeight": 545
+      },
+      "file": "cancel-after-390-125.png"
+    },
+    {
+      "name": "cancel-refunds-complete",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 286,
+        "y": 134,
+        "width": 1080,
+        "height": 634,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 2232,
+        "clientHeight": 634
+      },
+      "file": "cancel-refunds-complete-1366-100.png"
+    },
+    {
+      "name": "cancel-refunds-complete",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 840,
+        "y": 134,
+        "width": 1080,
+        "height": 946,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 2232,
+        "clientHeight": 946
+      },
+      "file": "cancel-refunds-complete-1920-100.png"
+    },
+    {
+      "name": "cancel-refunds-complete",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 0,
+        "y": 131,
+        "width": 390,
+        "height": 713,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 3198,
+        "clientHeight": 713
+      },
+      "file": "cancel-refunds-complete-390-100.png"
+    },
+    {
+      "name": "cancel-refunds-complete",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 248,
+        "y": 133,
+        "width": 844.7999877929688,
+        "height": 481.3999938964844,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 2578,
+        "clientHeight": 481
+      },
+      "file": "cancel-refunds-complete-1366-125.png"
+    },
+    {
+      "name": "cancel-refunds-complete",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 456,
+        "y": 133,
+        "width": 1080,
+        "height": 731,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 2227,
+        "clientHeight": 731
+      },
+      "file": "cancel-refunds-complete-1920-125.png"
+    },
+    {
+      "name": "cancel-refunds-complete",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 0,
+        "y": 130,
+        "width": 312,
+        "height": 545.2000122070312,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 3456,
+        "clientHeight": 545
+      },
+      "file": "cancel-refunds-complete-390-125.png"
+    },
+    {
+      "name": "cancel-rejection-retained",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 423,
+        "y": 190.296875,
+        "width": 520,
+        "height": 387.390625,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 387,
+        "clientHeight": 387
+      },
+      "file": "cancel-rejection-retained-1366-100.png"
+    },
+    {
+      "name": "cancel-rejection-retained",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 700,
+        "y": 346.296875,
+        "width": 520,
+        "height": 387.390625,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 387,
+        "clientHeight": 387
+      },
+      "file": "cancel-rejection-retained-1920-100.png"
+    },
+    {
+      "name": "cancel-rejection-retained",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 15.59375,
+        "y": 217.796875,
+        "width": 358.796875,
+        "height": 408.390625,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 408,
+        "clientHeight": 408
+      },
+      "file": "cancel-rejection-retained-390-100.png"
+    },
+    {
+      "name": "cancel-rejection-retained",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 286.3999938964844,
+        "y": 113.9000015258789,
+        "width": 520,
+        "height": 386.6000061035156,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 387,
+        "clientHeight": 387
+      },
+      "file": "cancel-rejection-retained-1366-125.png"
+    },
+    {
+      "name": "cancel-rejection-retained",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 508,
+        "y": 238.6999969482422,
+        "width": 520,
+        "height": 386.6000061035156,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 387,
+        "clientHeight": 387
+      },
+      "file": "cancel-rejection-retained-1920-125.png"
+    },
+    {
+      "name": "cancel-rejection-retained",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 12.475000381469727,
+        "y": 123.30000305175781,
+        "width": 287.0375061035156,
+        "height": 428.6000061035156,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 429,
+        "clientHeight": 429
+      },
+      "file": "cancel-rejection-retained-390-125.png"
+    },
+    {
+      "name": "terminate-paid-refund-guidance",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 303,
+        "y": 38.40625,
+        "width": 760,
+        "height": 691.1875,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 906,
+        "clientHeight": 691
+      },
+      "file": "terminate-paid-refund-guidance-1366-100.png"
+    },
+    {
+      "name": "terminate-paid-refund-guidance",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 580,
+        "y": 67.296875,
+        "width": 760,
+        "height": 945.390625,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 945,
+        "clientHeight": 945
+      },
+      "file": "terminate-paid-refund-guidance-1920-100.png"
+    },
+    {
+      "name": "terminate-paid-refund-guidance",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 0,
+        "y": 25.3125,
+        "width": 390,
+        "height": 793.359375,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 1037,
+        "clientHeight": 793
+      },
+      "file": "terminate-paid-refund-guidance-390-100.png"
+    },
+    {
+      "name": "terminate-paid-refund-guidance",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 166.40000915527344,
+        "y": 30.725000381469727,
+        "width": 760,
+        "height": 552.9500122070312,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 840,
+        "clientHeight": 553
+      },
+      "file": "terminate-paid-refund-guidance-1366-125.png"
+    },
+    {
+      "name": "terminate-paid-refund-guidance",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 388,
+        "y": 43.20000076293945,
+        "width": 760,
+        "height": 777.6000366210938,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 943,
+        "clientHeight": 778
+      },
+      "file": "terminate-paid-refund-guidance-1920-125.png"
+    },
+    {
+      "name": "terminate-paid-refund-guidance",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 0,
+        "y": 20.25,
+        "width": 312,
+        "height": 634.6875,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 1050,
+        "clientHeight": 635
+      },
+      "file": "terminate-paid-refund-guidance-390-125.png"
+    },
+    {
+      "name": "terminate-before-submit",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 303,
+        "y": 38.40625,
+        "width": 760,
+        "height": 691.1875,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 911,
+        "clientHeight": 691
+      },
+      "file": "terminate-before-submit-1366-100.png"
+    },
+    {
+      "name": "terminate-before-submit",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 580,
+        "y": 64.796875,
+        "width": 760,
+        "height": 950.390625,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 950,
+        "clientHeight": 950
+      },
+      "file": "terminate-before-submit-1920-100.png"
+    },
+    {
+      "name": "terminate-before-submit",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 0,
+        "y": 25.3125,
+        "width": 390,
+        "height": 793.359375,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 1024,
+        "clientHeight": 793
+      },
+      "file": "terminate-before-submit-390-100.png"
+    },
+    {
+      "name": "terminate-before-submit",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 166.40000915527344,
+        "y": 30.725000381469727,
+        "width": 760,
+        "height": 552.9500122070312,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 845,
+        "clientHeight": 553
+      },
+      "file": "terminate-before-submit-1366-125.png"
+    },
+    {
+      "name": "terminate-before-submit",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 388,
+        "y": 43.20000076293945,
+        "width": 760,
+        "height": 777.6000366210938,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 948,
+        "clientHeight": 778
+      },
+      "file": "terminate-before-submit-1920-125.png"
+    },
+    {
+      "name": "terminate-before-submit",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 0,
+        "y": 20.25,
+        "width": 312,
+        "height": 634.6875,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 1019,
+        "clientHeight": 635
+      },
+      "file": "terminate-before-submit-390-125.png"
+    },
+    {
+      "name": "terminate-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 286,
+        "y": 134,
+        "width": 1080,
+        "height": 634,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 2577,
+        "clientHeight": 634
+      },
+      "file": "terminate-after-1366-100.png"
+    },
+    {
+      "name": "terminate-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 840,
+        "y": 134,
+        "width": 1080,
+        "height": 946,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 2577,
+        "clientHeight": 946
+      },
+      "file": "terminate-after-1920-100.png"
+    },
+    {
+      "name": "terminate-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 0,
+        "y": 131,
+        "width": 390,
+        "height": 713,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 3384,
+        "clientHeight": 713
+      },
+      "file": "terminate-after-390-100.png"
+    },
+    {
+      "name": "terminate-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 248,
+        "y": 133,
+        "width": 844.7999877929688,
+        "height": 481.3999938964844,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 2922,
+        "clientHeight": 481
+      },
+      "file": "terminate-after-1366-125.png"
+    },
+    {
+      "name": "terminate-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 456,
+        "y": 133,
+        "width": 1080,
+        "height": 731,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 2571,
+        "clientHeight": 731
+      },
+      "file": "terminate-after-1920-125.png"
+    },
+    {
+      "name": "terminate-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 0,
+        "y": 130,
+        "width": 312,
+        "height": 545.2000122070312,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 3578,
+        "clientHeight": 545
+      },
+      "file": "terminate-after-390-125.png"
+    },
+    {
+      "name": "cancelled-void-before",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 497,
+        "y": 253.5,
+        "width": 620,
+        "height": 395,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 395,
+        "clientHeight": 395
+      },
+      "file": "cancelled-void-before-1366-100.png"
+    },
+    {
+      "name": "cancelled-void-before",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 774,
+        "y": 409.5,
+        "width": 620,
+        "height": 395,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 395,
+        "clientHeight": 395
+      },
+      "file": "cancelled-void-before-1920-100.png"
+    },
+    {
+      "name": "cancelled-void-before",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 16,
+        "y": 276.5,
+        "width": 358,
+        "height": 422,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 422,
+        "clientHeight": 422
+      },
+      "file": "cancelled-void-before-390-100.png"
+    },
+    {
+      "name": "cancelled-void-before",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 360.3999938964844,
+        "y": 176.60000610351562,
+        "width": 620,
+        "height": 394.20001220703125,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 394,
+        "clientHeight": 394
+      },
+      "file": "cancelled-void-before-1366-125.png"
+    },
+    {
+      "name": "cancelled-void-before",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 582,
+        "y": 301.3999938964844,
+        "width": 620,
+        "height": 394.20001220703125,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 394,
+        "clientHeight": 394
+      },
+      "file": "cancelled-void-before-1920-125.png"
+    },
+    {
+      "name": "cancelled-void-before",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 16,
+        "y": 181.5,
+        "width": 280,
+        "height": 442.20001220703125,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 442,
+        "clientHeight": 442
+      },
+      "file": "cancelled-void-before-390-125.png"
+    },
+    {
+      "name": "cancelled-void-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 286,
+        "y": 134,
+        "width": 1080,
+        "height": 634,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 2232,
+        "clientHeight": 634
+      },
+      "file": "cancelled-void-after-1366-100.png"
+    },
+    {
+      "name": "cancelled-void-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 840,
+        "y": 134,
+        "width": 1080,
+        "height": 946,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 2232,
+        "clientHeight": 946
+      },
+      "file": "cancelled-void-after-1920-100.png"
+    },
+    {
+      "name": "cancelled-void-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 0,
+        "y": 131,
+        "width": 390,
+        "height": 713,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 3238,
+        "clientHeight": 713
+      },
+      "file": "cancelled-void-after-390-100.png"
+    },
+    {
+      "name": "cancelled-void-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 248,
+        "y": 133,
+        "width": 844.7999877929688,
+        "height": 481.3999938964844,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 2578,
+        "clientHeight": 481
+      },
+      "file": "cancelled-void-after-1366-125.png"
+    },
+    {
+      "name": "cancelled-void-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 456,
+        "y": 133,
+        "width": 1080,
+        "height": 731,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 2227,
+        "clientHeight": 731
+      },
+      "file": "cancelled-void-after-1920-125.png"
+    },
+    {
+      "name": "cancelled-void-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 0,
+        "y": 130,
+        "width": 312,
+        "height": 545.2000122070312,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 3516,
+        "clientHeight": 545
+      },
+      "file": "cancelled-void-after-390-125.png"
+    },
+    {
+      "name": "cancelled-correction-before",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 497,
+        "y": 242.5,
+        "width": 620,
+        "height": 417,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 417,
+        "clientHeight": 417
+      },
+      "file": "cancelled-correction-before-1366-100.png"
+    },
+    {
+      "name": "cancelled-correction-before",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 774,
+        "y": 398.5,
+        "width": 620,
+        "height": 417,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 417,
+        "clientHeight": 417
+      },
+      "file": "cancelled-correction-before-1920-100.png"
+    },
+    {
+      "name": "cancelled-correction-before",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 16,
+        "y": 256.5,
+        "width": 358,
+        "height": 462,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 462,
+        "clientHeight": 462
+      },
+      "file": "cancelled-correction-before-390-100.png"
+    },
+    {
+      "name": "cancelled-correction-before",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 360.3999938964844,
+        "y": 165.8000030517578,
+        "width": 620,
+        "height": 415.8000183105469,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 416,
+        "clientHeight": 416
+      },
+      "file": "cancelled-correction-before-1366-125.png"
+    },
+    {
+      "name": "cancelled-correction-before",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 582,
+        "y": 290.6000061035156,
+        "width": 620,
+        "height": 415.8000183105469,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 416,
+        "clientHeight": 416
+      },
+      "file": "cancelled-correction-before-1920-125.png"
+    },
+    {
+      "name": "cancelled-correction-before",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 16,
+        "y": 172.1999969482422,
+        "width": 280,
+        "height": 460.8000183105469,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 461,
+        "clientHeight": 461
+      },
+      "file": "cancelled-correction-before-390-125.png"
+    },
+    {
+      "name": "cancelled-correction-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1,
+      "metrics": {
+        "x": 286,
+        "y": 134,
+        "width": 1080,
+        "height": 634,
+        "innerWidth": 1366,
+        "innerHeight": 768,
+        "scrollHeight": 2232,
+        "clientHeight": 634
+      },
+      "file": "cancelled-correction-after-1366-100.png"
+    },
+    {
+      "name": "cancelled-correction-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1,
+      "metrics": {
+        "x": 840,
+        "y": 134,
+        "width": 1080,
+        "height": 946,
+        "innerWidth": 1920,
+        "innerHeight": 1080,
+        "scrollHeight": 2232,
+        "clientHeight": 946
+      },
+      "file": "cancelled-correction-after-1920-100.png"
+    },
+    {
+      "name": "cancelled-correction-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1,
+      "metrics": {
+        "x": 0,
+        "y": 131,
+        "width": 390,
+        "height": 713,
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "scrollHeight": 3306,
+        "clientHeight": 713
+      },
+      "file": "cancelled-correction-after-390-100.png"
+    },
+    {
+      "name": "cancelled-correction-after",
+      "width": 1366,
+      "height": 768,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 248,
+        "y": 133,
+        "width": 844.7999877929688,
+        "height": 481.3999938964844,
+        "innerWidth": 1093,
+        "innerHeight": 614,
+        "scrollHeight": 2587,
+        "clientHeight": 481
+      },
+      "file": "cancelled-correction-after-1366-125.png"
+    },
+    {
+      "name": "cancelled-correction-after",
+      "width": 1920,
+      "height": 1080,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 456,
+        "y": 133,
+        "width": 1080,
+        "height": 731,
+        "innerWidth": 1536,
+        "innerHeight": 864,
+        "scrollHeight": 2227,
+        "clientHeight": 731
+      },
+      "file": "cancelled-correction-after-1920-125.png"
+    },
+    {
+      "name": "cancelled-correction-after",
+      "width": 390,
+      "height": 844,
+      "zoom": 1.25,
+      "metrics": {
+        "x": 0,
+        "y": 130,
+        "width": 312,
+        "height": 545.2000122070312,
+        "innerWidth": 312,
+        "innerHeight": 675,
+        "scrollHeight": 3552,
+        "clientHeight": 545
+      },
+      "file": "cancelled-correction-after-390-125.png"
+    }
+  ]
+}

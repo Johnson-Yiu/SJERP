@@ -5,6 +5,7 @@ import path from 'node:path'
 
 test.use({ channel: 'chrome', viewport: { width: 1366, height: 768 } })
 test('manual continuation cost saves and reloads independently of SKU sales currency', async ({ page, browser }, info) => {
+  test.skip(process.env.ISOLATED_PLAYWRIGHT_TEST_FILE !== 'cost-currency-integrity-02.spec.js', 'Dedicated authenticated isolated Chrome profile required.')
   const baseline = process.env.COST_BASELINE === '1'
   test.setTimeout(180_000)
   const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [

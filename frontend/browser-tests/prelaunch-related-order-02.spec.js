@@ -5,7 +5,7 @@ test.setTimeout(120000)
 async function post(page,url,data){const token=(await page.context().cookies()).find(c=>c.name==='csrftoken')?.value;const r=await page.request.post('/api'+url,{data,headers:{'X-CSRFToken':token}});expect(r.status(),await r.text()).toBe(201);return r.json()}
 for(const [width,height] of [[1366,768],[1920,1080],[390,844]]) test(`related order draft date currency editing and confirmation ${width}`,async({page},info)=>{
  await page.setViewportSize({width,height})
- const customer=await post(page,'/customers/',{code:'REL'+width,name:'合成关联订单客户'+width,country:'CN'})
+ const customer=await post(page,'/customers/',{code:'REL'+width,name:'合成关联订单客户'+width,country:'CN',contacts:[{name:'合成联系人',email:'synthetic@example.test'}]})
  const category=await post(page,'/categories/',{name:'合成关联分类'+width})
  const product=await post(page,'/products/',{code:'REL'+width,name:'合成关联产品'+width,category:category.id,sales_model_prefix:'REL'+width})
  const sku=await post(page,'/skus/',{product:product.id,sku:'REL'+width,unit:'pcs',default_price:'10',cost_price:'2',currency:'USD',cost_currency:'CNY',sales_model:'REL'+width})

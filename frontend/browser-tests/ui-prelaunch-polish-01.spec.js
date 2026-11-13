@@ -14,10 +14,19 @@ test.setTimeout(120000)
 for (const [width, height] of [[1366, 768], [1920, 1080]]) {
 test('order deletion locks the row until a failed request can be retried ' + width, async ({ page, browser }, testInfo) => {
   const unique = `${width}-${Date.now()}`
-  const customerResponse = await post(page, '/api/customers/', {data:{code:'UI-'+unique,name:'合成删除客户'+unique,country:'CN'}})
+  const customerResponse = await post(page, '/api/customers/', {data:{code:'UI-'+unique,name:'合成删除客户'+unique,country:'CN',contacts:[{name:'合成联系人',email:'synthetic@example.test'}]}})
   expect(customerResponse.status()).toBe(201)
   const customer = await customerResponse.json()
-  const orderResponse = await post(page, '/api/orders/', {data:{customer:customer.id,order_date:'2026-11-14',currency:'CNY',exchange_rate:'1',items:[]}})
+  const categoryResponse = await post(page, '/api/categories/', {data:{name:'合成删除分类'+unique}})
+  expect(categoryResponse.status()).toBe(201)
+  const category = await categoryResponse.json()
+  const productResponse = await post(page, '/api/products/', {data:{code:'UI'+unique,name:'合成删除产品'+unique,category:category.id,sales_model_prefix:'DEL'+width}})
+  expect(productResponse.status()).toBe(201)
+  const product = await productResponse.json()
+  const skuResponse = await post(page, '/api/skus/', {data:{sku:'DEL'+unique,product:product.id,unit:'pcs',sales_model:'DEL'+width}})
+  expect(skuResponse.status()).toBe(201)
+  const sku = await skuResponse.json()
+  const orderResponse = await post(page, '/api/orders/', {data:{customer:customer.id,order_date:'2026-11-14',currency:'CNY',exchange_rate:'1',items:[{sku:sku.id,quantity:'1',unit_price:'10'}]}})
   expect(orderResponse.status(),await orderResponse.text()).toBe(201)
   const order = await orderResponse.json()
   const id = order.id

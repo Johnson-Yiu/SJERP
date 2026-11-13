@@ -187,6 +187,22 @@ class SkuCostVerificationTests(TestCase):
             self.assertNotIn("purchase_price", row)
             self.assertNotIn("cost_currency", row)
 
+    def test_ordinary_order_api_cannot_inject_cost_currency_or_verification(self):
+        self.authenticate()
+        customer = Customer.objects.create(code="C-INJECT", name="成本字段测试客户")
+        for sales_currency, cost_currency in (("USD", "CNY"), ("CNY", "USD"), ("USD", "EUR"), ("USD", None)):
+            with self.subTest(sales_currency=sales_currency, cost_currency=cost_currency):
+                sku = self.make_sku(code="INJECT-" + str(cost_currency), currency=sales_currency)
+                SKU.objects.filter(pk=sku.pk).update(cost_currency=cost_currency)
+                result = self.client.post("/api/orders/", {"customer": customer.pk, "order_date": "2026-10-19",
+                    "currency": sales_currency, "exchange_rate": "1" if sales_currency == "CNY" else "7.2",
+                    "items": [{"sku": sku.pk, "quantity": 1, "unit_price": "20", "cost_price": "10",
+                               "cost_currency_snapshot": "GBP", "cost_verification_snapshot": "current"}]}, format="json")
+                self.assertEqual(result.status_code, 201, result.data)
+                item = OrderItem.objects.get(order_id=result.data["id"])
+                self.assertEqual(item.cost_currency_snapshot, cost_currency or "")
+                self.assertEqual(item.cost_verification_snapshot, "unverified" if cost_currency else "missing")
+
     @override_settings(APP_STAGE="production", DEBUG=False, DEVELOPMENT_SUPERADMIN=False, RBAC_ENFORCEMENT=True)
     def test_supplier_cost_serializer_hides_price_currency_without_purchase_view(self):
         sku = self.make_sku()

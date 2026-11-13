@@ -1,5 +1,7 @@
 from datetime import date
 from copy import deepcopy
+from decimal import Decimal
+from django.utils import timezone
 from django.test import TestCase
 from rest_framework.test import APIClient
 from crm.models import CategoryAttribute, ProductCategory, Product, SKU, Supplier, SupplierSKU, InventoryMovement, PurchaseOrderItem
@@ -37,6 +39,14 @@ class SKUPlansCandidatesTests(TestCase):
 
     def test_dimension_removal_merges_without_rewriting_history(self):
         other = self.create_sku("blue")
+        self.sku.cost_price = Decimal("12.3456")
+        self.sku.cost_currency = "EUR"
+        self.sku.save()
+        verified_at = timezone.now()
+        SKU.objects.filter(pk=self.sku.pk).update(cost_verified_at=verified_at)
+        other.cost_price = Decimal("99")
+        other.cost_currency = "USD"
+        other.save()
         movement = InventoryMovement.objects.create(sku=self.sku, movement_no="INV-PLAN", type="purchase_in", quantity=10, movement_date=date.today())
         original = deepcopy(self.sku.parameter_values)
         draft = self.draft()
@@ -52,6 +62,8 @@ class SKUPlansCandidatesTests(TestCase):
         self.assertEqual(movement.sku_id, self.sku.pk)
         self.assertEqual(movement.quantity, 10)
         target = self.sku.successors.get().target
+        self.assertEqual((target.cost_price, target.cost_currency, target.cost_verified_at),
+                         (Decimal("12.3456"), "EUR", verified_at))
         self.assertEqual(other.successors.get().target_id, target.pk)
         self.assertEqual(target.parameter_values[f"{self.category.pk}:color"], "")
         self.assertEqual(target.inventory_movements.count(), 0)
@@ -69,6 +81,7 @@ class SKUPlansCandidatesTests(TestCase):
         self.assertEqual(self.sku.versions.count(), 1)
 
     def test_split_requires_distinct_filled_variants(self):
+        SKU.objects.filter(pk=self.sku.pk).update(cost_price=Decimal("3.25"), cost_currency=None)
         draft = self.draft()
         draft["definitions"].append({"category_id": 0, "key": "pcb", "name": "PCB", "include_in_sku": True})
         draft = self.save_draft(draft)
@@ -79,6 +92,63 @@ class SKUPlansCandidatesTests(TestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(self.sku.successors.count(), 2)
         self.assertEqual(self.product.skus.filter(active=True).count(), 2)
+        for relation in self.sku.successors.select_related("target"):
+            self.assertEqual(relation.target.cost_price, Decimal("3.25"))
+            self.assertIsNone(relation.target.cost_currency)
+            self.assertIsNone(relation.target.cost_verified_at)
+
+    def test_split_copies_currency_and_matching_verification(self):
+        for cost_currency in ("USD", "EUR", "CNY"):
+            with self.subTest(cost_currency=cost_currency):
+                # One independent product per plan avoids changing old identities.
+                product = Product.objects.create(code="SPLIT-" + cost_currency, name="币种拆分" + cost_currency, category=self.category)
+                original_product, original_base = self.product, self.base
+                self.product = product
+                self.base = f"/api/products/{product.pk}/sku-plan/"
+                source = self.create_sku("red")
+                verified_at = timezone.now()
+                SKU.objects.filter(pk=source.pk).update(currency="USD" if cost_currency != "USD" else "CNY",
+                    cost_price=Decimal("6.25"), cost_currency=cost_currency, cost_verified_at=verified_at)
+                draft = self.draft()
+                draft["definitions"].append({"category_id": 0, "key": "pcb", "name": "PCB", "include_in_sku": True})
+                draft["assignments"] = {str(source.pk): [{"0:pcb": "double"}, {"0:pcb": "four"}]}
+                draft = self.save_draft(draft)
+                result = self.action(draft)
+                self.assertEqual(result.status_code, 200, result.data)
+                for relation in source.successors.select_related("target"):
+                    self.assertEqual((relation.target.cost_price, relation.target.cost_currency, relation.target.cost_verified_at),
+                                     (Decimal("6.25"), cost_currency, verified_at))
+                from crm.models import Customer, Quote, Order, OrderItem
+                from crm.quote_snapshots import create_quote_items
+                target = source.successors.first().target
+                customer = Customer.objects.create(code="DERIVED-" + cost_currency, name="派生成本客户" + cost_currency)
+                quote = Quote.objects.create(quote_no="DERIVED-" + cost_currency, customer=customer, quote_date=date.today())
+                quote_line = create_quote_items(quote, [{"sku": target, "quantity": 1, "unit_price": 20}])[0]
+                order = Order.objects.create(order_no="DERIVED-" + cost_currency, customer=customer, order_date=date.today())
+                order_line = OrderItem.objects.create(order=order, sku=target, quantity=1, unit_price=20, cost_price=target.cost_price)
+                self.assertEqual((quote_line.cost_price_snapshot, quote_line.cost_currency_snapshot, quote_line.cost_verification_snapshot),
+                                 (Decimal("6.25"), cost_currency, "current"))
+                self.assertEqual((order_line.cost_price, order_line.cost_currency_snapshot, order_line.cost_verification_snapshot),
+                                 (Decimal("6.25"), cost_currency, "current"))
+                self.product, self.base = original_product, original_base
+
+    def test_keep_and_refresh_preserve_independent_cost_tuple(self):
+        from crm.services.sku_plans import analyze
+        from crm.models import SKUParameterPlan
+        verified_at = timezone.now()
+        SKU.objects.filter(pk=self.sku.pk).update(currency="USD", cost_currency="EUR", cost_price=Decimal("4.375"), cost_verified_at=verified_at)
+        for refresh in (False, True):
+            draft = self.draft()
+            if refresh:
+                draft["definitions"].append({"category_id": 0, "key": "note", "name": "备注参数", "default_value": "a", "include_in_sku": True})
+                draft = self.save_draft(draft)
+            impact = analyze(SKUParameterPlan.objects.get(pk=draft["id"]))
+            self.assertEqual(impact["new_count"], 0)
+            self.assertEqual(impact["groups"][0]["action"], "refresh" if refresh else "keep")
+            self.assertEqual(self.action(draft).status_code, 200)
+            self.sku.refresh_from_db()
+            self.assertEqual((self.sku.cost_price, self.sku.cost_currency, self.sku.cost_verified_at),
+                             (Decimal("4.375"), "EUR", verified_at))
 
     def test_category_changes_do_not_change_existing_product_schema(self):
         CategoryAttribute.objects.filter(key="color").delete()

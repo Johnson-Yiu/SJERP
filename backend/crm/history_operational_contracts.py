@@ -103,7 +103,7 @@ def status(group, user):
                 supplier_id = PurchaseOrder.objects.filter(pk=record.target_id).values_list("supplier_id", flat=True).first()
                 candidates = list(SupplierSKU.objects.filter(sku=sku, supplier_id=supplier_id, is_active=True).values("id", "supplier_sku_code", "supplier_model", "moq"))
             lines.append({"source_id": line.pk, "source_record_id": line.source_record_id, "source": data,
-                "remaining_quantity": str(quantity), "sku_link_confirmed": bool(sku), "linked_sku_id": sku.pk if sku else None, "linked_sku_code": sku.sku if sku else "", "sku_currency": sku.currency if sku else "", "supplier_sources": candidates})
+                "remaining_quantity": str(quantity), "sku_link_confirmed": bool(sku), "linked_sku_id": sku.pk if sku else None, "linked_sku_code": sku.sku if sku else "", "sku_currency": sku.currency if sku else "", "sku_cost_currency": (sku.cost_currency or "") if sku else "", "supplier_sources": candidates})
         docs.append({"source_id": record.pk, "source_record_id": record.source_record_id, "record_type": record.record_type,
                      "source": row, "plans": plans, "remaining_lines": lines})
     links = []
@@ -246,9 +246,10 @@ def _snapshot(group, options, by_id, remainder):
                 detail["sku_parameters"] = sku.parameter_values
             if source.record_type == "销售订单":
                 cost = _amount(opt.get("unit_cost"), places=4, digits=14)
-                if not str(opt.get("cost_evidence") or "").strip() or str(opt.get("cost_currency") or "").upper() != sku.currency:
+                cost_currency = str(opt.get("cost_currency") or "").strip().upper()
+                if not str(opt.get("cost_evidence") or "").strip() or len(cost_currency) != 3 or not cost_currency.isascii() or not cost_currency.isalpha():
                     raise ValidationError("销售接续明细须明确核实 SKU 成本、币种和依据。")
-                detail.update({"unit_cost": str(cost), "cost_currency": sku.currency, "cost_evidence": str(opt["cost_evidence"]).strip()})
+                detail.update({"unit_cost": str(cost), "cost_currency": cost_currency, "cost_verification": "current", "cost_evidence": str(opt["cost_evidence"]).strip()})
             else:
                 supplier_id = opt.get("supplier_sku_id")
                 supplier_sku = SupplierSKU.objects.filter(pk=supplier_id, sku=sku, supplier=archived.supplier, is_active=True).first() if supplier_id else None
@@ -404,13 +405,14 @@ def _create_sales_draft(original, data, lines, by_id, number, cutover, adjustmen
                 "factor": str(row["trade_factor_snapshot"]),
                 "allow_fraction": row["allow_fraction_snapshot"],
             }
-        new = OrderItem.objects.create(order=order, sku_id=line["sku_id"], quantity=line["quantity"], unit_price=old.unit_price,
-            cost_price=line["unit_cost"], sales_model_snapshot=old.sales_model_snapshot,
+        new = OrderItem(order=order, sku_id=line["sku_id"], quantity=line["quantity"], unit_price=old.unit_price,
+            cost_price=line["unit_cost"], cost_currency_snapshot=line["cost_currency"], cost_verification_snapshot=line.get("cost_verification", "current"), sales_model_snapshot=old.sales_model_snapshot,
             display_name_snapshot=old.display_name_snapshot, description_snapshot=old.description_snapshot, unit_snapshot=old.unit_snapshot,
             trade_snapshot=trade_snapshot, trade_quantity=line["trade_quantity"], trade_unit_price=old.trade_unit_price if line["trade_quantity"] is not None else None,
             notes=f"接续历史明细 {source.source_record_id}"[:200])
+        new.save(preserve_cost_snapshot=True)
         links.append({"source_id": source.pk, "archived_item_id": old.pk, "continuation_item_id": new.pk,
-            "quantity": line["quantity"], "cost_evidence": line["cost_evidence"], "cost_currency": line["cost_currency"]})
+            "quantity": line["quantity"], "unit_cost": line["unit_cost"], "cost_verification": new.cost_verification_snapshot, "cost_evidence": line["cost_evidence"], "cost_currency": line["cost_currency"]})
     return order, links
 
 

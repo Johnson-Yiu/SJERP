@@ -35,10 +35,10 @@ for(const [width,height] of [[1280,800],[1366,768],[1920,1080]]) test(`category 
  await writeFile(info.outputPath('result.json'),JSON.stringify({width,height,root,child,product:product.id},null,2))
 })
 
-test('six and twelve workspaces keep activation local and permit narrow manual scroll',async({page},info)=>{
- await page.setViewportSize({width:1366,height:768})
+for(const width of [1366,1920]) test('six and twelve workspaces keep activation local and permit narrow manual scroll '+width,async({page},info)=>{
+ await page.setViewportSize({width,height:width===1366?768:1080})
  const names=[]
- for(let i=0;i<11;i++){const name='合成长标题客户商业照明跨区域采购项目验收'+i;names.push(name);await post(page,'/customers/',{code:'TAB'+i,name,country:'CN',contacts:[{name:'合成联系人'}]})}
+ for(let i=0;i<11;i++){const name='合成长标题客户商业照明跨区域采购项目验收'+width+'-'+i;names.push(name);await post(page,'/customers/',{code:'TAB'+width+'-'+i,name,country:'CN',contacts:[{name:'合成联系人'}]})}
  await page.goto('/customers')
  for(let i=0;i<11;i++){
   await page.getByRole('row').filter({has:page.getByText(names[i],{exact:true})}).getByRole('button',{name:'查看详情',exact:true}).click()

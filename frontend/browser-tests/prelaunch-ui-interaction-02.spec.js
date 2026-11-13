@@ -131,6 +131,8 @@ test(`PI nested preview scroll close and persisted content ${width}`,async({page
  const exported=info.outputPath('saved-pi.xlsx');await download.saveAs(exported)
  const cells=execFileSync(process.env.ISOLATED_TEST_PYTHON,['-c',"import openpyxl,sys,json; w=openpyxl.load_workbook(sys.argv[1],data_only=True); print(json.dumps([str(c.value) for s in w for row in s for c in row if c.value is not None],ensure_ascii=True))",exported],{encoding:'utf8'})
  expect(cells).toContain(saved.quote_no)
+ const values=JSON.parse(cells)
+ for(const item of saved.items){expect(values).toContain(String(Number(item.quantity)));expect(values).toContain(String(Number(item.unit_price)));expect(values).toContain(String(Number(item.quantity)*Number(item.unit_price)))}
  await writeFile(info.outputPath('exported-values.json'),cells)
 
  await expect(page.getByRole('button',{name:'预览 PI',exact:true}).first()).toBeVisible()
@@ -140,14 +142,14 @@ test(`PI nested preview scroll close and persisted content ${width}`,async({page
 test('summary card counts and layout across affected pages',async({page},info)=>{
  test.setTimeout(180000)
  const states=[]
- for(const [width,height] of [[1366,768],[1920,1080],[390,844]]) {
+ for(const [width,height] of [[1366,768],[1920,1080],[1024,768],[390,844]]) {
   await page.setViewportSize({width,height})
   for(const route of ['/customers','/suppliers','/products','/skus','/orders','/purchase-orders','/transactions','/receivables','/payables','/sku-packaging','/hs-codes','/contacts','/follow-ups','/product-certificates']) {
    await page.goto(route)
    const cards=page.locator('.summary-cards').first();await expect(cards).toBeVisible()
-   const grid=await cards.evaluate(el=>({columns:getComputedStyle(el).gridTemplateColumns.split(' ').length,width:el.clientWidth}))
-   expect([1,2,4]).toContain(grid.columns)
-   states.push({route,width,...grid})
+   const grid=await cards.evaluate(el=>({columns:getComputedStyle(el).gridTemplateColumns.split(' ').length,cardWidth:el.clientWidth,containerWidth:el.parentElement.clientWidth}))
+   expect(grid.columns).toBe(grid.containerWidth<=520?1:grid.containerWidth<=900?2:4)
+   states.push({route,viewportWidth:width,...grid})
    await page.screenshot({path:info.outputPath(`cards-${route.slice(1)}-${width}.png`)})
   }
  }
@@ -159,6 +161,7 @@ test('summary card counts and layout across affected pages',async({page},info)=>
   await expect(metric).toContainText('当前筛选结果（含全部页）')
   if(query==='合成分页客户'){await page.getByRole('button',{name:'下一页',exact:true}).click();await expect(metric.locator('strong')).toHaveText(String(count));await page.screenshot({path:info.outputPath('customers-filter-page-2.png')})}
  }
+ expect([...new Set(states.map(s=>s.columns))].sort()).toEqual([1,2,4])
  await writeFile(info.outputPath('card-results.json'),JSON.stringify(states,null,2))
 })
 for(const [width,height] of [[1366,768],[1920,1080]]) test(`rich text real keyboard selection and saved link ${width}`,async({page},info)=>{
@@ -178,11 +181,18 @@ for(const [width,height] of [[1366,768],[1920,1080]]) test(`rich text real keybo
  await page.getByTestId('dialog-confirm').click()
  await expect(page.getByText('链接格式不支持',{exact:true})).toBeVisible();await page.getByTestId('dialog-confirm').click()
  await expect(editor.locator('a')).toHaveCount(1)
+ await editor.click();await editor.press('Control+End');await editor.press('ArrowRight');await editor.press('Enter');await page.keyboard.type('MOUSE TARGET '+width)
+ const rect=await editor.evaluate(el=>{const walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let node;while(node=walk.nextNode()){const i=node.textContent.indexOf('MOUSE TARGET');if(i>=0){const range=document.createRange();range.setStart(node,i);range.setEnd(node,i+5);const r=range.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}}}throw new Error('Mouse selection text missing')})
+ await page.mouse.move(rect.x+1,rect.y+rect.height/2);await page.mouse.down();await page.mouse.move(rect.x+rect.width-1,rect.y+rect.height/2,{steps:10});await page.mouse.up()
+ expect(await page.evaluate(()=>getSelection().toString())).toBe('MOUSE')
+ await page.getByRole('button',{name:'插入链接',exact:true}).click();await page.getByTestId('dialog-input').fill('https://example.test/mouse-'+width);await page.getByTestId('dialog-confirm').click()
+ await expect(editor.locator('a[href="https://example.test/mouse-'+width+'"]')).toHaveText('MOUSE')
  await page.screenshot({path:info.outputPath('rich-link-selection.png')})
  const saved=page.waitForResponse(r=>r.request().method()==='POST'&&r.url().includes('important-notes'))
  await page.getByRole('button',{name:'保存重要备注',exact:true}).click();const result=await saved;expect(result.ok(),await result.text()).toBe(true)
  await page.reload();await page.locator('.workbench-tabs').getByRole('button',{name:/重要备注/}).click()
  await expect(page.locator('.important-note-content a').filter({hasText:'实际链接选择 '+width})).toHaveAttribute('href','https://example.test/'+width)
+ await expect(page.locator('.important-note-content a[href="https://example.test/mouse-'+width+'"]')).toHaveText('MOUSE')
  await page.screenshot({path:info.outputPath('rich-link-reopened.png')})
 })
 

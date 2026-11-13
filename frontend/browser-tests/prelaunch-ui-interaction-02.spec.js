@@ -114,6 +114,14 @@ test(`PI nested preview scroll close and persisted content ${width}`,async({page
  await close.click();await expect(modal).toBeHidden()
  const saved=await (await page.request.get('/api/quotes/'+salesFixture.quote+'/')).json()
  await writeFile(info.outputPath('saved-quote.json'),JSON.stringify(saved,null,2))
+ const downloading=page.waitForEvent('download')
+ await page.getByRole('button',{name:'导出 Excel',exact:true}).first().click()
+ const download=await downloading
+ const exported=info.outputPath('saved-pi.xlsx');await download.saveAs(exported)
+ const cells=execFileSync(process.env.ISOLATED_TEST_PYTHON,['-c',"import openpyxl,sys,json; w=openpyxl.load_workbook(sys.argv[1],data_only=True); print(json.dumps([str(c.value) for s in w for row in s for c in row if c.value is not None],ensure_ascii=True))",exported],{encoding:'utf8'})
+ expect(cells).toContain(saved.quote_no)
+ await writeFile(info.outputPath('exported-values.json'),cells)
+
  await expect(page.getByRole('button',{name:'预览 PI',exact:true}).first()).toBeVisible()
 })
 }

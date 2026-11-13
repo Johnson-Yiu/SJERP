@@ -48,7 +48,7 @@
 
 只读原始冲突反例：SQLite 1 项通过；PostgreSQL17 与后续修改待核实反例合计 2 项通过。PG runner 均自行建立并关闭新集群，浏览器 runner 均确认自有 SQLite/MEDIA_ROOT 并在完成后清理，端口已释放。
 
-业务提交 CI：<https://github.com/Johnson-Yiu/SJERP/actions/runs/43474478444>。Frontend Vitest 出现失败，后续 CI 浏览器及 build 为 skipped，不能称 CI 全绿；由协调任务收拢 C 包基线失败修复后在统一候选复验。本包本地定向 Vitest、独立真实 Chrome 和 build 已分别运行并通过。
+业务提交 CI：<https://github.com/Johnson-Yiu/SJERP/actions/runs/43474478444>。Frontend Vitest 出现失败，后续 CI 浏览器及 build 为 skipped，不能称 CI 全绿；已定位为新品需求测试 5 项（scrollIntoView 在 jsdom 不存在及连带 wrapper 失败）与 SKU 管理旧文案断言 1 项；由协调任务收拢 D/C 包修复后在统一候选复验。本包本地定向 Vitest、独立真实 Chrome 和 build 已分别运行并通过。
 
 ## 原始失败及处理
 

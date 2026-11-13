@@ -1,9 +1,12 @@
 import { defineConfig } from 'vite'
+import path from 'node:path'
 import vue from '@vitejs/plugin-vue'
 import { configDefaults } from 'vitest/config'
 
 export default defineConfig({
   plugins: [vue()],
+  // Independent acceptance runs may share installed dependencies, never optimizer state.
+  cacheDir: process.env.ISOLATED_TEST_ROOT ? path.join(process.env.ISOLATED_TEST_ROOT, 'vite-cache') : undefined,
   test: {
     include: [...configDefaults.include, 'tests/crm-list.vitest.js'],
     exclude: [...configDefaults.exclude, 'browser-tests/**', 'infrastructure-tests/**'],

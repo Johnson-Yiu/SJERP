@@ -15,6 +15,8 @@ export default async function setupCodexTestSession() {
     const context = await browser.newContext()
     const page = await context.newPage()
     await page.goto(`${baseURL}/login`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    // Wait for the first Vite dependency optimization/reload before entering credentials.
+    await page.waitForLoadState('networkidle', { timeout: 60000 })
     await page.getByLabel('账号').fill(username, { timeout: 60000 })
     await page.getByLabel('密码').fill(password)
     const loginResponsePromise = page.waitForResponse(response =>

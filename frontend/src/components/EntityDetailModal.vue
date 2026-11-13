@@ -159,10 +159,10 @@ async function refreshSkuManagement() {
     emit('changed')
   } catch (e) { console.warn('产品摘要刷新失败', e) }
 }
-let failedDetail
+let failedDetail, loadedDetailIdentity = ''
 function retryDetail() { return load(failedDetail?.entity, failedDetail?.id) }
 async function load(entity = currentEntity.value, id = currentId.value) {
-  const refreshing = Boolean(data.value && entity === currentEntity.value && id === currentId.value)
+  const refreshing = Boolean(data.value && loadedDetailIdentity === `${entity}:${id}`)
   failedDetail = null
   loading.value = !refreshing; error.value = ''; refreshError.value = ''
   try {
@@ -173,6 +173,7 @@ async function load(entity = currentEntity.value, id = currentId.value) {
       entity === 'suppliers' ? api.get(`/suppliers/${id}/`) : Promise.resolve(null),
       entity === 'product-certificates' ? api.get(`/product-certificates/${id}/`) : Promise.resolve(null),
     ])
+    loadedDetailIdentity = `${entity}:${id}`
     data.value = contextResponse.data
     movementRecord.value = movementResponse?.data || null
     supplierRecord.value = supplierResponse?.data || null

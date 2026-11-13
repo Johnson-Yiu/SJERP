@@ -1,7 +1,7 @@
 <script setup>
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import { confirmDialog } from '../dialogs'
@@ -17,6 +17,7 @@ const draftText = ref(''), planOpen = ref(false)
 const lifecycleResult = ref(null)
 const skuRows = ref([]), showInactive = ref(false), selectedIds = ref([])
 const rulesOpen = ref(props.initialTab === 'rules')
+const bindingTrigger = ref(null)
 const bindingOpen = ref(false), parameterFilters = ref({})
 const selectedActive = computed(() => skuRows.value.filter(s => selectedIds.value.includes(s.id) && s.active))
 const selectedInactive = computed(() => skuRows.value.filter(s => selectedIds.value.includes(s.id) && !s.active))
@@ -96,7 +97,8 @@ async function setSelectedActive(active) {
 watch([poolSearch, poolSource, poolParameterKey, poolParameterValue, showInactive], () => { selectedIds.value = [] })
 watch(poolParameterKey, () => { poolParameterValue.value = '' })
 watch(parameterFilters, () => { selectedIds.value = [] }, { deep: true })
-async function bindingSaved() { bindingOpen.value = false; selectedIds.value = []; await load(); emit('changed'); notice.value = '候选供应商已保存。' }
+async function closeBinding() { bindingOpen.value = false; await nextTick(); bindingTrigger.value?.focus() }
+async function bindingSaved() { await closeBinding(); selectedIds.value = []; await load(); emit('changed'); notice.value = '候选供应商已保存。' }
 function clearPoolFilters() { parameterFilters.value = {}; poolSearch.value = ''; poolSource.value = ''; poolParameterKey.value = ''; poolParameterValue.value = '' }
 async function editRule(row = null) {
   if (!await ruleGuard.requestClose(() => {})) return
@@ -215,7 +217,7 @@ watch(() => props.refreshKey, () => { void load() })
     <div class="pool-parameter-filters"><div v-for="parameter in candidatePool.parameter_options" :key="parameter.key"><strong>{{ parameter.name }}</strong><label v-for="value in parameter.values" :key="value"><input type="checkbox" :checked="(parameterFilters[parameter.key] || []).includes(value)" @change="parameterFilters[parameter.key] = $event.target.checked ? [...(parameterFilters[parameter.key] || []), value] : (parameterFilters[parameter.key] || []).filter(v => v !== value)" />{{ value }}</label></div></div>
     <div class="actions sku-list-actions">
      <label class="inline-check"><input type="checkbox" v-model="showInactive" /> 显示已停用 SKU</label>
-     <span>已选 {{ selectedIds.length }} 项（仅当前筛选结果）</span><button class="btn btn-primary batch-bind-button" type="button" :disabled="busy || !selectedActive.length || selectedInactive.length > 0" @click="bindingOpen = true">批量绑定供应商</button>
+     <span>已选 {{ selectedIds.length }} 项（仅当前筛选结果）</span><button ref="bindingTrigger" class="btn btn-primary batch-bind-button" type="button" :disabled="busy || !selectedActive.length || selectedInactive.length > 0" @click="bindingOpen = true">批量绑定供应商</button>
      <button v-if="selectedActive.length" class="deactivate-button" type="button" :disabled="busy" @click="setSelectedActive(false)">停用 {{ selectedActive.length }} 项</button>
      <button v-if="selectedInactive.length" type="button" :disabled="busy" @click="setSelectedActive(true)">重新启用 {{ selectedInactive.length }} 项</button>
      <button v-if="selectedIds.length" type="button" @click="selectedIds=[]">取消选择</button>
@@ -265,7 +267,7 @@ watch(() => props.refreshKey, () => { void load() })
    <details v-if="state.relationships.length"><summary>历史 SKU 去向（{{ state.relationships.length }} 条）</summary><p v-for="(r,i) in state.relationships" :key="i">{{ r.sku }} → {{ r.successors__target__sku }}</p></details>
   </details>
  </section>
-<SupplierBatchBindingDrawer v-if="bindingOpen" parent-guards-route :product-id="productId" :sku-ids="selectedActive.map(s => s.id)" @close="bindingOpen = false" @saved="bindingSaved" />
+<SupplierBatchBindingDrawer v-if="bindingOpen" parent-guards-route :product-id="productId" :sku-ids="selectedActive.map(s => s.id)" @close="closeBinding" @saved="bindingSaved" />
 </template>
 
 <style scoped>

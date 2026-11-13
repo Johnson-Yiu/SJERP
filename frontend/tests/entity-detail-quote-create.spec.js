@@ -191,3 +191,14 @@ describe('Customer and FollowUp quote shortcuts', () => {
     expect(mocks.api.post).not.toHaveBeenCalled()
   })
 })
+
+
+it('preserves a same-object refresh but resets the active section for a different record', async () => {
+  const {wrapper}=await mountDetail({entity:'customers',id:501,path:'/customers?detail=501',getContext:()=>customerContext()})
+  wrapper.vm.activeTab='quotes';await flushPromises()
+  await wrapper.setProps({refreshKey:1});await flushPromises()
+  expect(wrapper.vm.activeTab).toBe('quotes')
+  await wrapper.setProps({id:502});await flushPromises()
+  expect(wrapper.vm.activeTab).toBe('followups')
+  wrapper.unmount()
+})

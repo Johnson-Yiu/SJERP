@@ -1,0 +1,29 @@
+Creating test database for alias 'default'...
+
+.Bad Request: /api/skus/1/verify-cost/
+.Bad Request: /api/supplier-skus/1/verify-price/
+..............s.Bad Request: /api/orders/2/
+..Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/
+Bad Request: /api/inventory-movements/1/
+.....Bad Request: /api/orders/2/quantity-adjustments/
+.Bad Request: /api/orders/2/quantity-adjustments/
+Bad Request: /api/orders/2/quantity-adjustments/
+....Bad Request: /api/skus/batch-create/
+..Bad Request: /api/skus/
+.Bad Request: /api/skus/1/
+.Bad Request: /api/purchase-orders/
+.Bad Request: /api/products/1/sku-plan/publish/
+...Bad Request: /api/supplier-capabilities/
+....Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/products/1/sku-plan/publish/
+.Bad Request: /api/supplier-skus/1/
+.s
+----------------------------------------------------------------------
+Ran 46 tests in 110.355s
+
+OK (skipped=2)
+Destroying test database for alias 'default'...
+
+Found 46 test(s).
+System check identified no issues (0 silenced).

@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/cost-currency-integrity-02/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
+   Start at  01:27:12
+   Duration  8.09s (transform 1.07s, setup 649ms, import 1.08s, tests 873ms, environment 4.47s)
+

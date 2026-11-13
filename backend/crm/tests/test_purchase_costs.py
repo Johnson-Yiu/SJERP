@@ -1,8 +1,10 @@
 from datetime import date
+from csv import reader
+from io import StringIO
 from decimal import Decimal
 from django.test import TestCase
 from rest_framework.test import APIClient
-from crm.models import Customer, Order, Product, PurchaseOrder, PurchaseCostAllocation, SKU, Supplier
+from crm.models import ContractChangeRequest, Customer, Order, Product, PurchaseOrder, PurchaseCostAllocation, PaymentPlan, SKU, Supplier, Transaction, InventoryMovement
 from crm.services.purchase_costs import cost_summary, order_purchase_cost, split_amount
 from crm.services.fulfillment import order_item_metrics
 
@@ -164,3 +166,86 @@ class PurchaseCostTests(TestCase):
         self.assertEqual([(row.target_type, row.order_id, row.quantity) for row in rows], [
             ("order", self.b.id, Decimal("60")), ("inventory", None, Decimal("40")),
         ])
+
+    def test_approved_contract_changes_flow_through_cost_and_profit(self):
+        self.item.unit_price = Decimal("0.10")
+        self.item.save()
+        PaymentPlan.objects.create(purchase_order=self.purchase, direction="payable", currency=self.purchase.currency, planned_amount=100)
+        for delta, expected in [("-10", 90), ("30", 120)]:
+            with self.subTest(delta=delta):
+                created = self.client.post("/api/contract-changes/", {
+                    "purchase_order": self.purchase.pk, "amount_delta": delta, "notes": "Cost regression",
+                }, format="json")
+                self.assertEqual(created.status_code, 201, created.data)
+                self.assertEqual(self.client.get(self.url).data["total_amount"], self.purchase.total_amount)
+                approved = self.client.post(f"/api/contract-changes/{created.data['id']}/approve/", {}, format="json")
+                self.assertEqual(approved.status_code, 201, approved.data)
+                self.assertEqual(self.purchase.total_amount, expected)
+                summary = self.client.get(self.url)
+                self.assertEqual(summary.data["total_amount"], expected)
+                self.assertEqual(summary.data["base_amount"], 100)
+                profit = self.client.get(f"/api/orders/{self.a.pk}/workbench/").data["profit_summary"]
+                self.assertEqual(profit["purchase_cost_rmb"], expected * 7)
+
+    def test_signed_tail_and_multiple_attributions(self):
+        self.assertEqual(split_amount(Decimal("-0.01"), [Decimal(1)] * 3), [Decimal("-0.01"), 0, 0])
+        self.item.unit_price = Decimal("0.08")
+        self.item.save()
+        second = self.purchase.items.create(sku=self.item.sku, quantity=200, unit_price=Decimal("0.10"))
+        ContractChangeRequest.objects.create(purchase_order=self.purchase, status="approved", amount_delta="-10")
+        ContractChangeRequest.objects.create(purchase_order=self.purchase, status="pending", amount_delta="20")
+        ContractChangeRequest.objects.create(purchase_order=self.purchase, status="rejected", amount_delta="30")
+        payload = {"version": 0, "allocations": [
+            {"purchase_item": self.item.pk, "target_type": "order", "order": self.a.pk, "quantity": "750"},
+            {"purchase_item": self.item.pk, "target_type": "order", "order": self.b.pk, "quantity": "250"},
+            {"purchase_item": second.pk, "target_type": "sample", "quantity": "100"},
+        ], "expenses": [{"name": "Freight", "amount": "5", "method": "amount"}]}
+        preview = self.client.post(self.url.replace("cost-allocation/", "cost-allocation-preview/"), payload, format="json")
+        saved = self.client.post(self.url, payload, format="json")
+        self.assertEqual(preview.status_code, 200, preview.data)
+        self.assertEqual(saved.status_code, 200, saved.data)
+        self.assertEqual(preview.data["allocations"], saved.data["allocations"])
+        self.assertEqual(saved.data, self.client.get(self.url).data)
+        self.assertEqual([row["contract_change_amount"] for row in saved.data["allocations"]], [-6, -2, -1, -1])
+        self.assertEqual(saved.data["additional_amount"], 5)
+        self.assertEqual(saved.data["total_amount"], 95)
+        self.assertEqual(order_purchase_cost(self.a), (378, 21))
+        self.assertEqual(order_purchase_cost(self.b), (126, 7))
+
+    def test_zero_weight_with_approved_adjustment_exposes_incomplete_cost(self):
+        self.item.unit_price = 0
+        self.item.save()
+        ContractChangeRequest.objects.create(purchase_order=self.purchase, status="approved", amount_delta="10")
+        self.assertEqual(self.client.get(self.url).status_code, 400)
+        self.assertEqual(self.client.get(f"/api/orders/{self.a.pk}/workbench/").status_code, 400)
+
+    def test_adjusted_profit_overview_drill_export_and_cash_boundary(self):
+        self.a.status = "confirmed"
+        self.a.save(update_fields=["status"])
+        self.item.unit_price = Decimal("0.10")
+        self.item.save()
+        ContractChangeRequest.objects.create(purchase_order=self.purchase, status="approved", amount_delta="20")
+        for kind, direction, amount in [("supplier_payment", "expense", 35), ("supplier_refund", "income", 5)]:
+            Transaction.objects.create(
+                transaction_no=f"COST-{kind}", purchase_order=self.purchase, order=self.a,
+                transaction_date=date.today(), direction=direction, kind=kind, status="confirmed",
+                amount=amount, currency=self.purchase.currency, exchange_rate=self.purchase.exchange_rate,
+            )
+        tables = (PaymentPlan, Transaction, InventoryMovement)
+        before = [list(model.objects.order_by("pk").values()) for model in tables]
+        period = {"date_from": self.a.order_date.isoformat(), "date_to": self.a.order_date.isoformat()}
+        workbench = self.client.get(f"/api/orders/{self.a.pk}/workbench/")
+        profit = workbench.data["profit_summary"]["estimated_profit_rmb"]
+        self.assertEqual(workbench.data["profit_summary"]["purchase_cost_rmb"], 840)
+        self.assertEqual(profit, self.a.total_amount * self.a.exchange_rate - 840)
+        dashboard = self.client.get("/api/finance-dashboard/", period)
+        self.assertEqual(dashboard.data["metrics"]["estimated_profit_rmb"], profit)
+        drill = self.client.get("/api/finance-dashboard/details/", {**period, "metric": "estimated_profit_rmb"})
+        self.assertEqual(drill.data["total_amount"], profit)
+        params = {**period, "source": "profit", "group_by": "customer"}
+        report = self.client.get("/api/reports/data/", params)
+        self.assertEqual(report.data["totals"]["amount"], profit)
+        exported = self.client.get("/api/reports/data/", {**params, "export": "csv"})
+        self.assertEqual(exported.status_code, 200)
+        self.assertEqual(Decimal(list(reader(StringIO(exported.content.decode("utf-8-sig"))))[-1][1]), profit)
+        self.assertEqual([list(model.objects.order_by("pk").values()) for model in tables], before)

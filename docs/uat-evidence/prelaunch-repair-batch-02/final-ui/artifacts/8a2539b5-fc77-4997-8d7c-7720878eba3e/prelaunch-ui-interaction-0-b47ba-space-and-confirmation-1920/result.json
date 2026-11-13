@@ -1,0 +1,26 @@
+{
+  "source": "79ad78883900ceea2077f222f7a6ab27140abdd3",
+  "browser": "156.0.8078.80",
+  "width": 1920,
+  "height": 1080,
+  "metrics": {
+    "dpr": 1,
+    "width": 1920,
+    "height": 1080
+  },
+  "movement": 8,
+  "states": [
+    {
+      "name": "inventory-selected-wheel-unchanged",
+      "sha256": "81ab4cf9f3e631938c0f7bcd360ae0aece92f104f32cdaf4523c0d8d42cf0b79"
+    },
+    {
+      "name": "unsaved-confirm-over-parent",
+      "sha256": "5e8a25d7c25ba5d831b083cb518d4fe40c6d953b34f5ada4f946de197bbe23cb"
+    },
+    {
+      "name": "inventory-saved",
+      "sha256": "d045859221e8161242fb46ceeaa56a5e7a490791516819736a83424908329b25"
+    }
+  ]
+}

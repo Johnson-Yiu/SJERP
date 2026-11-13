@@ -1,0 +1,22 @@
+{
+  "source": "0f9bbe9c3be3d31e3ef6d001c166cf4a5631aba7",
+  "browser": "156.0.8078.80",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "devicePixelRatio": 1,
+  "saveStatus": 200,
+  "readback": {
+    "source_id": 3,
+    "unit_cost": "9.3750",
+    "cost_currency": "USD",
+    "cost_evidence": "synthetic://browser-USD-cost"
+  },
+  "fixture": {
+    "application": 1,
+    "group": 1,
+    "sku": 1,
+    "base": "/api/import/history-takeovers/1/groups/1/"
+  }
+}

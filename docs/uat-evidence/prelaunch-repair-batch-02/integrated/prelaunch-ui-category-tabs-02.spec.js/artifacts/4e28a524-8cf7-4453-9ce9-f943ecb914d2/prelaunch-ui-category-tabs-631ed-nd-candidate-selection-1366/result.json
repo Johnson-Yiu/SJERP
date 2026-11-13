@@ -1,0 +1,35 @@
+{
+  "width": 1366,
+  "height": 768,
+  "root": {
+    "id": 3,
+    "product_count": 0,
+    "child_count": 0,
+    "parent_name": "",
+    "attributes": [],
+    "effective_attributes": [],
+    "sku_name_preview": "",
+    "created_at": "2026-11-14T02:29:26.811559+08:00",
+    "updated_at": "2026-11-14T02:29:26.811582+08:00",
+    "name": "合成超长来源分类商业展厅照明安装附件电源系列1366",
+    "description": "",
+    "sort_order": 0,
+    "parent": null
+  },
+  "child": {
+    "id": 4,
+    "product_count": 0,
+    "child_count": 0,
+    "parent_name": "合成超长来源分类商业展厅照明安装附件电源系列1366",
+    "attributes": [],
+    "effective_attributes": [],
+    "sku_name_preview": "",
+    "created_at": "2026-11-14T02:29:26.947754+08:00",
+    "updated_at": "2026-11-14T02:29:26.947774+08:00",
+    "name": "合成子分类1366",
+    "description": "",
+    "sort_order": 0,
+    "parent": 3
+  },
+  "product": 2
+}

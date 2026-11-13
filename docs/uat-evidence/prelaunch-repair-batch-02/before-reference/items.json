@@ -1,0 +1,98 @@
+{
+  "P1-01": [
+    "ULR003-B-1366.png",
+    "ULR003-B-1920.png",
+    "MOVEMENT-SKU-CHECKBOX-B-1366.png",
+    "MOVEMENT-SKU-RIGHT-B-1366.png"
+  ],
+  "P1-02": [
+    "ULR004-B-after-click-attempt.png",
+    "ULR004-B-after-close.png"
+  ],
+  "P1-03": [
+    "ULR007-B-customer-active.png"
+  ],
+  "P1-04": [
+    "ORDER-DISCOUNT-WHEEL-AFTER-V2-B-1366.png",
+    "ORDER-LEAD-WHEEL-AFTER-B-1366.png",
+    "ORDER-LEAD-WHEEL-AFTER-B-390.png",
+    "ORDER-SHIPPING-WHEEL-AFTER-V2-B-1366.png"
+  ],
+  "P1-05": [
+    "ULR014-B-failed-child.png",
+    "ULR015-B-failure-bottom.png",
+    "ORDER-SOURCE-FAIL-B-1366.png"
+  ],
+  "P1-06": [
+    "PRODUCT-SKU-BATCH-FAIL-B-1920.png",
+    "PRODUCT-SKU-BATCH-FAIL-LATER-B-1920.png"
+  ],
+  "P1-07": [
+    "ORDER-DELETE-PENDING-B-1366.png",
+    "ORDER-DELETE-SECOND-CONFIRM-B-1366.png",
+    "ORDER-DELETE-TWO-PENDING-B-1366.png"
+  ],
+  "P1-08": [
+    "ULR019-B-selected.png",
+    "ULR019-B-status.png"
+  ],
+  "P2-01": [
+    "ULR009-B-1366-top.png"
+  ],
+  "P2-02": [
+    "ULR008-B-1366.png",
+    "ULR008-B-1920.png"
+  ],
+  "P2-03": [
+    "ULR010-B-1366.png",
+    "ULR010-B-1920.png"
+  ],
+  "P2-04": [
+    "ULR011-B-long-1280.png",
+    "ULR011-B-long-1366.png"
+  ],
+  "P2-05": [
+    "ULR012-B-4level-1280.png",
+    "ULR012-B-4level-1366.png",
+    "ULR012-B-additional-after-toggle-1366.png",
+    "ULR012-B-selected-horizontal-wheel-1366.png"
+  ],
+  "P2-06": [
+    "ULR013-B-after-detail.png",
+    "ULR013-B-after-new.png"
+  ],
+  "P2-07": [
+    "ULR018-B-1366-pending.png"
+  ],
+  "P2-08": [
+    "CUSTOMER-SEARCH-EMPTY-B-1366.png",
+    "CUSTOMER-COMBINED-B-1366.png",
+    "CUSTOMER-COMBINED-RELOAD-B-1366.png"
+  ],
+  "P2-09": [
+    "TABS-FIRST-OVERFLOW-B-1366.png",
+    "TABS-TWELVE-B-1366.png"
+  ],
+  "P2-10": [
+    "QUOTE-NOTE-LINK-MOUSE-B-1366.png",
+    "QUOTE-NOTE-LINK-VALID-B-1366.png"
+  ],
+  "P2-11": [
+    "PRODUCT-LOG-CLICK-B-1920.png"
+  ],
+  "P2-12": [
+    "BASE-B-contacts-1366.png",
+    "BASE-B-customers-1366.png",
+    "BASE-B-follow-ups-1366.png",
+    "BASE-B-inventory-movements-1366.png"
+  ],
+  "P2-13": [
+    "BASE-B-history-takeover-1366.png",
+    "BASE-B-history-takeover-1920.png",
+    "HISTORY-TAKEOVER-CORRECTION-B-1920.png",
+    "HISTORY-TAKEOVER-FINANCE-B-1920.png"
+  ],
+  "P2-14": [
+    "ULR019-B-selected.png"
+  ]
+}

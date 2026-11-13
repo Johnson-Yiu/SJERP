@@ -1,5 +1,7 @@
 # SJERP-UI-PRELAUNCH-POLISH-01 验收记录
 
+> 后续核验：本页是原轮次交付事实，不能继续把所有旧“阻塞”推定为当前缺陷。PRELAUNCH-REPAIR-BATCH-02 已按原编号完成当前应用源码的 32 项集成 Chrome 复验；逐项现状、完整来源、前后原图及最终候选门槛见[最新集成验收](../prelaunch-repair-batch-02/acceptance.md)。本页旧失败/缺口保留历史，不作为最终通过证据。
+
 分支 `codex/ui-prelaunch-polish-01`。基线 `f8f97882186a2644a2db6bde4063990da7ce85ea` 来自取消退款集成候选，包含 SEC1 `c7cdf3103d47d06bf8998b9098b2348fd94d1d79` 和 UI 集成 `30b3579a579174de5f3e4336619dcdb4c8502470`。获取远端后本地候选与远端一致。相对 origin/master，候选领先 667 个提交。独立工作树位于 `.worktrees/ui-prelaunch-polish-01`。
 
 源码交付候选 `df6c3311cc076a9637559e8ab42d3784596b1b64`。第一阶段 `c707f38a434937f53f09601c1edd0b4cca2c7f22`（订单、SKU 和保存反馈），第二阶段 `97e70e45b82efa305a922740c9a9076dc46dcc96`（工作区、确认和导入），页面阶段 `35011a73bce6b9f6db998660ac6391bfabb7f878`，最后补齐银行重试断言及分类容器。完整证据提交 SHA 由交付分支提供。

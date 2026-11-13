@@ -1,0 +1,450 @@
+[
+  {
+    "route": "/customers",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/suppliers",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/products",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/skus",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/orders",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/purchase-orders",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/transactions",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/receivables",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/payables",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/sku-packaging",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/hs-codes",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/contacts",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/follow-ups",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/product-certificates",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/inventory-movements",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/product-parameters",
+    "viewportWidth": 1366,
+    "columns": 4,
+    "cardWidth": 1050,
+    "containerWidth": 1050
+  },
+  {
+    "route": "/customers",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/suppliers",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/products",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/skus",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/orders",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/purchase-orders",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/transactions",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/receivables",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/payables",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/sku-packaging",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/hs-codes",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/contacts",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/follow-ups",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/product-certificates",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/inventory-movements",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/product-parameters",
+    "viewportWidth": 1920,
+    "columns": 4,
+    "cardWidth": 1532,
+    "containerWidth": 1532
+  },
+  {
+    "route": "/customers",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/suppliers",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/products",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/skus",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/orders",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/purchase-orders",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/transactions",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/receivables",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/payables",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/sku-packaging",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/hs-codes",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/contacts",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/follow-ups",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/product-certificates",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/inventory-movements",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/product-parameters",
+    "viewportWidth": 1024,
+    "columns": 2,
+    "cardWidth": 708,
+    "containerWidth": 708
+  },
+  {
+    "route": "/customers",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/suppliers",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/products",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/skus",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/orders",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/purchase-orders",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/transactions",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/receivables",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/payables",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/sku-packaging",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/hs-codes",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/contacts",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/follow-ups",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/product-certificates",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/inventory-movements",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  },
+  {
+    "route": "/product-parameters",
+    "viewportWidth": 390,
+    "columns": 1,
+    "cardWidth": 366,
+    "containerWidth": 366
+  }
+]

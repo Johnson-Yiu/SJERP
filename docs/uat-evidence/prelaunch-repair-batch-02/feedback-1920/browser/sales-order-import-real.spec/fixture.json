@@ -1,0 +1,10 @@
+{
+  "database_vendor": "sqlite",
+  "customer_code": "UAT-IMP-C001",
+  "valid_source_order": "UAT-EXT-ORDER-001",
+  "valid_lines": 2,
+  "invalid_source_order": "UAT-EXT-ORDER-BAD",
+  "invalid_sku": "UAT-UNKNOWN-SKU",
+  "workbook": "sales-order-import-input.xlsx",
+  "completion_profile": false
+}

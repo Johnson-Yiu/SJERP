@@ -1,0 +1,40 @@
+{
+  "source": "79ad78883900ceea2077f222f7a6ab27140abdd3",
+  "actionViewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "result": {
+    "batch_id": "1",
+    "status": "partial",
+    "total_rows": 3,
+    "total_orders": 2,
+    "created_orders": 1,
+    "failed_orders": 1,
+    "orders": [
+      {
+        "source_order_no": "UAT-EXT-ORDER-001",
+        "order_id": 9,
+        "order_no": "SO-2026-00001",
+        "status": "draft",
+        "customer_code": "UAT-IMP-C001",
+        "customer_name": "导入验收合成客户",
+        "line_count": 2,
+        "currency": "CNY",
+        "total_amount": "96.00"
+      }
+    ],
+    "errors": [
+      {
+        "row": 4,
+        "key": "UAT-EXT-ORDER-BAD",
+        "message": "找不到 SKU：UAT-UNKNOWN-SKU。"
+      }
+    ],
+    "business_write_performed": true
+  },
+  "retryStatus": 200,
+  "originalBatch": "1",
+  "lookupStatus": 200,
+  "errorCsvContainsInvalidSku": true
+}

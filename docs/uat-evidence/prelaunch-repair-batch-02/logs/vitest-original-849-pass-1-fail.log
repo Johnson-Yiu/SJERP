@@ -1,0 +1,60 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/prelaunch-repair-integration-02/frontend
+
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ❯ tests/trade-finance.spec.js (7 tests | 1 failed) 742ms
+     × requires a reason for root transaction void and hides child void actions 51ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: navigation to another Document
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/trade-finance.spec.js > trade finance interactions > requires a reason for root transaction void and hides child void actions
+AssertionError: expected '登记客户、供应商收付款和日常费用。流水发生日期用于记账，银行实际日期请在银…' to contain '此操作会同步作废拆分流水，并恢复关联收付款计划。'
+
+Expected: "此操作会同步作废拆分流水，并恢复关联收付款计划。"
+Received: "登记客户、供应商收付款和日常费用。流水发生日期用于记账，银行实际日期请在银行资金记录中查看。银行资金记录新增记账账面人民币折算参考：已确认流水按既有人民币金额及流水汇率汇总，包含原币为CNY的既有流水；不代表银行实际到账、已完成结汇或银行账户余额。流水发生日期不等同于银行到账日。流水记录实际收付；核销、退款与结汇保留各自业务关系。银行退回和更正须关联原凭证。流水笔数2当前查询结果账面收入（人民币折算参考）¥ 350.00按已确认流水汇总账面支出（人民币折算参考）¥ 0.00按已确认流水汇总业务归属流水2含核销分配及直接关联合同搜索状态已确认已作废全部状态收支方向全部收入支出流水发生日期从流水发生日期至查询重置流水发生日期 / 流水号收支 / 类型往来方 / 合同实际收付（原币）人民币折算参考状态 / 核销操作2026-09-01FIN-11收入客户收款客户甲未关联合同USD 30.00¥210.00已确认未分配 USD 30.00详情登记结汇到账核销作废2026-09-01FIN-12 · 拆分记录收入客户收款客户甲未关联合同USD 20.00¥140.00已确认未分配 USD 20.00详情登记结汇到账核销由原始流水统一作废作废财务流水同步作废拆分流水并更新关联计划，已取消订单的应收保持为零。×流水号FIN-11金额USD 30.00往来方 / 合同客户甲 / SO-11作废原因取消确认作废"
+
+ ❯ tests/trade-finance.spec.js:134:54
+    132|     expect(wrapper.text()).toContain('同步作废拆分流水并更新关联计划，已取消订单的应收保持为零。')
+    133|     const dialog = wrapper.find('form.dialog')
+    134|     await dialog.find('textarea').setValue('收款金额录入错误')
+       |                                                      ^
+    135|     await dialog.trigger('submit')
+    136|     await flushPromises()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 90 passed (91)
+      Tests  1 failed | 849 passed (850)
+   Start at  02:10:36
+   Duration  475.64s (transform 15.00s, setup 71.88s, import 43.45s, tests 49.08s, environment 707.01s)
+

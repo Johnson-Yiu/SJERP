@@ -1,0 +1,516 @@
+{
+  "sourceArchive": "SUNJACK-UI-COVERAGE-02-progress-20261113.zip",
+  "meaning": "Old reproduction reference; not final candidate validation; bytes unchanged",
+  "entries": [
+    {
+      "name": "BASE-B-contacts-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/BASE-B-contacts-1366.png",
+      "sha256": "63128be5638c806a18d89d845d584fcbfa6bb677ffcff110402a401f16c9ef96",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "BASE-B-customers-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/BASE-B-customers-1366.png",
+      "sha256": "441abad0661e0961cb5709b1880dce9ff964afc027aa685f625cb701251fe6cd",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "BASE-B-follow-ups-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/BASE-B-follow-ups-1366.png",
+      "sha256": "822613aaa8070d068c4a7cf7a2af49f6f6033bf79db37eb48c5d3290f8739630",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "BASE-B-history-takeover-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/BASE-B-history-takeover-1366.png",
+      "sha256": "240a9eb7a5629212b16e3c6843eefa56b8e4e3e1681e2df47ef7fd0b8580c296",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "BASE-B-history-takeover-1920.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/BASE-B-history-takeover-1920.png",
+      "sha256": "c4787ce5d7a7a20eab6cf569699b57fec305b2f9605be66f62ac4194c76ee45a",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "BASE-B-inventory-movements-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/BASE-B-inventory-movements-1366.png",
+      "sha256": "1ae0860835640f5bc342b1b07ed63d77180c6601153e71cf7ac239fe13e46818",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "CUSTOMER-COMBINED-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/CUSTOMER-COMBINED-B-1366.png",
+      "sha256": "a2df083c259022e695dffb880d0830ed41ac713ebdf4baffc64f253f46d3b475",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "CUSTOMER-COMBINED-RELOAD-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/CUSTOMER-COMBINED-RELOAD-B-1366.png",
+      "sha256": "a2df083c259022e695dffb880d0830ed41ac713ebdf4baffc64f253f46d3b475",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "CUSTOMER-SEARCH-EMPTY-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/CUSTOMER-SEARCH-EMPTY-B-1366.png",
+      "sha256": "4ea1a3010fe926339ae559112d4ee33b61cd3793a57fc37227ff0d9e1edf50d0",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "HISTORY-TAKEOVER-CORRECTION-B-1920.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/HISTORY-TAKEOVER-CORRECTION-B-1920.png",
+      "sha256": "75970c47d5eccab1df501e6f82bf16a0167bb41e66e3a1031d0538090d87c1c7",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "HISTORY-TAKEOVER-FINANCE-B-1920.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/HISTORY-TAKEOVER-FINANCE-B-1920.png",
+      "sha256": "ec9a6375fd2c1c9436cfe2032d8a6288a165b33f2b316dd4fe883a8f110a88f3",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "MOVEMENT-SKU-CHECKBOX-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/MOVEMENT-SKU-CHECKBOX-B-1366.png",
+      "sha256": "f5f0c82bcce7d30dd9e9f99f460ac6c6bcf6c2c007bebda74044d1999c48b123",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "MOVEMENT-SKU-RIGHT-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/MOVEMENT-SKU-RIGHT-B-1366.png",
+      "sha256": "b50282bad6a731cfd72ac685bbfd7fce8bb74fbb510a552c589a184e64d9b4b9",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ORDER-DELETE-PENDING-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ORDER-DELETE-PENDING-B-1366.png",
+      "sha256": "983834f2bd438d542d77ade2ec459bac7fc7fdeb3b6ae38f099bfb35bea4815c",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ORDER-DELETE-SECOND-CONFIRM-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ORDER-DELETE-SECOND-CONFIRM-B-1366.png",
+      "sha256": "2b91558eaf3d1828ce0701f1d903673aed46528bc2399e8165a4a0382fcd8a91",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ORDER-DELETE-TWO-PENDING-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ORDER-DELETE-TWO-PENDING-B-1366.png",
+      "sha256": "983834f2bd438d542d77ade2ec459bac7fc7fdeb3b6ae38f099bfb35bea4815c",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ORDER-DISCOUNT-WHEEL-AFTER-V2-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ORDER-DISCOUNT-WHEEL-AFTER-V2-B-1366.png",
+      "sha256": "2f73a22cd2af19cdf80f30c552c6a61722e3426efc4ab6c40e55ac3ec9fd73b6",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ORDER-LEAD-WHEEL-AFTER-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ORDER-LEAD-WHEEL-AFTER-B-1366.png",
+      "sha256": "3279a3452b64de0d4bbc64a8b9058eb9ff0e8394b190c6a508a6409986cc6827",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ORDER-LEAD-WHEEL-AFTER-B-390.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ORDER-LEAD-WHEEL-AFTER-B-390.png",
+      "sha256": "547e00c8f6ee89f1887da6b8f04203c771be4ecc0f85c7655c876a9a92ad6a2b",
+      "dimensions": [
+        390,
+        844
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ORDER-SHIPPING-WHEEL-AFTER-V2-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ORDER-SHIPPING-WHEEL-AFTER-V2-B-1366.png",
+      "sha256": "20c1cd4e6d84558f2682dd02c99f96232f8794a6ad4fe32f60f48cf4b23c568d",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ORDER-SOURCE-FAIL-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ORDER-SOURCE-FAIL-B-1366.png",
+      "sha256": "d413e3890038eceee4049fc29b97c645cc0b34183bf19df128f45b2850becde4",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "PRODUCT-LOG-CLICK-B-1920.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/PRODUCT-LOG-CLICK-B-1920.png",
+      "sha256": "42b54c4a90ca898ade52080b7fae2705d6382b2c2c2ed67eb6d17e2da5a8b50c",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "PRODUCT-SKU-BATCH-FAIL-B-1920.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/PRODUCT-SKU-BATCH-FAIL-B-1920.png",
+      "sha256": "c12b58b05f3eb10737133d64c3e1348d89e1d8fd59e9185a9da66b11d5d60cf8",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "PRODUCT-SKU-BATCH-FAIL-LATER-B-1920.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/PRODUCT-SKU-BATCH-FAIL-LATER-B-1920.png",
+      "sha256": "e0fd55457679770255fd234e21545b3d2f5c0622c02a7b784847097213f986c8",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "QUOTE-NOTE-LINK-MOUSE-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/QUOTE-NOTE-LINK-MOUSE-B-1366.png",
+      "sha256": "232d6fba8379917754074b0778883f21724b25a68d7ec03f0441b2c74f641570",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "QUOTE-NOTE-LINK-VALID-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/QUOTE-NOTE-LINK-VALID-B-1366.png",
+      "sha256": "44b04bacc46dd7f95c3d567583fc49741efea26a0eb1102379da8d26abe9d2bf",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "TABS-FIRST-OVERFLOW-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/TABS-FIRST-OVERFLOW-B-1366.png",
+      "sha256": "a498391b0061d89508c9dedd698dd7f01222c01ac31b9231a8f3a7fec7371098",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "TABS-TWELVE-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/TABS-TWELVE-B-1366.png",
+      "sha256": "2815ac2bc14cafaa64873accc8592a500b06375597f702cfbb0dca213101f747",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR003-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR003-B-1366.png",
+      "sha256": "f8f1ae56390b9c97ccf4ceae0043eea249c25799a86a0276e23a3dfec23537f9",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR003-B-1920.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR003-B-1920.png",
+      "sha256": "47bfdd27645ea7c3c47715158e7547824b98f14c534c7a4d75ecd9238e7ffcfa",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR004-B-after-click-attempt.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR004-B-after-click-attempt.png",
+      "sha256": "4ee50743e2fe8dc75565b427503a3c02905cab92dd8a303e93a6880e131981f9",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR004-B-after-close.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR004-B-after-close.png",
+      "sha256": "4ee50743e2fe8dc75565b427503a3c02905cab92dd8a303e93a6880e131981f9",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR007-B-customer-active.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR007-B-customer-active.png",
+      "sha256": "fc033f03655a499b314f4ab58dec3ae8e706094d2015e048e11a7dd406dee4ad",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR008-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR008-B-1366.png",
+      "sha256": "b5bdb7c0b1eac4a71be9ada01ea9a22240ec2afeb7ed98983baa1574464bb6c5",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR008-B-1920.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR008-B-1920.png",
+      "sha256": "f6c30a4d76c0e268eb9b663149ffd7da7d7f9e239d9e3fa49c38953edeab2276",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR009-B-1366-top.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR009-B-1366-top.png",
+      "sha256": "7c7d39d8fd54b50f154d635803f236c6d4c2f28cb2ba6cc1b4d2192b7db1c814",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR010-B-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR010-B-1366.png",
+      "sha256": "74085dbde2d48b0450fcaffe8100df9264b5cef47fb863db00d283dcf26edffe",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR010-B-1920.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR010-B-1920.png",
+      "sha256": "a3dfa8439f526097ff47f33521d1e16b965ca3db4e69f49b78c6939effea8b00",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR011-B-long-1280.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR011-B-long-1280.png",
+      "sha256": "1ef59f47c2f7a726c78f0a2e19638b32dbca259750417bb68b66b77ee6aed03b",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR011-B-long-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR011-B-long-1366.png",
+      "sha256": "5fd13e2e1132d8b86acc92353e5b7043638afbfe905357c6f7822ec517f910e0",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR012-B-4level-1280.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR012-B-4level-1280.png",
+      "sha256": "95bb6d71a5049ea9993c81eb9a006893262ead98b56430f8894cebace7ee1acc",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR012-B-4level-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR012-B-4level-1366.png",
+      "sha256": "30f2cec715ed3e31c47105e73359a47cdcce2b461966d832936a847c027ebde7",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR012-B-additional-after-toggle-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR012-B-additional-after-toggle-1366.png",
+      "sha256": "af667404869efe3baf529da5f5c9cbed6facb590da0539e645dbeb96f5bc6fa6",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR012-B-selected-horizontal-wheel-1366.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR012-B-selected-horizontal-wheel-1366.png",
+      "sha256": "366dc9644995604c75be5426d951f8ab96e83ec177454d092069af6378786d5a",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR013-B-after-detail.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR013-B-after-detail.png",
+      "sha256": "0a1acc878623ea04ad4ce40e8935adcddb8943228f5065c8f9d7face69acf563",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR013-B-after-new.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR013-B-after-new.png",
+      "sha256": "931c7402dd9cf01d5e68157bcb6136ac06fa6a0f646ffed19fd97ea6481d448b",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR014-B-failed-child.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR014-B-failed-child.png",
+      "sha256": "5cb6ccc9b6f6b9dc865ac7660814c22750d9c2d08e463113210c4c0dc417d82b",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR015-B-failure-bottom.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR015-B-failure-bottom.png",
+      "sha256": "85eabd362852f5553232ffb233bb7ab497063303d72d33da70d03bbf8620477b",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR018-B-1366-pending.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR018-B-1366-pending.png",
+      "sha256": "034a42a4286bce01d4fde16c57fd783c3aa1022b2b47409fa6cc526d58db430c",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR019-B-selected.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR019-B-selected.png",
+      "sha256": "0cedee02124d68ef633b080eaef46641da96a7fb2bcefe639463be0c3b191810",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    },
+    {
+      "name": "ULR019-B-status.png",
+      "archivePath": "docs/uat-evidence/ui-coverage-02/originals/ULR019-B-status.png",
+      "sha256": "bec007ffec538fd72bf1fa1ca87d6a9c9dbbb9f49ea4db2d1b6f0de4078bbcd8",
+      "dimensions": [
+        1366,
+        768
+      ],
+      "status": "original-reference-only"
+    }
+  ]
+}

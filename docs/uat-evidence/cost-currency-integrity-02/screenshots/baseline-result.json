@@ -1,0 +1,20 @@
+{
+  "source": "d7d155b994b652f6f4f777edde22a257a8ed7a2e",
+  "browser": "156.0.8078.80",
+  "viewport": {
+    "width": 1366,
+    "height": 768
+  },
+  "devicePixelRatio": 1,
+  "saveStatus": 400,
+  "error": [
+    "销售接续明细须明确核实 SKU 成本、币种和依据。"
+  ],
+  "fixture": {
+    "application": 1,
+    "group": 1,
+    "sku": 1,
+    "base": "/api/import/history-takeovers/1/groups/1/"
+  },
+  "baseline": true
+}

@@ -2187,6 +2187,8 @@ class Transaction(TimestampedModel):
 
     @property
     def unallocated_cash_amount(self):
+        if self.plan_id:
+            return Decimal("0")
         rows = getattr(self, "_prefetched_objects_cache", {}).get("allocations")
         if rows is None:
             rows = self.allocations.filter(is_active=True)

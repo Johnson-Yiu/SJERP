@@ -664,3 +664,7 @@ onMounted(() => { load(); loadQuoteCustomerOptions() })
 .quote-table th:nth-child(2),.quote-table td:nth-child(2){min-width:200px}
 .toolbar:not(.quote-toolbar)>select{min-width:120px;min-height:42px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:white;color:inherit}
 </style>
+
+<style scoped>
+.order-list-table th:last-child,.order-list-table td:last-child{position:sticky;right:0;background:#fff;z-index:1;min-width:120px}.order-list-table .table-actions{min-width:88px}.order-list-table .mini-btn{flex-shrink:0;white-space:nowrap}
+</style>

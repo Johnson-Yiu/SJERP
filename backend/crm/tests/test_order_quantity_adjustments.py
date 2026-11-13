@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
-from django.db import close_old_connections
+from django.db import close_old_connections, connections
 from django.test import TestCase, TransactionTestCase, override_settings, skipUnlessDBFeature
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -329,6 +329,33 @@ class OrderQuantityAdjustmentApiTests(TestCase):
         self.assertEqual(Decimal(change.lines[0]["old_quantity"]), 100)
         self.assertTrue(change.impact["preview"]["terminate_remaining"])
 
+    def test_terminate_multiple_lines_retains_zero_shipped_line_and_original_quantities(self):
+        other = self.order.items.create(sku=self.sku, quantity=20, unit_price=10)
+        self.plan.planned_amount = 1200
+        self.plan.save(update_fields=["planned_amount"])
+        shipment = Shipment.objects.create(shipment_no="SHP-MULTI-TERMINATE", order=self.order,
+                                           shipment_date=self.order.order_date, status="confirmed")
+        shipped = ShipmentItem.objects.create(shipment=shipment, order_item=self.item, sku=self.sku, quantity=40)
+        payload = self.payload(items=[{"order_item": self.item.pk, "new_quantity": "40"},
+                                     {"order_item": other.pk, "new_quantity": "0"}])
+        url = f"/api/orders/{self.order.pk}/quantity-adjustments/"
+        self.assertEqual(self.client.post(url, payload, format="json").status_code, 400)
+        payload["terminate_remaining"] = True
+        response = self.client.post(url, payload, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+        self.order.refresh_from_db()
+        other.refresh_from_db()
+        shipped.refresh_from_db()
+        self.assertEqual(other.quantity, 0)
+        self.assertEqual(self.order.items.count(), 2)
+        self.assertEqual(shipped.quantity, 40)
+        self.assertEqual(self.order.status, "completed")
+        self.assertEqual(self.order.total_amount, 400)
+        self.assertEqual(self.order.outstanding_amount, 400)
+        changes = {row["order_item"]: row for row in self.order.quantity_adjustments.get().lines}
+        self.assertEqual(Decimal(changes[other.pk]["old_quantity"]), 20)
+        self.assertFalse(InventoryReservation.objects.filter(order_item=other, quantity__gt=0).exists())
+
     def test_cannot_decrease_below_seventy_already_shipped(self):
         shipment = Shipment.objects.create(
             shipment_no="SHP-QTY-70",
@@ -623,6 +650,35 @@ class OrderQuantityAdjustmentApiTests(TestCase):
         self.assertEqual(item.trade_snapshot["factor"], "10")
 
 
+    def test_termination_respects_saved_whole_pack_rule(self):
+        unit = SKUTradeUnit.objects.create(sku=self.sku, name="箱", unit="箱", factor=10, allow_fraction=False)
+        self.item.trade_unit = unit
+        self.item.trade_quantity = 10
+        self.item.trade_unit_price = 100
+        self.item.trade_snapshot = {"unit": "箱", "base_unit": "pcs", "factor": "10", "allow_fraction": False}
+        self.item.save()
+        shipment = Shipment.objects.create(shipment_no="SHP-PACK-TERMINATE", order=self.order,
+                                           shipment_date=self.order.order_date, status="confirmed")
+        shipped = ShipmentItem.objects.create(shipment=shipment, order_item=self.item, sku=self.sku, quantity=45)
+        payload = self.payload(items=[{"order_item": self.item.pk, "new_trade_quantity": "4.5"}])
+        payload["terminate_remaining"] = True
+        url = f"/api/orders/{self.order.pk}/quantity-adjustments/"
+        result = self.client.post(url, payload, format="json")
+        self.assertEqual(result.status_code, 400, result.data)
+        self.assertIn("整包装", str(result.data))
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.quantity, 100)
+        # A separate consistent whole-pack fixture may terminate at 4 boxes.
+        shipped.quantity = 40
+        shipped.save(update_fields=["quantity"])
+        payload["items"][0]["new_trade_quantity"] = "4"
+        result = self.client.post(url, payload, format="json")
+        self.assertEqual(result.status_code, 201, result.data)
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.quantity, 40)
+        self.assertEqual(self.item.trade_quantity, 4)
+        self.assertEqual(self.item.trade_snapshot["factor"], "10")
+
     def test_real_receipt_shipment_payment_and_party_snapshots_are_unchanged(self):
         from crm.models import GoodsReceipt, PurchaseCostAllocation, PurchaseOrder, Supplier
         from crm.services.fulfillment import record_receipt, confirm_shipment, signed_inventory_quantity
@@ -739,7 +795,7 @@ class QuantityAdjustmentConcurrencyTests(TransactionTestCase):
             except QuantityAdjustmentConflict:
                 return False
             finally:
-                close_old_connections()
+                connections.close_all()
 
         with ThreadPoolExecutor(max_workers=2) as pool:
             self.assertCountEqual(pool.map(submit, ("2", "3")), [True, False])
@@ -777,7 +833,7 @@ class QuantityAdjustmentConcurrencyTests(TransactionTestCase):
                 }, format="json")
                 return response.status_code
             finally:
-                close_old_connections()
+                connections.close_all()
 
         with patch.object(OrderQuantityAdjustment.objects, "create", side_effect=competing_insert):
             with ThreadPoolExecutor(max_workers=2) as pool:

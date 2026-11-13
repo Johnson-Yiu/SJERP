@@ -415,7 +415,7 @@ onMounted(init)
                 <span class="quick-sku"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span>
                 <label class="quick-line-field">数量<input v-model="item.quantity" type="number" min="0.01" step="0.01" required /></label>
                 <label class="quick-line-field">售价（{{ form.currency }}）<input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required /></label>
-                <label v-if="isOrder" class="quick-line-field">成本（{{ form.currency }}）<input v-model="item.cost_price" v-money-input type="number" min="0" step="any" /></label>
+                <label v-if="isOrder" class="quick-line-field">成本（{{ skus.find(sku => sku.id === Number(item.sku))?.cost_currency || '币种未核实' }}）<input v-model="item.cost_price" v-money-input type="number" min="0" step="any" /></label>
                 <span>{{ form.currency }} {{ money(Number(item.quantity) * Number(item.unit_price)) }}</span>
                 <button type="button" :disabled="isInherited('sku') && index === 0" @click="form.items.splice(index, 1)"><MinusCircle :size="17" /></button>
               </div>

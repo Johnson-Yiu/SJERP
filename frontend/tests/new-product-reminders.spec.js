@@ -5,11 +5,13 @@ import Reminders from '../src/components/NewProductReminders.vue'
 import { api } from '../src/api'
 import { resolveDialog } from '../src/dialogs'
 vi.mock('../src/api', () => ({ api: { get: vi.fn(), post: vi.fn(), patch: vi.fn() } }))
+const scrollIntoView = vi.fn()
+Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', { configurable: true, value: scrollIntoView })
 const record = { id: 7, customer: 2, customer_name: '合成客户', requirement: '壁灯', specification: 'IP65', other_requirements: '', version: 1, created_by: '开发超级管理员（非实名员工）', created_at: '2026-11-05', voided_at: null }
 async function render(query = '') {
   const router = createRouter({history:createMemoryHistory(),routes:[{path:'/:pathMatch(.*)*',component:Reminders}]})
   await router.push('/new-product-reminders'+query)
-  const wrapper = mount(Reminders,{global:{plugins:[router]}})
+  const wrapper = mount(Reminders,{attachTo: document.body,global:{plugins:[router]}})
   await flushPromises()
   return {wrapper,router}
 }
@@ -22,6 +24,8 @@ describe('new product requirements', () => {
     const {wrapper} = await render()
     await wrapper.findAll('button').find(b=>b.text()==='记录新品需求').trigger('click'); await flushPromises()
     const editor = wrapper.find('.editor')
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' })
+    expect(document.activeElement).toBe(editor.find('h3').element)
     await editor.find('select').setValue('2')
     await editor.find('textarea').setValue('未建档产品')
     api.post.mockRejectedValueOnce(new Error('暂时失败')).mockResolvedValueOnce({data:{...record,requirement:'未建档产品'}})

@@ -107,7 +107,7 @@ def _canonical_request(payload):
     return version, reason, canonical_items, fingerprint
 
 
-def _line_value(item, row):
+def _line_value(item, row, *, terminate_remaining=False):
     if item.trade_unit_id or item.trade_quantity is not None or item.trade_unit_price is not None:
         snapshot = item.trade_snapshot or {}
         if item.trade_quantity is None or item.trade_unit_price is None:
@@ -123,10 +123,10 @@ def _line_value(item, row):
         if not item.trade_unit_id and item.trade_quantity * factor != item.quantity:
             raise ValidationError("原交易数量与基础数量不符合换算快照，不能安全调整。")
         if "new_trade_quantity" in row:
-            trade_quantity = _decimal(row["new_trade_quantity"], "交易数量")
+            trade_quantity = _decimal(row["new_trade_quantity"], "交易数量", positive=not terminate_remaining)
         elif not item.trade_unit_id and "new_quantity" in row:
-            requested_base = _decimal(row["new_quantity"], "基础数量")
-            trade_quantity = _decimal(requested_base / factor, "换算后的交易数量")
+            requested_base = _decimal(row["new_quantity"], "基础数量", positive=not terminate_remaining)
+            trade_quantity = _decimal(requested_base / factor, "换算后的交易数量", positive=not terminate_remaining)
             if trade_quantity * factor != requested_base:
                 raise ValidationError("原交易单位无法准确换算该基础数量。")
         else:
@@ -144,10 +144,12 @@ def _line_value(item, row):
         return trade_quantity, base_quantity
     if "new_quantity" not in row:
         raise ValidationError(f"{item.sku_code_snapshot or item.sku.sku} 必须填写基础数量。")
-    return None, _decimal(row["new_quantity"], "基础数量")
+    return None, _decimal(row["new_quantity"], "基础数量", positive=not terminate_remaining)
 
 
 def _normalized_lines(order, canonical_items, *, terminate_remaining=False):
+    if terminate_remaining and not any(_shipped_quantity(item) > 0 for item in order.items.all()):
+        raise ValidationError("订单尚未发货，请使用取消订单；终止剩余履约用于保留已发货部分。")
     item_ids = [row["order_item"] for row in canonical_items]
     if len(set(item_ids)) != len(item_ids):
         raise ValidationError("同一订单行不能重复提交。")
@@ -161,13 +163,13 @@ def _normalized_lines(order, canonical_items, *, terminate_remaining=False):
     line_amount = Decimal if order.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION else money
     for row in canonical_items:
         item = items[row["order_item"]]
-        trade_quantity, base_quantity = _line_value(item, row)
+        trade_quantity, base_quantity = _line_value(item, row, terminate_remaining=terminate_remaining)
         shipped = _shipped_quantity(item)
         if base_quantity < shipped:
             raise ValidationError(
                 f"{item.sku_code_snapshot or item.sku.sku} 的新数量不能低于已发货数量 {shipped}。"
             )
-        if terminate_remaining and (shipped <= 0 or base_quantity != shipped or base_quantity >= item.quantity):
+        if terminate_remaining and (base_quantity != shipped or base_quantity >= item.quantity):
             raise ValidationError("终止剩余履约须将该行数量调至已发数量，且保留已发记录。")
         proposed = copy(item)
         proposed.quantity = base_quantity
@@ -241,7 +243,7 @@ def _financial_state(order, before_total, after_total):
         reasons.append("应收计划余额或状态异常，请核对核销及抵减记录")
     delta = _money(target_total - old_total)
     if delta < 0 and -delta > outstanding:
-        reasons.append("数量减少超过未结应收计划余额")
+        reasons.append("数量减少超过未结应收计划余额。请先在财务流水从原收款登记实际退款；如含非现金抵减或我方手续费，请先核对对应核销记录，再重新预览。")
     return {
         "before_total": old_total,
         "after_total": target_total,

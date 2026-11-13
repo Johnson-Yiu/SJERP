@@ -38,6 +38,10 @@ def _writeoff_total_for_source(source):
 
 
 def _sync_plan_status(plan):
+    if plan.order_id and plan.order.status == "cancelled" and plan.order.total_amount == 0:
+        plan.planned_amount = plan.settled_amount + _writeoff_total(plan)
+        plan.status = "settled" if plan.planned_amount else "cancelled"
+        return
     plan.status = "settled" if plan.settled_amount + _writeoff_total(plan) == plan.planned_amount else "open"
 
 
@@ -127,7 +131,7 @@ def writeoff_receivable(source_transaction, plan, amount, reason, request_key, u
             raise cash.CashConflict("本次操作编号已用于其他抹零内容。")
         return existing, False
     _sync_plan_status(locked_plan)
-    locked_plan.save(update_fields=["status", "updated_at"])
+    locked_plan.save(update_fields=["planned_amount", "status", "updated_at"])
     return row, True
 
 
@@ -182,7 +186,7 @@ def correct_receivable_writeoff(source_transaction, writeoff, amount, reason, re
             raise cash.CashConflict("本次更正编号已用于其他内容。")
         return existing, False
     _sync_plan_status(plan)
-    plan.save(update_fields=["status", "updated_at"])
+    plan.save(update_fields=["planned_amount", "status", "updated_at"])
     return correction, True
 
 
@@ -845,7 +849,7 @@ def record_transaction(payload):
     if plan:
         plan.settled_amount += applied_amount
         _sync_plan_status(plan)
-        plan.save(update_fields=["settled_amount", "status", "updated_at"])
+        plan.save(update_fields=["planned_amount", "settled_amount", "status", "updated_at"])
         excess = amount - applied_cash
         if excess > 0:
             Transaction.objects.create(
@@ -929,7 +933,7 @@ def void_transaction(row, reason):
         plan = plans[plan_id]
         plan.settled_amount -= delta
         _sync_plan_status(plan)
-        plan.save(update_fields=["settled_amount", "status", "updated_at"])
+        plan.save(update_fields=["planned_amount", "settled_amount", "status", "updated_at"])
     for allocation in active_allocations:
         allocation.is_active = False
         allocation.save(update_fields=["is_active", "updated_at"])
@@ -978,7 +982,7 @@ def allocate_advance(advance, plan, amount):
     advance.save(update_fields=["allocated_amount", "updated_at"])
     plan.settled_amount += amount
     _sync_plan_status(plan)
-    plan.save(update_fields=["settled_amount", "status", "updated_at"])
+    plan.save(update_fields=["planned_amount", "settled_amount", "status", "updated_at"])
     cash_used = sum((row.cash_amount if row.cash_amount is not None else row.amount for row in AdvanceAllocation.objects.select_for_update().filter(advance=advance, is_active=True)), Decimal("0"))
     fee_used = sum(AdvanceAllocation.objects.select_for_update().filter(advance=advance, is_active=True).values_list("fee_credit_amount", flat=True), Decimal("0"))
     unallocated_refunds = advance.refunded_cash_amount(unallocated_only=True) + advance.returned_cash_amount(unallocated_only=True)
@@ -1186,7 +1190,7 @@ def record_contract_refund(contract, payload):
         first = first or row
         plan.settled_amount -= applied
         _sync_plan_status(plan)
-        plan.save(update_fields=["settled_amount", "status", "updated_at"])
+        plan.save(update_fields=["planned_amount", "settled_amount", "status", "updated_at"])
         remaining -= applied
         if remaining == 0:
             break

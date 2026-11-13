@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 
 from crm.models import AdvanceAllocation, ContractChangeRequest, Customer, InventoryReservation, Order, OrderItem, PaymentPlan, Quote, Shipment
@@ -213,7 +214,9 @@ def cancel_order(order, reason, *, settle_refund=False):
                 or any(plan.direction != "receivable" or reductions[plan.pk] < 0
                        or plan.settled_amount + reductions[plan.pk] > plan.planned_amount for plan in plans)
                 or order.transactions.filter(status="confirmed").exclude(
-                    kind="customer_receipt", plan_id__in=[plan.pk for plan in plans],
+                    Q(kind="customer_receipt", direction="income", plan_id__in=[plan.pk for plan in plans])
+                    | Q(kind="refund", direction="expense", plan_id__in=[plan.pk for plan in plans],
+                        receipt_refund_link__isnull=False)
                 ).exists()):
             raise ValidationError("订单现金、手续费或抵减与原计划不一致，请先核对资金来源。")
         for plan in plans:

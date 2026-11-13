@@ -24,6 +24,153 @@ class ReceiptRefundAttributionTests(CashFixture, TestCase):
             "amount": amount, "order": order or self.order.pk, "reason": "合成退款凭证已经核实", "voucher": self.proof.pk,
         }, format="json", HTTP_IDEMPOTENCY_KEY=key)
 
+    def test_direct_plan_receipt_has_no_unallocated_refund_capacity(self):
+        self.assertEqual(self.receipt.unallocated_cash_amount, Decimal("0"))
+        before = Transaction.objects.count()
+        response = self.client.post(f"/api/transactions/{self.receipt.pk}/refund-cash/", {
+            "amount": "20", "order": "", "reason": "直接计划收款禁止未分配退款", "voucher": self.proof.pk,
+        }, format="json", HTTP_IDEMPOTENCY_KEY="direct-plan-unallocated")
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertEqual(Transaction.objects.count(), before)
+        self.assertEqual(FinanceReceiptRefund.objects.count(), 0)
+        self.plan.refresh_from_db()
+        self.assertEqual(self.plan.settled_amount, Decimal("100"))
+
+    def test_cancelled_receipt_void_does_not_reopen_receivable(self):
+        from crm.services.finance import void_transaction
+        response = self.client.post(f"/api/orders/{self.order.pk}/cancel/", {
+            "reason": "测试取消后作废原收款", "settle_refund": True,
+        }, format="json", HTTP_IDEMPOTENCY_KEY="cancel-before-void")
+        self.assertEqual(response.status_code, 200, response.data)
+        void_transaction(self.receipt, "测试原收款作废")
+        self.plan.refresh_from_db()
+        self.order.refresh_from_db()
+        self.assertEqual(self.plan.settled_amount, 0)
+        self.assertEqual(self.plan.planned_amount, 0)
+        self.assertEqual(self.plan.status, "cancelled")
+        self.assertEqual(self.order.outstanding_amount, 0)
+        self.assertEqual(self.order.paid_amount, 0)
+
+    def test_cancelled_non_cash_correction_preserves_zero_receivable(self):
+        from crm.services.finance import record_transaction, void_transaction, writeoff_receivable, correct_receivable_writeoff
+        void_transaction(self.receipt, "测试原收款作废")
+        source = record_transaction(dict(plan=self.plan, amount="99", currency="USD"))
+        reduction, _ = writeoff_receivable(source, self.plan, Decimal("1"), "测试非现金抵减", "cancel-reduction", self.user)
+        response = self.client.post(f"/api/orders/{self.order.pk}/cancel/", {
+            "reason": "测试取消后更正非现金抵减", "settle_refund": True,
+        }, format="json", HTTP_IDEMPOTENCY_KEY="cancel-before-correction")
+        self.assertEqual(response.status_code, 200, response.data)
+        correction, created = correct_receivable_writeoff(source, reduction, Decimal("1"), "更正错误非现金抵减", "cancel-correction", self.user)
+        self.assertTrue(created)
+        self.assertEqual(correction.writeoff_id, reduction.pk)
+        self.plan.refresh_from_db()
+        self.order.refresh_from_db()
+        self.assertEqual(self.plan.planned_amount, 99)
+        self.assertEqual(self.plan.settled_amount, 99)
+        self.assertEqual(self.plan.status, "settled")
+        self.assertEqual(self.order.outstanding_amount, 0)
+        self.assertEqual(self.order.paid_amount, 99)
+        self.assertEqual(reduction.corrections.count(), 1)
+
+    def test_cancelled_company_fee_refunds_only_cash_and_does_not_reopen_receivable(self):
+        from crm.services.finance import record_transaction, void_transaction
+        from crm.services.finance_closeout import upload
+        void_transaction(self.receipt, "替换公司手续费夹具")
+        source = record_transaction(dict(kind="customer_receipt", direction="income", plan=self.plan,
+            amount="98", remittance_amount="100", bank_fee_amount="2", fee_responsibility="company",
+            fee_reason="合成我方承担手续费", fee_evidence=self.proof, currency="USD"))
+        response = self.client.post(f"/api/orders/{self.order.pk}/cancel/", {
+            "reason": "取消保留我方手续费的现金事实", "settle_refund": True,
+        }, format="json", HTTP_IDEMPOTENCY_KEY="cancel-company-fee")
+        self.assertEqual(response.status_code, 200, response.data)
+        proof = upload(SimpleUploadedFile("fee-refund.pdf", b"%PDF-1.4\nfee refund\n%%EOF"), self.user, scope="transaction")
+        response = self.client.post(f"/api/transactions/{source.pk}/refund-cash/", {
+            "order": self.order.pk, "amount": "98", "reason": "只退实际收到的原币现金", "voucher": proof.pk,
+        }, format="json", HTTP_IDEMPOTENCY_KEY="refund-company-fee")
+        self.assertEqual(response.status_code, 201, response.data)
+        self.plan.refresh_from_db()
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.paid_amount, 0)
+        self.assertEqual(self.order.outstanding_amount, 0)
+        self.assertEqual(self.plan.remaining_amount, 0)
+        self.assertEqual(self.plan.planned_amount, 2)
+        self.assertEqual(self.plan.settled_amount, 2)
+        self.assertEqual(self.plan.status, "settled")
+        self.assertEqual(source.refunded_cash_amount(), 98)
+
+    def test_cancellation_after_attributed_refund_preserves_net_cash(self):
+        self.assertEqual(self.refund("before-cancel-refund", "10").status_code, 201)
+        response = self.client.post(f"/api/orders/{self.order.pk}/cancel/", {
+            "reason": "已经原路退回部分款项后取消", "settle_refund": True,
+        }, format="json", HTTP_IDEMPOTENCY_KEY="cancel-after-refund")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.order.refresh_from_db()
+        self.plan.refresh_from_db()
+        self.assertEqual(self.order.total_amount, 0)
+        self.assertEqual(self.order.paid_amount, 90)
+        self.assertEqual(self.order.outstanding_amount, 0)
+        self.assertEqual(self.plan.settled_amount, 90)
+        self.assertEqual(self.plan.planned_amount, 90)
+        self.assertEqual(FinanceReceiptRefund.objects.count(), 1)
+
+    def shared_source(self):
+        from crm.models import Order
+        from crm.services.finance import record_transaction, void_transaction, allocate_advance
+        void_transaction(self.receipt, "替换为共享来源夹具")
+        other = Order.objects.create(order_no="SHARED-OTHER", customer=self.customer, currency="USD", status="confirmed", order_date=self.order.order_date)
+        other.items.create(sku=self.sku, quantity=1, unit_price=100)
+        other_plan = PaymentPlan.objects.create(order=other, direction="receivable", currency="USD", planned_amount=100)
+        source = record_transaction(dict(kind="unallocated_advance", direction="income", customer=self.customer, amount="300", currency="USD"))
+        allocate_advance(source, self.plan, Decimal("100"))
+        allocate_advance(source, other_plan, Decimal("100"))
+        response = self.client.post(f"/api/orders/{self.order.pk}/cancel/", {
+            "reason": "仅取消共享来源中的本订单", "settle_refund": True,
+        }, format="json", HTTP_IDEMPOTENCY_KEY="shared-cancel")
+        self.assertEqual(response.status_code, 200, response.data)
+        return source, other, other_plan
+
+    def test_shared_cash_three_buckets_never_borrow_and_cancelled_plan_stays_closed(self):
+        source, other, other_plan = self.shared_source()
+        for order in ("", self.order.pk, other.pk):
+            response = self.client.post(f"/api/transactions/{source.pk}/refund-cash/", {
+                "order": order, "amount": "101", "reason": "测试不得串用其他退款额度", "voucher": self.proof.pk,
+            }, format="json", HTTP_IDEMPOTENCY_KEY=f"shared-over-{order}")
+            self.assertEqual(response.status_code, 400, response.data)
+        self.assertEqual(FinanceReceiptRefund.objects.count(), 0)
+        for index, order in enumerate((self.order.pk, "", other.pk, self.order.pk)):
+            from crm.services.finance_closeout import upload
+            proof = upload(SimpleUploadedFile(f"shared-{index}.pdf", f"%PDF-1.4\nshared refund {index}\n%%EOF".encode()), self.user, scope="transaction")
+            response = self.client.post(f"/api/transactions/{source.pk}/refund-cash/", {
+                "order": order, "amount": "50", "reason": "按原来源及订单分次实际退款", "voucher": proof.pk,
+                "actual_date": "2026-10-20",
+            }, format="json", HTTP_IDEMPOTENCY_KEY=f"shared-refund-{index}")
+            self.assertEqual(response.status_code, 201, response.data)
+        self.plan.refresh_from_db()
+        other_plan.refresh_from_db()
+        self.assertEqual(self.plan.remaining_amount, 0)
+        self.assertEqual(self.plan.settled_amount, 0)
+        self.assertEqual(self.plan.status, "cancelled")
+        self.assertEqual(other_plan.settled_amount, 50)
+        self.assertEqual(other_plan.remaining_amount, 50)
+        self.assertEqual(other.paid_amount, 50)
+        self.assertEqual(source.unallocated_cash_amount, 50)
+        self.assertEqual(FinanceReceiptRefund.objects.count(), 4)
+        self.assertEqual(set(Transaction.objects.filter(kind="refund").values_list("transaction_date", flat=True)), {__import__("datetime").date(2026, 10, 20)})
+
+    def test_void_shared_receipt_keeps_cancelled_plan_closed_and_reopens_active_plan(self):
+        from crm.services.finance import void_transaction
+        source, other, other_plan = self.shared_source()
+        void_transaction(source, "共享收款作废，分别核对两单")
+        self.plan.refresh_from_db()
+        other_plan.refresh_from_db()
+        self.assertEqual(self.plan.status, "cancelled")
+        self.assertEqual(self.plan.planned_amount, 0)
+        self.assertEqual(self.plan.remaining_amount, 0)
+        self.assertEqual(other_plan.status, "open")
+        self.assertEqual(other_plan.planned_amount, 100)
+        self.assertEqual(other_plan.remaining_amount, 100)
+        self.assertEqual(source.allocations.filter(is_active=True).count(), 0)
+
     def test_refund_is_bound_to_source_and_replayed(self):
         first = self.refund("refund-one", "20")
         self.assertEqual(first.status_code, 201, first.data)

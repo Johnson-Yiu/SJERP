@@ -4,7 +4,10 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
 test.skip(process.env.ISOLATED_PLAYWRIGHT_TEST_FILE !== 'prelaunch-p1-05-feedback-02.spec.js', 'Requires its dedicated isolated codex profile and synthetic fixtures.')
-test.use({ channel: 'chrome', viewport: { width: 1366, height: 768 } })
+const feedbackWidth = Number(process.env.P1_FEEDBACK_WIDTH || '1366')
+if (![1366, 1920].includes(feedbackWidth)) throw new Error('P1_FEEDBACK_WIDTH must be 1366 or 1920.')
+const feedbackViewport = { width: feedbackWidth, height: feedbackWidth === 1920 ? 1080 : 768 }
+test.use({ channel: 'chrome', viewport: feedbackViewport })
 test('P1-05 packaging and procurement pending failure recovery and persisted success', async ({ page, browser }, info) => {
   test.setTimeout(240000)
   const output = info.outputPath('p1-05')
@@ -17,7 +20,7 @@ test('P1-05 packaging and procurement pending failure recovery and persisted suc
       await page.screenshot({ path: path.join(output, `${state}-${width}.png`) })
       expect(await page.evaluate(() => devicePixelRatio)).toBe(1)
     }
-    await page.setViewportSize({ width: 1366, height: 768 })
+    await page.setViewportSize(feedbackViewport)
   }
   await page.goto('/quotes?create=1&customer=' + fixture.customer)
   const editor = page.getByRole('form', { name: '报价编辑器' })
@@ -99,7 +102,7 @@ test('P1-05 packaging and procurement pending failure recovery and persisted suc
   await workbench.getByRole('button', { name: '采购与发货', exact: true }).click()
   await expect(page.getByRole('button', { name: '生成采购草稿', exact: true })).toBeDisabled()
   results.push({ key: 'procurement', save: 201, id: draft.id, quantity: record.items[0].quantity, reopenedCannotDuplicate: true })
-  await writeFile(path.join(output, 'result.json'), JSON.stringify({ source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), browser: browser.version(), results }, null, 2))
+  await writeFile(path.join(output, 'result.json'), JSON.stringify({ source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), browser: browser.version(), actionViewport: feedbackViewport, results }, null, 2))
 })
 
 test('authenticated codex superuser imports XLSX and downloads the actual error CSV', async ({ page }) => {
@@ -120,7 +123,7 @@ test('authenticated codex superuser imports XLSX and downloads the actual error 
       await page.screenshot({ path: path.join(evidenceDir, `${state}-${width}.png`) })
       expect(await page.evaluate(() => devicePixelRatio)).toBe(1)
     }
-    await page.setViewportSize({ width: 1366, height: 768 })
+    await page.setViewportSize(feedbackViewport)
   }
   const identityResponse = await page.request.get('/api/session/current-operator/')
   expect(identityResponse.status()).toBe(200)
@@ -213,6 +216,7 @@ test('authenticated codex superuser imports XLSX and downloads the actual error 
   await capture('import-idempotent-success')
   await writeFile(path.join(evidenceDir, 'p1-05-result.json'), JSON.stringify({
     source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+    actionViewport: feedbackViewport,
     result, retryStatus: executeResponse.status(), originalBatch: savedResult.batch_id,
     lookupStatus: resultLookup.status(), errorCsvContainsInvalidSku: csvText.includes(fixture.invalid_sku),
   }, null, 2))

@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from crm.models import AdvanceAllocation, Customer, InventoryReservation, Order, OrderItem, PaymentPlan, PurchaseOrder, Quote, Shipment
+from crm.models import AdvanceAllocation, Customer, InventoryReservation, Order, OrderItem, PaymentPlan, Quote, Shipment
 from crm.money import CURRENT_AMOUNT_CALCULATION_VERSION
 from crm.services.finance import ensure_default_payment_plans
 from crm.services.fulfillment import allocate_order, order_item_metrics
@@ -194,13 +194,6 @@ def cancel_order(order, reason):
         raise ValidationError("当前订单状态不能取消。")
     if Shipment.objects.filter(order=order, status="confirmed").exists():
         raise ValidationError("订单已有有效发货记录，不能直接取消。")
-    formal_purchase_statuses = ["ordered", "partial", "completed"]
-    if PurchaseOrder.objects.filter(
-        items__cost_allocations__target_type="order",
-        items__cost_allocations__order=order,
-        status__in=formal_purchase_statuses,
-    ).exists():
-        raise ValidationError("订单已有正式采购记录，不能直接取消。")
     if order.transactions.filter(status="confirmed").exists():
         raise ValidationError("订单已有正式收付款记录，不能直接取消。")
     if AdvanceAllocation.objects.filter(plan__order=order, is_active=True).exists():

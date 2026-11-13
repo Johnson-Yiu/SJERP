@@ -200,7 +200,7 @@ class ContractLifecycleApiTests(TestCase):
         response = self.client.post(f"/api/purchase-orders/{purchase.data['id']}/cancel/", {"reason": "不应取消"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_order_cancel_rejects_formal_purchase_explicitly_allocated_to_order(self):
+    def test_order_cancel_preserves_formal_purchase_explicitly_allocated_to_order(self):
         order = Order.objects.get(pk=self.create_draft(order_no="SO-LIFECYCLE-ALLOCATION").data["id"])
         self.assertEqual(self.client.post(f"/api/orders/{order.id}/confirm/", {}, format="json").status_code, status.HTTP_200_OK)
         supplier = Supplier.objects.create(code="LA", name="Lifecycle Allocation Supplier")
@@ -213,10 +213,14 @@ class ContractLifecycleApiTests(TestCase):
         }, format="json")
         self.assertEqual(allocation.status_code, status.HTTP_200_OK, allocation.data)
 
-        cancelled = self.client.post(f"/api/orders/{order.id}/cancel/", {"reason": "不应取消"}, format="json")
-        self.assertEqual(cancelled.status_code, status.HTTP_400_BAD_REQUEST)
+        original_purchase_status = purchase.status
+        cancelled = self.client.post(f"/api/orders/{order.id}/cancel/", {"reason": "客户停止履约，采购另行处理"}, format="json")
+        self.assertEqual(cancelled.status_code, status.HTTP_200_OK, cancelled.data)
         order.refresh_from_db()
-        self.assertEqual(order.status, "confirmed")
+        purchase.refresh_from_db()
+        self.assertEqual(order.status, "cancelled")
+        self.assertEqual(purchase.status, original_purchase_status)
+        self.assertTrue(purchase_item.cost_allocations.filter(order=order, quantity=2).exists())
 
     def test_purchase_with_cost_allocation_can_cancel_without_irreversible_history(self):
         order = Order.objects.create(order_no="SO-LIFECYCLE-COST", customer=self.customer, order_date=self.day, status="confirmed", currency="USD")

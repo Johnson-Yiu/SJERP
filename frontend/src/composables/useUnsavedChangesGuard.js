@@ -80,5 +80,5 @@ export function useUnsavedChangesGuard({ data, enabled = () => true, busy = () =
   workspace?.guards.add(scopedGuard)
   scope?.children.add(scopedGuard)
   onBeforeUnmount(() => { workspace?.guards.delete(scopedGuard); scope?.children.delete(scopedGuard); stop(); removeRouteGuard?.(); removeAfterGuard?.(); if (typeof window !== 'undefined') window.removeEventListener('beforeunload', beforeUnload) })
-  return { dirty, markClean, setBaseline: markClean, requestClose }
+  return { dirty, markClean, setBaseline: markClean, requestClose, confirmLeave }
 }

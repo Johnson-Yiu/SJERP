@@ -10,15 +10,19 @@ test.beforeEach(({ browserName }) => {
   expect(browserName).toBe('chromium')
 })
 
-test('order deletion locks the row until a failed request can be retried', async ({ page, browser }, testInfo) => {
+let sharedFixture
+for (const [width, height] of [[1366, 768], [1920, 1080]]) {
+test('order deletion locks the row until a failed request can be retried ' + width, async ({ page, browser }, testInfo) => {
   const root = new URL('../../', import.meta.url)
-  const fixture = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [
+  const fixture = width === 1366 ? JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [
     fileURLToPath(new URL('docs/uat-evidence/sales-state-closeout-05/seed.py', root)),
-  ], { cwd: fileURLToPath(new URL('backend/', root)), encoding: 'utf8' }))
-  const id = fixture.identifiers.draft
-  await page.setViewportSize({ width: 1366, height: 768 })
-  await page.goto('/orders?search=' + fixture.orders.draft)
-  const remove = page.getByRole('button', { name: '删除 ' + fixture.orders.draft })
+  ], { cwd: fileURLToPath(new URL('backend/', root)), encoding: 'utf8' })) : sharedFixture
+  sharedFixture = fixture
+  const id = width === 1366 ? fixture.identifiers.draft : fixture.confirmOrders[0]
+  const number = width === 1366 ? fixture.orders.draft : 'S5-CONFIRM-1'
+  await page.setViewportSize({ width, height })
+  await page.goto('/orders?search=' + number)
+  const remove = page.getByRole('button', { name: '删除 ' + number })
   const confirm = page.getByTestId('dialog-confirm')
   let requests = 0
   let release
@@ -34,7 +38,8 @@ test('order deletion locks the row until a failed request can be retried', async
   await expect.poll(() => requests).toBe(1)
   await expect(remove).toBeDisabled()
   const box = await remove.boundingBox()
-  expect(box.y + box.height).toBeLessThan(768)
+  expect(box.y + box.height).toBeLessThan(height)
+  expect(box.x + box.width).toBeLessThanOrEqual(width)
   await page.mouse.dblclick(box.x + box.width / 2, box.y + box.height / 2)
   expect(requests).toBe(1)
   const screenshot = await page.screenshot({ path: testInfo.outputPath('delete-pending-1366.png') })
@@ -47,12 +52,12 @@ test('order deletion locks the row until a failed request can be retried', async
   expect(requests).toBe(2)
   expect((await page.request.get('/api/orders/' + id + '/')).status()).toBe(404)
   await writeFile(testInfo.outputPath('delete.json'), JSON.stringify({
-    browser: browser.version(), id, requests, width: 1366, height: 768,
+    browser: browser.version(), id, requests, width, height,
     screenshotSha256: createHash('sha256').update(screenshot).digest('hex'),
   }, null, 2))
 })
 
-test('first bank-event load displays progress and supports retry', async ({ page }, testInfo) => {
+test('first bank-event load displays progress and supports retry ' + width, async ({ page }, testInfo) => {
   let release
   const wait = new Promise(resolve => { release = resolve })
   let requests = 0
@@ -61,7 +66,7 @@ test('first bank-event load displays progress and supports retry', async ({ page
     await wait
     await route.fulfill({ status: 503, json: { detail: '合成故障' } })
   })
-  await page.setViewportSize({ width: 1366, height: 768 })
+  await page.setViewportSize({ width, height })
   await page.goto('/rmb-cash-events')
   await expect(page.getByText('正在加载…', { exact: true })).toBeVisible()
   await page.screenshot({ path: testInfo.outputPath('bank-events-loading-1366.png') })
@@ -75,3 +80,5 @@ test('first bank-event load displays progress and supports retry', async ({ page
   expect(requests).toBe(7)
   await page.screenshot({ path: testInfo.outputPath('bank-events-recovered-1366.png') })
 })
+
+}

@@ -3,6 +3,10 @@
 > 2026-11-11 起恢复 GitHub Actions。2026-11-05 的暂停约定已失效。新提交正常推送，等待适用工作流结束并处理失败；认证核对最终源码 SHA。下方暂停、未运行及失败均为历史记录。
 > H2、E1-R2、E2-R2、H3 和 U3 主体已集成。U3 末两提交的测试与证据由 UI-DELIVERY-CLOSEOUT-04 补接。冻结源码 `7e99a5d394ddc0d96a3af04b74686307f754ca08` 的三个主 CI job 和三个 Linux 运维 job 均通过。[逐例验收、跳过、导出和历史分支补测清单](uat-evidence/ci-resume-certification-01/README.md)
 
+## SJERP-UI-PRELAUNCH-POLISH-01
+
+P3-01 至 P3-04 已纳入[上线后优化台账](uat-evidence/ui-prelaunch-polish-01/postlaunch-backlog.md)，状态均为后置／未实施。P1、P2 的实际验证进度见[逐项记录](uat-evidence/ui-prelaunch-polish-01/acceptance.md)。
+
 ## UI-DELIVERY-CLOSEOUT-04
 
 | Issue | 状态 | 证据与下一步 |

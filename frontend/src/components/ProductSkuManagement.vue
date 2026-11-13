@@ -2,6 +2,7 @@
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
 import { computed, ref, watch } from 'vue'
+import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 
 import { confirmDialog } from '../dialogs'
 import SupplierBatchBindingDrawer from './SupplierBatchBindingDrawer.vue'
@@ -21,6 +22,9 @@ const selectedActive = computed(() => skuRows.value.filter(s => selectedIds.valu
 const selectedInactive = computed(() => skuRows.value.filter(s => selectedIds.value.includes(s.id) && !s.active))
 const allSelected = computed(() => candidatePoolRows.value.length > 0 && candidatePoolRows.value.every(s => selectedIds.value.includes(s.sku_id)))
 const identityReviewOpen = ref(false), identityReviewSaving = ref(false), identityReviewError = ref('')
+const ruleGuard = useUnsavedChangesGuard({ data: () => ({ rule: rule.value, filters: filters.value, traits: traitText.value }), enabled: () => Boolean(rule.value), busy: () => busy.value || identityReviewSaving.value })
+const planGuard = useUnsavedChangesGuard({ data: () => draft.value, enabled: () => planOpen.value, routeGuard: false, busy: () => busy.value || identityReviewSaving.value })
+let loadSequence = 0, loadedProductId = null
 watch(() => props.initialTab, value => { rulesOpen.value = value === 'rules'; void load() })
 const clone = value => JSON.parse(JSON.stringify(value))
 const apiErrorMessage = error => error.response?.data?.detail || Object.values(error.response?.data || {}).flat().join(' ') || error.message || '操作失败。'
@@ -55,18 +59,20 @@ function parseTraits(text) {
 async function run(action) {
   if (busy.value) return
   busy.value = true; error.value = ''; notice.value = ''
-  try { await action() } catch (e) { error.value = e.message } finally { busy.value = false }
+  try { await action() } catch (e) { error.value = apiErrorMessage(e) } finally { busy.value = false }
 }
 async function load() {
   const id = props.productId
-  loading.value = true; error.value = ''
+  const sequence = ++loadSequence
+  loading.value = loadedProductId !== id; error.value = ''
   try {
     const [a,b,c,d,e] = await Promise.all([api.get(`/products/${id}/sku-plan/`), props.initialTab === 'rules' ? listAll('/supplier-capabilities/', { params: { product: id } }) : Promise.resolve([]), props.initialTab === 'rules' ? listAll('/suppliers/') : Promise.resolve([]), api.get(`/products/${id}/supplier-candidate-pool/`), listAll('/skus/', { params: { product: id, include_inactive: '1' } })] )
-    if (id !== props.productId) return
+    if (id !== props.productId || sequence !== loadSequence) return
+    loadedProductId = id
     state.value = a.data; rules.value = b; suppliers.value = c; candidatePool.value = d.data
     skuRows.value = e
-    draft.value = a.data.plans.find(p => p.status === 'draft') || null
-  } catch (e) { error.value = e.message } finally { loading.value = false }
+    if (!planOpen.value) draft.value = a.data.plans.find(p => p.status === 'draft') || null
+  } catch (e) { if (sequence === loadSequence) error.value = e.message } finally { if (sequence === loadSequence) loading.value = false }
 }
 function openSkuRecord(row) { emit('drill', { id: row.sku_id || row.id, _target_entity: 'skus' }) }
 function selectAll(checked) { selectedIds.value = checked ? candidatePoolRows.value.map(row => row.sku_id) : [] }
@@ -92,12 +98,14 @@ watch(poolParameterKey, () => { poolParameterValue.value = '' })
 watch(parameterFilters, () => { selectedIds.value = [] }, { deep: true })
 async function bindingSaved() { bindingOpen.value = false; selectedIds.value = []; await load(); emit('changed'); notice.value = '候选供应商已保存。' }
 function clearPoolFilters() { parameterFilters.value = {}; poolSearch.value = ''; poolSource.value = ''; poolParameterKey.value = ''; poolParameterValue.value = '' }
-function editRule(row = null) {
+async function editRule(row = null) {
+  if (!await ruleGuard.requestClose(() => {})) return
   rulesOpen.value = true
   rule.value = row ? clone(row) : { product: Number(props.productId), supplier: '', name: '', is_active: true }
   filters.value = Object.fromEntries(Object.entries(row?.filters || {}).map(([k,v]) => [k, v.join('、')]))
   traitText.value = Object.entries(row?.characteristics || {}).map(([k,v]) => `${k}：${v}`).join('\n')
   preview.value = null
+  ruleGuard.markClean()
 }
 function rulePayload() {
   return { product: Number(props.productId), supplier: Number(rule.value.supplier), name: rule.value.name,
@@ -109,10 +117,17 @@ const saveRule = () => run(async () => {
   const payload = rulePayload()
   if (rule.value.id) await api.patch(`/supplier-capabilities/${rule.value.id}/`, payload)
   else await api.post('/supplier-capabilities/', payload)
-  rule.value = null; await load(); notice.value = '供应能力已保存，候选名单按规则动态匹配。'
+  ruleGuard.markClean(); rule.value = null; await load(); notice.value = '供应能力已保存，候选名单按规则动态匹配。'
 })
 const toggleRule = row => run(async () => { await api.patch(`/supplier-capabilities/${row.id}/`, { is_active: !row.is_active }); await load() })
-const startDraft = () => run(async () => { draft.value = (await api.post(`/products/${props.productId}/sku-plan/`)).data; planOpen.value = true })
+const startDraft = async () => {
+  if (!await planGuard.confirmLeave()) return
+  await run(async () => {
+  draft.value = (await api.post(`/products/${props.productId}/sku-plan/`)).data
+  planOpen.value = true
+  planGuard.markClean()
+  })
+}
 function addDefinition() {
   draft.value.definitions.push({ category_id: 0, key: `attr_${Date.now()}`, name: '', unit: '', default_value: '', required: false, uppercase: false, include_in_sku: true, include_in_sales_model: false })
 }
@@ -132,6 +147,7 @@ function removeVariant(sku, index) {
 }
 async function saveDraft() {
   draft.value = (await api.patch(`/products/${props.productId}/sku-plan/`, draft.value)).data
+  planGuard.markClean()
 }
 const analyzeDraft = () => run(async () => {
   await saveDraft()
@@ -151,7 +167,7 @@ function diffSegments(oldValue, newValue, side = 'new') {
 async function publishPlan() {
   await api.post(`/products/${props.productId}/sku-plan/publish/`, { updated_at: draft.value.updated_at })
   identityReviewOpen.value = false; identityReviewError.value = ''
-  impact.value = null; planOpen.value = false; await load(); emit('changed'); notice.value = '方案已发布；旧单据和库存流水保留原关联，当前 SKU 已按新规则刷新。'
+  planGuard.markClean(); impact.value = null; planOpen.value = false; await load(); emit('changed'); notice.value = '方案已发布；旧单据和库存流水保留原关联，当前 SKU 已按新规则刷新。'
 }
 const publishDraft = () => run(async () => {
   if (!impact.value || draftText.value !== JSON.stringify(draft.value)) throw new Error('方案已修改，请重新分析。')
@@ -169,9 +185,13 @@ async function confirmIdentityPublish() {
   try { await publishPlan() } catch (e) { identityReviewError.value = apiErrorMessage(e); error.value = apiErrorMessage(e) } finally { identityReviewSaving.value = false }
 }
 function cancelIdentityPublish() { identityReviewOpen.value = false; identityReviewError.value = '' }
-const discardDraft = () => run(async () => {
-  await api.delete(`/products/${props.productId}/sku-plan/`); draft.value = null; impact.value = null; planOpen.value = false
-})
+const discardDraft = async () => {
+  if (!await planGuard.confirmLeave()) return
+  await run(async () => {
+    await api.delete(`/products/${props.productId}/sku-plan/`)
+    planGuard.markClean(); draft.value = null; impact.value = null; planOpen.value = false
+  })
+}
 const canPublish = computed(() => impact.value && !impact.value.stale && !impact.value.missing.length && draftText.value === JSON.stringify(draft.value))
 watch(() => props.refreshKey, () => { void load() })
   watch(() => props.productId, () => { bindingOpen.value = false; lifecycleResult.value = null; selectedIds.value = []; parameterFilters.value = {}; rule.value = null; impact.value = null; planOpen.value = false; identityReviewOpen.value = false; identityReviewError.value = ''; void load() }, { immediate: true })
@@ -222,17 +242,17 @@ watch(() => props.refreshKey, () => { void load() })
    <p class="help">同一参数内任一取值匹配即可，不同参数须同时满足。留空表示不限。规则只推荐候选，实际供应商由采购单确定。</p>
    <div v-for="row in rules" :key="row.id" class="rule-row"><div><strong>{{ row.name }}</strong> · {{ row.supplier_name }} <small>{{ row.is_active ? '启用' : '停用' }}</small><p>{{ Object.entries(row.filters).map(([k,v]) => `${state.definitions.find(d=>keyFor(d)===k)?.name || k}：${v.join(' / ')}`).join('；') || '本产品全部 SKU' }}</p><p>{{ traitString(row.characteristics) }}</p></div><div class="actions"><button type="button" @click="editRule(row)">编辑</button><button type="button" :disabled="busy" @click="toggleRule(row)">{{ row.is_active ? '停用' : '启用' }}</button></div></div>
    <p v-if="!rules.length" class="help">尚无规则。先选择供应商，再填写它能做的参数范围。</p>
-   <form v-if="rule" class="editor" @submit.prevent="saveRule">
+   <form v-if="rule" :inert="busy" class="editor" @submit.prevent="saveRule">
     <h4>{{ rule.id ? '编辑供应能力' : '新增供应能力' }}</h4><div class="fields"><label>规则名称<input v-model.trim="rule.name" required placeholder="例如：A厂常规灯带" /></label><label>供应商<select v-model="rule.supplier" required><option value="">请选择</option><option v-for="s in suppliers" :key="s.id" :value="s.id">{{ s.name }}</option></select></label><label v-for="d in state.definitions" :key="keyFor(d)">{{ d.name }}<input v-model="filters[keyFor(d)]" placeholder="不限；多个值用顿号隔开" /></label></div>
     <label>共同供货特点<textarea v-model="traitText" rows="4" placeholder="PCB：白色&#10;背胶：3M&#10;包装：10米/卷" /></label><p class="help">共同特点作为供货档案初始值，已有档案和历史采购不会随规则更新。</p>
-    <div class="actions"><button type="button" :disabled="busy" @click="previewRule">预览匹配</button><button type="submit" :disabled="busy" class="primary">保存规则</button><button type="button" @click="rule=null">取消</button></div><p v-if="preview">匹配 {{ preview.length }} 个现有 SKU：{{ preview.slice(0,15).map(s=>s.name).join('、') }}{{ preview.length>15 ? '…' : '' }}</p>
+    <div class="actions"><button type="button" :disabled="busy" @click="previewRule">预览匹配</button><button type="submit" :disabled="busy" class="primary">保存规则</button><button type="button" :disabled="busy" @click="ruleGuard.requestClose(() => rule=null)">取消</button></div><p v-if="preview">匹配 {{ preview.length }} 个现有 SKU：{{ preview.slice(0,15).map(s=>s.name).join('、') }}{{ preview.length>15 ? '…' : '' }}</p>
    </form>
    </details>
   </template>
   <details v-if="!loading && initialTab !== 'rules'" class="parameter-plan-panel"><summary>参数变更与历史方案 <span>调整已有 SKU 时，先分析影响再确认发布</span></summary>
    <p class="help">新增参数先补值；不再区分商品的参数改为普通属性。需要拆分时只添加实际组合；出现相同组合时合并为新 SKU。旧单据、库存及供货档案保留在原 SKU。</p>
    <div class="actions"><button type="button" class="primary" :disabled="busy" @click="startDraft">{{ draft ? `继续 V${draft.version} 草稿` : '创建参数方案草稿' }}</button><span>已发布：{{ state.plans.filter(p=>p.status==='published').map(p=>`V${p.version}`).join('、') || '尚无' }}</span></div>
-   <div v-if="draft && planOpen" class="editor">
+   <div v-if="draft && planOpen" :inert="busy || identityReviewSaving" class="editor">
     <div class="line"><h4>V{{ draft.version }} 草稿</h4><button type="button" @click="addDefinition">＋ 新增参数</button></div>
     <div class="scroll"><table><thead><tr><th>参数名称</th><th>单位</th><th>补充默认值</th><th>区分 SKU</th><th>参与型号</th><th>必填</th></tr></thead><tbody><tr v-for="d in draft.definitions" :key="keyFor(d)"><td><input v-model="d.name" aria-label="参数名称" /></td><td><input v-model="d.unit" aria-label="单位" /></td><td><input v-model="d.default_value" placeholder="仅补充空值" /></td><td><input type="checkbox" v-model="d.include_in_sku" /></td><td><input type="checkbox" v-model="d.include_in_sales_model" /></td><td><input type="checkbox" v-model="d.required" /></td></tr></tbody></table></div>
     <p class="help">取消“区分 SKU”和“参与型号”即可降为普通属性，原取值仍保留。默认值只用于空缺参数，已有值不会被覆盖。</p>
@@ -245,7 +265,7 @@ watch(() => props.refreshKey, () => { void load() })
    <details v-if="state.relationships.length"><summary>历史 SKU 去向（{{ state.relationships.length }} 条）</summary><p v-for="(r,i) in state.relationships" :key="i">{{ r.sku }} → {{ r.successors__target__sku }}</p></details>
   </details>
  </section>
-<SupplierBatchBindingDrawer v-if="bindingOpen" :product-id="productId" :sku-ids="selectedActive.map(s => s.id)" @close="bindingOpen = false" @saved="bindingSaved" />
+<SupplierBatchBindingDrawer v-if="bindingOpen" parent-guards-route :product-id="productId" :sku-ids="selectedActive.map(s => s.id)" @close="bindingOpen = false" @saved="bindingSaved" />
 </template>
 
 <style scoped>

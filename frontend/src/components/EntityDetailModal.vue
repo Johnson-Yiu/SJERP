@@ -29,7 +29,7 @@ import { useAccessControl } from '../accessControl'
 const props = defineProps({ entity: String, id: [Number, String], refreshKey: { type: Number, default: 0 }, nestedProductDetail: Boolean })
 const emit = defineEmits(['close', 'edit', 'changed'])
 const { can } = useAccessControl()
-const data = ref(null), loading = ref(true), error = ref(''), activeTab = ref(''), stack = ref([])
+const data = ref(null), loading = ref(true), error = ref(''), refreshError = ref(''), activeTab = ref(''), stack = ref([])
 const supplierRecord = ref(null), certificateRecord = ref(null)
 const isSupplierDetail = computed(() => currentEntity.value === 'suppliers')
 const supplierNotes = computed(() => data.value?.info?.find(item => item[0] === '备注')?.[1] || '')
@@ -162,8 +162,9 @@ async function refreshSkuManagement() {
 let failedDetail
 function retryDetail() { return load(failedDetail?.entity, failedDetail?.id) }
 async function load(entity = currentEntity.value, id = currentId.value) {
+  const refreshing = Boolean(data.value && entity === currentEntity.value && id === currentId.value)
   failedDetail = null
-  loading.value = true; error.value = ''
+  loading.value = !refreshing; error.value = ''; refreshError.value = ''
   try {
     const [contextResponse, movementResponse, , supplierResponse, certificateResponse] = await Promise.all([
       api.get(`/context/${entity}/${id}/`, { params: entity === 'products' && showInactiveSkus.value ? { include_inactive: '1' } : {} }),
@@ -177,11 +178,14 @@ async function load(entity = currentEntity.value, id = currentId.value) {
     supplierRecord.value = supplierResponse?.data || null
     certificateRecord.value = certificateResponse?.data || null
     currentEntity.value = entity; currentId.value = id
-    activeTab.value = entity === 'products' ? '__overview' : data.value.sections[0]?.key || ''
-    restoreCustomerTab()
+    if (!refreshing) {
+      activeTab.value = entity === 'products' ? '__overview' : data.value.sections[0]?.key || ''
+      restoreCustomerTab()
+    }
   } catch (e) {
     failedDetail = { entity, id }
-    error.value = apiErrorMessage(e)
+    if (refreshing) refreshError.value = apiErrorMessage(e)
+    else error.value = apiErrorMessage(e)
   } finally { loading.value = false }
 }
 async function loadOperationLogs(entity = currentEntity.value, id = currentId.value) {
@@ -394,8 +398,8 @@ watch(() => [props.entity, props.id], () => { stack.value = []; currentEntity.va
 watch(() => props.refreshKey, () => load())
 watch(() => route.query.tab, restoreCustomerTab)
 watch(activeTab, key => {
-  if (isProduct.value && isRoot.value && route.path === '/products' && !loading.value && route.query.tab !== key) {
-    void router.replace({ path: route.path, query: { ...route.query, tab: key }, hash: route.hash })
+  if (isProduct.value && isRoot.value && route.path === '/products' && !loading.value && route.query.tab !== (key === '__operation_logs' ? 'operation_logs' : key)) {
+    void router.replace({ path: route.path, query: { ...route.query, tab: key === '__operation_logs' ? 'operation_logs' : key }, hash: route.hash })
   }
 })
 watch(activeTab, () => { selectedSkuIds.value = []; skuQuery.value = ''; skuMultiSelect.value = false })
@@ -414,6 +418,7 @@ watch(() => data.value?.title, title => { if (!props.nestedProductDetail && work
       <button v-if="!isProduct && (loading || error)" class="btn btn-secondary supplier-state-close" @click="requestClose">关闭详情</button><div v-if="loading" role="status" class="detail-loading"><div class="spinner" /><span>正在整理关联数据...</span></div>
       <div v-else-if="error" role="alert" class="detail-error"><strong>详情加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="retryDetail">重试</button></div>
       <template v-else-if="data">
+        <p v-if="refreshError" role="alert">刷新失败：{{ refreshError }} <button type="button" @click="retryDetail">重试</button></p>
         <template v-if="isFollowUpDetail">
           <header class="follow-up-hero">
             <div class="follow-up-hero-nav">

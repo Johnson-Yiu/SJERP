@@ -7,10 +7,10 @@ import { computed, onMounted, ref } from 'vue'
 import { useUnsavedChangesGuard } from '../composables/useUnsavedChangesGuard'
 import { apiErrorMessage } from '../utils/apiErrors'
 
-const props = defineProps({ productId: [Number, String], skuIds: Array })
+const props = defineProps({ productId: [Number, String], skuIds: Array, parentGuardsRoute: Boolean })
 const emit = defineEmits(['close', 'saved'])
 const suppliers = ref([]), selected = ref([]), settings = ref({}), search = ref(''), loading = ref(true), busy = ref(false), error = ref('')
-const guard=useUnsavedChangesGuard({data:()=>({selected:selected.value,settings:settings.value}),enabled:()=>!loading.value,busy:()=>busy.value})
+const guard=useUnsavedChangesGuard({data:()=>({selected:selected.value,settings:settings.value}),enabled:()=>!loading.value,routeGuard:!props.parentGuardsRoute,busy:()=>busy.value})
 const requestClose=()=>guard.requestClose(()=>emit('close'))
 const showAll = ref(false)
 const visible = computed(() => suppliers.value.filter(s => (showAll.value || s.category_match) && `${s.name} ${s.code} ${(s.supply_category_names || []).join(' ')}`.toLowerCase().includes(search.value.trim().toLowerCase())))

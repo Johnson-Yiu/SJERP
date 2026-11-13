@@ -57,7 +57,7 @@ const packagingOverrides = reactive({})
 const packingOpen = ref(false), packagingSku = ref(null), packagingSaving = ref(false)
 const packagingForm = reactive({ template: '', qty_per_carton: '', unit_net_weight: '' })
 const packagingGuard = useUnsavedChangesGuard({ data: () => packagingForm, enabled: () => Boolean(packagingSku.value), routeGuard: false, scope: editorScope })
-const requestPackagingClose = () => packagingGuard.requestClose(() => { packagingSku.value = null })
+const requestPackagingClose = () => !packagingSaving.value && packagingGuard.requestClose(() => { packagingSku.value = null })
 
 function makeDraft() {
   const quote = props.quote || {}
@@ -208,12 +208,14 @@ const packingProjection = computed(() => {
   })
   return { cartons, missing, warnings, totalPieces: cartons.reduce((sum, row) => sum + row.quantity, 0), totalNet: cartons.reduce((sum, row) => sum + row.net, 0), totalGross: cartons.reduce((sum, row) => sum + row.gross, 0), totalCbm: cartons.reduce((sum, row) => sum + row.cbm, 0) }
 })
-function openPackaging(sku) { const pack = packagingFor(sku); Object.assign(packagingForm, { template: pack.template || '', qty_per_carton: pack.effective_qty_per_carton || '', unit_net_weight: pack.unit_net_weight || '' }); packagingGuard.markClean(); packagingSku.value = sku }
+const packagingError = ref('')
+function openPackaging(sku) { packagingError.value = ''; const pack = packagingFor(sku); Object.assign(packagingForm, { template: pack.template || '', qty_per_carton: pack.effective_qty_per_carton || '', unit_net_weight: pack.unit_net_weight || '' }); packagingGuard.markClean(); packagingSku.value = sku }
 async function savePackaging() {
-  if (!packagingSku.value || !packagingForm.template || Number(packagingForm.qty_per_carton) <= 0 || Number(packagingForm.unit_net_weight) < 0) return
+  if (packagingSaving.value || !packagingSku.value || !packagingForm.template || Number(packagingForm.qty_per_carton) <= 0 || Number(packagingForm.unit_net_weight) < 0) return
+  packagingError.value = ''
   packagingSaving.value = true
   try { const response = await api.put(`/skus/${packagingSku.value.id}/packaging/`, { packaging_template: Number(packagingForm.template), qty_per_carton_override: Number(packagingForm.qty_per_carton), unit_net_weight: Number(packagingForm.unit_net_weight) }); packagingOverrides[packagingSku.value.id] = response.data.effective; packagingGuard.markClean(); packagingSku.value = null; packingOpen.value = true }
-  catch (error) { errorMessage.value = `保存 ${packagingSku.value.sku} 的默认包装失败：${error.message}` }
+  catch (error) { packagingError.value = `默认包装保存失败：${error.message}` }
   finally { packagingSaving.value = false }
 }
 function syncSelectedSkus(ids) {
@@ -439,13 +441,14 @@ onMounted(async () => { if (props.mode === 'create' && draft.customer) await sel
       </div>
       <div class="modal-foot quote-editor-actions"><button type="button" class="btn btn-secondary quote-action-cancel" @click="requestClose">取消</button><button v-if="!savedQuote" type="button" class="btn btn-secondary quote-action-preview" @click="openPreview"><Eye :size="16" /> 预览报价单</button><button v-if="!savedQuote" type="button" class="btn btn-primary quote-action-save" :disabled="saving" @click="save(false)"><Save :size="16" /> {{ saving ? '保存中...' : '保存报价' }}</button><button v-if="!savedQuote && can('quotes', 'export')" type="button" class="btn btn-secondary quote-action-save-export" :disabled="saving" @click="save(true)"><Save :size="16" /> {{ saving ? '保存中...' : '保存并导出 Excel' }}</button></div>
     </form>
-    <div v-if="packagingSku" class="modal-backdrop packaging-config-backdrop"><form class="modal packaging-config-modal" @submit.prevent="savePackaging"><div class="modal-head"><div><h3>补充 SKU 默认包装</h3><small>{{ packagingSku.sku }} · 保存后将作为该 SKU 的默认包装配置</small></div><button type="button" class="mini-btn" @click="requestPackagingClose"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>包装模板 *</label><select v-model="packagingForm.template" required><option value="">请选择包装模板</option><option v-for="template in packagingTemplates" :key="template.id" :value="template.id">{{ template.name }}<template v-if="template.supplier_name"> · {{ template.supplier_name }}</template></option></select></div><div class="field"><label>装箱数 (pcs) *</label><input v-model="packagingForm.qty_per_carton" type="number" min="0.01" step="0.01" required /></div><div class="field"><label>单件净重 (kg) *</label><input v-model="packagingForm.unit_net_weight" type="number" min="0" step="0.001" required /></div></div></div><div class="modal-foot"><button type="button" class="btn btn-secondary" @click="requestPackagingClose">取消</button><button class="btn btn-primary" :disabled="packagingSaving"><PackageCheck :size="15" /> {{ packagingSaving ? '保存中...' : '保存默认包装' }}</button></div></form></div>
+    <div v-if="packagingSku" class="modal-backdrop packaging-config-backdrop"><form class="modal packaging-config-modal" @submit.prevent="savePackaging"><div class="modal-head"><div><h3>补充 SKU 默认包装</h3><small>{{ packagingSku.sku }} · 保存后将作为该 SKU 的默认包装配置</small></div><button type="button" class="mini-btn" :disabled="packagingSaving" @click="requestPackagingClose"><X :size="17" /></button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>包装模板 *</label><select v-model="packagingForm.template" required><option value="">请选择包装模板</option><option v-for="template in packagingTemplates" :key="template.id" :value="template.id">{{ template.name }}<template v-if="template.supplier_name"> · {{ template.supplier_name }}</template></option></select></div><div class="field"><label>装箱数 (pcs) *</label><input v-model="packagingForm.qty_per_carton" type="number" min="0.01" step="0.01" required /></div><div class="field"><label>单件净重 (kg) *</label><input v-model="packagingForm.unit_net_weight" type="number" min="0" step="0.001" required /></div></div></div><div class="modal-foot"><p v-if="packagingError" class="packaging-save-error" role="alert">{{ packagingError }}</p><button type="button" class="btn btn-secondary" :disabled="packagingSaving" @click="requestPackagingClose">取消</button><button class="btn btn-primary" :disabled="packagingSaving"><PackageCheck :size="15" /> {{ packagingSaving ? '保存中...' : '保存默认包装' }}</button></div></form></div>
     <QuotePreviewModal v-if="previewOpen" :draft="previewDraft" @close="previewOpen = false" />
      <QuoteRiskNotice v-if="riskNoticeOpen" :risks="riskRows" :risk-check-unavailable="riskCheckUnavailable" @cancel="cancelRiskExport" @continue="continueRiskExport" />
   </div>
 </template>
 
 <style scoped>
+.packaging-config-modal .modal-foot{flex-wrap:wrap}.packaging-save-error{flex:0 0 100%;margin:0;color:#b42318;overflow-wrap:anywhere}
 .quote-editor-backdrop{z-index:70;grid-template-columns:minmax(0,1fr)}
 .quote-editor-modal,.quote-editor-modal .modal-body{min-width:0}
 .quote-editor-modal fieldset > .form-grid:first-child{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.revision-summary textarea{min-height:64px}@media(max-width:850px){.quote-editor-modal fieldset > .form-grid:first-child{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.quote-editor-modal fieldset > .form-grid:first-child{grid-template-columns:1fr}}

@@ -13,6 +13,7 @@ const draft = ref(null), impact = ref(null)
 const candidatePool = ref({ rows: [], parameter_options: [], sku_total: 0, with_candidates: 0, coverage_rate: 0 }), poolSearch = ref(''), poolSource = ref(''), poolParameterKey = ref(''), poolParameterValue = ref('')
 const rule = ref(null), preview = ref(null), filters = ref({}), traitText = ref(''), skuSearch = ref('')
 const draftText = ref(''), planOpen = ref(false)
+const lifecycleResult = ref(null)
 const skuRows = ref([]), showInactive = ref(false), selectedIds = ref([])
 const rulesOpen = ref(props.initialTab === 'rules')
 const bindingOpen = ref(false), parameterFilters = ref({})
@@ -73,11 +74,17 @@ async function setSelectedActive(active) {
   const rows = active ? selectedInactive.value : selectedActive.value
   if (!rows.length || !await confirmDialog({ title: `确认${active ? '重新启用' : '停用'} SKU`, message: `确认${active ? '重新启用' : '停用'} ${rows.length} 个 SKU？历史单据不受影响。`, confirmText: `确认${active ? '启用' : '停用'}`, danger: !active })) return
   await run(async () => {
+    const productId = props.productId
+    const action = active ? '启用' : '停用'
     const results = await Promise.allSettled(rows.map(row => api.patch(`/skus/${row.id}/`, { active })))
-    const failed = results.filter(result => result.status === 'rejected')
-    selectedIds.value = []; await load(); emit('changed')
-    notice.value = `成功${active ? '启用' : '停用'} ${results.length - failed.length} 个 SKU。`
-    if (failed.length) error.value = `${failed.length} 个操作失败：${failed.map(result => result.reason.message).join('；')}`
+    if (props.productId !== productId) return
+    const failures = results.flatMap((result, index) => result.status === 'rejected'
+      ? [{ id: rows[index].id, code: rows[index].sku_code || rows[index].sku, message: apiErrorMessage(result.reason) }]
+      : [])
+    lifecycleResult.value = { action, succeeded: results.length - failures.length, failures }
+    selectedIds.value = failures.map(item => item.id)
+    await load()
+    if (lifecycleResult.value?.succeeded) emit('changed')
   })
 }
 watch([poolSearch, poolSource, poolParameterKey, poolParameterValue, showInactive], () => { selectedIds.value = [] })
@@ -167,12 +174,17 @@ const discardDraft = () => run(async () => {
 })
 const canPublish = computed(() => impact.value && !impact.value.stale && !impact.value.missing.length && draftText.value === JSON.stringify(draft.value))
 watch(() => props.refreshKey, () => { void load() })
-  watch(() => props.productId, () => { bindingOpen.value = false; selectedIds.value = []; parameterFilters.value = {}; rule.value = null; impact.value = null; planOpen.value = false; identityReviewOpen.value = false; identityReviewError.value = ''; void load() }, { immediate: true })
+  watch(() => props.productId, () => { bindingOpen.value = false; lifecycleResult.value = null; selectedIds.value = []; parameterFilters.value = {}; rule.value = null; impact.value = null; planOpen.value = false; identityReviewOpen.value = false; identityReviewError.value = ''; void load() }, { immediate: true })
 </script>
 
 <template>
  <section class="sku-management" aria-label="SKU 参数与供应商管理">
   <div class="management-head"><div><h3>{{ initialTab === 'rules' ? '供应能力规则' : 'SKU 档案与供应商分配' }}</h3><p>一份 SKU 清单管理规格与供货候选；实际采购供应商在销售订单或采购单中确认。</p></div></div>
+  <div v-if="lifecycleResult?.failures.length" class="error" role="alert">
+    <strong>{{ lifecycleResult.action }}结果：成功 {{ lifecycleResult.succeeded }} 项，失败 {{ lifecycleResult.failures.length }} 项</strong>
+    <ul><li v-for="item in lifecycleResult.failures" :key="item.id">{{ item.code }}：{{ item.message }}</li></ul>
+  </div>
+  <p v-else-if="lifecycleResult" class="notice" role="status">已{{ lifecycleResult.action }} {{ lifecycleResult.succeeded }} 项 SKU。</p>
   <p v-if="error" role="alert" class="error">{{ error }}</p><p v-if="notice" role="status" class="notice">{{ notice }}</p>
   <p v-if="loading">正在加载…</p>
   <template v-if="!loading">

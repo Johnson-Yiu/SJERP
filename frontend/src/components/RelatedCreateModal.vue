@@ -401,7 +401,8 @@ onMounted(init)
               <div class="field"><label>客户 *</label><select v-model="form.customer" required :disabled="isInherited('customer')"><option value="">请选择</option><option v-for="customer in customers" :key="customer.id" :value="customer.id">{{ customer.name }}</option></select></div>
               <div class="field"><label>{{ isOrder ? '订单日期' : '报价日期' }} *</label><SegmentedDateInput :model-value="form[documentCopy.date]" required @update:model-value="setDocumentDate" /></div>
               <div class="field"><label>{{ isOrder ? '预计交期' : '有效期' }}</label><div class="lead-time-input"><input v-model="documentDurationDays" type="number" min="0" step="1" placeholder="天数" :aria-label="isOrder ? '交期天数' : '有效期天数'" @input="setDocumentDurationDays" /><span>天</span><SegmentedDateInput :model-value="form[isOrder ? 'expected_ship_date' : 'valid_until']" @update:model-value="setDocumentTargetDate" /></div></div>
-              <div class="field"><label>状态 *</label><select v-model="form.status"><option v-for="(label, key) in documentCopy.statuses" :key="key" :value="key">{{ label }}</option></select></div>
+              <div v-if="isOrder" class="field"><label for="related-order-status">订单状态</label><input id="related-order-status" value="草稿" class="readonly-input" readonly /></div>
+              <div v-else class="field"><label>状态 *</label><select v-model="form.status"><option v-for="(label, key) in documentCopy.statuses" :key="key" :value="key">{{ label }}</option></select></div>
               <div v-if="isOrder" class="field"><label>来源报价</label><select v-model="form.quote" :disabled="isInherited('quote')"><option value="">无</option><option v-for="quote in quotes" :key="quote.id" :value="quote.id">{{ quote.quote_no }}</option></select></div>
               <div v-if="isOrder" class="field tail-policy-field"><label>尾货策略 <button type="button" class="policy-help-trigger" aria-label="查看尾货策略说明" @click="tailPolicyHelpOpen = !tailPolicyHelpOpen">?</button></label><select v-model="form.tail_goods_policy"><option v-for="(label, key) in tailPolicyLabels" :key="key" :value="key">{{ label }}</option></select><div v-if="tailPolicyHelpOpen" class="policy-help" role="note"><strong>不同策略的区别</strong><ul><li><b>整箱优先：</b>尾货自动使用标准箱尺寸、皮重和 CBM。</li><li><b>尾箱待确认：</b>保留尾货箱数并标记待确认，尺寸和 CBM 等待补充。</li><li><b>人工装箱：</b>不自动生成尾货箱，余数作为警告交由人工处理。</li></ul><small>此选择对整张订单统一生效，优先于 SKU 包装模板。</small></div></div>
               <div class="field"><label>币种</label><select v-model="form.currency"><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option></select></div>
@@ -412,9 +413,9 @@ onMounted(init)
             <div class="quick-lines">
               <div v-for="(item, index) in form.items" :key="index" class="quick-line" :class="{ order: isOrder }">
                 <span class="quick-sku"><b>{{ skus.find(sku => sku.id === Number(item.sku))?.display_name_cn || skus.find(sku => sku.id === Number(item.sku))?.product_name || '—' }}</b><small>SKU: {{ skus.find(sku => sku.id === Number(item.sku))?.sku_code || item.sku || '—' }} · Sales Model: {{ skus.find(sku => sku.id === Number(item.sku))?.sales_model || '—' }}</small><TradeUnitPicker :line="item" :sku="skus.find(sku => sku.id === Number(item.sku))" /><button type="button" class="text-btn" @click="form.items.splice(index + 1, 0, { ...item })">增加规格行</button></span>
-                <input v-model="item.quantity" type="number" min="0.01" step="0.01" required />
-                <input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required />
-                <input v-if="isOrder" v-model="item.cost_price" v-money-input type="number" min="0" step="any" />
+                <label class="quick-line-field">数量<input v-model="item.quantity" type="number" min="0.01" step="0.01" required /></label>
+                <label class="quick-line-field">售价（{{ form.currency }}）<input v-model="item.unit_price" v-money-input type="number" min="0" step="any" required /></label>
+                <label v-if="isOrder" class="quick-line-field">成本（{{ form.currency }}）<input v-model="item.cost_price" v-money-input type="number" min="0" step="any" /></label>
                 <span>{{ form.currency }} {{ money(Number(item.quantity) * Number(item.unit_price)) }}</span>
                 <button type="button" :disabled="isInherited('sku') && index === 0" @click="form.items.splice(index, 1)"><MinusCircle :size="17" /></button>
               </div>
@@ -432,7 +433,7 @@ onMounted(init)
           <p v-if="entity === 'follow-ups' && error" class="follow-up-validation" role="alert">{{ error }}</p>
           <button type="button" class="btn btn-secondary" @click="requestClose">取消</button>
           <button v-if="isQuote && error" type="button" class="btn btn-primary" :disabled="loading" @click="init">重新加载</button>
-          <button v-else-if="!isQuote" class="btn btn-primary" :disabled="saving || loading">{{ saving ? '保存中…' : props.entity === 'follow-ups' ? '保存跟进' : '保存' }}</button>
+          <button v-else-if="!isQuote" class="btn btn-primary" :disabled="saving || loading">{{ saving ? '保存中…' : props.entity === 'follow-ups' ? '保存跟进' : isOrder ? '保存草稿' : '保存' }}</button>
         </div>
       </form>
     </div>
@@ -453,12 +454,13 @@ onMounted(init)
 .related-create-modal select:disabled,.related-create-modal input:disabled,.related-create-modal textarea:disabled{background:#f1f5f3;color:#5d756b;cursor:not-allowed}
 .rate-reference{display:inline-flex;align-items:center;gap:5px;margin-left:6px;color:#75867f;font-size:var(--text-caption);font-weight:400}.rate-reference button{border:0;border-bottom:1px solid #76a596;background:transparent;padding:0;color:#26715d;font-size:var(--text-body);cursor:pointer}.rate-reference button:hover{color:#144f40}
 .tail-policy-field{position:relative}.policy-help-trigger{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:4px;border:1px solid #83ab9d;border-radius:50%;background:#f3faf6;color:#26715d;font:700 var(--text-caption)/1 inherit;cursor:pointer}.policy-help-trigger:hover{background:#dff1e8}.policy-help{position:relative;z-index:2;margin-top:8px;padding:10px 12px;border:1px solid #bed8cc;border-radius:8px;background:#f7fcf9;color:#3e5e53;font-size:var(--text-caption);line-height:1.55;box-shadow:0 5px 13px #173f3612}.policy-help strong,.policy-help small{display:block}.policy-help ul{margin:6px 0;padding-left:18px}.policy-help li+li{margin-top:3px}.policy-help small{color:#6c8379}
-@media(max-width:700px){.related-create-modal{width:100%;height:100%;max-height:100%;border-radius:0}.quick-lines{overflow:auto}.quick-line,.quick-line.order{min-width:750px}.quick-totals{flex-wrap:wrap}.related-follow-up-attachment-head{align-items:flex-start;flex-direction:column}.related-follow-up-attachment-head label{width:100%;justify-content:center}.related-follow-up-attachment-list{grid-template-columns:1fr}}
+@media(max-width:700px){.related-create-modal{width:100%;height:100%;max-height:100%;border-radius:0}.quick-lines{overflow:auto}.quick-line.order{grid-template-columns:repeat(2,minmax(0,1fr))}.quick-line.order .quick-sku{grid-column:1/-1}.quick-totals{flex-wrap:wrap}.related-follow-up-attachment-head{align-items:flex-start;flex-direction:column}.related-follow-up-attachment-head label{width:100%;justify-content:center}.related-follow-up-attachment-list{grid-template-columns:1fr}}
 .policy-help{position:absolute;z-index:12;top:48px;left:0;width:min(360px,calc(100vw - 64px));margin:0;box-shadow:0 8px 20px #173f3624}
 .supply-category-options{display:flex;flex-wrap:wrap;gap:10px;padding:10px;max-height:190px;overflow:auto;border:1px solid #dce7e1;border-radius:8px}.supply-category-options label{display:flex;gap:5px;align-items:center}.supply-category-options small{width:100%;color:#71857b}
 </style>
 
 <style scoped>
+.quick-line-field{display:grid;gap:4px;min-width:0;font-size:var(--text-caption)}
 .quick-line>span:not(.quick-sku){text-align:right;font-size:var(--text-body);font-weight:600}
 .quick-sku{min-width:0;text-align:left!important;font-weight:400!important}
 .quick-sku b,.quick-sku small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

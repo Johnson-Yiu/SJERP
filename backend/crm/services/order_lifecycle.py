@@ -199,22 +199,26 @@ def cancel_order(order, reason, *, settle_refund=False):
     if settle_refund:
         from .cash_events import guard_order_cancellation_sources
         from .finance import _writeoff_total
+        from .order_quantity_adjustments import _company_fee_credit
 
         if order.status == "draft" or hasattr(order, "history_continuation"):
             raise ValidationError("该订单须使用原取消或历史接续流程。")
         guard_order_cancellation_sources(order)
         plans = list(order.payment_plans.select_for_update().exclude(status="cancelled"))
         settled = sum((plan.settled_amount for plan in plans), Decimal("0"))
-        if (not plans or settled <= 0 or settled != order.paid_amount
-                or any(plan.direction != "receivable" or _writeoff_total(plan) for plan in plans)
-                or AdvanceAllocation.objects.filter(plan__order=order, is_active=True).exists()
+        cash_paid = order.paid_amount
+        fee_credit = _company_fee_credit(order, plans)
+        reductions = {plan.pk: _writeoff_total(plan) for plan in plans}
+        if (not plans or cash_paid < 0 or settled != cash_paid + fee_credit
+                or any(plan.direction != "receivable" or reductions[plan.pk] < 0
+                       or plan.settled_amount + reductions[plan.pk] > plan.planned_amount for plan in plans)
                 or order.transactions.filter(status="confirmed").exclude(
-                    kind="customer_receipt", plan_id__in=[plan.pk for plan in plans], bank_fee_amount=0,
+                    kind="customer_receipt", plan_id__in=[plan.pk for plan in plans],
                 ).exists()):
-            raise ValidationError("仅支持已按订单计划核销的原币现金收款；请先核对手续费、抵减和其他资金记录。")
+            raise ValidationError("订单现金、手续费或抵减与原计划不一致，请先核对资金来源。")
         for plan in plans:
-            plan.planned_amount = plan.settled_amount
-            plan.status = "settled" if plan.settled_amount else "cancelled"
+            plan.planned_amount = plan.settled_amount + reductions[plan.pk]
+            plan.status = "settled" if plan.planned_amount else "cancelled"
             plan.save(update_fields=["planned_amount", "status", "updated_at"])
         if order.total_amount:
             ContractChangeRequest.objects.create(

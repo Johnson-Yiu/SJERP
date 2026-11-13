@@ -272,6 +272,35 @@ class ContractLifecycleApiTests(TestCase):
             self.assertEqual(order.status, "confirmed")
             self.assertFalse(order.contract_changes.exists())
 
+    def test_cancel_order_with_shared_unconverted_advance_preserves_other_plan(self):
+        from crm.services.finance import allocate_advance
+
+        orders = []
+        for suffix in ("A", "B"):
+            order = Order.objects.get(pk=self.create_draft(order_no=f"SO-ADVANCE-{suffix}").data["id"])
+            self.assertEqual(self.client.post(f"/api/orders/{order.pk}/confirm/").status_code, 200)
+            orders.append(order)
+        source = Transaction.objects.create(
+            transaction_no="SHARED-UNCONVERTED", transaction_date=self.day, customer=self.customer,
+            direction="income", kind="unallocated_advance", status="confirmed", amount=40,
+            currency=orders[0].currency,
+        )
+        for order in orders:
+            allocate_advance(source, order.payment_plans.get(), Decimal("20"))
+        order, other = orders
+        response = self.client.post(f"/api/orders/{order.pk}/cancel/", {
+            "reason": "取消后保留可追溯预收", "settle_refund": True,
+        }, format="json", HTTP_IDEMPOTENCY_KEY="cancel-shared-unconverted")
+        self.assertEqual(response.status_code, 200, response.data)
+        order.refresh_from_db()
+        other.refresh_from_db()
+        self.assertEqual(order.total_amount, 0)
+        self.assertEqual(order.paid_amount, 20)
+        self.assertEqual(other.status, "confirmed")
+        self.assertEqual(other.paid_amount, 20)
+        self.assertEqual(source.allocations.filter(is_active=True).count(), 2)
+        self.assertFalse(Transaction.objects.filter(kind="refund").exists())
+
     def test_purchase_draft_place_cancel_and_guards(self):
         supplier = Supplier.objects.create(code="LC", name="Lifecycle Supplier")
         payload = {

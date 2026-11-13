@@ -6,6 +6,7 @@ on:
       - codex/ci-resume-certification-01
       - codex/ui-delivery-closeout-04
       - codex/small-team-finance-closeout-02
+      - codex/small-team-cancel-refund-01
       - codex/linux-operations-acceptance-20261104
       - codex/r1-prelaunch-consolidation-20261104
 permissions:

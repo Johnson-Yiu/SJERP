@@ -1,0 +1,16 @@
+name: Public delivery increment
+on:
+  push:
+    branches: [codex/small-team-cancel-refund-01]
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s scripts -p test_check_public_delivery.py
+      - run: python scripts/check_public_delivery.py --range 00f7753dfc40b417983335be05135cb76a945ee0..HEAD

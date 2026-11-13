@@ -1262,8 +1262,8 @@ def refund_receipt_cash(source, order, value, reason, evidence_id, user, *, actu
         if plan:
             plan.settled_amount -= applied
             if cancelled_refund:
-                plan.planned_amount = plan.settled_amount
-                plan.status = "settled" if plan.settled_amount else "cancelled"
+                plan.planned_amount = plan.settled_amount + _writeoff_total(plan)
+                plan.status = "settled" if plan.planned_amount else "cancelled"
             else:
                 _sync_plan_status(plan)
             plan.save(update_fields=["settled_amount", "planned_amount", "status", "updated_at"])

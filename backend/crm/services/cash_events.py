@@ -603,6 +603,8 @@ def guard_order_cancellation_sources(order):
     allocated = Q(allocations__plan__order=order, allocations__is_active=True)
     receipts = Transaction.objects.filter(direct | allocated, direction="income",
         kind__in=["customer_receipt", "unallocated_advance"], status="confirmed").distinct()
+    if any(refund_source_uncertainty(receipt) for receipt in receipts):
+        raise ValidationError("原收款或替代来源尚未核实，请核对后办理。")
     source_ids = {member.pk for receipt in receipts for member in family(receipt)}
     if CashSourceAllocation.objects.filter(source_id__in=source_ids, event__status__in=ACTIVE).exists():
         raise ValidationError("本单收款或共享预收已有银行登记，请核对原资金来源后办理。")

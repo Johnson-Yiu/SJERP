@@ -129,7 +129,7 @@ describe('trade finance interactions', () => {
     await flushPromises()
     expect(wrapper.findAll('button').filter(button => button.text() === '作废')).toHaveLength(1)
     await wrapper.findAll('button').find(button => button.text() === '作废').trigger('click')
-    expect(wrapper.text()).toContain('此操作会同步作废拆分流水，并恢复关联收付款计划。')
+    expect(wrapper.text()).toContain('同步作废拆分流水并更新关联计划，已取消订单的应收保持为零。')
     const dialog = wrapper.find('form.dialog')
     await dialog.find('textarea').setValue('收款金额录入错误')
     await dialog.trigger('submit')

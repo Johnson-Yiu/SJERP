@@ -198,6 +198,21 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual((line.cost_price, line.cost_currency_snapshot, line.cost_verification_snapshot),
                          (Decimal("8.1250"), "CNY", "current"))
 
+    def test_cost_inspection_confirms_only_conflict_between_original_records(self):
+        from crm.services.cost_integrity import inspect_cost_integrity
+        self.approve_contracts()
+        create_draft = contracts._create_sales_draft
+        def contradictory_original(*args, **kwargs):
+            order, links = create_draft(*args, **kwargs)
+            links[0]["cost_currency"] = "EUR"
+            return order, links
+        # Deliberately create conflicting original records in this disposable
+        # database; never rewrite the append-only link after creation.
+        with patch.object(contracts, "_create_sales_draft", side_effect=contradictory_original):
+            contracts.execute(self.group.pk, self.maker)
+        report = inspect_cost_integrity()
+        self.assertEqual(report["counts"], {"confirmed_mismatch": 1, "needs_review": 0})
+
     def test_unlink_invalidates_unexecuted_contract_approval(self):
         self.approve_contracts()
         line = self.sources[("销售明细", "SO-HT-1:1")]

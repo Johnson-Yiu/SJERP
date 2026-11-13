@@ -122,6 +122,10 @@ function purchasePartyReference(purchase) {
 }
 function money(value) { return Number(value || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 function date(value) { return value || '—' }
+function cancellationTime(value) {
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })
+}
 function newRequestKey() {
   if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
   return `qty-${Date.now()}-${Math.random().toString(36).slice(2)}`
@@ -582,7 +586,7 @@ watch(() => order.value?.order_no, title => { if (workspace && title) { workspac
       <template v-else>
         <header class="detail-header">
           <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" :disabled="lifecycleSaving || quantityAdjustmentSaving" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn btn-secondary" @click="emit('edit', $event.currentTarget)"><Pencil :size="14" /> 编辑草稿</button><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('confirm', '确认后订单将进入正式履约，并生成库存预留和应收计划。是否继续？')">确认订单</button><button v-if="can('orders', 'update') && order.status === 'confirmed'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('start-production')">开始生产</button><button v-if="can('orders', 'update') && order.status === 'shipped'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('complete')">完成履约</button><button v-if="can('orders', 'update') && ['draft', 'confirmed', 'production'].includes(order.status)" class="btn lifecycle-destructive" :disabled="lifecycleSaving" @click="openCancellation">取消订单</button></div></div>
-          <div class="detail-identity"><div><p class="detail-subtitle">{{ partyName }} · 下单于 {{ date(order.order_date) }}<small v-if="partyMasterReference" class="party-reference">{{ partyMasterReference }}</small></p><h2>{{ order.order_no }}</h2><small>预计交期：{{ order.expected_ship_date || '未设置' }}</small><p v-if="order.status === 'cancelled' && order.cancellation_reason" class="cancelled-context">取消原因：{{ order.cancellation_reason }}<span v-if="order.cancelled_at"> · {{ date(order.cancelled_at) }}</span></p></div><span class="detail-badge">履约：{{ order.status_display }}</span></div>
+          <div class="detail-identity"><div><p class="detail-subtitle">{{ partyName }} · 下单于 {{ date(order.order_date) }}<small v-if="partyMasterReference" class="party-reference">{{ partyMasterReference }}</small></p><h2>{{ order.order_no }}</h2><small>预计交期：{{ order.expected_ship_date || '未设置' }}</small><p v-if="order.status === 'cancelled' && order.cancellation_reason" class="cancelled-context">取消原因：{{ order.cancellation_reason }}<span v-if="order.cancelled_at"> · {{ cancellationTime(order.cancelled_at) }}</span></p></div><span class="detail-badge">履约：{{ order.status_display }}</span></div>
         </header>
         <main class="detail-content" :class="{ 'fulfillment-content': activeTab === 'fulfillment' }">
           <nav class="workbench-tabs" aria-label="订单工作台分页"><button v-for="tab in tabs" :key="tab[0]" :class="{ active: activeTab === tab[0] }" @click="activeTab = tab[0]">{{ tab[1] }}</button></nav>

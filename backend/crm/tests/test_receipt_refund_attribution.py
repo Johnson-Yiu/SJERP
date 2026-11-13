@@ -308,9 +308,20 @@ class ReceiptRefundAttributionTests(CashFixture, TestCase):
 @override_settings(RMB_CASH_ACCOUNT_IDS=("SYNTH_FX", "SYNTH_CNY"))
 class ReceiptRefundConcurrencyTests(CashFixture, TransactionTestCase):
     def test_concurrent_refunds_cannot_exceed_original_cash(self):
+        self.assert_concurrent_refunds(cancelled=False)
+
+    def test_concurrent_cancelled_refunds_keep_zero_receivable(self):
+        self.assert_concurrent_refunds(cancelled=True)
+
+    def assert_concurrent_refunds(self, *, cancelled):
         if connection.vendor != "postgresql":
             self.skipTest("Requires PostgreSQL row locks")
         self.setup_cash()
+        if cancelled:
+            response = self.client.post(f"/api/orders/{self.order.pk}/cancel/", {
+                "reason": "取消订单并发退款验收", "settle_refund": True,
+            }, format="json", HTTP_IDEMPOTENCY_KEY="cancel-before-concurrent-refunds")
+            self.assertEqual(response.status_code, 200, response.data)
         from crm.services.finance_closeout import upload
         proofs = [upload(SimpleUploadedFile(f"refund-{i}.pdf", f"%PDF-1.4\nsynthetic refund {i}\n%%EOF".encode()), self.user, scope="transaction") for i in range(2)]
         barrier = Barrier(2)
@@ -328,3 +339,10 @@ class ReceiptRefundConcurrencyTests(CashFixture, TransactionTestCase):
             self.assertCountEqual(list(pool.map(run, range(2))), [201, 400])
         self.assertEqual(FinanceReceiptRefund.objects.count(), 1)
         self.assertEqual(cash.available(self.receipt), Decimal("30"))
+        self.plan.refresh_from_db()
+        self.assertEqual(self.plan.settled_amount, 30)
+        if cancelled:
+            self.order.refresh_from_db()
+            self.assertEqual(self.plan.planned_amount, 30)
+            self.assertEqual(self.plan.status, "settled")
+            self.assertEqual(self.order.outstanding_amount, 0)

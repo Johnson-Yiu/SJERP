@@ -359,6 +359,10 @@ export async function resolvePlaywrightSelection(userArgs) {
     const selection = await resolvePlaywrightSelection(['--business-test', 'sales-state-closeout-05.spec.js'])
     return { ...selection, auditEnabled: true }
   }
+  if (args.length === 1 && args[0] === '--audit-product-draft-test') {
+    const selection = await resolvePlaywrightSelection(['--business-test', 'product-draft-protection-01.spec.js'])
+    return { ...selection, auditEnabled: true }
+  }
   if (args.length === 0) return { businessTest: null, businessSuite: false }
   if (args[0] === '--all-business-tests') {
     if (args.length === 1) return { businessTest: '*', businessSuite: true, excludedBusinessTests: [] }

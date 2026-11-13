@@ -29,7 +29,7 @@
 
 ## 验证与复跑
 
-- SQLite：`python manage.py test crm.tests.test_sku_cost_verification crm.tests.test_history_operational_contracts crm.tests.test_sku_plans_candidates --noinput`，46 项通过、2 个 PG 专项跳过（不记为通过）；另补只读原始记录冲突反例 1 项。
+- SQLite：`python manage.py test crm.tests.test_sku_cost_verification crm.tests.test_history_operational_contracts crm.tests.test_sku_plans_candidates --noinput`，运行 46 项，其中 44 项通过、2 个 PG 专项跳过（不记为通过）；另补只读原始记录冲突反例 1 项。
 - PostgreSQL 17：已有隔离 runner `docs/uat-evidence/history-product-sku-linking-01/run-postgres.py --postgres-bin <PG17 bin> --test-label <模块或测试>`。核心 45 项全部通过（含并发和 TRUNCATE 不可变记录保护）；补测 keep/refresh、派生后报价/订单快照 2 项通过；只读报告反例单独记录。
 - 前端：`npx vitest run tests/history-takeover.spec.js --maxWorkers=1`，14 项通过；`npm run build` 通过，存在既有大 chunk 提示。
 - Chrome：`npm run test:browser:isolated -- --business-test cost-currency-integrity-02.spec.js`。设置 `ISOLATED_PLAYWRIGHT_USE_CHROME=1`、`ISOLATED_CODEX_TEST_SUPERADMIN=1`，凭据从 Git 忽略的本机 `local-data/codex-test.env` 注入，不写日志。证据根必须为当前工作树 `docs/uat-evidence` 内绝对路径；端口 B 为 8955/8956。

@@ -3661,7 +3661,9 @@ class ContractChangeRequestViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             plan = approve_contract_change(request_item)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
-        record_operation(request=request, instance=request_item, action="custom", action_label="审批合同变更", metadata={"payment_plan_id": plan.id})
+        record_operation(request=request, instance=request_item, action="custom", action_label="审批合同变更", metadata={"payment_plan_id": plan.pk if plan else None})
+        if plan is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(PaymentPlanSerializer(plan, context={"request": request}).data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"])

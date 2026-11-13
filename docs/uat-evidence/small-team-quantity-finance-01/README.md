@@ -32,3 +32,9 @@
 GitHub Actions 的 CI 工作流适用于本分支推送。Linux operations acceptance 的推送分支清单不含本分支。[本分支 CI 记录](https://github.com/Johnson-Yiu/SJERP/actions/workflows/ci.yml?query=branch%3Acodex%2Fsmall-team-quantity-finance-01)
 
 历史计划差额继续进入原有核对流程。本包验证使用合成订单、一次性数据库及媒体目录。后续交付事项见[小团队首发范围](small-team-launch-scope.md)。
+
+## 独立复审补修
+
+复审发现合同审批以原始变更额调整计划，当前版本的合同总额却按分舍入。销售合同审批现按变更前后完整合同总额求计划差额，保留原审批金额和旧版口径。舍入后零差额的审批仍留审计，API 返回 204。回归通过实际审批服务后再连续改量。
+
+不同订单并发提交同一全局幂等键时，数据库唯一约束保留一笔成功，另一笔返回 HTTP 409。测试用两个数据库连接在插入前同步，验证仅有一笔订单版本和应收计划发生变化。另补银行退回后低于可调减边界的拒绝断言。

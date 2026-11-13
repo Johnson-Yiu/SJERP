@@ -6,7 +6,7 @@ from copy import copy
 from decimal import Decimal, InvalidOperation
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Sum
 
 from crm.history_products import document_lines
@@ -454,18 +454,24 @@ def apply_quantity_adjustment(order, payload, *, operator=None):
     old_version = order.quantity_change_version
     financial = preview["financial"]
     before_lines = preview["lines"]
-    adjustment = OrderQuantityAdjustment.objects.create(
-        order=order,
-        operator=operator if getattr(operator, "is_authenticated", False) else None,
-        request_key=key,
-        request_fingerprint=fingerprint,
-        reason=reason,
-        before_total_amount=financial["before_total"],
-        after_total_amount=financial["after_total"],
-        amount_delta=financial["amount_delta"],
-        lines=before_lines,
-        impact={"preview": preview, "warnings": preview["warnings"]},
-    )
+    try:
+        with transaction.atomic():
+            adjustment = OrderQuantityAdjustment.objects.create(
+                order=order,
+                operator=operator if getattr(operator, "is_authenticated", False) else None,
+                request_key=key,
+                request_fingerprint=fingerprint,
+                reason=reason,
+                before_total_amount=financial["before_total"],
+                after_total_amount=financial["after_total"],
+                amount_delta=financial["amount_delta"],
+                lines=before_lines,
+                impact={"preview": preview, "warnings": preview["warnings"]},
+            )
+    except IntegrityError:
+        if OrderQuantityAdjustment.objects.filter(request_key=key).exists():
+            raise QuantityAdjustmentConflict("请求幂等键已用于另一项数量变更，请重新预览。")
+        raise
     for row in normalized:
         item = row["item"]
         item.quantity = row["new_quantity"]

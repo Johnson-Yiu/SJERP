@@ -352,6 +352,14 @@ class FinanceCloseoutTests(CloseoutFixture, TestCase):
         if direction == "receivable":
             from crm.services.order_quantity_adjustments import apply_quantity_adjustment
 
+            from django.core.exceptions import ValidationError
+
+            with self.assertRaises(ValidationError):
+                apply_quantity_adjustment(order, {
+                    "version": 0, "request_key": "qty-below-bank-return-boundary",
+                    "reason": "Adjust below remaining settlement",
+                    "items": [{"order_item": item.pk, "new_quantity": "5.99"}],
+                })
             _, _, result = apply_quantity_adjustment(order, {
                 "version": 0, "request_key": "qty-after-bank-return", "reason": "Adjust after bank return",
                 "items": [{"order_item": item.pk, "new_quantity": "6"}],

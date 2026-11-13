@@ -131,6 +131,73 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
                     "supplier_sku_id": None, "manual_reason": "原供应商无供货档案，已核对合同", "target": "order", "sales_source_id": sale.pk}]},
             ]}
 
+    def test_manual_cost_currency_survives_master_change_and_confirmation(self):
+        self.payload["contracts"][0]["line_options"][0].update(
+            unit_cost="7.1250", cost_currency="EUR", cost_evidence="synthetic://EUR-cost")
+        self.approve_contracts()
+        self.sku.cost_currency = "CNY"
+        self.sku.cost_price = Decimal("99")
+        self.sku.save()
+        contracts.execute(self.group.pk, self.maker)
+        contract = self.group.operational_contracts.get(archived_order__isnull=False)
+        order = contract.continuation_order
+        line = order.items.get()
+        self.assertEqual(line.cost_price, Decimal("7.1250"))
+        self.assertEqual(line.cost_currency_snapshot, "EUR")
+        self.assertEqual(line.cost_verification_snapshot, "current")
+        self.assertEqual(contract.line_links[0]["unit_cost"], "7.1250")
+        self.assertEqual(contract.line_links[0]["cost_evidence"], "synthetic://EUR-cost")
+        result = self.client.patch(f"/api/orders/{order.pk}/", {"notes": "合成草稿保存"}, format="json")
+        # Controlled continuation drafts cannot be overwritten through ordinary
+        # order PATCH; re-opening and formal confirmation retain the frozen cost.
+        self.assertEqual(result.status_code, 400, result.data)
+        reopened = self.client.get(f"/api/orders/{order.pk}/")
+        self.assertEqual(reopened.status_code, 200)
+        self.assertEqual(reopened.data["items"][0]["cost_currency_snapshot"], "EUR")
+        confirm_order(order)
+        line.refresh_from_db()
+        self.assertEqual(line.cost_currency_snapshot, "EUR")
+
+    def test_manual_cost_requires_explicit_currency_and_evidence(self):
+        option = self.payload["contracts"][0]["line_options"][0]
+        for currency, evidence in (("", "proof"), ("CNY", ""), ("美元", "proof")):
+            with self.subTest(currency=currency, evidence=evidence):
+                option.update(cost_currency=currency, cost_evidence=evidence)
+                with self.assertRaises(APIException):
+                    contracts.propose(self.group.pk, self.payload, self.maker)
+        self.assertFalse(self.group.operational_contracts.exists())
+
+    def test_cost_integrity_inspection_is_read_only_and_does_not_guess_after_edits(self):
+        from crm.services.cost_integrity import inspect_cost_integrity
+        from crm.models import OrderItem
+        self.approve_contracts()
+        contracts.execute(self.group.pk, self.maker)
+        contract = self.group.operational_contracts.get(archived_order__isnull=False)
+        line = contract.continuation_order.items.get()
+        def read_only(execute, sql, params, many, context):
+            self.assertTrue(sql.lstrip().upper().startswith("SELECT"), sql)
+            return execute(sql, params, many, context)
+        with connection.execute_wrapper(read_only):
+            self.assertEqual(inspect_cost_integrity()["findings"], [])
+        # A later synthetic manual edit is not evidence that creation was wrong.
+        OrderItem.objects.filter(pk=line.pk).update(cost_currency_snapshot="EUR")
+        before = list(OrderItem.objects.values())
+        with connection.execute_wrapper(read_only):
+            report = inspect_cost_integrity()
+        self.assertEqual(report["counts"], {"confirmed_mismatch": 0, "needs_review": 1})
+        self.assertEqual(list(OrderItem.objects.values()), before)
+
+    def test_manual_cny_cost_is_independent_of_usd_sales_and_master_cost(self):
+        self.sku.currency = "USD"
+        self.sku.cost_currency = "EUR"
+        self.sku.save()
+        self.payload["contracts"][0]["line_options"][0].update(unit_cost="8.1250", cost_currency="CNY")
+        self.approve_contracts()
+        contracts.execute(self.group.pk, self.maker)
+        line = self.group.operational_contracts.get(archived_order__isnull=False).continuation_order.items.get()
+        self.assertEqual((line.cost_price, line.cost_currency_snapshot, line.cost_verification_snapshot),
+                         (Decimal("8.1250"), "CNY", "current"))
+
     def test_unlink_invalidates_unexecuted_contract_approval(self):
         self.approve_contracts()
         line = self.sources[("销售明细", "SO-HT-1:1")]

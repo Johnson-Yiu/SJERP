@@ -360,10 +360,12 @@ def publish(plan):
             conflicts = identity_conflict_messages(sales_model=new_model)
             if conflicts:
                 raise ValidationError({"duplicate_sku": conflicts})
-            target = SKU.objects.create(product=product, parameter_values=group["values"], identity_signature=group["signature"], schema_version=plan.version,
+            target = SKU(product=product, parameter_values=group["values"], identity_signature=group["signature"], schema_version=plan.version,
                 display_name_cn=generated.get("display_name_cn", ""), sales_model=new_model or None, sales_model_abbreviations=abbreviations,
                 description_cn=generated.get("description_cn", ""), description_en=generated.get("description_en", ""),
-                unit=source.unit, currency=source.currency, cost_price=source.cost_price, default_price=source.default_price)
+                unit=source.unit, currency=source.currency, cost_price=source.cost_price, cost_currency=source.cost_currency,
+                cost_verified_at=source.cost_verified_at, cost_verified_by=source.cost_verified_by, default_price=source.default_price)
+            target.save(preserve_unknown_cost_currency=True)
             if new_model:
                 used_models.add(new_model)
             for source_id in group["source_ids"]:

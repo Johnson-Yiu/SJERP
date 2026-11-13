@@ -758,7 +758,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                     <strong>SKU {{ skuBusinessLabel(line.source) }} · 剩余 {{ line.remaining_quantity }} {{ line.source.base_unit_snapshot }}</strong><span>原系统明细 {{ line.source_record_id }}</span>
                     <div v-if="doc.record_type === '销售订单'" class="takeover-form-grid wide">
                       <label>核实单位成本<input v-model="operationalForms[doc.source_id].line_options[index].unit_cost" inputmode="decimal" /></label>
-                      <label>成本币种（SKU：{{ line.sku_currency }}）<input v-model="operationalForms[doc.source_id].line_options[index].cost_currency" /></label>
+                      <label>成本币种（SKU 参考：{{ line.sku_cost_currency || '未核实' }}）<input v-model="operationalForms[doc.source_id].line_options[index].cost_currency" /></label>
                       <label>成本依据<input v-model="operationalForms[doc.source_id].line_options[index].cost_evidence" /></label>
                     </div>
                     <div v-else class="takeover-form-grid wide">

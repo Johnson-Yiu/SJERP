@@ -699,7 +699,10 @@ class SKU(TimestampedModel):
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get("update_fields")
-        if self._state.adding and not self.cost_currency:
+        # Internal derivation keeps an unknown source currency unknown; this is
+        # not a persisted field or a client-writable serializer option.
+        preserve_unknown_cost_currency = kwargs.pop("preserve_unknown_cost_currency", False)
+        if self._state.adding and not self.cost_currency and not preserve_unknown_cost_currency:
             # New SKUs get the agreed default; migrated/history rows are not
             # backfilled because their original currency is unknown.
             self.cost_currency = "CNY"
@@ -1356,6 +1359,9 @@ class OrderItem(TradeUnitLine):
     supplier_allocated_at = models.DateTimeField("供应商分配时间", null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        # Only reviewed services may supply a complete frozen cost tuple.
+        # Ordinary API serializers independently derive their snapshots.
+        preserve_cost_snapshot = kwargs.pop("preserve_cost_snapshot", False)
         snapshot_fields = ("product_category_reference_snapshot", "product_category_name_snapshot")
         update_fields = kwargs.get("update_fields")
         if not self._state.adding and (update_fields is None or set(update_fields) & set(snapshot_fields)):
@@ -1371,7 +1377,7 @@ class OrderItem(TradeUnitLine):
             self.display_name_snapshot = self.display_name_snapshot or sku.display_name_cn or sku.product.name
             self.description_snapshot = self.description_snapshot or sku.description_en or sku.description_cn or self.display_name_snapshot
             self.unit_snapshot = self.unit_snapshot or sku.unit
-            if not self.order.historical_only and self.order.status != "historical" and not self.order.quote_id:
+            if not preserve_cost_snapshot and not self.order.historical_only and self.order.status != "historical" and not self.order.quote_id:
                 from .services.sku_costs import verification_state
                 self.cost_currency_snapshot = sku.cost_currency or ""
                 self.cost_verification_snapshot = verification_state(sku.cost_price, sku.cost_currency, sku.cost_verified_at)

@@ -304,6 +304,31 @@ class OrderQuantityAdjustmentApiTests(TestCase):
         self.assertEqual(self.item.quantity, Decimal("60.00"))
         self.assertEqual(OrderQuantityAdjustment.objects.filter(order=self.order).count(), 1)
 
+    def test_terminate_remaining_keeps_shipped_facts_and_releases_demand(self):
+        shipment = Shipment.objects.create(shipment_no="SHP-TERMINATE-40", order=self.order,
+                                           shipment_date=self.order.order_date, status="confirmed")
+        shipped = ShipmentItem.objects.create(shipment=shipment, order_item=self.item, sku=self.sku, quantity=40)
+        url = f"/api/orders/{self.order.pk}/quantity-adjustments/"
+        payload = self.payload(key="terminate-remaining", items=[{"order_item": self.item.pk, "new_quantity": "40"}])
+        payload["terminate_remaining"] = True
+        preview = self.client.post(url + "preview/", payload, format="json")
+        self.assertEqual(preview.status_code, 200, preview.data)
+        result = self.client.post(url, payload, format="json")
+        self.assertEqual(result.status_code, 201, result.data)
+        self.assertEqual(self.client.post(url, payload, format="json").status_code, 200)
+        self.order.refresh_from_db()
+        self.item.refresh_from_db()
+        shipped.refresh_from_db()
+        self.assertEqual(self.order.status, "completed")
+        self.assertEqual(self.item.quantity, 40)
+        self.assertEqual(shipped.quantity, 40)
+        self.assertEqual(self.order.total_amount, 400)
+        self.assertEqual(self.order.outstanding_amount, 400)
+        self.assertFalse(InventoryReservation.objects.filter(order_item=self.item).exists())
+        change = self.order.quantity_adjustments.get()
+        self.assertEqual(Decimal(change.lines[0]["old_quantity"]), 100)
+        self.assertTrue(change.impact["preview"]["terminate_remaining"])
+
     def test_cannot_decrease_below_seventy_already_shipped(self):
         shipment = Shipment.objects.create(
             shipment_no="SHP-QTY-70",

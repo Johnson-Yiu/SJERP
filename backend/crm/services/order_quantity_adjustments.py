@@ -101,6 +101,8 @@ def _canonical_request(payload):
         canonical_items.append({"order_item": item_id, value_key: str(row[value_key])})
     canonical_items.sort(key=lambda row: row["order_item"])
     canonical = {"version": version, "reason": reason, "items": canonical_items}
+    if payload.get("terminate_remaining") is True:
+        canonical["terminate_remaining"] = True
     fingerprint = hashlib.sha256(json.dumps(canonical, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
     return version, reason, canonical_items, fingerprint
 
@@ -145,7 +147,7 @@ def _line_value(item, row):
     return None, _decimal(row["new_quantity"], "基础数量")
 
 
-def _normalized_lines(order, canonical_items):
+def _normalized_lines(order, canonical_items, *, terminate_remaining=False):
     item_ids = [row["order_item"] for row in canonical_items]
     if len(set(item_ids)) != len(item_ids):
         raise ValidationError("同一订单行不能重复提交。")
@@ -165,6 +167,8 @@ def _normalized_lines(order, canonical_items):
             raise ValidationError(
                 f"{item.sku_code_snapshot or item.sku.sku} 的新数量不能低于已发货数量 {shipped}。"
             )
+        if terminate_remaining and (shipped <= 0 or base_quantity != shipped or base_quantity >= item.quantity):
+            raise ValidationError("终止剩余履约须将该行数量调至已发数量，且保留已发记录。")
         proposed = copy(item)
         proposed.quantity = base_quantity
         if trade_quantity is not None:
@@ -392,7 +396,7 @@ def preview_quantity_adjustment(order, payload):
         raise ValidationError("只有已确认、生产中或已发货的正式订单可以调整数量。")
     if version != order.quantity_change_version:
         raise QuantityAdjustmentConflict("订单数量已被其他操作更新，请刷新后重新预览。")
-    normalized = _normalized_lines(order, canonical_items)
+    normalized = _normalized_lines(order, canonical_items, terminate_remaining=payload.get("terminate_remaining") is True)
     return _build_preview(order, normalized)
 
 
@@ -461,9 +465,11 @@ def apply_quantity_adjustment(order, payload, *, operator=None):
     ).values_list("sku_id", flat=True)))
     from crm.models import SKU
     list(SKU.objects.select_for_update().filter(pk__in=affected_sku_ids).order_by("pk"))
-    normalized = _normalized_lines(order, canonical_items)
+    normalized = _normalized_lines(order, canonical_items, terminate_remaining=payload.get("terminate_remaining") is True)
     preview = _build_preview(order, normalized, financial_strict=True)
     old_version = order.quantity_change_version
+    if payload.get("terminate_remaining") is True:
+        preview["terminate_remaining"] = True
     financial = preview["financial"]
     before_lines = preview["lines"]
     try:
@@ -491,7 +497,12 @@ def apply_quantity_adjustment(order, payload, *, operator=None):
             item.trade_quantity = row["new_trade_quantity"]
         item.save(update_fields=["quantity", "trade_quantity"])
     order.quantity_change_version = old_version + 1
-    if order.status == "shipped" and any(
+    if preview.get("terminate_remaining") and all(
+        _shipped_quantity(item) >= item.quantity for item in order.items.all()
+    ):
+        order.status = "completed"
+        order.save(update_fields=["quantity_change_version", "status", "updated_at"])
+    elif order.status == "shipped" and any(
         row["new_quantity"] > row["shipped_quantity"] for row in normalized
     ):
         order.status = "production"

@@ -2472,7 +2472,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                         request=request,
                         instance=adjustment.order,
                         action="custom",
-                        action_label="调整销售订单数量",
+                        action_label="终止销售订单剩余履约" if preview.get("terminate_remaining") else "调整销售订单数量",
                         before=before,
                         after=after,
                         metadata={

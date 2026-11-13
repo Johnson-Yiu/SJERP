@@ -63,7 +63,7 @@ test(`reminder list focus and real save ${width}`,async({page},info)=>{
  await page.screenshot({path:info.outputPath('reminder-focus-long-list.png')})
  await page.locator('.editor').getByRole('button',{name:'取消',exact:true}).click();await expect(trigger).toBeFocused()
  await expect(page.getByPlaceholder('产品、规格、其他要求或客户')).toHaveValue('合成提醒 '+width)
- await trigger.click();await page.locator('.editor').getByLabel('客户',{exact:true}).selectOption(String(customer.id))
+ await trigger.click();await page.locator('.editor select').first().selectOption(String(customer.id))
  await page.getByLabel('所找产品',{exact:true}).fill('实际保存需求 '+width)
  const saved=page.waitForResponse(r=>r.url().endsWith('/new-product-reminders/')&&r.request().method()==='POST')
  await page.getByRole('button',{name:'保存需求',exact:true}).click()

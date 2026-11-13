@@ -57,7 +57,7 @@ test('first bank-event load displays progress and supports retry', async ({ page
   const wait = new Promise(resolve => { release = resolve })
   let requests = 0
   await page.route('**/api/rmb-cash-events/**', async route => {
-    if (++requests > 1) return route.continue()
+    if (++requests > 6) return route.continue()
     await wait
     await route.fulfill({ status: 503, json: { detail: '合成故障' } })
   })
@@ -66,8 +66,12 @@ test('first bank-event load displays progress and supports retry', async ({ page
   await expect(page.getByText('正在加载…', { exact: true })).toBeVisible()
   await page.screenshot({ path: testInfo.outputPath('bank-events-loading-1366.png') })
   release()
-  await page.getByRole('button', { name: '重试', exact: true }).click()
+  const retry = page.getByRole('button', { name: '重试', exact: true })
+  await expect(retry).toBeVisible({ timeout: 12000 })
+  await page.screenshot({ path: testInfo.outputPath('bank-events-error-1366.png') })
+  await retry.click()
   await expect(page.getByText('正在加载…', { exact: true })).toBeHidden()
   await expect(page.getByText('合成故障', { exact: true })).toBeHidden()
-  expect(requests).toBe(2)
+  expect(requests).toBe(7)
+  await page.screenshot({ path: testInfo.outputPath('bank-events-recovered-1366.png') })
 })

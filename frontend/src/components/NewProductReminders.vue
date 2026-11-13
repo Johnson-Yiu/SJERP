@@ -10,7 +10,7 @@ const rows = ref([]), count = ref(0), loading = ref(false), busy = ref(false), e
 const selected = ref(null), editing = ref(false), history = ref([]), voiding = ref(false), reason = ref('')
 const editorHeading = ref(null)
 let editorTrigger
-watch(() => [editing.value, selected.value?.id], () => {
+watch([editing, () => selected.value?.id], () => {
   if (!editorHeading.value) {
     if (editorTrigger?.isConnected) {
       editorTrigger.scrollIntoView({ block: 'nearest' })

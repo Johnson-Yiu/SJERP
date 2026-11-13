@@ -10,8 +10,12 @@ for(const [width,height] of [[1280,800],[1366,768],[1920,1080]]) test(`category 
  const child=await post(page,'/categories/',{name:'合成子分类'+width,parent:root.id})
  await post(page,'/category-attributes/',{category:root.id,name:'额定功率',key:'power',include_in_sku:true})
  await page.goto('/categories');await page.getByRole('button',{name:'全部展开'}).click()
+ await page.locator('.tree-node').filter({hasText:rootName}).click()
+ await page.locator('.source-badge').first().scrollIntoViewIfNeeded()
+ await page.screenshot({path:info.outputPath('category-current-short.png')})
  await page.locator('.tree-node').filter({hasText:child.name}).click()
  const badge=page.locator('.source-badge.inherited').first();await expect(badge).toContainText(rootName)
+ await badge.scrollIntoViewIfNeeded();await expect(badge).toBeInViewport()
  const box=await badge.boundingBox();expect(box.x+box.width).toBeLessThanOrEqual(width)
  expect(await badge.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true)
  await page.screenshot({path:info.outputPath('category-inherited-long.png')})
@@ -32,9 +36,12 @@ for(const [width,height] of [[1280,800],[1366,768],[1920,1080]]) test(`category 
 })
 
 test('six and twelve workspaces keep activation local and permit narrow manual scroll',async({page},info)=>{
- await page.setViewportSize({width:1366,height:768});await page.goto('/customers')
+ await page.setViewportSize({width:1366,height:768})
+ const names=[]
+ for(let i=0;i<11;i++){const name='合成长标题客户商业照明跨区域采购项目验收'+i;names.push(name);await post(page,'/customers/',{code:'TAB'+i,name,country:'CN',contacts:[{name:'合成联系人'}]})}
+ await page.goto('/customers')
  for(let i=0;i<11;i++){
-  await page.getByRole('button',{name:'新建客户',exact:true}).click()
+  await page.getByRole('row').filter({has:page.getByText(names[i],{exact:true})}).getByRole('button',{name:'查看详情',exact:true}).click()
   if(i===4||i===10){
    const count=await page.getByRole('tab').count();expect(count).toBe(i+2)
    const active=page.locator('[role=tab][aria-selected=true]');await expect(active).toBeInViewport()
@@ -50,3 +57,5 @@ test('six and twelve workspaces keep activation local and permit narrow manual s
  await last.press('Home');await expect(page.getByRole('tab').first()).toHaveAttribute('aria-selected','true')
  expect(await page.evaluate(()=>scrollX)).toBe(0)
 })
+
+test.beforeEach(async({page})=>{page.setDefaultTimeout(30000)})

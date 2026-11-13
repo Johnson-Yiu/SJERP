@@ -8,7 +8,7 @@ test.skip(process.env.ISOLATED_PLAYWRIGHT_TEST_FILE !== 'prelaunch-ui-interactio
 test.setTimeout(120000)
 let fixture, salesFixture
 const sku='EVID-TRACK-LONG-SKU-3000K-BEAM24-BLACK-01'
-test.beforeAll(()=>{const cache=process.env.ISOLATED_TEST_ROOT+'/d-ui-fixtures.json';if(existsSync(cache)){({fixture,salesFixture}=JSON.parse(readFileSync(cache,'utf8')));return;}salesFixture=JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON,[fileURLToPath(new URL('../../docs/uat-evidence/ui-sales-completion-02/seed.py',import.meta.url))],{encoding:'utf8'}));fixture=JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON,[fileURLToPath(new URL('../../docs/uat-evidence/ui-final-state-closeout-03/seed.py',import.meta.url))],{encoding:'utf8'}));writeFileSync(cache,JSON.stringify({fixture,salesFixture}))})
+test.beforeAll(()=>{const cache=process.env.ISOLATED_TEST_ROOT+'/d-ui-fixtures.json';if(existsSync(cache)){({fixture,salesFixture}=JSON.parse(readFileSync(cache,'utf8')));return;}salesFixture=JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON,[fileURLToPath(new URL('../../docs/uat-evidence/ui-sales-completion-02/seed.py',import.meta.url))],{encoding:'utf8'}));fixture=JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON,[fileURLToPath(new URL('../../docs/uat-evidence/ui-final-state-closeout-03/seed.py',import.meta.url))],{encoding:'utf8'}));execFileSync(process.env.ISOLATED_TEST_PYTHON,[fileURLToPath(new URL('../../docs/uat-evidence/prelaunch-repair-batch-02/seed-pagination.py',import.meta.url))],{encoding:'utf8'});writeFileSync(cache,JSON.stringify({fixture,salesFixture}))})
 for(const [width,height] of [[1366,768],[1920,1080]]) {
 test(`inventory actual pointer, wheel, workspace and confirmation ${width}`,async({page,browser},info)=>{
  test.setTimeout(120000)
@@ -27,17 +27,18 @@ test(`inventory actual pointer, wheel, workspace and confirmation ${width}`,asyn
  await qty.fill('2');await qty.hover();await page.mouse.wheel(0,500)
  await expect(qty).toHaveValue('2')
  await snap('inventory-selected-wheel-unchanged')
+ const scrollBefore=await form.locator('.modal-body').evaluate(el=>el.scrollTop)
  await page.locator('.sidebar').getByRole('link',{name:'客户管理',exact:true}).click()
  await expect(form).toBeHidden()
  await page.getByRole('tab',{name:/库存流水 · 新建/}).click()
- await expect(form).toBeVisible();await expect(qty).toHaveValue('2')
+ await expect(form).toBeVisible();await expect(qty).toHaveValue('2');expect(await form.locator('.modal-body').evaluate(el=>el.scrollTop)).toBe(scrollBefore)
  await form.getByRole('button',{name:'取消',exact:true}).click()
  const stay=page.getByRole('button',{name:'继续编辑',exact:true})
  await expect(stay).toBeFocused()
  await page.keyboard.press('Shift+Tab');await expect(page.getByTestId('dialog-confirm')).toBeFocused()
  await page.keyboard.press('Tab');await expect(stay).toBeFocused()
  await snap('unsaved-confirm-over-parent')
- await stay.click();await expect(qty).toHaveValue('2')
+ await stay.click();await expect(qty).toHaveValue('2');await expect(form.getByRole('button',{name:'取消',exact:true})).toBeFocused()
  const saved=page.waitForResponse(r=>r.url().endsWith('/inventory-movements/batch/')&&r.request().method()==='POST')
  await form.getByRole('button',{name:'保存 1 条流水',exact:true}).click()
  const response=await saved;expect(response.status(),await response.text()).toBe(201)
@@ -46,7 +47,9 @@ test(`inventory actual pointer, wheel, workspace and confirmation ${width}`,asyn
  await expect(form).toBeHidden();await snap('inventory-saved')
  await page.getByRole('button',{name:'新建库存调整',exact:true}).click()
  await form.locator('label').filter({hasText:sku}).getByRole('checkbox').check()
- await form.getByRole('button',{name:'取消',exact:true}).click()
+ await page.locator('.workspace-tab.active button[aria-label^="关闭 "]').click()
+ await page.getByRole('button',{name:'继续编辑',exact:true}).click();await expect(form).toBeVisible()
+ await page.locator('.workspace-tab.active button[aria-label^="关闭 "]').click()
  await page.getByRole('button',{name:'放弃修改',exact:true}).click();await expect(form).toBeHidden()
  await writeFile(info.outputPath('result.json'),JSON.stringify({source:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),browser:browser.version(),width,height,metrics:await page.evaluate(()=>({dpr:devicePixelRatio,width:innerWidth,height:innerHeight})),movement:movement.id,states},null,2))
 })
@@ -72,6 +75,11 @@ test(`reminder list focus and real save ${width}`,async({page},info)=>{
  await page.getByRole('button',{name:'返回需求列表',exact:true}).click()
  await expect(page.getByPlaceholder('产品、规格、其他要求或客户')).toHaveValue('合成提醒 '+width)
  await page.screenshot({path:info.outputPath('reminder-return-filter-preserved.png')})
+ await page.getByPlaceholder('产品、规格、其他要求或客户').fill('实际保存需求 '+width);await page.getByRole('button',{name:'查询',exact:true}).click()
+ await expect(page.locator('.requirement')).toHaveCount(1)
+ await page.getByRole('button',{name:'查看需求 #'+record.id,exact:true}).click()
+ await expect(page.getByRole('heading',{name:'新品需求详情',exact:true})).toBeFocused()
+ await page.screenshot({path:info.outputPath('reminder-short-list-detail.png')})
 })
 }
 
@@ -115,7 +123,10 @@ test(`PI nested preview scroll close and persisted content ${width}`,async({page
  const saved=await (await page.request.get('/api/quotes/'+salesFixture.quote+'/')).json()
  await writeFile(info.outputPath('saved-quote.json'),JSON.stringify(saved,null,2))
  const downloading=page.waitForEvent('download')
+ const riskResponse=page.waitForResponse(r=>r.url().includes('/quotes/risk-preview/'))
  await page.getByRole('button',{name:'导出 Excel',exact:true}).first().click()
+ const risks=await (await riskResponse).json()
+ if(risks.items?.some(item=>item.has_risk)) await page.getByRole('button',{name:'了解风险，继续导出',exact:true}).click()
  const download=await downloading
  const exported=info.outputPath('saved-pi.xlsx');await download.saveAs(exported)
  const cells=execFileSync(process.env.ISOLATED_TEST_PYTHON,['-c',"import openpyxl,sys,json; w=openpyxl.load_workbook(sys.argv[1],data_only=True); print(json.dumps([str(c.value) for s in w for row in s for c in row if c.value is not None],ensure_ascii=True))",exported],{encoding:'utf8'})
@@ -140,12 +151,13 @@ test('summary card counts and layout across affected pages',async({page},info)=>
    await page.screenshot({path:info.outputPath(`cards-${route.slice(1)}-${width}.png`)})
   }
  }
- for(const query of ['', 'EVID', 'nonexistent-customer-ui-02']) {
+ for(const query of ['', '合成分页客户', 'nonexistent-customer-ui-02']) {
   const response=await page.request.get('/api/customers/?search='+query);const data=await response.json();const count=data.count??data.length
   await page.goto('/customers?search='+query)
   const metric=page.locator('.summary-cards article').filter({hasText:'客户数量'})
   await expect(metric.locator('strong')).toHaveText(String(count))
   await expect(metric).toContainText('当前筛选结果（含全部页）')
+  if(query==='合成分页客户'){await page.getByRole('button',{name:'下一页',exact:true}).click();await expect(metric.locator('strong')).toHaveText(String(count));await page.screenshot({path:info.outputPath('customers-filter-page-2.png')})}
  }
  await writeFile(info.outputPath('card-results.json'),JSON.stringify(states,null,2))
 })
@@ -183,3 +195,5 @@ test.afterEach(async({page,browser},info)=>{
  await page.screenshot({path:info.outputPath('final-state.png')}).catch(()=>{})
  await writeFile(info.outputPath('environment.json'),JSON.stringify({source:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),browser:browser.version(),viewport:page.viewportSize(),metrics:await page.evaluate(()=>({dpr:devicePixelRatio,width:innerWidth,height:innerHeight})).catch(()=>null),status:info.status},null,2))
 })
+
+test.beforeEach(async({page})=>{page.setDefaultTimeout(30000)})

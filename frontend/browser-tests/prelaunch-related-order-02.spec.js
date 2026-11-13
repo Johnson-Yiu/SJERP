@@ -41,3 +41,5 @@ for(const [width,height] of [[1366,768],[1920,1080],[390,844]]) test(`related or
  const read=await (await page.request.get('/api/orders/'+order.id+'/')).json();expect(read.status).toBe('confirmed')
  await writeFile(info.outputPath('order-readback.json'),JSON.stringify(read,null,2));await page.screenshot({path:info.outputPath('related-order-confirmed.png')})
 })
+
+test.beforeEach(async({page})=>{page.setDefaultTimeout(30000)})

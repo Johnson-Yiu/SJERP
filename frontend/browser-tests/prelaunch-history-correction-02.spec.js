@@ -14,8 +14,8 @@ test('historical correction groups preserve actual submitted and read back value
   await expect(form.getByText('请填写原系统记录号或业务单据号。',{exact:true})).toBeVisible()
   await form.getByLabel('原系统记录号',{exact:true}).fill('SYNTH-CORRECTION-'+width)
   await form.getByLabel('原系统业务单据号',{exact:true}).fill('SYNTH-DOC-'+width)
-  await form.getByLabel('更正明细（原值、更正值）',{exact:true}).fill('合成备注：原值 A，更正值 B；仅申请不正式执行。')
-  await form.getByLabel('提交原因（必填）',{exact:true}).fill('合成表单字段验证 '+width)
+  await form.getByLabel(/^更正明细（原值、更正值）/).fill('合成备注：原值 A，更正值 B；仅申请不正式执行。')
+  await form.getByLabel(/^提交原因（必填）/).fill('合成表单字段验证 '+width)
   await expect(form.getByRole('group',{name:'定位原始记录'})).toBeVisible()
   await expect(form.getByRole('group',{name:'补充资料'})).toBeVisible()
   await page.screenshot({path:info.outputPath(`history-correction-${width}.png`)})
@@ -29,3 +29,5 @@ test('historical correction groups preserve actual submitted and read back value
   await writeFile(info.outputPath(`history-correction-${width}.json`),JSON.stringify({sent,readback:app},null,2))
  }
 })
+
+test.beforeEach(async({page})=>{page.setDefaultTimeout(30000)})

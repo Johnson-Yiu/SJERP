@@ -245,6 +245,24 @@ it('Order-derived Purchase prefill is clean, and price changes protect cancellat
   expect(mocks.confirmDialog).toHaveBeenCalledTimes(1)
   expect(wrapper.vm.groups[0].items[0].unit_price).toBe('12')
 })
+it('pending procurement creation blocks close and route departure until failure recovers', async () => {
+  let reject
+  mocks.api.post.mockImplementation(() => new Promise((resolve, fail) => { reject = fail }))
+  await mountAt(ProcurementDraftModal, { orderId: 1, plan: { groups: [{ supplier: 1, currency: 'CNY', items: [2] }], items: [{ order_item: 2, draftable_quantity: 4, reference_purchase_price: 5 }] } })
+  await wrapper.findAll('button').find(b => b.text().includes('创建 采购草稿')).trigger('click')
+  await flushPromises()
+  expect(wrapper.get('[aria-label="关闭"]').element.disabled).toBe(true)
+  await wrapper.vm.requestClose()
+  expect(wrapper.emitted('close')).toBeUndefined()
+  await router.push('/orders')
+  expect(router.currentRoute.value.path).toBe('/quotes')
+  reject(new Error('合成创建失败'))
+  await flushPromises()
+  expect(wrapper.get('[role="alert"]').text()).toContain('合成创建失败')
+  expect(wrapper.get('[aria-label="关闭"]').element.disabled).toBe(false)
+  await wrapper.vm.requestClose()
+  expect(wrapper.emitted('close')).toHaveLength(1)
+})
 it('beforeunload exists only while dirty and is removed on clean/unmount', async () => {
   const state = reactive({ items: [] })
   let guard

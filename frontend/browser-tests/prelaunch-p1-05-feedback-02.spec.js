@@ -110,8 +110,13 @@ test('authenticated codex superuser imports XLSX and downloads the actual error 
     cwd: path.resolve('../backend'), env: { ...process.env, SALES_ORDER_IMPORT_EVIDENCE_DIR: evidenceDir }, encoding: 'utf8',
   })
   const capture = async state => {
+    const acknowledgement = page.getByRole('button', { name: '知道了', exact: true })
+    if (await acknowledgement.isVisible()) await acknowledgement.click()
     for (const [width, height] of [[1366, 768], [1920, 1080]]) {
       await page.setViewportSize({ width, height })
+      if (state === 'import-pending') await page.getByText('正在创建销售草稿，请勿离开', { exact: true }).scrollIntoViewIfNeeded()
+      if (state === 'import-lost-response') await page.getByRole('alert').filter({ hasText: '提交结果待核对' }).scrollIntoViewIfNeeded()
+      if (state === 'import-idempotent-success') await page.getByText('已创建 1 张草稿，1 张未创建', { exact: true }).scrollIntoViewIfNeeded()
       await page.screenshot({ path: path.join(evidenceDir, `${state}-${width}.png`) })
       expect(await page.evaluate(() => devicePixelRatio)).toBe(1)
     }

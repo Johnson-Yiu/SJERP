@@ -302,7 +302,7 @@ class FinanceCloseoutTests(CloseoutFixture, TestCase):
         self.assert_cny_bank_return_restores_plan("payable")
 
     def assert_cny_bank_return_restores_plan(self, direction):
-        from crm.models import Customer, FinanceBankReturnAllocation, Order, PaymentPlan, PurchaseOrder, Supplier
+        from crm.models import Customer, FinanceBankReturnAllocation, Order, PaymentPlan, Product, PurchaseOrder, SKU, Supplier
         from crm.services import cash_events
         from crm.services.finance import record_transaction
         from crm.tests.test_cash_events import payload
@@ -310,6 +310,9 @@ class FinanceCloseoutTests(CloseoutFixture, TestCase):
         if direction == "receivable":
             customer = Customer.objects.create(code="RETURN-CNY", name="合成退回客户")
             order = Order.objects.create(order_no="RETURN-CNY", customer=customer, currency="CNY", status="confirmed", order_date=date(2026, 1, 2))
+            product = Product.objects.create(code="RETURN-CNY", name="Bank return quantity fixture")
+            sku = SKU.objects.create(product=product, sku="RETURN-CNY", unit="pcs")
+            item = order.items.create(sku=sku, quantity=10, unit_price=10)
             relation = {"order": order}
             bank_direction, return_direction = "income", "expense"
         else:
@@ -345,6 +348,27 @@ class FinanceCloseoutTests(CloseoutFixture, TestCase):
         self.assertEqual(FinanceBankReturnAllocation.objects.count(), 1)
         with self.assertRaises(APIException):
             self.fact(kind="bank_return", legacy_parent=event.pk, direction=return_direction, amount="60.01", actual_date="2026-10-20")
+
+        if direction == "receivable":
+            from crm.services.order_quantity_adjustments import apply_quantity_adjustment
+
+            from django.core.exceptions import ValidationError
+
+            with self.assertRaises(ValidationError):
+                apply_quantity_adjustment(order, {
+                    "version": 0, "request_key": "qty-below-bank-return-boundary",
+                    "reason": "Adjust below remaining settlement",
+                    "items": [{"order_item": item.pk, "new_quantity": "5.99"}],
+                })
+            _, _, result = apply_quantity_adjustment(order, {
+                "version": 0, "request_key": "qty-after-bank-return", "reason": "Adjust after bank return",
+                "items": [{"order_item": item.pk, "new_quantity": "6"}],
+            })
+            self.assertEqual(Decimal(result["financial"]["paid_amount"]), Decimal("60"))
+            self.assertEqual(Decimal(result["financial"]["outstanding_before"]), Decimal("40"))
+            self.assertEqual(Decimal(result["financial"]["outstanding_after"]), Decimal("0"))
+            plan.refresh_from_db()
+            self.assertEqual((plan.planned_amount, plan.settled_amount, plan.status), (60, 60, "settled"))
 
     def test_separate_refund_approvals_still_identify_cumulative_excess(self):
         receipt = self.fact()

@@ -2,16 +2,20 @@
 
 import hashlib
 import json
+from copy import copy
 from decimal import Decimal, InvalidOperation
 
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Sum
 
-from crm.models import Order, OrderItem, OrderQuantityAdjustment, PaymentPlan
+from crm.history_products import document_lines
+from crm.models import AdvanceAllocation, Order, OrderItem, OrderQuantityAdjustment, PaymentPlan
+from crm.money import LEGACY_AMOUNT_CALCULATION_VERSION, document_total, legacy_document_total, money
+from crm.services.finance import _sync_plan_status, _writeoff_total
 from crm.services.fulfillment import _shipped_quantity, order_item_metrics, rebalance_sku_reservations
-from crm.services.historical import reject_historical
 from crm.permissions import development_superadmin_enabled
+from crm.services.historical import reject_historical
 
 
 QUANTITY_QUANTUM = Decimal("0.01")
@@ -140,6 +144,7 @@ def _normalized_lines(order, canonical_items):
     if len(items) != len(item_ids):
         raise ValidationError("数量变更明细不属于当前销售订单。")
     normalized = []
+    line_amount = Decimal if order.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION else money
     for row in canonical_items:
         item = items[row["order_item"]]
         trade_quantity, base_quantity = _line_value(item, row)
@@ -148,19 +153,19 @@ def _normalized_lines(order, canonical_items):
             raise ValidationError(
                 f"{item.sku_code_snapshot or item.sku.sku} 的新数量不能低于已发货数量 {shipped}。"
             )
-        new_amount = (
-            trade_quantity * item.trade_unit_price
-            if item.trade_unit_id
-            else base_quantity * item.unit_price
-        )
+        proposed = copy(item)
+        proposed.quantity = base_quantity
+        if item.trade_unit_id:
+            proposed.trade_quantity = trade_quantity
         normalized.append({
             "item": item,
             "old_quantity": item.quantity,
             "new_quantity": base_quantity,
             "old_trade_quantity": item.trade_quantity,
             "new_trade_quantity": trade_quantity,
-            "old_amount": item.amount,
-            "new_amount": new_amount,
+            "old_amount": line_amount(item.amount),
+            "new_amount": line_amount(proposed.amount),
+            "proposed": proposed,
             "shipped_quantity": shipped,
         })
     changed = [row for row in normalized if row["new_quantity"] != row["old_quantity"]]
@@ -169,24 +174,57 @@ def _normalized_lines(order, canonical_items):
     return changed
 
 
-def _financial_state(order, new_total=None):
-    old_total = _money(order.total_amount)
-    target_total = old_total if new_total is None else _money(new_total)
+def _receivable_plans(order):
+    return order.payment_plans.select_for_update().filter(direction="receivable").exclude(
+        status="cancelled",
+    ).order_by("-due_date", "-id")
+
+
+def _company_fee_credit(order, plans):
+    # Direct receipts can include an applied fee smaller than the fee on the
+    # voucher. Advance allocations already store the exact applied fee split.
+    receipts = order.transactions.filter(
+        status="confirmed", kind="customer_receipt", direction="income",
+        plan__in=plans, fee_responsibility="company", fee_evidence__isnull=False,
+    )
+    direct_credit = sum((
+        row.settlement_amount - row.amount for row in receipts
+        if 0 < row.settlement_amount - row.amount <= row.bank_fee_amount
+    ), Decimal("0"))
+    allocated_credit = AdvanceAllocation.objects.filter(
+        plan__in=plans, is_active=True, advance__status="confirmed", cash_amount__isnull=False,
+    ).aggregate(total=Sum("fee_credit_amount"))["total"] or Decimal("0")
+    return direct_credit + allocated_credit
+
+
+def _financial_state(order, before_total, after_total):
+    old_total = _money(before_total)
+    target_total = _money(after_total)
     continuation = getattr(order, "history_continuation", None)
     financial_order = continuation.archived_order if continuation else order
-    plans = list(financial_order.payment_plans.select_for_update().exclude(status="cancelled").order_by("-due_date", "-id"))
+    plans = list(_receivable_plans(financial_order))
     planned = sum((plan.planned_amount for plan in plans), Decimal("0"))
     settled = sum((plan.settled_amount for plan in plans), Decimal("0"))
+    reductions = [_writeoff_total(plan) for plan in plans]
+    balances = [
+        plan.planned_amount - plan.settled_amount - reduction
+        for plan, reduction in zip(plans, reductions)
+    ]
+    outstanding = sum((balance for plan, balance in zip(plans, balances) if plan.status == "open"), Decimal("0"))
     paid = _money(financial_order.paid_amount)
+    fee_credit = _company_fee_credit(financial_order, plans)
     reasons = []
-    if not continuation and _money(planned) != old_total:
+    if not continuation and planned != old_total:
         reasons.append(f"现有应收计划合计 {_money(planned)} 与订单金额 {old_total} 不一致")
-    if _money(settled) != paid:
-        reasons.append(f"应收计划已核销 {_money(settled)} 与已收金额 {paid} 不一致")
-    if not continuation and settled > target_total:
-        reasons.append(f"调整后订单金额 {target_total} 低于已收金额 {paid}，需先处理退款或资金差额")
+    if settled != paid + fee_credit:
+        reasons.append(f"应收已核销 {_money(settled)} 与净实收 {paid} 加已核销手续费 {_money(fee_credit)} 不符，请核对流水")
+    if any(
+        reduction < 0 or balance < 0 or (plan.status == "settled" and balance != 0)
+        for plan, reduction, balance in zip(plans, reductions, balances)
+    ):
+        reasons.append("应收计划余额或状态异常，请核对核销及抵减记录")
     delta = _money(target_total - old_total)
-    if delta < 0 and _money(planned + delta) < _money(settled):
+    if delta < 0 and -delta > outstanding:
         reasons.append("数量减少超过未结应收计划余额")
     return {
         "before_total": old_total,
@@ -195,10 +233,24 @@ def _financial_state(order, new_total=None):
         "planned": _money(planned),
         "settled": _money(settled),
         "paid": paid,
-        "outstanding_before": _money(planned - settled),
-        "outstanding_after": _money(planned - settled + delta) if continuation else _money(target_total - settled),
+        "fee_credit": _money(fee_credit),
+        "receivable_reduction": _money(sum(reductions, Decimal("0"))),
+        "outstanding_before": _money(outstanding),
+        "outstanding_after": _money(outstanding + delta),
         "blocking_reasons": reasons,
     }
+
+
+def _contract_totals(order, normalized):
+    lines = list(document_lines(order))
+    proposed = {row["item"].pk: row["proposed"] for row in normalized}
+    legacy = order.amount_calculation_version == LEGACY_AMOUNT_CALCULATION_VERSION
+    calculate = legacy_document_total if legacy else document_total
+    terms = {"shipping_fee": order.shipping_fee, "discount": order.discount}
+    approved = order.approved_change_amount
+    before = calculate(lines, **terms) + approved
+    after = calculate([proposed.get(line.pk, line) for line in lines], **terms) + approved
+    return (before, after) if legacy else (money(before), money(after))
 
 
 def _metrics_snapshot(item, *, quantity_overrides=None):
@@ -237,9 +289,7 @@ def _metrics_snapshot(item, *, quantity_overrides=None):
 
 
 def _build_preview(order, normalized, *, financial_strict=False):
-    before_total = order.total_amount
-    after_total = before_total + sum((row["new_amount"] - row["old_amount"] for row in normalized), Decimal("0"))
-    financial = _financial_state(order, after_total)
+    financial = _financial_state(order, *_contract_totals(order, normalized))
     lines = []
     warnings = []
     warning_details = []
@@ -306,6 +356,8 @@ def _build_preview(order, normalized, *, financial_strict=False):
             "paid_amount": _json_decimal(financial["paid"]),
             "planned_amount": _json_decimal(financial["planned"]),
             "settled_amount": _json_decimal(financial["settled"]),
+            "fee_credit_amount": _json_decimal(financial["fee_credit"]),
+            "receivable_reduction_amount": _json_decimal(financial["receivable_reduction"]),
             "outstanding_before": _json_decimal(financial["outstanding_before"]),
             "outstanding_after": _json_decimal(financial["outstanding_after"]),
         },
@@ -349,13 +401,16 @@ def _apply_payment_delta(order, financial, adjustment_id):
         return None
     remaining = -delta
     affected = None
-    for plan in financial_order.payment_plans.select_for_update().exclude(status="cancelled").order_by("-due_date", "-id"):
+    for plan in _receivable_plans(financial_order).filter(status="open"):
         reducible = plan.remaining_amount
         reduction = min(reducible, remaining)
         if reduction <= 0:
             continue
         plan.planned_amount -= reduction
-        plan.status = "cancelled" if plan.planned_amount == 0 else ("settled" if plan.planned_amount == plan.settled_amount else "open")
+        if plan.planned_amount == 0:
+            plan.status = "cancelled"
+        else:
+            _sync_plan_status(plan)
         plan.notes = f"{plan.notes}\n数量变更 #{adjustment_id} 调减 {_json_decimal(reduction)}"
         plan.save(update_fields=["planned_amount", "status", "notes", "updated_at"])
         affected = plan
@@ -377,7 +432,13 @@ def apply_quantity_adjustment(order, payload, *, operator=None):
     if existing:
         if existing.order_id != order.pk or existing.request_fingerprint != fingerprint:
             raise ValidationError("请求幂等键已用于另一项数量变更，不能重复使用。")
-        return existing, True, existing.impact.get("preview", {})
+        preview = existing.impact.get("preview", {})
+        return existing, True, {
+            **preview,
+            "version": preview.get("version", version) + 1,
+            "after_metrics": existing.impact.get("after_metrics", []),
+            "warnings": existing.impact.get("warnings", []),
+        }
     if order.status not in ADJUSTABLE_STATUSES:
         raise ValidationError("只有已确认、生产中或已发货的正式订单可以调整数量。")
     if version != order.quantity_change_version:
@@ -393,18 +454,24 @@ def apply_quantity_adjustment(order, payload, *, operator=None):
     old_version = order.quantity_change_version
     financial = preview["financial"]
     before_lines = preview["lines"]
-    adjustment = OrderQuantityAdjustment.objects.create(
-        order=order,
-        operator=operator if getattr(operator, "is_authenticated", False) else None,
-        request_key=key,
-        request_fingerprint=fingerprint,
-        reason=reason,
-        before_total_amount=financial["before_total"],
-        after_total_amount=financial["after_total"],
-        amount_delta=financial["amount_delta"],
-        lines=before_lines,
-        impact={"preview": preview, "warnings": preview["warnings"]},
-    )
+    try:
+        with transaction.atomic():
+            adjustment = OrderQuantityAdjustment.objects.create(
+                order=order,
+                operator=operator if getattr(operator, "is_authenticated", False) else None,
+                request_key=key,
+                request_fingerprint=fingerprint,
+                reason=reason,
+                before_total_amount=financial["before_total"],
+                after_total_amount=financial["after_total"],
+                amount_delta=financial["amount_delta"],
+                lines=before_lines,
+                impact={"preview": preview, "warnings": preview["warnings"]},
+            )
+    except IntegrityError:
+        if OrderQuantityAdjustment.objects.filter(request_key=key).exists():
+            raise QuantityAdjustmentConflict("请求幂等键已用于另一项数量变更，请重新预览。")
+        raise
     for row in normalized:
         item = row["item"]
         item.quantity = row["new_quantity"]

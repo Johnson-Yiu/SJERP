@@ -81,3 +81,9 @@ test('order workbench exposes procurement shortage, draft coverage, generation a
   assert.match(source, /关联采购单/)
   assert.match(source, /ProcurementDraftModal/)
 })
+
+test('quantity preview shows applied fees and the server-calculated receivable', async () => {
+  const source = await readFile(componentUrl, 'utf8')
+  assert.match(source, /已核销含我方承担手续费.*money\(quantityAdjustmentPreview\.financial\.fee_credit_amount\)/)
+  assert.match(source, /调整后待收.*money\(quantityAdjustmentPreview\.financial\.outstanding_after\)/)
+})

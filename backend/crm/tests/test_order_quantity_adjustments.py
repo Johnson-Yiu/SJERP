@@ -1,17 +1,30 @@
+import hashlib
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from decimal import Decimal
+from tempfile import TemporaryDirectory
+from threading import Barrier
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase, TransactionTestCase, override_settings
+from django.core.files.base import ContentFile
+from django.db import close_old_connections
+from django.test import TestCase, TransactionTestCase, override_settings, skipUnlessDBFeature
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.views import APIView
 
 from crm.authentication import SessionAuthenticationWithChallenge
+from crm.services.finance import (
+    allocate_advance, approve_contract_change, correct_receivable_writeoff, record_contract_refund,
+    record_transaction, writeoff_receivable,
+)
+from crm.services.order_quantity_adjustments import QuantityAdjustmentConflict, apply_quantity_adjustment
 from crm.models import (
     AccessRole,
     Customer,
+    ContractChangeRequest,
+    FinanceVoucher,
     EmployeeProfile,
     InventoryReservation,
     InventoryMovement,
@@ -63,6 +76,152 @@ class OrderQuantityAdjustmentApiTests(TestCase):
             "reason": reason,
             "items": items or [{"order_item": self.item.id, "new_quantity": "150"}],
         }
+
+    def test_cent_rounded_contract_delta_supports_consecutive_changes(self):
+        self.item.quantity = 1
+        self.item.unit_price = Decimal("0.335")
+        self.item.save(update_fields=["quantity", "unit_price"])
+        self.plan.planned_amount = Decimal("0.34")
+        self.plan.save(update_fields=["planned_amount"])
+        url = f"/api/orders/{self.order.pk}/quantity-adjustments/"
+        for version, quantity, total, delta in [
+            (0, "2", "0.67", "0.33"), (1, "3", "1.01", "0.34"),
+            (2, "3.01", "1.01", "0"),
+        ]:
+            payload = self.payload(version=version, key=f"cents-{version}",
+                                   items=[{"order_item": self.item.pk, "new_quantity": quantity}])
+            preview = self.client.post(f"{url}preview/", payload, format="json")
+            self.assertEqual(preview.status_code, 200, preview.data)
+            self.assertEqual(Decimal(preview.data["financial"]["amount_delta"]), Decimal(delta))
+            applied = self.client.post(url, payload, format="json")
+            self.assertEqual(applied.status_code, 201, applied.data)
+            retry = self.client.post(url, payload, format="json")
+            self.assertEqual(retry.status_code, 200, retry.data)
+            self.assertEqual(applied.data["preview"], retry.data["preview"])
+            self.order.refresh_from_db()
+            self.assertEqual(self.order.total_amount, Decimal(total))
+            self.assertEqual(self.order.outstanding_amount, Decimal(total))
+            self.assertEqual(sum(self.order.payment_plans.values_list("planned_amount", flat=True)), Decimal(total))
+        self.assertEqual(self.order.payment_plans.count(), 3)
+
+    def test_company_bank_fee_settlement_allows_increase_without_changing_cash(self):
+        with TemporaryDirectory() as media, override_settings(MEDIA_ROOT=media):
+            for direct in (True, False):
+                with self.subTest(direct=direct):
+                    self._assert_company_fee_increase(direct)
+
+    def _assert_company_fee_increase(self, direct):
+        order = Order.objects.create(order_no=f"FEE-{direct}", customer=self.order.customer,
+                                     status="confirmed", order_date=self.order.order_date, currency="USD")
+        item = order.items.create(sku=self.sku, quantity=10, unit_price=100)
+        plan = order.payment_plans.create(direction="receivable", currency="USD", planned_amount=1000)
+        content = f"%PDF-1.4\nSynthetic voucher {direct}\n%%EOF".encode()
+        proof = FinanceVoucher(original_name="receipt.pdf", sha256=hashlib.sha256(content).hexdigest(),
+                               size=len(content), scope="transaction", actor={})
+        proof.file.save("receipt.pdf", ContentFile(content), save=False)
+        proof.save()
+        receipt = record_transaction(dict(
+            kind="customer_receipt" if direct else "unallocated_advance", direction="income",
+            customer=order.customer, amount="980", remittance_amount="1000", bank_fee_amount="20",
+            fee_responsibility="company", fee_reason="Company bears intermediary bank fee",
+            fee_evidence=proof, currency="USD", **({"order": order, "plan": plan} if direct else {}),
+        ))
+        if not direct:
+            allocate_advance(receipt, plan, Decimal("1000"))
+        plan.refresh_from_db()
+        self.assertEqual(plan.settled_amount, Decimal("1000"))
+        self.assertEqual(order.paid_amount, Decimal("980"))
+        url = f"/api/orders/{order.pk}/quantity-adjustments/"
+        payload = self.payload(key=f"fee-{direct}", items=[{"order_item": item.pk, "new_quantity": "11"}])
+        result = self.client.post(url, payload, format="json")
+        self.assertEqual(result.status_code, 201, result.data)
+        financial = result.data["preview"]["financial"]
+        self.assertEqual(Decimal(financial["fee_credit_amount"]), Decimal("20"))
+        self.assertEqual(Decimal(financial["settled_amount"]), Decimal("1000"))
+        self.assertEqual(Decimal(financial["outstanding_after"]), Decimal("100"))
+        order.refresh_from_db()
+        self.assertEqual(order.total_amount, Decimal("1100"))
+        self.assertEqual(order.outstanding_amount, Decimal("100"))
+        self.assertEqual(order.paid_amount, Decimal("980"))
+
+        record_contract_refund(order, {"amount": "40", "currency": "USD"})
+        order.refresh_from_db()
+        self.assertEqual(order.paid_amount, Decimal("940"))
+        self.assertEqual(order.outstanding_amount, Decimal("140"))
+        for quantity, expected in [("9.59", 400), ("9.60", 201)]:
+            reduction = self.payload(version=1, key=f"refund-{direct}-{quantity}",
+                                     items=[{"order_item": item.pk, "new_quantity": quantity}])
+            result = self.client.post(url, reduction, format="json")
+            self.assertEqual(result.status_code, expected, result.data)
+        self.assertEqual(order.outstanding_amount, Decimal("0"))
+
+    def test_versioned_totals_include_trade_lines_and_contract_terms(self):
+        from crm.money import LEGACY_AMOUNT_CALCULATION_VERSION
+
+        trade_unit = SKUTradeUnit.objects.create(sku=self.sku, name="box", unit="box", factor=4)
+        for legacy in (False, True):
+            with self.subTest(legacy=legacy):
+                order = Order.objects.create(
+                    order_no=f"VERSION-{legacy}", customer=self.order.customer, currency="USD",
+                    status="confirmed", order_date=self.order.order_date,
+                    shipping_fee=Decimal("0.015"), discount=Decimal("0.005"),
+                )
+                if legacy:
+                    order.amount_calculation_version = LEGACY_AMOUNT_CALCULATION_VERSION
+                    order.save(update_fields=["amount_calculation_version"])
+                item = order.items.create(sku=self.sku, quantity=1, unit_price=Decimal("0.335"))
+                trade = order.items.create(
+                    sku=self.sku, quantity=4, unit_price=Decimal("0.1"), trade_unit=trade_unit,
+                    trade_quantity=1, trade_unit_price=Decimal("0.335"),
+                    trade_snapshot={"factor": "4", "allow_fraction": False},
+                )
+                order.payment_plans.create(direction="receivable", currency="USD", planned_amount=order.total_amount)
+                change = ContractChangeRequest.objects.create(order=order, amount_delta=Decimal("0.011"),
+                                                             notes="Approved test change")
+                approve_contract_change(change)
+                self.assertEqual(sum(order.payment_plans.values_list("planned_amount", flat=True)), order.total_amount)
+                url = f"/api/orders/{order.pk}/quantity-adjustments/"
+                for version, quantity in enumerate((2, 3)):
+                    result = self.client.post(url, self.payload(
+                        version=version, key=f"version-{legacy}-{version}", items=[
+                            {"order_item": item.pk, "new_quantity": str(quantity)},
+                            {"order_item": trade.pk, "new_trade_quantity": str(quantity)},
+                        ],
+                    ), format="json")
+                    self.assertEqual(result.status_code, 201, result.data)
+                    expected = (("1.361", "2.031") if legacy else ("1.36", "2.04"))[version]
+                    self.assertEqual(order.total_amount, Decimal(expected))
+                    self.assertEqual(order.outstanding_amount, Decimal(expected))
+                    trade.refresh_from_db()
+                    self.assertEqual(trade.quantity, 4 * quantity)
+
+    def test_approval_with_zero_rounded_delta_keeps_plan(self):
+        change = ContractChangeRequest.objects.create(
+            order=self.order, amount_delta=Decimal("0.004"), notes="Sub-cent contract change",
+        )
+        response = self.client.post(f"/api/contract-changes/{change.pk}/approve/", {}, format="json")
+        self.assertEqual(response.status_code, 204, response.data)
+        change.refresh_from_db()
+        self.assertEqual(change.status, "approved")
+        self.assertEqual(self.order.payment_plans.count(), 1)
+        self.assertEqual(self.order.outstanding_amount, self.order.total_amount)
+        self.assertEqual(self.order.total_amount, Decimal("1000"))
+
+    def test_writeoff_and_correction_determine_reducible_balance_and_plan_status(self):
+        receipt = record_transaction({"plan": self.plan, "amount": "990", "category": "Customer receipt"})
+        writeoff, _ = writeoff_receivable(receipt, self.plan, Decimal("5"), "Rounding difference", "qty-writeoff", None)
+        correct_receivable_writeoff(receipt, writeoff, Decimal("2"), "Correct rounding", "qty-correction", None)
+        url = f"/api/orders/{self.order.pk}/quantity-adjustments/"
+        for quantity, expected in [("99.29", 400), ("99.30", 201)]:
+            result = self.client.post(url, self.payload(
+                key=f"writeoff-{quantity}", items=[{"order_item": self.item.pk, "new_quantity": quantity}],
+            ), format="json")
+            self.assertEqual(result.status_code, expected, result.data)
+        self.plan.refresh_from_db()
+        self.assertEqual(self.plan.status, "settled")
+        self.assertEqual(self.plan.remaining_amount, 0)
+        self.assertEqual(self.plan.settled_amount, 990)
+        self.assertEqual(self.order.outstanding_amount, 0)
 
     def test_increase_updates_line_preserves_identity_and_extends_receivable(self):
         payload = self.payload()
@@ -531,6 +690,78 @@ RBAC_SETTINGS = {
 }
 
 
+class QuantityAdjustmentConcurrencyTests(TransactionTestCase):
+    @skipUnlessDBFeature("has_select_for_update")
+    def test_same_version_concurrent_changes_only_apply_once(self):
+        customer = Customer.objects.create(code="QTY-RACE", name="Quantity race")
+        product = Product.objects.create(code="QTY-RACE", name="Quantity race")
+        sku = SKU.objects.create(product=product, sku="QTY-RACE", unit="pcs")
+        order = Order.objects.create(order_no="QTY-RACE", customer=customer, order_date=date(2026, 10, 21),
+                                     currency="USD", status="confirmed")
+        item = order.items.create(sku=sku, quantity=1, unit_price=Decimal("0.335"))
+        order.payment_plans.create(direction="receivable", currency="USD", planned_amount=Decimal("0.34"))
+        barrier = Barrier(2)
+
+        def submit(quantity):
+            close_old_connections()
+            try:
+                barrier.wait(timeout=10)
+                apply_quantity_adjustment(order, {
+                    "version": 0, "request_key": f"qty-race-{quantity}", "reason": "Concurrent adjustment",
+                    "items": [{"order_item": item.pk, "new_quantity": quantity}],
+                })
+                return True
+            except QuantityAdjustmentConflict:
+                return False
+            finally:
+                close_old_connections()
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            self.assertCountEqual(pool.map(submit, ("2", "3")), [True, False])
+        order.refresh_from_db()
+        self.assertEqual(order.quantity_change_version, 1)
+        self.assertEqual(order.quantity_adjustments.count(), 1)
+        self.assertEqual(order.payment_plans.count(), 2)
+        self.assertEqual(order.outstanding_amount, order.total_amount)
+
+
+    @skipUnlessDBFeature("has_select_for_update")
+    def test_concurrent_cross_order_key_collision_returns_conflict(self):
+        customer = Customer.objects.create(code="KEY-RACE", name="Key race")
+        product = Product.objects.create(code="KEY-RACE", name="Key race")
+        items = []
+        for number in (1, 2):
+            sku = SKU.objects.create(product=product, sku=f"KEY-RACE-{number}", unit="pcs")
+            order = Order.objects.create(order_no=f"KEY-RACE-{number}", customer=customer,
+                                         order_date=date(2026, 10, 21), currency="USD", status="confirmed")
+            items.append(order.items.create(sku=sku, quantity=1, unit_price=10))
+            order.payment_plans.create(direction="receivable", currency="USD", planned_amount=10)
+        barrier = Barrier(2)
+        create = OrderQuantityAdjustment.objects.create
+
+        def competing_insert(**kwargs):
+            barrier.wait(timeout=10)
+            return create(**kwargs)
+
+        def submit(item):
+            close_old_connections()
+            try:
+                response = APIClient().post(f"/api/orders/{item.order_id}/quantity-adjustments/", {
+                    "version": 0, "request_key": "shared-concurrent-key", "reason": "Concurrent adjustment",
+                    "items": [{"order_item": item.pk, "new_quantity": "2"}],
+                }, format="json")
+                return response.status_code
+            finally:
+                close_old_connections()
+
+        with patch.object(OrderQuantityAdjustment.objects, "create", side_effect=competing_insert):
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                self.assertCountEqual(pool.map(submit, items), [201, 409])
+        self.assertEqual(OrderQuantityAdjustment.objects.count(), 1)
+        self.assertEqual(PaymentPlan.objects.count(), 3)
+        self.assertCountEqual(Order.objects.values_list("quantity_change_version", flat=True), [0, 1])
+
+
 @override_settings(**RBAC_SETTINGS)
 class QuantityAdjustmentRBACApiTests(TestCase):
     def setUp(self):
@@ -625,6 +856,8 @@ class QuantityAdjustmentRBACApiTests(TestCase):
         preview = self.client.post(f"/api/orders/{self.order.id}/quantity-adjustments/preview/", payload, format="json")
         self.assertEqual(preview.status_code, status.HTTP_200_OK, preview.data)
         self.assertIsNone(preview.data["financial"]["amount_delta"])
+        self.assertIsNone(preview.data["financial"]["fee_credit_amount"])
+        self.assertIsNone(preview.data["financial"]["receivable_reduction_amount"])
         self.assertNotIn("old_amount", preview.data["lines"][0])
         self.assertNotIn("after", preview.data["lines"][0])
         self.assertNotIn("1000", repr(preview.data))

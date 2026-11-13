@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, models, transaction
 
 from django.utils import timezone
+from crm.money import LEGACY_AMOUNT_CALCULATION_VERSION, money
 from crm.models import AdvanceAllocation, ContractChangeRequest, FinancePlanWriteoff, FinancePlanWriteoffCorrection, FinanceReceiptAdjustment, FinanceVoucher, Order, PaymentPlan, PurchaseOrder, Transaction
 from crm.finance_scope import require_finance_permission, scope_plan_queryset, scope_transaction_queryset, validate_finance_relations
 from crm.services import cash_events as cash
@@ -1286,20 +1287,26 @@ def approve_contract_change(change):
     contract = change.order or change.purchase_order
     if contract is None or contract.status in {"draft", "cancelled"}:
         raise ValidationError("只有有效合同可以确认金额变更。")
-    if change.amount_delta > 0:
+    before_total = contract.total_amount
+    target_total = before_total + change.amount_delta
+    if change.order_id and contract.amount_calculation_version != LEGACY_AMOUNT_CALCULATION_VERSION:
+        target_total = money(contract.base_amount + contract.approved_change_amount + change.amount_delta)
+    delta = target_total - before_total
+    plan = None
+    if delta > 0:
         plan = PaymentPlan.objects.create(
             order=change.order,
             purchase_order=change.purchase_order,
             direction="receivable" if change.order_id else "payable",
             due_date=change.due_date,
-            planned_amount=change.amount_delta,
+            planned_amount=delta,
             currency=contract.currency,
             notes=f"变更单 #{change.pk}：{change.notes}",
         )
-    else:
-        if contract.total_amount + change.amount_delta < contract.paid_amount:
+    elif delta < 0:
+        if target_total < contract.paid_amount:
             raise ValidationError("金额调减后不能低于当前已收/已付金额，需先完成退款。")
-        remaining_reduction = -change.amount_delta
+        remaining_reduction = -delta
         plans = list(contract.payment_plans.select_for_update().exclude(status="cancelled").order_by("-due_date", "-id"))
         if sum((plan.remaining_amount for plan in plans), Decimal("0")) < remaining_reduction:
             raise ValidationError("金额调减超过可减少的未结收付款计划余额。")

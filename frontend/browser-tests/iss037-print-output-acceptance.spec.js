@@ -72,6 +72,7 @@ test('saved PI permits printing after resources load on narrow screen', async ({
 
 for (const [label, width, headers = false] of [['complete', 1440], ['complete', 1440, true], ['complete', 390], ['multipage', 1440], ['optional-empty', 1440]]) {
 test(`Chrome UI print to PDF ${label} ${width}px headers=${headers}`, async ({ baseURL }) => {
+  test.setTimeout(150000)
   const artifactName = `ui-formal-${label}-${width}-headers-${headers}`
   const sample = formalFixture.samples.find(item => item.label === label)
   expect(sample.status).toBe('sent')
@@ -91,8 +92,11 @@ test(`Chrome UI print to PDF ${label} ${width}px headers=${headers}`, async ({ b
     download: { default_directory: output, prompt_for_download: false },
   }))
   const browser = await chromium.launchPersistentContext(profile, { channel: 'chrome', headless: false, args: ['--kiosk-printing'] })
+  const printDiagnostic = { console: [], pageErrors: [] }
   try {
     const page = await browser.newPage()
+    page.on('console', message => printDiagnostic.console.push({ type: message.type(), text: message.text() }))
+    page.on('pageerror', error => printDiagnostic.pageErrors.push(error.message))
     await page.setViewportSize({ width, height: 900 })
     await page.goto(`${baseURL}/quotes?detail=${sample.id}`)
     const detail = page.getByRole('dialog', { name: '报价工作台' })
@@ -109,17 +113,21 @@ test(`Chrome UI print to PDF ${label} ${width}px headers=${headers}`, async ({ b
     }, null, 2))
     await expect(page.locator('iframe[title="已保存 PI"]')).toBeVisible()
     await page.screenshot({ path: path.join(evidence, `${artifactName}.png`) })
-    // The native print dialog may block the renderer, so schedule a real DOM
-    // click after this evaluation returns and poll the output from Node.
-    await page.evaluate(() => {
-      const button = Array.from(document.querySelectorAll('button')).find(el => el.textContent.includes('导出 PI PDF'))
-      if (!button) throw new Error('PI print button not found')
-      setTimeout(() => button.click(), 100)
-    })
-    await expect.poll(() => fs.readdirSync(output).filter(name => name.endsWith('.pdf')), { timeout: 20000 }).not.toHaveLength(0)
+    const preview = page.getByRole('dialog', { name: 'PI 预览' })
+    const printButton = preview.getByRole('button', { name: '导出 PI PDF' })
+    printDiagnostic.initiallyDisabled = await printButton.isDisabled()
+    printDiagnostic.previewBeforeClick = await preview.innerText()
+    await expect(printButton).toBeEnabled({ timeout: 30000 })
+    // A genuine browser click preserves user activation. Native printing may
+    // block the renderer, so poll from Node before awaiting its completion.
+    const clickResult = printButton.click({ timeout: 90000 }).then(() => null, error => error)
+    await expect.poll(() => fs.readdirSync(output).filter(name => name.endsWith('.pdf')), { timeout: 60000 }).not.toHaveLength(0)
+    const clickError = await clickResult
+    if (clickError) throw clickError
     const file = fs.readdirSync(output).find(name => name.endsWith('.pdf'))
     fs.copyFileSync(path.join(output, file), path.join(evidence, `${artifactName}.pdf`))
   } finally {
+    fs.writeFileSync(path.join(evidence, `${artifactName}-diagnostic.json`), JSON.stringify(printDiagnostic, null, 2))
     await browser.close()
   }
 })

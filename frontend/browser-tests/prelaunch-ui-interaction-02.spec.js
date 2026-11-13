@@ -129,7 +129,7 @@ test(`PI nested preview scroll close and persisted content ${width}`,async({page
  if(risks.items?.some(item=>item.has_risk)) await page.getByRole('button',{name:'了解风险，继续导出',exact:true}).click()
  const download=await downloading
  const exported=info.outputPath('saved-pi.xlsx');await download.saveAs(exported)
- const cells=execFileSync(process.env.ISOLATED_TEST_PYTHON,['-c',"import openpyxl,sys,json; w=openpyxl.load_workbook(sys.argv[1],data_only=True); print(json.dumps([str(c.value) for s in w for row in s for c in row if c.value is not None],ensure_ascii=True))",exported],{encoding:'utf8'})
+ const cells=execFileSync(process.env.ISOLATED_TEST_PYTHON,['-c',"import openpyxl,sys,json,io; w=openpyxl.load_workbook(io.BytesIO(sys.stdin.buffer.read()),data_only=True); print(json.dumps([str(c.value) for s in w for row in s for c in row if c.value is not None],ensure_ascii=True))"],{encoding:'utf8',input:readFileSync(exported)})
  expect(cells).toContain(saved.quote_no)
  const values=JSON.parse(cells)
  for(const item of saved.items){expect(values).toContain(String(Number(item.quantity)));expect(values).toContain(String(Number(item.unit_price)));expect(values).toContain(String(Number(item.quantity)*Number(item.unit_price)))}

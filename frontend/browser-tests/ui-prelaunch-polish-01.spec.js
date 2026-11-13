@@ -10,16 +10,18 @@ test.beforeEach(({ browserName }) => {
   expect(browserName).toBe('chromium')
 })
 
-let sharedFixture
+test.setTimeout(120000)
 for (const [width, height] of [[1366, 768], [1920, 1080]]) {
 test('order deletion locks the row until a failed request can be retried ' + width, async ({ page, browser }, testInfo) => {
-  const root = new URL('../../', import.meta.url)
-  const fixture = width === 1366 ? JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [
-    fileURLToPath(new URL('docs/uat-evidence/sales-state-closeout-05/seed.py', root)),
-  ], { cwd: fileURLToPath(new URL('backend/', root)), encoding: 'utf8' })) : sharedFixture
-  sharedFixture = fixture
-  const id = width === 1366 ? fixture.identifiers.draft : fixture.confirmOrders[0]
-  const number = width === 1366 ? fixture.orders.draft : 'S5-CONFIRM-1'
+  const unique = `${width}-${Date.now()}`
+  const customerResponse = await post(page, '/api/customers/', {data:{code:'UI-'+unique,name:'合成删除客户'+unique,country:'CN'}})
+  expect(customerResponse.status()).toBe(201)
+  const customer = await customerResponse.json()
+  const orderResponse = await post(page, '/api/orders/', {data:{customer:customer.id,order_date:'2026-11-14',currency:'CNY',exchange_rate:'1',items:[]}})
+  expect(orderResponse.status(),await orderResponse.text()).toBe(201)
+  const order = await orderResponse.json()
+  const id = order.id
+  const number = order.order_no
   await page.setViewportSize({ width, height })
   await page.goto('/orders?search=' + number)
   const remove = page.getByRole('button', { name: '删除 ' + number })
@@ -42,7 +44,7 @@ test('order deletion locks the row until a failed request can be retried ' + wid
   expect(box.x + box.width).toBeLessThanOrEqual(width)
   await page.mouse.dblclick(box.x + box.width / 2, box.y + box.height / 2)
   expect(requests).toBe(1)
-  const screenshot = await page.screenshot({ path: testInfo.outputPath('delete-pending-1366.png') })
+  const screenshot = await page.screenshot({ path: testInfo.outputPath(`delete-pending-${width}.png`) })
   release()
   await expect(remove).toBeEnabled()
   expect((await page.request.get('/api/orders/' + id + '/')).ok()).toBe(true)
@@ -57,7 +59,12 @@ test('order deletion locks the row until a failed request can be retried ' + wid
   }, null, 2))
 })
 
-test('first bank-event load displays progress and supports retry ' + width, async ({ page }, testInfo) => {
+test('first bank-event load displays progress and supports retry ' + width, async ({ page, browser }, testInfo) => {
+  if (width === 1366) {
+    execFileSync(process.env.ISOLATED_TEST_PYTHON, [fileURLToPath(new URL('../../docs/uat-evidence/ui-final-state-closeout-03/seed.py', import.meta.url))], {
+      cwd: fileURLToPath(new URL('../../backend/', import.meta.url)), encoding: 'utf8', env: { ...process.env, CLOSEOUT_FINANCE_LAYOUT: '1' },
+    })
+  }
   let release
   const wait = new Promise(resolve => { release = resolve })
   let requests = 0
@@ -69,16 +76,34 @@ test('first bank-event load displays progress and supports retry ' + width, asyn
   await page.setViewportSize({ width, height })
   await page.goto('/rmb-cash-events')
   await expect(page.getByText('正在加载…', { exact: true })).toBeVisible()
-  await page.screenshot({ path: testInfo.outputPath('bank-events-loading-1366.png') })
+  await page.screenshot({ path: testInfo.outputPath(`bank-events-loading-${width}.png`) })
   release()
   const retry = page.getByRole('button', { name: '重试', exact: true })
   await expect(retry).toBeVisible({ timeout: 12000 })
-  await page.screenshot({ path: testInfo.outputPath('bank-events-error-1366.png') })
+  await page.screenshot({ path: testInfo.outputPath(`bank-events-error-${width}.png`) })
   await retry.click()
   await expect(page.getByText('正在加载…', { exact: true })).toBeHidden()
   await expect(page.getByText('合成故障', { exact: true })).toBeHidden()
   expect(requests).toBe(7)
-  await page.screenshot({ path: testInfo.outputPath('bank-events-recovered-1366.png') })
+  const row = page.getByRole('row').filter({ hasText: 'EVID-BANK-CLOSEOUT' })
+  await expect(row).toBeVisible()
+  await row.getByRole('button', { name: /详情/ }).click()
+  const dialog = page.getByRole('dialog', { name: 'EVID-BANK-CLOSEOUT' })
+  await expect(dialog).toBeVisible()
+  const close = dialog.getByRole('button', { name: /关闭/ }).first()
+  const bounds = await close.boundingBox()
+  expect(bounds.y).toBeGreaterThanOrEqual(0)
+  expect(bounds.y + bounds.height).toBeLessThanOrEqual(height)
+  await page.screenshot({ path: testInfo.outputPath(`bank-detail-${width}.png`) })
+  await close.click()
+  await expect(dialog).toBeHidden()
+  await writeFile(testInfo.outputPath('bank.json'), JSON.stringify({ source: execFileSync('git', ['rev-parse','HEAD'], {encoding:'utf8'}).trim(), browser: browser.version(), width, height, requests, nonempty: true, detailClosed: true, metrics: await page.evaluate(() => ({dpr:devicePixelRatio,width:innerWidth,height:innerHeight})) }, null, 2))
+  await page.screenshot({ path: testInfo.outputPath(`bank-events-recovered-${width}.png`) })
 })
 
+}
+
+async function post(page,url,options) {
+ const token=(await page.context().cookies()).find(c=>c.name==='csrftoken')?.value
+ return page.request.post(url,{...options,headers:{...options?.headers,'X-CSRFToken':token}})
 }

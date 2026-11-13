@@ -1232,7 +1232,8 @@ def refund_receipt_cash(source, order, value, reason, evidence_id, user, *, actu
         plans = list(PaymentPlan.objects.select_for_update().filter(pk__in=plan_ids).order_by("pk"))
         order = Order.objects.select_for_update().get(pk=order.pk)
         reject_unlinked_historical_finance(order, "登记退款")
-        if order.customer_id != source.customer_id or order.currency != source.currency or order.status in {"draft", "cancelled"}:
+        cancelled_refund = order.status == "cancelled" and order.total_amount == 0
+        if order.customer_id != source.customer_id or order.currency != source.currency or order.status == "draft" or (order.status == "cancelled" and not cancelled_refund):
             raise ValidationError("订单与原收款的客户、币种或状态不匹配。")
         plans.sort(key=lambda plan: (plan.due_date is not None, plan.due_date or date.min, plan.pk), reverse=True)
     else:
@@ -1260,8 +1261,12 @@ def refund_receipt_cash(source, order, value, reason, evidence_id, user, *, actu
         link = FinanceReceiptRefund.objects.create(source=source, refund=refund, voucher=proof, actor=cash.actor(user, "refund_receipt_cash"))
         if plan:
             plan.settled_amount -= applied
-            _sync_plan_status(plan)
-            plan.save(update_fields=["settled_amount", "status", "updated_at"])
+            if cancelled_refund:
+                plan.planned_amount = plan.settled_amount
+                plan.status = "settled" if plan.settled_amount else "cancelled"
+            else:
+                _sync_plan_status(plan)
+            plan.save(update_fields=["settled_amount", "planned_amount", "status", "updated_at"])
         rows.append((refund, link))
         remaining -= applied
         if not remaining:

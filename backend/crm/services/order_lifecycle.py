@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from crm.models import AdvanceAllocation, Customer, InventoryReservation, Order, OrderItem, PaymentPlan, Quote, Shipment
+from crm.models import AdvanceAllocation, ContractChangeRequest, Customer, InventoryReservation, Order, OrderItem, PaymentPlan, Quote, Shipment
 from crm.money import CURRENT_AMOUNT_CALCULATION_VERSION
 from crm.services.finance import ensure_default_payment_plans
 from crm.services.fulfillment import allocate_order, order_item_metrics
@@ -184,22 +184,49 @@ def complete_order(order):
 
 
 @transaction.atomic
-def cancel_order(order, reason):
+def cancel_order(order, reason, *, settle_refund=False):
     reason = str(reason or "").strip()
     if not reason:
         raise ValidationError("取消原因不能为空。")
+    if settle_refund:
+        Customer.objects.select_for_update().get(pk=order.customer_id)
     order = Order.objects.select_for_update().get(pk=order.pk)
     reject_historical(order, "取消正式订单")
     if order.status not in {"draft", "confirmed", "production"}:
         raise ValidationError("当前订单状态不能取消。")
     if Shipment.objects.filter(order=order, status="confirmed").exists():
         raise ValidationError("订单已有有效发货记录，不能直接取消。")
-    if order.transactions.filter(status="confirmed").exists():
-        raise ValidationError("订单已有正式收付款记录，不能直接取消。")
-    if AdvanceAllocation.objects.filter(plan__order=order, is_active=True).exists():
-        raise ValidationError("订单已有有效预收款核销，不能直接取消。")
-    if order.payment_plans.filter(settled_amount__gt=Decimal("0")).exists():
-        raise ValidationError("订单已有已结算收款计划，不能直接取消。")
+    if settle_refund:
+        from .cash_events import guard_refund
+        from .finance import _writeoff_total
+
+        if order.status == "draft" or hasattr(order, "history_continuation"):
+            raise ValidationError("该订单须使用原取消或历史接续流程。")
+        guard_refund(order)
+        plans = list(order.payment_plans.select_for_update().exclude(status="cancelled"))
+        settled = sum((plan.settled_amount for plan in plans), Decimal("0"))
+        if (not plans or settled <= 0 or settled != order.paid_amount
+                or any(plan.direction != "receivable" or _writeoff_total(plan) for plan in plans)
+                or AdvanceAllocation.objects.filter(plan__order=order, is_active=True).exists()
+                or order.transactions.filter(status="confirmed").exclude(
+                    kind="customer_receipt", plan_id__in=[plan.pk for plan in plans], bank_fee_amount=0,
+                ).exists()):
+            raise ValidationError("仅支持已按订单计划核销的原币现金收款；请先核对手续费、抵减和其他资金记录。")
+        for plan in plans:
+            plan.planned_amount = plan.settled_amount
+            plan.status = "settled" if plan.settled_amount else "cancelled"
+            plan.save(update_fields=["planned_amount", "status", "updated_at"])
+        if order.total_amount:
+            ContractChangeRequest.objects.create(
+                order=order, amount_delta=-order.total_amount, status="approved", notes=reason,
+            )
+    else:
+        if order.transactions.filter(status="confirmed").exists():
+            raise ValidationError("订单已有正式收付款记录，不能直接取消。")
+        if AdvanceAllocation.objects.filter(plan__order=order, is_active=True).exists():
+            raise ValidationError("订单已有有效预收款核销，不能直接取消。")
+        if order.payment_plans.filter(settled_amount__gt=Decimal("0")).exists():
+            raise ValidationError("订单已有已结算收款计划，不能直接取消。")
 
     order.status = "cancelled"
     order.cancelled_at = timezone.now()

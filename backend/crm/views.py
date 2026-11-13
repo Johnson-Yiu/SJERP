@@ -2304,14 +2304,34 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         input_serializer.is_valid(raise_exception=True)
         try:
             with transaction.atomic():
-                order = cancel_order(self.get_object(), input_serializer.validated_data["reason"])
+                settle_refund = input_serializer.validated_data["settle_refund"]
+                target = self.get_object()
+                reason = input_serializer.validated_data["reason"]
+                identity = None
+                if settle_refund:
+                    require_finance_permission(request.user, "finance", "update")
+                    require_finance_permission(request.user, "transactions", "view")
+                    identity, replay = begin_fulfillment_idempotency(
+                        key=require_finance_request_key(request), operation="order_paid_cancel",
+                        target_id=target.pk, payload={"reason": reason},
+                        operator_id=request.user.pk if request.user.is_authenticated else None,
+                    )
+                    if replay:
+                        response = Response(self.get_serializer(target).data)
+                        response["Idempotent-Replay"] = "true"
+                        return response
+                order = cancel_order(target, reason, settle_refund=settle_refund)
                 record_operation(
                     request=request,
                     instance=order,
                     action="custom",
                     action_label="取消销售订单",
-                    metadata={"reason": order.cancellation_reason},
+                    metadata={"reason": order.cancellation_reason, "settle_refund": settle_refund},
                 )
+                if identity is not None:
+                    complete_fulfillment_idempotency(identity, {"order_id": order.pk}, response_status=200)
+        except FulfillmentIdempotencyConflict as error:
+            return Response({"detail": error.messages[0]}, status=status.HTTP_409_CONFLICT)
         except DjangoValidationError as error:
             return Response({"detail": error.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
         return Response(self.get_serializer(order).data)

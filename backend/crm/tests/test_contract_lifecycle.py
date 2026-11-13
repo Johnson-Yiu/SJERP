@@ -3,7 +3,7 @@ from decimal import Decimal
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -160,6 +160,50 @@ class ContractLifecycleApiTests(TestCase):
         self.assertIsNotNone(order.cancelled_at)
         self.assertFalse(InventoryReservation.objects.filter(order_item__order=order).exists())
         self.assertTrue(all(plan.status == "cancelled" for plan in order.payment_plans.all()))
+
+    def test_paid_order_cancellation_and_two_actual_refunds(self):
+        from django.core.files.base import ContentFile
+        import hashlib
+        import tempfile
+        from crm.models import FinanceVoucher
+        from crm.services.finance import record_transaction
+
+        order = Order.objects.get(pk=self.create_draft(order_no="SO-PAID-CANCEL", items=[{"sku": self.sku.pk, "quantity": "10", "unit_price": "100"}]).data["id"])
+        self.assertEqual(self.client.post(f"/api/orders/{order.pk}/confirm/").status_code, 200)
+        plan = order.payment_plans.get()
+        amount = plan.planned_amount
+        receipt = record_transaction({"kind": "customer_receipt", "direction": "income", "order": order,
+                                      "plan": plan, "amount": amount, "currency": order.currency})
+        url = f"/api/orders/{order.pk}/cancel/"
+        payload = {"reason": "客户取消，原款分次退回", "settle_refund": True}
+        response = self.client.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="paid-cancel-order")
+        self.assertEqual(response.status_code, 200, response.data)
+        replay = self.client.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="paid-cancel-order")
+        self.assertEqual(replay.status_code, 200, replay.data)
+        self.assertEqual(replay["Idempotent-Replay"], "true")
+        self.assertEqual(order.contract_changes.count(), 1)
+        order.refresh_from_db()
+        self.assertEqual(order.status, "cancelled")
+        self.assertEqual(order.total_amount, 0)
+        self.assertEqual(order.paid_amount, amount)
+        self.assertFalse(order.transactions.filter(kind="refund").exists())
+        first = amount * Decimal("0.4")
+        for value, expected in [(first, amount - first), (amount - first, Decimal("0"))]:
+            content = f"%PDF-1.4\nSynthetic cancellation refund {value}\n%%EOF".encode()
+            proof = FinanceVoucher(original_name="refund.pdf", sha256=hashlib.sha256(content).hexdigest(),
+                                   size=len(content), scope="transaction", actor={"kind": "synthetic_fixture"})
+            with tempfile.TemporaryDirectory() as media, override_settings(MEDIA_ROOT=media):
+                proof.file.save("refund.pdf", ContentFile(content), save=False)
+                proof.save()
+                result = self.client.post(f"/api/transactions/{receipt.pk}/refund-cash/", {
+                    "order": order.pk, "amount": format(value, ".4f"), "reason": "合成实际退款凭证",
+                    "voucher": proof.pk, "actual_date": self.day.isoformat(),
+                }, format="json", HTTP_IDEMPOTENCY_KEY=f"paid-cancel-{value}")
+                self.assertEqual(result.status_code, 201, result.data)
+            self.assertEqual(order.paid_amount, expected)
+            self.assertEqual(order.outstanding_amount, 0)
+        self.assertEqual(order.transactions.filter(kind="refund", plan=plan).count(), 2)
+        self.assertEqual(Transaction.objects.get(pk=receipt.pk).status, "confirmed")
 
     def test_purchase_draft_place_cancel_and_guards(self):
         supplier = Supplier.objects.create(code="LC", name="Lifecycle Supplier")

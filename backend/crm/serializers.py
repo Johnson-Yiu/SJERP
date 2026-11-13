@@ -940,6 +940,7 @@ class ShipmentReversalInputSerializer(serializers.Serializer):
 
 
 class CancellationInputSerializer(serializers.Serializer):
+    settle_refund = serializers.BooleanField(default=False)
     reason = serializers.CharField(max_length=500, allow_blank=False, trim_whitespace=True)
 
 

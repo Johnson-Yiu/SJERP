@@ -106,17 +106,29 @@ def _canonical_request(payload):
 
 
 def _line_value(item, row):
-    if item.trade_unit_id:
-        if "new_trade_quantity" not in row:
-            raise ValidationError(f"{item.sku_code_snapshot or item.sku.sku} 必须按原交易单位填写数量。")
-        trade_quantity = _decimal(row["new_trade_quantity"], "交易数量")
+    if item.trade_unit_id or item.trade_quantity is not None or item.trade_unit_price is not None:
         snapshot = item.trade_snapshot or {}
+        if item.trade_quantity is None or item.trade_unit_price is None:
+            raise ValidationError("原交易数量或单价缺失，不能安全调整。")
+        if not item.trade_unit_id and not isinstance(snapshot.get("allow_fraction"), bool):
+            raise ValidationError("原交易单位缺少拆分规则，不能安全调整。")
         try:
             factor = Decimal(str(snapshot["factor"]))
         except (KeyError, InvalidOperation, TypeError, ValueError):
             raise ValidationError(f"{item.sku_code_snapshot or item.sku.sku} 缺少可靠的交易单位换算快照，不能安全调整。")
         if not factor.is_finite() or factor <= 0:
             raise ValidationError("原交易单位换算关系无效，不能安全调整。")
+        if not item.trade_unit_id and item.trade_quantity * factor != item.quantity:
+            raise ValidationError("原交易数量与基础数量不符合换算快照，不能安全调整。")
+        if "new_trade_quantity" in row:
+            trade_quantity = _decimal(row["new_trade_quantity"], "交易数量")
+        elif not item.trade_unit_id and "new_quantity" in row:
+            requested_base = _decimal(row["new_quantity"], "基础数量")
+            trade_quantity = _decimal(requested_base / factor, "换算后的交易数量")
+            if trade_quantity * factor != requested_base:
+                raise ValidationError("原交易单位无法准确换算该基础数量。")
+        else:
+            raise ValidationError(f"{item.sku_code_snapshot or item.sku.sku} 必须按原交易单位填写数量。")
         if not snapshot.get("allow_fraction", False) and trade_quantity != trade_quantity.to_integral_value():
             raise ValidationError(f"{item.sku_code_snapshot or item.sku.sku} 的原交易单位只允许整包装数量。")
         base_quantity = trade_quantity * factor
@@ -155,7 +167,7 @@ def _normalized_lines(order, canonical_items):
             )
         proposed = copy(item)
         proposed.quantity = base_quantity
-        if item.trade_unit_id:
+        if trade_quantity is not None:
             proposed.trade_quantity = trade_quantity
         normalized.append({
             "item": item,
@@ -475,7 +487,7 @@ def apply_quantity_adjustment(order, payload, *, operator=None):
     for row in normalized:
         item = row["item"]
         item.quantity = row["new_quantity"]
-        if item.trade_unit_id:
+        if row["new_trade_quantity"] is not None:
             item.trade_quantity = row["new_trade_quantity"]
         item.save(update_fields=["quantity", "trade_quantity"])
     order.quantity_change_version = old_version + 1

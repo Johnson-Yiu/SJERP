@@ -46,6 +46,7 @@ function canDrill(metric) {
   return can('transactions', 'view')
 }
 function drillAmount(row) {
+  if (row.amount === null) return '成本待核实'
   return drill.value?.amount_unit === '笔' ? `${row.amount || 0} 笔` : `¥${money(row.amount)}`
 }
 function drillBasisLabel(value) {
@@ -170,7 +171,7 @@ onMounted(load)
     <PageLoadState :loading="loading" :has-loaded="hasLoaded" :error="error" @retry="load" />
     <template v-if="hasLoaded">
     <section class="metric-section"><header><div><h3>所选期间</h3><p>{{ data.period?.date_from }} 至 {{ data.period?.date_to }}</p></div></header><div class="cards period-cards">
-      <article v-for="[key, label] in periodCards" :key="key"><span>{{ label }}</span><strong>¥{{ money(data.metrics[key]) }}</strong><button v-if="canDrill(key)" type="button" class="metric-drill" :disabled="drillLoading" @click="openDrill(key)">查看构成明细</button></article>
+      <article v-for="[key, label] in periodCards" :key="key"><span>{{ label }}</span><strong>{{ data.metrics[key] === null ? '成本待核实' : '¥' + money(data.metrics[key]) }}</strong><button v-if="canDrill(key)" type="button" class="metric-drill" :disabled="drillLoading" @click="openDrill(key)">查看构成明细</button></article>
     </div></section>
     <section class="metric-section"><header><div><h3>当前待结与未核销（余额）</h3><p>截至当前的待结与未核销金额，不受所选期间筛选限制</p></div></header><div class="cards balance-cards">
       <article v-for="[key, label, kind] in balanceCards" :key="key"><span>{{ label }}</span><strong>{{ kind === 'count' ? `${data.metrics[key] || 0} 笔` : `¥${money(data.metrics[key])}` }}</strong><button v-if="canDrill(key)" type="button" class="metric-drill" :disabled="drillLoading" @click="openDrill(key)">查看构成明细</button></article>
@@ -181,7 +182,7 @@ onMounted(load)
       <p v-if="drillError" class="error" role="alert">{{ drillError }}</p>
       <p v-else-if="drillLoading" class="definition-note" role="status">正在加载构成明细…</p>
       <template v-else-if="drill">
-        <p class="drill-total">明细合计：<strong>{{ drill.amount_unit === '笔' ? `${drill.total_amount || 0} 笔` : `¥${money(drill.total_amount)}` }}</strong> · {{ drill.total_count }} 条记录</p>
+        <p class="drill-total">明细合计：<strong>{{ drill.total_amount === null ? '成本待核实' : drill.amount_unit === '笔' ? `${drill.total_amount || 0} 笔` : `¥${money(drill.total_amount)}` }}</strong> · {{ drill.total_count }} 条记录</p>
         <p v-if="!drill.rows?.length" class="empty-state">当前范围没有可展示的构成记录。</p>
         <table v-else><thead><tr><th><button type="button" class="table-sort" @click="sortDrill('record')">记录</button></th><th><button type="button" class="table-sort" @click="sortDrill('date')">日期</button></th><th>关联对象</th><th>状态</th><th><button type="button" class="table-sort" @click="sortDrill('amount')">金额</button></th><th>构成说明</th><th>操作</th></tr></thead><tbody><tr v-for="row in drill.rows" :key="`${drill.metric}-${row.id}`"><td>{{ row.record_label }}</td><td>{{ row.date || '—' }}</td><td>{{ row.relation_label }}</td><td>{{ row.status_label }}</td><td>{{ drillAmount(row) }}</td><td>{{ row.amount_note || '—' }}</td><td><RouterLink :to="row.detail_url">{{ row.detail_label || '查看原始记录' }}</RouterLink></td></tr></tbody></table>
         <nav v-if="drill.total_count > drill.page_size" class="drill-pagination" aria-label="构成明细分页"><button type="button" class="secondary" :disabled="drill.page <= 1 || drillLoading" @click="openDrill(drill.metric, drill.page - 1, drill.sort_by, drill.sort_order)">上一页</button><span>第 {{ drill.page }} 页 · 每页 {{ drill.page_size }} 条</span><button type="button" class="secondary" :disabled="!drill.has_more || drillLoading" @click="openDrill(drill.metric, drill.page + 1, drill.sort_by, drill.sort_order)">下一页</button></nav>

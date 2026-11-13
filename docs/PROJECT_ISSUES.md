@@ -755,3 +755,5 @@ H2 历史商品关联、E1-R2 销售界面、E2-R2 产品运营补修已在独�
 对账命令从 backend 启动时漏检源码修改，已定位为 Git 路径限定使用调用者目录。修复及真实临时仓库回归已接入 U4，等待独立复审。D1 合成试导与多币种检查保留真实资料、未结余额、库存和剩余履约的待验边界。[U4 证据与状态](uat-evidence/ui-delivery-closeout-04/README.md)
 
 U4 已接收 S5、Q6、P6 的固定交付。库存其他来源、关联子详情返回及 SKU 行内按键仍待验，统一候选 CI 单独核销。[逐项状态和来源](uat-evidence/ui-delivery-closeout-04/remaining.md)
+
+小团队金额集成接收了数量核销与采购成本修复。历史接续交易快照改量、成本异常下的工作台与报表完整性已补修，统一 CI 与独立复审待核对。[验证记录](uat-evidence/small-team-finance-closeout-02/README.md)

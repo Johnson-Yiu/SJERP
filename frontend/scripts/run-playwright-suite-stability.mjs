@@ -15,6 +15,7 @@ const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
+  { name: 'small-team-quantity-finance-01-isolated', file: 'small-team-quantity-finance-01.spec.js', codex: true },
   { name: 'sales-state-closeout-05-audit', file: 'sales-state-closeout-05.spec.js', codex: true, args: ['--audit-sales-test'] },
   ...['sales-state-closeout-05-create', 'sales-state-closeout-05-packing',
     'quote-state-closeout-06', 'quote-state-closeout-06-review'].map(scenario => ({

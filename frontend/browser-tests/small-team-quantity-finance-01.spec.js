@@ -21,7 +21,7 @@ test('quantity changes retain exact receivable and net cash after reopening', as
   const cases = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, [path.join(evidence, 'seed.py')], {
     cwd: path.join(repository, 'backend'), encoding: 'utf8',
   }))
-  const screenshots = path.join(evidence, 'screenshots')
+  const screenshots = path.join(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT || evidence, 'screenshots')
   await mkdir(screenshots, { recursive: true })
   await page.setViewportSize({ width: 1440, height: 900 })
   const workbench = page.getByRole('dialog', { name: '订单工作台' })
@@ -35,6 +35,7 @@ test('quantity changes retain exact receivable and net cash after reopening', as
     await page.goto(new URL('/orders?search=' + fixture.number, baseURL).href)
     const row = activeRows.filter({ hasText: fixture.number })
     await row.click()
+    if (scenario.case === 'FEE') await expect(workbench.locator('.cost-profit-card')).toContainText('采购合同调整')
     await workbench.getByRole('button', { name: '调整数量', exact: true }).click()
     await dialog.getByRole('spinbutton', { name: /新的基础数量/ }).fill(scenario.quantity)
     await dialog.getByLabel('变更原因').fill('核对数量变更后的订单金额与待收')
@@ -65,4 +66,12 @@ test('quantity changes retain exact receivable and net cash after reopening', as
     await payment.screenshot({ path: path.join(screenshots, scenario.case + '-reopened.png') })
     await workbench.getByRole('button', { name: '关闭订单详情' }).click()
   }
+  await page.goto(new URL('/orders?search=' + cases.INCOMPLETE.number, baseURL).href)
+  await activeRows.filter({ hasText: cases.INCOMPLETE.number }).click()
+  const cost = workbench.locator('.cost-profit-card')
+  await expect(cost).toContainText('成本待核实')
+  await expect(cost).not.toContainText('¥')
+  await expect(workbench).toContainText(cases.INCOMPLETE.number)
+  await cost.screenshot({ path: path.join(screenshots, 'incomplete-cost.png') })
+
 })

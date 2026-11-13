@@ -10,7 +10,7 @@ from django.core.files.base import ContentFile
 
 django.setup()
 
-from crm.models import Customer, FinanceVoucher, Order, Product, SKU
+from crm.models import ContractChangeRequest, Customer, FinanceVoucher, Order, Product, PurchaseOrder, SKU, Supplier
 from crm.services.finance import record_transaction
 from test_support.isolated_runtime import verify_isolated_runtime
 
@@ -36,4 +36,17 @@ for case, quantity, price in (("CENTS", 1, "0.335"), ("FEE", 10, "100")):
             amount="980", remittance_amount="1000", bank_fee_amount="20", fee_responsibility="company",
             fee_reason="验收用银行手续费由我方承担", fee_evidence=proof, currency="USD",
         ))
+supplier = Supplier.objects.create(code="QTY-UAT-SUP", name="合成采购成本供应商")
+for case, unit_price in (("FEE", "100"), ("INCOMPLETE", "0")):
+    if case == "FEE":
+        order = Order.objects.get(pk=fixtures[case]["id"])
+    else:
+        order = Order.objects.create(order_no="QTY-UAT-INCOMPLETE", customer=customer,
+                                     order_date=date.today(), currency="USD", status="confirmed")
+        order.items.create(sku=sku, quantity=1, unit_price=10)
+        fixtures[case] = {"id": order.pk, "number": order.order_no}
+    purchase = PurchaseOrder.objects.create(purchase_no=f"QTY-UAT-PO-{case}", supplier=supplier,
+                                            order=order, order_date=date.today(), status="ordered")
+    purchase.items.create(sku=sku, quantity=1, unit_price=Decimal(unit_price))
+    ContractChangeRequest.objects.create(purchase_order=purchase, status="approved", amount_delta=20)
 print(json.dumps(fixtures))

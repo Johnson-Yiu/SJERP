@@ -217,7 +217,28 @@ class PurchaseCostTests(TestCase):
         self.item.save()
         ContractChangeRequest.objects.create(purchase_order=self.purchase, status="approved", amount_delta="10")
         self.assertEqual(self.client.get(self.url).status_code, 400)
-        self.assertEqual(self.client.get(f"/api/orders/{self.a.pk}/workbench/").status_code, 400)
+        response = self.client.get(f"/api/orders/{self.a.pk}/workbench/")
+        self.assertEqual(response.status_code, 200, response.data)
+        profit = response.data["profit_summary"]
+        self.assertTrue(profit["cost_incomplete"])
+        self.assertIn("无法分摊", profit["cost_issue"])
+        self.assertIsNone(profit["purchase_cost_rmb"])
+        self.assertIsNone(profit["estimated_profit_rmb"])
+        Order.objects.filter(pk__in=[self.a.pk, self.b.pk]).update(status="confirmed")
+        period = {"date_from": self.a.order_date.isoformat(), "date_to": self.a.order_date.isoformat()}
+        dashboard = self.client.get("/api/finance-dashboard/", period)
+        self.assertIsNone(dashboard.data["metrics"]["estimated_profit_rmb"])
+        self.assertIsNone(dashboard.data["metrics"]["purchase_cost_rmb"])
+        drill = self.client.get("/api/finance-dashboard/details/", {**period, "metric": "estimated_profit_rmb"})
+        self.assertEqual(drill.status_code, 200, drill.data)
+        self.assertIsNone(drill.data["total_amount"])
+        self.assertTrue(any(row["amount"] is None for row in drill.data["rows"]))
+        params = {**period, "source": "profit", "group_by": "customer"}
+        report = self.client.get("/api/reports/data/", params)
+        self.assertIsNone(report.data["totals"]["amount"])
+        exported = self.client.get("/api/reports/data/", {**params, "export": "csv"})
+        self.assertEqual(exported.status_code, 200)
+        self.assertIn("成本待核实", exported.content.decode("utf-8-sig"))
 
     def test_adjusted_profit_overview_drill_export_and_cash_boundary(self):
         self.a.status = "confirmed"

@@ -25,6 +25,71 @@ from crm.tests.test_history_takeover import HistoryTakeoverFixtureMixin
 
 @override_settings(AUDIT_LOG_ENABLED=True)
 class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
+    def source_rows(self, **kwargs):
+        rows = super().source_rows(**kwargs)
+        if self._testMethodName.startswith("test_snapshot_quantity_"):
+            fractional = self._testMethodName.endswith("_fractional")
+            rows["销售明细"][0].update(quantity_base="60", unit_price="0.335", trade_quantity="6",
+                trade_unit_snapshot="箱", trade_unit_price="3.35", trade_factor_snapshot="10",
+                allow_fraction_snapshot=fractional)
+            rows["履约记录"][0]["quantity_base"] = "10"
+            rows["收付款计划"][0].update(planned_amount="20.10", settled_amount="3.35")
+            rows["收付款流水"][0]["amount"] = "3.35"
+        return rows
+
+    def test_snapshot_quantity_whole(self):
+        self.check_snapshot_quantity(fractional=False)
+
+    def test_snapshot_quantity_fractional(self):
+        self.check_snapshot_quantity(fractional=True)
+
+    def check_snapshot_quantity(self, *, fractional):
+        self.approve_contracts()
+        contracts.execute(self.group.pk, self.maker)
+        original = Order.objects.get(order_no="HIST-SO-HT-1")
+        order = confirm_order(HistoryOperationalContract.objects.get(archived_order=original).continuation_order)
+        line = order.items.get()
+        self.assertIsNone(line.trade_unit_id)
+        self.assertEqual((line.quantity, line.trade_quantity, line.amount),
+                         (Decimal("50"), Decimal("5"), Decimal("16.75")))
+        archived = list(original.archived_lines.values())
+        cash = list(Transaction.objects.values())
+        facts = list(FinanceFact.objects.values())
+        url = f"/api/orders/{order.pk}/quantity-adjustments/"
+
+        def submit(quantity, version, key):
+            payload = {"version": version, "request_key": key, "reason": "合成接续改量",
+                       "items": [{"order_item": line.pk, "new_quantity": quantity}]}
+            return self.client.post(url, payload, format="json")
+
+        result = submit("55", 0, "snapshot-55")
+        if fractional:
+            self.assertEqual(result.status_code, 201, result.data)
+            line.refresh_from_db()
+            self.assertEqual(line.trade_quantity, Decimal("5.5"))
+        else:
+            self.assertEqual(result.status_code, 400, result.data)
+            line.refresh_from_db()
+            self.assertEqual(line.quantity, Decimal("50"))
+            self.assertEqual(original.payment_plans.count(), 1)
+        version = int(fractional)
+        result = submit("60", version, "snapshot-60")
+        self.assertEqual(result.status_code, 201, result.data)
+        self.assertEqual(submit("60", version, "snapshot-60").status_code, 200)
+        line.refresh_from_db()
+        self.assertEqual((line.quantity, line.trade_quantity, line.amount),
+                         (Decimal("60"), Decimal("6"), Decimal("20.10")))
+        self.assertEqual(sum(original.payment_plans.values_list("planned_amount", flat=True)), Decimal("20.10"))
+        self.assertFalse(order.payment_plans.exists())
+        self.assertEqual(list(original.archived_lines.values()), archived)
+        self.assertEqual(list(Transaction.objects.values()), cash)
+        self.assertEqual(list(FinanceFact.objects.values()), facts)
+        line.trade_snapshot = {"factor": "10"}
+        line.save(update_fields=["trade_snapshot"])
+        self.assertEqual(submit("70", version + 1, "snapshot-incomplete").status_code, 400)
+        line.refresh_from_db()
+        self.assertEqual(line.quantity, Decimal("60"))
+
     def setUp(self):
         super().setUp()
         self.sku.specification = "24W"

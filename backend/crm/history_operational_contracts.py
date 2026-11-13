@@ -397,10 +397,17 @@ def _create_sales_draft(original, data, lines, by_id, number, cutover, adjustmen
     for line in lines:
         source, row = by_id[line["source_id"]]
         old = source_line(source)
+        trade_snapshot = old.trade_snapshot
+        if line["trade_quantity"] is not None:
+            trade_snapshot = {
+                **trade_snapshot,
+                "factor": str(row["trade_factor_snapshot"]),
+                "allow_fraction": row["allow_fraction_snapshot"],
+            }
         new = OrderItem.objects.create(order=order, sku_id=line["sku_id"], quantity=line["quantity"], unit_price=old.unit_price,
             cost_price=line["unit_cost"], sales_model_snapshot=old.sales_model_snapshot,
             display_name_snapshot=old.display_name_snapshot, description_snapshot=old.description_snapshot, unit_snapshot=old.unit_snapshot,
-            trade_snapshot=old.trade_snapshot, trade_quantity=line["trade_quantity"], trade_unit_price=old.trade_unit_price if line["trade_quantity"] is not None else None,
+            trade_snapshot=trade_snapshot, trade_quantity=line["trade_quantity"], trade_unit_price=old.trade_unit_price if line["trade_quantity"] is not None else None,
             notes=f"接续历史明细 {source.source_record_id}"[:200])
         links.append({"source_id": source.pk, "archived_item_id": old.pk, "continuation_item_id": new.pk,
             "quantity": line["quantity"], "cost_evidence": line["cost_evidence"], "cost_currency": line["cost_currency"]})

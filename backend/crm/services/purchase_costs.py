@@ -71,6 +71,10 @@ class CostInput(serializers.Serializer):
     expenses = ExpenseInput(many=True)
 
 
+class IncompletePurchaseCost(serializers.ValidationError):
+    """Known cost data inconsistency, safe to expose to authorized readers."""
+
+
 def split_amount(amount, weights, *, quantum=CENT):
     """Largest remainder in stable row order; all shares sum to the rounded total."""
     if amount < 0:
@@ -79,7 +83,7 @@ def split_amount(amount, weights, *, quantum=CENT):
     amount = amount.quantize(quantum, rounding=ROUND_HALF_UP)
     if not total:
         if amount:
-            raise serializers.ValidationError("采购金额为零，不能分摊正公共费用；请核对采购金额或移除公共费用。")
+            raise IncompletePurchaseCost("采购金额为零，不能分摊正公共费用；请核对采购金额或移除公共费用。")
         return [Decimal(0)] * len(weights)
     exact = [amount * weight / total for weight in weights]
     shares = [value.quantize(quantum, rounding=ROUND_DOWN) for value in exact]
@@ -95,7 +99,7 @@ def cost_summary(purchase, records=None, expenses=None):
     for item in purchase.items.order_by("pk"):
         allocations = ([record for record in records if record.purchase_item_id == item.pk] if records is not None else list(item.cost_allocations.select_related("order")))
         if adjustment and sum(allocation.quantity for allocation in allocations) != item.quantity:
-            raise serializers.ValidationError("采购成本归属不完整，无法分摊合同金额变更。")
+            raise IncompletePurchaseCost("采购成本归属不完整，无法分摊合同金额变更。")
         amounts = split_amount(item.amount, [a.quantity for a in allocations])
         for allocation, amount in zip(allocations, amounts):
             rows.append({"purchase_item": item.pk, "sku_code": item.sku_code_snapshot,
@@ -107,13 +111,13 @@ def cost_summary(purchase, records=None, expenses=None):
     weights = [row["base_amount"] for row in rows]
     if adjustment:
         if any(weight < 0 for weight in weights) or not sum(weights):
-            raise serializers.ValidationError("采购合同金额变更无法分摊，请核对原采购金额和成本归属。")
+            raise IncompletePurchaseCost("采购合同金额变更无法分摊，请核对原采购金额和成本归属。")
     # Contract changes can carry four decimal places. Use cents when possible.
     quantum = CENT if adjustment == adjustment.quantize(CENT) else Decimal("0.0001")
     for row, share in zip(rows, split_amount(adjustment, weights, quantum=quantum)):
         row["contract_change_amount"] = share
         if adjustment and row["base_amount"] + share < 0:
-            raise serializers.ValidationError("合同金额变更导致采购归属成本为负，请核对采购金额。")
+            raise IncompletePurchaseCost("合同金额变更导致采购归属成本为负，请核对采购金额。")
     expense_breakdown = []
     expenses = purchase.additional_costs if expenses is None else expenses
     for expense in expenses:

@@ -2701,10 +2701,11 @@ def finance_dashboard(request):
     period_orders = _finance_period_orders(request.user, start, end, can_view_orders)
     sales_rmb = sum((order.total_amount * order.exchange_rate for order in period_orders), Decimal("0"))
     profits = [order_profit_summary(order) for order in period_orders] if can_view_orders and can_view_purchases else []
-    purchase_cost_rmb = sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
+    incomplete_cost_count = sum(row["cost_incomplete"] for row in profits)
+    purchase_cost_rmb = None if incomplete_cost_count else sum((row["purchase_cost_rmb"] for row in profits), Decimal("0"))
     order_expense_rmb = sum((row["expense_rmb"] for row in profits), Decimal("0"))
     receivable_reduction_rmb = sum((row["receivable_reduction_rmb"] for row in profits), Decimal("0"))
-    estimated_profit_rmb = sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
+    estimated_profit_rmb = None if incomplete_cost_count else sum((row["estimated_profit_rmb"] for row in profits), Decimal("0"))
     cash_all = _finance_cash(request.user, start, end)
     missing_cash_rates = cash_all.filter(Q(reference_rate_missing=True) | Q(exchange_rate__isnull=True)).count()
     cash = cash_all.filter(reference_rate_missing=False, exchange_rate__isnull=False)
@@ -2749,6 +2750,7 @@ def finance_dashboard(request):
     payload["cash_basis"] = book_rmb_metadata()
     payload["cash_basis"]["missing_reference_count"] = missing_cash_rates
     payload["cash_basis"]["missing_advance_reference_count"] = missing_advance_rates
+    payload["cash_basis"]["incomplete_cost_count"] = incomplete_cost_count
     payload["cash_basis"]["incomplete_profit_count"] = sum(1 for item in profits if item["reference_incomplete"])
     if missing_cash_rates or missing_advance_rates:
         payload["cash_basis"]["note"] += f" 有 {missing_cash_rates} 笔期间流水及 {missing_advance_rates} 笔预收预付未录入参考汇率，相关人民币汇总暂不包含这些金额。"
@@ -2773,6 +2775,9 @@ def finance_dashboard(request):
             writer.writerow([])
             writer.writerow(["订单指标（按订单日期）", "人民币折算参考金额"])
             writer.writerow(["核准非现金抵减", payload["metrics"]["receivable_reduction_rmb"]])
+            for key, label in [("purchase_cost_rmb", "订单采购归属成本"), ("estimated_profit_rmb", "预计订单利润")]:
+                value = payload["metrics"][key]
+                writer.writerow([label, "成本待核实" if value is None else value])
         return response
     return Response(payload)
 
@@ -2864,12 +2869,15 @@ def finance_dashboard_details(request):
                     "estimated_profit_rmb": profit["estimated_profit_rmb"],
                 }[metric]
                 note = (
-                    f"销售额 ¥{sales:,.2f}；采购归属成本 ¥{profit['purchase_cost_rmb']:,.2f}；"
+                    f"销售额 ¥{sales:,.2f}；"
+                    + (f"成本待核实：{profit['cost_issue']}；" if profit["cost_incomplete"] else f"采购归属成本 ¥{profit['purchase_cost_rmb']:,.2f}；")
+                    +
                     f"订单费用 ¥{profit['expense_rmb']:,.2f}；有效非现金抵减 ¥{profit['receivable_reduction_rmb']:,.2f}。"
                 )
                 if profit["reference_incomplete"]:
                     note += "部分费用未录入参考汇率，预计利润暂未包含这些费用。"
-            total_amount += amount
+            if amount is not None:
+                total_amount += amount
             rows.append(order_row(order, amount, note))
     elif metric in {"income_rmb", "expense_rmb", "net_cash_rmb"}:
         cash = _finance_cash(request.user, start, end).filter(reference_rate_missing=False, exchange_rate__isnull=False).select_related("customer", "supplier", "order", "purchase_order")
@@ -2952,7 +2960,7 @@ def finance_dashboard_details(request):
 
     def sort_value(row):
         if sort_by == "amount":
-            return Decimal(str(row["amount"]))
+            return (row["amount"] is not None, row["amount"] or Decimal("0"))
         if sort_by == "record":
             return str(row["record_label"] or "")
         return row["date"] or date.max
@@ -2970,7 +2978,7 @@ def finance_dashboard_details(request):
         "current_balance": date_basis == "current_balance",
         "period": {"date_from": start, "date_to": end},
         "total_count": total_count,
-        "total_amount": total_amount,
+        "total_amount": None if any(row["amount"] is None for row in rows) else total_amount,
         "page": page,
         "page_size": page_size,
         "sort_by": sort_by,

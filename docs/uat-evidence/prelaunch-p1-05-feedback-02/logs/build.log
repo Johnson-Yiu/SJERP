@@ -1,0 +1,37 @@
+
+> senju-crm-erp@1.0.0 build
+> vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2070 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                        0.56 kB │ gzip:   0.36 kB
+dist/assets/LoginPage-Eb3C-OWn.css                     0.70 kB │ gzip:   0.33 kB
+dist/assets/NewProductReminders-BDl5z9BY.css           2.09 kB │ gzip:   0.68 kB
+dist/assets/TradeUnitsPage-CWKFM52Z.css                2.89 kB │ gzip:   0.89 kB
+dist/assets/FinanceLedgerPage-BAYnkEpR.css             2.93 kB │ gzip:   0.88 kB
+dist/assets/HistoryPreflightPage-Dydbozsu.css          6.14 kB │ gzip:   1.48 kB
+dist/assets/HistoryOrdersPage-BlkpRNQJ.css             6.63 kB │ gzip:   1.55 kB
+dist/assets/HistoryTakeoverPage-B87LfJ4O.css           9.44 kB │ gzip:   2.05 kB
+dist/assets/ReportsPage-DLSkMolU.css                  18.04 kB │ gzip:   3.42 kB
+dist/assets/index-BoNDUajE.css                       412.31 kB │ gzip:  67.68 kB
+dist/assets/file-up-zJNiSYzi.js                        0.34 kB │ gzip:   0.23 kB
+dist/assets/LoginPage-BzD7tx2W.js                      1.74 kB │ gzip:   1.07 kB
+dist/assets/HistoryPreflightPage-CihA4QEj.js           7.36 kB │ gzip:   3.12 kB
+dist/assets/TradeUnitsPage-DaEPrH10.js                10.64 kB │ gzip:   4.33 kB
+dist/assets/NewProductReminders-DImXzaKt.js           12.74 kB │ gzip:   4.40 kB
+dist/assets/HistoryOrdersPage-9T-OnKnH.js             14.30 kB │ gzip:   5.02 kB
+dist/assets/FinanceLedgerPage-CCzu5xHz.js             32.44 kB │ gzip:  10.19 kB
+dist/assets/ReportsPage-d9RlkrK0.js                   52.02 kB │ gzip:  16.78 kB
+dist/assets/HistoryTakeoverPage-dTPCkGro.js           65.19 kB │ gzip:  19.26 kB
+dist/assets/_plugin-vue_export-helper-CYew6eD2.js    126.51 kB │ gzip:  48.21 kB
+dist/assets/index-D5sGt93p.js                      1,347.70 kB │ gzip: 459.31 kB
+
+✓ built in 2.47s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

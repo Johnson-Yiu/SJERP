@@ -145,3 +145,10 @@ test('purchase placement keeps low MOQ as a reasoned soft exception and displays
   assert.match(detail, /确认时间/)
   assert.match(detail, /确认人员/)
 })
+
+test('purchase cost displays contract changes separately from freight', async () => {
+  const modal = await readFile(new URL('../components/PurchaseCostAllocationModal.vue', import.meta.url), 'utf8')
+  assert.match(modal, /row\.contract_change_amount/)
+  assert.match(modal, /row\.additional_amount/)
+  assert.match(modal, /result\.total_amount/)
+})

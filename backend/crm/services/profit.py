@@ -3,11 +3,11 @@ from decimal import Decimal
 
 from django.db.models import Q
 from crm.models import AdvanceAllocation, FinancePlanWriteoff, FinancePlanWriteoffCorrection, Transaction
-from .purchase_costs import order_purchase_cost
+from .purchase_costs import order_purchase_cost_components
 
 
 def order_profit_summary(order):
-    purchase_base_rmb, purchase_additional_rmb = order_purchase_cost(order)
+    purchase_base_rmb, purchase_contract_change_rmb, purchase_additional_rmb = order_purchase_cost_components(order)
     missing_rate = Q(reference_rate_missing=True) | Q(exchange_rate__isnull=True)
     expense_rows = order.transactions.filter(status="confirmed", direction="expense").exclude(
         kind__in=["supplier_payment", "refund", "unallocated_advance", "unallocated_payment"])
@@ -35,10 +35,11 @@ def order_profit_summary(order):
     reduction -= sum(FinancePlanWriteoffCorrection.objects.filter(writeoff__in=writeoffs).values_list("amount", flat=True), Decimal("0"))
     receivable_reduction_rmb = reduction * order.exchange_rate
     sales_rmb = order.total_amount * order.exchange_rate
-    purchase_cost_rmb = purchase_base_rmb + purchase_additional_rmb
+    purchase_cost_rmb = purchase_base_rmb + purchase_contract_change_rmb + purchase_additional_rmb
     estimated_profit_rmb = sales_rmb - purchase_cost_rmb - expense_rmb - receivable_reduction_rmb
     return {
         "sales_rmb": sales_rmb, "purchase_base_rmb": purchase_base_rmb,
+        "purchase_contract_change_rmb": purchase_contract_change_rmb,
         "purchase_additional_rmb": purchase_additional_rmb, "purchase_cost_rmb": purchase_cost_rmb,
         "order_expense_rmb": expense_rmb, "expense_rmb": expense_rmb,
         "receipt_bank_fee_rmb": direct_fees + allocated_fees,

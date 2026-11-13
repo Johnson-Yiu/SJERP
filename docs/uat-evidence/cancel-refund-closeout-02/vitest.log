@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/cancel-refund-closeout-02/frontend
+
+
+ Test Files  4 passed (4)
+      Tests  41 passed (41)
+   Start at  01:54:27
+   Duration  24.40s (transform 2.43s, setup 5.79s, import 3.43s, tests 2.96s, environment 37.34s)
+

@@ -1,0 +1,43 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/cancel-refund-closeout-02/frontend
+
+ ❯ tests/order-quantity-adjustment.spec.js (4 tests | 2 failed) 273ms
+   × keeps cancellation errors and reason inside the form and blocks closing while submitting 27ms
+   × sends explicit termination semantics and permits zero only in that mode 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/order-quantity-adjustment.spec.js > keeps cancellation errors and reason inside the form and blocks closing while submitting
+AssertionError: expected undefined to be defined
+ ❯ tests/order-quantity-adjustment.spec.js:106:47
+    104|   expect(form.get('textarea').attributes('disabled')).toBeDefined()
+    105|   expect(form.findAll('button').find(button => button.text() === '返回')…
+    106|   expect(wrapper.get('[aria-label="关闭订单详情"]').attributes('disabled')).…
+       |                                               ^
+    107|   rejectRequest({ data: { detail: '已有发货，请终止剩余履约。' } })
+    108|   await flushPromises()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/order-quantity-adjustment.spec.js > sends explicit termination semantics and permits zero only in that mode
+AssertionError: expected '0.01' to be '0' // Object.is equality
+
+Expected: "0"
+Received: "0.01"
+
+ ❯ tests/order-quantity-adjustment.spec.js:126:53
+    124|   expect(form.get('input[type="number"]').attributes('min')).toBe('0')
+    125|   await form.get('input[type="number"]').setValue('0')
+    126|   await form.get('textarea').setValue('明确终止未发货的剩余履约')
+       |                                                     ^
+    127|   mocks.api.post.mockResolvedValueOnce({ data: { can_submit: true, lin…
+    128|   await form.trigger('submit')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  01:30:00
+   Duration  6.50s (transform 1.02s, setup 445ms, import 1.17s, tests 273ms, environment 3.89s)
+

@@ -1,0 +1,45 @@
+
+> senju-crm-erp@1.0.0 build
+> vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2069 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                        0.56 kB │ gzip:   0.36 kB
+dist/assets/LoginPage-Eb3C-OWn.css                     0.70 kB │ gzip:   0.33 kB
+dist/assets/NewProductReminders-BDl5z9BY.css           2.09 kB │ gzip:   0.68 kB
+dist/assets/TradeUnitsPage-CWKFM52Z.css                2.89 kB │ gzip:   0.89 kB
+dist/assets/FinanceLedgerPage-BAYnkEpR.css             2.93 kB │ gzip:   0.88 kB
+dist/assets/HistoryPreflightPage-Dydbozsu.css          6.14 kB │ gzip:   1.48 kB
+dist/assets/HistoryOrdersPage-BlkpRNQJ.css             6.63 kB │ gzip:   1.55 kB
+dist/assets/HistoryTakeoverPage-CcbclB4t.css           9.44 kB │ gzip:   2.05 kB
+dist/assets/ReportsPage-DLSkMolU.css                  18.04 kB │ gzip:   3.42 kB
+dist/assets/index-BTDeuD4L.css                       412.27 kB │ gzip:  67.68 kB
+dist/assets/file-up-BGV9ahah.js                        0.34 kB │ gzip:   0.23 kB
+dist/assets/LoginPage-CTo7fvCB.js                      1.74 kB │ gzip:   1.07 kB
+dist/assets/HistoryPreflightPage-CWFg4WIZ.js           7.36 kB │ gzip:   3.12 kB
+dist/assets/TradeUnitsPage-BDNJ3FRP.js                10.64 kB │ gzip:   4.33 kB
+dist/assets/NewProductReminders-P-3SkB8X.js           12.74 kB │ gzip:   4.40 kB
+dist/assets/HistoryOrdersPage-CbvPGOfR.js             14.30 kB │ gzip:   5.02 kB
+dist/assets/FinanceLedgerPage-C2fOjL1j.js             32.44 kB │ gzip:  10.19 kB
+dist/assets/ReportsPage-Cki-kERE.js                   52.02 kB │ gzip:  16.78 kB
+dist/assets/HistoryTakeoverPage-D_JxpGJA.js           65.16 kB │ gzip:  19.25 kB
+dist/assets/_plugin-vue_export-helper-CYew6eD2.js    126.51 kB │ gzip:  48.21 kB
+dist/assets/index-HV4ekXcy.js                      1,346.67 kB │ gzip: 458.89 kB
+
+✓ built in 6.88s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[PLUGIN_TIMINGS] JavaScript callbacks ran for 4.1s of this 6.8s build (61%).
+The slowest callbacks, timed inside each callback (the wait before a callback starts is excluded, the time it awaits is included):
+  - plugin vite:vue transform (45%, 3.1s, 190 calls)
+Additional callback time came from the callbacks below and from callbacks under 1s.
+1 callback is listed without a time. Its calls overlapped, so the time inside one call includes work from other calls. To find its cost, profile the build with `node --cpu-prof`:
+  - plugin vite:css transform (111 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+

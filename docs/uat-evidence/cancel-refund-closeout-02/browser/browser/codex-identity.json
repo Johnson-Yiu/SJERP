@@ -1,0 +1,8 @@
+{
+  "username": "codex",
+  "role": "超级管理员",
+  "authenticated": true,
+  "development_superadmin": false,
+  "rbac_enforcement": false,
+  "has_all_permissions": true
+}

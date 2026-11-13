@@ -845,6 +845,40 @@ class QuantityAdjustmentRBACApiTests(TestCase):
     def auth(self, user):
         self.client.force_authenticate(user=user)
 
+    def test_incomplete_cost_does_not_expose_finance_or_an_out_of_scope_order(self):
+        from crm.models import ContractChangeRequest, PurchaseOrder, Supplier
+
+        supplier = Supplier.objects.create(code="RBAC-COST", name="受限采购供应商")
+        purchase = PurchaseOrder.objects.create(
+            purchase_no="RBAC-COST-SECRET", supplier=supplier, order=self.order,
+            order_date=self.order.order_date, status="ordered",
+        )
+        purchase.items.create(sku=self.sku, quantity=1, unit_price=0)
+        ContractChangeRequest.objects.create(purchase_order=purchase, status="approved", amount_delta=10)
+        url = f"/api/orders/{self.order.pk}/workbench/"
+
+        self.auth(self.user_b)
+        full = self.client.get(url)
+        self.assertEqual(full.status_code, 200, full.data)
+        self.assertTrue(full.data["profit_summary"]["cost_incomplete"])
+
+        self.auth(self.user_a)
+        restricted = self.client.get(url)
+        self.assertEqual(restricted.status_code, 200, restricted.data)
+        self.assertEqual(restricted.data["order"]["id"], self.order.pk)
+        self.assertEqual(restricted.data["items"][0]["id"], self.item.pk)
+        self.assertIsNone(restricted.data["profit_summary"])
+        self.assertNotContains(restricted, "无法分摊")
+        self.assertNotContains(restricted, "RBAC-COST-SECRET")
+        fulfillment = self.client.get(f"/api/orders/{self.order.pk}/fulfillment/")
+        self.assertEqual(fulfillment.status_code, 200, fulfillment.data)
+
+        self.auth(self.user_d)
+        hidden = self.client.get(url)
+        self.assertEqual(hidden.status_code, 404, hidden.data)
+        self.assertNotContains(hidden, self.order.order_no, status_code=404)
+        self.assertNotContains(hidden, "无法分摊", status_code=404)
+
     def test_orders_update_user_can_adjust_but_receives_no_finance_or_procurement_details(self):
         self.auth(self.user_a)
         payload = {

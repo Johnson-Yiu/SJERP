@@ -49,6 +49,10 @@ for(const width of [1366,1920]) test('six and twelve workspaces keep activation 
   }
   await page.getByRole('tab',{name:'客户管理',exact:true}).click()
  }
+ const lastDesktop=page.getByRole('tab',{name:names.at(-1),exact:true});await lastDesktop.click()
+ await page.getByRole('button',{name:names.at(-1)+' 标签操作',exact:true}).click();await page.getByRole('button',{name:'向左移动',exact:true}).click()
+ await expect(lastDesktop).toHaveAttribute('aria-selected','true');await expect(lastDesktop).toBeInViewport()
+ await page.getByRole('button',{name:'向右移动',exact:true}).click();await expect(lastDesktop).toBeInViewport();await page.getByRole('button',{name:'收起',exact:true}).click()
  await page.setViewportSize({width:390,height:844})
  const list=page.getByRole('tablist');await list.hover();await page.mouse.wheel(1000,0)
  await expect.poll(()=>list.evaluate(el=>el.scrollLeft)).toBeGreaterThan(0)

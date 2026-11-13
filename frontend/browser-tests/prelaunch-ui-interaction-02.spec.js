@@ -144,7 +144,7 @@ test('summary card counts and layout across affected pages',async({page},info)=>
  const states=[]
  for(const [width,height] of [[1366,768],[1920,1080],[1024,768],[390,844]]) {
   await page.setViewportSize({width,height})
-  for(const route of ['/customers','/suppliers','/products','/skus','/orders','/purchase-orders','/transactions','/receivables','/payables','/sku-packaging','/hs-codes','/contacts','/follow-ups','/product-certificates']) {
+  for(const route of ['/customers','/suppliers','/products','/skus','/orders','/purchase-orders','/transactions','/receivables','/payables','/sku-packaging','/hs-codes','/contacts','/follow-ups','/product-certificates','/inventory-movements','/product-parameters']) {
    await page.goto(route)
    const cards=page.locator('.summary-cards').first();await expect(cards).toBeVisible()
    const grid=await cards.evaluate(el=>({columns:getComputedStyle(el).gridTemplateColumns.split(' ').length,cardWidth:el.clientWidth,containerWidth:el.parentElement.clientWidth}))
@@ -175,6 +175,8 @@ for(const [width,height] of [[1366,768],[1920,1080]]) test(`rich text real keybo
  await page.getByTestId('dialog-confirm').click()
  await expect(editor.locator('a')).toHaveText('实际链接选择 '+width)
  await expect(editor.locator('a')).toHaveAttribute('href','https://example.test/'+width)
+ const beforeCancel=await editor.innerText()
+ await page.getByRole('button',{name:'插入链接',exact:true}).click();await page.getByTestId('dialog-input').fill('https://example.test/cancel');await page.getByTestId('dialog-cancel').click();await expect(editor).toHaveText(beforeCancel)
  await editor.click();await editor.press('End')
  await page.getByRole('button',{name:'插入链接',exact:true}).click()
  await page.getByTestId('dialog-input').fill('javascript:alert(1)')
@@ -187,12 +189,16 @@ for(const [width,height] of [[1366,768],[1920,1080]]) test(`rich text real keybo
  expect(await page.evaluate(()=>getSelection().toString())).toBe('MOUSE')
  await page.getByRole('button',{name:'插入链接',exact:true}).click();await page.getByTestId('dialog-input').fill('https://example.test/mouse-'+width);await page.getByTestId('dialog-confirm').click()
  await expect(editor.locator('a[href="https://example.test/mouse-'+width+'"]')).toHaveText('MOUSE')
+ await editor.press('Control+End');await editor.press('ArrowRight');await editor.press('Enter')
+ await page.getByRole('button',{name:'插入链接',exact:true}).click();await page.getByTestId('dialog-input').fill('https://example.test/empty-'+width);await page.getByTestId('dialog-confirm').click()
+ await expect(editor.locator('a[href="https://example.test/empty-'+width+'"]')).toHaveText('https://example.test/empty-'+width)
  await page.screenshot({path:info.outputPath('rich-link-selection.png')})
  const saved=page.waitForResponse(r=>r.request().method()==='POST'&&r.url().includes('important-notes'))
  await page.getByRole('button',{name:'保存重要备注',exact:true}).click();const result=await saved;expect(result.ok(),await result.text()).toBe(true)
  await page.reload();await page.locator('.workbench-tabs').getByRole('button',{name:/重要备注/}).click()
  await expect(page.locator('.important-note-content a').filter({hasText:'实际链接选择 '+width})).toHaveAttribute('href','https://example.test/'+width)
  await expect(page.locator('.important-note-content a[href="https://example.test/mouse-'+width+'"]')).toHaveText('MOUSE')
+ await expect(page.locator('.important-note-content a[href="https://example.test/empty-'+width+'"]')).toHaveText('https://example.test/empty-'+width)
  await page.screenshot({path:info.outputPath('rich-link-reopened.png')})
 })
 

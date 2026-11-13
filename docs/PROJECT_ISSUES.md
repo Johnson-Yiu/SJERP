@@ -1,5 +1,22 @@
 # SUNJACK-ERP 项目问题台账
 
+## SJERP PRELAUNCH-REPAIR-BATCH-02（2026-11-14）
+
+共同基线 `d7d155b994b652f6f4f777edde22a257a8ed7a2e` 完整接收 UI 和取消退款来源，再按 A/B/C/D 函数与组件归属集成。以下为已实现、定向验证后待独立复审项；最终集成全量与精确 HEAD CI 见[本批验收](uat-evidence/prelaunch-repair-batch-02/acceptance.md)，阶段性成功不替代交付门槛。
+
+| Issue | 优先级／状态 | 来源、最近核实与影响 | 负责人、阶段、下一步与复审依据 |
+| --- | --- | --- | --- |
+| ISS-129 成本金额与独立币种快照错配 | P1 / FIXED_PENDING_REVIEW | 首次来源：用户本批 R03，原始发现日期 UNKNOWN；2026-11-14 核对历史接续人工成本被主档默认值覆盖、SKU 派生成本币种及关联创建成本标签。未扫描正式数据。 | B／本批；独立复审受控快照、公有 API 只读保护、派生来源及只读差异检查。[B 证据](uat-evidence/cost-currency-integrity-02/README.md)，D 关联订单回读见本批索引。 |
+| ISS-130 产品规则、方案丢稿及日志标签恢复 | P1 / FIXED_PENDING_REVIEW | 首次来源：用户本批 R05/P2-11，原始发现日期 UNKNOWN；2026-11-14 以共同基线复现丢稿和日志刷新回退。 | C／本批；独立复审各自 dirty/busy、同对象异步加载、继续/放弃、保存失败重试和空审计日志。[C 证据](uat-evidence/product-draft-protection-01/README.md)。 |
+| ISS-131 公共确认框被绑定抽屉遮挡 | P1 / FIXED_PENDING_REVIEW | 2026-11-14 集成 Chrome 真实鼠标发现公共层级 200 低于绑定抽屉 300，确认可见但无法命中。 | D／本批；统一提升确认及通知层级，独立复审继续/放弃、Tab 循环、父抽屉和焦点恢复；C 报告保留失败与修后证据。 |
+| ISS-132 采购草稿忙碌关闭及导入重复反馈 | P1 / FIXED_PENDING_REVIEW | 2026-11-14 P1-05 当前基线故障注入：采购创建在途仍能关闭；导入失败重复显示 alert。包装入口已有正确恢复实现。 | B 协助 D／本批；独立复审慢请求、失败保值、重试、同批恢复不重复建单。[证据](uat-evidence/prelaunch-p1-05-feedback-02/README.md)。 |
+| ISS-133 1366 订单删除待处理文字裁切 | P2 / FIXED_PENDING_REVIEW | 首次来源：上轮 UI P1-07 验收，日期 UNKNOWN；2026-11-14 复核待处理操作列空间不足。 | D／本批；保留操作列宽度，独立复审两桌面慢 DELETE、重复鼠标、503 后重试、204/404 回读和原图。 |
+| ISS-134 前端测试环境与过期提示断言 | P2 / FIXED_PENDING_REVIEW | 原 CI `43423924926`：5 个新品提醒 scrollIntoView 环境失败、1 个 SKU 旧文案断言；本批全量另发现作废提示旧断言。首次日期 UNKNOWN，最近核实 2026-11-14。 | D/C/A／本批；保留焦点、失败对象、状态回读、作废原因及幂等请求断言；独立复审最终全量与精确 HEAD CI，不删测试换绿灯。 |
+
+ISS-105、ISS-108 仍为 `FIXED_PENDING_REVIEW`，追加 R01/R02/R04/R06 反例：直接计划收款不得重复当未分配现金；取消后作废/抵减更正不得复活应收；三类来源额度不能串用；部分履约终止仅在显式语义下允许零发货余项归零。普通改量、历史快照、已结汇安全拒绝、审计原子性和真实 PG17 并发保留。[A 证据](uat-evidence/cancel-refund-closeout-02/README.md)。不重做既有数量舍入、手续费核销或采购成本分摊。
+
+本批新增 6 个唯一 ID（129–134），均待独立复审；新增 CLOSED 为 0，既有 Issue 不自动关闭。全台账唯一编号从 128 增至 134；旧阶段统计按当时事实保留。P3 四组继续仅记[长期台账](uat-evidence/ui-prelaunch-polish-01/postlaunch-backlog.md)，P4 保留。本批外正式数据、部署、员工权限和延期项的原下一步不变。
+
 > 2026-11-11 起恢复 GitHub Actions。2026-11-05 的暂停约定已失效。新提交正常推送，等待适用工作流结束并处理失败；认证核对最终源码 SHA。下方暂停、未运行及失败均为历史记录。
 > H2、E1-R2、E2-R2、H3 和 U3 主体已集成。U3 末两提交的测试与证据由 UI-DELIVERY-CLOSEOUT-04 补接。冻结源码 `7e99a5d394ddc0d96a3af04b74686307f754ca08` 的三个主 CI job 和三个 Linux 运维 job 均通过。[逐例验收、跳过、导出和历史分支补测清单](uat-evidence/ci-resume-certification-01/README.md)
 

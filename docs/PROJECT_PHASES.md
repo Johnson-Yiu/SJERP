@@ -1,5 +1,13 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## SJERP PRELAUNCH-REPAIR-BATCH-02（2026-11-14，统一候选验收）
+
+在独立 `codex/prelaunch-repair-integration-02` 接入 UI `e5ce789459b2499189bc9b0b5e922e8722847da1` 和取消退款 `c8a06892579bf586d1a674750902c27943fa69d4`；共同基线 `d7d155b994b652f6f4f777edde22a257a8ed7a2e`。A 财务、B 成本、C 草稿均已按源码来源正常 merge，D 收拢公共弹窗与原 22 项 UI，保留 SEC1 及并行业务成果。没有新增迁移，既有多来源迁移汇合与 0130 叶节点保留。
+
+当前阶段为统一候选全量、真实 PG17 和 Chrome 交叉复验。具体命令、失败修复、精确 HEAD CI、R01–R07 与 P1/P2 结果以[集成验收索引](uat-evidence/prelaunch-repair-batch-02/acceptance.md)为准。任务完成后交独立复审，Issue 为 `FIXED_PENDING_REVIEW`，不由 Codex 自行关闭。本批新登记 ISS-129–134，原 ISS-105/108 追加反例。
+
+P3 四组仅入长期台账；P4、完整打印专项及未采集新范围保持原边界。不合并 master、不部署、不正式导入、不启用 RBAC、不操作真实数据库或资金。正式环境、历史资料和既有延期门槛独立验收，不因本批回归通过消失。
+
 > 2026-11-11 起恢复 GitHub Actions。2026-11-05 的暂停约定已失效。新提交正常推送，等待适用工作流结束并处理失败；认证核对最终源码 SHA。下方暂停、未运行及失败均为历史记录。
 > H2、E1-R2、E2-R2、H3 和 U3 主体已集成。U3 末两提交的测试与证据由 UI-DELIVERY-CLOSEOUT-04 补接。冻结源码 `7e99a5d394ddc0d96a3af04b74686307f754ca08` 的三个主 CI job 和三个 Linux 运维 job 均通过。[逐例验收、跳过、导出和历史分支补测清单](uat-evidence/ci-resume-certification-01/README.md)
 

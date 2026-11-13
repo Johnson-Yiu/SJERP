@@ -197,12 +197,12 @@ def cancel_order(order, reason, *, settle_refund=False):
     if Shipment.objects.filter(order=order, status="confirmed").exists():
         raise ValidationError("订单已有有效发货记录，不能直接取消。")
     if settle_refund:
-        from .cash_events import guard_refund
+        from .cash_events import guard_order_cancellation_sources
         from .finance import _writeoff_total
 
         if order.status == "draft" or hasattr(order, "history_continuation"):
             raise ValidationError("该订单须使用原取消或历史接续流程。")
-        guard_refund(order)
+        guard_order_cancellation_sources(order)
         plans = list(order.payment_plans.select_for_update().exclude(status="cancelled"))
         settled = sum((plan.settled_amount for plan in plans), Decimal("0"))
         if (not plans or settled <= 0 or settled != order.paid_amount

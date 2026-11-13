@@ -848,7 +848,7 @@ class QuantityAdjustmentRBACApiTests(TestCase):
     def test_incomplete_cost_does_not_expose_finance_or_an_out_of_scope_order(self):
         from crm.models import ContractChangeRequest, PurchaseOrder, Supplier
 
-        supplier = Supplier.objects.create(code="RBAC-COST", name="受限采购供应商")
+        supplier = Supplier.objects.create(code="RC", name="受限采购供应商")
         purchase = PurchaseOrder.objects.create(
             purchase_no="RBAC-COST-SECRET", supplier=supplier, order=self.order,
             order_date=self.order.order_date, status="ordered",

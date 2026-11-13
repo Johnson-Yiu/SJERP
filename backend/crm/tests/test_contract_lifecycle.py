@@ -205,6 +205,73 @@ class ContractLifecycleApiTests(TestCase):
         self.assertEqual(order.transactions.filter(kind="refund", plan=plan).count(), 2)
         self.assertEqual(Transaction.objects.get(pk=receipt.pk).status, "confirmed")
 
+    def test_paid_cancellation_checks_only_its_receipt_family(self):
+        from crm.models import CashSourceAllocation, RmbCashEvent
+        from crm.services.finance import record_transaction
+
+        orders = []
+        receipts = []
+        for suffix in ("A", "B"):
+            order = Order.objects.get(pk=self.create_draft(order_no=f"SO-SCOPE-{suffix}").data["id"])
+            self.assertEqual(self.client.post(f"/api/orders/{order.pk}/confirm/").status_code, 200)
+            plan = order.payment_plans.get()
+            receipts.append(record_transaction({
+                "kind": "customer_receipt", "direction": "income", "order": order,
+                "plan": plan, "amount": plan.planned_amount, "currency": order.currency,
+            }))
+            orders.append(order)
+        event = RmbCashEvent.objects.create(
+            event_no="BANK-B", request_key="bank-b", kind="fx_settlement",
+            currency=orders[1].currency, direction="income", amount=receipts[1].amount,
+            bank_date=self.day, bank_net_amount=100, request_payload={}, created_actor={},
+        )
+        CashSourceAllocation.objects.create(event=event, source=receipts[1], currency=event.currency,
+                                            amount=event.amount, source_snapshot={})
+        for order, expected in zip(orders, (200, 400)):
+            response = self.client.post(f"/api/orders/{order.pk}/cancel/", {
+                "reason": "核对实际收款归属", "settle_refund": True,
+            }, format="json", HTTP_IDEMPOTENCY_KEY=f"scope-cancel-{order.pk}")
+            self.assertEqual(response.status_code, expected, response.data)
+            order.refresh_from_db()
+            self.assertEqual(order.status, "cancelled" if expected == 200 else "confirmed")
+        self.assertFalse(Transaction.objects.filter(kind="refund").exists())
+
+    def test_paid_cancellation_rejects_bank_event_on_shared_advance(self):
+        from crm.models import AdvanceAllocation, CashSourceAllocation, RmbCashEvent
+
+        orders = []
+        for suffix in ("A", "B"):
+            order = Order.objects.get(pk=self.create_draft(order_no=f"SO-SHARED-{suffix}").data["id"])
+            self.assertEqual(self.client.post(f"/api/orders/{order.pk}/confirm/").status_code, 200)
+            orders.append(order)
+        source = Transaction.objects.create(
+            transaction_no="SHARED-ADVANCE", transaction_date=self.day, customer=self.customer,
+            direction="income", kind="unallocated_advance", status="confirmed",
+            amount=40, currency=orders[0].currency,
+        )
+        for order in orders:
+            plan = order.payment_plans.get()
+            AdvanceAllocation.objects.create(advance=source, plan=plan, amount=20, cash_amount=20)
+            plan.settled_amount = 20
+            plan.status = "settled"
+            plan.save(update_fields=["settled_amount", "status"])
+        event = RmbCashEvent.objects.create(
+            event_no="BANK-SHARED", request_key="bank-shared", kind="fx_settlement",
+            currency=source.currency, direction="income", amount=40, bank_date=self.day,
+            bank_net_amount=280, request_payload={}, created_actor={},
+        )
+        CashSourceAllocation.objects.create(event=event, source=source, currency=source.currency,
+                                            amount=40, source_snapshot={})
+        for order in orders:
+            response = self.client.post(f"/api/orders/{order.pk}/cancel/", {
+                "reason": "验证共享预收受保护", "settle_refund": True,
+            }, format="json", HTTP_IDEMPOTENCY_KEY=f"shared-cancel-{order.pk}")
+            self.assertEqual(response.status_code, 400, response.data)
+            self.assertIn("共享预收已有银行登记", str(response.data))
+            order.refresh_from_db()
+            self.assertEqual(order.status, "confirmed")
+            self.assertFalse(order.contract_changes.exists())
+
     def test_purchase_draft_place_cancel_and_guards(self):
         supplier = Supplier.objects.create(code="LC", name="Lifecycle Supplier")
         payload = {

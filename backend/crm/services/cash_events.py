@@ -596,3 +596,13 @@ def guard_refund(contract):
         relation = Q(source__supplier_id=contract.supplier_id) | Q(source__purchase_order__supplier_id=contract.supplier_id) | Q(source__plan__purchase_order__supplier_id=contract.supplier_id)
     if CashSourceAllocation.objects.filter(relation, source__currency=contract.currency, event__status__in=ACTIVE).exists():
         raise ValidationError("该往来方同币种资金已有银行事件，退款来源未明确，不能自动释放或推测使用额度。")
+
+def guard_order_cancellation_sources(order):
+    """Check whole receipt families for cash funding this order's plans."""
+    direct = Q(plan__order=order) | Q(order=order)
+    allocated = Q(allocations__plan__order=order, allocations__is_active=True)
+    receipts = Transaction.objects.filter(direct | allocated, direction="income",
+        kind__in=["customer_receipt", "unallocated_advance"], status="confirmed").distinct()
+    source_ids = {member.pk for receipt in receipts for member in family(receipt)}
+    if CashSourceAllocation.objects.filter(source_id__in=source_ids, event__status__in=ACTIVE).exists():
+        raise ValidationError("本单收款或共享预收已有银行登记，请核对原资金来源后办理。")

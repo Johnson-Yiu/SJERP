@@ -405,12 +405,14 @@ async function lifecycleAction(path, confirmation) {
 }
 const cancellationPaid = computed(() => Number(workbench.value?.payment_summary?.paid_amount || 0))
 const cancelWithRefund = computed(() => cancellationPaid.value > 0 && can('finance', 'update') && can('transactions', 'view'))
-function openCancellation() { cancellationReason.value = cancellationAttempt?.reason || ''; error.value = ''; cancelOpen.value = true }
+const cancellationError = ref('')
+function openCancellation() { cancellationReason.value = cancellationAttempt?.reason || ''; cancellationError.value = ''; cancelOpen.value = true }
 async function submitCancellation() {
   if (!can('orders', 'update')) return
   const reason = cancellationReason.value.trim()
   if (!reason || lifecycleSaving.value) return
   lifecycleSaving.value = true
+  cancellationError.value = ''
   if (cancelWithRefund.value && cancellationAttempt?.reason !== reason) {
     cancellationAttempt = { reason, key: crypto.randomUUID() }
   }
@@ -421,7 +423,7 @@ async function submitCancellation() {
     cancelOpen.value = false
     await load()
   }
-  catch (err) { error.value = err.message }
+  catch (err) { cancellationError.value = err.message }
   finally { lifecycleSaving.value = false }
 }
 function ship(item) { return openShipmentDialog([item.id]) }
@@ -518,7 +520,7 @@ watch(() => order.value?.order_no, title => { if (workspace && title) { workspac
             <header><div><strong>{{ line.sku_code }}</strong><span>{{ line.sales_model || '未设置型号' }} · {{ line.display_name }}</span></div><small>明细 #{{ line.id }}</small></header>
             <div class="quantity-adjustment-fields">
               <div><small>当前数量</small><strong>{{ line.usesTradeQuantity ? line.trade_quantity : line.quantity }} {{ line.usesTradeQuantity ? line.trade_snapshot?.unit : line.trade_snapshot?.base_unit }}</strong></div>
-              <label>{{ line.usesTradeQuantity ? '新的交易数量' : '新的基础数量' }}<input v-if="line.usesTradeQuantity" v-model="line.new_trade_quantity" @input="quantityAdjustmentPreview = null" type="number" min="0.01" step="0.01" :aria-label="`新的交易数量 ${line.sku_code}`" required /><input v-else v-model="line.new_quantity" @input="quantityAdjustmentPreview = null" type="number" min="0.01" step="0.01" :aria-label="`新的基础数量 ${line.sku_code}`" required /></label>
+              <label>{{ line.usesTradeQuantity ? '新的交易数量' : '新的基础数量' }}<input v-if="line.usesTradeQuantity" v-model="line.new_trade_quantity" @input="quantityAdjustmentPreview = null" type="number" :min="terminateRemaining ? 0 : 0.01" step="0.01" :aria-label="`新的交易数量 ${line.sku_code}`" required /><input v-else v-model="line.new_quantity" @input="quantityAdjustmentPreview = null" type="number" :min="terminateRemaining ? 0 : 0.01" step="0.01" :aria-label="`新的基础数量 ${line.sku_code}`" required /></label>
               <div><small>已发货 / 已采购 / 已到货</small><strong>{{ line.shipped_quantity ?? '—' }} / {{ line.purchased_quantity ?? '—' }} / {{ line.received_quantity ?? '—' }} {{ line.trade_snapshot?.base_unit }}</strong></div>
             </div>
             <p v-if="line.usesTradeQuantity" class="quantity-adjustment-conversion">按保存的交易单位换算，基础数量将由服务端重新计算。</p>
@@ -526,7 +528,7 @@ watch(() => order.value?.order_no, title => { if (workspace && title) { workspac
         </div>
         <label class="quantity-adjustment-reason">变更原因<textarea v-model="quantityAdjustmentReason" @input="quantityAdjustmentPreview = null" maxlength="500" rows="3" required placeholder="请说明客户或业务调整原因" /></label>
           <label><input type="checkbox" v-model="terminateRemaining" @change="quantityAdjustmentPreview = null" /> 终止本次选中明细的剩余履约</label>
-          <p v-if="terminateRemaining">将新数量填写为已发数量。已发生的发货保留，关联采购请另行核对。</p>
+          <p v-if="terminateRemaining">将新数量填写为已发数量，未发货余项填写 0。保留原数量和发货记录，关联采购请另行核对。</p>
         </fieldset>
         <div v-if="quantityAdjustmentPreview" class="quantity-adjustment-preview">
           <strong>影响预览</strong>
@@ -571,7 +573,7 @@ watch(() => order.value?.order_no, title => { if (workspace && title) { workspac
       </form>
     </div>
     <div v-if="shipmentReversalTarget && can('orders', 'update')" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitShipmentReversal"><h3>冲销发货 · {{ shipmentReversalTarget.shipment_no }}</h3><p>{{ shipmentReversalTarget.has_overage ? '该发货单包含超发/增补。冲销会同步撤销系统生成的增补订单明细；客户追加产生的未收款应收计划也会取消。如已发生收款，系统将拒绝冲销。' : '原发货记录将保留，并生成对应的库存回收入库流水。' }}</p><label>冲销原因<textarea v-model="shipmentReversalReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="shipmentReversalTarget = null">取消</button><button class="btn btn-primary" :disabled="shipmentReversalSaving || !shipmentReversalReason.trim()">{{ shipmentReversalSaving ? '保存中…' : '确认冲销' }}</button></footer></form></div>
-    <div v-if="cancelOpen && can('orders', 'update')" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitCancellation"><h3>取消订单</h3><p v-if="cancelWithRefund">取消将停止履约，合同金额调为零。已收 {{ order.currency }} {{ money(cancellationPaid) }} 将列为待退款，实际退款在财务流水登记。</p><p v-else>取消会释放库存预留并关闭未结应收计划。</p><label>取消原因<textarea v-model="cancellationReason" maxlength="500" rows="4" required /></label><p v-if="error" role="alert">{{ error }}</p><footer><button type="button" class="btn btn-secondary" @click="cancelOpen = false">返回</button><button class="btn btn-primary" :disabled="lifecycleSaving || !cancellationReason.trim()">{{ lifecycleSaving ? '提交中…' : '确认取消' }}</button></footer></form></div>
+    <div v-if="cancelOpen && can('orders', 'update')" class="trade-shipment-mask"><form class="trade-shipment-dialog" @submit.prevent="submitCancellation"><h3>取消订单</h3><p v-if="cancelWithRefund">取消将停止履约，合同金额调为零。已收 {{ order.currency }} {{ money(cancellationPaid) }} 将列为待退款，实际退款在财务流水登记。</p><p v-else>取消会释放库存预留并关闭未结应收计划。</p><label>取消原因<textarea v-model="cancellationReason" :disabled="lifecycleSaving" maxlength="500" rows="4" required /></label><p v-if="cancellationError" role="alert">{{ cancellationError }}</p><footer><button type="button" class="btn btn-secondary" :disabled="lifecycleSaving" @click="cancelOpen = false">返回</button><button class="btn btn-primary" :disabled="lifecycleSaving || !cancellationReason.trim()">{{ lifecycleSaving ? '提交中…' : '确认取消' }}</button></footer></form></div>
   </Teleport>
   <div v-show="!suspended" :inert="suspended" class="modal-backdrop detail-backdrop">
     <article ref="workbenchElement" class="detail-modal order-workbench" role="dialog" aria-modal="true" aria-label="订单工作台" tabindex="-1">
@@ -579,7 +581,7 @@ watch(() => order.value?.order_no, title => { if (workspace && title) { workspac
       <div v-else-if="error" class="detail-error"><AlertTriangle :size="27" /><strong>加载失败</strong><p>{{ error }}</p><button class="btn btn-secondary" @click="load">重试</button></div>
       <template v-else>
         <header class="detail-header">
-          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn btn-secondary" @click="emit('edit', $event.currentTarget)"><Pencil :size="14" /> 编辑草稿</button><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('confirm', '确认后订单将进入正式履约，并生成库存预留和应收计划。是否继续？')">确认订单</button><button v-if="can('orders', 'update') && order.status === 'confirmed'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('start-production')">开始生产</button><button v-if="can('orders', 'update') && order.status === 'shipped'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('complete')">完成履约</button><button v-if="can('orders', 'update') && ['draft', 'confirmed', 'production'].includes(order.status)" class="btn lifecycle-destructive" :disabled="lifecycleSaving" @click="openCancellation">取消订单</button></div></div>
+          <div class="detail-nav"><div class="detail-nav-start"><button class="detail-close" aria-label="关闭订单详情" :disabled="lifecycleSaving || quantityAdjustmentSaving" @click="emit('close')"><X :size="18" /> <span>关闭</span></button><span>订单工作台 · 履约与回款</span></div><div class="detail-actions"><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn btn-secondary" @click="emit('edit', $event.currentTarget)"><Pencil :size="14" /> 编辑草稿</button><button v-if="can('orders', 'update') && order.status === 'draft'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('confirm', '确认后订单将进入正式履约，并生成库存预留和应收计划。是否继续？')">确认订单</button><button v-if="can('orders', 'update') && order.status === 'confirmed'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('start-production')">开始生产</button><button v-if="can('orders', 'update') && order.status === 'shipped'" class="btn lifecycle-primary" :disabled="lifecycleSaving" @click="lifecycleAction('complete')">完成履约</button><button v-if="can('orders', 'update') && ['draft', 'confirmed', 'production'].includes(order.status)" class="btn lifecycle-destructive" :disabled="lifecycleSaving" @click="openCancellation">取消订单</button></div></div>
           <div class="detail-identity"><div><p class="detail-subtitle">{{ partyName }} · 下单于 {{ date(order.order_date) }}<small v-if="partyMasterReference" class="party-reference">{{ partyMasterReference }}</small></p><h2>{{ order.order_no }}</h2><small>预计交期：{{ order.expected_ship_date || '未设置' }}</small><p v-if="order.status === 'cancelled' && order.cancellation_reason" class="cancelled-context">取消原因：{{ order.cancellation_reason }}<span v-if="order.cancelled_at"> · {{ date(order.cancelled_at) }}</span></p></div><span class="detail-badge">履约：{{ order.status_display }}</span></div>
         </header>
         <main class="detail-content" :class="{ 'fulfillment-content': activeTab === 'fulfillment' }">

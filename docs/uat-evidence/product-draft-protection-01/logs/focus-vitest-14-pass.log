@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 D:/Codex项目/森爵照明管理系统/.worktrees/product-draft-protection-01/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
+   Start at  01:49:13
+   Duration  5.57s (transform 473ms, setup 400ms, import 478ms, tests 660ms, environment 3.66s)
+

@@ -8,6 +8,19 @@ const route = useRoute(), router = useRouter()
 const { api } = useWorkspaceApi()
 const rows = ref([]), count = ref(0), loading = ref(false), busy = ref(false), error = ref(''), feedback = ref('')
 const selected = ref(null), editing = ref(false), history = ref([]), voiding = ref(false), reason = ref('')
+const editorHeading = ref(null)
+let editorTrigger
+watch(() => [editing.value, selected.value?.id], () => {
+  if (!editorHeading.value) {
+    if (editorTrigger?.isConnected) {
+      editorTrigger.scrollIntoView({ block: 'nearest' })
+      editorTrigger.focus({ preventScroll: true })
+    }
+    return
+  }
+  editorHeading.value.scrollIntoView({ block: 'nearest' })
+  editorHeading.value.focus({ preventScroll: true })
+}, { flush: 'post' })
 const saveError = ref(''), staleVersion = ref(false)
 const customers = ref([]), customerSearch = ref(''), contacts = ref([]), products = ref([]), productSearch = ref('')
 const search = ref(route.query.search || ''), state = ref(route.query.state || 'active')
@@ -105,7 +118,7 @@ watch(() => route.query, async () => {
 
 <template>
   <section class="reminders">
-    <div class="reminder-header"><div><h2>客户产品需求</h2><p>记录客户所找的产品，按关键词查找待联系客户。</p></div><button v-if="can('followups','create')" class="btn btn-primary" :disabled="busy" @click="start">记录新品需求</button></div>
+    <div class="reminder-header"><div><h2>客户产品需求</h2><p>记录客户所找的产品，按关键词查找待联系客户。</p></div><button v-if="can('followups','create')" class="btn btn-primary" :disabled="busy" @click="editorTrigger = $event.currentTarget; start()">记录新品需求</button></div>
     <form class="filters" @submit.prevent="filter()">
       <label>标签<select aria-label="需求标签"><option>新品提醒</option></select></label>
       <label class="grow">关键词<input v-model="search" placeholder="产品、规格、其他要求或客户" /></label>
@@ -118,12 +131,12 @@ watch(() => route.query, async () => {
     <div v-for="row in rows" :key="row.id" class="requirement" :class="{ voided: row.voided_at }">
       <div><strong>{{ row.customer_name }}</strong> <span class="badge">新品提醒</span> <strong v-if="row.voided_at">已作废</strong></div>
       <p>{{ row.requirement }}</p><p v-if="row.specification">规格：{{ row.specification }}</p><p v-if="row.other_requirements">其他要求：{{ row.other_requirements }}</p>
-      <button class="btn btn-secondary" :disabled="busy" @click="router.push({query:{...route.query,detail:row.id}})">查看需求 #{{ row.id }}</button>
+      <button class="btn btn-secondary" :disabled="busy" @click="editorTrigger = $event.currentTarget; router.push({query:{...route.query,detail:row.id}})">查看需求 #{{ row.id }}</button>
       <RouterLink :to="{path:'/customers',query:{detail:row.customer}}">查看客户</RouterLink>
     </div>
     <nav class="pager" aria-label="需求分页"><button :disabled="page <= 1 || loading" @click="filter(page-1)">上一页</button><span>共 {{ count }} 条 · 第 {{ page }} 页</span><button :disabled="page * 50 >= count || loading" @click="filter(page+1)">下一页</button></nav>
     <section v-if="editing || selected" class="editor" aria-label="新品需求详情">
-      <h3>{{ editing ? (selected ? '修改新品需求' : '记录新品需求') : '新品需求详情' }}</h3>
+      <h3 ref="editorHeading" tabindex="-1">{{ editing ? (selected ? '修改新品需求' : '记录新品需求') : '新品需求详情' }}</h3>
       <form v-if="editing" @submit.prevent="save">
         <fieldset :disabled="busy"><template v-if="!selected"><label>查找客户<input v-model="customerSearch" /></label><button type="button" @click="findCustomers">查找客户</button><label>客户<select v-model="form.customer" required @change="form.contact=null"><option value="">请选择客户</option><option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option></select></label></template>
         <p v-else>{{ selected.customer_name }}</p>
@@ -137,6 +150,7 @@ watch(() => route.query, async () => {
         <div :class="{voided:selected.voided_at}"><strong>{{ selected.customer_name }}</strong><p v-if="selected.voided_at"><strong>已作废</strong> · {{ selected.void_reason }}<br>{{ selected.voided_by }} · {{ displayTime(selected.voided_at) }}</p><p>{{ selected.requirement }}</p><p>规格：{{ selected.specification || '—' }}</p><p>其他要求：{{ selected.other_requirements || '—' }}</p><p>记录人：{{ selected.created_by }} · {{ displayTime(selected.created_at) }}</p></div>
         <div class="actions"><RouterLink :to="{path:'/customers',query:{detail:selected.customer}}">查看客户</RouterLink><RouterLink v-if="selected.follow_up" :to="{path:'/follow-ups',query:{detail:selected.follow_up}}">查看来源跟进</RouterLink><RouterLink v-if="selected.product && can('products','view')" :to="{path:'/products',query:{detail:selected.product}}">查看关联产品</RouterLink><button v-if="!selected.voided_at && writable" class="btn btn-secondary" @click="edit">修改需求</button><button v-if="!selected.voided_at && writable" class="btn btn-secondary" @click="voiding=true;reason=''">作废</button></div>
         <form v-if="voiding" @submit.prevent="confirmVoid"><label>作废原因<textarea v-model="reason" required maxlength="4000" :disabled="busy" /></label><p>作废后保留记录和修改历史。</p><button class="btn btn-primary" :disabled="busy || !reason.trim()">确认作废</button><button type="button" :disabled="busy" @click="voiding=false">取消作废</button></form>
+        <button type="button" class="btn btn-secondary" @click="router.replace({query:{...route.query,detail:undefined}})">返回需求列表</button>
         <h4>修改历史</h4><details v-for="h in history" :key="h.id"><summary>{{ h.action_label }} · {{ h.metadata.actor }} · {{ displayTime(h.created_at) }}</summary><p>变更前：{{ h.before_data.requirement || '—' }} / {{ h.before_data.specification || '—' }} / {{ h.before_data.other_requirements || '—' }}</p><p>变更后：{{ h.after_data.requirement }} / {{ h.after_data.specification }} / {{ h.after_data.other_requirements }}</p></details>
       </template>
     </section>

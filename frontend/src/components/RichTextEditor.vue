@@ -1,11 +1,20 @@
 <script setup>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Bold, Link, List, ListOrdered } from 'lucide-vue-next'
 import { alertDialog, inputDialog } from '../dialogs'
 
 const props = defineProps({ modelValue: { type: String, default: '' } })
 const emit = defineEmits(['update:modelValue'])
 const editor = ref(null)
+let savedRange
+function rememberSelection() {
+  const selection = window.getSelection()
+  if (!selection?.rangeCount) return
+  const range = selection.getRangeAt(0)
+  if (editor.value?.contains(range.commonAncestorContainer)) savedRange = range.cloneRange()
+}
+onMounted(() => document.addEventListener('selectionchange', rememberSelection))
+onBeforeUnmount(() => document.removeEventListener('selectionchange', rememberSelection))
 
 function sync() {
   emit('update:modelValue', editor.value?.innerHTML || '')
@@ -16,13 +25,36 @@ function format(command, value = null) {
   sync()
 }
 async function addLink() {
+  rememberSelection()
+  const element = editor.value
+  const range = savedRange?.cloneRange()
+  const content = element?.innerHTML
   const url = await inputDialog({ title: '插入链接', message: '请输入以 http、https 或 mailto 开头的链接地址。', label: '链接地址', placeholder: 'https://example.com', required: true, maxLength: 2000, confirmText: '插入链接' })
   if (!url) return
   if (!/^(https?:|mailto:)/i.test(url)) {
     await alertDialog({ title: '链接格式不支持', message: '链接必须以 http、https 或 mailto 开头。' })
     return
   }
-  format('createLink', url)
+  if (!element?.isConnected || element.innerHTML !== content) return
+  element.focus()
+  const selection = window.getSelection()
+  if (!selection) return
+  const linkRange = range && element.contains(range.commonAncestorContainer) ? range : document.createRange()
+  if (linkRange !== range) {
+    linkRange.selectNodeContents(element)
+    linkRange.collapse(false)
+  }
+  selection.removeAllRanges()
+  selection.addRange(linkRange)
+  if (linkRange.collapsed) {
+    const link = document.createElement('a')
+    link.href = url
+    link.textContent = url
+    document.execCommand('insertHTML', false, link.outerHTML)
+  } else {
+    document.execCommand('createLink', false, url)
+  }
+  sync()
 }
 onMounted(() => { if (editor.value) editor.value.innerHTML = props.modelValue })
 watch(() => props.modelValue, async value => {

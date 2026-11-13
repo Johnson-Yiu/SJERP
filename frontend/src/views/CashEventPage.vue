@@ -70,7 +70,7 @@ onMounted(loadEvents)
       <button type="button" class="secondary" @click="loadEvents">刷新</button>
     </form>
     <p class="field-hint">列表包含待确认、已确认和已放弃记录；只有已确认事件计入银行资金汇总。</p>
-    <PageLoadState v-if="loading && !hasLoaded" entity="人民币资金记录" />
+    <PageLoadState v-if="loading && !hasLoaded" :loading="loading" />
     <div v-else-if="loadError" class="cash-load-error" role="alert"><p>{{ loadError }}</p><button type="button" @click="loadEvents">重试</button></div>
     <ListEmptyState v-else-if="!filtered.length" entity="人民币资金记录" :filtered="statusFilter || listSearch" @clear="statusFilter='';listSearch=''" />
     <div v-else class="cash-table-wrap"><table class="cash-table"><thead><tr><th>实际到账日期 / 事件编号</th><th>类型 / 方向</th><th>来源金额</th><th>银行净额 / 参考号</th><th>手续费</th><th>状态</th><th>操作</th></tr></thead><tbody>

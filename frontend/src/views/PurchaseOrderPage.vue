@@ -598,6 +598,7 @@ watch(() => route.query.detail, id => {
     <div v-if="receiptTarget && can('purchases', 'update')" class="receipt-mask">
       <form ref="receiptDialog" class="receipt-dialog goods-receipt-dialog" role="dialog" aria-modal="true" aria-labelledby="receipt-title" tabindex="-1" @keydown.esc.stop.prevent="closeReceipt" @submit.prevent="submitReceipt">
         <header><h3 id="receipt-title">验货合格入库</h3><p>{{ receiptTarget.row.purchase_no }} · {{ receiptTarget.item.sku_code }} / {{ receiptTarget.item.display_name || itemSku(receiptTarget.item)?.display_name_cn || '—' }}</p><p>供应商：{{ supplierPartyName(receiptTarget.row) }}</p></header>
+        <div class="receipt-fields">
         <div class="receipt-progress"><div><small>下单数量</small><strong>{{ receiptTarget.item.quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>已到货</small><strong>{{ receiptTarget.item.received_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div><div><small>当前待到</small><strong>{{ receiptTarget.item.remaining_quantity }} {{ itemBaseUnit(receiptTarget.item) }}</strong></div></div>
         <p>不合格或拒收数量请写入备注，等待补货后再登记入库。</p>
         <label>实际入库日期 *<input v-model="receiptForm.receipt_date" type="date" required></label>
@@ -611,6 +612,7 @@ watch(() => route.query.detail, id => {
         <label class="receipt-check"><input v-model="receiptForm.specify_location" type="checkbox"> 指定入库仓库和批次</label>
         <template v-if="receiptForm.specify_location"><label>仓库类型<select v-model="receiptForm.warehouse_type"><option>自有仓</option><option>第三方仓</option></select></label><label>仓库<input v-model="receiptForm.warehouse" maxlength="100" required></label><label>批次或货位（无则留空）<input v-model="receiptForm.lot_reference" maxlength="160"></label></template>
         <p v-if="error" class="error" role="alert">{{ error }}</p>
+        </div>
         <footer><small>保存后将立即更新：库存、订单预留、采购到货数量、在途数量。</small><div><button type="button" class="btn btn-secondary" :disabled="receiptSaving" @click="closeReceipt">取消</button><button class="btn btn-primary" :disabled="receiptSaving || !receiptForm.checked">{{ receiptSaving ? '保存中…' : '确认入库' }}</button></div></footer>
       </form>
     </div>
@@ -671,4 +673,9 @@ watch(() => route.query.detail, id => {
 .receipt-danger{font:inherit;border-radius:7px;padding:10px 16px;cursor:pointer}
 .reversal-effect{background:#fff7e8;padding:12px;border-radius:8px;line-height:1.6}
 
+</style>
+
+<style scoped>
+.goods-receipt-dialog{display:flex;flex-direction:column;max-height:100%;min-height:0;overflow:hidden}.receipt-fields{min-height:0;overflow:auto}.goods-receipt-dialog>header,.goods-receipt-dialog>footer{flex:none}
+.receipt-mask{padding:12px;grid-template-rows:minmax(0,1fr)}
 </style>

@@ -241,7 +241,7 @@ const resourceMetrics = computed(() => {
   const total = rows.value.length
   const today = new Date().toISOString().slice(0, 10)
   if (endpoint === 'customers') return [
-    { label: '客户总数', value: total, hint: '全部客户档案' },
+    { label: '客户数量', value: total, hint: '当前筛选结果（含全部页）' },
     { label: '正式客户', value: rows.value.filter(row => ['customer', 'company'].includes(row.status)).length, hint: '已有正式订单' },
     { label: '待开发', value: rows.value.filter(row => ['lead', 'contact', 'opportunity'].includes(row.status)).length, hint: '尚未成交' },
     { label: '累计销售额', value: `¥ ${rows.value.reduce((sum, row) => sum + Number(row.sales_amount || 0), 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, hint: '当前列表累计' },

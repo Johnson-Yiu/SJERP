@@ -1,7 +1,19 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 const props = defineProps({ manager: Object })
-const menu = ref(''), bar = ref(null)
+const menu = ref(''), bar = ref(null), tabList = ref(null)
+watch([
+  () => props.manager.activeId.value,
+  () => props.manager.tabs.findIndex(tab => tab.id === props.manager.activeId.value),
+], () => {
+  const list = tabList.value
+  const active = list?.querySelector('.workspace-tab.active')
+  if (!active) return
+  const bounds = list.getBoundingClientRect()
+  const tab = active.getBoundingClientRect()
+  if (tab.left < bounds.left) list.scrollLeft += tab.left - bounds.left
+  else if (tab.right > bounds.right) list.scrollLeft += tab.right - bounds.right
+}, { flush: 'post' })
 let observer
 onMounted(() => { if (typeof ResizeObserver === 'undefined') return; observer = new ResizeObserver(() => document.documentElement.style.setProperty('--workspace-top', `${82 + bar.value.offsetHeight}px`)); observer.observe(bar.value) })
 onBeforeUnmount(() => observer?.disconnect())
@@ -19,7 +31,7 @@ function batch(id, mode) {
 </script>
 <template>
   <div ref="bar" class="workspace-bar">
-    <div class="workspace-tabs" role="tablist" aria-label="业务工作区">
+    <div ref="tabList" class="workspace-tabs" role="tablist" aria-label="业务工作区">
       <div v-for="tab in manager.tabs" :key="tab.id" class="workspace-tab" :class="{ active: tab.id === manager.activeId.value }">
         <button type="button" role="tab" :tabindex="tab.id === manager.activeId.value ? 0 : -1" :aria-controls="`workspace-panel-${tab.id}`" @keydown="keydown($event, tab)" :aria-selected="tab.id === manager.activeId.value" @click="manager.activate(tab)">{{ tab.title }}<span v-if="[...tab.guards].some(g => g.dirty?.value)" aria-label="未保存"> ●</span><span v-if="tab.stale" aria-label="数据有更新"> ↻</span></button>
         <button type="button" :aria-label="`关闭 ${tab.title}`" @click="manager.close([tab.id])">×</button>

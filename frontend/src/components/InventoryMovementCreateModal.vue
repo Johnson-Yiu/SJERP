@@ -1,6 +1,4 @@
 <script setup>
-import { useWorkspaceTeleportDisabled } from "../composables/useWorkspaceTeleport"
-const workspaceTeleportDisabled = useWorkspaceTeleportDisabled()
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 const { api, listAll } = useWorkspaceApi()
 import { useAccessControl } from '../accessControl'
@@ -160,7 +158,7 @@ onMounted(init)
 </script>
 
 <template>
-  <Teleport to="body" :disabled="workspaceTeleportDisabled">
+  <Teleport to="body" :disabled="Boolean(workspace)">
     <div class="modal-backdrop inventory-movement-backdrop">
       <form role="dialog" aria-label="新建手工库存流水" class="modal inventory-movement-modal" @submit.prevent="save">
         <div class="modal-head"><div><h3>库存调整</h3><p>每个 SKU 生成独立库存流水。</p></div><button type="button" class="mini-btn" aria-label="关闭手工库存流水" :disabled="saving" @click="close"><X :size="17" /></button></div>

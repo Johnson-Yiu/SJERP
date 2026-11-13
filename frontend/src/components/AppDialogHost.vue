@@ -4,13 +4,23 @@ import { dialogState, dismissToast, resolveDialog } from '../dialogs'
 
 const input = ref('')
 const inputElement = ref(null)
+const dialogElement = ref(null)
+let previousFocus
 const confirming = ref(false)
 
-watch(() => dialogState.current?.id, async () => {
+watch(() => dialogState.current?.id, async (id, previousId) => {
+  if (id && !previousId) previousFocus = document.activeElement
   input.value = ''
   confirming.value = false
   await nextTick()
-  inputElement.value?.focus()
+  if (dialogState.current?.id !== id) return
+  if (id) {
+    const target = inputElement.value || dialogElement.value?.querySelector('[data-testid="dialog-cancel"], [data-testid="dialog-confirm"]')
+    target?.focus({ preventScroll: true })
+  } else {
+    if (previousFocus?.isConnected && !previousFocus.closest('[inert]')) previousFocus.focus({ preventScroll: true })
+    previousFocus = null
+  }
 })
 
 function cancel() {
@@ -36,6 +46,17 @@ function confirm() {
 }
 
 function onKeydown(event) {
+  if (!dialogState.current) return
+  if (event.key === 'Tab' && dialogElement.value) {
+    const controls = [...dialogElement.value.querySelectorAll('textarea:not(:disabled), button:not(:disabled)')]
+    const first = controls[0], last = controls.at(-1)
+    const focused = document.activeElement
+    if (!controls.includes(focused) || (event.shiftKey ? focused === first : focused === last)) {
+      event.preventDefault()
+      const target = event.shiftKey ? last : first
+      target?.focus()
+    }
+  }
   if (event.key === 'Escape') {
     event.preventDefault()
     cancel()
@@ -49,7 +70,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 <template>
   <Teleport to="body">
     <div v-if="dialogState.current" class="app-dialog-backdrop">
-      <section class="app-dialog" role="dialog" aria-modal="true" :aria-labelledby="`app-dialog-title-${dialogState.current.id}`" :aria-describedby="dialogState.current.message ? `app-dialog-message-${dialogState.current.id}` : undefined">
+      <section ref="dialogElement" class="app-dialog" role="dialog" aria-modal="true" :aria-labelledby="`app-dialog-title-${dialogState.current.id}`" :aria-describedby="dialogState.current.message ? `app-dialog-message-${dialogState.current.id}` : undefined">
         <header><h2 :id="`app-dialog-title-${dialogState.current.id}`">{{ dialogState.current.title }}</h2></header>
         <div class="app-dialog-body">
           <p v-if="dialogState.current.message" :id="`app-dialog-message-${dialogState.current.id}`">{{ dialogState.current.message }}</p>

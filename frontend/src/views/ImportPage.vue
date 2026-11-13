@@ -276,6 +276,7 @@ async function execute() {
           <div v-if="orderErrors.length" class="error-table"><p>表格行号按 Excel 中的实际行号显示。请按错误原因修正原文件后重新预览。</p><table><thead><tr><th>表格行号</th><th>来源订单编号</th><th>错误原因</th></tr></thead><tbody><tr v-for="(item,index) in orderErrors" :key="index"><td>{{ item.row }}</td><td>{{ item.key || '—' }}</td><td>{{ errorCopy(item.message) }}</td></tr></tbody></table></div>
           <button v-if="orderResult.orders?.length" class="inline-action" @click="downloadOrderResults">下载导入结果 CSV</button>
           <button v-if="orderErrors.length" class="inline-action" @click="downloadOrderFailures">下载错误清单 CSV</button>
+          <p v-if="orderError && !orderResult.completed" class="stage" role="alert">{{ orderError }}</p>
           <button v-if="!orderResult.completed && orderResult.valid_orders > 0" class="btn btn-primary execute-btn" :disabled="orderBusy || !canExecuteOrders" @click="executeOrders">{{ orderExecuting ? '正在创建草稿…' : orderConfirming ? '等待确认…' : `确认导入 ${orderResult.valid_orders} 张草稿` }}</button>
           <RouterLink v-if="orderResult.completed && can('orders', 'view')" class="btn" to="/orders">前往订单管理</RouterLink>
         </div></div>

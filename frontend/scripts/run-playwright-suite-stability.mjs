@@ -15,6 +15,7 @@ const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
+  { name: 'small-team-paid-cancel-isolated', file: 'small-team-paid-cancel.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
   { name: 'small-team-history-snapshot-isolated', file: 'small-team-history-snapshot.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
   { name: 'small-team-quantity-finance-01-isolated', file: 'small-team-quantity-finance-01.spec.js', codex: true },
   { name: 'sales-state-closeout-05-audit', file: 'sales-state-closeout-05.spec.js', codex: true, args: ['--audit-sales-test'] },

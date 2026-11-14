@@ -246,7 +246,6 @@ class PostgresDrillBackupTests(SimpleTestCase):
         corrupt = self.drill.root / "bad-database-test.zip"
         with zipfile.ZipFile(backup["archive"]) as source, zipfile.ZipFile(corrupt, "w") as target:
             manifest = json.loads(source.read("manifest.json"))
-            import hashlib
             bad_dump = b"not a postgres custom dump"
             manifest["database_sha256"] = hashlib.sha256(bad_dump).hexdigest()
             for info in source.infolist():

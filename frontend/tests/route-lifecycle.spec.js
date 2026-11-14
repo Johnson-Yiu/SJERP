@@ -438,22 +438,43 @@ describe('query route lifecycle', () => {
   })
 
   it('updates only order create prefills when customer or quote query values change', async () => {
+    vi.useFakeTimers()
     await mountAt('/orders', 'orders')
     const search = wrapper.find('input[placeholder*="搜索订单号"]')
     await search.setValue('SO-2026-00026')
-    await vi.waitFor(() => expect(wrapper.text()).toContain('SO-2026-00026'))
+    await vi.advanceTimersByTimeAsync(301)
+    await flushPromises()
+    expect(router.currentRoute.value.query.search).toBe('SO-2026-00026')
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/orders/').at(-1)[1].params.search).toBe('SO-2026-00026')
+    expect(wrapper.find('.table-wrap').text()).toContain('SO-2026-00026')
+    expect(wrapper.find('.table-wrap').text()).not.toContain('SO-2026-00004')
 
-    await router.push('/orders?create=1&customer=5&quote=14')
+    await router.push({ path: '/orders', query: { ...router.currentRoute.value.query, create: '1', customer: '5', quote: '14' } })
     await flushPromises()
     const customerSelect = wrapper.find('.modal select')
     const quoteSelect = wrapper.findAll('.modal select')[1]
     expect(customerSelect.element.value).toBe('5')
     expect(quoteSelect.element.value).toBe('14')
-    await router.push('/orders?create=1&customer=6&quote=15')
+    await router.push({ path: '/orders', query: { ...router.currentRoute.value.query, customer: '6', quote: '15' } })
     await flushPromises()
     expect(customerSelect.element.value).toBe('6')
     expect(quoteSelect.element.value).toBe('15')
+    expect(wrapper.find('input[placeholder*="搜索订单号"]').element).toBe(search.element)
+    expect(router.currentRoute.value.query.search).toBe('SO-2026-00026')
     expect(search.element.value).toBe('SO-2026-00026')
+  })
+
+  it('clears the order search when navigation explicitly removes its query parameter', async () => {
+    await mountAt('/orders?search=SO-2026-00026', 'orders')
+    const search = wrapper.find('input[placeholder*="搜索订单号"]')
+    expect(search.element.value).toBe('SO-2026-00026')
+    expect(wrapper.find('.table-wrap').text()).not.toContain('SO-2026-00004')
+
+    await router.push('/orders')
+    await flushPromises()
+    expect(search.element.value).toBe('')
+    expect(mocks.listAll.mock.calls.filter(([url]) => url === '/orders/').at(-1)[1].params.search).toBe('')
+    expect(wrapper.find('.table-wrap').text()).toContain('SO-2026-00004')
   })
 
   it('updates a route-controlled quote customer prefill without reopening unrelated manual modals', async () => {

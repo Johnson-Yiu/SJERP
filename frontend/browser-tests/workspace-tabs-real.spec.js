@@ -8,7 +8,11 @@ test('desktop and 390px isolated workspaces preserve draft inputs, route state a
  const fixture = JSON.parse(await readFile(path.join(evidence, 'fixture.json'), 'utf8'))
  const errors=[]; page.on('pageerror', e=>errors.push(e.message))
  const apiRequests=[];page.on('request', r=>{if(r.url().includes('/api/'))apiRequests.push({method:r.method(),url:new URL(r.url()).pathname})})
+ const initialCustomers=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/customers/' && new URL(response.url()).searchParams.get('search')==='Workspace' && response.request().method()==='GET')
  await page.goto('/customers?search=Workspace', {waitUntil:'domcontentloaded'})
+ const initialResponse=await initialCustomers
+ expect(initialResponse.status()).toBe(200)
+ expect((await initialResponse.json()).results.some(row=>row.name==='Workspace Alpha')).toBe(true)
  await expect(active(page).getByText('Workspace Alpha', {exact:true})).toBeVisible()
  await active(page).getByRole('button',{name:/新建客户/}).click()
  await expect(page.getByRole('tab')).toHaveCount(2)

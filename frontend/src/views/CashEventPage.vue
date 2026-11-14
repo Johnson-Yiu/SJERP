@@ -23,12 +23,12 @@ function money(value, currency = 'CNY') {
 function statusLabel(value) { return ({ pending: '待确认', confirmed: '已确认', cancelled: '已放弃' })[value] || value || '—' }
 function kindLabel(value) { return ({ fx_settlement: '外币结汇流入', cny_direct: '人民币直接收付', bank_fee: '独立银行扣费' })[value] || value || '—' }
 function directionLabel(value) { return value === 'income' ? '流入' : value === 'expense' ? '流出' : '—' }
-async function loadEvents() {
+async function loadEvents({ openRouteDetail = false } = {}) {
   loading.value = true; loadError.value = ''
   try {
     events.value = (await api.get('/rmb-cash-events/')).data.results || []; hasLoaded.value = true
     const detailId = Number(route.query.event)
-    if (detailId > 0) {
+    if (openRouteDetail && detailId > 0 && !showForm.value && !selected.value) {
       const row = events.value.find(item => item.id === detailId)
       if (row) openDetail(row)
     }
@@ -44,15 +44,16 @@ function openDetail(row) {
 function closeEntry() { showForm.value = false }
 async function refreshAfterSave(row) {
   if (row) selected.value = row
+  // Keep the save response authoritative for the active review. Replacing it
+  // with a list row would reset the user's voucher confirmation mid-review.
   await loadEvents()
-  if (row) selected.value = events.value.find(item => item.id === row.id) || row
 }
 function filteredEvents() {
   const keyword = listSearch.value.trim().toLowerCase()
   return events.value.filter(row => (!statusFilter.value || row.status === statusFilter.value) && (!keyword || `${row.event_no} ${row.bank_reference}`.toLowerCase().includes(keyword)))
 }
 const filtered = computed(filteredEvents)
-onMounted(loadEvents)
+onMounted(() => loadEvents({ openRouteDetail: true }))
 </script>
 
 <template>

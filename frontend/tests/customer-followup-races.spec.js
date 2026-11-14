@@ -20,6 +20,17 @@ beforeEach(() => {
   mocks.api.get.mockResolvedValue({ data: { name: '开发身份' } })
 })
 afterEach(() => wrapper?.unmount())
+it('reopens a complete but stale follow-up row using the saved attachment detail', async () => {
+  await open('follow-ups')
+  const stale = { ...Object.fromEntries(resourceConfigs['follow-ups'].fields.map(([key]) => [key, ''])), id: 7, subject: 'Saved follow-up', attachments: [] }
+  const attachment = { id: 81, original_name: 'saved-evidence.txt', url: '/api/media/saved-evidence.txt' }
+  mocks.api.get.mockResolvedValue({ data: { ...stale, attachments: [attachment] } })
+  await wrapper.vm.openEdit(stale)
+  await flushPromises()
+  expect(mocks.api.get).toHaveBeenCalledWith('/follow-ups/7/')
+  expect(wrapper.vm.followUpAttachments).toEqual([attachment])
+  expect(wrapper.findAll('.follow-up-attachment-editor-item.saved')).toHaveLength(1)
+})
 async function open(entity, query = '') {
   router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/:pathMatch(.*)*', component: { template: '<main />' } }] })
   await router.push(`/${entity}${query}`)

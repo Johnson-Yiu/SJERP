@@ -615,10 +615,9 @@ async function openCreate({ isCurrent = () => true } = {}) {
 async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}) {
   if (!can(accessModule.value, 'update')) return
   let editRow = row
-  if (props.config.endpoint === 'follow-ups' && (
-    !Array.isArray(row.attachments) ||
-    props.config.fields.some(([name]) => !Object.prototype.hasOwnProperty.call(row, name))
-  )) {
+  // A list refresh may still be pending after an attachment upload. Reopening
+  // must use the current detail, even when the old row has all field names.
+  if (props.config.endpoint === 'follow-ups') {
     try { editRow = (await api.get(`/follow-ups/${row.id}/`)).data }
     catch (error) { if (isCurrent()) notify(apiErrorMessage(error), true); return }
     if (!isCurrent()) return

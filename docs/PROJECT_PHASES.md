@@ -1,5 +1,10 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## SJERP LOCAL-PILOT-PREP-01（2026-11-15）
+
+交付归档与解包校验完成，清理 2,133,454 逻辑字节的可重建前端产物。现无可用 Linux 来宾，体验实例和联合恢复验收为 BLOCKED，待管理员授权准备 Linux。既有复审状态保留。[归档、保护范围与运行手册](deployment/LOCAL-PILOT-PREP-01.md)
+
+
 ## SJERP PILOT-DELIVERY-FINAL-EVIDENCE-01
 
 发布源码 `0b0654de5b079d244b74d752ed4b78710ec4881b` 的主 CI 和 Linux 专项均通过。独立发布包解包后全文件摘要和定向冒烟通过。ISS-130 关联 SKU 批量启用的 SQLite 写锁修复仍为 FIXED_PENDING_REVIEW，本机合成 SQLite 发布包冒烟已完成；实际 PostgreSQL 17 证据为同源码主 CI 和 Linux 专项。交付 ZIP 与解包校验已复核。目标电脑部署、实际 PostgreSQL、HTTPS 与恢复仍待授权验收。[发布验收证据](deployment/PILOT-DELIVERY-FINAL-EVIDENCE-01.md)

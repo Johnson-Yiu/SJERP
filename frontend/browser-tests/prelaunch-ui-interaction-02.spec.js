@@ -139,27 +139,33 @@ test(`PI nested preview scroll close and persisted content ${width}`,async({page
 })
 }
 
-test('summary card counts and layout across affected pages',async({page},info)=>{
+test('summary card counts and layout across affected pages',async({page:authenticatedPage,browser},info)=>{
  test.setTimeout(180000)
  const states=[]
+ const storageState=await authenticatedPage.context().storageState()
  for(const [width,height] of [[1366,768],[1920,1080],[1024,768],[390,844]]) {
-  await page.setViewportSize({width,height})
+  const context=await browser.newContext({baseURL:info.project.use.baseURL,storageState,viewport:{width,height}})
+  const page=await context.newPage()
+  try {
   for(const route of ['/customers','/suppliers','/products','/skus','/orders','/purchase-orders','/transactions','/receivables','/payables','/sku-packaging','/hs-codes','/contacts','/follow-ups','/product-certificates','/inventory-movements','/product-parameters']) {
-   await page.goto(route)
+   await page.goto(route,{waitUntil:'domcontentloaded'})
    const cards=page.locator('.summary-cards').first();await expect(cards).toBeVisible()
    const grid=await cards.evaluate(el=>({columns:getComputedStyle(el).gridTemplateColumns.split(' ').length,cardWidth:el.clientWidth,containerWidth:el.parentElement.clientWidth}))
    expect(grid.columns).toBe(grid.containerWidth<=520?1:grid.containerWidth<=900?2:4)
    states.push({route,viewportWidth:width,...grid})
    await page.screenshot({path:info.outputPath(`cards-${route.slice(1)}-${width}.png`)})
   }
- }
+  if(width===390) {
  for(const query of ['', '合成分页客户', 'nonexistent-customer-ui-02']) {
   const response=await page.request.get('/api/customers/?search='+query);const data=await response.json();const count=data.count??data.length
-  await page.goto('/customers?search='+query)
+  await page.goto('/customers?search='+query,{waitUntil:'domcontentloaded'})
   const metric=page.locator('.summary-cards article').filter({hasText:'客户数量'})
   await expect(metric.locator('strong')).toHaveText(String(count))
   await expect(metric).toContainText('当前筛选结果（含全部页）')
   if(query==='合成分页客户'){await page.getByRole('button',{name:'下一页',exact:true}).click();await expect(metric.locator('strong')).toHaveText(String(count));await page.screenshot({path:info.outputPath('customers-filter-page-2.png')})}
+ }
+  }
+  } finally { await context.close() }
  }
  expect([...new Set(states.map(s=>s.columns))].sort()).toEqual([1,2,4])
  await writeFile(info.outputPath('card-results.json'),JSON.stringify(states,null,2))

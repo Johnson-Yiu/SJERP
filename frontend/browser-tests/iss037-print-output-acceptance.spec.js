@@ -111,7 +111,14 @@ test(`Chrome UI print to PDF ${label} ${width}px headers=${headers}`, async ({ b
     fs.writeFileSync(path.join(evidence, `${artifactName}.json`), JSON.stringify({
       source: 'UI print button', paper: 'A4', headers, width, quote: sample, api: saved,
     }, null, 2))
-    await expect(page.locator('iframe[title="已保存 PI"]')).toBeVisible()
+    const frame = page.locator('iframe[title="已保存 PI"]')
+    await expect(frame).toBeVisible()
+    // The print action correctly refuses an iframe that is still loading.
+    // Positive output cases must wait for this saved invoice, not just its frame.
+    await expect.poll(() => frame.evaluate((element, quoteNo) => ({
+      state: element.contentDocument?.readyState,
+      hasInvoice: element.contentDocument?.body?.textContent?.includes(quoteNo) || false,
+    }), sample.quote_no), { timeout: 30000 }).toEqual({ state: 'complete', hasInvoice: true })
     await page.screenshot({ path: path.join(evidence, `${artifactName}.png`) })
     const preview = page.getByRole('dialog', { name: 'PI 预览' })
     const printButton = preview.getByRole('button', { name: '导出 PI PDF' })

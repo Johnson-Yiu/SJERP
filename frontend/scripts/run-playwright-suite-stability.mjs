@@ -15,6 +15,17 @@ const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
+  { name: 'batch02-refund', file: 'cancel-refund-closeout-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
+  { name: 'batch02-cost', file: 'cost-currency-integrity-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
+  { name: 'batch02-draft', file: 'product-draft-protection-01.spec.js', codex: true, args: ['--audit-product-draft-test'], env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
+  { name: 'batch02-packaging', file: 'product-packaging-p2-05.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
+  { name: 'batch02-feedback-1366', file: 'prelaunch-p1-05-feedback-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1', P1_FEEDBACK_WIDTH: '1366' } },
+  { name: 'batch02-feedback-1920', file: 'prelaunch-p1-05-feedback-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1', P1_FEEDBACK_WIDTH: '1920' } },
+  { name: 'batch02-related', file: 'prelaunch-related-order-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
+  { name: 'batch02-category-tabs', file: 'prelaunch-ui-category-tabs-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
+  { name: 'batch02-delete-bank', file: 'ui-prelaunch-polish-01.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
+  { name: 'batch02-history', file: 'prelaunch-history-correction-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
+  { name: 'batch02-interaction', file: 'prelaunch-ui-interaction-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
   { name: 'small-team-paid-cancel-isolated', file: 'small-team-paid-cancel.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
   { name: 'small-team-history-snapshot-isolated', file: 'small-team-history-snapshot.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
   { name: 'small-team-quantity-finance-01-isolated', file: 'small-team-quantity-finance-01.spec.js', codex: true },

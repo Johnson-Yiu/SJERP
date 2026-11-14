@@ -27,7 +27,7 @@ test('authenticated codex superuser imports XLSX and downloads the actual error 
 
   const fixture = JSON.parse(await readFile(path.join(evidenceDir, 'fixture.json'), 'utf8'))
   const workbookPath = path.join(evidenceDir, fixture.workbook)
-  await page.goto('/import')
+  await page.goto('/import', { waitUntil: 'domcontentloaded' })
   await page.getByRole('tab', { name: '销售订单', exact: true }).click()
 
   const templateDownloadPromise = page.waitForEvent('download')
@@ -154,7 +154,7 @@ test('history page downloads the current workbook CSV without business writes', 
     return result
   }
   const before=await snapshot()
-  await page.goto('/history-preflight')
+  await page.goto('/history-preflight', { waitUntil: 'domcontentloaded' })
   let releaseA, signalA
   const heldA=new Promise(resolve=>{signalA=resolve}), releasedA=new Promise(resolve=>{releaseA=resolve})
   await page.route('**/api/import/history-preflight/',async route=>{
@@ -206,7 +206,7 @@ test('history page downloads the current workbook CSV without business writes', 
 
 test('finance overview presents the noncash reduction and downloads its CSV', async ({ page }) => {
   const loaded = page.waitForResponse(response => new URL(response.url()).pathname === '/api/finance-dashboard/' && response.ok())
-  await page.goto('/finance')
+  await page.goto('/finance', { waitUntil: 'domcontentloaded' })
   const dashboard = await (await loaded).json()
   const metric = page.locator('article').filter({ hasText: '核准非现金抵减' }).first()
   await expect(metric).toBeVisible()
@@ -244,7 +244,7 @@ async function fillReceiptFee(form, proof, amount, handling) {
 
 test('inventory draft guards the form and replays the same write after a lost response', async ({ page }) => {
   test.setTimeout(60000)
-  await page.goto('/finance')
+  await page.goto('/finance', { waitUntil: 'domcontentloaded' })
   await page.getByRole('link', { name: '库存流水', exact: true }).click()
   await page.getByRole('button', { name: '新建库存调整', exact: true }).click()
   const form = page.getByRole('dialog', { name: '新建手工库存流水' })
@@ -285,7 +285,7 @@ test('inventory draft guards the form and replays the same write after a lost re
   await draftTab.getByRole('button', { name: /^关闭/ }).press('Enter', { timeout: 10000 })
   await page.getByTestId('dialog-confirm').click({ timeout: 10000 })
   await expect(form).toBeHidden()
-  await page.goto('/inventory-movements')
+  await page.goto('/inventory-movements', { waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: '新建库存调整', exact: true }).click()
   await expect(form.getByRole('region', { name: '待核对的库存调整' })).toContainText('UAT-IMP-SKU-002')
   const replay = page.waitForResponse(response => response.url().endsWith('/inventory-movements/batch/') && response.ok())
@@ -299,7 +299,7 @@ test('inventory draft guards the form and replays the same write after a lost re
 test('finance receipt separates cash fee credit refund capacity and inline settlement', async ({page}) => {
   test.setTimeout(90000)
   const proof={name:'synthetic-review.pdf',mimeType:'application/pdf',buffer:syntheticVoucherPdf()}
-  await page.goto('/transactions')
+  await page.goto('/transactions', { waitUntil: 'domcontentloaded' })
   await page.getByRole('button',{name:'新增记账',exact:true}).click()
   const form=page.getByRole('dialog',{name:'新增记账',exact:true})
   await form.getByLabel(/^类型/).selectOption('customer_receipt')
@@ -346,7 +346,7 @@ test('finance receipt separates cash fee credit refund capacity and inline settl
 
 test('finance fee scenarios refuse excess refunds and reverse writeoffs without cash', async ({page}) => {
   test.setTimeout(90000)
-  await page.goto('/transactions')
+  await page.goto('/transactions', { waitUntil: 'domcontentloaded' })
   const proof={name:'synthetic-review.pdf',mimeType:'application/pdf',buffer:syntheticVoucherPdf()}
   async function receipt(suffix, responsibility, amount='980', remittance='1000') {
     await page.getByRole('button',{name:'新增记账',exact:true}).click()
@@ -431,7 +431,7 @@ test('historical finance reviews a duplicate and posts only after second-user ap
   try {
     const page = await context.newPage()
     async function signIn(username) {
-      await page.goto('/login')
+      await page.goto('/login', { waitUntil: 'domcontentloaded' })
       await page.getByLabel('账号').fill(username)
       await page.getByLabel('密码').fill(process.env.CODEX_TEST_PASSWORD)
       const login = page.waitForResponse(response => response.url().endsWith('/api/session/login/') && response.ok())
@@ -530,14 +530,14 @@ test('Chrome native page zoom keeps long finance and history records usable', as
       }
       let orderRow
       if (!completion) {
-        await app.goto(new URL('/finance?date_from=2026-11-01&date_to=2026-11-30', baseURL).href)
+        await app.goto(new URL('/finance?date_from=2026-11-01&date_to=2026-11-30', baseURL).href, { waitUntil: 'domcontentloaded' })
         const sales = app.locator('article').filter({ hasText: '合同销售额' }).first()
         await sales.getByRole('button', { name: '查看构成明细' }).click()
         const detail = app.getByRole('region', { name: '财务金额构成明细' })
         orderRow = detail.getByRole('row').filter({ hasText: fixture.order })
         await expect(orderRow).toContainText(fixture.customer)
         await expect(orderRow).toContainText('¥71,035.50')
-        await history.goto(new URL('/history-preflight', baseURL).href)
+        await history.goto(new URL('/history-preflight', baseURL).href, { waitUntil: 'domcontentloaded' })
         await history.locator('input[type="file"]').setInputFiles(path.join(evidenceDir, fixture.workbook))
         await history.getByRole('button', { name: '开始预检', exact: true }).click()
         await expect(history.locator('.preflight-summary')).toContainText(fixture.workbook)
@@ -651,7 +651,7 @@ test('Chrome native page zoom keeps long finance and history records usable', as
 })
 
 test('certificate validation identifies the business field without closing the draft', async ({ page }) => {
-  await page.goto('/product-certificates')
+  await page.goto('/product-certificates', { waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: '新建产品证书', exact: true }).click()
   const form = page.getByRole('dialog', { name: '新建产品证书', exact: true })
   await form.getByRole('combobox', { name: '所属产品', exact: true }).selectOption({ label: '导入验收合成灯具' })
@@ -694,7 +694,7 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
     }
     await page.setViewportSize({ width: 1600, height: 1000 })
   }
-  await page.goto('/transactions')
+  await page.goto('/transactions', { waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: '新增记账', exact: true }).click()
   let receipt = page.getByRole('dialog', { name: '新增记账', exact: true })
   await receipt.getByLabel(/^类型/).selectOption('customer_receipt')
@@ -711,7 +711,7 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   await receipt.getByRole('button', { name: '保存', exact: true }).click()
   await expect(receipt).toContainText('记账结果尚未确认')
   await page.unroute('**/api/transactions/', lost)
-  await page.goto('/transactions')
+  await page.goto('/transactions', { waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: '按原内容核对' }).click()
   receipt = page.getByRole('dialog', { name: '新增记账', exact: true })
   await expect(receipt.getByLabel('银行实际到账原币金额', { exact: true })).toHaveValue(/^100(?:\.00)?$/)
@@ -742,7 +742,7 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
   expect((await posted.json()).refunds[0].actual_date).toBe('2026-10-30')
   await expect(refund).toBeHidden()
 
-  await page.goto('/rmb-cash-events')
+  await page.goto('/rmb-cash-events', { waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: '新增资金事件' }).click()
   const cash = page.locator('.cash-entry-dialog')
   await cash.getByPlaceholder('搜索流水号').fill(original.transaction_no)
@@ -776,7 +776,7 @@ test('completion evidence follows lost receipt, actual refund date and funds rev
 })
 
 test('codex logout clears the workspaces and returns to sign-in', async ({ page }) => {
-  await page.goto('/finance')
+  await page.goto('/finance', { waitUntil: 'domcontentloaded' })
   await expect(page.locator('.workspace-pane')).toBeVisible()
   const logout = page.waitForResponse(response => response.url().endsWith('/api/session/logout/') && response.ok())
   await page.getByRole('button', { name: '退出登录', exact: true }).click()

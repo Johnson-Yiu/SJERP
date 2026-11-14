@@ -46,7 +46,7 @@ for (const width of [1440, 390]) {
       return body
     }
     async function open(purchase) {
-      await page.goto('/purchase-orders')
+      await page.goto('/purchase-orders', { waitUntil: 'domcontentloaded' })
       const row = page.locator('.purchase-list-row').filter({ hasText: purchase.no })
       await row.getByRole('button', { name: /查看采购单/ }).click()
       const detail = page.getByRole('dialog', { name: '采购工作台' })

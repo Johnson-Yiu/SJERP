@@ -54,7 +54,7 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
     path.resolve('../docs/uat-evidence/history-product-linking-fixes-02/seed-browser.py'),
   ], { cwd: path.resolve('../backend'), env: process.env, encoding: 'utf8' }).trim().split('\n').at(-1))
 
-  await page.goto('/history-takeover?application=' + fixture.candidate)
+  await page.goto('/history-takeover?application=' + fixture.candidate, { waitUntil: 'domcontentloaded' })
   const effective = await page.evaluate(() => ({ width: innerWidth, scale: devicePixelRatio }))
   expect(effective.scale).toBeCloseTo(nativeZoom / 100)
   expect(Math.abs(effective.width - page.viewportSize().width / effective.scale)).toBeLessThan(2)
@@ -75,7 +75,7 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
   expect((await saveMapping).status()).toBe(200)
   await expect(page.getByText('已登记主档关联')).toBeVisible()
 
-  await page.goto('/history-takeover?application=' + fixture.archived)
+  await page.goto('/history-takeover?application=' + fixture.archived, { waitUntil: 'domcontentloaded' })
   await page.getByText('历史商品关联', { exact: true }).first().click()
   await page.getByRole('checkbox', { name: 'A1', exact: true }).check()
   await page.getByRole('button', { name: /处理所选商品/ }).click()
@@ -111,7 +111,7 @@ test('H2 controlled candidate selection, specification recovery, audit, analysis
   expect(exported).toContain('历史原文明细')
   expect(exported).toMatch(/A1,,旧分类,2(?:\.0+)?,pcs,50(?:\.0+)?,CNY,已关联,B/)
 
-  await page.goto('/historical-orders')
+  await page.goto('/historical-orders', { waitUntil: 'domcontentloaded' })
   const analysis = page.locator('.analysis-card')
   const grouping = analysis.getByLabel('商品口径')
   const sales = analysis.locator('.analysis-detail-section').filter({

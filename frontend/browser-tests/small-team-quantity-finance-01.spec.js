@@ -32,7 +32,7 @@ test('quantity changes retain exact receivable and net cash after reopening', as
     { case: 'FEE', quantity: '11', total: '1100.00', delta: '100.00', paid: '980.00', balance: '100.00' },
   ]) {
     const fixture = cases[scenario.case]
-    await page.goto(new URL('/orders?search=' + fixture.number, baseURL).href)
+    await page.goto(new URL('/orders?search=' + fixture.number, baseURL).href, { waitUntil: 'domcontentloaded' })
     const row = activeRows.filter({ hasText: fixture.number })
     await row.click()
     if (scenario.case === 'FEE') await expect(workbench.locator('.cost-profit-card')).toContainText('采购合同调整')
@@ -66,7 +66,7 @@ test('quantity changes retain exact receivable and net cash after reopening', as
     await payment.screenshot({ path: path.join(screenshots, scenario.case + '-reopened.png') })
     await workbench.getByRole('button', { name: '关闭订单详情' }).click()
   }
-  await page.goto(new URL('/orders?search=' + cases.INCOMPLETE.number, baseURL).href)
+  await page.goto(new URL('/orders?search=' + cases.INCOMPLETE.number, baseURL).href, { waitUntil: 'domcontentloaded' })
   await activeRows.filter({ hasText: cases.INCOMPLETE.number }).click()
   const cost = workbench.locator('.cost-profit-card')
   await expect(cost).toContainText('成本待核实')

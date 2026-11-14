@@ -18,7 +18,7 @@ test('draft party details can be saved and reopened on all three documents', asy
   const evidence = path.join(process.env.ISOLATED_PLAYWRIGHT_EVIDENCE_ROOT, 'party-details-ui')
   fs.mkdirSync(evidence, { recursive: true })
   for (const [kind, route] of [['quote', 'quotes'], ['order', 'orders'], ['purchase', 'purchase-orders']]) {
-    await page.goto(new URL(`/${route}?detail=${fixture[kind]}`, baseURL).toString())
+    await page.goto(new URL(`/${route}?detail=${fixture[kind]}`, baseURL).toString(), { waitUntil: 'domcontentloaded' })
     const panel = page.locator('.party-details-panel')
     await expect(panel.getByRole('heading', { name: '草稿双方资料' })).toBeVisible()
     await panel.getByLabel('买方账单地址').fill(`Synthetic ${kind} billing`)

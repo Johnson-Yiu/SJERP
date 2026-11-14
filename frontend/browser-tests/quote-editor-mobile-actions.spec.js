@@ -52,7 +52,7 @@ test('quote editor actions stay readable at desktop and narrow widths and preser
   })
 
   async function openEditor() {
-    await page.goto(`/quotes?create=1&customer=${fixture.customer}`)
+    await page.goto(`/quotes?create=1&customer=${fixture.customer}`, { waitUntil: 'domcontentloaded' })
     const editor = page.locator('form.quote-editor-modal')
     await expect(editor).toBeVisible()
     await expect(editor.locator('.quote-action-save-export')).toBeVisible()

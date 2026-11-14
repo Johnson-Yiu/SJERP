@@ -52,7 +52,7 @@ test('S5 order status filtering and workbench recovery', async ({ baseURL }) => 
       for (const [width, height] of [[1366, 768], [1440, 900], [390, 844]]) {
         await page.setViewportSize({ width, height })
         if (!audit) {
-          await page.goto(new URL('/orders?search=S5-SO', baseURL).href)
+          await page.goto(new URL('/orders?search=S5-SO', baseURL).href, { waitUntil: 'domcontentloaded' })
           await expect(rows).toHaveCount(6)
           const metrics = await page.evaluate(() => ({ dpr: devicePixelRatio, cssWidth: innerWidth }))
           expect(metrics.dpr).toBe(zoom)
@@ -86,7 +86,7 @@ test('S5 order status filtering and workbench recovery', async ({ baseURL }) => 
             ? route.fulfill({ status: 400, json: { detail: 'S5 合成工作台加载失败' } })
             : route.continue())
           try {
-            await page.goto(new URL(`/orders?detail=${identifiers.confirmed}`, baseURL).href)
+            await page.goto(new URL(`/orders?detail=${identifiers.confirmed}`, baseURL).href, { waitUntil: 'domcontentloaded' })
             await expect(workbench.locator('.detail-error')).toBeVisible()
             await expect(workbench).not.toContainText(orders.draft)
             const screenshot = `so-04-load-failed-${width}-${zoom * 100}.png`
@@ -139,7 +139,7 @@ test('S5 order status filtering and workbench recovery', async ({ baseURL }) => 
           }
           const quoteEndpoint = url => url.pathname === `/api/quotes/${quote}/workbench/`
           const quoteWorkbench = page.getByRole('dialog', { name: '报价工作台' })
-          await page.goto(new URL(`/quotes?detail=${previousQuote}`, baseURL).href)
+          await page.goto(new URL(`/quotes?detail=${previousQuote}`, baseURL).href, { waitUntil: 'domcontentloaded' })
           await expect(quoteWorkbench).toContainText('S5-QUO-PREVIOUS')
           await expect(quoteWorkbench.getByText('S5 上一报价独立备注', { exact: true })).toBeVisible()
           await quoteWorkbench.getByRole('button', { name: '关闭报价详情' }).click()
@@ -165,7 +165,7 @@ test('S5 order status filtering and workbench recovery', async ({ baseURL }) => 
           results.push({ state: 'QUO-04-recovered', width, height, zoom, screenshot })
         }
         const confirmId = confirmOrders[matrixIndex++]
-        await page.goto(new URL(`/orders?detail=${confirmId}`, baseURL).href)
+        await page.goto(new URL(`/orders?detail=${confirmId}`, baseURL).href, { waitUntil: 'domcontentloaded' })
         const metrics = await page.evaluate(() => ({ dpr: devicePixelRatio, cssWidth: innerWidth }))
         expect(metrics.dpr).toBe(zoom)
         expect(metrics.cssWidth).toBeCloseTo(width / zoom, 0)

@@ -28,7 +28,7 @@ test('real Django: recipient A/B, empty/invalid email, master changes, saved PI 
     return body
   }
   await page.setViewportSize({ width: 1440, height: 1100 })
-  await page.goto(`/quotes?create=1&customer=${fixture.customer}`)
+  await page.goto(`/quotes?create=1&customer=${fixture.customer}`, { waitUntil: 'domcontentloaded' })
   const editor = page.getByRole('form', { name: '报价编辑器' })
   await expect(editor.getByLabel('买方邮箱', { exact: true })).toHaveValue('primary@example.com')
   await expect(editor.getByLabel('收件人', { exact: true })).toHaveValue('Original Primary')
@@ -56,7 +56,7 @@ test('real Django: recipient A/B, empty/invalid email, master changes, saved PI 
   let master = await api('get', `/contacts/${fixture.contact}/`)
   expect(master.email).toBe('primary@example.com')
 
-  await page.goto(`/quotes?detail=${a.id}`)
+  await page.goto(`/quotes?detail=${a.id}`, { waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: '标记为已发送', exact: true }).click()
   await expect(page.locator('.detail-badge')).toHaveText('已发送')
   await page.getByRole('button', { name: '创建修订版', exact: true }).click()
@@ -93,7 +93,7 @@ test('real Django: recipient A/B, empty/invalid email, master changes, saved PI 
     expect(detail.buyer_address).toBe(address)
     expect(pi.buyer.name).toBe(recipient)
     expect(pi.buyer.email).toBe(email)
-    await page.goto(`/quotes?detail=${quote.id}`)
+    await page.goto(`/quotes?detail=${quote.id}`, { waitUntil: 'domcontentloaded' })
     await page.getByRole('button', { name: '预览 PI', exact: true }).first().click()
     const preview = page.getByRole('dialog', { name: 'PI 预览' })
     await expect(preview).toContainText('已保存报价 · PI 预览')
@@ -116,7 +116,7 @@ test('real Django: recipient A/B, empty/invalid email, master changes, saved PI 
   }
   // Reopen the saved draft as the starting point of a revision; a dirty input
   // cannot alter the original PI or export endpoint.
-  await page.goto(`/quotes?edit=${b.id}`)
+  await page.goto(`/quotes?edit=${b.id}`, { waitUntil: 'domcontentloaded' })
   await expect(editor.getByLabel('买方邮箱', { exact: true })).toHaveValue('')
   await expect(editor.getByLabel('收件人', { exact: true })).toHaveValue('Version B Recipient')
   await editor.getByLabel('买方邮箱', { exact: true }).fill('unsaved@example.com')

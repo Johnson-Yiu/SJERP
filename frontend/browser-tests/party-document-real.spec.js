@@ -35,7 +35,7 @@ test('formal SO and PO corrections retain original snapshots and business facts'
       const before = await (await page.request.get(`/api/${route}/${id}/`)).json()
       const url = new URL(`/${route}?detail=${id}`, baseURL).toString()
       async function open(p) {
-        await p.goto(url)
+        await p.goto(url, { waitUntil: 'domcontentloaded' })
         await p.getByRole('button', { name: '查看主体版本与更正' }).click()
         await expect(p.locator('.document-party-versions')).toContainText('当前有效主体资料')
       }

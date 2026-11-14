@@ -12,7 +12,7 @@
 | 发布/构建 | `/srv/sjerp/a/release`，`frontend/dist`、`backend/staticfiles` 位于发布目录内 |
 | 媒体 | `/var/lib/sjerp/a/private-media`，持久卷，与发布和公共静态目录分离 |
 | 机器配置 | `/etc/sjerp/a/runtime.env` 等，密码、密钥、证书私钥在受保护的仓库外位置 |
-| 联合备份 | `/etc/sjerp/a/backup.json`，实际归档与独立备份位置由恢复交接填写 |
+| 联合备份 | `/etc/sjerp/a/backup.json`，实际归档与独立备份位置由恢复交接填写。保留同一 SHA 的干净 Git 检出供维护命令使用，与精简运行包、数据库和媒体分开 |
 
 ## 验收记录
 

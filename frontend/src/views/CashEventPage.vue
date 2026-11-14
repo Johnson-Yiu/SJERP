@@ -14,6 +14,7 @@ const route = useRoute()
 const events = ref([]), loading = ref(true), hasLoaded = ref(false), loadError = ref('')
 const error = ref(''), notice = ref(''), statusFilter = ref(''), listSearch = ref('')
 const selected = ref(null), showForm = ref(false)
+let initialDetailId = Number(route.query.event)
 
 function money(value, currency = 'CNY') {
   if (value === null || value === undefined || value === '') return '待核对'
@@ -23,20 +24,20 @@ function money(value, currency = 'CNY') {
 function statusLabel(value) { return ({ pending: '待确认', confirmed: '已确认', cancelled: '已放弃' })[value] || value || '—' }
 function kindLabel(value) { return ({ fx_settlement: '外币结汇流入', cny_direct: '人民币直接收付', bank_fee: '独立银行扣费' })[value] || value || '—' }
 function directionLabel(value) { return value === 'income' ? '流入' : value === 'expense' ? '流出' : '—' }
-async function loadEvents({ openRouteDetail = false } = {}) {
+async function loadEvents() {
   loading.value = true; loadError.value = ''
   try {
     events.value = (await api.get('/rmb-cash-events/')).data.results || []; hasLoaded.value = true
-    const detailId = Number(route.query.event)
-    if (openRouteDetail && detailId > 0 && !showForm.value && !selected.value) {
-      const row = events.value.find(item => item.id === detailId)
+    if (initialDetailId > 0 && !showForm.value && !selected.value) {
+      const row = events.value.find(item => item.id === initialDetailId)
       if (row) openDetail(row)
     }
   } catch (err) { loadError.value = apiErrorMessage(err) || '人民币资金记录加载失败，请重试。' }
   finally { loading.value = false }
 }
-function openCreate() { selected.value = null; showForm.value = true; error.value = ''; notice.value = '' }
+function openCreate() { initialDetailId = 0; selected.value = null; showForm.value = true; error.value = ''; notice.value = '' }
 function openDetail(row) {
+  initialDetailId = 0
   selected.value = row
   showForm.value = row.status === 'pending' && can('finance', 'update')
   error.value = ''; notice.value = ''
@@ -53,7 +54,7 @@ function filteredEvents() {
   return events.value.filter(row => (!statusFilter.value || row.status === statusFilter.value) && (!keyword || `${row.event_no} ${row.bank_reference}`.toLowerCase().includes(keyword)))
 }
 const filtered = computed(filteredEvents)
-onMounted(() => loadEvents({ openRouteDetail: true }))
+onMounted(loadEvents)
 </script>
 
 <template>

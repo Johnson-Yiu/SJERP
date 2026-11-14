@@ -46,6 +46,33 @@ async function mountPage(query = {}) {
 const confirmButton = () => wrapper.findAll('button').find(button => button.text() === '确认银行凭证')
 
 describe('bank event review survives list refresh', () => {
+  it('opens the initial deep link after a failed first load is retried', async () => {
+    listRows = [event()]
+    mocks.api.get.mockRejectedValueOnce(new Error('Synthetic list unavailable'))
+    await mountPage({ event: '71' })
+    expect(wrapper.find('.cash-load-error').exists()).toBe(true)
+    expect(wrapper.findComponent(CashEventEntryForm).exists()).toBe(false)
+    await wrapper.get('.cash-load-error button').trigger('click')
+    await flushPromises()
+    expect(wrapper.findComponent(CashEventEntryForm).props('initialEvent').id).toBe(71)
+    expect(wrapper.get('.review-confirm input').element.checked).toBe(false)
+  })
+
+  it('does not reopen the initial deep link after the user chooses a new event during loading', async () => {
+    const initialList = deferred()
+    mocks.api.get.mockImplementation(url => url === '/rmb-cash-events/'
+      ? initialList.promise : Promise.resolve({ data: { results: [] } }))
+    await mountPage({ event: '71' })
+    await wrapper.findAll('button').find(button => button.text() === '新增资金事件').trigger('click')
+    await flushPromises()
+    await wrapper.get('[aria-label="关闭资金表单"]').trigger('click')
+    initialList.resolve({ data: { results: [event()] } })
+    await flushPromises()
+    expect(wrapper.findComponent(CashEventEntryForm).exists()).toBe(false)
+    expect(wrapper.find('.cash-detail-panel').exists()).toBe(false)
+    expect(wrapper.get('.cash-table').text()).toContain('SYNTH-REVIEW-71')
+  })
+
   for (const deepLink of [false, true]) {
     it(`preserves checked review while the ${deepLink ? 'deep-linked updated' : 'newly created'} event list arrives late`, async () => {
       listRows = deepLink ? [event()] : []

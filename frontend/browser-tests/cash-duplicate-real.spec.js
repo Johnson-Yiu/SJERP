@@ -48,7 +48,24 @@ for (const [index, width] of [1440, 390].entries()) {
       if (!response.url().includes('/api/rmb-cash-events/')) return
       try { results.push({ width, method: response.request().method(), path: new URL(response.url()).pathname, status: response.status(), response: await response.json() }) } catch {}
     })
-    await page.goto('/rmb-cash-events', { waitUntil: 'domcontentloaded' })
+    let rejectInitialList = true
+    await page.route('**/api/rmb-cash-events/', route => {
+      if (rejectInitialList && route.request().method() === 'GET') {
+        return route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ detail: '合成列表暂不可用' }) })
+      }
+      return route.continue()
+    })
+    await page.goto(`/rmb-cash-events?event=${firstId}`, { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('.cash-load-error')).toBeVisible()
+    await page.screenshot({ path: path.join(screenshots, `deep-link-failed-${width}.png`) })
+    rejectInitialList = false
+    await page.locator('.cash-load-error').getByRole('button', { name: '重试' }).click()
+    const originalDetail = page.getByRole('dialog', { name: data.event_no, exact: true })
+    await expect(originalDetail).toBeVisible()
+    await expect(originalDetail).toContainText('已确认')
+    await page.screenshot({ path: path.join(screenshots, `deep-link-recovered-${width}.png`) })
+    await originalDetail.getByRole('button', { name: '关闭资金详情' }).click()
+    await page.unroute('**/api/rmb-cash-events/')
     await expect(page.getByRole('button', { name: '新增资金事件' })).toBeVisible()
     await page.getByRole('button', { name: '新增资金事件' }).click()
     await page.getByLabel('事件类型').selectOption('bank_fee')

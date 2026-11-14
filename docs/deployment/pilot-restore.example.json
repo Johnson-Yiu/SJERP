@@ -1,0 +1,29 @@
+{
+  "connection": {
+    "host": "pg-drill.example.invalid",
+    "port": 5432,
+    "user": "sjerp_a_drill_maintenance",
+    "dbname": "postgres",
+    "passfile": "/etc/sjerp/a/drill-secrets/pgpass-maintenance",
+    "sslmode": "verify-full",
+    "sslrootcert": "/etc/sjerp/a/drill-tls/postgres-ca.pem",
+    "connect_timeout": 10
+  },
+  "pg_bin": "/usr/lib/postgresql/17/bin",
+  "expected_database": "postgres",
+  "expected_system_identifier": "REPLACE_WITH_VERIFIED_ISOLATED_CLUSTER_ID",
+  "app_sha": "REPLACE_WITH_EXACT_40_CHARACTER_SOURCE_SHA",
+  "archive": "/srv/sjerp-recovery/a/restore-input/backup-REPLACE.gpg",
+  "expected_sha256": "REPLACE_WITH_VERIFIED_PLAINTEXT_SHA256",
+  "encrypted_sha256": "REPLACE_WITH_VERIFIED_ENCRYPTED_SHA256",
+  "media_parent": "/var/lib/sjerp-recovery/a/restored-media",
+  "encryption": {
+    "key_file": "/etc/sjerp/a/drill-secrets/backup-key",
+    "executable": "/usr/bin/gpg"
+  },
+  "receipt_signing": {
+    "executable": "/usr/bin/openssl",
+    "private_key": "/etc/sjerp/a/drill-secrets/restore-signing-key.pem"
+  },
+  "receipt_output": "/srv/sjerp-recovery/a/receipts/restore-REPLACE.json"
+}

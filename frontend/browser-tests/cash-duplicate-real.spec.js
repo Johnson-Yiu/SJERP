@@ -49,13 +49,18 @@ for (const [index, width] of [1440, 390].entries()) {
       try { results.push({ width, method: response.request().method(), path: new URL(response.url()).pathname, status: response.status(), response: await response.json() }) } catch {}
     })
     let rejectInitialList = true
+    let rejectedListRequests = 0
     await page.route('**/api/rmb-cash-events/', route => {
       if (rejectInitialList && route.request().method() === 'GET') {
+        rejectedListRequests += 1
         return route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ detail: '合成列表暂不可用' }) })
       }
       return route.continue()
     })
     await page.goto(`/rmb-cash-events?event=${firstId}`, { waitUntil: 'domcontentloaded' })
+    // The API retries a transient GET five times (6.75s of backoff). Assert
+    // exhaustion before expecting the user's explicit recovery action.
+    await expect.poll(() => rejectedListRequests, { timeout: 30000 }).toBe(6)
     await expect(page.locator('.cash-load-error')).toBeVisible()
     await page.screenshot({ path: path.join(screenshots, `deep-link-failed-${width}.png`) })
     rejectInitialList = false

@@ -83,12 +83,18 @@ async function setSelectedActive(active) {
   await run(async () => {
     const productId = props.productId
     const action = active ? '启用' : '停用'
-    const results = await Promise.allSettled(rows.map(row => api.patch(`/skus/${row.id}/`, { active })))
+    const failures = []
+    // Each SKU update and its audit write complete before the next request.
+    for (const row of rows) {
+      if (props.productId !== productId) return
+      try {
+        await api.patch(`/skus/${row.id}/`, { active })
+      } catch (reason) {
+        failures.push({ id: row.id, code: row.sku_code || row.sku, message: apiErrorMessage(reason) })
+      }
+    }
     if (props.productId !== productId) return
-    const failures = results.flatMap((result, index) => result.status === 'rejected'
-      ? [{ id: rows[index].id, code: rows[index].sku_code || rows[index].sku, message: apiErrorMessage(result.reason) }]
-      : [])
-    lifecycleResult.value = { action, succeeded: results.length - failures.length, failures }
+    lifecycleResult.value = { action, succeeded: rows.length - failures.length, failures }
     selectedIds.value = failures.map(item => item.id)
     await load()
     if (lifecycleResult.value?.succeeded) emit('changed')

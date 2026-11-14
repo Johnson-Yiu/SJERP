@@ -577,7 +577,14 @@ function isInherited(fieldName) {
 function onCertificateFileSelected(event) {
   form.file = event.target.files?.[0] || null
 }
-async function openCreate({ isCurrent = () => true } = {}) {
+function directEditorIntent() {
+  const version = ++routeActionVersion
+  const path = route.fullPath
+  const signal = workspaceNavigation.workspace?.controller.signal
+  return () => version === routeActionVersion && route.fullPath === path && !signal?.aborted
+}
+async function openCreate({ isCurrent = null } = {}) {
+  isCurrent ||= directEditorIntent()
   if (!can(accessModule.value, 'create')) return
   clearToast()
   certificateSaveError.value=''
@@ -612,7 +619,8 @@ async function openCreate({ isCurrent = () => true } = {}) {
   syncFollowUpDaysFromDate()
   if (isCurrent()) { guard.markClean(); modalOpen.value = true }
 }
-async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}) {
+async function openEdit(row, { keepDetail = false, isCurrent = null } = {}) {
+  isCurrent ||= directEditorIntent()
   if (!can(accessModule.value, 'update')) return
   let editRow = row
   // A list refresh may still be pending after an attachment upload. Reopening
@@ -651,6 +659,7 @@ async function openEdit(row, { keepDetail = false, isCurrent = () => true } = {}
 }
 const closeModal = () => { if ((isSupplierPage.value || isCrmPage.value || isParameterPage.value || isCertificatePage.value) && saving.value) return; return guard.requestClose(discardModal) }
 function discardModal() {
+  routeActionVersion += 1
   const refreshDetail = keepDetailOpen.value
   modalOpen.value = false; keepDetailOpen.value = false; followUpDays.value = ''; followUpAttachments.value = []; pendingFollowUpFiles.value = []; attachmentSaveError.value = ''; attachmentDeleteError.value = ''; currentCertificateFileUrl.value = ''
   contactDuplicateRequest += 1; contactDuplicateRows.value = []; contactDuplicateLoading.value = false; contactDuplicateError.value = ''

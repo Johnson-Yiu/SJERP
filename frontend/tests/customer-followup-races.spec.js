@@ -31,6 +31,34 @@ it('reopens a complete but stale follow-up row using the saved attachment detail
   expect(wrapper.vm.followUpAttachments).toEqual([attachment])
   expect(wrapper.findAll('.follow-up-attachment-editor-item.saved')).toHaveLength(1)
 })
+it('keeps the newer direct editor and its input when an older detail arrives', async () => {
+  await open('follow-ups')
+  const first = deferred(), second = deferred()
+  mocks.api.get.mockImplementation(url => url === '/follow-ups/1/' ? first.promise : second.promise)
+  const openingFirst = wrapper.vm.openEdit({ id: 1, attachments: [] })
+  const openingSecond = wrapper.vm.openEdit({ id: 2, attachments: [] })
+  second.resolve({ data: { id: 2, subject: 'B', attachments: [] } })
+  await openingSecond
+  await wrapper.get('[aria-label="主题"]').setValue('B unsaved input')
+  first.resolve({ data: { id: 1, subject: 'A', attachments: [] } })
+  await openingFirst
+  expect(wrapper.vm.editingId).toBe(2)
+  expect(wrapper.get('[aria-label="主题"]').element.value).toBe('B unsaved input')
+})
+for (const action of ['create', 'close']) it(`invalidates a pending direct edit when the user chooses ${action}`, async () => {
+  await open('follow-ups')
+  const old = deferred()
+  mocks.api.get.mockImplementation(url => url === '/follow-ups/1/' ? old.promise : Promise.resolve({ data: { name: 'Developer' } }))
+  const opening = wrapper.vm.openEdit({ id: 1, attachments: [] })
+  await wrapper.vm.openCreate()
+  if (action === 'close') await wrapper.vm.closeModal()
+  else await wrapper.get('[aria-label="主题"]').setValue('New draft input')
+  old.resolve({ data: { id: 1, subject: 'Old saved row', attachments: [] } })
+  await opening
+  expect(wrapper.vm.editingId).toBeNull()
+  expect(wrapper.vm.modalOpen).toBe(action === 'create')
+  if (action === 'create') expect(wrapper.get('[aria-label="主题"]').element.value).toBe('New draft input')
+})
 async function open(entity, query = '') {
   router = createRouter({ history: createMemoryHistory(), routes: [{ path: '/:pathMatch(.*)*', component: { template: '<main />' } }] })
   await router.push(`/${entity}${query}`)

@@ -13,7 +13,7 @@ const followup = { id: 8, customer: 12, contact: 9, followed_at: '2026-10-09T10:
 beforeEach(() => {
  vi.clearAllMocks()
  mocks.listAll.mockImplementation(async url => url === '/customers/' ? [customer] : url === '/contacts/' ? [{ id: 9, customer: 12, name: 'UAT Contact' }, { id: 10, customer: 99, name: 'Other Contact' }] : url === '/follow-ups/' ? [followup] : [])
- mocks.api.get.mockImplementation(async url => ({ data: url === '/customers/next-code/' ? { code: 'C13' } : { name: 'Johnson' } }))
+ mocks.api.get.mockImplementation(async url => ({ data: url === '/customers/next-code/' ? { code: 'C13' } : url === '/follow-ups/8/' ? { ...followup } : { name: 'Johnson' } }))
  mocks.api.post.mockResolvedValue({ data: { id: 13 } })
  mocks.api.put.mockResolvedValue({ data: { id: 8 } })
 })
@@ -53,6 +53,7 @@ it('Customer edit has a dedicated identity and preserves all fields without crea
 })
 it('Followup edit keeps customer contact filtering, rich text, dates, attachment input and exact payload', async () => {
  await resource('follow-ups'); await wrapper.get('tbody [title="编辑"]').trigger('click'); await flushPromises()
+ expect(mocks.api.get).toHaveBeenCalledWith('/follow-ups/8/')
  expect(wrapper.get('.modal h3').text()).toBe('编辑跟进记录')
  expect(field('联系人').findAll('option').map(o => o.text())).toEqual(['请选择','UAT Contact'])
  expect(wrapper.get('.follow-up-attachment-picker input').attributes('multiple')).toBeDefined()

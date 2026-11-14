@@ -32,3 +32,11 @@ Windows、Python 3.14.5、隔离合成 SQLite 和私有媒体完成包内迁移�
 | 保留 | `local-data` 236,000，`.experience-preview-data` 2,547,569，`.system-temp-recovery-20261027` 63,942,090，`.tmp` 115,337,687 | 仅检查目录字节。含可能仍在用的数据或所有权未知产物；逐项确认前保留，任何业务库、媒体与恢复归档须保留。 |
 
 现行集成工作树扫描为 1,408,421,506 字节。基线 `96276dff` 的 Git 树按路径统计为 1,150,696,544 字节，其中 `docs/uat-evidence` 为 1,137,143,016 字节。最大单项 `review-integration-batch-20261104/ci-1f189c3-ui-screenshots.zip` 为 30,898,981 字节。隔离浏览器工具检查证据目录边界，历史报告和部分工具保留对该目录的引用，因此目录整体排除在删除候选之外。逐文件清理须核对工作流、测试入口、证据索引及归档可读性。已跟踪文件须经正常提交删除。未合入成果、业务模板、迁移、当前审计证据和工作树管理信息保留。
+
+## 最终交付复核（2026-11-15）
+
+发布源码为 `0b0654de5b079d244b74d752ed4b78710ec4881b`。本机发布目录和 ZIP 的独立解包目录均再次通过 331 文件校验，清单覆盖 5,141,754 字节。构建日志记录锁定依赖构建和 verify 成功。冒烟日志记录合成 SQLite 迁移、Django 检查、回环静态资源、CSRF 登录退出、附件上传与下载字节一致、XLSX 模板及 CSV 导出。退出后附件请求得到预期拒绝。
+
+PostgreSQL 17 验证来自同一源码 SHA 的 [主 CI](https://github.com/Johnson-Yiu/SJERP/actions/runs/43577214916) 和 [Linux 运维专项](https://github.com/Johnson-Yiu/SJERP/actions/runs/43577218735)。交付 ZIP 的本机冒烟使用 SQLite。目标电脑上的服务启动、实际 PostgreSQL 和 HTTPS、附件路径及独立备份恢复仍待授权后验收。
+
+[本机包路径、大小、SHA-256 与验收记录](PILOT-DELIVERY-FINAL-EVIDENCE-01.md)。

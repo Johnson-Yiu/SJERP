@@ -1,6 +1,11 @@
 {
   "applicationSource": "71592c9087198787baf03b22a4b5e0707b561505",
-  "scope": "Original scoped Chrome PNGs. Source trees backend and frontend/src match the frozen integration. Harness commits and preliminary failures are documented separately.",
+  "scope": "Original scoped Chrome PNGs captured before final certification. Later source changes and final-HEAD reruns are recorded separately.",
+  "indexGeneratedAtHead": "0a58a3300a2cce40888be3662837fe19352d3451",
+  "applicationFilesChangedSinceCapture": [
+    "frontend/src/views/CashEventPage.vue",
+    "frontend/src/views/ResourcePage.vue"
+  ],
   "imageProcessing": "None: no cropping, scaling, compositing or re-encoding.",
   "zoom": "Default native 100%; refund/chrome/run.json records actual Chrome settings 100% and 125% and viewport metrics.",
   "suites": [

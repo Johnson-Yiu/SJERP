@@ -28,8 +28,9 @@ SUITES = {
 def main():
     records = []
     suites = []
-    # Every application source file is unchanged after this frozen integration.
-    subprocess.run(['git', 'diff', '--exit-code', APP_SOURCE, 'HEAD', '--', 'backend', 'frontend/src'], check=True)
+    # These are historical scoped captures. Later certification records its own HEAD.
+    current_head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+    later_changes = subprocess.check_output(['git', 'diff', '--name-only', APP_SOURCE, 'HEAD', '--', 'backend', 'frontend/src'], text=True).splitlines()
     for name, (folder, count) in SUITES.items():
         directory = ROOT / folder
         runs = sorted((directory / 'artifacts').glob('*'), key=lambda p: p.stat().st_mtime)
@@ -45,7 +46,9 @@ def main():
                             'pixels': [width, height], 'sha256': hashlib.sha256(data).hexdigest()})
     report = {
         'applicationSource': APP_SOURCE,
-        'scope': 'Original scoped Chrome PNGs. Source trees backend and frontend/src match the frozen integration. Harness commits and preliminary failures are documented separately.',
+        'scope': 'Original scoped Chrome PNGs captured before final certification. Later source changes and final-HEAD reruns are recorded separately.',
+        'indexGeneratedAtHead': current_head,
+        'applicationFilesChangedSinceCapture': later_changes,
         'imageProcessing': 'None: no cropping, scaling, compositing or re-encoding.',
         'zoom': 'Default native 100%; refund/chrome/run.json records actual Chrome settings 100% and 125% and viewport metrics.',
         'suites': suites,

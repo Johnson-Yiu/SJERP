@@ -152,10 +152,33 @@ test('C editors, batch results and product logs retain real state', async ({ pag
   expect((await (await page.request.get(`/api/skus/${fixture.skus[1]}/`)).json()).active).toBe(false)
   await page.getByLabel('显示已停用',{exact:false}).check()
   await page.locator('.candidate-table thead input').check()
+  for (const code of ['C-SKU-1', 'C-SKU-2']) {
+    await expect(page.getByRole('checkbox', { name: `选择 ${code}`, exact: true })).toBeChecked()
+  }
+  const responses = fixture.skus.map(id => page.waitForResponse(response =>
+    new URL(response.url()).pathname === `/api/skus/${id}/` && response.request().method() === 'PATCH'
+  ))
   await page.getByRole('button',{name:'重新启用 2 项',exact:true}).click()
   await page.getByTestId('dialog-confirm').click()
+  for (const [index, response] of (await Promise.all(responses)).entries()) {
+    expect(response.request().postDataJSON()).toEqual({ active: true })
+    expect(response.status()).toBe(200)
+    expect(await response.json()).toMatchObject({ id: fixture.skus[index], active: true })
+  }
   await expect(page.getByText('已启用 2 项 SKU。',{exact:true})).toBeVisible()
   for (const id of fixture.skus) expect((await (await page.request.get(`/api/skus/${id}/`)).json()).active).toBe(true)
+  const persisted = JSON.parse(execFileSync(process.env.ISOLATED_TEST_PYTHON, ['-c', `
+import django
+import json
+import sys
+django.setup()
+from django.conf import settings
+from test_support.isolated_runtime import verify_isolated_runtime
+verify_isolated_runtime(settings=settings, database_must_exist=True)
+from crm.models import SKU
+print(json.dumps(list(SKU.objects.filter(pk__in=sys.argv[1:]).order_by('pk').values_list('active', flat=True))))
+`, ...fixture.skus.map(String)], { cwd: fileURLToPath(new URL('backend/', repository)), encoding: 'utf8' }))
+  expect(persisted).toEqual([true, true])
   await shot('batch-success-real-readback')
   await rows.first().locator('input[type=checkbox]').check()
   await page.getByRole('button',{name:'批量绑定供应商',exact:true}).click()

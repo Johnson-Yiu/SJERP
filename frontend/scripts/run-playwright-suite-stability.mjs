@@ -15,6 +15,7 @@ const logsRoot = path.join(reportRoot, 'logs')
 const runnerPath = path.join(scriptsRoot, 'run-isolated-browser-tests.mjs')
 
 const dedicatedRuns = [
+  { name: 'sku-price-currencies', file: 'product-sku-price-currencies.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
   { name: 'batch02-refund', file: 'cancel-refund-closeout-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
   { name: 'batch02-cost', file: 'cost-currency-integrity-02.spec.js', codex: true, env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },
   { name: 'batch02-draft', file: 'product-draft-protection-01.spec.js', codex: true, args: ['--audit-product-draft-test'], env: { ISOLATED_PLAYWRIGHT_USE_CHROME: '1' } },

@@ -231,7 +231,10 @@ watch(() => props.refreshKey, () => { void load() })
      <td><strong>{{ row.sku_name }}</strong><small>{{ row.sales_model || '未设置 Sales Model' }}</small></td>
      <td>{{ row.specification || Object.values(row.parameters).join(' / ') || '—' }}</td>
      <td>{{ row.stock_quantity ?? '—' }} <small>{{ row.unit }}</small></td>
-     <td>{{ row.cost_price }} / {{ row.default_price }}<small>{{ row.currency }}</small></td>
+     <td>
+      <div>成本 {{ row.cost_price ?? '—' }} {{ row.cost_currency || '币种待核实' }}</div>
+      <div>售价 {{ row.default_price ?? '—' }} {{ row.currency }}</div>
+     </td>
      <td><span v-if="!row.active">—</span><template v-else-if="row.candidate_supplier_count"><strong v-for="supplier in (row.candidates || [])" :key="supplier.supplier">{{ supplier.supplier_name }}</strong><small v-if="row.preferred_supplier">优先选择：{{ row.preferred_supplier.name }}</small></template><span v-else>暂无可选供应商</span></td>
      <td><template v-if="row.last_purchase"><span>{{ lastPurchaseSupplier(row) }}</span><small>{{ row.last_purchase.date }}</small><small>单价 {{ row.last_purchase.price }} {{ row.last_purchase.currency }}</small></template><span v-else>尚未采购</span></td>
      <td>{{ row.active ? '启用' : '已停用' }}</td>

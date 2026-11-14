@@ -1,5 +1,10 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## SJERP PILOT-DELIVERY-FINAL-EVIDENCE-01
+
+发布源码 `0b0654de5b079d244b74d752ed4b78710ec4881b` 的主 CI 和 Linux 专项均通过。独立发布包解包后全文件摘要和定向冒烟通过。ISS-130 关联 SKU 批量启用的 SQLite 写锁修复仍为 FIXED_PENDING_REVIEW，目标机部署与验收待授权。[发布验收证据](deployment/PILOT-DELIVERY-FINAL-EVIDENCE-01.md)
+
+
 ## SJERP PRELAUNCH-REPAIR-BATCH-02（2026-11-14，统一候选验收）
 
 在独立 `codex/prelaunch-repair-integration-02` 接入 UI `e5ce789459b2499189bc9b0b5e922e8722847da1` 和取消退款 `c8a06892579bf586d1a674750902c27943fa69d4`；共同基线 `d7d155b994b652f6f4f777edde22a257a8ed7a2e`。A 财务、B 成本、C 草稿均已按源码来源正常 merge，D 收拢公共弹窗与原 22 项 UI，保留 SEC1 及并行业务成果。没有新增迁移，既有多来源迁移汇合与 0130 叶节点保留。

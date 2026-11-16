@@ -1,0 +1,19 @@
+# 横切实现与本地独有候选
+
+基线为 `7b4e666758ba31a2afd36a7ef81635085a27ff24`。分支和路径关联见[功能索引](feature-implementations.tsv)及[路径清单](candidate-paths.tsv)。下表对跨业务共用约束和只有本地引用的差异给出处置。
+
+| 功能／候选 | 当前实现与候选比较 | 证据与风险 | 建议与最小接收范围 |
+| --- | --- | --- | --- |
+| 访问会话与开发身份。旧功能权限、访问就绪审核、`integration-validation-04-login-test` | 主干在 `backend/crm/permissions.py` 统一判定开发身份，环境约束由 `backend/config/settings.py` 管理。旧入口用于证明登录、功能权限和下载证据。当前开发保留统一超级管理员，试点正式身份及验收用独立真实账号。 | `test_access_readiness_20261105.py` 覆盖停用后会话拒绝，`test_access_readiness_format_and_role.py` 覆盖角色和格式。历史登录测试的两个变动为浏览器验收差异，其原提交补丁已在主干历史。风险高，开发身份启停、台账和生产鉴权不得互相替代。 | 主干已满足现有开发约定。正式非开发试点按既有要求验证实际身份、停用、对象权限和附件范围；保留会话浏览器场景，可择取合成测试数据。 |
+| 私有附件、证书与备份。ISS-007、ISS-017、ISS-018、ISS-047、`attachments-recovery-hardening-01`，本地 `r1-iss018-backup-restore-drill-20261103` | 主干合入隔离 PostgreSQL 恢复命令及实际身份保护，继续扩展私有媒体与附件恢复。同一目标有早期独立适配器、测试脚本和后续整合版本。状态机、归档清单和目标主机角色需要一起使用。 | `postgres_drill_backup.py` 历史后继 `2213bbbd`、`37e25810`、`44b1f056` 明确保留恢复命令、隔离身份和附件保护；`test_postgres_drill_backup.py` 保留归档损坏、空媒体目录和失败边界，另有 `test_review_attachment_atomicity.py`、`test_review_attachment_download.py` 和 `test_iss047_private_storage.py`。风险高，错用恢复目标或遗漏媒体无法靠绿色单测补偿。 | 保留主干恢复入口和测试。若目标主机尚无数据库与私有媒体联合恢复实证，单独完成既有上线验证；按实际缺口选旧夹具，恢复适配器和启动配置保持现行设计。 |
+| 审计失败与库存重试。本地 `release-integration-repair-01-b` | 候选为批量库存手工调整加同幂等键重试，失败时回滚库存和幂等记录。它还把核准非现金抵减同时暴露到看板、钻取和 CSV。主干已有对应业务入口，并分离现金、手续费和非现金抵减。 | 候选 `b2cf51557de8461d9a99e0c23f39fd554462474f` 的修改集中在 `views.py`、`services/profit.py` 和测试。主干 `test_inventory_finance_idempotency.py` 加强到第 2 行审计失败后全批回滚、同键重试；`test_finance_receipt_convergence.py` 核对三处金额一致，`test_trade_finance_upgrade.py` 另测抵减更正。风险高，复制旧服务会改变成本与现金的区分。 | 采用主干事务和核算口径。保留历史单批重试例作追踪；无需接收旧生产补丁。 |
+| 历史承接的现金重复复核。本地 `release-integration-repair-01-d-finance` | 候选将查重入口接到历史承接页，涉及 `history_takeover_api.py`、`HistoryTakeoverPage.vue` 与测试。该提交 `efa808aac214f082853f7b0b110a22e1ce379fcf` 有主干补丁身份对应。主干继续按已验凭证和入账事实处理。 | `test_history_takeover.py`、`test_history_operational_finance.py` 及针对当前银行资金的 `test_cash_duplicate_review.py`。旧页面恢复整体版本会重新暴露被后继收敛的选择与错误提示。风险高。 | 使用财务/历史章节的主干链。按同一隔离工作簿验收重复命中、拒绝及复核；不整批接收旧承接页面。 |
+| 预检工作簿、CSV 上传与导出回执。本地 `local-history-upload-env-01`、`r1-iss052-import-audit-fix-20261031`、`integration-validation-04-login-test` | 早期方案交付独立上传入口和登录后的下载证据；另有旧 traceability 分支对模型、权限和上传审计重复修改。主干以只读工作簿预检、业务导入与行级审计分入口，能够在选中新工作簿时忽略旧请求结果。 | 当前 `test_history_import_preflight.py` 校验重复源行、跨行履约及只读；`test_safe_csv_import.py`、`test_csv_upload_http_413.py`、`test_csv_import_audit_postgres.py` 区分应用响应、临时文件和 PostgreSQL 审计保护。风险高，旧 App/路由和旧上传模型可能回退授权与错误处理。 | 保留现行服务、端点和迁移。旧证据作对照。若指定导入模板的失败样本未覆盖，只接收脱敏样本与错误回归断言。 |
+| 客户详情上方编辑器。本地分离 HEAD `41e88660a292026449bbe1bd944e6744f93c7cf8` 与主干 `b52f3edc`、`6d41a643`、`b3466298` | 旧 `ResourcePage.vue` 局部调高客户编辑器堆叠层并把背后的详情设为 inert；主干保留客户编辑器层级处理，并增加列表失败时打开编辑器与旧响应丢弃保护。直接使用旧组件会丢失附件删除错误和客户联系人保存失败反馈。 | Git 源码差异和 `8786d0f8`、`b3466298` 的客户编辑请求衔接。风险中，主要影响鼠标回归、对话框可达性和草稿。 | 主干实现优先。现行浏览器验证详情进入编辑、取消后指针复位、列表失败及迟到响应。只在可复现时修复当前组件逻辑和断言。 |
+| 测试隔离与证据复用。本地 `release-b-vitest-followup`、`r1-prelaunch-consolidation-20261104`，旧 Playwright/CI 修复组 | `108adfeb` 在旧 HS 测试登记清理并探测读取新 SKU 列；主干采用历史迁移隔离测试基类。早期浏览器版本为财务与报价限时和输出跟踪；现行工作区/隔离运行器继续扩展恢复和竞态场景。 | `backend/crm/tests/test_hs_codes.py` 使用 `HistoricalMigrationTestCase`，旧测试定时和日志不是生产功能。共用浏览器证据见 `ui-final-state-list-load-04.spec.js`、`ui-final-state-draft-recovery-03.spec.js` 及报价、SKU 专用用例。风险中，旧测试运行时配置可能绑定过时端口、用户或数据库。 | 可以后置。需要补覆盖时选具体断言，并使用现行合成夹具和运行器。若重现迁移测试异常时污染其他用例，仅修复测试清理；保持生产迁移不变。 |
+| 当前 ALEX 部署辅助工具。最新 `codex/lan-installer-01` | `9568677cf8dc84addc62e11eece6e9d55a87a353` 相对共同基线新增 Windows 预检、Hyper-V 创建、运行包校验及 Linux 服务/备份控制。当前 master 与它的分支端点差还包含仅由 master 演进的 SKU 草稿改动。共同基线三点差异确认候选没有 SKU 源码变更。 | 净差异与 `scripts/lan-installer/` 路径核对。部署工具可能写目标主机，风险高。未运行 ALEX 上的预配或备份命令。 | 单列保留，按既有运维任务评审。上线实施只核对获授权的目标主机、包摘要、恢复流程，业务源码无接收范围。 |
+
+已在[前次清理记录](../branch-cleanup-02/README.md)复核的历史补丁用作证据。该记录中的可删除判断与本轮功能取舍相互独立。
+
+
+本地同名分支 `0993db4c3f9209e61ce79caf738bc6632bf140f2` 另增加 `scripts/lan-installer/New-AlexBuildVm.ps1`。其分支净变化仍全部在部署工具目录。

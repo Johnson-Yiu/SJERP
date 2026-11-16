@@ -1,0 +1,98 @@
+{
+  "master": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
+  "remote_count": 227,
+  "audit_remote_count": 276,
+  "audit_local_rows": 306,
+  "remote_changes": [
+    {
+      "branch": "codex/lan-installer-01",
+      "prior": "e25f49583bb163c2e4e2524393fdf45c2f1cfbd0",
+      "current": "9568677cf8dc84addc62e11eece6e9d55a87a353"
+    },
+    {
+      "branch": "codex/sjerp-branch-audit-and-cleanup-01",
+      "prior": null,
+      "current": "82a9225c7ef6816319084982208cf85a04584890"
+    },
+    {
+      "branch": "codex/sjerp-branch-cleanup-02",
+      "prior": null,
+      "current": "24d4a72bdada27eb430995339fccd043ff7ac744"
+    }
+  ],
+  "local_changes": [
+    {
+      "branch": "codex/lan-installer-01",
+      "prior": "826b326e0523f34c0cc3225f02c3e6c6e8020fd6",
+      "current": "0993db4c3f9209e61ce79caf738bc6632bf140f2"
+    }
+  ],
+  "remote_absent": [
+    "chore/ci-baseline-repair",
+    "codex/access-readiness-20261105",
+    "codex/crm-state-closeout-05",
+    "codex/finance-receipt-settlement-01",
+    "codex/fix-iss036-snapshot-conflicts",
+    "codex/fix-iss055-chinese-404",
+    "codex/history-link-context-fix-03",
+    "codex/history-product-linking-fixes-02",
+    "codex/integration-018-036-025",
+    "codex/integration-020-022-051",
+    "codex/integration-024-019-008",
+    "codex/integration-026-107-017",
+    "codex/integration-036-002-003-052-058",
+    "codex/integration-039-037-040",
+    "codex/integration-043-075-023",
+    "codex/iss-041-detail-drill",
+    "codex/iss-041-multidim-01",
+    "codex/iss-042-shared-reports",
+    "codex/iss-049-quick-filters",
+    "codex/iss-062-date-window",
+    "codex/iss-067-report-permission",
+    "codex/iss025-report-visual-evidence",
+    "codex/pre-uat-iss007-attachment-flow",
+    "codex/quote-state-closeout-06",
+    "codex/r0-d4b1-scope",
+    "codex/r1-iss006-audit-atomicity-bd324-20261030",
+    "codex/r1-iss006-frontend-idempotency-bd324-20261030",
+    "codex/r1-iss006-inventory-chrome-uat-20261031",
+    "codex/r1-iss006-inventory-reversal-audit-atomicity-20261030",
+    "codex/r1-iss006-po-locking-bd324-20261030",
+    "codex/r1-iss006-postgres-concurrency-gaps-20261101",
+    "codex/r1-iss037-print-output-acceptance-20261104",
+    "codex/r1-postgres-test-isolation-20261102",
+    "codex/r1-rule-gap-batch-02-integration-20261103",
+    "codex/repair-final-cross-module-ux",
+    "codex/repair-history-recipient-typography",
+    "codex/repair-playwright-isolation",
+    "codex/repair-supplier-purchase-ux-r2",
+    "codex/sales-state-closeout-05",
+    "codex/ux-copy-finance-inventory",
+    "codex/ux-copy-finance-inventory-test-fix",
+    "codex/ux-copy-foundation",
+    "codex/ux-copy-sales-purchase",
+    "codex/verify-iss003-employee-permissions",
+    "codex/verify-iss052-csv-import",
+    "fix/phase3b-final-blockers",
+    "fix/phase3b-packaging-ui-gap",
+    "fix/quote-country-iso-resolution",
+    "integration-pre-iss022",
+    "phase-03c-invariant-fault-injection",
+    "phase-04b-postgresql-runtime-ci"
+  ],
+  "path_records": 1521,
+  "candidate_refs": 204,
+  "candidate_shas": 110,
+  "feature_families": {
+    "横切／附件、审计、环境与交付": 44,
+    "库存／履约、预留、入出库冲销": 25,
+    "前端／操作、导航与恢复": 51,
+    "财务／收款、核销、资金与报表": 34,
+    "采购／供货来源、MOQ、采购价": 26,
+    "销售／报价 PI、主体快照、订单": 31,
+    "商品／分类、SKU、成本与单位": 23,
+    "横切／共用 API、模型或运行器": 8,
+    "历史／试导、商品关联与历史保护": 24,
+    "CRM／客户联系人跟进及权限": 15
+  }
+}

@@ -59,7 +59,7 @@ def main():
             "supplier_product_name": "ISS022 浏览器测试来源",
             "purchase_price": "12.0000",
             "currency": "CNY",
-            "moq": "10.00",
+            "moq": "58.00",
             "is_active": True,
             "is_preferred": True,
         },
@@ -67,7 +67,7 @@ def main():
     source.sku = sku
     source.purchase_price = "12.0000"
     source.currency = "CNY"
-    source.moq = "10.00"
+    source.moq = "58.00"
     source.is_active = True
     source.is_preferred = True
     source.save()
@@ -75,17 +75,17 @@ def main():
     trade_unit, _ = SKUTradeUnit.objects.get_or_create(
         sku=sku,
         supplier=supplier,
-        name="10 件箱",
+        name="100 件箱",
         defaults={
             "unit": "box",
-            "factor": "10.00",
+            "factor": "100.00",
             "allow_fraction": True,
             "is_default": False,
             "active": True,
         },
     )
     trade_unit.unit = "box"
-    trade_unit.factor = "10.00"
+    trade_unit.factor = "100.00"
     trade_unit.allow_fraction = True
     trade_unit.active = True
     trade_unit.save()

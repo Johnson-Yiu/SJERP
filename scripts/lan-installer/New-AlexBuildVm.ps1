@@ -23,7 +23,8 @@ if ($switch.Count -ne 1) { throw '找不到指定的现有 Hyper-V 虚拟交换�
 $name = 'SJERP-Linux-Build'
 $root = 'D:\ERP\SJERP-Linux-Build'
 $disk = Join-Path $root 'SJERP-Linux-Build.vhdx'
-if (@(Get-VM | Where-Object Name -EQ $name).Count -or (Test-Path -LiteralPath $root)) {
+$existing = Get-CimInstance -Namespace 'root\virtualization\v2' -ClassName Msvm_ComputerSystem -Filter "ElementName = '$name'"
+if ($existing -or (Test-Path -LiteralPath $root)) {
     throw '虚拟机或工作目录已存在。请先在 Hyper-V 管理器核对，不会覆盖。'
 }
 if ((Get-PSDrive D).Free -lt 64GB) { throw 'D 盘可用空间少于 64 GiB。' }

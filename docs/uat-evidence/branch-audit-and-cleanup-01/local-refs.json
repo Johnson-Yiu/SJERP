@@ -6090,11 +6090,11 @@
       "conclusion": null,
       "event": "push",
       "head_branch": "codex/lan-installer-01",
-      "head_sha": "f7358266a04ffa6785c610bfce61fe28ca349e52",
-      "id": 43786570945,
+      "head_sha": "e25f49583bb163c2e4e2524393fdf45c2f1cfbd0",
+      "id": 43787676164,
       "name": "CI",
       "status": "in_progress",
-      "updated_at": "2026-11-16T01:29:38Z"
+      "updated_at": "2026-11-16T01:41:04Z"
     },
     "prs": [],
     "open_pr_base": [],

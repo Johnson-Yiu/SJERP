@@ -3,6 +3,16 @@
     "conclusion": null,
     "event": "push",
     "head_branch": "codex/lan-installer-01",
+    "head_sha": "e25f49583bb163c2e4e2524393fdf45c2f1cfbd0",
+    "id": 43787676164,
+    "name": "CI",
+    "status": "in_progress",
+    "updated_at": "2026-11-16T01:41:04Z"
+  },
+  {
+    "conclusion": null,
+    "event": "push",
+    "head_branch": "codex/lan-installer-01",
     "head_sha": "826b326e0523f34c0cc3225f02c3e6c6e8020fd6",
     "id": 43787140811,
     "name": "CI",

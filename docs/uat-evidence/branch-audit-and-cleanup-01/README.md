@@ -20,9 +20,9 @@
 
 对每个 tip 执行共同基线和双向提交计数。比较共同基线至分支的净变化，与当前 master 逐路径核对，包括文件模式和删除状态。用 Git 补丁身份核对改写后的提交。逐分支证据中的签名匹配有助于识别 cherry-pick。对于 squash、重写和后续替代，终态相同可以证明净变化已覆盖。终态依然不同的条目需进一步用入口和测试确认，摘要和 CI 通过只能辅助判断。A 类提交包含关系证明 Git 恢复可达性，后续业务变更仍以 master 当前实现为准。
 
-[历史报告](../branch-coverage-closeout-01/README.md)快照有 244 分支，本次新见 32 个，旧分支均仍存在，旧快照仅 master 移动。历史专项矩阵的 38 个 tip 仍一致，已对 master 重新计算差异，并在逐项记录保留历史结论和证据入口。四个实时 tip 与本地跟踪引用不同或本地缺失，其中三个缺失对象已取至独立审计仓库。全量引用以实时远端快照为准。
+[历史报告](../branch-coverage-closeout-01/README.md)快照有 244 分支，本次新见 32 个，旧分支均仍存在，旧快照仅 master 移动。历史专项矩阵的 38 个 tip 仍一致，已对 master 重新计算差异，并在逐项记录保留历史结论和证据入口。四个实时 tip 与本地跟踪引用不同或本地缺失，其中三个缺失对象已取至独立审计仓库。全量引用以复核后的实时快照为准，排除本任务新建的审计分支。
 
-GitHub 列表返回 688 次工作流运行，123 个当前远端分支有同分支同 SHA 记录。其余条目标记快照无记录，保留其它分支上的同 SHA 记录和本分支较旧 SHA 记录。Actions 历史受保留期影响。两个开放 PR 分别是 [#1 SKU 成本与风险](https://github.com/Johnson-Yiu/SUNJACK-ERP/pull/1) 和 [#2 MOQ 草稿](https://github.com/Johnson-Yiu/SUNJACK-ERP/pull/2)，进入保留批。GitHub Releases、Git 标签与 Deployments 在本次读取中均为空。维护引用、档案与目标环境交接记录仍是实际使用证据。未运行新的本机回归。
+GitHub 列表返回 689 次工作流运行，123 个当前远端分支有同分支同 SHA 记录。其余条目标记快照无记录，保留其它分支上的同 SHA 记录和本分支较旧 SHA 记录。Actions 历史受保留期影响。两个开放 PR 分别是 [#1 SKU 成本与风险](https://github.com/Johnson-Yiu/SUNJACK-ERP/pull/1) 和 [#2 MOQ 草稿](https://github.com/Johnson-Yiu/SUNJACK-ERP/pull/2)，进入保留批。GitHub Releases、Git 标签与 Deployments 在本次读取中均为空。维护引用、档案与目标环境交接记录仍是实际使用证据。未运行新的本机回归。
 
 ## 发布与重点核对
 
@@ -31,7 +31,7 @@ GitHub 列表返回 688 次工作流运行，123 个当前远端分支有同分�
 | 历史认证 | `7e99a5d394ddc0d96a3af04b74686307f754ca08` 的主 CI 和 Linux 专项均成功，和证据提交 `f3b7242e77752b6cc5b72425bcc3df2fa938de61` 的 backend、frontend、.github 树一致。[主 CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/42980478188) · [Linux 专项](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/42980478124) |
 | 试点固定源码 | `0b0654de5b079d244b74d752ed4b78710ec4881b` 是 master 祖先，backend、frontend、.github 树与 master 一致。master 增加六个文档路径和两个 Windows LAN 预检文件。受保护本机归档的 ZIP 和 RELEASE.json 当前重新计算的 SHA-256 与原发布证据一致。实际目标主机和恢复交接继续保留。[主 CI](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/43577214916) · [Linux 专项](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/43577218735) · [证据](../../deployment/PILOT-DELIVERY-FINAL-EVIDENCE-01.md) |
 | 当前基线 | `7b4e666758ba31a2afd36a7ef81635085a27ff24` 有成功的同 SHA 主 CI。[运行记录](https://github.com/Johnson-Yiu/SUNJACK-ERP/actions/runs/43677043705) |
-| LAN 安装与恢复 | `826b326e0523f34c0cc3225f02c3e6c6e8020fd6` 的 `erp-control.sh` 仍独有。它封装 systemd 管理、HTTPS 检查和既有备份及恢复演练命令。待对应 CI 和隔离 Linux 主机验证后择取。测试主机与配置未确认，保留此分支及工作树。 |
+| LAN 安装与恢复 | `e25f49583bb163c2e4e2524393fdf45c2f1cfbd0` 的 `erp-control.sh` 与 `New-AlexVm.ps1` 仍独有。前者封装 systemd、HTTPS 和备份恢复；后者检查宿主、ISO 摘要、交换机和磁盘后创建虚拟机。当前 SHA 的 CI 快照仍在运行。待对应 CI 和隔离 Linux 主机验证后择取。测试主机与配置未确认，保留此分支及工作树。 |
 | 正式数量调整与主体快照 | ISS-021 旧 0078 的版本、调整记录、幂等键及索引对应主干 0085。ISS-037 旧 0078 的订单客户和采购供应商快照字段对应主干 0080。依赖图与后续业务变化仍须沿现行迁移链验证，旧编号无需重引入。 |
 | CSV 审计 | 主干 0094 在旧 0093 两表保护外覆盖预览审计，并在有历史记录时拒绝反向移除保护。主干保留 PostgreSQL 正常和反向迁移测试。仍需逐项核对旧 413 及审计失败留痕测试是否有独有覆盖。 |
 | 财务 0120 | 两端都有收款差额字段和模型。主干通过条件加列执行现金回填，并禁止逆向删除共享列，以兼容并行迁移。保留旧分支历史验收证据，重点验证分叉升级及已有分摊值不会被重算。 |

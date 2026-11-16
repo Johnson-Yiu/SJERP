@@ -6136,31 +6136,34 @@
   {
     "scope": "origin",
     "branch": "codex/lan-installer-01",
-    "sha": "826b326e0523f34c0cc3225f02c3e6c6e8020fd6",
+    "sha": "e25f49583bb163c2e4e2524393fdf45c2f1cfbd0",
     "classification": "B",
-    "reason": "独有 Linux 服务控制及备份恢复命令入口。保留，定向验收后接入。",
+    "reason": "独有 Linux 服务控制、备份恢复入口及 Windows Hyper-V 虚拟机创建脚本。保留，定向验收后接入。",
     "merge_base": "3d067d659be70e1db0e4d6b0c44ac45454d26f5f",
-    "ahead": 3,
+    "ahead": 4,
     "behind": 15,
-    "tip": "2026-11-16T09:35:16+08:00\tops: expose existing pilot backup and restore commands",
+    "tip": "2026-11-16T09:40:54+08:00\tops: add guarded ALEX Linux VM provisioning entry",
     "patch_equivalent": [
       "077252229716d4d916f4f3ea97a69d8d3b96cdcb"
     ],
     "patch_unmatched": [
       "f7358266a04ffa6785c610bfce61fe28ca349e52",
-      "826b326e0523f34c0cc3225f02c3e6c6e8020fd6"
+      "826b326e0523f34c0cc3225f02c3e6c6e8020fd6",
+      "e25f49583bb163c2e4e2524393fdf45c2f1cfbd0"
     ],
     "net_paths_equal": [
       "scripts/lan-installer/Check-Alex.cmd",
       "scripts/lan-installer/Check-Alex.ps1"
     ],
     "residual_paths": [
+      "scripts/lan-installer/New-AlexVm.ps1",
       "scripts/lan-installer/erp-control.sh"
     ],
     "residual_type_counts": {
-      "部署/工具": 1
+      "部署/工具": 2
     },
     "unique_commits": [
+      "e25f49583bb163c2e4e2524393fdf45c2f1cfbd0\tops: add guarded ALEX Linux VM provisioning entry",
       "826b326e0523f34c0cc3225f02c3e6c6e8020fd6\tops: expose existing pilot backup and restore commands",
       "f7358266a04ffa6785c610bfce61fe28ca349e52\tops: expose basic LAN service controls",
       "077252229716d4d916f4f3ea97a69d8d3b96cdcb\tops: add read-only Windows LAN pilot preflight"
@@ -6171,11 +6174,11 @@
         "conclusion": null,
         "event": "push",
         "head_branch": "codex/lan-installer-01",
-        "head_sha": "826b326e0523f34c0cc3225f02c3e6c6e8020fd6",
-        "id": 43787140811,
+        "head_sha": "e25f49583bb163c2e4e2524393fdf45c2f1cfbd0",
+        "id": 43787676164,
         "name": "CI",
         "status": "in_progress",
-        "updated_at": "2026-11-16T01:35:26Z"
+        "updated_at": "2026-11-16T01:41:04Z"
       }
     ],
     "ci_exact_sha_other_context": [],
@@ -6183,11 +6186,11 @@
       "conclusion": null,
       "event": "push",
       "head_branch": "codex/lan-installer-01",
-      "head_sha": "f7358266a04ffa6785c610bfce61fe28ca349e52",
-      "id": 43786570945,
+      "head_sha": "826b326e0523f34c0cc3225f02c3e6c6e8020fd6",
+      "id": 43787140811,
       "name": "CI",
       "status": "in_progress",
-      "updated_at": "2026-11-16T01:29:38Z"
+      "updated_at": "2026-11-16T01:35:26Z"
     },
     "prs": [],
     "open_pr_base": [],

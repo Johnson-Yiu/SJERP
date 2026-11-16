@@ -1,5 +1,5 @@
 {
-  "snapshot_local": "2026-11-16T09:49:13.980984+08:00",
+  "snapshot_local": "2026-11-16T09:51:15.400215+08:00",
   "master": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
   "tags": {},
   "releases": [],
@@ -26,7 +26,7 @@
       "state": "open"
     }
   ],
-  "ci_count": 688,
+  "ci_count": 689,
   "old_remote_count": 244,
   "old_new": [
     "codex/branch-coverage-closeout-01",
@@ -80,7 +80,7 @@
     ],
     "codex/lan-installer-01": [
       "077252229716d4d916f4f3ea97a69d8d3b96cdcb",
-      "826b326e0523f34c0cc3225f02c3e6c6e8020fd6"
+      "e25f49583bb163c2e4e2524393fdf45c2f1cfbd0"
     ],
     "codex/project-consolidation-rebuild-05": [
       null,

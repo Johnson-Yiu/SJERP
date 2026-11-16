@@ -2,7 +2,7 @@
 #Requires -RunAsAdministrator
 [CmdletBinding(SupportsShouldProcess)]
 param(
-    [string]$IsoPath = (Join-Path $PSScriptRoot 'ubuntu-24.04.5-live-server-amd64.iso'),
+    [string]$IsoPath,
     [string]$IsoSha256 = '97f3d7ffb032c3eb3b23d2c8be9cc76e60c2c1f2c0146ba5ba9fe01cafae0fd8',
     [Parameter(Mandatory)][string]$SwitchName
 )
@@ -10,6 +10,9 @@ $ErrorActionPreference = 'Stop'
 if ($env:COMPUTERNAME -ne 'ALEX') { throw '请在 ALEX 本机运行。' }
 Import-Module Hyper-V
 if ((Get-Service vmms).Status -ne 'Running') { throw 'Hyper-V 管理服务未运行。' }
+if (!$IsoPath) {
+    $IsoPath = Join-Path (Split-Path -Parent $PSCommandPath) 'ubuntu-24.04.5-live-server-amd64.iso'
+}
 $iso = Get-Item -LiteralPath $IsoPath
 if ($iso.PSIsContainer -or $iso.Extension -ne '.iso') { throw '请提供本地 Linux 安装 ISO。' }
 if ((Get-FileHash -LiteralPath $iso.FullName -Algorithm SHA256).Hash -ne $IsoSha256) {

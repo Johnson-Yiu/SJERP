@@ -1,0 +1,96 @@
+{
+  "snapshot_local": "2026-11-16T09:49:13.980984+08:00",
+  "master": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
+  "tags": {},
+  "releases": [],
+  "deployments": [],
+  "prs": [
+    {
+      "base": "master",
+      "head": "codex/r1-moq-02",
+      "merge_commit_sha": "40006ca7c0529777b8210d21fdbccd0f81519393",
+      "merged_at": null,
+      "number": 2,
+      "repo": "Johnson-Yiu/SJERP",
+      "sha": "aa35db2a49b6152e35f57b74edff95914735864d",
+      "state": "open"
+    },
+    {
+      "base": "master",
+      "head": "codex/r1-sku-01-fix-02",
+      "merge_commit_sha": "e483a44d6b24eb27275008740bbb6d2068969c5f",
+      "merged_at": null,
+      "number": 1,
+      "repo": "Johnson-Yiu/SJERP",
+      "sha": "fed49cd2b25524d79715d8c241a9ff7f0536218c",
+      "state": "open"
+    }
+  ],
+  "ci_count": 688,
+  "old_remote_count": 244,
+  "old_new": [
+    "codex/branch-coverage-closeout-01",
+    "codex/cancel-refund-closeout-02",
+    "codex/clean-env-cutover-06",
+    "codex/cost-currency-integrity-02",
+    "codex/crm-state-closeout-05",
+    "codex/disk-recovery-deep-audit-07",
+    "codex/history-import-delivery-01",
+    "codex/lan-installer-01",
+    "codex/lan-pilot-readiness-01",
+    "codex/local-pilot-deploy-02",
+    "codex/local-pilot-prep-01",
+    "codex/local-runtime-delivery-01",
+    "codex/pilot-delivery-closeout-04",
+    "codex/pilot-delivery-final-evidence-01",
+    "codex/pilot-handoff-alignment-01",
+    "codex/pilot-recovery-readiness-01",
+    "codex/prelaunch-repair-integration-02",
+    "codex/product-draft-protection-01",
+    "codex/product-state-closeout-06",
+    "codex/project-consolidation-rebuild-05",
+    "codex/public-delivery-safety-01",
+    "codex/quote-state-closeout-06",
+    "codex/release-slim-prep-01",
+    "codex/sales-state-closeout-05",
+    "codex/small-team-cancel-refund-01",
+    "codex/small-team-finance-closeout-02",
+    "codex/small-team-launch-guide-01",
+    "codex/small-team-purchase-cost-01",
+    "codex/small-team-quantity-finance-01",
+    "codex/ui-delivery-closeout-04",
+    "codex/ui-prelaunch-polish-01",
+    "codex/worktree-consolidation-cleanup-02"
+  ],
+  "old_missing": [],
+  "old_moved": {
+    "master": [
+      "25405e1b25ff8a218b67883acf489ada8a53e146",
+      "7b4e666758ba31a2afd36a7ef81635085a27ff24"
+    ]
+  },
+  "tracking_changed": {
+    "codex/clean-env-cutover-06": [
+      null,
+      "868b3210ad8c0d7aaca3a50d325694f77460c9fb"
+    ],
+    "codex/disk-recovery-deep-audit-07": [
+      null,
+      "684733f7cb19dd7fb2a4bc53b8f027fbc1dedeeb"
+    ],
+    "codex/lan-installer-01": [
+      "077252229716d4d916f4f3ea97a69d8d3b96cdcb",
+      "826b326e0523f34c0cc3225f02c3e6c6e8020fd6"
+    ],
+    "codex/project-consolidation-rebuild-05": [
+      null,
+      "dfe6a22025d0f5c1fb2bee283525a901a806608a"
+    ]
+  },
+  "stash": {
+    "D": [
+      "a0e117aa77a1c642b1598ea44d37ca232c83e972"
+    ],
+    "E": []
+  }
+}

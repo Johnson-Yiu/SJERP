@@ -1,0 +1,2578 @@
+[
+  {
+    "HEAD": "608c0194a44221a0ec758f23f8628998668a96c7",
+    "branch": "refs/heads/master",
+    "tracked_changes": {
+      " M": 51
+    },
+    "untracked_count": 170,
+    "inventory": {
+      "media": 8824,
+      "database": 18,
+      "backup/archive": 11
+    },
+    "bytes": {
+      "media": 1021499595,
+      "database": 23420928,
+      "backup/archive": 219528066
+    },
+    "scan_errors": 0,
+    "id": "W001"
+  },
+  {
+    "HEAD": "10afa1acd0e7956ae5db545b5582ec4f05474d13",
+    "branch": "refs/heads/ux-review-evidence",
+    "tracked_changes": {},
+    "untracked_count": 1,
+    "inventory": {
+      "media": 156
+    },
+    "bytes": {
+      "media": 43979760
+    },
+    "scan_errors": 0,
+    "id": "W002"
+  },
+  {
+    "HEAD": "c7cdf3103d47d06bf8998b9098b2348fd94d1d79",
+    "branch": "refs/heads/codex/public-delivery-safety-01",
+    "tracked_changes": {},
+    "untracked_count": 2,
+    "inventory": {},
+    "bytes": {},
+    "scan_errors": 0,
+    "id": "W003"
+  },
+  {
+    "HEAD": "826b326e0523f34c0cc3225f02c3e6c6e8020fd6",
+    "branch": "refs/heads/codex/lan-installer-01",
+    "tracked_changes": {},
+    "untracked_count": 748,
+    "inventory": {},
+    "bytes": {},
+    "scan_errors": 0,
+    "id": "W004"
+  },
+  {
+    "HEAD": "4e4ca504ee398da85fe23cc53d534c6008807e5c",
+    "branch": "refs/heads/codex/audit-iss002-dependency-security",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1492,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 125692753,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W005"
+  },
+  {
+    "HEAD": "80dc73ae4ae47f9e04969f39b441af206d34306b",
+    "branch": "refs/heads/codex/fix-iss008-chinese-aliases",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1616,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 171782890,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W006"
+  },
+  {
+    "HEAD": "6db1ef53e4b78c20156e66071b37b7e6f29a6476",
+    "branch": "refs/heads/codex/fix-iss036-factor-one",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1484
+    },
+    "bytes": {
+      "database": 1363968,
+      "media": 125049656
+    },
+    "scan_errors": 0,
+    "id": "W007"
+  },
+  {
+    "HEAD": "80a93559852d9d679c86d71250549261c7c2bbd1",
+    "branch": "refs/heads/codex/fix-iss036-invalid-snapshot",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1486
+    },
+    "bytes": {
+      "database": 1363968,
+      "media": 125213408
+    },
+    "scan_errors": 0,
+    "id": "W008"
+  },
+  {
+    "HEAD": "ba4274742727a6794608dc8581a49b3692d865a6",
+    "branch": "refs/heads/codex/history-operational-closeout-20261104",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 2568,
+      "backup/archive": 65
+    },
+    "bytes": {
+      "database": 0,
+      "media": 330035353,
+      "backup/archive": 55921958
+    },
+    "scan_errors": 1,
+    "id": "W009"
+  },
+  {
+    "HEAD": "a0729a0965850028fe52f5b6fcc3e825f23b1289",
+    "branch": "refs/heads/codex/history-takeover-batch-20261104",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 2094,
+      "backup/archive": 41
+    },
+    "bytes": {
+      "media": 276855032,
+      "backup/archive": 1079666
+    },
+    "scan_errors": 0,
+    "id": "W010"
+  },
+  {
+    "HEAD": "28ba758388429f57c2e3516e12385a88ce6646a3",
+    "branch": "refs/heads/codex/integration-021-029-027",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 2,
+      "media": 1442
+    },
+    "bytes": {
+      "database": 1458176,
+      "media": 119910185
+    },
+    "scan_errors": 0,
+    "id": "W011"
+  },
+  {
+    "HEAD": "54925e0a10a48c16ba3b66bbab9e433f48a0e2d7",
+    "branch": "refs/heads/codex/integration-049-053-067",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1390
+    },
+    "bytes": {
+      "database": 1290240,
+      "media": 114119154
+    },
+    "scan_errors": 0,
+    "id": "W012"
+  },
+  {
+    "HEAD": "54e715bdc568b80ba624186fecd866550676cf38",
+    "branch": "refs/heads/codex/integration-pre-pilot-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 7
+    },
+    "bytes": {
+      "database": 0,
+      "media": 766990
+    },
+    "scan_errors": 0,
+    "id": "W013"
+  },
+  {
+    "HEAD": "84da66e963414002576b653cf8d9340dafcbc2d6",
+    "detached": "",
+    "tracked_changes": {
+      " M": 18
+    },
+    "untracked_count": 3,
+    "inventory": {
+      "media": 1564,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 149814412,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W014"
+  },
+  {
+    "HEAD": "bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb",
+    "branch": "refs/heads/codex/integration-r1-repairs-20261028",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1612,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 171394498,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W015"
+  },
+  {
+    "HEAD": "c5fc1c11b9728655a363a4f2a5ba0544584a8d07",
+    "branch": "refs/heads/codex/iss-017-private-files",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1417
+    },
+    "bytes": {
+      "media": 117253599
+    },
+    "scan_errors": 0,
+    "id": "W016"
+  },
+  {
+    "HEAD": "2776fecfadcdf6992ef52e69af8c36697c620b51",
+    "branch": "refs/heads/codex/iss-019-report-csv",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1419
+    },
+    "bytes": {
+      "media": 118069137
+    },
+    "scan_errors": 0,
+    "id": "W017"
+  },
+  {
+    "HEAD": "6e7aaedd2cccef3150a5c7ee3135fd5f37dcee47",
+    "branch": "refs/heads/codex/iss-022-procurement-moq",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1451
+    },
+    "bytes": {
+      "media": 121263609
+    },
+    "scan_errors": 0,
+    "id": "W018"
+  },
+  {
+    "HEAD": "bb68ead4fd248fc446c259a5a142b798b4cd124a",
+    "branch": "refs/heads/codex/iss-029-quote-recipient-snapshot",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1425
+    },
+    "bytes": {
+      "media": 118674329
+    },
+    "scan_errors": 0,
+    "id": "W019"
+  },
+  {
+    "HEAD": "3fe05aa1fe08f859cd6b737150d67b4c1066b248",
+    "branch": "refs/heads/codex/iss-036-carton-units",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1483
+    },
+    "bytes": {
+      "database": 1363968,
+      "media": 124877334
+    },
+    "scan_errors": 0,
+    "id": "W020"
+  },
+  {
+    "HEAD": "c356e57014d28295485d52df23612c2fe6c02444",
+    "branch": "refs/heads/codex/iss-048-finance-drill",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1375
+    },
+    "bytes": {
+      "media": 112401596
+    },
+    "scan_errors": 0,
+    "id": "W021"
+  },
+  {
+    "HEAD": "caf0aadf5f7305d5c0d69020a07d2aeab71e4f34",
+    "branch": "refs/heads/codex/iss-053-purchase-status",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1380
+    },
+    "bytes": {
+      "database": 1290240,
+      "media": 112850278
+    },
+    "scan_errors": 0,
+    "id": "W022"
+  },
+  {
+    "HEAD": "771307b19667256453c7c22ebf60256ffd2a26dd",
+    "branch": "refs/heads/codex/iss-075-payment-terms",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1470
+    },
+    "bytes": {
+      "media": 123469000
+    },
+    "scan_errors": 0,
+    "id": "W023"
+  },
+  {
+    "HEAD": "9fe9f479bc47fd7470c80822c89fa59d7d71cbf5",
+    "branch": "refs/heads/codex/iss-080-contact-duplicates",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1475
+    },
+    "bytes": {
+      "media": 124005648
+    },
+    "scan_errors": 0,
+    "id": "W024"
+  },
+  {
+    "HEAD": "9ee4bd4b1eb14f45e08a4b83f0b1cd1b294cde37",
+    "branch": "refs/heads/codex/iss-097-admin-permissions",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1476
+    },
+    "bytes": {
+      "media": 124107572
+    },
+    "scan_errors": 0,
+    "id": "W025"
+  },
+  {
+    "HEAD": "60df1b045c06c7f2146b44e4a60866b1786024cc",
+    "branch": "refs/heads/codex/iss-107-finance-labels",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1415
+    },
+    "bytes": {
+      "media": 116972224
+    },
+    "scan_errors": 0,
+    "id": "W026"
+  },
+  {
+    "HEAD": "6d3496d0cc45213f4aab26950cd5ab8629996de8",
+    "branch": "refs/heads/codex/next-iss-037-integration",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1399
+    },
+    "bytes": {
+      "database": 1290240,
+      "media": 114976008
+    },
+    "scan_errors": 0,
+    "id": "W027"
+  },
+  {
+    "HEAD": "d82643907f2886ecc412fdfa8839d2b8cc165751",
+    "branch": "refs/heads/codex/r1-inv-03",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1345
+    },
+    "bytes": {
+      "media": 104946311
+    },
+    "scan_errors": 0,
+    "id": "W028"
+  },
+  {
+    "HEAD": "12c0ea9d60537d202393266f7850fcc188276860",
+    "branch": "refs/heads/codex/r1-iss-021-audit-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1334
+    },
+    "bytes": {
+      "media": 103403424
+    },
+    "scan_errors": 0,
+    "id": "W029"
+  },
+  {
+    "HEAD": "92d32ad856fdd056fab0be56a70a9af52fbb99f2",
+    "branch": "refs/heads/codex/r1-iss-021-dev",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1341
+    },
+    "bytes": {
+      "database": 1290240,
+      "media": 104278611
+    },
+    "scan_errors": 0,
+    "id": "W030"
+  },
+  {
+    "HEAD": "4d3032b914cde951bae1d1da669e0d737e4b8d52",
+    "branch": "refs/heads/codex/r1-iss-037-audit-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1335
+    },
+    "bytes": {
+      "media": 103403436
+    },
+    "scan_errors": 0,
+    "id": "W031"
+  },
+  {
+    "HEAD": "ff59be7a8c49f3a7a33a1702e74e0e29f742aa1f",
+    "branch": "refs/heads/codex/r1-iss-037-p1",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1345
+    },
+    "bytes": {
+      "media": 104260302
+    },
+    "scan_errors": 0,
+    "id": "W032"
+  },
+  {
+    "HEAD": "ac52d3d126a6dbeb9225e6044fa8da234c72db8f",
+    "branch": "refs/heads/codex/r1-iss-039",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1343
+    },
+    "bytes": {
+      "database": 1249280,
+      "media": 104291879
+    },
+    "scan_errors": 0,
+    "id": "W033"
+  },
+  {
+    "HEAD": "cce6a3556bae9c1c13c4d76aa1c0e3c03595d16f",
+    "branch": "refs/heads/codex/r1-iss018-backup-restore-drill-20261103",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 2075,
+      "backup/archive": 37
+    },
+    "bytes": {
+      "media": 274134265,
+      "backup/archive": 799216
+    },
+    "scan_errors": 0,
+    "id": "W034"
+  },
+  {
+    "HEAD": "aa35db2a49b6152e35f57b74edff95914735864d",
+    "branch": "refs/heads/codex/r1-moq-02",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 2,
+      "media": 1349
+    },
+    "bytes": {
+      "database": 2531328,
+      "media": 105532920
+    },
+    "scan_errors": 0,
+    "id": "W035"
+  },
+  {
+    "HEAD": "2dde7c6b5b8ba29df56eb1a3e771a82739859277",
+    "branch": "refs/heads/codex/r1-po-04",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1339
+    },
+    "bytes": {
+      "database": 1249280,
+      "media": 103934652
+    },
+    "scan_errors": 0,
+    "id": "W036"
+  },
+  {
+    "HEAD": "57d8c2df573b11621a940a756ef7ed34531e7af6",
+    "branch": "refs/heads/codex/r1-sku-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1336
+    },
+    "bytes": {
+      "database": 1257472,
+      "media": 103695644
+    },
+    "scan_errors": 0,
+    "id": "W037"
+  },
+  {
+    "HEAD": "450476355ffe03b9a32e69226d8b3c2e179ea155",
+    "branch": "refs/heads/codex/r1-sku-01-fix-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1344
+    },
+    "bytes": {
+      "database": 0,
+      "media": 104497456
+    },
+    "scan_errors": 0,
+    "id": "W038"
+  },
+  {
+    "HEAD": "fed49cd2b25524d79715d8c241a9ff7f0536218c",
+    "branch": "refs/heads/codex/r1-sku-01-fix-02",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1346
+    },
+    "bytes": {
+      "media": 104497480
+    },
+    "scan_errors": 0,
+    "id": "W039"
+  },
+  {
+    "HEAD": "e20f8a7bc506c299644b6c828c9b5574ee688f46",
+    "branch": "refs/heads/codex/repair-browser-navigation-timeouts",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1508,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 132799622,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W040"
+  },
+  {
+    "HEAD": "58541e94918e2d912c2b75d2371a8d625e1fc9d4",
+    "branch": "refs/heads/codex/repair-orders-390-layout",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1509,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 127134891,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W041"
+  },
+  {
+    "HEAD": "fe1cc16c3950e256fa564ea4508e08414ae8810b",
+    "branch": "refs/heads/codex/repair-supplier-purchase-ux-20261028",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 2,
+      "media": 1511,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "database": 2727936,
+      "media": 128214218,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W042"
+  },
+  {
+    "HEAD": "fa0edf18f38db5e1757717dcdf9996ba6f19cb62",
+    "branch": "refs/heads/codex/pilot-closeout-sku-04",
+    "tracked_changes": {},
+    "untracked_count": 57,
+    "inventory": {
+      "media": 7144,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 921449294,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 56,
+    "id": "W043"
+  },
+  {
+    "HEAD": "48a2126b07670c5e228180d7e6ca100fa12dbb64",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 3,
+      "media": 1210
+    },
+    "bytes": {
+      "database": 2424832,
+      "media": 86233249
+    },
+    "scan_errors": 0,
+    "id": "W044"
+  },
+  {
+    "HEAD": "b916fab613806a9fd00636cc87496803557d45a8",
+    "branch": "refs/heads/codex-r0-f5-contacts-followups",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 11,
+      "media": 273
+    },
+    "bytes": {
+      "database": 13565952,
+      "media": 20613864
+    },
+    "scan_errors": 0,
+    "id": "W045"
+  },
+  {
+    "HEAD": "f3b7242e77752b6cc5b72425bcc3df2fa938de61",
+    "branch": "refs/heads/codex/ci-resume-certification-01",
+    "tracked_changes": {},
+    "untracked_count": 10299,
+    "inventory": {
+      "backup/archive": 222,
+      "media": 10415,
+      "database": 23
+    },
+    "bytes": {
+      "backup/archive": 261527291,
+      "media": 1127736508,
+      "database": 27017216
+    },
+    "scan_errors": 408,
+    "id": "W046"
+  },
+  {
+    "HEAD": "1dfde3a597c3051b18696c14f8745a5ad4b3bcd1",
+    "branch": "refs/heads/codex/history-import-delivery-01",
+    "tracked_changes": {},
+    "untracked_count": 2,
+    "inventory": {
+      "media": 3513,
+      "backup/archive": 222,
+      "database": 13
+    },
+    "bytes": {
+      "media": 308882281,
+      "backup/archive": 66412570,
+      "database": 27017216
+    },
+    "scan_errors": 3,
+    "id": "W047"
+  },
+  {
+    "HEAD": "49410f0226df7625c22665f1f84597f2b5e5d6a0",
+    "branch": "refs/heads/codex/local-runtime-delivery-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 5956,
+      "backup/archive": 222,
+      "database": 13
+    },
+    "bytes": {
+      "media": 780776869,
+      "backup/archive": 66415287,
+      "database": 27017216
+    },
+    "scan_errors": 9,
+    "id": "W048"
+  },
+  {
+    "HEAD": "108adfeb7e9af3fb6be99340a70d42bfce629355",
+    "branch": "refs/heads/codex/release-b-vitest-followup",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 4233,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 29286400,
+      "media": 607730541,
+      "backup/archive": 66335059
+    },
+    "scan_errors": 9,
+    "id": "W049"
+  },
+  {
+    "HEAD": "dd019e98f932668ae851dc0c4c7f602f888d51f9",
+    "branch": "refs/heads/codex/release-integration-acceptance-03",
+    "tracked_changes": {
+      " M": 36
+    },
+    "untracked_count": 1194,
+    "inventory": {
+      "media": 6412,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 851918684,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 97,
+    "id": "W050"
+  },
+  {
+    "HEAD": "b2cf51557de8461d9a99e0c23f39fd554462474f",
+    "branch": "refs/heads/codex/release-integration-repair-01-b",
+    "tracked_changes": {},
+    "untracked_count": 1,
+    "inventory": {
+      "media": 4215,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 603504530,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 13,
+    "id": "W051"
+  },
+  {
+    "HEAD": "c8a06892579bf586d1a674750902c27943fa69d4",
+    "branch": "refs/heads/codex/small-team-cancel-refund-01",
+    "tracked_changes": {},
+    "untracked_count": 9,
+    "inventory": {
+      "media": 12
+    },
+    "bytes": {
+      "media": 2043200
+    },
+    "scan_errors": 0,
+    "id": "W052"
+  },
+  {
+    "HEAD": "00f7753dfc40b417983335be05135cb76a945ee0",
+    "branch": "refs/heads/codex/small-team-finance-closeout-02",
+    "tracked_changes": {},
+    "untracked_count": 2,
+    "inventory": {
+      "media": 3765,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 337736625,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 3,
+    "id": "W053"
+  },
+  {
+    "HEAD": "72ffff52434a6573eff9b0113a0902423267b031",
+    "branch": "refs/heads/codex/small-team-purchase-cost-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 3765,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 29327360,
+      "media": 337736625,
+      "backup/archive": 66332342
+    },
+    "scan_errors": 3,
+    "id": "W054"
+  },
+  {
+    "HEAD": "7e1d0376648ed084ee1c228a3a4e5acdef110f16",
+    "branch": "refs/heads/codex/small-team-quantity-finance-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 3768,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 337223721,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 3,
+    "id": "W055"
+  },
+  {
+    "HEAD": "30b3579a579174de5f3e4336619dcdb4c8502470",
+    "branch": "refs/heads/codex/ui-delivery-closeout-04",
+    "tracked_changes": {},
+    "untracked_count": 2123,
+    "inventory": {
+      "media": 5271,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 485514794,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 386,
+    "id": "W056"
+  },
+  {
+    "HEAD": "dbec86c9d620002157c0f18bfedb5251204dd3ea",
+    "branch": "refs/heads/codex/ui-final-state-closeout-03",
+    "tracked_changes": {},
+    "untracked_count": 145,
+    "inventory": {
+      "media": 3415,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 303160419,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 3,
+    "id": "W057"
+  },
+  {
+    "HEAD": "92c15b65e495012f203496698bd8fb8af9ef3d17",
+    "detached": "",
+    "tracked_changes": {
+      " M": 1
+    },
+    "untracked_count": 44,
+    "inventory": {
+      "media": 5499,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 741273946,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 29,
+    "id": "W058"
+  },
+  {
+    "HEAD": "43067137d0fba04b0be055e449e55a06dba6d208",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 12,
+    "inventory": {
+      "media": 2295,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 191303000,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 16,
+    "id": "W059"
+  },
+  {
+    "HEAD": "41e88660a292026449bbe1bd944e6744f93c7cf8",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 12,
+    "inventory": {
+      "media": 4511,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 639643189,
+      "backup/archive": 66330866,
+      "database": 27017216
+    },
+    "scan_errors": 38,
+    "id": "W060"
+  },
+  {
+    "HEAD": "958421df61a2ac6dd9e66b685f2d0101e13321c5",
+    "branch": "refs/heads/codex/ui-product-operations-completion-02",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 2469,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 207735945,
+      "backup/archive": 66330866,
+      "database": 27017216
+    },
+    "scan_errors": 21,
+    "id": "W061"
+  },
+  {
+    "HEAD": "d836ba21a657a3a61b770a1d124a5b1fb62a9f46",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 37,
+    "inventory": {
+      "media": 2277,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 189063636,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 0,
+    "id": "W062"
+  },
+  {
+    "HEAD": "6242c5c3b85efdb3f904c8a4de7b8909a2bedcba",
+    "branch": "refs/heads/codex/ui-sales-completion-02",
+    "tracked_changes": {},
+    "untracked_count": 166,
+    "inventory": {
+      "media": 2510,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 208342853,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 0,
+    "id": "W063"
+  },
+  {
+    "HEAD": "9dd721723422b45b1fabf1d97d1ad492488b7437",
+    "branch": "refs/heads/codex/ui-sales-state-evidence-01",
+    "tracked_changes": {},
+    "untracked_count": 24,
+    "inventory": {
+      "media": 2785,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 245203159,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 3,
+    "id": "W064"
+  },
+  {
+    "HEAD": "966deaa209cd5b115704a67e58aeb12783b9a60a",
+    "branch": "refs/heads/codex/audit-iss045-legacy-test-scripts",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1613,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "database": 0,
+      "media": 171394510,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W065"
+  },
+  {
+    "HEAD": "d3b9be06da578b988a78d595eab21fccb2983520",
+    "branch": "refs/heads/codex/audit-ux-visual-20261029",
+    "tracked_changes": {},
+    "untracked_count": 1500,
+    "inventory": {
+      "media": 1698,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 181185460,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W066"
+  },
+  {
+    "HEAD": "a4b2ff4c53e117b2efffeb5af54813121887ce5f",
+    "branch": "refs/heads/codex/cancel-refund-closeout-02",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 3803,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 341983386,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 0,
+    "id": "W067"
+  },
+  {
+    "HEAD": "78bcedb217d3d6ca0a05c9348e72d37c35801312",
+    "branch": "refs/heads/codex/core-business-closeout-20261105",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1869,
+      "backup/archive": 136,
+      "database": 1
+    },
+    "bytes": {
+      "media": 152501020,
+      "backup/archive": 64096696,
+      "database": 1933312
+    },
+    "scan_errors": 1,
+    "id": "W068"
+  },
+  {
+    "HEAD": "e302199f7890c686a309f54aebe8cc31b6202f52",
+    "branch": "refs/heads/codex/core-workspace-ux-batch-20261104",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1535,
+      "backup/archive": 38
+    },
+    "bytes": {
+      "media": 137865394,
+      "backup/archive": 827768
+    },
+    "scan_errors": 0,
+    "id": "W069"
+  },
+  {
+    "HEAD": "d7d155b994b652f6f4f777edde22a257a8ed7a2e",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 7,
+    "inventory": {
+      "media": 2
+    },
+    "bytes": {
+      "media": 127145
+    },
+    "scan_errors": 1,
+    "id": "W070"
+  },
+  {
+    "HEAD": "79530615a24292d2a87198032d2a85420e630fd7",
+    "branch": "refs/heads/codex/cost-currency-integrity-02",
+    "tracked_changes": {},
+    "untracked_count": 66,
+    "inventory": {
+      "media": 3835,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 348333143,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 1,
+    "id": "W071"
+  },
+  {
+    "HEAD": "62245cfc8d55714af2ce14c9cb1dab825e164b82",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 4272,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 29790208,
+      "media": 613109301,
+      "backup/archive": 66335059
+    },
+    "scan_errors": 6,
+    "id": "W072"
+  },
+  {
+    "HEAD": "dc57b06e856f4640c804e5d14659e40b4093c4e4",
+    "branch": "refs/heads/codex/export-stability-closeout-20261105",
+    "tracked_changes": {},
+    "untracked_count": 53,
+    "inventory": {
+      "media": 2005,
+      "backup/archive": 139,
+      "database": 14
+    },
+    "bytes": {
+      "media": 171129727,
+      "backup/archive": 65778939,
+      "database": 28872704
+    },
+    "scan_errors": 1,
+    "id": "W073"
+  },
+  {
+    "HEAD": "e301a86044ffe56b72172a94dc3b00ae09401b05",
+    "branch": "refs/heads/codex/finance-adversarial-review-20261104",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1717,
+      "backup/archive": 65
+    },
+    "bytes": {
+      "database": 0,
+      "media": 142444436,
+      "backup/archive": 55921958
+    },
+    "scan_errors": 0,
+    "id": "W074"
+  },
+  {
+    "HEAD": "3a07e7ef1a9e63c98077d45492ba23b798c7fcdd",
+    "branch": "refs/heads/codex/finance-closeout-batch-20261104",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1557,
+      "backup/archive": 38
+    },
+    "bytes": {
+      "database": 0,
+      "media": 137867343,
+      "backup/archive": 827768
+    },
+    "scan_errors": 0,
+    "id": "W075"
+  },
+  {
+    "HEAD": "96ad680c7b0cd154914046bcbe63de23fb8e64e3",
+    "branch": "refs/heads/codex/finance-completion-fixes-02",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 2254,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 27017216,
+      "media": 187481269,
+      "backup/archive": 66335059
+    },
+    "scan_errors": 0,
+    "id": "W076"
+  },
+  {
+    "HEAD": "0a3418d7c35bfd006ea70816c71a866646b73aa2",
+    "branch": "refs/heads/codex/sunjack-finance-integration-review-fix-01",
+    "tracked_changes": {},
+    "untracked_count": 34,
+    "inventory": {
+      "media": 2260,
+      "database": 20,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "media": 187264782,
+      "database": 27017234,
+      "backup/archive": 66332342
+    },
+    "scan_errors": 3,
+    "id": "W077"
+  },
+  {
+    "HEAD": "bfd217ae5c8ca8dccb734af842564bd46111d739",
+    "branch": "refs/heads/codex/finance-inventory-consistency-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 2276,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 27017216,
+      "media": 187482083,
+      "backup/archive": 66332342
+    },
+    "scan_errors": 3,
+    "id": "W078"
+  },
+  {
+    "HEAD": "c978758f37db8b8acf5e751fc7aa836287163a6b",
+    "branch": "refs/heads/codex/finance-receipt-optimization-02",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 2255,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 27017216,
+      "media": 187264491,
+      "backup/archive": 66332342
+    },
+    "scan_errors": 3,
+    "id": "W079"
+  },
+  {
+    "HEAD": "52d924b05085e67bf97dc5a5cfac01b6ba48ed70",
+    "branch": "refs/heads/codex/finance-transactions-unified-entry-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 2,
+      "media": 1857,
+      "backup/archive": 136
+    },
+    "bytes": {
+      "database": 1933312,
+      "media": 152500651,
+      "backup/archive": 64096696
+    },
+    "scan_errors": 1,
+    "id": "W080"
+  },
+  {
+    "HEAD": "1a2ec0f5c940386e445e59967d498ca1187aa6be",
+    "branch": "refs/heads/codex/sunjack-first-release-core-uat-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 2174,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 29413376,
+      "media": 179846357,
+      "backup/archive": 66335059
+    },
+    "scan_errors": 0,
+    "id": "W081"
+  },
+  {
+    "HEAD": "11c964897afb7558db8e3cd41c4539571aead5eb",
+    "branch": "refs/heads/codex/first-release-independent-review-02",
+    "tracked_changes": {
+      " M": 5
+    },
+    "untracked_count": 600,
+    "inventory": {
+      "media": 4795,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 683127237,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 12,
+    "id": "W082"
+  },
+  {
+    "HEAD": "3e925910d43647e58c1f0512c2ccc6371adeb874",
+    "branch": "refs/heads/codex/history-completion-fixes-02",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 2250,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 187481121,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 0,
+    "id": "W083"
+  },
+  {
+    "HEAD": "4d205ece04204e2f8d915ca9ba7707ac86532be7",
+    "branch": "refs/heads/codex/history-data-readiness-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 4213,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 604168915,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 5,
+    "id": "W084"
+  },
+  {
+    "HEAD": "4c29837f42697596c8c67e8c2d34379a5939eebd",
+    "branch": "refs/heads/codex/history-preflight-web-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 2174,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 179846357,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 0,
+    "id": "W085"
+  },
+  {
+    "HEAD": "ecb38a7869ebff35ac76a876ee1f801616a64db0",
+    "branch": "refs/heads/codex/history-preflight-web-fix-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 2174,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 28897280,
+      "media": 179846357,
+      "backup/archive": 66335059
+    },
+    "scan_errors": 0,
+    "id": "W086"
+  },
+  {
+    "HEAD": "43067137d0fba04b0be055e449e55a06dba6d208",
+    "branch": "refs/heads/codex/history-product-sku-linking-01",
+    "tracked_changes": {
+      " M": 144
+    },
+    "untracked_count": 608,
+    "inventory": {
+      "database": 18,
+      "media": 4710,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 36364288,
+      "media": 680661091,
+      "backup/archive": 66335059
+    },
+    "scan_errors": 9,
+    "id": "W087"
+  },
+  {
+    "HEAD": "b37fbaa76564e0d281c237ab71ceaf5f1add5c58",
+    "branch": "refs/heads/codex/local-history-upload-env-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 4133,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 589940567,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 4,
+    "id": "W088"
+  },
+  {
+    "HEAD": "7951ecb8c6196f773128ad5978bfcd0a5b30c6b5",
+    "branch": "refs/heads/codex/integration-047-097-080",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 4,
+      "media": 1481
+    },
+    "bytes": {
+      "database": 4100096,
+      "media": 124705687
+    },
+    "scan_errors": 0,
+    "id": "W089"
+  },
+  {
+    "HEAD": "d189084554a2a2da0d701b488a34ebc50723fa17",
+    "branch": "refs/heads/codex/integration-pre-pilot-02",
+    "tracked_changes": {},
+    "untracked_count": 1,
+    "inventory": {
+      "media": 1678,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 179879158,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W090"
+  },
+  {
+    "HEAD": "f5bdf4e75add5d7c16f81eb234cf3b9db1d54be0",
+    "branch": "refs/heads/codex/internal-workspace-tabs-20261105",
+    "tracked_changes": {},
+    "untracked_count": 748,
+    "inventory": {
+      "database": 14,
+      "media": 2632,
+      "backup/archive": 170
+    },
+    "bytes": {
+      "database": 28872704,
+      "media": 246287384,
+      "backup/archive": 66175182
+    },
+    "scan_errors": 7,
+    "id": "W091"
+  },
+  {
+    "HEAD": "aa15c9ba7584599e918c1dd14723d31e31158b3d",
+    "branch": "refs/heads/codex/internal-workspace-tabs-integration-01",
+    "tracked_changes": {},
+    "untracked_count": 44,
+    "inventory": {
+      "media": 2192,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 181543370,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 14,
+    "id": "W092"
+  },
+  {
+    "HEAD": "1fac93f09e3b5c578a030df5c0736e5d0552e4cc",
+    "branch": "refs/heads/codex/iss-025-customer-status-labels",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 2,
+      "media": 1485
+    },
+    "bytes": {
+      "database": 1363968,
+      "media": 125076461
+    },
+    "scan_errors": 0,
+    "id": "W093"
+  },
+  {
+    "HEAD": "742692a6e4887e4b8352736e69a52b1ebe8d066f",
+    "branch": "refs/heads/codex/measure-iss058-frontend-performance",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1491,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 125692741,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W094"
+  },
+  {
+    "HEAD": "dc2bbbb2b29fbc8ffc26c392659e79319c86d592",
+    "branch": "refs/heads/codex/fix-iss052-csv-import-audit-20261029",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1629,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "database": 1417216,
+      "media": 173245212,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W095"
+  },
+  {
+    "HEAD": "f63e984f33b86fb00c0de1daeb6a66fd4d42fc78",
+    "branch": "refs/heads/codex/new-product-reminders-20261105",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 16,
+      "media": 2448,
+      "backup/archive": 174
+    },
+    "bytes": {
+      "database": 30908416,
+      "media": 223433554,
+      "backup/archive": 66977609
+    },
+    "scan_errors": 2,
+    "id": "W096"
+  },
+  {
+    "HEAD": "7cc8c4bf0249a3de53809836b7b3f233476a1648",
+    "branch": "refs/heads/codex/party-version-closeout-20261105",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 11,
+      "media": 1917,
+      "backup/archive": 136
+    },
+    "bytes": {
+      "database": 1933339,
+      "media": 158947036,
+      "backup/archive": 64096696
+    },
+    "scan_errors": 2,
+    "id": "W097"
+  },
+  {
+    "HEAD": "dfa36058206fe7021ff6e6192fbbd247fb471947",
+    "branch": "refs/heads/codex/pre-uat-iss006-inventory-safety",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 4,
+      "media": 1618,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "database": 4116480,
+      "media": 171949273,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W098"
+  },
+  {
+    "HEAD": "96276dffa07c11fb60720a439269df8c36031f7a",
+    "branch": "refs/heads/codex/prelaunch-repair-integration-02",
+    "tracked_changes": {
+      " M": 147
+    },
+    "untracked_count": 1060,
+    "inventory": {
+      "media": 7750,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 997034148,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 82,
+    "id": "W099"
+  },
+  {
+    "HEAD": "faec4794d24f08a71f42fea93071d2552a120265",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 10,
+    "inventory": {
+      "media": 6554,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 845718585,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 6,
+    "id": "W100"
+  },
+  {
+    "HEAD": "9d5dd253bf30e0785cb70b14246902811233a08f",
+    "branch": "refs/heads/codex/product-draft-protection-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 3789,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 340121295,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 0,
+    "id": "W101"
+  },
+  {
+    "HEAD": "8ac8fab5a08f7c170adb3514108dd3ba01a56ff3",
+    "branch": "refs/heads/codex/product-state-closeout-06",
+    "tracked_changes": {},
+    "untracked_count": 2,
+    "inventory": {
+      "media": 3702,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 330447217,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 0,
+    "id": "W102"
+  },
+  {
+    "HEAD": "1b593bf3298ab257fafa4a462c96aa58b920e6e8",
+    "detached": "",
+    "tracked_changes": {
+      " M": 10
+    },
+    "untracked_count": 47,
+    "inventory": {
+      "database": 4,
+      "media": 50
+    },
+    "bytes": {
+      "database": 4853760,
+      "media": 3148843
+    },
+    "scan_errors": 0,
+    "id": "W103"
+  },
+  {
+    "HEAD": "f9a9cfb076f581ecb1e2f758b2284fe4dcf525fd",
+    "detached": "",
+    "tracked_changes": {
+      " M": 3
+    },
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1225
+    },
+    "bytes": {
+      "database": 1220608,
+      "media": 87552303
+    },
+    "scan_errors": 0,
+    "id": "W104"
+  },
+  {
+    "HEAD": "f779ed858da3bc4dd468645f5405b0fed2556a8d",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 2,
+      "media": 1232
+    },
+    "bytes": {
+      "database": 1212416,
+      "media": 88064495
+    },
+    "scan_errors": 0,
+    "id": "W105"
+  },
+  {
+    "HEAD": "7faafcf142827ee4e94aa1aaa8d04e68e77e3726",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 2,
+      "media": 1249
+    },
+    "bytes": {
+      "database": 1212416,
+      "media": 89184332
+    },
+    "scan_errors": 0,
+    "id": "W106"
+  },
+  {
+    "HEAD": "da39ea3aa986df9faa12e79b1da3adece03260b7",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 2,
+      "media": 1258
+    },
+    "bytes": {
+      "database": 1212416,
+      "media": 89817299
+    },
+    "scan_errors": 0,
+    "id": "W107"
+  },
+  {
+    "HEAD": "1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1267
+    },
+    "bytes": {
+      "database": 1212416,
+      "media": 91027481
+    },
+    "scan_errors": 0,
+    "id": "W108"
+  },
+  {
+    "HEAD": "b79af36dc7140507ef210ea61437dd579ba8de8b",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1267
+    },
+    "bytes": {
+      "database": 1249280,
+      "media": 91027481
+    },
+    "scan_errors": 0,
+    "id": "W109"
+  },
+  {
+    "HEAD": "b5e46be7863c9756f010df972870bfd0ec154a62",
+    "branch": "refs/heads/codex/r1-hist-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1358
+    },
+    "bytes": {
+      "database": 1261568,
+      "media": 106046563
+    },
+    "scan_errors": 0,
+    "id": "W110"
+  },
+  {
+    "HEAD": "f308502362fc8bbee1a57d3905b5c12278719a05",
+    "branch": "refs/heads/codex/r1-iss-040-dev",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1356
+    },
+    "bytes": {
+      "media": 108567381
+    },
+    "scan_errors": 0,
+    "id": "W111"
+  },
+  {
+    "HEAD": "dfa36058206fe7021ff6e6192fbbd247fb471947",
+    "branch": "refs/heads/codex/r1-iss006-audit-atomicity-20261029",
+    "tracked_changes": {
+      " M": 1
+    },
+    "untracked_count": 1,
+    "inventory": {
+      "media": 1617,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 171949261,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W112"
+  },
+  {
+    "HEAD": "aadd2ff3a7a15bc2a6601238ac6cea58d921c741",
+    "branch": "refs/heads/codex/r1-iss039-amount-allocation-fix-20261103",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1532,
+      "backup/archive": 5
+    },
+    "bytes": {
+      "media": 136785344,
+      "backup/archive": 558266
+    },
+    "scan_errors": 0,
+    "id": "W113"
+  },
+  {
+    "HEAD": "70fe8ee1d4ffbd7786f1908804ea7142461d5286",
+    "branch": "refs/heads/codex/r1-iss052-audit-hardening-20261031",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1499,
+      "backup/archive": 2
+    },
+    "bytes": {
+      "media": 132254370,
+      "backup/archive": 25953
+    },
+    "scan_errors": 0,
+    "id": "W114"
+  },
+  {
+    "HEAD": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+    "branch": "refs/heads/codex/r1-iss052-csv-limit-failure-audit-20261029",
+    "tracked_changes": {
+      " M": 3
+    },
+    "untracked_count": 1,
+    "inventory": {
+      "media": 1800,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 225186394,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W115"
+  },
+  {
+    "HEAD": "8cff96af9f1f2e09dcbc0a29f361017ee23ffb75",
+    "branch": "refs/heads/codex/r1-iss052-http-413-bd324-20261031",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1498,
+      "backup/archive": 2
+    },
+    "bytes": {
+      "media": 132254358,
+      "backup/archive": 25953
+    },
+    "scan_errors": 0,
+    "id": "W116"
+  },
+  {
+    "HEAD": "60afd938ae10ebced75008dc58b0f11b2c32b6ef",
+    "branch": "refs/heads/codex/r1-iss052-import-audit-fix-20261031",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1800,
+      "backup/archive": 1
+    },
+    "bytes": {
+      "media": 225186394,
+      "backup/archive": 9272
+    },
+    "scan_errors": 0,
+    "id": "W117"
+  },
+  {
+    "HEAD": "1cad93d0cb0297c33f764f6cb68d5c610512d9e4",
+    "branch": "refs/heads/codex/r1-iss105-actual-cash-audit-20261103",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1532,
+      "backup/archive": 5
+    },
+    "bytes": {
+      "media": 136785344,
+      "backup/archive": 514953
+    },
+    "scan_errors": 0,
+    "id": "W118"
+  },
+  {
+    "HEAD": "8d3ca5faa16fb74de95dbc716f5556a5d51bbe79",
+    "branch": "refs/heads/codex/r1-postgres-integration-validation-20261102",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1532,
+      "backup/archive": 5
+    },
+    "bytes": {
+      "media": 136785344,
+      "backup/archive": 743114
+    },
+    "scan_errors": 0,
+    "id": "W119"
+  },
+  {
+    "HEAD": "25056fc43b63448f9788a6fcd9f4aa67883a448f",
+    "branch": "refs/heads/codex/r1-prelaunch-consolidation-20261104",
+    "tracked_changes": {},
+    "untracked_count": 1182,
+    "inventory": {
+      "backup/archive": 190,
+      "media": 4351,
+      "database": 29
+    },
+    "bytes": {
+      "backup/archive": 187568740,
+      "media": 632368601,
+      "database": 54849558
+    },
+    "scan_errors": 13,
+    "id": "W120"
+  },
+  {
+    "HEAD": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "detached": "",
+    "tracked_changes": {
+      " D": 2380,
+      " M": 32
+    },
+    "untracked_count": 126,
+    "inventory": {
+      "media": 248,
+      "backup/archive": 109
+    },
+    "bytes": {
+      "media": 9206567,
+      "backup/archive": 61332653
+    },
+    "scan_errors": 12,
+    "id": "W121"
+  },
+  {
+    "HEAD": "447d7816ead2e971e249cb2e762b1a6f7009b9c0",
+    "detached": "",
+    "tracked_changes": {
+      " D": 2380,
+      " M": 32
+    },
+    "untracked_count": 100,
+    "inventory": {
+      "media": 234,
+      "backup/archive": 109
+    },
+    "bytes": {
+      "media": 8470533,
+      "backup/archive": 61332569
+    },
+    "scan_errors": 10,
+    "id": "W122"
+  },
+  {
+    "HEAD": "b7ce265833320cc62a7b9aa57e08880f6013203f",
+    "branch": "refs/heads/codex/integration-validation-04",
+    "tracked_changes": {
+      " D": 3649
+    },
+    "untracked_count": 54,
+    "inventory": {
+      "media": 477,
+      "backup/archive": 221,
+      "database": 14
+    },
+    "bytes": {
+      "media": 4483481,
+      "backup/archive": 66788565,
+      "database": 28901376
+    },
+    "scan_errors": 186,
+    "id": "W123"
+  },
+  {
+    "HEAD": "0620fbaa0082dacde8bcff2d972fdab9853e492f",
+    "branch": "refs/heads/codex/integration-validation-04-login-test",
+    "tracked_changes": {
+      " D": 3633
+    },
+    "untracked_count": 9,
+    "inventory": {
+      "media": 403,
+      "backup/archive": 215,
+      "database": 13
+    },
+    "bytes": {
+      "media": 2753804,
+      "backup/archive": 64504285,
+      "database": 27017216
+    },
+    "scan_errors": 213,
+    "id": "W124"
+  },
+  {
+    "HEAD": "76c98873f8ba4e521941f497fbd170c9b2bdb689",
+    "detached": "",
+    "tracked_changes": {
+      " D": 3442
+    },
+    "untracked_count": 8,
+    "inventory": {
+      "media": 407,
+      "backup/archive": 166,
+      "database": 13
+    },
+    "bytes": {
+      "media": 2603965,
+      "backup/archive": 66896056,
+      "database": 27017216
+    },
+    "scan_errors": 106,
+    "id": "W125"
+  },
+  {
+    "HEAD": "c95601eebfc83597da044ca60a0ad362c57237d0",
+    "detached": "",
+    "tracked_changes": {
+      " D": 3555,
+      " M": 35
+    },
+    "untracked_count": 255,
+    "inventory": {
+      "media": 636,
+      "backup/archive": 173,
+      "database": 15
+    },
+    "bytes": {
+      "media": 30192376,
+      "backup/archive": 67049702,
+      "database": 30752768
+    },
+    "scan_errors": 241,
+    "id": "W126"
+  },
+  {
+    "HEAD": "732d756cec38c139187e7d9c49de771d97df93d4",
+    "detached": "",
+    "tracked_changes": {
+      " D": 3097
+    },
+    "untracked_count": 1,
+    "inventory": {
+      "media": 320,
+      "backup/archive": 142,
+      "database": 14
+    },
+    "bytes": {
+      "media": 2562870,
+      "backup/archive": 65832054,
+      "database": 28872704
+    },
+    "scan_errors": 59,
+    "id": "W127"
+  },
+  {
+    "HEAD": "a46c26f796fe6cc4c4a6a07dc70fe92cfda34114",
+    "detached": "",
+    "tracked_changes": {
+      " D": 3067,
+      " M": 30
+    },
+    "untracked_count": 256,
+    "inventory": {
+      "media": 550,
+      "backup/archive": 146,
+      "database": 14
+    },
+    "bytes": {
+      "media": 42754384,
+      "backup/archive": 66300966,
+      "database": 28872704
+    },
+    "scan_errors": 67,
+    "id": "W128"
+  },
+  {
+    "HEAD": "d5a6a23394397775d3aab0f237163d4000bce224",
+    "detached": "",
+    "tracked_changes": {
+      " D": 3067,
+      " M": 30
+    },
+    "untracked_count": 283,
+    "inventory": {
+      "media": 562,
+      "backup/archive": 146,
+      "database": 15
+    },
+    "bytes": {
+      "media": 44963507,
+      "backup/archive": 66300995,
+      "database": 30806016
+    },
+    "scan_errors": 85,
+    "id": "W129"
+  },
+  {
+    "HEAD": "d7d927658e26727b6ebef135708d77278b9ee258",
+    "detached": "",
+    "tracked_changes": {
+      " D": 3379,
+      " M": 30
+    },
+    "untracked_count": 279,
+    "inventory": {
+      "media": 638,
+      "backup/archive": 152,
+      "database": 15
+    },
+    "bytes": {
+      "media": 44113045,
+      "backup/archive": 66403384,
+      "database": 30806016
+    },
+    "scan_errors": 134,
+    "id": "W130"
+  },
+  {
+    "HEAD": "f5a91a5ff0b75f2e5b45a6efcf04a36f57da37f0",
+    "branch": "refs/heads/codex/party-version-integration-01",
+    "tracked_changes": {
+      " D": 3726
+    },
+    "untracked_count": 34,
+    "inventory": {
+      "media": 454,
+      "backup/archive": 220,
+      "database": 13
+    },
+    "bytes": {
+      "media": 3646756,
+      "backup/archive": 66318676,
+      "database": 27017216
+    },
+    "scan_errors": 79,
+    "id": "W131"
+  },
+  {
+    "HEAD": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "detached": "",
+    "tracked_changes": {
+      " D": 2410,
+      " M": 1
+    },
+    "untracked_count": 14,
+    "inventory": {
+      "media": 156,
+      "backup/archive": 110
+    },
+    "bytes": {
+      "media": 2814053,
+      "backup/archive": 61321683
+    },
+    "scan_errors": 7,
+    "id": "W132"
+  },
+  {
+    "HEAD": "02140bf46df27ba1abf5b9018507c07aae825769",
+    "detached": "",
+    "tracked_changes": {
+      " D": 2410
+    },
+    "untracked_count": 7,
+    "inventory": {
+      "media": 156,
+      "backup/archive": 105
+    },
+    "bytes": {
+      "media": 2817631,
+      "backup/archive": 60852057
+    },
+    "scan_errors": 8,
+    "id": "W133"
+  },
+  {
+    "HEAD": "a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f",
+    "detached": "",
+    "tracked_changes": {
+      " D": 2394,
+      " M": 1
+    },
+    "untracked_count": 6,
+    "inventory": {
+      "media": 152,
+      "backup/archive": 71
+    },
+    "bytes": {
+      "media": 2470368,
+      "backup/archive": 56770775
+    },
+    "scan_errors": 1,
+    "id": "W134"
+  },
+  {
+    "HEAD": "a55469c1b07e4f13037c6644c69d8a35ef0496a0",
+    "branch": "refs/heads/codex/r1-rule-gap-fix-integration-20261103",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 1532,
+      "backup/archive": 25
+    },
+    "bytes": {
+      "media": 136785344,
+      "backup/archive": 1047097
+    },
+    "scan_errors": 0,
+    "id": "W135"
+  },
+  {
+    "HEAD": "3093c22c6e0a623499a98d5a602f7b1cb5758e8e",
+    "branch": "refs/heads/codex/unified-github-ci-post-oct20-20261101",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 1,
+      "media": 1535,
+      "backup/archive": 2
+    },
+    "bytes": {
+      "database": 0,
+      "media": 136785951,
+      "backup/archive": 25953
+    },
+    "scan_errors": 0,
+    "id": "W136"
+  },
+  {
+    "HEAD": "baf6bb875b28586932bfc9b6ed88827356ef0041",
+    "branch": "refs/heads/codex/release-completion-acceptance-02",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 2307,
+      "backup/archive": 227,
+      "database": 13
+    },
+    "bytes": {
+      "media": 187483566,
+      "backup/archive": 66369910,
+      "database": 27017216
+    },
+    "scan_errors": 3,
+    "id": "W137"
+  },
+  {
+    "HEAD": "1e45e42cc4fa38afbf856143228dada7c8a2e86f",
+    "branch": "refs/heads/codex/release-integration-repair-01",
+    "tracked_changes": {},
+    "untracked_count": 3249,
+    "inventory": {
+      "database": 14,
+      "media": 2268,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 27017216,
+      "media": 190825836,
+      "backup/archive": 66335059
+    },
+    "scan_errors": 0,
+    "id": "W138"
+  },
+  {
+    "HEAD": "0a401638c45ffa5dda1363a933f6e3c7a6d6f6cc",
+    "branch": "refs/heads/codex/release-integration-repair-01-c",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 4213,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 27017216,
+      "media": 603790882,
+      "backup/archive": 66332342
+    },
+    "scan_errors": 10,
+    "id": "W139"
+  },
+  {
+    "HEAD": "ed1a554e09d8f49c9b0e07b96921b863b2f8e4f7",
+    "branch": "refs/heads/codex/release-integration-repair-01-d",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 2250,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 27017216,
+      "media": 187481121,
+      "backup/archive": 66332342
+    },
+    "scan_errors": 3,
+    "id": "W140"
+  },
+  {
+    "HEAD": "efa808aac214f082853f7b0b110a22e1ce379fcf",
+    "branch": "refs/heads/codex/release-integration-repair-01-d-finance",
+    "tracked_changes": {},
+    "untracked_count": 2,
+    "inventory": {
+      "database": 15,
+      "media": 4234,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 31592448,
+      "media": 606588311,
+      "backup/archive": 66332342
+    },
+    "scan_errors": 34,
+    "id": "W141"
+  },
+  {
+    "HEAD": "9e8473cf78765447d67dd0ba3071dc9d20367cf6",
+    "branch": "refs/heads/codex/release-repair-c-certificate",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 4233,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 607953322,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 6,
+    "id": "W142"
+  },
+  {
+    "HEAD": "d5d0d15c03d55a718f11a298e08f29a9b9d0c4b0",
+    "branch": "refs/heads/codex/review-iss025-status-consistency",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 2,
+      "media": 1484
+    },
+    "bytes": {
+      "database": 1363968,
+      "media": 125076449
+    },
+    "scan_errors": 0,
+    "id": "W143"
+  },
+  {
+    "HEAD": "2bff4790f67b81b35a449f143b8cddb6b24e1821",
+    "branch": "refs/heads/codex/sales-order-import-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 2175,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 27017216,
+      "media": 180063209,
+      "backup/archive": 66335059
+    },
+    "scan_errors": 0,
+    "id": "W144"
+  },
+  {
+    "HEAD": "37520998e347afb34b00d725014d0137a49a6920",
+    "branch": "refs/heads/codex/sunjack-sales-order-import-01",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 2250,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 27017216,
+      "media": 187481121,
+      "backup/archive": 66332342
+    },
+    "scan_errors": 4,
+    "id": "W145"
+  },
+  {
+    "HEAD": "945c2ae41ce59d55051bbab4664f3d7a4df0fbba",
+    "branch": "refs/heads/codex/ui-copy-optimization-02",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "database": 14,
+      "media": 2176,
+      "backup/archive": 221
+    },
+    "bytes": {
+      "database": 28897280,
+      "media": 180084291,
+      "backup/archive": 66335059
+    },
+    "scan_errors": 0,
+    "id": "W146"
+  },
+  {
+    "HEAD": "e5ce789459b2499189bc9b0b5e922e8722847da1",
+    "branch": "refs/heads/codex/ui-prelaunch-polish-01",
+    "tracked_changes": {},
+    "untracked_count": 15,
+    "inventory": {
+      "media": 6556,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 846160794,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 4,
+    "id": "W147"
+  },
+  {
+    "HEAD": "67410d72c0d4dabca1a6c374e2d9600ba6f9aee6",
+    "branch": "refs/heads/codex/ui-product-operations-state-evidence-01",
+    "tracked_changes": {
+      " M": 5
+    },
+    "untracked_count": 0,
+    "inventory": {
+      "media": 4574,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 642337976,
+      "backup/archive": 66332342,
+      "database": 27017216
+    },
+    "scan_errors": 34,
+    "id": "W148"
+  },
+  {
+    "HEAD": "d836ba21a657a3a61b770a1d124a5b1fb62a9f46",
+    "detached": "",
+    "tracked_changes": {},
+    "untracked_count": 64,
+    "inventory": {
+      "media": 2310,
+      "backup/archive": 220,
+      "database": 13
+    },
+    "bytes": {
+      "media": 193243235,
+      "backup/archive": 66318676,
+      "database": 27017216
+    },
+    "scan_errors": 72,
+    "id": "W149"
+  },
+  {
+    "HEAD": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
+    "branch": "refs/heads/master",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {
+      "media": 7136,
+      "backup/archive": 221,
+      "database": 13
+    },
+    "bytes": {
+      "media": 927331750,
+      "backup/archive": 66335059,
+      "database": 27017216
+    },
+    "scan_errors": 0,
+    "id": "W150"
+  },
+  {
+    "HEAD": "684733f7cb19dd7fb2a4bc53b8f027fbc1dedeeb",
+    "branch": "refs/heads/codex/disk-recovery-deep-audit-07",
+    "tracked_changes": {},
+    "untracked_count": 0,
+    "inventory": {},
+    "bytes": {},
+    "scan_errors": 0,
+    "id": "W151"
+  }
+]

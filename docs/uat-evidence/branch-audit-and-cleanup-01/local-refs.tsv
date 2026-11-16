@@ -1,0 +1,307 @@
+﻿范围	分支	完整 SHA	分类	落后	独有提交	同终态路径	差异路径	迁移	测试	部署/工具	CI 同分支同 SHA	PR	理由及建议	风险	批次
+D-local	archive/master-before-worktree-consolidation-02	25405e1b25ff8a218b67883acf489ada8a53e146	A	761	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	chore/ci-baseline-repair	7509ed96ce9f02fbf158b0099cd6baa2ef0eded1	A	1008	0	0	0	0	0	0	36035297470 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex-r0-f5-contacts-followups	b916fab613806a9fd00636cc87496803557d45a8	A	788	0	0	0	0	0	0	41186873721 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/access-readiness-20261105	bbfe475ef546b5d0fc3db8dbda0f456f0b042e9d	A	415	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/attachments-recovery-hardening-01	905945f241795f5353e5a25fe1834af0c639938e	C	320	2	11	1	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/audit-integration-lineage-20261029	9eadf441e3bc548def0c2e90c81c48f4977035d1	B	627	1	0	2	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/audit-iss002-dependency-security	4e4ca504ee398da85fe23cc53d534c6008807e5c	A	671	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/audit-iss045-legacy-test-scripts	966deaa209cd5b115704a67e58aeb12783b9a60a	C	635	1	2	5	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/audit-security-readiness-20261029	995058cb2e386c86ab2b8559c1e3a3595c1d7532	B	627	1	0	1	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/audit-ux-visual-20261029	d3b9be06da578b988a78d595eab21fccb2983520	D	627	1	0	78	0	1	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/branch-coverage-closeout-01	0bc7ad307c50ebae1c54269348bd941705d136ff	A	179	1	17	0	0	0	0	43006125396 success		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	外部消费者待复核	保留
+D-local	codex/cancel-refund-closeout-02	a4b2ff4c53e117b2efffeb5af54813121887ce5f	A	77	0	0	0	0	0	0	43486528757 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/ci-resume-certification-01	f3b7242e77752b6cc5b72425bcc3df2fa938de61	A	179	0	0	0	0	0	0	42989828362 success, 42989828268 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/core-business-closeout-20261105	78bcedb217d3d6ca0a05c9348e72d37c35801312	A	411	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/core-workspace-ux-batch-20261104	e302199f7890c686a309f54aebe8cc31b6202f52	A	518	0	0	0	0	0	0	41808354916 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/cost-currency-integrity-02	79530615a24292d2a87198032d2a85420e630fd7	A	64	0	0	0	0	0	0	43480406634 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/crm-state-closeout-05	c47deb009744c2cde85b7fff37a4175a8be8b7b2	A	144	0	0	0	0	0	0	43155522971 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/export-stability-closeout-20261105	dc57b06e856f4640c804e5d14659e40b4093c4e4	A	417	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/finance-adversarial-review-20261104	e301a86044ffe56b72172a94dc3b00ae09401b05	A	448	0	0	0	0	0	0	41862778457 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/finance-closeout-batch-20261104	3a07e7ef1a9e63c98077d45492ba23b798c7fcdd	A	511	0	0	0	0	0	0	41815451746 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/finance-completion-fixes-02	96ad680c7b0cd154914046bcbe63de23fb8e64e3	C	292	1	6	10	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/finance-inventory-consistency-01	bfd217ae5c8ca8dccb734af842564bd46111d739	A	312	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/finance-list-flex-01	75a6ff0843bc0b7c4a849fc3b61fd018486bdc84	D	340	1	0	3	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/finance-receipt-optimization-02	c978758f37db8b8acf5e751fc7aa836287163a6b	D	329	6	6	43	1	9	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/finance-receipt-settlement-01	b75b48cc1b6c9e8e4c9eb359aa36da639bf1a18c	A	332	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/finance-transactions-unified-entry-01	52d924b05085e67bf97dc5a5cfac01b6ba48ed70	D	411	1	3	19	0	4	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/first-release-independent-review-02	11c964897afb7558db8e3cd41c4539571aead5eb	D	320	1	0	809	0	111	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/fix-finance-summary-card-truncation-20261029	0f440a784130be326357cdf569ccb8959a560771	C	627	1	11	3	0	2	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/fix-iss006-request-idempotency-20261029	083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a	C	627	1	4	13	0	7	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/fix-iss008-chinese-aliases	80dc73ae4ae47f9e04969f39b441af206d34306b	C	635	1	9	1	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/fix-iss018-backup-safety	a73273f49aa32d8be8040d1c444045ff51a67c65	A	692	0	0	0	0	0	0	40449595921 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/fix-iss018-restore-edge-cases	21812b7c1190540a7214d4b77518ede31221180a	A	690	0	0	0	0	0	0	40465792857 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/fix-iss036-factor-one	6db1ef53e4b78c20156e66071b37b7e6f29a6476	A	691	0	0	0	0	0	0	40447038137 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/fix-iss036-invalid-snapshot	80a93559852d9d679c86d71250549261c7c2bbd1	A	689	0	0	0	0	0	0	40468414035 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/fix-iss036-snapshot-conflicts	b64c54b07908d4bb462c64f120c351d148e06f6f	A	670	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/fix-iss052-csv-import-audit-20261029	dc2bbbb2b29fbc8ffc26c392659e79319c86d592	D	627	1	2	7	0	4	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/fix-iss055-chinese-404	9c5f1f821cfc1b436f5fffe0b681991fa056b34d	A	655	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/fix-playwright-suite-stability-20261029	68ceb2953b19f1831e06f7d161e8364902308e4b	D	627	1	134	6	0	3	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/fix-quote-editor-mobile-actions-20261029	776d90bcc050bc6ab3ae96a3c8c994e0064e7291	C	627	1	8	5	0	3	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/fix-unified-ci-env-20261101	cd479ea5ad7cd923f5b1798c0f296f960ae46dae	D	564	4	0	4	0	1	1	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/global-numeric-wheel-guard-01	568105bd220185ae95e9f0d7b8b1c32081d445c3	D	329	1	2	12	0	3	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/history-completion-fixes-02	3e925910d43647e58c1f0512c2ccc6371adeb874	A	291	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/history-data-readiness-01	4d205ece04204e2f8d915ca9ba7707ac86532be7	D	320	1	13	16	0	6	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/history-import-delivery-01	1dfde3a597c3051b18696c14f8745a5ad4b3bcd1	A	161	0	0	0	0	0	0	43075675813 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/history-link-context-fix-03	1c478b0aa298d53ffca03a38d4200b0d122b27ea	A	206	0	0	0	0	0	0	42970542724 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/history-operational-closeout-20261104	ba4274742727a6794608dc8581a49b3692d865a6	A	448	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/history-preflight-web-01	4c29837f42697596c8c67e8c2d34379a5939eebd	D	355	1	11	8	0	1	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/history-preflight-web-fix-01	ecb38a7869ebff35ac76a876ee1f801616a64db0	D	355	2	20	8	0	1	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/history-product-linking-fixes-02	84ea87801693d3b512ef28a76f684444af332685	A	265	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/history-product-sku-linking-01	43067137d0fba04b0be055e449e55a06dba6d208	A	272	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/history-takeover-batch-20261104	a0729a0965850028fe52f5b6fcc3e825f23b1289	A	517	0	0	0	0	0	0	41822826770 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/history-upload-readiness-01	188a1ad5303ee694686cb837203b42d2b1c25bec	B	355	2	0	8	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/integration-018-036-025	46353a5436637832f5adadb7bdef6b45cdeada23	A	673	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/integration-020-022-051	f12b591cb90d6a5d8ebfedf1c559703377c92d84	A	703	0	0	0	0	0	0	40310596892 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/integration-021-029-027	28ba758388429f57c2e3516e12385a88ce6646a3	A	713	0	0	0	0	0	0	40259969429 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/integration-024-019-008	b3559f3bf83b967d06166bd409b00fc92e4e5902	A	720	0	0	0	0	0	0	40204310570 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/integration-026-107-017	af018ac63cf71143d223b9f6db4a087707495693	A	730	0	0	0	0	0	0	40067800313 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/integration-036-002-003-052-058	054bd82518039a5bc0e0c14234964a14d7fbbfd8	A	656	0	0	0	0	0	0	40537540885 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/integration-039-037-040	71ec4a4c2d860b9944624a1434d9d7580e9a6d38	A	736	0	0	0	0	0	0	40053958954 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/integration-043-075-023	9900ef54311e93836f1113f66943462b3cdacd62	D	703	7	45	18	0	6	1	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/integration-047-097-080	7951ecb8c6196f773128ad5978bfcd0a5b30c6b5	A	696	0	0	0	0	0	0	40368513659 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/integration-049-053-067	54925e0a10a48c16ba3b66bbab9e433f48a0e2d7	A	741	0	0	0	0	0	0	39980960890 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/integration-pre-pilot-01	54e715bdc568b80ba624186fecd866550676cf38	A	627	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/integration-pre-pilot-02	d189084554a2a2da0d701b488a34ebc50723fa17	A	608	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/integration-r1-iss006-052-ux-pw-auth	bd324a8c3fb64af245c3afcabbd4301c84f7711c	A	619	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/integration-r1-repairs-20261028	bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb	A	635	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/integration-validation-04	b7ce265833320cc62a7b9aa57e08880f6013203f	A	355	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/integration-validation-04-login-test	0620fbaa0082dacde8bcff2d972fdab9853e492f	C	360	2	0	2	0	2	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/internal-workspace-tabs-20261105	f5bdf4e75add5d7c16f81eb234cf3b9db1d54be0	A	361	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/internal-workspace-tabs-integration-01	aa15c9ba7584599e918c1dd14723d31e31158b3d	A	340	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/iss-008-country-select	a14d3d929e0c64dbb06d375d9a0ffa832526af92	D	730	2	3	10	0	2	0	40197522740 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/iss-017-private-files	c5fc1c11b9728655a363a4f2a5ba0544584a8d07	C	736	1	7	12	0	3	0	40056435147 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/iss-018-backup-recovery	ad64eed9e00810beb2734e23f4e58cb6b4533bb8	A	694	0	0	0	0	0	0	40442474601 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/iss-019-report-csv	2776fecfadcdf6992ef52e69af8c36697c620b51	C	730	3	8	5	0	2	0	40073538664 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/iss-020-quote-export	13b453de019193ae45c4fa1e15724040329da594	C	713	2	13	7	0	1	0	40286813654 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/iss-022-procurement-moq	6e7aaedd2cccef3150a5c7ee3135fd5f37dcee47	D	713	1	20	11	0	3	0	41187442571 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/iss-023-sales-model	c6a1415437fb2a020ec31d655fe8ce274aa93912	D	703	1	3	7	0	1	0	40315099383 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/iss-024-supplier-recommendation	1d576e961dc021d194e0ec2f9fd7dd6fc629535d	C	730	1	11	7	0	1	0	40073405391 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/iss-025-customer-status-labels	1fac93f09e3b5c578a030df5c0736e5d0552e4cc	A	694	0	0	0	0	0	0	40442632953 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/iss-026-supplier-lifecycle	3625f472b028146c062823990322de32a98759a1	C	736	1	3	11	0	1	0	40066297225 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/iss-027-followup-date	5a05a8b0c4d856c9378cad452b1e98307bd135c0	D	720	1	9	2	0	0	0	40255948117 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/iss-029-quote-recipient-snapshot	bb68ead4fd248fc446c259a5a142b798b4cd124a	D	720	2	22	7	0	3	0	40255223934 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/iss-036-carton-units	3fe05aa1fe08f859cd6b737150d67b4c1066b248	A	693	0	0	0	0	0	0	40442869135 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/iss-041-detail-drill	0bba34c0e7139b77a88d2e838dbf921eff427373	A	752	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/iss-041-multidim-01	66338b701afed071bd6482a33a8cca8ebc20bfa2	A	753	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/iss-042-shared-reports	fb859b91f68bb62c539d5439c65b52c06f13a58c	A	750	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/iss-043-audit-protection	dea057ce0c98fc32da44b72999beb4af78a58176	D	703	4	8	5	0	0	1	40319080090 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/iss-047-private-storage	5ab3ed6dd740ba7331abb258118882d7c96e39b5	C	702	1	5	6	0	2	0	40353478734 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/iss-048-finance-drill	c356e57014d28295485d52df23612c2fe6c02444	A	748	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/iss-049-quick-filters	9d08009f62920c62399ec48defe7f4d1c2e21411	A	747	0	0	0	0	0	0	39972771852 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/iss-051-environment-isolation	8a3c8a0a0a67f896f62483ece5551f7d32fb868b	D	713	3	4	6	0	1	1	40264749655 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/iss-053-purchase-status	caf0aadf5f7305d5c0d69020a07d2aeab71e4f34	A	747	0	0	0	0	0	0	39977172951 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/iss-062-date-window	9edbb6488a66a0801ecc1e5bc842df7866c6c7dc	A	754	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/iss-067-report-permission	dd538183523c9b3670763da9d43551a9454fb0b3	A	747	0	0	0	0	0	0	39968202651 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/iss-075-payment-terms	771307b19667256453c7c22ebf60256ffd2a26dd	D	703	1	25	12	0	5	0	40320443465 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/iss-080-contact-duplicates	9fe9f479bc47fd7470c80822c89fa59d7d71cbf5	D	703	9	50	18	0	6	1	40355387257 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/iss-097-admin-permissions	9ee4bd4b1eb14f45e08a4b83f0b1cd1b294cde37	D	702	1	3	5	0	1	0	40353198075 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/iss-107-finance-labels	60df1b045c06c7f2146b44e4a60866b1786024cc	D	736	1	3	5	0	1	0	40056744016 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/iss025-report-visual-evidence	1480429338d0fc6de20384ea77a43e969a2b7de4	A	690	0	0	0	0	0	0	40472708612 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/lan-installer-01	826b326e0523f34c0cc3225f02c3e6c6e8020fd6	D	15	3	2	1	0	0	1	43787140811 in_progress		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/lan-pilot-readiness-01	6d13301e7c8b5b8a2470988850cfceff559d1d6e	A	14	0	0	0	0	0	0	43562589121 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/linux-operations-acceptance-20261104	4a4f338b09e9a464f1e66c24a905c35c970729bf	A	444	0	0	0	0	0	0	41866028480 success, 41866028447 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/local-history-upload-env-01	b37fbaa76564e0d281c237ab71ceaf5f1add5c58	D	355	8	20	30	0	2	20	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/local-operations-closeout-20261105	250c3b7f55585acccb73b2efc1b0993605be0b0b	A	417	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/local-pilot-deploy-02	3bbbc96b1bf42c645835f46d28ffecbbc7b113db	A	1	0	0	0	0	0	0	43618198072 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/local-pilot-prep-01	9420f1cf66d2c74df971945dfa03bd6511cfadcd	A	2	0	0	0	0	0	0	43616132946 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/local-runtime-delivery-01	49410f0226df7625c22665f1f84597f2b5e5d6a0	C	174	4	14	1	0	0	0	43061346491 success, 43061335424 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/measure-iss058-frontend-performance	742692a6e4887e4b8352736e69a52b1ebe8d066f	A	672	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/new-product-reminders-20261105	f63e984f33b86fb00c0de1daeb6a66fd4d42fc78	A	369	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/next-iss-021-integration	a662500c06807151bb39ca990ebe17ae8d05ef54	C	720	3	40	9	0	2	0	40257430796 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/next-iss-037-integration	6d3496d0cc45213f4aab26950cd5ab8629996de8	D	741	5	17	17	0	5	0	39987993885 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/next-iss-039-integration	1d976d8dd1d1b827d9ab9122c4d07be8c816a14d	D	741	1	13	10	0	5	0	39986352357 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/next-iss-040-integration	a4fc6d4f01f8c32a4a89f0d46557500a34566e98	C	741	1	23	4	0	1	0	39998311315 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/operations-readiness-batch-20261104	d289de36a3da3e4bd6531c812ec21a05f046d570	A	504	0	0	0	0	0	0	41814619508 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/party-version-closeout-20261105	7cc8c4bf0249a3de53809836b7b3f233476a1648	A	416	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/party-version-integration-01	f5a91a5ff0b75f2e5b45a6efcf04a36f57da37f0	A	349	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/pilot-closeout-sku-04	fa0edf18f38db5e1757717dcdf9996ba6f19cb62	A	15	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/pilot-delivery-closeout-04	a38975c6ab52e5779320d6868e73268ee39735d7	A	4	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/pilot-delivery-final-evidence-01	ad207b0e759396fd2eb484727b5bcb8f9fa343d2	A	3	0	0	0	0	0	0	43613937593 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/pilot-handoff-alignment-01	406b56f6e370b180857bb58b8a45866bccd7aa38	A	14	0	0	0	0	0	0	43562550419 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/pilot-recovery-readiness-01	e0169499d4a0a70922859558c00446fc9ef1d5a8	A	15	0	0	0	0	0	0	43563218655 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/pre-uat-iss006-inventory-safety	dfa36058206fe7021ff6e6192fbbd247fb471947	A	634	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/prelaunch-repair-integration-02	96276dffa07c11fb60720a439269df8c36031f7a	A	16	0	0	0	0	0	0	43558761924 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/product-draft-protection-01	9d5dd253bf30e0785cb70b14246902811233a08f	A	77	0	0	0	0	0	0	43479598181 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/product-state-closeout-06	8ac8fab5a08f7c170adb3514108dd3ba01a56ff3	A	134	0	0	0	0	0	0	43251953711 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/public-delivery-safety-01	c7cdf3103d47d06bf8998b9098b2348fd94d1d79	A	102	0	0	0	0	0	0	43397291841 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/quote-state-closeout-06	598717617be8de95fcaeb03426693f1efc71808a	A	128	0	0	0	0	0	0	43231132995 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/r1-csv-audit-truncate-test-20261102	aeab244b7475f95d0c1d8069af546529e735e90f	D	564	10	4	12	0	4	1	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-fix-shared-report-timeout-20261029	74e0f90c33add755731f521dcad23c92d95cbb1c	C	619	1	17	1	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-hist-01	b5e46be7863c9756f010df972870bfd0ec154a62	A	755	0	0	0	0	0	0	39737150483 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/r1-inv-03	d82643907f2886ecc412fdfa8839d2b8cc165751	D	761	4	1	33	0	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-iss-021-audit-01	12c0ea9d60537d202393266f7850fcc188276860	D	761	2	0	4	0	1	0	39554676192 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-iss-021-dev	92d32ad856fdd056fab0be56a70a9af52fbb99f2	D	761	2	0	24	1	3	0	39583599131 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-iss-037-audit-01	4d3032b914cde951bae1d1da669e0d737e4b8d52	D	761	1	0	14	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-iss-037-p1	ff59be7a8c49f3a7a33a1702e74e0e29f742aa1f	D	761	4	14	17	1	4	0	39552116003 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-iss-039	ac52d3d126a6dbeb9225e6044fa8da234c72db8f	D	761	2	0	18	0	3	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-iss-040-dev	f308502362fc8bbee1a57d3905b5c12278719a05	D	761	5	1	42	0	2	0	39622019538 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-iss002-dependency-audit-retry-20261031	04ff4effb17ed1f87ef5feb263a63c060e6b0b72	B	619	6	1	23	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/r1-iss002-ledger-refresh-20261101	486775839413ac2e174378f0e1898b4e8dd67909	D	619	6	0	2	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss002-python-audit-complete-20261101	709b8d4c6fa0769173498693586b8dc286b54122	B	619	2	13	13	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/r1-iss002-python-security-bd324-20261031	fe4245f20ec19ca22db0adeaacf5e8e6d7920061	B	619	1	0	1	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/r1-iss002-python312-verify-20261031	8c5840651ab4d40132a1470972ff966340ff1461	B	619	3	1	18	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/r1-iss002-security-audit-final-20261101	427d2a2c38516a52d460f50e60e0fb635f23a4c2	A	619	1	13	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	外部消费者待复核	保留
+D-local	codex/r1-iss006-audit-atomicity-20261029	dfa36058206fe7021ff6e6192fbbd247fb471947	A	634	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/r1-iss006-audit-atomicity-bd324-20261030	a4eea21dc3e21096950b08439dcbee26ce506e86	A	618	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/r1-iss006-frontend-idempotency-20261029	74b1ac29e85a80efbc0ed2200a1653ad19b4bfae	D	627	4	5	16	0	7	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss006-frontend-idempotency-bd324-20261030	f83f9b08a5f516f860655bc08b6c7d5f0787c35e	A	618	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/r1-iss006-frontend-storage-chrome-verify	bf3d4e4fb1d8bf3e5f944071f4336929ff68beae	D	618	1	1	25	0	1	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss006-inventory-reversal-audit-atomicity-20261030	7429c9630305bfad61f16475dd5617c13c07959e	A	618	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/r1-iss006-po-locking-20261029	083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a	C	627	1	4	13	0	7	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-iss006-po-locking-bd324-20261030	13e8b4bed06d0c1d099f007696a81260dfb2d3ef	A	616	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/r1-iss006-postgres-concurrency-20261031	4b43ed561952381bd96dc11abe87392375fb5abd	D	619	1	0	8	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss006-postgres-concurrency-gaps-20261101	2e25b743884123d7ae5599c89586988a12791bf4	A	562	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/r1-iss006-postgresql-concurrency-uat-20261101	10ba6e38a03c955e20be13f303799b30000e6ce3	B	619	2	0	5	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/r1-iss007-followup-files-uat-20261031	e3b1eeb6cff69b7b77bc35c83661df052e028b41	D	619	6	41	4	0	1	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss007-image-snapshot-uat-20261031	d48df222271059721bfa6b9f5f61f395e57db45b	D	619	2	19	5	0	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss007-ledger-evidence-update-20261101	8d80fc0c082a3792a27d60677f9c55c86288c2fe	D	619	4	0	2	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss008-aliases-bd324-20261031	bca4d5794afacc505d443afc03e151ab7ee5c5a2	D	619	3	11	2	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss018-backup-restore-drill-20261103	cce6a3556bae9c1c13c4d76aa1c0e3c03595d16f	D	546	11	22	3	0	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-iss018-postgres-boundary-20261102	704b0df6cc7fa18ce8ed29567afa8d13d605557e	D	564	10	0	9	0	4	1	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss018-postgres-ci-boundary-20261101	ac0d5a22ebecead70cf479fdee09d2f40335600d	D	564	7	0	15	0	2	1	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss028-035-category-verify-20261031	5da8d351129e775563aced753fd05efbfc39d893	D	619	2	0	21	0	1	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss028-035-category-verify-bd324-20261031	ae78826ef9906d56f8211ee983c2a01132551165	C	619	1	26	1	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-iss037-print-output-acceptance-20261104	b3d0d386de70d9efd77bf62cdbd87877fbccbfb8	A	521	0	0	0	0	0	0	41802910019 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/r1-iss037-seller-template-freeze-20261103	b00981200eb01af4bfa8351c4bd636ab1a678b71	C	546	3	8	16	0	4	0	41662554113 failure		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-iss037-snapshot-audit-20261103	c88a121298465fcb04e11f9b65ef9ad251eadf3f	A	553	1	8	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	外部消费者待复核	保留
+D-local	codex/r1-iss037-unknown-buyer-revision-fix-20261103	1a9666010c370dda08e2719e2c70caf6ee6c1b11	C	553	1	3	1	0	0	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-iss039-amount-allocation-fix-20261103	aadd2ff3a7a15bc2a6601238ac6cea58d921c741	C	553	1	24	4	0	2	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/r1-iss039-reservation-concurrency-20261103	087f6098c27050a1d7180fe9c85eef6417063c0b	A	546	2	6	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	外部消费者待复核	保留
+D-local	codex/r1-iss039-shared-cost-audit-20261103	2d5164287672d9a57a6496761c3ea0d026088072	A	553	1	7	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	外部消费者待复核	保留
+D-local	codex/r1-iss045-python312-verify-20261031	a2aaf7d53e73bba8bb4414f8f9c2f8020c88ffb1	D	619	4	3	27	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss045-qa-tools-bd324-20261031	4ddaa6b7bdd1a9f21443f687e4ff90f46aa02629	C	619	1	3	1	0	0	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-iss052-audit-hardening-20261031	70fe8ee1d4ffbd7786f1908804ea7142461d5286	A	613	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/r1-iss052-csv-limit-bd324-20261030	d08ca625ac6beeec51ecc14eb92c97da0ea6f63b	C	619	2	7	3	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-iss052-csv-limit-failure-audit-20261029	bd324a8c3fb64af245c3afcabbd4301c84f7711c	A	619	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/r1-iss052-http-413-20261031	d08ca625ac6beeec51ecc14eb92c97da0ea6f63b	C	619	2	7	3	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-iss052-http-413-bd324-20261031	8cff96af9f1f2e09dcbc0a29f361017ee23ffb75	C	619	3	11	5	0	2	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/r1-iss052-import-audit-fix-20261031	60afd938ae10ebced75008dc58b0f11b2c32b6ef	D	619	1	3	6	0	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-iss052-pg-audit-appendonly-20261029	315d50cb2a80c882ea901181da1d5910bc6a80f3	D	619	3	0	9	1	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss052-pg-truncate-bd324-20261030	bbbb7169e21233fd691af246db722875989d9453	D	619	1	0	9	1	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss052-postgresql-uat-20261101	a34bed75edd4e4b07c7a7780f6821a650b06f68c	A	614	1	1	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	外部消费者待复核	保留
+D-local	codex/r1-iss105-actual-cash-audit-20261103	1cad93d0cb0297c33f764f6cb68d5c610512d9e4	A	553	1	4	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/r1-iss105-bank-duplicate-detection-20261103	8e99dc1abcf1f4f9fbd9d6cac57258990c12d3e8	C	546	3	17	18	0	6	0	41620695799 success		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-iss105-financial-audit-20261031	7f00efd8a019d1a273675287f53fa73783d73695	D	619	2	0	1	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-iss105-independent-bank-fee-fix-20261103	321cb77d0179888a4788408d32c77d789504fbdd	C	553	1	17	6	0	3	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-iss121-history-import-preflight-20261103	951adda34b5c60b303725702514cdacac17cc58d	C	546	2	11	4	0	1	0	41670109804 success		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/r1-issue-ledger-update-20261031	dd3b31445ab9dddb42c7ac8d095692df45efde24	D	619	2	0	2	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-ledger-consolidation-20261031	4e762070f825f4545f454a542365ea085f06f2e0	D	619	1	0	2	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-ledger-review-accept-20261031	c8eb1efa2399768ef8933ca402120bee21ebe7f6	D	619	3	0	2	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-ledger-sync-20261101	bbf98726b550bdb6753d4c72ed7cbd58203e0c20	D	619	3	0	2	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-moq-02	aa35db2a49b6152e35f57b74edff95914735864d	D	761	7	0	32	1	7	0	39390526477 failure, 39390519759 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-po-04	2dde7c6b5b8ba29df56eb1a3e771a82739859277	B	761	1	0	5	0	0	0	39434669811 failure		差异仅见于验收证据。校验归档后评估退役。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-postgres-auth-contract-20261102	784b9230906eccdd99fb2ba8ea618e78ea4e863a	D	558	2	0	7	0	4	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-postgres-integration-validation-20261102	8d3ca5faa16fb74de95dbc716f5556a5d51bbe79	A	553	0	0	0	0	0	0	41486353528 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/r1-postgres-supplier-fixtures-20261101	e2e7e017a5a2675af44b47fc93650b3837971755	D	564	8	3	10	0	4	1	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-postgres-supplier-fixtures-full-20261102	644f6a908a755f9d2293dba74c609471f86fcd5d	D	558	1	6	6	0	4	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-postgres-test-isolation-20261101	e280e5d140b5255bd51f5d0be428f36e87336139	D	564	8	0	7	0	3	1	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/r1-postgres-test-isolation-20261102	9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2	A	558	0	0	0	0	0	0	41390992274 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/r1-prelaunch-consolidation-20261104	25056fc43b63448f9788a6fcd9f4aa67883a448f	D	372	2	0	3	0	3	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-review-iss006-idempotency-20261029	4bd1da3f096186fbf0ac192e836b4590f915741f	B	619	1	0	6	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/r1-review-iss052-csv-audit-20261029	27734334833395196ae9951c5409f87c3574655d	B	619	1	0	3	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/r1-rule-gap-batch-02-integration-20261103	d5abc64750d00c89d685bf12c0f8f67d4ba10a97	A	535	0	0	0	0	0	0	41671231926 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/r1-rule-gap-fix-integration-20261103	a55469c1b07e4f13037c6644c69d8a35ef0496a0	A	546	0	0	0	0	0	0	41602567626 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/r1-sku-01	57d8c2df573b11621a940a756ef7ed34531e7af6	D	761	1	0	18	1	5	0	39279588276 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-sku-01-fix-01	450476355ffe03b9a32e69226d8b3c2e179ea155	D	761	2	1	28	1	6	0	39285095803 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-sku-01-fix-02	fed49cd2b25524d79715d8c241a9ff7f0536218c	D	761	3	1	29	1	7	0	39364853862 success, 39364713405 success		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/r1-status-reconcile-bd324-20261031	ae0f7e073d2ef6cb8b98164920697ecd4bac73be	D	619	1	0	2	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/reconcile-issue-ledger-20261028	2bb9d1746d13ce7b1c70e13dee1b8d3b48aaed2e	C	635	1	1	4	0	0	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/release-b-vitest-followup	108adfeb7e9af3fb6be99340a70d42bfce629355	D	302	2	0	4	0	4	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/release-completion-acceptance-02	baf6bb875b28586932bfc9b6ed88827356ef0041	A	281	2	6	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/release-integration-acceptance-03	dd019e98f932668ae851dc0c4c7f602f888d51f9	A	209	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/release-integration-repair-01	1e45e42cc4fa38afbf856143228dada7c8a2e86f	A	292	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/release-integration-repair-01-b	b2cf51557de8461d9a99e0c23f39fd554462474f	D	320	4	5	11	0	4	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/release-integration-repair-01-c	0a401638c45ffa5dda1363a933f6e3c7a6d6f6cc	A	318	2	2	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/release-integration-repair-01-d	ed1a554e09d8f49c9b0e07b96921b863b2f8e4f7	A	319	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/release-integration-repair-01-d-finance	efa808aac214f082853f7b0b110a22e1ce379fcf	C	302	1	2	3	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/release-repair-c-certificate	9e8473cf78765447d67dd0ba3071dc9d20367cf6	A	302	1	2	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/release-slim-prep-01	3d067d659be70e1db0e4d6b0c44ac45454d26f5f	A	15	0	0	0	0	0	0	43562898725 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/repair-browser-navigation-timeouts	e20f8a7bc506c299644b6c828c9b5574ee688f46	A	654	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/repair-final-cross-module-ux	45df13b8fd229427229a58d64d0ae2bec30a00cb	A	654	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/repair-history-recipient-typography	c3739e77562c5dd8995228d5c3e7375a6728d316	A	654	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/repair-iss002-python-security	85adec7d99d725c7c920c728385172d6517730ce	C	635	1	2	1	0	0	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/repair-orders-390-layout	58541e94918e2d912c2b75d2371a8d625e1fc9d4	A	655	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/repair-playwright-isolation	5ad252c537dfb0b3f95150e76e471c9fe3fd0a99	A	653	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/repair-supplier-purchase-ux	3945123376d08256787ff1796ca0a9fc416c1668	D	656	1	0	22	0	1	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/repair-supplier-purchase-ux-20261028	fe1cc16c3950e256fa564ea4508e08414ae8810b	D	656	2	0	32	0	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/repair-supplier-purchase-ux-r2	64fb397aa065062e192ceb30040421f59b63a08c	A	655	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/review-iss025-status-consistency	d5d0d15c03d55a718f11a298e08f29a9b9d0c4b0	A	692	0	0	0	0	0	0	40448002007 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/review-iss051-business-auth-design-20261029	be0a0a392b27efbbcf41a8feed82fb493d52d2a7	A	627	1	1	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	外部消费者待复核	保留
+D-local	codex/sales-order-import-01	2bff4790f67b81b35a449f143b8cddb6b24e1821	D	340	2	8	15	0	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/sales-state-closeout-05	0f73688d92c70543e050e617ac636a9cc58bd2b2	A	133	0	0	0	0	0	0	43200103746 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/small-team-cancel-refund-01	c8a06892579bf586d1a674750902c27943fa69d4	A	93	0	0	0	0	0	0	43421825307 success, 43421825268 success, 43421825246 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/small-team-finance-closeout-02	00f7753dfc40b417983335be05135cb76a945ee0	A	106	0	0	0	0	0	0	43365698590 success, 43365698478 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/small-team-launch-guide-01	e45f39aa727d72ff62c4dee51740d5c14e069a5b	D	106	1	0	2	0	0	0	43374519358 success		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	codex/small-team-purchase-cost-01	72ffff52434a6573eff9b0113a0902423267b031	A	112	0	0	0	0	0	0	43345279026 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/small-team-quantity-finance-01	7e1d0376648ed084ee1c228a3a4e5acdef110f16	A	111	0	0	0	0	0	0	43344979317 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/sunjack-finance-integration-review-fix-01	0a3418d7c35bfd006ea70816c71a866646b73aa2	A	328	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/sunjack-first-release-consolidation-02	f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a	A	331	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/sunjack-first-release-core-uat-01	1a2ec0f5c940386e445e59967d498ca1187aa6be	D	340	1	0	8	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/sunjack-first-release-integration-01	b223c052902463b59e149409cf9941503aeab31f	A	333	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/sunjack-sales-order-import-01	37520998e347afb34b00d725014d0137a49a6920	A	329	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/ui-copy-optimization-02	945c2ae41ce59d55051bbab4664f3d7a4df0fbba	D	340	7	21	33	0	8	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/ui-delivery-closeout-04	30b3579a579174de5f3e4336619dcdb4c8502470	A	113	0	0	0	0	0	0	43255346541 success, 43255346476 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/ui-final-state-closeout-03	dbec86c9d620002157c0f18bfedb5251204dd3ea	D	201	2	76	5	0	3	0	42980811630 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/ui-prelaunch-polish-01	e5ce789459b2499189bc9b0b5e922e8722847da1	A	89	0	0	0	0	0	0	43423924926 failure		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/ui-product-operations-completion-02	958421df61a2ac6dd9e66b685f2d0101e13321c5	D	263	2	35	2	0	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/ui-product-operations-state-evidence-01	67410d72c0d4dabca1a6c374e2d9600ba6f9aee6	D	292	4	318	1	0	1	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/ui-sales-completion-02	6242c5c3b85efdb3f904c8a4de7b8909a2bedcba	D	262	2	51	1	0	1	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/ui-sales-state-evidence-01	9dd721723422b45b1fabf1d97d1ad492488b7437	D	292	3	560	2	0	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+D-local	codex/unified-github-ci-post-oct20-20261101	3093c22c6e0a623499a98d5a602f7b1cb5758e8e	A	564	1	1	0	0	0	0	41291827825 failure		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	本机同名分支或同 SHA 工作树	保留
+D-local	codex/ux-copy-finance-inventory	9f957e1744e790b2cc784176ea9999b9c949c98f	A	633	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/ux-copy-finance-inventory-test-fix	5499da5a80029233fb38e8101c2cfca0adecbece	A	631	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/ux-copy-foundation	f82554686478f62e3a60ed69bb4144e8c052ac7c	A	634	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/ux-copy-sales-purchase	58577c809168a36c5b8f0d331b795d4c8d11f9f2	A	634	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/verify-candidate-regression-20261029	90f622528a7d534983313220d0824f3d461c03a3	B	627	1	0	54	0	0	0	快照无记录		差异仅见于验收证据。校验归档后评估退役。	尚需保留或复核	保留
+D-local	codex/verify-iss003-employee-permissions	2111d193ef3a69db05c23e27813cfbf26d9034d7	A	672	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/verify-iss028-035-category-schema	901b762fba20ed558f554cfba37175b303f83db9	C	635	1	17	2	0	1	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	codex/verify-iss052-csv-import	93736e0773ca2136d4070a604e62324cf832dc6f	A	671	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	codex/worktree-consolidation-cleanup-02	7b4e666758ba31a2afd36a7ef81635085a27ff24	A	0	0	0	0	0	0	0	43666080406 success		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+D-local	fix/phase3b-final-blockers	3acc2c4b8d07db7d08a7caf060d6a1cbc5d9173a	A	1005	0	0	0	0	0	0	36260967132 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	fix/phase3b-packaging-ui-gap	5f3d6d50bdb903a0f45269e2439657b0943c4c56	A	1003	0	0	0	0	0	0	36294352342 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	fix/quote-country-iso-resolution	5ebb731deced7b18b841e33680943878780878ec	A	1006	0	0	0	0	0	0	36163838895 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	integration-pre-iss022	fc15ca0e834897bcf0456c6cb874639eb961d58e	A	705	0	0	0	0	0	0	41187151079 failure		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	master	608c0194a44221a0ec758f23f8628998668a96c7	A	851	0	0	0	0	0	0	38115541370 success		tip 可从固定 master 到达，提交历史完整。	基线/交付用途；本机同名分支或同 SHA 工作树	保留
+D-local	phase-01-bugfix	54cbcd44c5850ecd490ed33d082e22a0abb7acf1	D	1016	4	0	8	0	4	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	phase-02a-receipt-reversal	e0697eee363a57b4edf958b331b0557056549870	C	1015	1	1	7	0	2	0	快照无记录		所有分支独有提交均有等价补丁。当前终态存在后续差异，退役前复核回退与消费者。	外部消费者待复核	保留
+D-local	phase-02b-shipment-reversal	fe949dfe3974e2c6ea3822311a8162b283814a76	D	1014	2	1	7	0	2	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	phase-02c-finance-void-consistency	9150fcb31b1fc8aed86b4a131420b84d5bf3de50	D	1013	5	1	10	0	4	1	36022669836 failure		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	phase-03-business-invariant-uat	d54329e4f74ad013959eb30454acd6dc3e634a66	A	1008	4	1	0	0	0	0	36111507642 success		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	外部消费者待复核	保留
+D-local	phase-03b-real-ui-uat	9160b2a81e4ce822675fd293bb02e5e4f05790aa	D	1003	22	0	1	0	0	0	36300568444 success		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+D-local	phase-03c-invariant-fault-injection	907a3991dadde19a31cbe02f27d0c5b789405c51	A	1002	0	0	0	0	0	0	36301922392 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	phase-04a-production-readiness-audit	1759c02a66353d2db6f709fd3b3ab27b46e2fc1b	A	1001	0	0	0	0	0	0	36303079127 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	phase-04b-postgresql-runtime-ci	f6362a646108df70a10410275f1fba472b8d8980	A	995	0	0	0	0	0	0	36328670202 success		tip 可从固定 master 到达，提交历史完整。	外部消费者待复核	保留
+D-local	ux-review-evidence	10afa1acd0e7956ae5db545b5582ec4f05474d13	B	880	18	0	139	0	0	0	38115550741 success		差异仅见于验收证据。校验归档后评估退役。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+E-local	codex/clean-env-cutover-06	868b3210ad8c0d7aaca3a50d325694f77460c9fb	D	0	1	0	1	0	0	0	43694037781 success		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+E-local	codex/disk-recovery-deep-audit-07	684733f7cb19dd7fb2a4bc53b8f027fbc1dedeeb	D	0	4	0	2	0	0	0	43738326238 success		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+E-local	codex/project-consolidation-rebuild-05	dfe6a22025d0f5c1fb2bee283525a901a806608a	D	0	1	0	1	0	0	0	43683326299 success		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	尚需保留或复核	保留
+E-local	master	7b4e666758ba31a2afd36a7ef81635085a27ff24	A	0	0	0	0	0	0	0	43677043705 success		tip 可从固定 master 到达，提交历史完整。	基线/交付用途；本机同名分支或同 SHA 工作树	保留
+detached	W014	84da66e963414002576b653cf8d9340dafcbc2d6	A	636	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W044	48a2126b07670c5e228180d7e6ca100fa12dbb64	A	783	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W058	92c15b65e495012f203496698bd8fb8af9ef3d17	A	221	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W059	43067137d0fba04b0be055e449e55a06dba6d208	A	272	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W060	41e88660a292026449bbe1bd944e6744f93c7cf8	D	266	1	0	1	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+detached	W062	d836ba21a657a3a61b770a1d124a5b1fb62a9f46	A	282	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W070	d7d155b994b652f6f4f777edde22a257a8ed7a2e	A	87	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W072	62245cfc8d55714af2ce14c9cb1dab825e164b82	A	290	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W100	faec4794d24f08a71f42fea93071d2552a120265	A	87	2	2	0	0	0	0	快照无记录		全部净变化路径与 master 文件对象、模式或删除状态逐项相同。保留独有提交恢复点。	本机同名分支或同 SHA 工作树	保留
+detached	W103	1b593bf3298ab257fafa4a462c96aa58b920e6e8	D	810	1	0	1	0	0	0	快照无记录		仍有内容差异。保留，按差异与提交入口核实用途、后继及回归。	本机同名分支或同 SHA 工作树；尚需保留或复核	保留
+detached	W104	f9a9cfb076f581ecb1e2f758b2284fe4dcf525fd	A	782	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W105	f779ed858da3bc4dd468645f5405b0fed2556a8d	A	781	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W106	7faafcf142827ee4e94aa1aaa8d04e68e77e3726	A	779	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W107	da39ea3aa986df9faa12e79b1da3adece03260b7	A	778	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W108	1b2ca0eb5b1947dd53f5ab995828dd33f514e0d4	A	776	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W109	b79af36dc7140507ef210ea61437dd579ba8de8b	A	774	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W121	02140bf46df27ba1abf5b9018507c07aae825769	A	420	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W122	447d7816ead2e971e249cb2e762b1a6f7009b9c0	A	423	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W125	76c98873f8ba4e521941f497fbd170c9b2bdb689	A	384	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W126	c95601eebfc83597da044ca60a0ad362c57237d0	A	376	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W127	732d756cec38c139187e7d9c49de771d97df93d4	A	408	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W128	a46c26f796fe6cc4c4a6a07dc70fe92cfda34114	A	411	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W129	d5a6a23394397775d3aab0f237163d4000bce224	A	407	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W130	d7d927658e26727b6ebef135708d77278b9ee258	A	400	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W132	02140bf46df27ba1abf5b9018507c07aae825769	A	420	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W133	02140bf46df27ba1abf5b9018507c07aae825769	A	420	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W134	a8400fb8deb1bfeaaf99e0498d8b4aa34ef48f3f	A	449	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留
+detached	W149	d836ba21a657a3a61b770a1d124a5b1fb62a9f46	A	282	0	0	0	0	0	0	快照无记录		tip 可从固定 master 到达，提交历史完整。	本机同名分支或同 SHA 工作树	保留

@@ -1,0 +1,1845 @@
+{
+  "baseline": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
+  "master": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
+  "remote_before": 277,
+  "remote_immediately_after": 226,
+  "deleted": 51,
+  "skipped": 15,
+  "unrelated_ref_updates": {
+    "codex/lan-installer-01": [
+      "e25f49583bb163c2e4e2524393fdf45c2f1cfbd0",
+      "9568677cf8dc84addc62e11eece6e9d55a87a353"
+    ]
+  },
+  "unrelated_new_refs": [],
+  "branches": [
+    {
+      "branch": "chore/ci-baseline-repair",
+      "expected_sha": "7509ed96ce9f02fbf158b0099cd6baa2ef0eded1",
+      "live_sha": "7509ed96ce9f02fbf158b0099cd6baa2ef0eded1",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/chore/ci-baseline-repair",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/chore/ci-baseline-repair",
+        "tree": "d32ad100c365f541aa564fb975a8104ca636c3f6",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "chore/ci-baseline-repair",
+          "expected_sha": "7509ed96ce9f02fbf158b0099cd6baa2ef0eded1",
+          "status": "eligible",
+          "recovery_tree": "d32ad100c365f541aa564fb975a8104ca636c3f6"
+        },
+        {
+          "branch": "chore/ci-baseline-repair",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/chore/ci-baseline-repair\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/access-readiness-20261105",
+      "expected_sha": "bbfe475ef546b5d0fc3db8dbda0f456f0b042e9d",
+      "live_sha": "bbfe475ef546b5d0fc3db8dbda0f456f0b042e9d",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/access-readiness-20261105",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/access-readiness-20261105",
+        "tree": "92a54b95e563a4a168ade0f1c19879b2bd3d9fb6",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/access-readiness-20261105",
+          "expected_sha": "bbfe475ef546b5d0fc3db8dbda0f456f0b042e9d",
+          "status": "eligible",
+          "recovery_tree": "92a54b95e563a4a168ade0f1c19879b2bd3d9fb6"
+        },
+        {
+          "branch": "codex/access-readiness-20261105",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/access-readiness-20261105\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/crm-state-closeout-05",
+      "expected_sha": "c47deb009744c2cde85b7fff37a4175a8be8b7b2",
+      "live_sha": "c47deb009744c2cde85b7fff37a4175a8be8b7b2",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/crm-state-closeout-05",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/crm-state-closeout-05",
+        "tree": "31a1f3ddca795aac697b55c71bea8a30ca131ee6",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/crm-state-closeout-05",
+          "expected_sha": "c47deb009744c2cde85b7fff37a4175a8be8b7b2",
+          "status": "eligible",
+          "recovery_tree": "31a1f3ddca795aac697b55c71bea8a30ca131ee6"
+        },
+        {
+          "branch": "codex/crm-state-closeout-05",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/crm-state-closeout-05\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/finance-receipt-settlement-01",
+      "expected_sha": "b75b48cc1b6c9e8e4c9eb359aa36da639bf1a18c",
+      "live_sha": "b75b48cc1b6c9e8e4c9eb359aa36da639bf1a18c",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/finance-receipt-settlement-01",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/finance-receipt-settlement-01",
+        "tree": "979562ed20dfbbdb01ab29c8044f31c0bb0444bd",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/finance-receipt-settlement-01",
+          "expected_sha": "b75b48cc1b6c9e8e4c9eb359aa36da639bf1a18c",
+          "status": "eligible",
+          "recovery_tree": "979562ed20dfbbdb01ab29c8044f31c0bb0444bd"
+        },
+        {
+          "branch": "codex/finance-receipt-settlement-01",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/finance-receipt-settlement-01\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/fix-iss018-backup-safety",
+      "expected_sha": "a73273f49aa32d8be8040d1c444045ff51a67c65",
+      "live_sha": "a73273f49aa32d8be8040d1c444045ff51a67c65",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "a73273f49aa32d8be8040d1c444045ff51a67c65",
+      "execution": [
+        {
+          "branch": "codex/fix-iss018-backup-safety",
+          "expected_sha": "a73273f49aa32d8be8040d1c444045ff51a67c65",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/fix-iss018-restore-edge-cases",
+      "expected_sha": "21812b7c1190540a7214d4b77518ede31221180a",
+      "live_sha": "21812b7c1190540a7214d4b77518ede31221180a",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "21812b7c1190540a7214d4b77518ede31221180a",
+      "execution": [
+        {
+          "branch": "codex/fix-iss018-restore-edge-cases",
+          "expected_sha": "21812b7c1190540a7214d4b77518ede31221180a",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/fix-iss036-snapshot-conflicts",
+      "expected_sha": "b64c54b07908d4bb462c64f120c351d148e06f6f",
+      "live_sha": "b64c54b07908d4bb462c64f120c351d148e06f6f",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/fix-iss036-snapshot-conflicts",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/fix-iss036-snapshot-conflicts",
+        "tree": "84a3b8faf1d2595f41f81aa0b950af54063bed83",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/fix-iss036-snapshot-conflicts",
+          "expected_sha": "b64c54b07908d4bb462c64f120c351d148e06f6f",
+          "status": "eligible",
+          "recovery_tree": "84a3b8faf1d2595f41f81aa0b950af54063bed83"
+        },
+        {
+          "branch": "codex/fix-iss036-snapshot-conflicts",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/fix-iss036-snapshot-conflicts\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/fix-iss055-chinese-404",
+      "expected_sha": "9c5f1f821cfc1b436f5fffe0b681991fa056b34d",
+      "live_sha": "9c5f1f821cfc1b436f5fffe0b681991fa056b34d",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/fix-iss055-chinese-404",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/fix-iss055-chinese-404",
+        "tree": "9e64082ae130a053670b82124c040982a69750c8",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/fix-iss055-chinese-404",
+          "expected_sha": "9c5f1f821cfc1b436f5fffe0b681991fa056b34d",
+          "status": "eligible",
+          "recovery_tree": "9e64082ae130a053670b82124c040982a69750c8"
+        },
+        {
+          "branch": "codex/fix-iss055-chinese-404",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/fix-iss055-chinese-404\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/history-link-context-fix-03",
+      "expected_sha": "1c478b0aa298d53ffca03a38d4200b0d122b27ea",
+      "live_sha": "1c478b0aa298d53ffca03a38d4200b0d122b27ea",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/history-link-context-fix-03",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/history-link-context-fix-03",
+        "tree": "cbff89b428ed008a4e946e98bdb4e9d8304513de",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/history-link-context-fix-03",
+          "expected_sha": "1c478b0aa298d53ffca03a38d4200b0d122b27ea",
+          "status": "eligible",
+          "recovery_tree": "cbff89b428ed008a4e946e98bdb4e9d8304513de"
+        },
+        {
+          "branch": "codex/history-link-context-fix-03",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/history-link-context-fix-03\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/history-product-linking-fixes-02",
+      "expected_sha": "84ea87801693d3b512ef28a76f684444af332685",
+      "live_sha": "84ea87801693d3b512ef28a76f684444af332685",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/history-product-linking-fixes-02",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/history-product-linking-fixes-02",
+        "tree": "28fd9a9da2b8cd66da5cb724ee6aeebeb50661ae",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/history-product-linking-fixes-02",
+          "expected_sha": "84ea87801693d3b512ef28a76f684444af332685",
+          "status": "eligible",
+          "recovery_tree": "28fd9a9da2b8cd66da5cb724ee6aeebeb50661ae"
+        },
+        {
+          "branch": "codex/history-product-linking-fixes-02",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/history-product-linking-fixes-02\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/integration-018-036-025",
+      "expected_sha": "46353a5436637832f5adadb7bdef6b45cdeada23",
+      "live_sha": "46353a5436637832f5adadb7bdef6b45cdeada23",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/integration-018-036-025",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/integration-018-036-025",
+        "tree": "ecb178a7899cd106606378b66046f6f834479da2",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/integration-018-036-025",
+          "expected_sha": "46353a5436637832f5adadb7bdef6b45cdeada23",
+          "status": "eligible",
+          "recovery_tree": "ecb178a7899cd106606378b66046f6f834479da2"
+        },
+        {
+          "branch": "codex/integration-018-036-025",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/integration-018-036-025\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/integration-020-022-051",
+      "expected_sha": "f12b591cb90d6a5d8ebfedf1c559703377c92d84",
+      "live_sha": "f12b591cb90d6a5d8ebfedf1c559703377c92d84",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/integration-020-022-051",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/integration-020-022-051",
+        "tree": "cc4a123bc3f0d2a28887bdc1d667e823da7c7837",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/integration-020-022-051",
+          "expected_sha": "f12b591cb90d6a5d8ebfedf1c559703377c92d84",
+          "status": "eligible",
+          "recovery_tree": "cc4a123bc3f0d2a28887bdc1d667e823da7c7837"
+        },
+        {
+          "branch": "codex/integration-020-022-051",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/integration-020-022-051\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/integration-024-019-008",
+      "expected_sha": "b3559f3bf83b967d06166bd409b00fc92e4e5902",
+      "live_sha": "b3559f3bf83b967d06166bd409b00fc92e4e5902",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/integration-024-019-008",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/integration-024-019-008",
+        "tree": "57df7f55c8d72c5be914d0b79d6d6ef58d14bce6",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/integration-024-019-008",
+          "expected_sha": "b3559f3bf83b967d06166bd409b00fc92e4e5902",
+          "status": "eligible",
+          "recovery_tree": "57df7f55c8d72c5be914d0b79d6d6ef58d14bce6"
+        },
+        {
+          "branch": "codex/integration-024-019-008",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/integration-024-019-008\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/integration-026-107-017",
+      "expected_sha": "af018ac63cf71143d223b9f6db4a087707495693",
+      "live_sha": "af018ac63cf71143d223b9f6db4a087707495693",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/integration-026-107-017",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/integration-026-107-017",
+        "tree": "f92cc2ff19bfc17df7d9e3497ac64aa2ad9143f6",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/integration-026-107-017",
+          "expected_sha": "af018ac63cf71143d223b9f6db4a087707495693",
+          "status": "eligible",
+          "recovery_tree": "f92cc2ff19bfc17df7d9e3497ac64aa2ad9143f6"
+        },
+        {
+          "branch": "codex/integration-026-107-017",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/integration-026-107-017\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/integration-036-002-003-052-058",
+      "expected_sha": "054bd82518039a5bc0e0c14234964a14d7fbbfd8",
+      "live_sha": "054bd82518039a5bc0e0c14234964a14d7fbbfd8",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/integration-036-002-003-052-058",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/integration-036-002-003-052-058",
+        "tree": "c74268d5c9ac76ef41c011fc4e1d36d4f8599bb2",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/integration-036-002-003-052-058",
+          "expected_sha": "054bd82518039a5bc0e0c14234964a14d7fbbfd8",
+          "status": "eligible",
+          "recovery_tree": "c74268d5c9ac76ef41c011fc4e1d36d4f8599bb2"
+        },
+        {
+          "branch": "codex/integration-036-002-003-052-058",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/integration-036-002-003-052-058\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/integration-039-037-040",
+      "expected_sha": "71ec4a4c2d860b9944624a1434d9d7580e9a6d38",
+      "live_sha": "71ec4a4c2d860b9944624a1434d9d7580e9a6d38",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/integration-039-037-040",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/integration-039-037-040",
+        "tree": "c67e45569419194fd2be95c46beb6375ff659f9e",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/integration-039-037-040",
+          "expected_sha": "71ec4a4c2d860b9944624a1434d9d7580e9a6d38",
+          "status": "eligible",
+          "recovery_tree": "c67e45569419194fd2be95c46beb6375ff659f9e"
+        },
+        {
+          "branch": "codex/integration-039-037-040",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/integration-039-037-040\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/integration-043-075-023",
+      "expected_sha": "8b2b5c19e517addd9604b239211e199a789b739e",
+      "live_sha": "8b2b5c19e517addd9604b239211e199a789b739e",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/integration-043-075-023",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/integration-043-075-023",
+        "tree": "70a4a046684cd1d918bd4b46df7ff0ed796daa39",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/integration-043-075-023",
+          "expected_sha": "8b2b5c19e517addd9604b239211e199a789b739e",
+          "status": "eligible",
+          "recovery_tree": "70a4a046684cd1d918bd4b46df7ff0ed796daa39"
+        },
+        {
+          "branch": "codex/integration-043-075-023",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/integration-043-075-023\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/iss-018-backup-recovery",
+      "expected_sha": "ad64eed9e00810beb2734e23f4e58cb6b4533bb8",
+      "live_sha": "ad64eed9e00810beb2734e23f4e58cb6b4533bb8",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "ad64eed9e00810beb2734e23f4e58cb6b4533bb8",
+      "execution": [
+        {
+          "branch": "codex/iss-018-backup-recovery",
+          "expected_sha": "ad64eed9e00810beb2734e23f4e58cb6b4533bb8",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/iss-041-detail-drill",
+      "expected_sha": "0bba34c0e7139b77a88d2e838dbf921eff427373",
+      "live_sha": "0bba34c0e7139b77a88d2e838dbf921eff427373",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/iss-041-detail-drill",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/iss-041-detail-drill",
+        "tree": "8c2b8df8f0046e7fb8d168ae287087ad696ce616",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/iss-041-detail-drill",
+          "expected_sha": "0bba34c0e7139b77a88d2e838dbf921eff427373",
+          "status": "eligible",
+          "recovery_tree": "8c2b8df8f0046e7fb8d168ae287087ad696ce616"
+        },
+        {
+          "branch": "codex/iss-041-detail-drill",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/iss-041-detail-drill\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/iss-041-multidim-01",
+      "expected_sha": "66338b701afed071bd6482a33a8cca8ebc20bfa2",
+      "live_sha": "66338b701afed071bd6482a33a8cca8ebc20bfa2",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/iss-041-multidim-01",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/iss-041-multidim-01",
+        "tree": "2fcaa70faded9984c0ed7f309657dca7dc1f8219",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/iss-041-multidim-01",
+          "expected_sha": "66338b701afed071bd6482a33a8cca8ebc20bfa2",
+          "status": "eligible",
+          "recovery_tree": "2fcaa70faded9984c0ed7f309657dca7dc1f8219"
+        },
+        {
+          "branch": "codex/iss-041-multidim-01",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/iss-041-multidim-01\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/iss-042-shared-reports",
+      "expected_sha": "fb859b91f68bb62c539d5439c65b52c06f13a58c",
+      "live_sha": "fb859b91f68bb62c539d5439c65b52c06f13a58c",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/iss-042-shared-reports",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/iss-042-shared-reports",
+        "tree": "e6c2256fdaa7a3e1b959204dfa5a2addd8c7147d",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/iss-042-shared-reports",
+          "expected_sha": "fb859b91f68bb62c539d5439c65b52c06f13a58c",
+          "status": "eligible",
+          "recovery_tree": "e6c2256fdaa7a3e1b959204dfa5a2addd8c7147d"
+        },
+        {
+          "branch": "codex/iss-042-shared-reports",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/iss-042-shared-reports\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/iss-049-quick-filters",
+      "expected_sha": "9d08009f62920c62399ec48defe7f4d1c2e21411",
+      "live_sha": "9d08009f62920c62399ec48defe7f4d1c2e21411",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/iss-049-quick-filters",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/iss-049-quick-filters",
+        "tree": "4be96b758d70caa7a06997662f4944bd1ede58c2",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/iss-049-quick-filters",
+          "expected_sha": "9d08009f62920c62399ec48defe7f4d1c2e21411",
+          "status": "eligible",
+          "recovery_tree": "4be96b758d70caa7a06997662f4944bd1ede58c2"
+        },
+        {
+          "branch": "codex/iss-049-quick-filters",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/iss-049-quick-filters\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/iss-062-date-window",
+      "expected_sha": "9edbb6488a66a0801ecc1e5bc842df7866c6c7dc",
+      "live_sha": "9edbb6488a66a0801ecc1e5bc842df7866c6c7dc",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/iss-062-date-window",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/iss-062-date-window",
+        "tree": "5c06e0748ae36862a9ef8fbed371b76d432e34d4",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/iss-062-date-window",
+          "expected_sha": "9edbb6488a66a0801ecc1e5bc842df7866c6c7dc",
+          "status": "eligible",
+          "recovery_tree": "5c06e0748ae36862a9ef8fbed371b76d432e34d4"
+        },
+        {
+          "branch": "codex/iss-062-date-window",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/iss-062-date-window\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/iss-067-report-permission",
+      "expected_sha": "dd538183523c9b3670763da9d43551a9454fb0b3",
+      "live_sha": "dd538183523c9b3670763da9d43551a9454fb0b3",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/iss-067-report-permission",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/iss-067-report-permission",
+        "tree": "af3b088cafd3be43ff2b44ad8a742377d624b4e1",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/iss-067-report-permission",
+          "expected_sha": "dd538183523c9b3670763da9d43551a9454fb0b3",
+          "status": "eligible",
+          "recovery_tree": "af3b088cafd3be43ff2b44ad8a742377d624b4e1"
+        },
+        {
+          "branch": "codex/iss-067-report-permission",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/iss-067-report-permission\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/iss025-report-visual-evidence",
+      "expected_sha": "1480429338d0fc6de20384ea77a43e969a2b7de4",
+      "live_sha": "1480429338d0fc6de20384ea77a43e969a2b7de4",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/iss025-report-visual-evidence",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/iss025-report-visual-evidence",
+        "tree": "de7f2b86e7feed6d1eebbe8bf16a993f5f3bc817",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/iss025-report-visual-evidence",
+          "expected_sha": "1480429338d0fc6de20384ea77a43e969a2b7de4",
+          "status": "eligible",
+          "recovery_tree": "de7f2b86e7feed6d1eebbe8bf16a993f5f3bc817"
+        },
+        {
+          "branch": "codex/iss025-report-visual-evidence",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/iss025-report-visual-evidence\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/lan-pilot-readiness-01",
+      "expected_sha": "6d13301e7c8b5b8a2470988850cfceff559d1d6e",
+      "live_sha": "6d13301e7c8b5b8a2470988850cfceff559d1d6e",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "6d13301e7c8b5b8a2470988850cfceff559d1d6e",
+      "execution": [
+        {
+          "branch": "codex/lan-pilot-readiness-01",
+          "expected_sha": "6d13301e7c8b5b8a2470988850cfceff559d1d6e",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/linux-operations-acceptance-20261104",
+      "expected_sha": "4a4f338b09e9a464f1e66c24a905c35c970729bf",
+      "live_sha": "4a4f338b09e9a464f1e66c24a905c35c970729bf",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护",
+        "当前部署、脚本或工作流引用"
+      ],
+      "operational_files": [
+        ".github/workflows/linux-operations-acceptance.yml"
+      ],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "4a4f338b09e9a464f1e66c24a905c35c970729bf",
+      "execution": [
+        {
+          "branch": "codex/linux-operations-acceptance-20261104",
+          "expected_sha": "4a4f338b09e9a464f1e66c24a905c35c970729bf",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护",
+            "当前部署、脚本或工作流引用"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/local-operations-closeout-20261105",
+      "expected_sha": "250c3b7f55585acccb73b2efc1b0993605be0b0b",
+      "live_sha": "250c3b7f55585acccb73b2efc1b0993605be0b0b",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "250c3b7f55585acccb73b2efc1b0993605be0b0b",
+      "execution": [
+        {
+          "branch": "codex/local-operations-closeout-20261105",
+          "expected_sha": "250c3b7f55585acccb73b2efc1b0993605be0b0b",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/local-pilot-deploy-02",
+      "expected_sha": "3bbbc96b1bf42c645835f46d28ffecbbc7b113db",
+      "live_sha": "3bbbc96b1bf42c645835f46d28ffecbbc7b113db",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "3bbbc96b1bf42c645835f46d28ffecbbc7b113db",
+      "execution": [
+        {
+          "branch": "codex/local-pilot-deploy-02",
+          "expected_sha": "3bbbc96b1bf42c645835f46d28ffecbbc7b113db",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/local-pilot-prep-01",
+      "expected_sha": "9420f1cf66d2c74df971945dfa03bd6511cfadcd",
+      "live_sha": "9420f1cf66d2c74df971945dfa03bd6511cfadcd",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "9420f1cf66d2c74df971945dfa03bd6511cfadcd",
+      "execution": [
+        {
+          "branch": "codex/local-pilot-prep-01",
+          "expected_sha": "9420f1cf66d2c74df971945dfa03bd6511cfadcd",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/operations-readiness-batch-20261104",
+      "expected_sha": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+      "live_sha": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+      "execution": [
+        {
+          "branch": "codex/operations-readiness-batch-20261104",
+          "expected_sha": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/pilot-handoff-alignment-01",
+      "expected_sha": "406b56f6e370b180857bb58b8a45866bccd7aa38",
+      "live_sha": "406b56f6e370b180857bb58b8a45866bccd7aa38",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "406b56f6e370b180857bb58b8a45866bccd7aa38",
+      "execution": [
+        {
+          "branch": "codex/pilot-handoff-alignment-01",
+          "expected_sha": "406b56f6e370b180857bb58b8a45866bccd7aa38",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/pilot-recovery-readiness-01",
+      "expected_sha": "e0169499d4a0a70922859558c00446fc9ef1d5a8",
+      "live_sha": "e0169499d4a0a70922859558c00446fc9ef1d5a8",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "e0169499d4a0a70922859558c00446fc9ef1d5a8",
+      "execution": [
+        {
+          "branch": "codex/pilot-recovery-readiness-01",
+          "expected_sha": "e0169499d4a0a70922859558c00446fc9ef1d5a8",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/pre-uat-iss007-attachment-flow",
+      "expected_sha": "0fb8f09e344b319a02a86a3ded38deb3d37f5afe",
+      "live_sha": "0fb8f09e344b319a02a86a3ded38deb3d37f5afe",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/pre-uat-iss007-attachment-flow",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/pre-uat-iss007-attachment-flow",
+        "tree": "f8be117b72699aeb18a04498b439c79fc2ec2a1d",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/pre-uat-iss007-attachment-flow",
+          "expected_sha": "0fb8f09e344b319a02a86a3ded38deb3d37f5afe",
+          "status": "eligible",
+          "recovery_tree": "f8be117b72699aeb18a04498b439c79fc2ec2a1d"
+        },
+        {
+          "branch": "codex/pre-uat-iss007-attachment-flow",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/pre-uat-iss007-attachment-flow\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/quote-state-closeout-06",
+      "expected_sha": "598717617be8de95fcaeb03426693f1efc71808a",
+      "live_sha": "598717617be8de95fcaeb03426693f1efc71808a",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/quote-state-closeout-06",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/quote-state-closeout-06",
+        "tree": "57369aeb2a18ee3f4d6f55a4fe3ca66d70dd960e",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/quote-state-closeout-06",
+          "expected_sha": "598717617be8de95fcaeb03426693f1efc71808a",
+          "status": "eligible",
+          "recovery_tree": "57369aeb2a18ee3f4d6f55a4fe3ca66d70dd960e"
+        },
+        {
+          "branch": "codex/quote-state-closeout-06",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/quote-state-closeout-06\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r0-d4b1-scope",
+      "expected_sha": "c84a001b825081d5e154bc4559d627ad10af97be",
+      "live_sha": "c84a001b825081d5e154bc4559d627ad10af97be",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r0-d4b1-scope",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r0-d4b1-scope",
+        "tree": "c6190658736b64c155f3d6eea13203ea100b0259",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r0-d4b1-scope",
+          "expected_sha": "c84a001b825081d5e154bc4559d627ad10af97be",
+          "status": "eligible",
+          "recovery_tree": "c6190658736b64c155f3d6eea13203ea100b0259"
+        },
+        {
+          "branch": "codex/r0-d4b1-scope",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r0-d4b1-scope\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r1-iss006-audit-atomicity-bd324-20261030",
+      "expected_sha": "a4eea21dc3e21096950b08439dcbee26ce506e86",
+      "live_sha": "a4eea21dc3e21096950b08439dcbee26ce506e86",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r1-iss006-audit-atomicity-bd324-20261030",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r1-iss006-audit-atomicity-bd324-20261030",
+        "tree": "efe316b75a843b79afa86dcc5ccae0ee5387510f",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r1-iss006-audit-atomicity-bd324-20261030",
+          "expected_sha": "a4eea21dc3e21096950b08439dcbee26ce506e86",
+          "status": "eligible",
+          "recovery_tree": "efe316b75a843b79afa86dcc5ccae0ee5387510f"
+        },
+        {
+          "branch": "codex/r1-iss006-audit-atomicity-bd324-20261030",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r1-iss006-audit-atomicity-bd324-20261030\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r1-iss006-frontend-idempotency-bd324-20261030",
+      "expected_sha": "f83f9b08a5f516f860655bc08b6c7d5f0787c35e",
+      "live_sha": "f83f9b08a5f516f860655bc08b6c7d5f0787c35e",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r1-iss006-frontend-idempotency-bd324-20261030",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r1-iss006-frontend-idempotency-bd324-20261030",
+        "tree": "0dbe03a3fec960dd098a44d64438ac1d73731f68",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r1-iss006-frontend-idempotency-bd324-20261030",
+          "expected_sha": "f83f9b08a5f516f860655bc08b6c7d5f0787c35e",
+          "status": "eligible",
+          "recovery_tree": "0dbe03a3fec960dd098a44d64438ac1d73731f68"
+        },
+        {
+          "branch": "codex/r1-iss006-frontend-idempotency-bd324-20261030",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r1-iss006-frontend-idempotency-bd324-20261030\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r1-iss006-inventory-chrome-uat-20261031",
+      "expected_sha": "fb683934cab97d3d721575b4452cb21df2ccc94a",
+      "live_sha": "fb683934cab97d3d721575b4452cb21df2ccc94a",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r1-iss006-inventory-chrome-uat-20261031",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r1-iss006-inventory-chrome-uat-20261031",
+        "tree": "9984ead27059e35704f9cacbba1bbd7d26616933",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r1-iss006-inventory-chrome-uat-20261031",
+          "expected_sha": "fb683934cab97d3d721575b4452cb21df2ccc94a",
+          "status": "eligible",
+          "recovery_tree": "9984ead27059e35704f9cacbba1bbd7d26616933"
+        },
+        {
+          "branch": "codex/r1-iss006-inventory-chrome-uat-20261031",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r1-iss006-inventory-chrome-uat-20261031\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r1-iss006-inventory-reversal-audit-atomicity-20261030",
+      "expected_sha": "7429c9630305bfad61f16475dd5617c13c07959e",
+      "live_sha": "7429c9630305bfad61f16475dd5617c13c07959e",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r1-iss006-inventory-reversal-audit-atomicity-20261030",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r1-iss006-inventory-reversal-audit-atomicity-20261030",
+        "tree": "0cc3817a80e55431690373b7b964284bec1972f3",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r1-iss006-inventory-reversal-audit-atomicity-20261030",
+          "expected_sha": "7429c9630305bfad61f16475dd5617c13c07959e",
+          "status": "eligible",
+          "recovery_tree": "0cc3817a80e55431690373b7b964284bec1972f3"
+        },
+        {
+          "branch": "codex/r1-iss006-inventory-reversal-audit-atomicity-20261030",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r1-iss006-inventory-reversal-audit-atomicity-20261030\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r1-iss006-po-locking-bd324-20261030",
+      "expected_sha": "13e8b4bed06d0c1d099f007696a81260dfb2d3ef",
+      "live_sha": "13e8b4bed06d0c1d099f007696a81260dfb2d3ef",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r1-iss006-po-locking-bd324-20261030",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r1-iss006-po-locking-bd324-20261030",
+        "tree": "c085a84742293d4065898c4a5e0210cdd6a7d2f5",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r1-iss006-po-locking-bd324-20261030",
+          "expected_sha": "13e8b4bed06d0c1d099f007696a81260dfb2d3ef",
+          "status": "eligible",
+          "recovery_tree": "c085a84742293d4065898c4a5e0210cdd6a7d2f5"
+        },
+        {
+          "branch": "codex/r1-iss006-po-locking-bd324-20261030",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r1-iss006-po-locking-bd324-20261030\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r1-iss006-postgres-concurrency-gaps-20261101",
+      "expected_sha": "2e25b743884123d7ae5599c89586988a12791bf4",
+      "live_sha": "2e25b743884123d7ae5599c89586988a12791bf4",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r1-iss006-postgres-concurrency-gaps-20261101",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r1-iss006-postgres-concurrency-gaps-20261101",
+        "tree": "909cb3f4e8dd1208dcabc4ffe317b878bd554e87",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r1-iss006-postgres-concurrency-gaps-20261101",
+          "expected_sha": "2e25b743884123d7ae5599c89586988a12791bf4",
+          "status": "eligible",
+          "recovery_tree": "909cb3f4e8dd1208dcabc4ffe317b878bd554e87"
+        },
+        {
+          "branch": "codex/r1-iss006-postgres-concurrency-gaps-20261101",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r1-iss006-postgres-concurrency-gaps-20261101\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r1-iss037-print-output-acceptance-20261104",
+      "expected_sha": "b3d0d386de70d9efd77bf62cdbd87877fbccbfb8",
+      "live_sha": "b3d0d386de70d9efd77bf62cdbd87877fbccbfb8",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r1-iss037-print-output-acceptance-20261104",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r1-iss037-print-output-acceptance-20261104",
+        "tree": "9f727a41c2127cf62abd35e44abf3b81ab8f5aa4",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r1-iss037-print-output-acceptance-20261104",
+          "expected_sha": "b3d0d386de70d9efd77bf62cdbd87877fbccbfb8",
+          "status": "eligible",
+          "recovery_tree": "9f727a41c2127cf62abd35e44abf3b81ab8f5aa4"
+        },
+        {
+          "branch": "codex/r1-iss037-print-output-acceptance-20261104",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r1-iss037-print-output-acceptance-20261104\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r1-postgres-test-isolation-20261102",
+      "expected_sha": "9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2",
+      "live_sha": "9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r1-postgres-test-isolation-20261102",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r1-postgres-test-isolation-20261102",
+        "tree": "0efd4d7dd368f4d94e2a3af251a7a3db3db54e42",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r1-postgres-test-isolation-20261102",
+          "expected_sha": "9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2",
+          "status": "eligible",
+          "recovery_tree": "0efd4d7dd368f4d94e2a3af251a7a3db3db54e42"
+        },
+        {
+          "branch": "codex/r1-postgres-test-isolation-20261102",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r1-postgres-test-isolation-20261102\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/r1-rule-gap-batch-02-integration-20261103",
+      "expected_sha": "d5abc64750d00c89d685bf12c0f8f67d4ba10a97",
+      "live_sha": "d5abc64750d00c89d685bf12c0f8f67d4ba10a97",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/r1-rule-gap-batch-02-integration-20261103",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/r1-rule-gap-batch-02-integration-20261103",
+        "tree": "8e2e631e0173de024f0f5775baed92f0bd2e4ee3",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/r1-rule-gap-batch-02-integration-20261103",
+          "expected_sha": "d5abc64750d00c89d685bf12c0f8f67d4ba10a97",
+          "status": "eligible",
+          "recovery_tree": "8e2e631e0173de024f0f5775baed92f0bd2e4ee3"
+        },
+        {
+          "branch": "codex/r1-rule-gap-batch-02-integration-20261103",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/r1-rule-gap-batch-02-integration-20261103\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/release-slim-prep-01",
+      "expected_sha": "3d067d659be70e1db0e4d6b0c44ac45454d26f5f",
+      "live_sha": "3d067d659be70e1db0e4d6b0c44ac45454d26f5f",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "3d067d659be70e1db0e4d6b0c44ac45454d26f5f",
+      "execution": [
+        {
+          "branch": "codex/release-slim-prep-01",
+          "expected_sha": "3d067d659be70e1db0e4d6b0c44ac45454d26f5f",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/repair-final-cross-module-ux",
+      "expected_sha": "45df13b8fd229427229a58d64d0ae2bec30a00cb",
+      "live_sha": "45df13b8fd229427229a58d64d0ae2bec30a00cb",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/repair-final-cross-module-ux",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/repair-final-cross-module-ux",
+        "tree": "023524d30957b12b85207567018128c071963fd2",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/repair-final-cross-module-ux",
+          "expected_sha": "45df13b8fd229427229a58d64d0ae2bec30a00cb",
+          "status": "eligible",
+          "recovery_tree": "023524d30957b12b85207567018128c071963fd2"
+        },
+        {
+          "branch": "codex/repair-final-cross-module-ux",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/repair-final-cross-module-ux\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/repair-history-recipient-typography",
+      "expected_sha": "c3739e77562c5dd8995228d5c3e7375a6728d316",
+      "live_sha": "c3739e77562c5dd8995228d5c3e7375a6728d316",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/repair-history-recipient-typography",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/repair-history-recipient-typography",
+        "tree": "8dd1cd431ed6508128e9de6d9f522cf51007eb97",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/repair-history-recipient-typography",
+          "expected_sha": "c3739e77562c5dd8995228d5c3e7375a6728d316",
+          "status": "eligible",
+          "recovery_tree": "8dd1cd431ed6508128e9de6d9f522cf51007eb97"
+        },
+        {
+          "branch": "codex/repair-history-recipient-typography",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/repair-history-recipient-typography\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/repair-playwright-isolation",
+      "expected_sha": "5ad252c537dfb0b3f95150e76e471c9fe3fd0a99",
+      "live_sha": "5ad252c537dfb0b3f95150e76e471c9fe3fd0a99",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/repair-playwright-isolation",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/repair-playwright-isolation",
+        "tree": "8679c243a820ef7881ce9b2870a5c3f3305f0797",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/repair-playwright-isolation",
+          "expected_sha": "5ad252c537dfb0b3f95150e76e471c9fe3fd0a99",
+          "status": "eligible",
+          "recovery_tree": "8679c243a820ef7881ce9b2870a5c3f3305f0797"
+        },
+        {
+          "branch": "codex/repair-playwright-isolation",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/repair-playwright-isolation\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/repair-supplier-purchase-ux-r2",
+      "expected_sha": "64fb397aa065062e192ceb30040421f59b63a08c",
+      "live_sha": "64fb397aa065062e192ceb30040421f59b63a08c",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/repair-supplier-purchase-ux-r2",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/repair-supplier-purchase-ux-r2",
+        "tree": "84efaadf8eb335c013b391581780e7ec62edf0a3",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/repair-supplier-purchase-ux-r2",
+          "expected_sha": "64fb397aa065062e192ceb30040421f59b63a08c",
+          "status": "eligible",
+          "recovery_tree": "84efaadf8eb335c013b391581780e7ec62edf0a3"
+        },
+        {
+          "branch": "codex/repair-supplier-purchase-ux-r2",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/repair-supplier-purchase-ux-r2\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/sales-state-closeout-05",
+      "expected_sha": "0f73688d92c70543e050e617ac636a9cc58bd2b2",
+      "live_sha": "0f73688d92c70543e050e617ac636a9cc58bd2b2",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/sales-state-closeout-05",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/sales-state-closeout-05",
+        "tree": "76bcf1ab8d675958b6764ab14e2e5369123620be",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/sales-state-closeout-05",
+          "expected_sha": "0f73688d92c70543e050e617ac636a9cc58bd2b2",
+          "status": "eligible",
+          "recovery_tree": "76bcf1ab8d675958b6764ab14e2e5369123620be"
+        },
+        {
+          "branch": "codex/sales-state-closeout-05",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/sales-state-closeout-05\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/sunjack-first-release-consolidation-02",
+      "expected_sha": "f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a",
+      "live_sha": "f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a",
+      "execution": [
+        {
+          "branch": "codex/sunjack-first-release-consolidation-02",
+          "expected_sha": "f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/sunjack-first-release-integration-01",
+      "expected_sha": "b223c052902463b59e149409cf9941503aeab31f",
+      "live_sha": "b223c052902463b59e149409cf9941503aeab31f",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "b223c052902463b59e149409cf9941503aeab31f",
+      "execution": [
+        {
+          "branch": "codex/sunjack-first-release-integration-01",
+          "expected_sha": "b223c052902463b59e149409cf9941503aeab31f",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "codex/ux-copy-finance-inventory",
+      "expected_sha": "9f957e1744e790b2cc784176ea9999b9c949c98f",
+      "live_sha": "9f957e1744e790b2cc784176ea9999b9c949c98f",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/ux-copy-finance-inventory",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/ux-copy-finance-inventory",
+        "tree": "6366f53a14b655cd9f1f6e5e70390ec5fb690b7b",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/ux-copy-finance-inventory",
+          "expected_sha": "9f957e1744e790b2cc784176ea9999b9c949c98f",
+          "status": "eligible",
+          "recovery_tree": "6366f53a14b655cd9f1f6e5e70390ec5fb690b7b"
+        },
+        {
+          "branch": "codex/ux-copy-finance-inventory",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/ux-copy-finance-inventory\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/ux-copy-finance-inventory-test-fix",
+      "expected_sha": "5499da5a80029233fb38e8101c2cfca0adecbece",
+      "live_sha": "5499da5a80029233fb38e8101c2cfca0adecbece",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/ux-copy-finance-inventory-test-fix",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/ux-copy-finance-inventory-test-fix",
+        "tree": "7e431eb1392b3f9955080518c3be25bc3d9833d9",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/ux-copy-finance-inventory-test-fix",
+          "expected_sha": "5499da5a80029233fb38e8101c2cfca0adecbece",
+          "status": "eligible",
+          "recovery_tree": "7e431eb1392b3f9955080518c3be25bc3d9833d9"
+        },
+        {
+          "branch": "codex/ux-copy-finance-inventory-test-fix",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/ux-copy-finance-inventory-test-fix\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/ux-copy-foundation",
+      "expected_sha": "f82554686478f62e3a60ed69bb4144e8c052ac7c",
+      "live_sha": "f82554686478f62e3a60ed69bb4144e8c052ac7c",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/ux-copy-foundation",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/ux-copy-foundation",
+        "tree": "47b199eb02f856ce0453a8cb43e824eecfe40ecc",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/ux-copy-foundation",
+          "expected_sha": "f82554686478f62e3a60ed69bb4144e8c052ac7c",
+          "status": "eligible",
+          "recovery_tree": "47b199eb02f856ce0453a8cb43e824eecfe40ecc"
+        },
+        {
+          "branch": "codex/ux-copy-foundation",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/ux-copy-foundation\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/ux-copy-sales-purchase",
+      "expected_sha": "58577c809168a36c5b8f0d331b795d4c8d11f9f2",
+      "live_sha": "58577c809168a36c5b8f0d331b795d4c8d11f9f2",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/ux-copy-sales-purchase",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/ux-copy-sales-purchase",
+        "tree": "f4553cc0688802b0e6d8aa2da0ea2ddff5376bcf",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/ux-copy-sales-purchase",
+          "expected_sha": "58577c809168a36c5b8f0d331b795d4c8d11f9f2",
+          "status": "eligible",
+          "recovery_tree": "f4553cc0688802b0e6d8aa2da0ea2ddff5376bcf"
+        },
+        {
+          "branch": "codex/ux-copy-sales-purchase",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/ux-copy-sales-purchase\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/verify-iss003-employee-permissions",
+      "expected_sha": "2111d193ef3a69db05c23e27813cfbf26d9034d7",
+      "live_sha": "2111d193ef3a69db05c23e27813cfbf26d9034d7",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/verify-iss003-employee-permissions",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/verify-iss003-employee-permissions",
+        "tree": "cac73434975442cc6f01a1c192334bc808cb6272",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/verify-iss003-employee-permissions",
+          "expected_sha": "2111d193ef3a69db05c23e27813cfbf26d9034d7",
+          "status": "eligible",
+          "recovery_tree": "cac73434975442cc6f01a1c192334bc808cb6272"
+        },
+        {
+          "branch": "codex/verify-iss003-employee-permissions",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/verify-iss003-employee-permissions\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "codex/verify-iss052-csv-import",
+      "expected_sha": "93736e0773ca2136d4070a604e62324cf832dc6f",
+      "live_sha": "93736e0773ca2136d4070a604e62324cf832dc6f",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/codex/verify-iss052-csv-import",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/codex/verify-iss052-csv-import",
+        "tree": "fe4860dd7c3ad671f6f0d037957cf3c0cf575512",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "codex/verify-iss052-csv-import",
+          "expected_sha": "93736e0773ca2136d4070a604e62324cf832dc6f",
+          "status": "eligible",
+          "recovery_tree": "fe4860dd7c3ad671f6f0d037957cf3c0cf575512"
+        },
+        {
+          "branch": "codex/verify-iss052-csv-import",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/codex/verify-iss052-csv-import\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "fix/phase3b-final-blockers",
+      "expected_sha": "3acc2c4b8d07db7d08a7caf060d6a1cbc5d9173a",
+      "live_sha": "3acc2c4b8d07db7d08a7caf060d6a1cbc5d9173a",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/fix/phase3b-final-blockers",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/fix/phase3b-final-blockers",
+        "tree": "cd2bdaaf41f4bfd541f2980998952d21e1de584f",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "fix/phase3b-final-blockers",
+          "expected_sha": "3acc2c4b8d07db7d08a7caf060d6a1cbc5d9173a",
+          "status": "eligible",
+          "recovery_tree": "cd2bdaaf41f4bfd541f2980998952d21e1de584f"
+        },
+        {
+          "branch": "fix/phase3b-final-blockers",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/fix/phase3b-final-blockers\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "fix/phase3b-packaging-ui-gap",
+      "expected_sha": "5f3d6d50bdb903a0f45269e2439657b0943c4c56",
+      "live_sha": "5f3d6d50bdb903a0f45269e2439657b0943c4c56",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/fix/phase3b-packaging-ui-gap",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/fix/phase3b-packaging-ui-gap",
+        "tree": "043ee4c6ee3dc9b3f9c357c5aa79c7f3b490a293",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "fix/phase3b-packaging-ui-gap",
+          "expected_sha": "5f3d6d50bdb903a0f45269e2439657b0943c4c56",
+          "status": "eligible",
+          "recovery_tree": "043ee4c6ee3dc9b3f9c357c5aa79c7f3b490a293"
+        },
+        {
+          "branch": "fix/phase3b-packaging-ui-gap",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/fix/phase3b-packaging-ui-gap\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "fix/quote-country-iso-resolution",
+      "expected_sha": "5ebb731deced7b18b841e33680943878780878ec",
+      "live_sha": "5ebb731deced7b18b841e33680943878780878ec",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/fix/quote-country-iso-resolution",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/fix/quote-country-iso-resolution",
+        "tree": "26d4605d3379d8f46df5df4791e504ccb4dbe1d0",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "fix/quote-country-iso-resolution",
+          "expected_sha": "5ebb731deced7b18b841e33680943878780878ec",
+          "status": "eligible",
+          "recovery_tree": "26d4605d3379d8f46df5df4791e504ccb4dbe1d0"
+        },
+        {
+          "branch": "fix/quote-country-iso-resolution",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/fix/quote-country-iso-resolution\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "integration-pre-iss022",
+      "expected_sha": "fc15ca0e834897bcf0456c6cb874639eb961d58e",
+      "live_sha": "fc15ca0e834897bcf0456c6cb874639eb961d58e",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/integration-pre-iss022",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/integration-pre-iss022",
+        "tree": "cdbb99e796d23f16da52ed4b1e6d633ac5da1336",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "integration-pre-iss022",
+          "expected_sha": "fc15ca0e834897bcf0456c6cb874639eb961d58e",
+          "status": "eligible",
+          "recovery_tree": "cdbb99e796d23f16da52ed4b1e6d633ac5da1336"
+        },
+        {
+          "branch": "integration-pre-iss022",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/integration-pre-iss022\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "phase-03c-invariant-fault-injection",
+      "expected_sha": "907a3991dadde19a31cbe02f27d0c5b789405c51",
+      "live_sha": "907a3991dadde19a31cbe02f27d0c5b789405c51",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/phase-03c-invariant-fault-injection",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/phase-03c-invariant-fault-injection",
+        "tree": "4142799ad51c27b00d7dddd9153e9d0acc558aa2",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "phase-03c-invariant-fault-injection",
+          "expected_sha": "907a3991dadde19a31cbe02f27d0c5b789405c51",
+          "status": "eligible",
+          "recovery_tree": "4142799ad51c27b00d7dddd9153e9d0acc558aa2"
+        },
+        {
+          "branch": "phase-03c-invariant-fault-injection",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/phase-03c-invariant-fault-injection\t[deleted]"
+        }
+      ]
+    },
+    {
+      "branch": "phase-04a-production-readiness-audit",
+      "expected_sha": "1759c02a66353d2db6f709fd3b3ab27b46e2fc1b",
+      "live_sha": "1759c02a66353d2db6f709fd3b3ab27b46e2fc1b",
+      "ancestor": true,
+      "reasons": [
+        "发布、试点/ALEX、恢复或运维交接保护"
+      ],
+      "operational_files": [],
+      "recovery": null,
+      "result": "跳过",
+      "post_sha": "1759c02a66353d2db6f709fd3b3ab27b46e2fc1b",
+      "execution": [
+        {
+          "branch": "phase-04a-production-readiness-audit",
+          "expected_sha": "1759c02a66353d2db6f709fd3b3ab27b46e2fc1b",
+          "status": "skipped",
+          "reasons": [
+            "发布、试点/ALEX、恢复或运维交接保护"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "phase-04b-postgresql-runtime-ci",
+      "expected_sha": "f6362a646108df70a10410275f1fba472b8d8980",
+      "live_sha": "f6362a646108df70a10410275f1fba472b8d8980",
+      "ancestor": true,
+      "reasons": [],
+      "operational_files": [],
+      "recovery": {
+        "ref": "refs/recovery/branch-cleanup-02/phase-04b-postgresql-runtime-ci",
+        "restored_ref": "refs/restore-check/branch-cleanup-02/phase-04b-postgresql-runtime-ci",
+        "tree": "ae1fbad55a15b930a85e41df4605de7ed1b77656",
+        "master_contains": true
+      },
+      "result": "已删除",
+      "post_sha": null,
+      "execution": [
+        {
+          "branch": "phase-04b-postgresql-runtime-ci",
+          "expected_sha": "f6362a646108df70a10410275f1fba472b8d8980",
+          "status": "eligible",
+          "recovery_tree": "ae1fbad55a15b930a85e41df4605de7ed1b77656"
+        },
+        {
+          "branch": "phase-04b-postgresql-runtime-ci",
+          "status": "push-ok",
+          "detail": "-\t:refs/heads/phase-04b-postgresql-runtime-ci\t[deleted]"
+        }
+      ]
+    }
+  ]
+}

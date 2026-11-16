@@ -1,0 +1,2742 @@
+{
+  "master": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
+  "branches": [
+    {
+      "branch": "codex/attachments-recovery-hardening-01",
+      "sha": "905945f241795f5353e5a25fe1834af0c639938e",
+      "live_sha": "905945f241795f5353e5a25fe1834af0c639938e",
+      "base": "c90cacaa99a468d92dd61c41437834c5d8acb094",
+      "commits": [
+        {
+          "sha": "905945f241795f5353e5a25fe1834af0c639938e",
+          "subject": "docs: record attachment recovery evidence [skip ci]",
+          "matching_master_commits": [
+            "2225173b1bbda1ded0a0ce0a5f1b9e72a014f7fb"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "2225173b1bbda1ded0a0ce0a5f1b9e72a014f7fb"
+          ]
+        },
+        {
+          "sha": "268b521472cf8edce16cbeff15f1ce25f54ea529",
+          "subject": "fix: harden attachment recovery [skip ci]",
+          "matching_master_commits": [
+            "44b1f056dc53c36f7186240a1f82c1ac8074a05a"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "44b1f056dc53c36f7186240a1f82c1ac8074a05a"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/file_access.py",
+        "backend/crm/services/backup_recovery.py",
+        "backend/crm/services/operations_postgres.py",
+        "backend/crm/services/postgres_drill_backup.py",
+        "backend/crm/services/private_media.py",
+        "backend/crm/tests/iss018_drill_fixture.py",
+        "backend/crm/tests/test_iss018_backup_recovery.py",
+        "backend/crm/tests/test_review_attachment_download.py",
+        "backend/operations_pg_acceptance.py",
+        "docs/deployment/ISS-018-数据库与附件一致性备份恢复.md",
+        "docs/uat-evidence/attachments-recovery-hardening-01/README.md"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/tests/test_postgres_drill_backup.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "0",
+            "1"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "PostgreSQL 恢复测试仍覆盖坏数据库归档拒绝、空媒体目录恢复及失败边界，老测试余 diff 仅为重复 hashlib 导入。",
+      "current_evidence": [
+        "backend/crm/tests/test_postgres_drill_backup.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/branch-coverage-closeout-01",
+      "sha": "0bc7ad307c50ebae1c54269348bd941705d136ff",
+      "live_sha": "0bc7ad307c50ebae1c54269348bd941705d136ff",
+      "base": "f3b7242e77752b6cc5b72425bcc3df2fa938de61",
+      "commits": [
+        {
+          "sha": "0bc7ad307c50ebae1c54269348bd941705d136ff",
+          "subject": "Review coverage of 38 unmatched release branches",
+          "matching_master_commits": [],
+          "prior_patch_equivalent": false,
+          "exact_patch_matches": []
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/branch-coverage-closeout-01/README.md",
+        "docs/uat-evidence/branch-coverage-closeout-01/actions-snapshot.jsonl",
+        "docs/uat-evidence/branch-coverage-closeout-01/candidate-pg17.log",
+        "docs/uat-evidence/branch-coverage-closeout-01/candidate-sqlite.log",
+        "docs/uat-evidence/branch-coverage-closeout-01/candidate-vitest-initial.log",
+        "docs/uat-evidence/branch-coverage-closeout-01/candidate-vitest.log",
+        "docs/uat-evidence/branch-coverage-closeout-01/classification-matrix.json",
+        "docs/uat-evidence/branch-coverage-closeout-01/classification-matrix.md",
+        "docs/uat-evidence/branch-coverage-closeout-01/finance-chrome.log",
+        "docs/uat-evidence/branch-coverage-closeout-01/finance-chrome/account-facts-1440.png",
+        "docs/uat-evidence/branch-coverage-closeout-01/finance-chrome/account-facts-390.png",
+        "docs/uat-evidence/branch-coverage-closeout-01/finance-chrome/facts-1440.csv",
+        "docs/uat-evidence/branch-coverage-closeout-01/finance-chrome/facts-390.csv",
+        "docs/uat-evidence/branch-coverage-closeout-01/finance-chrome/http-1440.json",
+        "docs/uat-evidence/branch-coverage-closeout-01/finance-chrome/http-390.json",
+        "docs/uat-evidence/branch-coverage-closeout-01/remote-heads.tsv",
+        "docs/uat-evidence/branch-coverage-closeout-01/snapshot-reconciliation.json"
+      ],
+      "remaining": [],
+      "disposition": "继续保留",
+      "reason": "最终净路径相同。该引用是原专项审计的独立恢复入口，继续保留。",
+      "current_evidence": [
+        "docs/uat-evidence/branch-coverage-closeout-01/README.md"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/fix-finance-summary-card-truncation-20261029",
+      "sha": "0f440a784130be326357cdf569ccb8959a560771",
+      "live_sha": "0f440a784130be326357cdf569ccb8959a560771",
+      "base": "54e715bdc568b80ba624186fecd866550676cf38",
+      "commits": [
+        {
+          "sha": "0f440a784130be326357cdf569ccb8959a560771",
+          "subject": "fix: keep finance summary amounts readable [skip ci]",
+          "matching_master_commits": [
+            "bd5ff25c27cc69b7a4e7f4a5e6765459c833e6d0"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "bd5ff25c27cc69b7a4e7f4a5e6765459c833e6d0"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/README.md",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/evidence-manifest.json",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots/payables-1024.png",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots/payables-1440.png",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots/payables-390.png",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots/receivables-1024.png",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots/receivables-1440.png",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots/receivables-390.png",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots/transactions-1024.png",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots/transactions-1440.png",
+        "docs/uat-evidence/r1-ux-finance-summary-20261029/screenshots/transactions-390.png"
+      ],
+      "remaining": [
+        {
+          "path": "frontend/browser-tests/finance-summary-cards.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "3",
+            "1"
+          ]
+        },
+        {
+          "path": "frontend/src/components/SummaryCards.test.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2",
+            "1"
+          ]
+        },
+        {
+          "path": "frontend/src/components/SummaryCards.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1",
+            "1"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现有卡片允许金额换行，单测检查 overflow-wrap 且拒绝 ellipsis，浏览器测试检查三种 CSS 属性和长金额。",
+      "current_evidence": [
+        "frontend/src/components/SummaryCards.test.js",
+        "frontend/browser-tests/finance-summary-cards.spec.js"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/fix-iss006-request-idempotency-20261029",
+      "sha": "083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a",
+      "live_sha": "083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a",
+      "base": "54e715bdc568b80ba624186fecd866550676cf38",
+      "commits": [
+        {
+          "sha": "083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a",
+          "subject": "fix: persist fulfillment request idempotency [skip ci]",
+          "matching_master_commits": [
+            "1025c0c80f7ebafc3579293299a0187f027ee951"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "1025c0c80f7ebafc3579293299a0187f027ee951"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/migrations/0090_fulfillment_idempotency.py",
+        "backend/crm/tests/test_procurement_data_scope.py",
+        "docs/uat-evidence/r1-iss006-idempotency-20261029/README.md",
+        "docs/uat-evidence/r1-iss006-idempotency-20261029/http-evidence.txt"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/models.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2669",
+            "1758"
+          ]
+        },
+        {
+          "path": "backend/crm/services/fulfillment.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "135",
+            "17"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_contract_lifecycle.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "149",
+            "5"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_fulfillment.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2",
+            "2"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_iss006_idempotency.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "95",
+            "3"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_trade_units.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "5",
+            "2"
+          ]
+        },
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1533",
+            "184"
+          ]
+        },
+        {
+          "path": "frontend/src/components/OrderDetailModal.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "93",
+            "41"
+          ]
+        },
+        {
+          "path": "frontend/src/utils/fulfillmentIdempotency.js",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "72",
+            "22"
+          ]
+        },
+        {
+          "path": "frontend/src/views/PurchaseOrderPage.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "83",
+            "30"
+          ]
+        },
+        {
+          "path": "frontend/tests/order-detail-shipment-batch.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "18",
+            "0"
+          ]
+        },
+        {
+          "path": "frontend/tests/purchase-editor-receipt.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "14",
+            "5"
+          ]
+        },
+        {
+          "path": "frontend/tests/trade-finance.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "59",
+            "4"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "保留入库和出库请求键、服务事务与 PostgreSQL 重复请求串行；库存失败回退及预留恢复有回归。",
+      "current_evidence": [
+        "backend/crm/tests/test_iss006_idempotency.py",
+        "backend/crm/tests/test_fulfillment.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/fix-quote-editor-mobile-actions-20261029",
+      "sha": "776d90bcc050bc6ab3ae96a3c8c994e0064e7291",
+      "live_sha": "776d90bcc050bc6ab3ae96a3c8c994e0064e7291",
+      "base": "54e715bdc568b80ba624186fecd866550676cf38",
+      "commits": [
+        {
+          "sha": "776d90bcc050bc6ab3ae96a3c8c994e0064e7291",
+          "subject": "[skip ci] Fix quote editor mobile action layout",
+          "matching_master_commits": [
+            "aa2f805855a5b70545af5b50f31b69bfcd93cddf"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "aa2f805855a5b70545af5b50f31b69bfcd93cddf"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-ux-quote-actions-20261029/README.md",
+        "docs/uat-evidence/r1-ux-quote-actions-20261029/browser-results.json",
+        "docs/uat-evidence/r1-ux-quote-actions-20261029/chrome-quote-actions-1024.png",
+        "docs/uat-evidence/r1-ux-quote-actions-20261029/chrome-quote-actions-1440.png",
+        "docs/uat-evidence/r1-ux-quote-actions-20261029/chrome-quote-actions-320.png",
+        "docs/uat-evidence/r1-ux-quote-actions-20261029/chrome-quote-actions-390.png",
+        "docs/uat-evidence/r1-ux-quote-actions-20261029/fixture.json",
+        "docs/uat-evidence/r1-ux-quote-actions-20261029/prepare_quote_actions.py"
+      ],
+      "remaining": [
+        {
+          "path": "frontend/browser-tests/quote-editor-mobile-actions.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "88",
+            "6"
+          ]
+        },
+        {
+          "path": "frontend/infrastructure-tests/runner-validation.test.mjs",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "246",
+            "14"
+          ]
+        },
+        {
+          "path": "frontend/scripts/run-isolated-browser-tests.mjs",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "326",
+            "27"
+          ]
+        },
+        {
+          "path": "frontend/src/components/QuoteEditorModal.test.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1",
+            "1"
+          ]
+        },
+        {
+          "path": "frontend/src/components/QuoteEditorModal.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "123",
+            "29"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行窄屏和桌面场景覆盖预览、保存、导出及下载，并有运行器诊断。",
+      "current_evidence": [
+        "frontend/browser-tests/quote-editor-mobile-actions.spec.js"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/iss-020-quote-export",
+      "sha": "13b453de019193ae45c4fa1e15724040329da594",
+      "live_sha": "13b453de019193ae45c4fa1e15724040329da594",
+      "base": "28ba758388429f57c2e3516e12385a88ce6646a3",
+      "commits": [
+        {
+          "sha": "13b453de019193ae45c4fa1e15724040329da594",
+          "subject": "docs: record ISS-020 delivery and CI evidence",
+          "matching_master_commits": [
+            "b21b6e5dc428c2e11585f5d1ceedd106900064b6"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "b21b6e5dc428c2e11585f5d1ceedd106900064b6"
+          ]
+        },
+        {
+          "sha": "35aad7d6b3576851d496c678d6568c12987cce35",
+          "subject": "fix: align quote exports with saved revisions",
+          "matching_master_commits": [
+            "0eeaca68f6acf1f4029a1e955defaaafb765e046"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "0eeaca68f6acf1f4029a1e955defaaafb765e046"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/quote_export.py",
+        "docs/uat-evidence/iss-020-quote-export/README.md",
+        "docs/uat-evidence/iss-020-quote-export/TEST_LOG.md",
+        "docs/uat-evidence/iss-020-quote-export/api-evidence.json",
+        "docs/uat-evidence/iss-020-quote-export/browser-manual-log.md",
+        "docs/uat-evidence/iss-020-quote-export/capture_api.py",
+        "docs/uat-evidence/iss-020-quote-export/fixture.json",
+        "docs/uat-evidence/iss-020-quote-export/full-django-test.log",
+        "docs/uat-evidence/iss-020-quote-export/prepare_evidence.py",
+        "docs/uat-evidence/iss-020-quote-export/version-a.xlsx",
+        "docs/uat-evidence/iss-020-quote-export/version-b-empty-email.xlsx",
+        "frontend/src/utils/piMoney.js",
+        "frontend/tests/pi-amount-words.spec.js"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/quotation_export_dto.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "70",
+            "18"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_iss020_quote_export.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "130",
+            "3"
+          ]
+        },
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1633",
+            "200"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_ISSUES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "388",
+            "49"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_PHASES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "570",
+            "2"
+          ]
+        },
+        {
+          "path": "frontend/src/components/QuoteEditorModal.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "126",
+            "30"
+          ]
+        },
+        {
+          "path": "frontend/src/utils/apiErrors.js",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "4",
+            "1"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "主干测试断言历史应收金额、缺失快照拒绝、分级舍入、正式 PI/XLSX 图片与金额。",
+      "current_evidence": [
+        "backend/crm/tests/test_iss020_quote_export.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/iss-024-supplier-recommendation",
+      "sha": "1d576e961dc021d194e0ec2f9fd7dd6fc629535d",
+      "live_sha": "1d576e961dc021d194e0ec2f9fd7dd6fc629535d",
+      "base": "af018ac63cf71143d223b9f6db4a087707495693",
+      "commits": [
+        {
+          "sha": "1d576e961dc021d194e0ec2f9fd7dd6fc629535d",
+          "subject": "feat: add customer-scoped supplier recommendations",
+          "matching_master_commits": [
+            "22342ad1a9abbbc03bfcb81f76e46664be8594ea"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "22342ad1a9abbbc03bfcb81f76e46664be8594ea"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/migrations/0083_customer_supplier_preference.py",
+        "backend/crm/migrations/0084_alter_orderitem_supplier_allocation_scope_and_source.py",
+        "backend/crm/services/supplier_allocation.py",
+        "backend/crm/services/supplier_candidates.py",
+        "backend/crm/sku_management.py",
+        "backend/crm/tests/test_iss024_reproduction.py",
+        "backend/crm/tests/test_supplier_allocation.py",
+        "docs/uat-evidence/ISS-024/README.md",
+        "docs/uat-evidence/ISS-024/iss024-mobile-supplier-warning-detail.png",
+        "docs/uat-evidence/ISS-024/iss024-mobile-supplier-warning.png",
+        "frontend/src/components/SupplierAllocationModal.test.js"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/models.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2669",
+            "1628"
+          ]
+        },
+        {
+          "path": "backend/crm/permissions.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "16",
+            "0"
+          ]
+        },
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1783",
+            "222"
+          ]
+        },
+        {
+          "path": "frontend/src/components/PurchaseSupplierPicker.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "6",
+            "2"
+          ]
+        },
+        {
+          "path": "frontend/src/components/SupplierAllocationModal.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "4",
+            "2"
+          ]
+        },
+        {
+          "path": "frontend/src/views/PurchaseOrderPage.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "169",
+            "42"
+          ]
+        },
+        {
+          "path": "frontend/tests/purchase-editor-receipt.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "18",
+            "6"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "偏好和来源范围迁移的终态与分支一致。推荐标识及原因仍由采购来源入口渲染，专门的 ISS-024 回归文件留存。",
+      "current_evidence": [
+        "frontend/src/components/PurchaseSupplierPicker.vue",
+        "backend/crm/tests/test_iss024_reproduction.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/iss-026-supplier-lifecycle",
+      "sha": "3625f472b028146c062823990322de32a98759a1",
+      "live_sha": "3625f472b028146c062823990322de32a98759a1",
+      "base": "71ec4a4c2d860b9944624a1434d9d7580e9a6d38",
+      "commits": [
+        {
+          "sha": "3625f472b028146c062823990322de32a98759a1",
+          "subject": "feat: add supplier lifecycle controls",
+          "matching_master_commits": [
+            "523d9fa0f8704ceb0d08caa01e6a734cf83c4785"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "523d9fa0f8704ceb0d08caa01e6a734cf83c4785"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/migrations/0081_supplier_lifecycle.py",
+        "backend/crm/tests/test_supplier_lifecycle.py",
+        "docs/uat-evidence/iss-026-supplier-lifecycle/README.md"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/models.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2669",
+            "1584"
+          ]
+        },
+        {
+          "path": "backend/crm/serializers.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "642",
+            "36"
+          ]
+        },
+        {
+          "path": "backend/crm/services/purchase_lifecycle.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "97",
+            "10"
+          ]
+        },
+        {
+          "path": "backend/crm/services/supplier_candidates.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "149",
+            "20"
+          ]
+        },
+        {
+          "path": "backend/crm/sku_management.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "59",
+            "8"
+          ]
+        },
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1787",
+            "222"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_ISSUES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "403",
+            "55"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_PHASES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "654",
+            "3"
+          ]
+        },
+        {
+          "path": "frontend/src/views/PurchaseOrderPage.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "170",
+            "43"
+          ]
+        },
+        {
+          "path": "frontend/src/views/ResourcePage.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1151",
+            "1005"
+          ]
+        },
+        {
+          "path": "frontend/tests/supplier-ux.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "7",
+            "9"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "停用恢复、候选过滤、权限与历史来源回查均有当前测试。",
+      "current_evidence": [
+        "backend/crm/tests/test_supplier_lifecycle.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/iss-047-private-storage",
+      "sha": "5ab3ed6dd740ba7331abb258118882d7c96e39b5",
+      "live_sha": "5ab3ed6dd740ba7331abb258118882d7c96e39b5",
+      "base": "8b2b5c19e517addd9604b239211e199a789b739e",
+      "commits": [
+        {
+          "sha": "5ab3ed6dd740ba7331abb258118882d7c96e39b5",
+          "subject": "feat: harden private media storage handoff",
+          "matching_master_commits": [
+            "3cf5a8155df746728b0c3c56fc6fd1e8fa7a6e59"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "3cf5a8155df746728b0c3c56fc6fd1e8fa7a6e59"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/management/commands/private_media_manifest.py",
+        "backend/crm/tests/test_iss047_private_storage.py",
+        "backend/environment.example",
+        "docs/deployment/ISS-047-单服务器私有文件存储.md",
+        "docs/uat-evidence/iss-047-private-storage/README.md"
+      ],
+      "remaining": [
+        {
+          "path": "backend/config/settings.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "11",
+            "0"
+          ]
+        },
+        {
+          "path": "backend/crm/services/private_media.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "116",
+            "4"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_database_settings.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2",
+            "1"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_functional_rbac.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "46",
+            "8"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_ISSUES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "385",
+            "46"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_PHASES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "522",
+            "2"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行私有媒体测试验证相对路径清单、摘要、恢复后重新读取与拒绝符号链接。",
+      "current_evidence": [
+        "backend/crm/tests/test_iss047_private_storage.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/next-iss-021-integration",
+      "sha": "a662500c06807151bb39ca990ebe17ae8d05ef54",
+      "live_sha": "a662500c06807151bb39ca990ebe17ae8d05ef54",
+      "base": "b3559f3bf83b967d06166bd409b00fc92e4e5902",
+      "commits": [
+        {
+          "sha": "a662500c06807151bb39ca990ebe17ae8d05ef54",
+          "subject": "docs(iss-021): record Actions billing blocker and delivery evidence",
+          "matching_master_commits": [
+            "0d3a3b2f03866845e22ee4c5b6092d755d772ada"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "0d3a3b2f03866845e22ee4c5b6092d755d772ada"
+          ]
+        },
+        {
+          "sha": "7fb7ff875b312fb277e9b3b06056cbca1a6a8e42",
+          "subject": "test(iss-021): archive raw regression and migration logs",
+          "matching_master_commits": [
+            "afc6d17dc6dba0660ca35bcba7a0582046b91af9"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "afc6d17dc6dba0660ca35bcba7a0582046b91af9"
+          ]
+        },
+        {
+          "sha": "07f349f80d5244243867a7841ec0dc1e77f6eb3c",
+          "subject": "feat(iss-021): integrate safe formal order quantity changes",
+          "matching_master_commits": [
+            "3ec269246c39c77bb34d530d8817ba0cb136c9a6"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "3ec269246c39c77bb34d530d8817ba0cb136c9a6"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/migrations/0085_order_quantity_adjustment.py",
+        "docs/uat-evidence/iss-021-integration/README.md",
+        "docs/uat-evidence/iss-021-integration/api-evidence.json",
+        "docs/uat-evidence/iss-021-integration/api-probe.log",
+        "docs/uat-evidence/iss-021-integration/api_probe.py",
+        "docs/uat-evidence/iss-021-integration/backend-full.log",
+        "docs/uat-evidence/iss-021-integration/backend-redaction-final.log",
+        "docs/uat-evidence/iss-021-integration/backend-targeted-final.log",
+        "docs/uat-evidence/iss-021-integration/backend-targeted-wrong-labels.log",
+        "docs/uat-evidence/iss-021-integration/backend-targeted.log",
+        "docs/uat-evidence/iss-021-integration/browser-decrease-preview.jpg",
+        "docs/uat-evidence/iss-021-integration/browser-increase-history.jpg",
+        "docs/uat-evidence/iss-021-integration/browser-increase-preview.jpg",
+        "docs/uat-evidence/iss-021-integration/browser-paid900-footer-390.jpg",
+        "docs/uat-evidence/iss-021-integration/browser-paid900-rejection-390.jpg",
+        "docs/uat-evidence/iss-021-integration/browser-paid900.txt",
+        "docs/uat-evidence/iss-021-integration/browser-refreshed-history.jpg",
+        "docs/uat-evidence/iss-021-integration/browser-shipped70-rejection-390.jpg",
+        "docs/uat-evidence/iss-021-integration/browser-shipped70.txt",
+        "docs/uat-evidence/iss-021-integration/ci-40257290673.log",
+        "docs/uat-evidence/iss-021-integration/ci-annotations-40257290673.log",
+        "docs/uat-evidence/iss-021-integration/ci-jobs-40257290673.log",
+        "docs/uat-evidence/iss-021-integration/database-after.json",
+        "docs/uat-evidence/iss-021-integration/database-before.json",
+        "docs/uat-evidence/iss-021-integration/database-verification.log",
+        "docs/uat-evidence/iss-021-integration/frontend-build-final.log",
+        "docs/uat-evidence/iss-021-integration/frontend-build.log",
+        "docs/uat-evidence/iss-021-integration/frontend-node.log",
+        "docs/uat-evidence/iss-021-integration/frontend-targeted-final.log",
+        "docs/uat-evidence/iss-021-integration/frontend-targeted.log",
+        "docs/uat-evidence/iss-021-integration/frontend-vitest-tests.log",
+        "docs/uat-evidence/iss-021-integration/frontend-vitest-wrong-runner.log",
+        "docs/uat-evidence/iss-021-integration/migration-check.log",
+        "docs/uat-evidence/iss-021-integration/migration-probe-wrong-fixture.log",
+        "docs/uat-evidence/iss-021-integration/migration-upgrade.log",
+        "docs/uat-evidence/iss-021-integration/migrations-browser.log",
+        "docs/uat-evidence/iss-021-integration/migrations.log",
+        "docs/uat-evidence/iss-021-integration/seed.json",
+        "docs/uat-evidence/iss-021-integration/seed.log",
+        "docs/uat-evidence/iss-021-integration/seed_and_verify.py"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/models.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2669",
+            "1664"
+          ]
+        },
+        {
+          "path": "backend/crm/serializers.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "562",
+            "35"
+          ]
+        },
+        {
+          "path": "backend/crm/services/order_quantity_adjustments.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "152",
+            "56"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_order_quantity_adjustments.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "360",
+            "9"
+          ]
+        },
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1658",
+            "219"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_ISSUES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "389",
+            "49"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_PHASES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "603",
+            "2"
+          ]
+        },
+        {
+          "path": "frontend/src/components/OrderDetailModal.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "99",
+            "43"
+          ]
+        },
+        {
+          "path": "frontend/tests/order-quantity-adjustment.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "40",
+            "0"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行数量调整回归覆盖精度、上限、历史标志绕过与脱敏审计，保留现行迁移链。",
+      "current_evidence": [
+        "backend/crm/tests/test_order_quantity_adjustments.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/next-iss-040-integration",
+      "sha": "a4fc6d4f01f8c32a4a89f0d46557500a34566e98",
+      "live_sha": "a4fc6d4f01f8c32a4a89f0d46557500a34566e98",
+      "base": "54925e0a10a48c16ba3b66bbab9e433f48a0e2d7",
+      "commits": [
+        {
+          "sha": "a4fc6d4f01f8c32a4a89f0d46557500a34566e98",
+          "subject": "feat: integrate ISS-040 packing list export",
+          "matching_master_commits": [
+            "2dc00706696c5035aadd1a64da34bc0266e9a326"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "2dc00706696c5035aadd1a64da34bc0266e9a326"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/services/packing_list.py",
+        "backend/crm/templates/packing/Packing List装箱单.xlsx",
+        "backend/crm/tests/test_packing_list_export.py",
+        "docs/uat-evidence/iss-040-integration/README.md",
+        "docs/uat-evidence/iss-040-integration/TEST_LOG.md",
+        "docs/uat-evidence/iss-040-integration/browser-chrome-packing-tab-1440.png",
+        "docs/uat-evidence/iss-040-integration/browser-chrome-packing-tab-700.png",
+        "docs/uat-evidence/iss-040-integration/samples/sample-a-normal-preview.png",
+        "docs/uat-evidence/iss-040-integration/samples/sample-a-normal.xlsx",
+        "docs/uat-evidence/iss-040-integration/samples/sample-b-mixed-preview.png",
+        "docs/uat-evidence/iss-040-integration/samples/sample-b-mixed.xlsx",
+        "docs/uat-evidence/iss-040-integration/samples/sample-c-different-carton-specs-preview.png",
+        "docs/uat-evidence/iss-040-integration/samples/sample-c-different-carton-specs.xlsx",
+        "docs/uat-evidence/iss-040-integration/samples/sample-d-split-shipment-01-preview.png",
+        "docs/uat-evidence/iss-040-integration/samples/sample-d-split-shipment-01.xlsx",
+        "docs/uat-evidence/iss-040-integration/samples/sample-d-split-shipment-02-preview.png",
+        "docs/uat-evidence/iss-040-integration/samples/sample-d-split-shipment-02.xlsx",
+        "docs/uat-evidence/iss-040-integration/samples/sample-e-multipage-60-rows-preview.png",
+        "docs/uat-evidence/iss-040-integration/samples/sample-e-multipage-60-rows.xlsx",
+        "docs/uat-evidence/iss-040-integration/samples/sample-f-long-description-preview.png",
+        "docs/uat-evidence/iss-040-integration/samples/sample-f-long-description.xlsx",
+        "docs/uat-evidence/iss-040-integration/seed.json",
+        "docs/uat-evidence/iss-040-integration/xlsx-structure-validation.json"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1852",
+            "224"
+          ]
+        },
+        {
+          "path": "frontend/src/api.js",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "27",
+            "21"
+          ]
+        },
+        {
+          "path": "frontend/src/components/ShipmentActualPacking.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "11",
+            "7"
+          ]
+        },
+        {
+          "path": "frontend/tests/shipment-actual-packing.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "16",
+            "6"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行正式 Shipment XLSX 验证真实出库、分批导出、打印区域和权限。历史原生 Excel 实机分页仍按既定范围延期。",
+      "current_evidence": [
+        "backend/crm/tests/test_packing_list_export.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/publish-local-20261031/r1-iss028-035-category-verify-bd324-20261031",
+      "sha": "ae78826ef9906d56f8211ee983c2a01132551165",
+      "live_sha": "ae78826ef9906d56f8211ee983c2a01132551165",
+      "base": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+      "commits": [
+        {
+          "sha": "ae78826ef9906d56f8211ee983c2a01132551165",
+          "subject": "test: verify iss028-035 categories and SKU snapshots [skip ci]",
+          "matching_master_commits": [
+            "fe1eb0af3a164bd087ada091d69ef73472779eea"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "fe1eb0af3a164bd087ada091d69ef73472779eea"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/README.md",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/artifacts/17954a6c-8796-4132-ac95-9545a62c2bd5/.last-run.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/artifacts/e33c8eaa-6c91-4de7-9c0a-6f71814649bd/.last-run.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/01-iss028-root-category-assignment-desktop.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/02-iss028-root-category-filter-desktop.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/03-iss028-child-category-filter-desktop.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/04-iss028-root-category-assignment-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/05-iss028-root-category-filter-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/06-iss028-child-category-filter-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/07-iss028-inherited-attributes-1440.webp",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/08-iss028-inherited-attributes-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/09-iss035-category-template-changed-1440.webp",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/10-iss035-category-template-changed-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/11-iss035-ordinary-sku-save-1440.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/12-iss035-reopened-sku-1440.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/13-iss035-ordinary-sku-save-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/14-iss035-reopened-sku-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/browser-environment.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/iss028-browser-layout.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/iss028-http-results.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/iss035-api-and-db-snapshots.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/iss035-browser-layout.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/chrome-isolated-run.log",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/focused-unit-tests.log",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/frontend-build.log",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/inspect_fixture_sqlite.py"
+      ],
+      "remaining": [
+        {
+          "path": "frontend/browser-tests/iss028-035-category-schema.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "8",
+            "7"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行浏览器测试覆盖根/子分类、继承属性、筛选，以及属性模板变化后的 SKU、报价、订单快照。",
+      "current_evidence": [
+        "frontend/browser-tests/iss028-035-category-schema.spec.js"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-fix-shared-report-timeout-20261029",
+      "sha": "74e0f90c33add755731f521dcad23c92d95cbb1c",
+      "live_sha": "74e0f90c33add755731f521dcad23c92d95cbb1c",
+      "base": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+      "commits": [
+        {
+          "sha": "74e0f90c33add755731f521dcad23c92d95cbb1c",
+          "subject": "test: isolate shared report spec from external fonts [skip ci]",
+          "matching_master_commits": [
+            "3805aab51a3fa066dec1a044a516769b7ab991e8"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "3805aab51a3fa066dec1a044a516769b7ab991e8"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/README.md",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/artifacts/350f2994-c492-411e-9c1a-0c116f947d84/.last-run.json",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/artifacts/350f2994-c492-411e-9c1a-0c116f947d84/shared-report-templates-se-bc410--published-query-definition/error-context.md",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/artifacts/400e1f3b-ea51-46e8-885e-1986f6749c4c/.last-run.json",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/artifacts/e82ecfc3-ce6e-4c91-978e-eaa2cb022b3c/.last-run.json",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/artifacts/e82ecfc3-ce6e-4c91-978e-eaa2cb022b3c/shared-report-templates-se-bc410--published-query-definition/error-context.md",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/baseline-employee-700px.png",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/baseline-reproduction.log",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/diagnostic-employee-700px.png",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/diagnostic-manager-1024px.png",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/diagnostic-manager-1440px.png",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/domcontentloaded-diagnostic.log",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/fixed-browser-test.log",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/fixed-employee-700px-after-delete.png",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/fixed-employee-700px.png",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/fixed-manager-1024px.png",
+        "docs/uat-evidence/r1-shared-report-timeout-20261029/fixed-manager-1440px.png"
+      ],
+      "remaining": [
+        {
+          "path": "frontend/browser-tests/shared-report-templates.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "5",
+            "5"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行 spec 同时拦截 fonts.googleapis.com 和 fonts.gstatic.com，保留共享报表回归。",
+      "current_evidence": [
+        "frontend/browser-tests/shared-report-templates.spec.js"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss002-security-audit-final-20261101",
+      "sha": "427d2a2c38516a52d460f50e60e0fb635f23a4c2",
+      "live_sha": "427d2a2c38516a52d460f50e60e0fb635f23a4c2",
+      "base": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+      "commits": [
+        {
+          "sha": "427d2a2c38516a52d460f50e60e0fb635f23a4c2",
+          "subject": "[skip ci] docs: record ISS-002 security audit evidence",
+          "matching_master_commits": [
+            "872fb42ca11b1949275d1588ca0de8022e4f0d4c"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "872fb42ca11b1949275d1588ca0de8022e4f0d4c"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/README.md",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/audit-environment.txt",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/frontend-lock-integrity.log",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/npm-audit-all.exit-code.txt",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/npm-audit-all.json",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/npm-audit-all.stderr.log",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/npm-audit-production.exit-code.txt",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/npm-audit-production.json",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/npm-audit-production.stderr.log",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/pip-audit-cache-check.log",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/pip-audit-unavailable.log",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/python-lock-integrity.log",
+        "docs/uat-evidence/r1-iss002-security-audit-final-20261101/logs/python-runtime-and-pip-audit-availability.log"
+      ],
+      "remaining": [],
+      "disposition": "可删除",
+      "reason": "全部净变化路径对象及模式一致，原证据仍在 master。",
+      "current_evidence": [],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss006-po-locking-20261029",
+      "sha": "083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a",
+      "live_sha": "083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a",
+      "base": "54e715bdc568b80ba624186fecd866550676cf38",
+      "commits": [
+        {
+          "sha": "083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a",
+          "subject": "fix: persist fulfillment request idempotency [skip ci]",
+          "matching_master_commits": [
+            "1025c0c80f7ebafc3579293299a0187f027ee951"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "1025c0c80f7ebafc3579293299a0187f027ee951"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/migrations/0090_fulfillment_idempotency.py",
+        "backend/crm/tests/test_procurement_data_scope.py",
+        "docs/uat-evidence/r1-iss006-idempotency-20261029/README.md",
+        "docs/uat-evidence/r1-iss006-idempotency-20261029/http-evidence.txt"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/models.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2669",
+            "1758"
+          ]
+        },
+        {
+          "path": "backend/crm/services/fulfillment.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "135",
+            "17"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_contract_lifecycle.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "149",
+            "5"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_fulfillment.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2",
+            "2"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_iss006_idempotency.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "95",
+            "3"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_trade_units.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "5",
+            "2"
+          ]
+        },
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1533",
+            "184"
+          ]
+        },
+        {
+          "path": "frontend/src/components/OrderDetailModal.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "93",
+            "41"
+          ]
+        },
+        {
+          "path": "frontend/src/utils/fulfillmentIdempotency.js",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "72",
+            "22"
+          ]
+        },
+        {
+          "path": "frontend/src/views/PurchaseOrderPage.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "83",
+            "30"
+          ]
+        },
+        {
+          "path": "frontend/tests/order-detail-shipment-batch.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "18",
+            "0"
+          ]
+        },
+        {
+          "path": "frontend/tests/purchase-editor-receipt.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "14",
+            "5"
+          ]
+        },
+        {
+          "path": "frontend/tests/trade-finance.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "59",
+            "4"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "与另一 ISS-006 候选指向同一 SHA。幂等、库存副作用及并发覆盖采用现行实现。",
+      "current_evidence": [
+        "backend/crm/tests/test_iss006_idempotency.py",
+        "backend/crm/tests/test_fulfillment.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss028-035-category-verify-bd324-20261031",
+      "sha": "1d546d494d820f793b336aed8ffbc7afd8f2af21",
+      "live_sha": "1d546d494d820f793b336aed8ffbc7afd8f2af21",
+      "base": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+      "commits": [
+        {
+          "sha": "1d546d494d820f793b336aed8ffbc7afd8f2af21",
+          "subject": "test: verify iss028-035 categories and SKU snapshots [skip ci]",
+          "matching_master_commits": [
+            "fe1eb0af3a164bd087ada091d69ef73472779eea"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "fe1eb0af3a164bd087ada091d69ef73472779eea"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/README.md",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/artifacts/17954a6c-8796-4132-ac95-9545a62c2bd5/.last-run.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/artifacts/e33c8eaa-6c91-4de7-9c0a-6f71814649bd/.last-run.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/01-iss028-root-category-assignment-desktop.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/02-iss028-root-category-filter-desktop.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/03-iss028-child-category-filter-desktop.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/04-iss028-root-category-assignment-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/05-iss028-root-category-filter-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/06-iss028-child-category-filter-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/07-iss028-inherited-attributes-1440.webp",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/08-iss028-inherited-attributes-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/09-iss035-category-template-changed-1440.webp",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/10-iss035-category-template-changed-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/11-iss035-ordinary-sku-save-1440.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/12-iss035-reopened-sku-1440.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/13-iss035-ordinary-sku-save-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/14-iss035-reopened-sku-390.png",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/browser-environment.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/iss028-browser-layout.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/iss028-http-results.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/iss035-api-and-db-snapshots.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/browser/iss028-035-category-schema.spec/iss035-browser-layout.json",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/chrome-isolated-run.log",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/focused-unit-tests.log",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/frontend-build.log",
+        "docs/uat-evidence/r1-iss028-035-category-verify-bd324-20261031/inspect_fixture_sqlite.py"
+      ],
+      "remaining": [
+        {
+          "path": "frontend/browser-tests/iss028-035-category-schema.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "8",
+            "7"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行浏览器测试覆盖根/子分类、继承属性、筛选，以及属性模板变化后的 SKU、报价、订单快照。",
+      "current_evidence": [
+        "frontend/browser-tests/iss028-035-category-schema.spec.js"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss037-seller-template-freeze-20261103",
+      "sha": "b00981200eb01af4bfa8351c4bd636ab1a678b71",
+      "live_sha": "b00981200eb01af4bfa8351c4bd636ab1a678b71",
+      "base": "a55469c1b07e4f13037c6644c69d8a35ef0496a0",
+      "commits": [
+        {
+          "sha": "b00981200eb01af4bfa8351c4bd636ab1a678b71",
+          "subject": "Verify saved PI content and images inside frozen frame",
+          "matching_master_commits": [
+            "e754921b46882eebb4ee17de17ed4943dc5c9977"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "e754921b46882eebb4ee17de17ed4943dc5c9977"
+          ]
+        },
+        {
+          "sha": "2371d7981d05fd727e175e8b7cd14f8524437781",
+          "subject": "Verify saved quotation iframe printing",
+          "matching_master_commits": [
+            "774ff07f1a7e7f0b5f9d327e1619a879862d168f"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "774ff07f1a7e7f0b5f9d327e1619a879862d168f"
+          ]
+        },
+        {
+          "sha": "01b2a7394a28f1a2f34c8fe0d7cd60a4db3f9232",
+          "subject": "Freeze quotation seller and template assets",
+          "matching_master_commits": [
+            "8cf56297a32d0d32056c81799ab37b8bb1cc9b4a"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "8cf56297a32d0d32056c81799ab37b8bb1cc9b4a"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/migrations/0096_quote_pi_template_snapshots.py",
+        "backend/crm/quote_template_snapshot.py",
+        "backend/crm/quote_xlsx_renderer.py",
+        "backend/crm/tests/test_quote_template_snapshot.py",
+        "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/README.md",
+        "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/seed_browser.py",
+        "frontend/browser-tests/integration-020-051-evidence.spec.js",
+        "frontend/tests/final-polish.spec.js"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/models.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2669",
+            "1992"
+          ]
+        },
+        {
+          "path": "backend/crm/pi_print_template.html",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1",
+            "1"
+          ]
+        },
+        {
+          "path": "backend/crm/quotation_export_dto.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "55",
+            "13"
+          ]
+        },
+        {
+          "path": "backend/crm/serializers.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "402",
+            "23"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_quote_template_migration.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "4",
+            "3"
+          ]
+        },
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "826",
+            "130"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/browser-http-1440.json",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2",
+            "2"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/browser-http-390.json",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2",
+            "2"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/screenshots/revision-draft-preview-1440.png",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "-",
+            "-"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/screenshots/saved-pi-1440.png",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "-",
+            "-"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss037-seller-template-freeze-20261103/screenshots/saved-pi-390.png",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "-",
+            "-"
+          ]
+        },
+        {
+          "path": "frontend/browser-tests/iss007-image-snapshot-real.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "25",
+            "5"
+          ]
+        },
+        {
+          "path": "frontend/browser-tests/iss029-recipient-snapshot.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "19",
+            "5"
+          ]
+        },
+        {
+          "path": "frontend/browser-tests/iss037-seller-freeze-real.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "5",
+            "2"
+          ]
+        },
+        {
+          "path": "frontend/src/components/QuoteEditorModal.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "107",
+            "20"
+          ]
+        },
+        {
+          "path": "frontend/src/components/QuotePreviewModal.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "41",
+            "6"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行浏览器场景验证 1440/390 已保存 PI、Chrome 打印入口与未保存修订沿用父卖方。旧截图可经主干匹配提交追溯。",
+      "current_evidence": [
+        "frontend/browser-tests/iss037-seller-freeze-real.spec.js",
+        "backend/crm/tests/test_quote_template_snapshot.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss037-snapshot-audit-20261103",
+      "sha": "c88a121298465fcb04e11f9b65ef9ad251eadf3f",
+      "live_sha": "c88a121298465fcb04e11f9b65ef9ad251eadf3f",
+      "base": "8d3ca5faa16fb74de95dbc716f5556a5d51bbe79",
+      "commits": [
+        {
+          "sha": "c88a121298465fcb04e11f9b65ef9ad251eadf3f",
+          "subject": "docs: audit ISS-037 historical party snapshot coverage [skip ci]",
+          "matching_master_commits": [
+            "72dfc116d2e1c552351b93bcea82a117a639308e"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "72dfc116d2e1c552351b93bcea82a117a639308e"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-iss037-snapshot-audit-20261103/README.md",
+        "docs/uat-evidence/r1-iss037-snapshot-audit-20261103/audit_runner.py",
+        "docs/uat-evidence/r1-iss037-snapshot-audit-20261103/final-verification-raw.zip",
+        "docs/uat-evidence/r1-iss037-snapshot-audit-20261103/migration-raw.zip",
+        "docs/uat-evidence/r1-iss037-snapshot-audit-20261103/migration_probe.py",
+        "docs/uat-evidence/r1-iss037-snapshot-audit-20261103/probe-rerun-raw.zip",
+        "docs/uat-evidence/r1-iss037-snapshot-audit-20261103/raw-evidence.zip",
+        "docs/uat-evidence/r1-iss037-snapshot-audit-20261103/snapshot_probe.py"
+      ],
+      "remaining": [],
+      "disposition": "可删除",
+      "reason": "正式主体快照审计的全部净变化路径终态一致。",
+      "current_evidence": [
+        "backend/crm/tests/test_formal_party_snapshots.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss037-unknown-buyer-revision-fix-20261103",
+      "sha": "1a9666010c370dda08e2719e2c70caf6ee6c1b11",
+      "live_sha": "1a9666010c370dda08e2719e2c70caf6ee6c1b11",
+      "base": "8d3ca5faa16fb74de95dbc716f5556a5d51bbe79",
+      "commits": [
+        {
+          "sha": "1a9666010c370dda08e2719e2c70caf6ee6c1b11",
+          "subject": "fix: preserve unknown buyer snapshots across quote revisions [skip ci]",
+          "matching_master_commits": [
+            "d9ac8cbb262b2c303d90ea843a4a6580b8260ff8"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "d9ac8cbb262b2c303d90ea843a4a6580b8260ff8"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/tests/test_quote_unknown_buyer.py",
+        "docs/uat-evidence/r1-iss037-unknown-buyer-revision-fix-20261103/README.md",
+        "docs/uat-evidence/r1-iss037-unknown-buyer-revision-fix-20261103/raw-logs.zip"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/models.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2669",
+            "1942"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "当前专用回归验证未知买方修订、PI 和 XLSX 拒绝，检查不回落到实时主数据。",
+      "current_evidence": [
+        "backend/crm/tests/test_quote_unknown_buyer.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss039-reservation-concurrency-20261103",
+      "sha": "087f6098c27050a1d7180fe9c85eef6417063c0b",
+      "live_sha": "087f6098c27050a1d7180fe9c85eef6417063c0b",
+      "base": "a55469c1b07e4f13037c6644c69d8a35ef0496a0",
+      "commits": [
+        {
+          "sha": "087f6098c27050a1d7180fe9c85eef6417063c0b",
+          "subject": "Record PostgreSQL reservation race results [skip ci]",
+          "matching_master_commits": [
+            "5ae09a5715e0e1bce48d082f13a754d2cf33923d"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "5ae09a5715e0e1bce48d082f13a754d2cf33923d"
+          ]
+        },
+        {
+          "sha": "a065a49da0d6af7102acaf8a30fc6500e89c84bb",
+          "subject": "Add PostgreSQL purchase reservation concurrency coverage",
+          "matching_master_commits": [
+            "fb91c598031a865e932c669360a082a8d59f5cdc"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "fb91c598031a865e932c669360a082a8d59f5cdc"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/tests/test_postgres_concurrency.py",
+        "docs/uat-evidence/r1-iss039-reservation-concurrency-20261103/README.md",
+        "docs/uat-evidence/r1-iss039-reservation-concurrency-20261103/sqlite-rollback.raw.log",
+        "docs/uat-evidence/r1-iss039-reservation-concurrency-20261103/sqlite-sequential.raw.log",
+        "docs/uat-evidence/r1-iss039-reservation-concurrency-20261103/sqlite-sku-sequential.raw.log",
+        "docs/uat-evidence/r1-iss039-reservation-concurrency-20261103/sqlite-test.raw.log"
+      ],
+      "remaining": [],
+      "disposition": "可删除",
+      "reason": "净变化路径终态一致。保留原 PostgreSQL 竞争验证和现行库存事务测试。",
+      "current_evidence": [
+        "backend/crm/tests/test_fulfillment.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss039-shared-cost-audit-20261103",
+      "sha": "2d5164287672d9a57a6496761c3ea0d026088072",
+      "live_sha": "2d5164287672d9a57a6496761c3ea0d026088072",
+      "base": "8d3ca5faa16fb74de95dbc716f5556a5d51bbe79",
+      "commits": [
+        {
+          "sha": "2d5164287672d9a57a6496761c3ea0d026088072",
+          "subject": "docs: audit ISS-039 shared purchase cost rules [skip ci]",
+          "matching_master_commits": [
+            "2ef3748906fcbecdf9e54ea04bd0d1c87e22329d"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "2ef3748906fcbecdf9e54ea04bd0d1c87e22329d"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-iss039-shared-cost-audit-20261103/README.md",
+        "docs/uat-evidence/r1-iss039-shared-cost-audit-20261103/existing-tests.raw.zip",
+        "docs/uat-evidence/r1-iss039-shared-cost-audit-20261103/frontend.raw.zip",
+        "docs/uat-evidence/r1-iss039-shared-cost-audit-20261103/frontend_probe.py",
+        "docs/uat-evidence/r1-iss039-shared-cost-audit-20261103/probe.py",
+        "docs/uat-evidence/r1-iss039-shared-cost-audit-20261103/probe.raw.zip",
+        "docs/uat-evidence/r1-iss039-shared-cost-audit-20261103/run_existing.ps1"
+      ],
+      "remaining": [],
+      "disposition": "可删除",
+      "reason": "净变化路径终态一致。主干保留采购共享成本专项。",
+      "current_evidence": [
+        "backend/crm/tests/test_iss039_shared_purchase_costs.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss045-qa-tools-bd324-20261031",
+      "sha": "4ddaa6b7bdd1a9f21443f687e4ff90f46aa02629",
+      "live_sha": "4ddaa6b7bdd1a9f21443f687e4ff90f46aa02629",
+      "base": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+      "commits": [
+        {
+          "sha": "4ddaa6b7bdd1a9f21443f687e4ff90f46aa02629",
+          "subject": "[skip ci] harden seed demo database isolation",
+          "matching_master_commits": [
+            "6ec1a50ee14fd17a64de4f68cd63e2b2c426b47b"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "6ec1a50ee14fd17a64de4f68cd63e2b2c426b47b"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/management/commands/seed_demo.py",
+        "backend/crm/tests/test_legacy_qa_tools.py",
+        "docs/uat-evidence/r1-iss045-qa-tools-bd324-20261031/README.md"
+      ],
+      "remaining": [
+        {
+          "path": "README.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "16",
+            "74"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "seed_demo 及隔离测试的路径终态一致。README 已改用现行启动器说明，命令仍检查环境、SQLite 路径和符号链接。",
+      "current_evidence": [
+        "backend/crm/tests/test_legacy_qa_tools.py",
+        "backend/crm/management/commands/seed_demo.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss052-csv-limit-bd324-20261030",
+      "sha": "d08ca625ac6beeec51ecc14eb92c97da0ea6f63b",
+      "live_sha": "d08ca625ac6beeec51ecc14eb92c97da0ea6f63b",
+      "base": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+      "commits": [
+        {
+          "sha": "d08ca625ac6beeec51ecc14eb92c97da0ea6f63b",
+          "subject": "fix: enforce CSV upload limits while streaming [skip ci]",
+          "matching_master_commits": [
+            "1c9a86aedd928ad450276ad54b5db561740f8385"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "1c9a86aedd928ad450276ad54b5db561740f8385"
+          ]
+        },
+        {
+          "sha": "a6c5b56a00326234681399a3405efa2117198f76",
+          "subject": "fix: limit CSV uploads and audit parse failures [skip ci]",
+          "matching_master_commits": [
+            "403f4a30d914e9e888dde2de261357d3c05deab7"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "403f4a30d914e9e888dde2de261357d3c05deab7"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/config/settings.py",
+        "docs/uat-evidence/iss052-csv-stream-limit.md",
+        "docs/uat-evidence/r1-five-fixes-migration-20261030/D-csv-limit/README.md",
+        "docs/uat-evidence/r1-five-fixes-migration-20261030/D-csv-limit/logs/csv-limit-audit-tests.log",
+        "docs/uat-evidence/r1-five-fixes-migration-20261030/D-csv-limit/logs/locked-dependencies.log",
+        "docs/uat-evidence/r1-five-fixes-migration-20261030/D-csv-limit/logs/makemigrations-check.log",
+        "docs/uat-evidence/r1-five-fixes-migration-20261030/D-csv-limit/logs/system-check.log"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/tests/test_safe_csv_import.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "270",
+            "5"
+          ]
+        },
+        {
+          "path": "backend/crm/upload_handlers.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "49",
+            "7"
+          ]
+        },
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1203",
+            "200"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行 HTTP 413 回归验证所有 CSV 路由及临时文件释放，主干保有单独的 PostgreSQL 持久审计测试。",
+      "current_evidence": [
+        "backend/crm/tests/test_csv_upload_http_413.py",
+        "backend/crm/tests/test_csv_import_audit_postgres.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss052-postgresql-uat-20261101",
+      "sha": "a34bed75edd4e4b07c7a7780f6821a650b06f68c",
+      "live_sha": "a34bed75edd4e4b07c7a7780f6821a650b06f68c",
+      "base": "ab9ce886094a065766a24b35d9b82c7a7c0fd067",
+      "commits": [
+        {
+          "sha": "a34bed75edd4e4b07c7a7780f6821a650b06f68c",
+          "subject": "[skip ci] docs: record ISS-052 PostgreSQL UAT blocker",
+          "matching_master_commits": [
+            "4db62dca82ddfdae043d36e23d3cb9a82c3c4f23"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "4db62dca82ddfdae043d36e23d3cb9a82c3c4f23"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/iss-052-postgresql-uat-20261101.md"
+      ],
+      "remaining": [],
+      "disposition": "可删除",
+      "reason": "净变化路径终态一致；历史阻塞记录与现行 PostgreSQL 测试分开保存。",
+      "current_evidence": [
+        "backend/crm/tests/test_csv_import_audit_postgres.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss105-bank-duplicate-detection-20261103",
+      "sha": "8e99dc1abcf1f4f9fbd9d6cac57258990c12d3e8",
+      "live_sha": "8e99dc1abcf1f4f9fbd9d6cac57258990c12d3e8",
+      "base": "a55469c1b07e4f13037c6644c69d8a35ef0496a0",
+      "commits": [
+        {
+          "sha": "8e99dc1abcf1f4f9fbd9d6cac57258990c12d3e8",
+          "subject": "Separate synthetic bank facts across browser suites",
+          "matching_master_commits": [
+            "60bff36b0b4402656bce11a7fa8cd24632af567c"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "60bff36b0b4402656bce11a7fa8cd24632af567c"
+          ]
+        },
+        {
+          "sha": "19e2379db994bdcd28bef2b9c6147ba827fa7068",
+          "subject": "Record PostgreSQL bank fact verification [skip ci]",
+          "matching_master_commits": [
+            "ff0bdc4a0ecf76f08089b66854ec21c98dec9fc2"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "ff0bdc4a0ecf76f08089b66854ec21c98dec9fc2"
+          ]
+        },
+        {
+          "sha": "cc38433c6079c79ba0471543378e2f6ddfd8bc1a",
+          "subject": "Detect and audit suspected duplicate bank facts",
+          "matching_master_commits": [
+            "104da6c71de8e79ff40170034ce57d089b73ebaa"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "104da6c71de8e79ff40170034ce57d089b73ebaa"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/migrations/0096_rmbcashevent_bank_counterparty_and_more.py",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/README.md",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/artifacts/0977766c-ff93-462d-9764-2f07adfec14f/.last-run.json",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/artifacts/6cffab08-5104-4efb-bc9f-dd59fba0cf21/.last-run.json",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/artifacts/737ff8db-d1ae-411f-8ae2-e00a96860b38/.last-run.json",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/artifacts/9e74a8bf-4a49-4662-8210-ee7331e3897f/.last-run.json",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/artifacts/fd56dccb-0516-49c1-afab-123d3abb0b04/.last-run.json",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/execution-logs.zip",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/independent-bank-fee/database-after.json",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/independent-bank-fee/http.json",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/independent-bank-fee/isolation-database.json",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/independent-bank-fee/layout.json",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/independent-bank-fee/screenshots/confirmed-fee-1440.png",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/independent-bank-fee/screenshots/confirmed-fee-390.png",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/independent-bank-fee/screenshots/optional-fee-1440.png",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/independent-bank-fee/screenshots/optional-fee-390.png",
+        "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/inspect_browser.py"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/cash_api.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "166",
+            "24"
+          ]
+        },
+        {
+          "path": "backend/crm/models.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2670",
+            "1964"
+          ]
+        },
+        {
+          "path": "backend/crm/postgres_test_cleanup.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "43",
+            "3"
+          ]
+        },
+        {
+          "path": "backend/crm/services/cash_events.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "219",
+            "23"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_cash_duplicate_review.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "24",
+            "3"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_cash_events.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "474",
+            "9"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_postgres_test_isolation.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "25",
+            "10"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/artifacts/6cffab08-5104-4efb-bc9f-dd59fba0cf21/cash-duplicate-real-核对同账户同额候选并有说明放行-1440px/error-context.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "4",
+            "4"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/artifacts/6cffab08-5104-4efb-bc9f-dd59fba0cf21/cash-duplicate-real-核对同账户同额候选并有说明放行-390px/error-context.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "4",
+            "4"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/browser-database.json",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "15",
+            "15"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/browser-http.json",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "375",
+            "83"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/screenshots/duplicate-review-1440.png",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "-",
+            "-"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/r1-iss105-bank-duplicate-detection-20261103/screenshots/duplicate-review-390.png",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "-",
+            "-"
+          ]
+        },
+        {
+          "path": "frontend/browser-tests/cash-duplicate-real.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "46",
+            "19"
+          ]
+        },
+        {
+          "path": "frontend/browser-tests/cash-events-p2b.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "179",
+            "87"
+          ]
+        },
+        {
+          "path": "frontend/browser-tests/independent-bank-fee-real.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "56",
+            "25"
+          ]
+        },
+        {
+          "path": "frontend/scripts/run-isolated-browser-tests.mjs",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "120",
+            "20"
+          ]
+        },
+        {
+          "path": "frontend/src/views/CashEventPage.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "51",
+            "343"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行独立数据库用例保留 390/1440 同账户同额复核，增加私有凭证和失败重试。后端覆盖跨日期银行标识、确认失败回滚、并发串行和 PostgreSQL 审计保护。",
+      "current_evidence": [
+        "frontend/browser-tests/cash-duplicate-real.spec.js",
+        "backend/crm/tests/test_cash_duplicate_review.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss105-independent-bank-fee-fix-20261103",
+      "sha": "321cb77d0179888a4788408d32c77d789504fbdd",
+      "live_sha": "321cb77d0179888a4788408d32c77d789504fbdd",
+      "base": "8d3ca5faa16fb74de95dbc716f5556a5d51bbe79",
+      "commits": [
+        {
+          "sha": "321cb77d0179888a4788408d32c77d789504fbdd",
+          "subject": "fix: allow optional settlement for independent bank fees [skip ci]",
+          "matching_master_commits": [
+            "45aedd3a25439c586e426a72b8046e9b223dc345"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "45aedd3a25439c586e426a72b8046e9b223dc345"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/tests/test_independent_bank_fee.py",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/README.md",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/SHA256.md",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/ci-entry-supplement.zip",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/independent-bank-fee/database-after.json",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/independent-bank-fee/http.json",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/independent-bank-fee/isolation-database.json",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/independent-bank-fee/layout.json",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/independent-bank-fee/screenshots/confirmed-fee-1440.png",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/independent-bank-fee/screenshots/confirmed-fee-390.png",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/independent-bank-fee/screenshots/optional-fee-1440.png",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/independent-bank-fee/screenshots/optional-fee-390.png",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/raw-logs.zip",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/redact_logs.mjs",
+        "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/verify_environment.py",
+        "frontend/src/utils/cashEventPayload.js",
+        "frontend/src/utils/cashEventPayload.test.js"
+      ],
+      "remaining": [
+        {
+          "path": "docs/uat-evidence/r1-iss105-independent-bank-fee-fix-20261103/seed_browser.py",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "7",
+            "1"
+          ]
+        },
+        {
+          "path": "frontend/browser-tests/independent-bank-fee-real.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "57",
+            "25"
+          ]
+        },
+        {
+          "path": "frontend/infrastructure-tests/runner-validation.test.mjs",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "130",
+            "13"
+          ]
+        },
+        {
+          "path": "frontend/scripts/run-isolated-browser-tests.mjs",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "120",
+            "20"
+          ]
+        },
+        {
+          "path": "frontend/src/views/CashEventPage.test.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "46",
+            "46"
+          ]
+        },
+        {
+          "path": "frontend/src/views/CashEventPage.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "51",
+            "322"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行测试验证无父结算关联时可确认且重放只入账一次，仍校验账户、凭证、精度。",
+      "current_evidence": [
+        "backend/crm/tests/test_independent_bank_fee.py",
+        "frontend/browser-tests/independent-bank-fee-real.spec.js"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/r1-iss121-history-import-preflight-20261103",
+      "sha": "951adda34b5c60b303725702514cdacac17cc58d",
+      "live_sha": "951adda34b5c60b303725702514cdacac17cc58d",
+      "base": "a55469c1b07e4f13037c6644c69d8a35ef0496a0",
+      "commits": [
+        {
+          "sha": "951adda34b5c60b303725702514cdacac17cc58d",
+          "subject": "fix: evaluate partial fulfillment across order lines",
+          "matching_master_commits": [
+            "6b64f7ce7ce9746df61669078c35557a390cd422"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "6b64f7ce7ce9746df61669078c35557a390cd422"
+          ]
+        },
+        {
+          "sha": "0ccbf6c4a776fef5be74ad71ca4b6df0ba12e813",
+          "subject": "feat: add ISS-121 read-only history import preflight [skip ci]",
+          "matching_master_commits": [
+            "545623e8dd54b6a6baee2e3af6c08a6e8ab395e0"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "545623e8dd54b6a6baee2e3af6c08a6e8ab395e0"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/FIX-01-REPORT.md",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/ISS-121-history-import-template.xlsx",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/ISS-121-history-import-template.xlsx.inspect.ndjson",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/README.md",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/fix01-before-regression.log",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/fix01-environment.log",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/fix01-focused.log",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/fix01-regression.log",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/run-fix01-tests.ps1",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/template-instructions-preview.png",
+        "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/template-sales-orders-preview.png"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/history_import_preflight.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "146",
+            "19"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_history_import_preflight.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "68",
+            "20"
+          ]
+        },
+        {
+          "path": "backend/crm/upload_handlers.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2",
+            "0"
+          ]
+        },
+        {
+          "path": "backend/crm/urls.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "40",
+            "0"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行测试明确覆盖跨行部分履约，只计已验事实，并覆盖历史撤销边界、重复源行及 413。",
+      "current_evidence": [
+        "backend/crm/tests/test_history_import_preflight.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/reconcile-issue-ledger-20261028",
+      "sha": "2bb9d1746d13ce7b1c70e13dee1b8d3b48aaed2e",
+      "live_sha": "2bb9d1746d13ce7b1c70e13dee1b8d3b48aaed2e",
+      "base": "bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb",
+      "commits": [
+        {
+          "sha": "2bb9d1746d13ce7b1c70e13dee1b8d3b48aaed2e",
+          "subject": "docs: reconcile issue ledger status [skip ci]",
+          "matching_master_commits": [
+            "2303c573465701e40db922654e2ae4d25fa5a626"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "2303c573465701e40db922654e2ae4d25fa5a626"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/r1-status-reconcile-20261028/README.md"
+      ],
+      "remaining": [
+        {
+          "path": "AGENTS.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "19",
+            "0"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_ISSUES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "344",
+            "31"
+          ]
+        },
+        {
+          "path": "docs/PROJECT_PHASES.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "349",
+            "2"
+          ]
+        },
+        {
+          "path": "docs/uat-evidence/INDEX.md",
+          "type": "docs",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2",
+            "0"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "历史台账补丁有现行可达对应提交。当前台账及项目约定继续随 master 演进，恢复旧记录使用匹配提交。",
+      "current_evidence": [
+        "docs/PROJECT_ISSUES.md",
+        "docs/PROJECT_PHASES.md"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/repair-iss002-python-security",
+      "sha": "85adec7d99d725c7c920c728385172d6517730ce",
+      "live_sha": "85adec7d99d725c7c920c728385172d6517730ce",
+      "base": "bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb",
+      "commits": [
+        {
+          "sha": "85adec7d99d725c7c920c728385172d6517730ce",
+          "subject": "fix: secure and lock Python imaging dependencies [skip ci]",
+          "matching_master_commits": [
+            "3961ef6c4b0499adb0689f14be73372692ddac3f"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "3961ef6c4b0499adb0689f14be73372692ddac3f"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/requirements.txt",
+        "docs/uat-evidence/iss-002-python-security/README.md"
+      ],
+      "remaining": [
+        {
+          "path": "backend/requirements.lock",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1",
+            "0"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "独有锁定文件补丁有主干对应历史，现行依赖锁另有后继，直接沿用当前版本。",
+      "current_evidence": [
+        "backend/requirements.lock"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/review-iss051-business-auth-design-20261029",
+      "sha": "be0a0a392b27efbbcf41a8feed82fb493d52d2a7",
+      "live_sha": "be0a0a392b27efbbcf41a8feed82fb493d52d2a7",
+      "base": "54e715bdc568b80ba624186fecd866550676cf38",
+      "commits": [
+        {
+          "sha": "be0a0a392b27efbbcf41a8feed82fb493d52d2a7",
+          "subject": "docs: add ISS-051 auth design review [skip ci]",
+          "matching_master_commits": [
+            "3952f5a4c64629b1a972edb22da636451d629845"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "3952f5a4c64629b1a972edb22da636451d629845"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/ISS-051-正式内部试用认证方案对比.md"
+      ],
+      "remaining": [],
+      "disposition": "可删除",
+      "reason": "原设计评审的净变化路径全部同终态。保留 master 上的原评审资料及现行开发授权约定。",
+      "current_evidence": [],
+      "integrate_files": []
+    },
+    {
+      "branch": "codex/verify-iss028-035-category-schema",
+      "sha": "901b762fba20ed558f554cfba37175b303f83db9",
+      "live_sha": "901b762fba20ed558f554cfba37175b303f83db9",
+      "base": "bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb",
+      "commits": [
+        {
+          "sha": "901b762fba20ed558f554cfba37175b303f83db9",
+          "subject": "fix: allow direct root category assignment [skip ci]",
+          "matching_master_commits": [
+            "47fcab0f6f37f52475074e65ab7ab188352ae8ce"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "47fcab0f6f37f52475074e65ab7ab188352ae8ce"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "docs/uat-evidence/iss-028-035-category-schema/00-iss028-root-category-selection-before-fix.png",
+        "docs/uat-evidence/iss-028-035-category-schema/01-iss028-root-category-assignment-after-fix.png",
+        "docs/uat-evidence/iss-028-035-category-schema/02-iss028-root-category-filter.png",
+        "docs/uat-evidence/iss-028-035-category-schema/03-iss028-child-category-filter.png",
+        "docs/uat-evidence/iss-028-035-category-schema/04-iss028-inherited-attributes-desktop.png",
+        "docs/uat-evidence/iss-028-035-category-schema/05-iss028-inherited-attributes-narrow.png",
+        "docs/uat-evidence/iss-028-035-category-schema/06-iss035-category-template-changed-desktop.png",
+        "docs/uat-evidence/iss-028-035-category-schema/07-iss035-category-template-changed-narrow.png",
+        "docs/uat-evidence/iss-028-035-category-schema/08-iss035-ordinary-sku-save.png",
+        "docs/uat-evidence/iss-028-035-category-schema/09-iss035-reopened-sku-after-save.png",
+        "docs/uat-evidence/iss-028-035-category-schema/README.md",
+        "docs/uat-evidence/iss-028-035-category-schema/inspect_fixture_sqlite.py",
+        "docs/uat-evidence/iss-028-035-category-schema/iss028-browser-layout.json",
+        "docs/uat-evidence/iss-028-035-category-schema/iss028-http-results.json",
+        "docs/uat-evidence/iss-028-035-category-schema/iss035-api-and-db-snapshots.json",
+        "docs/uat-evidence/iss-028-035-category-schema/iss035-browser-layout.json",
+        "docs/uat-evidence/iss-028-035-category-schema/run_isolated_django_tests.py"
+      ],
+      "remaining": [
+        {
+          "path": "frontend/browser-tests/iss028-035-category-schema.spec.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "177",
+            "45"
+          ]
+        },
+        {
+          "path": "frontend/src/views/ProductPage.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "29",
+            "18"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "现行浏览器验证根/子分类归类及历史快照，后端有分类和 SKU 身份保护回归。",
+      "current_evidence": [
+        "frontend/browser-tests/iss028-035-category-schema.spec.js",
+        "backend/crm/tests/test_product_category_sku_identity_safety.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "phase-02a-receipt-reversal",
+      "sha": "e0697eee363a57b4edf958b331b0557056549870",
+      "live_sha": "e0697eee363a57b4edf958b331b0557056549870",
+      "base": "c1de6a8faeec6468d05d1243576cff3fde901eea",
+      "commits": [
+        {
+          "sha": "e0697eee363a57b4edf958b331b0557056549870",
+          "subject": "feat: add purchase receipt reversal",
+          "matching_master_commits": [
+            "a49a2b1922efa3ad9f65f1a6c574f8ce72332be5"
+          ],
+          "prior_patch_equivalent": true,
+          "exact_patch_matches": [
+            "a49a2b1922efa3ad9f65f1a6c574f8ce72332be5"
+          ]
+        }
+      ],
+      "exact_net_paths": [
+        "backend/crm/migrations/0064_goods_receipt_reversal.py"
+      ],
+      "remaining": [
+        {
+          "path": "backend/crm/models.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "2743",
+            "1394"
+          ]
+        },
+        {
+          "path": "backend/crm/serializers.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "1913",
+            "138"
+          ]
+        },
+        {
+          "path": "backend/crm/services/fulfillment.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "570",
+            "60"
+          ]
+        },
+        {
+          "path": "backend/crm/tests/test_trade_finance_upgrade.py",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "549",
+            "20"
+          ]
+        },
+        {
+          "path": "backend/crm/views.py",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "3530",
+            "392"
+          ]
+        },
+        {
+          "path": "frontend/src/views/PurchaseOrderPage.test.js",
+          "type": "test",
+          "current_exists": true,
+          "changes_since_branch": [
+            "125",
+            "2"
+          ]
+        },
+        {
+          "path": "frontend/src/views/PurchaseOrderPage.vue",
+          "type": "source",
+          "current_exists": true,
+          "changes_since_branch": [
+            "674",
+            "160"
+          ]
+        }
+      ],
+      "disposition": "可删除",
+      "reason": "当前覆盖冲销数量、采购状态、库存与预留恢复、二次冲销拒绝和失败无副作用。",
+      "current_evidence": [
+        "backend/crm/tests/test_trade_finance_upgrade.py",
+        "backend/crm/tests/test_fulfillment.py"
+      ],
+      "integrate_files": []
+    },
+    {
+      "branch": "phase-03-business-invariant-uat",
+      "sha": "d54329e4f74ad013959eb30454acd6dc3e634a66",
+      "live_sha": "d54329e4f74ad013959eb30454acd6dc3e634a66",
+      "base": "7509ed96ce9f02fbf158b0099cd6baa2ef0eded1",
+      "commits": [
+        {
+          "sha": "d54329e4f74ad013959eb30454acd6dc3e634a66",
+          "subject": "docs: correct final phase 3 execution methods",
+          "matching_master_commits": [],
+          "prior_patch_equivalent": false,
+          "exact_patch_matches": []
+        },
+        {
+          "sha": "fbcb9d5d7be37d17545865dc0708abd01a5ff405",
+          "subject": "docs: separate UI UAT from invariant fault injection",
+          "matching_master_commits": [],
+          "prior_patch_equivalent": false,
+          "exact_patch_matches": []
+        },
+        {
+          "sha": "4500b1abb70109083640dfd9aafa1cb7e0d7805d",
+          "subject": "docs: correct phase 3 UAT contract assumptions",
+          "matching_master_commits": [],
+          "prior_patch_equivalent": false,
+          "exact_patch_matches": []
+        },
+        {
+          "sha": "af9591201b5629fa6de1dbd9e725d8bb50dd7045",
+          "subject": "docs: define phase 3 business invariant UAT plan",
+          "matching_master_commits": [],
+          "prior_patch_equivalent": false,
+          "exact_patch_matches": []
+        }
+      ],
+      "exact_net_paths": [
+        "docs/Phase3-业务流程与异常UAT计划.md"
+      ],
+      "remaining": [],
+      "disposition": "可删除",
+      "reason": "四个独有提交未逐个匹配补丁，但分支全部净变化路径同终态，业务不变量的测试和证据保留于 master。",
+      "current_evidence": [],
+      "integrate_files": []
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+﻿分支	完整 SHA	结果	原因	恢复引用	恢复树 SHA	删除后 SHA
+chore/ci-baseline-repair	7509ed96ce9f02fbf158b0099cd6baa2ef0eded1	已删除		refs/recovery/branch-cleanup-02/chore/ci-baseline-repair	d32ad100c365f541aa564fb975a8104ca636c3f6	—
+codex/access-readiness-20261105	bbfe475ef546b5d0fc3db8dbda0f456f0b042e9d	已删除		refs/recovery/branch-cleanup-02/codex/access-readiness-20261105	92a54b95e563a4a168ade0f1c19879b2bd3d9fb6	—
+codex/crm-state-closeout-05	c47deb009744c2cde85b7fff37a4175a8be8b7b2	已删除		refs/recovery/branch-cleanup-02/codex/crm-state-closeout-05	31a1f3ddca795aac697b55c71bea8a30ca131ee6	—
+codex/finance-receipt-settlement-01	b75b48cc1b6c9e8e4c9eb359aa36da639bf1a18c	已删除		refs/recovery/branch-cleanup-02/codex/finance-receipt-settlement-01	979562ed20dfbbdb01ab29c8044f31c0bb0444bd	—
+codex/fix-iss018-backup-safety	a73273f49aa32d8be8040d1c444045ff51a67c65	跳过	发布、试点/ALEX、恢复或运维交接保护			a73273f49aa32d8be8040d1c444045ff51a67c65
+codex/fix-iss018-restore-edge-cases	21812b7c1190540a7214d4b77518ede31221180a	跳过	发布、试点/ALEX、恢复或运维交接保护			21812b7c1190540a7214d4b77518ede31221180a
+codex/fix-iss036-snapshot-conflicts	b64c54b07908d4bb462c64f120c351d148e06f6f	已删除		refs/recovery/branch-cleanup-02/codex/fix-iss036-snapshot-conflicts	84a3b8faf1d2595f41f81aa0b950af54063bed83	—
+codex/fix-iss055-chinese-404	9c5f1f821cfc1b436f5fffe0b681991fa056b34d	已删除		refs/recovery/branch-cleanup-02/codex/fix-iss055-chinese-404	9e64082ae130a053670b82124c040982a69750c8	—
+codex/history-link-context-fix-03	1c478b0aa298d53ffca03a38d4200b0d122b27ea	已删除		refs/recovery/branch-cleanup-02/codex/history-link-context-fix-03	cbff89b428ed008a4e946e98bdb4e9d8304513de	—
+codex/history-product-linking-fixes-02	84ea87801693d3b512ef28a76f684444af332685	已删除		refs/recovery/branch-cleanup-02/codex/history-product-linking-fixes-02	28fd9a9da2b8cd66da5cb724ee6aeebeb50661ae	—
+codex/integration-018-036-025	46353a5436637832f5adadb7bdef6b45cdeada23	已删除		refs/recovery/branch-cleanup-02/codex/integration-018-036-025	ecb178a7899cd106606378b66046f6f834479da2	—
+codex/integration-020-022-051	f12b591cb90d6a5d8ebfedf1c559703377c92d84	已删除		refs/recovery/branch-cleanup-02/codex/integration-020-022-051	cc4a123bc3f0d2a28887bdc1d667e823da7c7837	—
+codex/integration-024-019-008	b3559f3bf83b967d06166bd409b00fc92e4e5902	已删除		refs/recovery/branch-cleanup-02/codex/integration-024-019-008	57df7f55c8d72c5be914d0b79d6d6ef58d14bce6	—
+codex/integration-026-107-017	af018ac63cf71143d223b9f6db4a087707495693	已删除		refs/recovery/branch-cleanup-02/codex/integration-026-107-017	f92cc2ff19bfc17df7d9e3497ac64aa2ad9143f6	—
+codex/integration-036-002-003-052-058	054bd82518039a5bc0e0c14234964a14d7fbbfd8	已删除		refs/recovery/branch-cleanup-02/codex/integration-036-002-003-052-058	c74268d5c9ac76ef41c011fc4e1d36d4f8599bb2	—
+codex/integration-039-037-040	71ec4a4c2d860b9944624a1434d9d7580e9a6d38	已删除		refs/recovery/branch-cleanup-02/codex/integration-039-037-040	c67e45569419194fd2be95c46beb6375ff659f9e	—
+codex/integration-043-075-023	8b2b5c19e517addd9604b239211e199a789b739e	已删除		refs/recovery/branch-cleanup-02/codex/integration-043-075-023	70a4a046684cd1d918bd4b46df7ff0ed796daa39	—
+codex/iss-018-backup-recovery	ad64eed9e00810beb2734e23f4e58cb6b4533bb8	跳过	发布、试点/ALEX、恢复或运维交接保护			ad64eed9e00810beb2734e23f4e58cb6b4533bb8
+codex/iss-041-detail-drill	0bba34c0e7139b77a88d2e838dbf921eff427373	已删除		refs/recovery/branch-cleanup-02/codex/iss-041-detail-drill	8c2b8df8f0046e7fb8d168ae287087ad696ce616	—
+codex/iss-041-multidim-01	66338b701afed071bd6482a33a8cca8ebc20bfa2	已删除		refs/recovery/branch-cleanup-02/codex/iss-041-multidim-01	2fcaa70faded9984c0ed7f309657dca7dc1f8219	—
+codex/iss-042-shared-reports	fb859b91f68bb62c539d5439c65b52c06f13a58c	已删除		refs/recovery/branch-cleanup-02/codex/iss-042-shared-reports	e6c2256fdaa7a3e1b959204dfa5a2addd8c7147d	—
+codex/iss-049-quick-filters	9d08009f62920c62399ec48defe7f4d1c2e21411	已删除		refs/recovery/branch-cleanup-02/codex/iss-049-quick-filters	4be96b758d70caa7a06997662f4944bd1ede58c2	—
+codex/iss-062-date-window	9edbb6488a66a0801ecc1e5bc842df7866c6c7dc	已删除		refs/recovery/branch-cleanup-02/codex/iss-062-date-window	5c06e0748ae36862a9ef8fbed371b76d432e34d4	—
+codex/iss-067-report-permission	dd538183523c9b3670763da9d43551a9454fb0b3	已删除		refs/recovery/branch-cleanup-02/codex/iss-067-report-permission	af3b088cafd3be43ff2b44ad8a742377d624b4e1	—
+codex/iss025-report-visual-evidence	1480429338d0fc6de20384ea77a43e969a2b7de4	已删除		refs/recovery/branch-cleanup-02/codex/iss025-report-visual-evidence	de7f2b86e7feed6d1eebbe8bf16a993f5f3bc817	—
+codex/lan-pilot-readiness-01	6d13301e7c8b5b8a2470988850cfceff559d1d6e	跳过	发布、试点/ALEX、恢复或运维交接保护			6d13301e7c8b5b8a2470988850cfceff559d1d6e
+codex/linux-operations-acceptance-20261104	4a4f338b09e9a464f1e66c24a905c35c970729bf	跳过	发布、试点/ALEX、恢复或运维交接保护；当前部署、脚本或工作流引用			4a4f338b09e9a464f1e66c24a905c35c970729bf
+codex/local-operations-closeout-20261105	250c3b7f55585acccb73b2efc1b0993605be0b0b	跳过	发布、试点/ALEX、恢复或运维交接保护			250c3b7f55585acccb73b2efc1b0993605be0b0b
+codex/local-pilot-deploy-02	3bbbc96b1bf42c645835f46d28ffecbbc7b113db	跳过	发布、试点/ALEX、恢复或运维交接保护			3bbbc96b1bf42c645835f46d28ffecbbc7b113db
+codex/local-pilot-prep-01	9420f1cf66d2c74df971945dfa03bd6511cfadcd	跳过	发布、试点/ALEX、恢复或运维交接保护			9420f1cf66d2c74df971945dfa03bd6511cfadcd
+codex/operations-readiness-batch-20261104	d289de36a3da3e4bd6531c812ec21a05f046d570	跳过	发布、试点/ALEX、恢复或运维交接保护			d289de36a3da3e4bd6531c812ec21a05f046d570
+codex/pilot-handoff-alignment-01	406b56f6e370b180857bb58b8a45866bccd7aa38	跳过	发布、试点/ALEX、恢复或运维交接保护			406b56f6e370b180857bb58b8a45866bccd7aa38
+codex/pilot-recovery-readiness-01	e0169499d4a0a70922859558c00446fc9ef1d5a8	跳过	发布、试点/ALEX、恢复或运维交接保护			e0169499d4a0a70922859558c00446fc9ef1d5a8
+codex/pre-uat-iss007-attachment-flow	0fb8f09e344b319a02a86a3ded38deb3d37f5afe	已删除		refs/recovery/branch-cleanup-02/codex/pre-uat-iss007-attachment-flow	f8be117b72699aeb18a04498b439c79fc2ec2a1d	—
+codex/quote-state-closeout-06	598717617be8de95fcaeb03426693f1efc71808a	已删除		refs/recovery/branch-cleanup-02/codex/quote-state-closeout-06	57369aeb2a18ee3f4d6f55a4fe3ca66d70dd960e	—
+codex/r0-d4b1-scope	c84a001b825081d5e154bc4559d627ad10af97be	已删除		refs/recovery/branch-cleanup-02/codex/r0-d4b1-scope	c6190658736b64c155f3d6eea13203ea100b0259	—
+codex/r1-iss006-audit-atomicity-bd324-20261030	a4eea21dc3e21096950b08439dcbee26ce506e86	已删除		refs/recovery/branch-cleanup-02/codex/r1-iss006-audit-atomicity-bd324-20261030	efe316b75a843b79afa86dcc5ccae0ee5387510f	—
+codex/r1-iss006-frontend-idempotency-bd324-20261030	f83f9b08a5f516f860655bc08b6c7d5f0787c35e	已删除		refs/recovery/branch-cleanup-02/codex/r1-iss006-frontend-idempotency-bd324-20261030	0dbe03a3fec960dd098a44d64438ac1d73731f68	—
+codex/r1-iss006-inventory-chrome-uat-20261031	fb683934cab97d3d721575b4452cb21df2ccc94a	已删除		refs/recovery/branch-cleanup-02/codex/r1-iss006-inventory-chrome-uat-20261031	9984ead27059e35704f9cacbba1bbd7d26616933	—
+codex/r1-iss006-inventory-reversal-audit-atomicity-20261030	7429c9630305bfad61f16475dd5617c13c07959e	已删除		refs/recovery/branch-cleanup-02/codex/r1-iss006-inventory-reversal-audit-atomicity-20261030	0cc3817a80e55431690373b7b964284bec1972f3	—
+codex/r1-iss006-po-locking-bd324-20261030	13e8b4bed06d0c1d099f007696a81260dfb2d3ef	已删除		refs/recovery/branch-cleanup-02/codex/r1-iss006-po-locking-bd324-20261030	c085a84742293d4065898c4a5e0210cdd6a7d2f5	—
+codex/r1-iss006-postgres-concurrency-gaps-20261101	2e25b743884123d7ae5599c89586988a12791bf4	已删除		refs/recovery/branch-cleanup-02/codex/r1-iss006-postgres-concurrency-gaps-20261101	909cb3f4e8dd1208dcabc4ffe317b878bd554e87	—
+codex/r1-iss037-print-output-acceptance-20261104	b3d0d386de70d9efd77bf62cdbd87877fbccbfb8	已删除		refs/recovery/branch-cleanup-02/codex/r1-iss037-print-output-acceptance-20261104	9f727a41c2127cf62abd35e44abf3b81ab8f5aa4	—
+codex/r1-postgres-test-isolation-20261102	9f0e59ea4e31778e0944bdac8cff858d0cfd9fa2	已删除		refs/recovery/branch-cleanup-02/codex/r1-postgres-test-isolation-20261102	0efd4d7dd368f4d94e2a3af251a7a3db3db54e42	—
+codex/r1-rule-gap-batch-02-integration-20261103	d5abc64750d00c89d685bf12c0f8f67d4ba10a97	已删除		refs/recovery/branch-cleanup-02/codex/r1-rule-gap-batch-02-integration-20261103	8e2e631e0173de024f0f5775baed92f0bd2e4ee3	—
+codex/release-slim-prep-01	3d067d659be70e1db0e4d6b0c44ac45454d26f5f	跳过	发布、试点/ALEX、恢复或运维交接保护			3d067d659be70e1db0e4d6b0c44ac45454d26f5f
+codex/repair-final-cross-module-ux	45df13b8fd229427229a58d64d0ae2bec30a00cb	已删除		refs/recovery/branch-cleanup-02/codex/repair-final-cross-module-ux	023524d30957b12b85207567018128c071963fd2	—
+codex/repair-history-recipient-typography	c3739e77562c5dd8995228d5c3e7375a6728d316	已删除		refs/recovery/branch-cleanup-02/codex/repair-history-recipient-typography	8dd1cd431ed6508128e9de6d9f522cf51007eb97	—
+codex/repair-playwright-isolation	5ad252c537dfb0b3f95150e76e471c9fe3fd0a99	已删除		refs/recovery/branch-cleanup-02/codex/repair-playwright-isolation	8679c243a820ef7881ce9b2870a5c3f3305f0797	—
+codex/repair-supplier-purchase-ux-r2	64fb397aa065062e192ceb30040421f59b63a08c	已删除		refs/recovery/branch-cleanup-02/codex/repair-supplier-purchase-ux-r2	84efaadf8eb335c013b391581780e7ec62edf0a3	—
+codex/sales-state-closeout-05	0f73688d92c70543e050e617ac636a9cc58bd2b2	已删除		refs/recovery/branch-cleanup-02/codex/sales-state-closeout-05	76bcf1ab8d675958b6764ab14e2e5369123620be	—
+codex/sunjack-first-release-consolidation-02	f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a	跳过	发布、试点/ALEX、恢复或运维交接保护			f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a
+codex/sunjack-first-release-integration-01	b223c052902463b59e149409cf9941503aeab31f	跳过	发布、试点/ALEX、恢复或运维交接保护			b223c052902463b59e149409cf9941503aeab31f
+codex/ux-copy-finance-inventory	9f957e1744e790b2cc784176ea9999b9c949c98f	已删除		refs/recovery/branch-cleanup-02/codex/ux-copy-finance-inventory	6366f53a14b655cd9f1f6e5e70390ec5fb690b7b	—
+codex/ux-copy-finance-inventory-test-fix	5499da5a80029233fb38e8101c2cfca0adecbece	已删除		refs/recovery/branch-cleanup-02/codex/ux-copy-finance-inventory-test-fix	7e431eb1392b3f9955080518c3be25bc3d9833d9	—
+codex/ux-copy-foundation	f82554686478f62e3a60ed69bb4144e8c052ac7c	已删除		refs/recovery/branch-cleanup-02/codex/ux-copy-foundation	47b199eb02f856ce0453a8cb43e824eecfe40ecc	—
+codex/ux-copy-sales-purchase	58577c809168a36c5b8f0d331b795d4c8d11f9f2	已删除		refs/recovery/branch-cleanup-02/codex/ux-copy-sales-purchase	f4553cc0688802b0e6d8aa2da0ea2ddff5376bcf	—
+codex/verify-iss003-employee-permissions	2111d193ef3a69db05c23e27813cfbf26d9034d7	已删除		refs/recovery/branch-cleanup-02/codex/verify-iss003-employee-permissions	cac73434975442cc6f01a1c192334bc808cb6272	—
+codex/verify-iss052-csv-import	93736e0773ca2136d4070a604e62324cf832dc6f	已删除		refs/recovery/branch-cleanup-02/codex/verify-iss052-csv-import	fe4860dd7c3ad671f6f0d037957cf3c0cf575512	—
+fix/phase3b-final-blockers	3acc2c4b8d07db7d08a7caf060d6a1cbc5d9173a	已删除		refs/recovery/branch-cleanup-02/fix/phase3b-final-blockers	cd2bdaaf41f4bfd541f2980998952d21e1de584f	—
+fix/phase3b-packaging-ui-gap	5f3d6d50bdb903a0f45269e2439657b0943c4c56	已删除		refs/recovery/branch-cleanup-02/fix/phase3b-packaging-ui-gap	043ee4c6ee3dc9b3f9c357c5aa79c7f3b490a293	—
+fix/quote-country-iso-resolution	5ebb731deced7b18b841e33680943878780878ec	已删除		refs/recovery/branch-cleanup-02/fix/quote-country-iso-resolution	26d4605d3379d8f46df5df4791e504ccb4dbe1d0	—
+integration-pre-iss022	fc15ca0e834897bcf0456c6cb874639eb961d58e	已删除		refs/recovery/branch-cleanup-02/integration-pre-iss022	cdbb99e796d23f16da52ed4b1e6d633ac5da1336	—
+phase-03c-invariant-fault-injection	907a3991dadde19a31cbe02f27d0c5b789405c51	已删除		refs/recovery/branch-cleanup-02/phase-03c-invariant-fault-injection	4142799ad51c27b00d7dddd9153e9d0acc558aa2	—
+phase-04a-production-readiness-audit	1759c02a66353d2db6f709fd3b3ab27b46e2fc1b	跳过	发布、试点/ALEX、恢复或运维交接保护			1759c02a66353d2db6f709fd3b3ab27b46e2fc1b
+phase-04b-postgresql-runtime-ci	f6362a646108df70a10410275f1fba472b8d8980	已删除		refs/recovery/branch-cleanup-02/phase-04b-postgresql-runtime-ci	ae1fbad55a15b930a85e41df4605de7ed1b77656	—

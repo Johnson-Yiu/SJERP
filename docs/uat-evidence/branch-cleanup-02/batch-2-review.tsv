@@ -1,0 +1,34 @@
+﻿分支	完整 SHA	分类	同终态路径数	差异路径数	当前证据	接收文件	说明
+codex/attachments-recovery-hardening-01	905945f241795f5353e5a25fe1834af0c639938e	可删除	11	1	backend/crm/tests/test_postgres_drill_backup.py		PostgreSQL 恢复测试仍覆盖坏数据库归档拒绝、空媒体目录恢复及失败边界，老测试余 diff 仅为重复 hashlib 导入。
+codex/branch-coverage-closeout-01	0bc7ad307c50ebae1c54269348bd941705d136ff	继续保留	17	0	docs/uat-evidence/branch-coverage-closeout-01/README.md		最终净路径相同。该引用是原专项审计的独立恢复入口，继续保留。
+codex/fix-finance-summary-card-truncation-20261029	0f440a784130be326357cdf569ccb8959a560771	可删除	11	3	frontend/src/components/SummaryCards.test.js | frontend/browser-tests/finance-summary-cards.spec.js		现有卡片允许金额换行，单测检查 overflow-wrap 且拒绝 ellipsis，浏览器测试检查三种 CSS 属性和长金额。
+codex/fix-iss006-request-idempotency-20261029	083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a	可删除	4	13	backend/crm/tests/test_iss006_idempotency.py | backend/crm/tests/test_fulfillment.py		保留入库和出库请求键、服务事务与 PostgreSQL 重复请求串行；库存失败回退及预留恢复有回归。
+codex/fix-quote-editor-mobile-actions-20261029	776d90bcc050bc6ab3ae96a3c8c994e0064e7291	可删除	8	5	frontend/browser-tests/quote-editor-mobile-actions.spec.js		现行窄屏和桌面场景覆盖预览、保存、导出及下载，并有运行器诊断。
+codex/iss-020-quote-export	13b453de019193ae45c4fa1e15724040329da594	可删除	13	7	backend/crm/tests/test_iss020_quote_export.py		主干测试断言历史应收金额、缺失快照拒绝、分级舍入、正式 PI/XLSX 图片与金额。
+codex/iss-024-supplier-recommendation	1d576e961dc021d194e0ec2f9fd7dd6fc629535d	可删除	11	7	frontend/src/components/PurchaseSupplierPicker.vue | backend/crm/tests/test_iss024_reproduction.py		偏好和来源范围迁移的终态与分支一致。推荐标识及原因仍由采购来源入口渲染，专门的 ISS-024 回归文件留存。
+codex/iss-026-supplier-lifecycle	3625f472b028146c062823990322de32a98759a1	可删除	3	11	backend/crm/tests/test_supplier_lifecycle.py		停用恢复、候选过滤、权限与历史来源回查均有当前测试。
+codex/iss-047-private-storage	5ab3ed6dd740ba7331abb258118882d7c96e39b5	可删除	5	6	backend/crm/tests/test_iss047_private_storage.py		现行私有媒体测试验证相对路径清单、摘要、恢复后重新读取与拒绝符号链接。
+codex/next-iss-021-integration	a662500c06807151bb39ca990ebe17ae8d05ef54	可删除	40	9	backend/crm/tests/test_order_quantity_adjustments.py		现行数量调整回归覆盖精度、上限、历史标志绕过与脱敏审计，保留现行迁移链。
+codex/next-iss-040-integration	a4fc6d4f01f8c32a4a89f0d46557500a34566e98	可删除	23	4	backend/crm/tests/test_packing_list_export.py		现行正式 Shipment XLSX 验证真实出库、分批导出、打印区域和权限。历史原生 Excel 实机分页仍按既定范围延期。
+codex/publish-local-20261031/r1-iss028-035-category-verify-bd324-20261031	ae78826ef9906d56f8211ee983c2a01132551165	可删除	26	1	frontend/browser-tests/iss028-035-category-schema.spec.js		现行浏览器测试覆盖根/子分类、继承属性、筛选，以及属性模板变化后的 SKU、报价、订单快照。
+codex/r1-fix-shared-report-timeout-20261029	74e0f90c33add755731f521dcad23c92d95cbb1c	可删除	17	1	frontend/browser-tests/shared-report-templates.spec.js		现行 spec 同时拦截 fonts.googleapis.com 和 fonts.gstatic.com，保留共享报表回归。
+codex/r1-iss002-security-audit-final-20261101	427d2a2c38516a52d460f50e60e0fb635f23a4c2	可删除	13	0			全部净变化路径对象及模式一致，原证据仍在 master。
+codex/r1-iss006-po-locking-20261029	083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a	可删除	4	13	backend/crm/tests/test_iss006_idempotency.py | backend/crm/tests/test_fulfillment.py		与另一 ISS-006 候选指向同一 SHA。幂等、库存副作用及并发覆盖采用现行实现。
+codex/r1-iss028-035-category-verify-bd324-20261031	1d546d494d820f793b336aed8ffbc7afd8f2af21	可删除	26	1	frontend/browser-tests/iss028-035-category-schema.spec.js		现行浏览器测试覆盖根/子分类、继承属性、筛选，以及属性模板变化后的 SKU、报价、订单快照。
+codex/r1-iss037-seller-template-freeze-20261103	b00981200eb01af4bfa8351c4bd636ab1a678b71	可删除	8	16	frontend/browser-tests/iss037-seller-freeze-real.spec.js | backend/crm/tests/test_quote_template_snapshot.py		现行浏览器场景验证 1440/390 已保存 PI、Chrome 打印入口与未保存修订沿用父卖方。旧截图可经主干匹配提交追溯。
+codex/r1-iss037-snapshot-audit-20261103	c88a121298465fcb04e11f9b65ef9ad251eadf3f	可删除	8	0	backend/crm/tests/test_formal_party_snapshots.py		正式主体快照审计的全部净变化路径终态一致。
+codex/r1-iss037-unknown-buyer-revision-fix-20261103	1a9666010c370dda08e2719e2c70caf6ee6c1b11	可删除	3	1	backend/crm/tests/test_quote_unknown_buyer.py		当前专用回归验证未知买方修订、PI 和 XLSX 拒绝，检查不回落到实时主数据。
+codex/r1-iss039-reservation-concurrency-20261103	087f6098c27050a1d7180fe9c85eef6417063c0b	可删除	6	0	backend/crm/tests/test_fulfillment.py		净变化路径终态一致。保留原 PostgreSQL 竞争验证和现行库存事务测试。
+codex/r1-iss039-shared-cost-audit-20261103	2d5164287672d9a57a6496761c3ea0d026088072	可删除	7	0	backend/crm/tests/test_iss039_shared_purchase_costs.py		净变化路径终态一致。主干保留采购共享成本专项。
+codex/r1-iss045-qa-tools-bd324-20261031	4ddaa6b7bdd1a9f21443f687e4ff90f46aa02629	可删除	3	1	backend/crm/tests/test_legacy_qa_tools.py | backend/crm/management/commands/seed_demo.py		seed_demo 及隔离测试的路径终态一致。README 已改用现行启动器说明，命令仍检查环境、SQLite 路径和符号链接。
+codex/r1-iss052-csv-limit-bd324-20261030	d08ca625ac6beeec51ecc14eb92c97da0ea6f63b	可删除	7	3	backend/crm/tests/test_csv_upload_http_413.py | backend/crm/tests/test_csv_import_audit_postgres.py		现行 HTTP 413 回归验证所有 CSV 路由及临时文件释放，主干保有单独的 PostgreSQL 持久审计测试。
+codex/r1-iss052-postgresql-uat-20261101	a34bed75edd4e4b07c7a7780f6821a650b06f68c	可删除	1	0	backend/crm/tests/test_csv_import_audit_postgres.py		净变化路径终态一致；历史阻塞记录与现行 PostgreSQL 测试分开保存。
+codex/r1-iss105-bank-duplicate-detection-20261103	8e99dc1abcf1f4f9fbd9d6cac57258990c12d3e8	可删除	17	18	frontend/browser-tests/cash-duplicate-real.spec.js | backend/crm/tests/test_cash_duplicate_review.py		现行独立数据库用例保留 390/1440 同账户同额复核，增加私有凭证和失败重试。后端覆盖跨日期银行标识、确认失败回滚、并发串行和 PostgreSQL 审计保护。
+codex/r1-iss105-independent-bank-fee-fix-20261103	321cb77d0179888a4788408d32c77d789504fbdd	可删除	17	6	backend/crm/tests/test_independent_bank_fee.py | frontend/browser-tests/independent-bank-fee-real.spec.js		现行测试验证无父结算关联时可确认且重放只入账一次，仍校验账户、凭证、精度。
+codex/r1-iss121-history-import-preflight-20261103	951adda34b5c60b303725702514cdacac17cc58d	可删除	11	4	backend/crm/tests/test_history_import_preflight.py		现行测试明确覆盖跨行部分履约，只计已验事实，并覆盖历史撤销边界、重复源行及 413。
+codex/reconcile-issue-ledger-20261028	2bb9d1746d13ce7b1c70e13dee1b8d3b48aaed2e	可删除	1	4	docs/PROJECT_ISSUES.md | docs/PROJECT_PHASES.md		历史台账补丁有现行可达对应提交。当前台账及项目约定继续随 master 演进，恢复旧记录使用匹配提交。
+codex/repair-iss002-python-security	85adec7d99d725c7c920c728385172d6517730ce	可删除	2	1	backend/requirements.lock		独有锁定文件补丁有主干对应历史，现行依赖锁另有后继，直接沿用当前版本。
+codex/review-iss051-business-auth-design-20261029	be0a0a392b27efbbcf41a8feed82fb493d52d2a7	可删除	1	0			原设计评审的净变化路径全部同终态。保留 master 上的原评审资料及现行开发授权约定。
+codex/verify-iss028-035-category-schema	901b762fba20ed558f554cfba37175b303f83db9	可删除	17	2	frontend/browser-tests/iss028-035-category-schema.spec.js | backend/crm/tests/test_product_category_sku_identity_safety.py		现行浏览器验证根/子分类归类及历史快照，后端有分类和 SKU 身份保护回归。
+phase-02a-receipt-reversal	e0697eee363a57b4edf958b331b0557056549870	可删除	1	7	backend/crm/tests/test_trade_finance_upgrade.py | backend/crm/tests/test_fulfillment.py		当前覆盖冲销数量、采购状态、库存与预留恢复、二次冲销拒绝和失败无副作用。
+phase-03-business-invariant-uat	d54329e4f74ad013959eb30454acd6dc3e634a66	可删除	1	0			四个独有提交未逐个匹配补丁，但分支全部净变化路径同终态，业务不变量的测试和证据保留于 master。

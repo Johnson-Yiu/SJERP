@@ -61,6 +61,7 @@ test('C editors, batch results and product logs retain real state', async ({ pag
     await page.getByTestId('dialog-cancel').click()
     await page.unroute('**/api/supplier-capabilities/')
     await page.getByRole('button',{name:'保存规则',exact:true}).click()
+    await expect(page.getByText('供应能力已保存，候选名单按规则动态匹配。',{exact:true})).toBeVisible()
     await expect(name).toHaveCount(0)
     const rules=await (await page.request.get(`/api/supplier-capabilities/?product=${fixture.product}`)).json()
     expect((rules.results||rules).some(rule=>rule.name===`合成能力规则 ${width}` && rule.characteristics['包装']==='合成测试纸盒')).toBeTruthy()

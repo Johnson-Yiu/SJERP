@@ -1,18 +1,26 @@
 ﻿#Requires -Version 5.1
 #Requires -RunAsAdministrator
-param([Parameter(Mandatory)][string[]]$ClientIPv4)
+[CmdletBinding(DefaultParameterSetName='Devices')]
+param(
+    [Parameter(Mandatory, ParameterSetName='Devices')][string[]]$ClientIPv4,
+    [Parameter(Mandatory, ParameterSetName='Subnet')][switch]$WholeLan
+)
 $ErrorActionPreference = 'Stop'
 if ($env:COMPUTERNAME -ne 'ALEX') { throw '请在 ALEX 本机运行。' }
-$clients = @($ClientIPv4 | Sort-Object -Unique)
-if ($clients.Count -lt 1 -or $clients.Count -gt 5) { throw '请提供 1 至 5 台终端的 IPv4 地址。' }
-foreach ($client in $clients) {
-    if ($client -notmatch '^192\.168\.1\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4])$' -or $client -eq '192.168.1.36') {
-        throw "终端地址不在本次验收网段或与 ALEX 冲突：$client"
+if ($WholeLan) {
+    $clients = @('192.168.1.1-192.168.1.254')
+} else {
+    $clients = @($ClientIPv4 | Sort-Object -Unique)
+    if ($clients.Count -lt 1 -or $clients.Count -gt 5) { throw '请提供 1 至 5 台终端的 IPv4 地址。' }
+    foreach ($client in $clients) {
+        if ($client -notmatch '^192\.168\.1\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4])$' -or $client -eq '192.168.1.36') {
+            throw "终端地址不在本次验收网段或与 ALEX 冲突：$client"
+        }
     }
 }
 $local = Get-NetIPAddress -AddressFamily IPv4 -IPAddress 192.168.1.36
-if ((Get-NetConnectionProfile -InterfaceIndex $local.InterfaceIndex).NetworkCategory -ne 'Private') {
-    throw 'ALEX 的局域网网卡不在专用网络。'
+if ($local.PrefixLength -ne 24 -or (Get-NetConnectionProfile -InterfaceIndex $local.InterfaceIndex).NetworkCategory -ne 'Private') {
+    throw 'ALEX 的局域网网卡须为 192.168.1.0/24 专用网络。'
 }
 $proxy = netsh interface portproxy show v4tov4
 if ($LASTEXITCODE -or !($proxy -match '^\s*192\.168\.1\.36\s+443\s+10\.253\.247\.2\s+18443\s*$')) {
@@ -34,7 +42,7 @@ $serviceNic = @(Get-VMNetworkAdapter -VM $vm | Where-Object MacAddress -eq '0253
 $dvd = @(Get-VMDvdDrive -VM $vm)
 if ($serviceNic.Count -ne 1 -or $dvd.Count -ne 1) { throw 'ERP 虚拟机身份不符。' }
 Write-Host ('本次只启用以下终端：' + ($clients -join ', '))
-if ((Read-Host '确认重启 ERP 来宾、安装证书并开放上述终端，请输入 YES') -cne 'YES') { return }
+if ((Read-Host '确认重启 ERP 来宾、安装证书、开放上述地址，并清理部署备份临时转发，请输入 YES') -cne 'YES') { return }
 if ($dvd[0].Path -ne $iso) {
     if ($vm.State -ne 'Off') { Stop-VM -VM $vm }
     if ((Get-VM -Id $vm.Id).State -ne 'Off') { throw 'ERP 来宾尚未关机。' }
@@ -60,4 +68,28 @@ $firewall = @{
     RemoteAddress = $clients
 }
 New-NetFirewallRule @firewall | Out-Null
+# Only remove the exact, deployment-owned temporary forwarding and firewall rule.
+$backupRuleName = 'SJERP-Deployment-Backup-Temporary'
+$backupRule = Get-NetFirewallRule -Name $backupRuleName -ErrorAction SilentlyContinue
+$backupProxy = netsh interface portproxy show v4tov4
+if ($LASTEXITCODE) { throw '团队 HTTPS 已启用，但无法核对临时备份转发。' }
+$backupRows = @($backupProxy -match '^\s*192\.168\.1\.36\s+22223\s')
+if ($backupRule -or $backupRows.Count) {
+    $backupAddresses = if ($backupRule) { $backupRule | Get-NetFirewallAddressFilter }
+    $backupPorts = if ($backupRule) { $backupRule | Get-NetFirewallPortFilter }
+    if (!$backupRule -or $backupRows.Count -ne 1 -or
+        $backupRows[0] -notmatch '^\s*192\.168\.1\.36\s+22223\s+10\.253\.247\.2\s+22\s*$' -or
+        $backupAddresses.LocalAddress -ne '192.168.1.36' -or
+        $backupAddresses.RemoteAddress -ne '192.168.1.79' -or $backupPorts.LocalPort -ne '22223') {
+        Write-Warning '团队 HTTPS 已启用。临时备份转发与部署记录不符，保留原配置供核查。'
+    } elseif (!(Test-Path -LiteralPath 'D:\ERP备份\backup-9bbea3f05507489dbe4cb98c8be48f56.gpg' -PathType Leaf) -or
+        (Get-FileHash -LiteralPath 'D:\ERP备份\backup-9bbea3f05507489dbe4cb98c8be48f56.gpg').Hash -ne '0AE73EEC385C1015297FBFB40BA83AB2ECF66B837DEF85EDEB32FCE63F4097A9') {
+        Write-Warning '团队 HTTPS 已启用。部署备份未通过本机核对，保留临时备份转发。'
+    } else {
+        netsh interface portproxy delete v4tov4 listenaddress=192.168.1.36 listenport=22223
+        if ($LASTEXITCODE) { throw '团队 HTTPS 已启用，但移除临时备份转发失败。' }
+        Remove-NetFirewallRule -Name $backupRuleName
+        Write-Host '部署备份临时转发已移除。'
+    }
+}
 Write-Host '团队 HTTPS 已配置，客户端需信任交付的 CA 公共证书。'

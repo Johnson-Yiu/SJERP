@@ -19,6 +19,7 @@ def main():
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--upgrade", nargs=6, metavar="INPUT", help="rehearsal script, Git pack, target ZIP, staging script, upgrade driver, backup driver")
     modes.add_argument("--business-test", type=Path, help="isolated test account and restart check")
+    modes.add_argument("--team-tls", nargs=3, metavar=("SCRIPT", "CA", "LEAF"))
     modes.add_argument("--lan-test", type=Path, help="isolated guest LAN HTTPS configuration")
     modes.add_argument("--encrypted-admin", nargs=2, metavar=("SCRIPT", "ENVELOPE"))
     modes.add_argument("--admin-console", type=Path, help="one-shot interactive administrator setup")
@@ -174,6 +175,19 @@ def main():
         ]
         config["runcmd"] = [["systemctl", "daemon-reload"],
                             ["systemctl", "--no-block", "start", "sjerp-encrypted-admin.service"]]
+    if args.team_tls:
+        script, ca, leaf = map(Path, args.team_tls)
+        config["ssh_deletekeys"] = False
+        config["write_files"] = [
+            {"path": "/usr/local/sbin/sjerp-enable-team-https", "permissions": "0700",
+             "content": script.read_text(encoding="utf-8")},
+            {"path": "/var/lib/sjerp-team-tls/sjerp-alex-ca.pem", "permissions": "0644",
+             "content": ca.read_text(encoding="ascii")},
+            {"path": "/var/lib/sjerp-team-tls/sjerp-alex-server.pem", "permissions": "0644",
+             "content": leaf.read_text(encoding="ascii")},
+        ]
+        config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-team-https",
+                            "/usr/local/sbin/sjerp-enable-team-https"]]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",

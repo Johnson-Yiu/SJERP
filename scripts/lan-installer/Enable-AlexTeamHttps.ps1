@@ -26,6 +26,9 @@ $ca = Join-Path $dir 'sjerp-alex-ca.pem'
 if ((Get-FileHash -LiteralPath $iso).Hash -ne '2694D0A356079DF40BA83F8795AA86AD260010FCC7AAF38BA14B5D158804DB06') {
     throw '团队 HTTPS 配置 ISO 摘要不匹配。'
 }
+if ((Get-FileHash -LiteralPath $ca).Hash -ne '7B89346A0E01D3AF55885BB5D12F8B6B6327BFBAC1AA71F267646BAAFC25C922') {
+    throw '团队 CA 公共证书摘要不匹配。'
+}
 $vm = Get-VM -Name 'SJERP-Linux-CombinedTest'
 $serviceNic = @(Get-VMNetworkAdapter -VM $vm | Where-Object MacAddress -eq '02534A455201')
 $dvd = @(Get-VMDvdDrive -VM $vm)

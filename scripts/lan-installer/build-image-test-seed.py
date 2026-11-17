@@ -20,6 +20,7 @@ def main():
     modes.add_argument("--upgrade", nargs=6, metavar="INPUT", help="rehearsal script, Git pack, target ZIP, staging script, upgrade driver, backup driver")
     modes.add_argument("--business-test", type=Path, help="isolated test account and restart check")
     modes.add_argument("--lan-test", type=Path, help="isolated guest LAN HTTPS configuration")
+    modes.add_argument("--admin-console", type=Path, help="one-shot interactive administrator setup")
     modes.add_argument("--activate", type=Path, help="isolated test activation script")
     modes.add_argument("--offline", nargs=6, metavar="INPUT",
                         help="system tar, ERP zip, install script, stage script, bootstrap, APT manifest SHA")
@@ -130,6 +131,26 @@ def main():
         ]
         config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-test-business",
                             "/usr/local/sbin/sjerp-prepare-test-business"]]
+    if args.admin_console:
+        config["ssh_deletekeys"] = False
+        config["write_files"] = [
+            {"path": "/usr/local/sbin/sjerp-create-test-admin.py", "permissions": "0644",
+             "content": args.admin_console.read_text(encoding="utf-8")},
+            {"path": "/etc/systemd/system/sjerp-admin-console.service", "permissions": "0644",
+             "content": (
+                 "[Unit]\nDescription=Interactive ALEX ERP administrator setup\n"
+                 "Requires=sjerp-local@a.service\nAfter=sjerp-local@a.service\n"
+                 "Conflicts=getty@tty2.service\nAfter=getty@tty2.service\n"
+                 "[Service]\nType=simple\nUser=sjerp-a\nGroup=sjerp-a\n"
+                 "WorkingDirectory=/srv/sjerp/current/release/backend\n"
+                 "EnvironmentFile=/etc/sjerp/a/runtime.env\nEnvironment=PYTHONPATH=/srv/sjerp/current/release/backend\n"
+                 "ExecStart=/srv/sjerp/current/venv/bin/python /usr/local/sbin/sjerp-create-test-admin.py\n"
+                 "StandardInput=tty-force\nStandardOutput=tty\nStandardError=tty\n"
+                 "TTYPath=/dev/tty2\nTTYReset=yes\nTTYVHangup=yes\nRuntimeMaxSec=15min\n"
+             )},
+        ]
+        config["runcmd"] = [["systemctl", "daemon-reload"],
+                            ["systemctl", "--no-block", "start", "sjerp-admin-console.service"]]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",

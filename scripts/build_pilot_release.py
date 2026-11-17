@@ -118,6 +118,9 @@ def build(commit, output, offline):
         if not (dist / "index.html").is_file():
             raise ValueError("Production build did not produce an index.")
         shutil.copytree(dist, release / "frontend/dist")
+        (release / "frontend/dist/release-info.json").write_text(
+            json.dumps({"commit": commit}) + "\n", encoding="utf-8", newline="\n"
+        )
         for name in ("package.json", "package-lock.json"):
             shutil.copy2(frontend / name, release / "frontend" / name)
         manifest = {

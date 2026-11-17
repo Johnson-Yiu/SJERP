@@ -1,0 +1,33 @@
+{
+  "required_commits": {
+    "已验证发布基线": "0b0654de5b079d244b74d752ed4b78710ec4881b",
+    "UI 收尾": "e5ce789459b2499189bc9b0b5e922e8722847da1",
+    "UI 交付": "30b3579a579174de5f3e4336619dcdb4c8502470",
+    "取消退款": "a4b2ff4c53e117b2efffeb5af54813121887ce5f",
+    "成本币种": "79530615a24292d2a87198032d2a85420e630fd7",
+    "草稿保护": "9d5dd253bf30e0785cb70b14246902811233a08f",
+    "SKU 批量串行化": "fa0edf18f38db5e1757717dcdf9996ba6f19cb62",
+    "运行交接": "6d13301e7c8b5b8a2470988850cfceff559d1d6e",
+    "恢复交接": "e0169499d4a0a70922859558c00446fc9ef1d5a8",
+    "发布打包": "3d067d659be70e1db0e4d6b0c44ac45454d26f5f",
+    "用户交接": "406b56f6e370b180857bb58b8a45866bccd7aa38"
+  },
+  "reviewed_blobs": {
+    "frontend/src/components/ProductSkuManagement.vue": "f4599ef883f6aad1d62dc2868c9e2f86bfb0d4bb",
+    "frontend/src/components/OrderDetailModal.vue": "16b95a983d13cc9c5b14026879a4f418cca97e81",
+    "frontend/src/composables/useUnsavedChangesGuard.js": "99d47ae2717eac62a35ecc7935c4497c14eb6604",
+    "backend/crm/services/operations_postgres.py": "fc6d1bd435c0e93130f52e62fc3dc04fa21b9590",
+    "frontend/src/views/FinanceLedgerPage.vue": "e3e203027b50f5eab980533866268a694de03259",
+    "frontend/src/views/CashEventPage.vue": "8170a945efba88538fd75a2b98e42091e469b807"
+  },
+  "required_text": {
+    "frontend/src/views/TransactionPage.vue": [
+      "class=\"transaction-table-viewport\"",
+      ".transaction-table {",
+      "width: 100%;"
+    ],
+    "scripts/build_pilot_release.py": [
+      "frontend/dist/release-info.json"
+    ]
+  }
+}

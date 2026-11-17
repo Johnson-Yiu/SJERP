@@ -18,9 +18,12 @@ if ($WholeLan) {
         }
     }
 }
-$local = Get-NetIPAddress -AddressFamily IPv4 -IPAddress 192.168.1.36
-if ($local.PrefixLength -ne 24 -or (Get-NetConnectionProfile -InterfaceIndex $local.InterfaceIndex).NetworkCategory -ne 'Private') {
-    throw 'ALEX 的局域网网卡须为 192.168.1.0/24 专用网络。'
+$local = @(Get-NetIPAddress -AddressFamily IPv4 -IPAddress 192.168.1.36)
+if ($local.Count -ne 1) { throw '无法唯一定位 ALEX 的 192.168.1.36 网卡。' }
+$profile = @(Get-NetConnectionProfile -InterfaceIndex $local[0].InterfaceIndex)
+if ($profile.Count -ne 1 -or $profile[0].NetworkCategory -ne 'Private') {
+    $category = if ($profile.Count -eq 1) { $profile[0].NetworkCategory } else { '无法唯一识别' }
+    throw "ALEX 网卡 $($local[0].InterfaceAlias)，地址 192.168.1.36/$($local[0].PrefixLength)，网络类型 $category。启用需要专用网络。"
 }
 $proxy = netsh interface portproxy show v4tov4
 if ($LASTEXITCODE -or !($proxy -match '^\s*192\.168\.1\.36\s+443\s+10\.253\.247\.2\s+18443\s*$')) {

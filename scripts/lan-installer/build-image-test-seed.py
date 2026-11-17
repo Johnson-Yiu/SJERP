@@ -20,6 +20,7 @@ def main():
     modes.add_argument("--upgrade", nargs=6, metavar="INPUT", help="rehearsal script, Git pack, target ZIP, staging script, upgrade driver, backup driver")
     modes.add_argument("--business-test", type=Path, help="isolated test account and restart check")
     modes.add_argument("--lan-test", type=Path, help="isolated guest LAN HTTPS configuration")
+    modes.add_argument("--encrypted-admin", nargs=2, metavar=("SCRIPT", "ENVELOPE"))
     modes.add_argument("--admin-console", type=Path, help="one-shot interactive administrator setup")
     modes.add_argument("--activate", type=Path, help="isolated test activation script")
     modes.add_argument("--offline", nargs=6, metavar="INPUT",
@@ -151,6 +152,28 @@ def main():
         ]
         config["runcmd"] = [["systemctl", "daemon-reload"],
                             ["systemctl", "--no-block", "start", "sjerp-admin-console.service"]]
+    if args.encrypted_admin:
+        script, envelope = map(Path, args.encrypted_admin)
+        encoded = envelope.read_text(encoding="ascii").strip()
+        if not re.fullmatch(r"[a-zA-Z0-9+/]{342}==", encoded):
+            parser.error("invalid RSA-2048 OAEP envelope")
+        config["ssh_deletekeys"] = False
+        config["write_files"] = [
+            {"path": "/usr/local/sbin/sjerp-create-encrypted-admin.py", "permissions": "0700",
+             "content": script.read_text(encoding="utf-8")},
+            {"path": "/etc/systemd/system/sjerp-encrypted-admin.service", "permissions": "0600",
+             "content": (
+                 "[Unit]\nDescription=Create the ALEX ERP administrator once\n"
+                 "Requires=sjerp-local@a.service\nAfter=sjerp-local@a.service\n"
+                 "[Service]\nType=oneshot\n"
+                 "WorkingDirectory=/srv/sjerp/current/release/backend\n"
+                 "EnvironmentFile=/etc/sjerp/a/runtime.env\nEnvironment=PYTHONPATH=/srv/sjerp/current/release/backend\n"
+                 f"Environment=SJERP_ADMIN_PASSWORD_ENVELOPE={encoded}\n"
+                 "ExecStart=/srv/sjerp/current/venv/bin/python /usr/local/sbin/sjerp-create-encrypted-admin.py\n"
+             )},
+        ]
+        config["runcmd"] = [["systemctl", "daemon-reload"],
+                            ["systemctl", "--no-block", "start", "sjerp-encrypted-admin.service"]]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",

@@ -21,7 +21,10 @@ def main():
     modes.add_argument("--activate", type=Path, help="isolated test activation script")
     modes.add_argument("--offline", nargs=6, metavar="INPUT",
                         help="system tar, ERP zip, install script, stage script, bootstrap, APT manifest SHA")
+    parser.add_argument("--activate-after", type=Path, help="activation script to run after offline staging")
     args = parser.parse_args()
+    if args.activate_after and not args.offline:
+        parser.error("--activate-after requires --offline")
     key = args.public_key.read_text(encoding="ascii").strip()
     if not re.fullmatch(r"ssh-ed25519 [A-Za-z0-9+/]+=*(?: [^\r\n]+)?", key):
         parser.error("expected exactly one Ed25519 SSH public key")
@@ -68,6 +71,23 @@ def main():
         ]
         config["runcmd"] = [["systemctl", "daemon-reload"],
                             ["systemctl", "--no-block", "enable", "--now", "sjerp-offline-firstboot.service"]]
+    if args.activate_after:
+        config["write_files"].extend([
+            {"path": "/usr/local/sbin/sjerp-activate-offline-test", "permissions": "0700",
+             "content": args.activate_after.read_text(encoding="utf-8")},
+            {"path": "/etc/systemd/system/sjerp-test-activation.service", "permissions": "0644",
+             "content": (
+                 "[Unit]\nDescription=Activate isolated SJERP instance\n"
+                 "Requires=sjerp-offline-firstboot.service\n"
+                 "After=cloud-final.service sjerp-offline-firstboot.service\n"
+                 "ConditionPathExists=!/srv/sjerp/current\n"
+                 "[Service]\nType=oneshot\nExecStart=/usr/local/sbin/sjerp-activate-offline-test\n"
+                 "TimeoutStartSec=15min\n[Install]\nWantedBy=multi-user.target\n"
+             )},
+        ])
+        config["runcmd"].append(
+            ["systemctl", "--no-block", "enable", "--now", "sjerp-test-activation.service"]
+        )
     if args.activate:
         config["ssh_deletekeys"] = False
         config["write_files"] = [

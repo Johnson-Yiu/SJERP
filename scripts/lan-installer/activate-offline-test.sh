@@ -25,6 +25,7 @@ if getent passwd sjerp-a >/dev/null; then echo '运行账号已存在'; exit 1; 
 psql_as_postgres() {
     runuser -u postgres -- /usr/lib/postgresql/17/bin/psql -X -q -v ON_ERROR_STOP=1 "$@"
 }
+systemctl start postgresql@17-main.service nginx.service
 test -z "$(psql_as_postgres -Atd postgres -c "SELECT datname FROM pg_database WHERE datname='sjerp_a'")"
 test -z "$(psql_as_postgres -Atd postgres -c "SELECT rolname FROM pg_roles WHERE rolname IN ('sjerp_a_migrate','sjerp_a_runtime')")"
 useradd --system --user-group --no-create-home --shell /usr/sbin/nologin sjerp-a

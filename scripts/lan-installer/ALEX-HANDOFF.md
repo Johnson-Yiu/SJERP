@@ -28,3 +28,13 @@ D 盘归档属于 ALEX 本机副本。独立位置、独立恢复演练、日常
 ALEX 原服务器证书缺少 AKI，原 CA 缺少 SKI。修复版沿用原 CA 和服务器公钥，补齐两个标识。严格校验的客户端使用新版公开 CA `sjerp-alex-ca-v3.pem`。新 Windows 终端可双击 `Open-Sjerp.cmd` 并确认导入新版公开 CA。开发机 Chrome 已用原有 CA 信任直接打开 ERP 登录页。
 
 修复入口 `Repair-AlexTeamTls.ps1` 在 ALEX 的管理员 PowerShell 运行。它验证镜像摘要与当前证书，短暂重启 ERP 来宾，再检查 HTTPS 接口和实际送出的证书指纹。来宾先严格验证证书及服务器公钥，验证失败时恢复原证书。2026-11-17 已确认线上证书 SHA-256 指纹为 08323823f84dafc9cb24edf9bfeb5f876b4f9159c0b0ff2414b37f179ad6e0e4。开发机以新版公开 CA 完成 Python 严格 TLS 1.3 校验，首页、会话与发布接口返回 HTTP 200。发布版本仍为 3bb0970148ff98025d44d6c5ee42e17bfe180002。
+
+## 自动联合备份和异机恢复
+
+ALEX 管理员运行 `Install-AlexAutomaticBackup.ps1` 并确认本次维护。入口生成 ALEX 本机的任务密钥，核对现有 Hyper-V 来宾和镜像摘要，重启来宾，并由 Windows 任务计划程序先执行一次 `SJERP-AutomaticJointBackup`。任务每天在 ALEX 本地时间 03:00 执行。每次短暂停止 ERP，将专用附件卷临时设为只读，仅保留本机 PostgreSQL 维护登录。完成或失败时按维护标记恢复数据库角色、附件卷写权限和 ERP 服务。关机期间错过的任务可由管理员选在维护窗口手动运行；当前未设工作时间内自动补跑。
+
+Windows 任务经 Hyper-V 专用网络请求联合备份，核对发布信息、加密归档及恢复密钥信封的 SHA-256，然后以 `SJERP-auto-*.zip` 发布到 D:\ERP备份。查看任务结果用 `Get-ScheduledTaskInfo -TaskName SJERP-AutomaticJointBackup`。详细状态和 SSH 诊断在 `C:\ProgramData\SJERP-AutoBackup` 的 `last-run.json` 与 `ssh-error.log`，Linux 服务日志为 `journalctl -u sjerp-automatic-backup.service`。本轮保存所有归档。磁盘空间和保留期需根据备份增长单独管理。
+
+归档使用逐次随机口令。归档只含由恢复公钥加密的口令信封。对应私钥保存在独立开发电脑当前 Windows 用户的 DPAPI 保护文件；恢复时需要该 Windows 用户或后来另行建立的密钥托管。从备份归档恢复时，使用归档对应发布提交的干净维护源码和独立 PG17。开发机入口为 `restore-alex-automatic-backup.py`，参数见 `--help`。它验证归档及信封，使用现有 `restore-encrypted-verify` 恢复到新数据库和附件目录，保留签名回执和应用验证记录，并关闭独立 PostgreSQL 实例。新输出目录应置于访问受限的本机路径。升级到新 SHA 后，需要同步更新来宾的维护源码包，旧包会拒绝备份新发布。
+
+部署状态仍待首份自动归档及独立电脑的应用回读实测。D 盘归档仍属于 ALEX 本机，异机恢复演练与持续保存异机备份副本分别管理。

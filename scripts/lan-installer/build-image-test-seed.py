@@ -24,6 +24,8 @@ def main():
     modes.add_argument("--encrypted-admin", nargs=2, metavar=("SCRIPT", "ENVELOPE"))
     modes.add_argument("--admin-console", type=Path, help="one-shot interactive administrator setup")
     modes.add_argument("--restore-test", nargs=3, metavar=("SCRIPT", "ARCHIVE", "PACK"))
+    modes.add_argument("--scheduled-backup", nargs=6, metavar="INPUT",
+                       help="setup script, worker, source pack, release SHA file, recovery public key, collector placeholder")
     modes.add_argument("--activate", type=Path, help="isolated test activation script")
     modes.add_argument("--offline", nargs=6, metavar="INPUT",
                         help="system tar, ERP zip, install script, stage script, bootstrap, APT manifest SHA")
@@ -210,6 +212,33 @@ def main():
                             "--property=Requires=sjerp-local@a.service",
                             "--property=After=sjerp-local@a.service",
                             "/usr/local/sbin/sjerp-isolated-restore"]]
+    if args.scheduled_backup:
+        setup, worker, pack, release, recipient, collector = map(Path, args.scheduled_backup)
+        hasher = hashlib.sha256()
+        with pack.open("rb") as handle:
+            hasher = hashlib.file_digest(handle, "sha256")
+        payload = {"maintenance.pack": pack}
+        base = "/usr/local/share/sjerp-backup-seed"
+        config["ssh_deletekeys"] = False
+        files_to_write = {
+            "setup.sh": setup, "worker.py": worker, "release-sha": release,
+            "recovery-public.pem": recipient, "collector.pub": collector,
+        }
+        config["write_files"] = [
+            {"path": f"{base}/{name}", "permissions": "0700" if name == "setup.sh" else "0600",
+             "content": source.read_text(encoding="ascii")}
+            for name, source in files_to_write.items()
+        ]
+        wrapper = (
+            "set -eu; d=$(mktemp -d); "
+            "trap 'if mountpoint -q \"$d\"; then umount \"$d\"; fi; rmdir \"$d\"' EXIT; "
+            'mount -o ro,nosuid,nodev,noexec /dev/disk/by-label/CIDATA "$d"; '
+            f'echo "{hasher.hexdigest()}  $d/maintenance.pack" | sha256sum -c -; '
+            f'install -m 0600 "$d/maintenance.pack" {base}/maintenance.pack; '
+            f'exec_setup=0; {base}/setup.sh || exec_setup=$?; exit "$exec_setup"'
+        )
+        config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-backup-setup",
+                            "/bin/sh", "-c", wrapper]]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",

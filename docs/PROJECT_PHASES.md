@@ -1,5 +1,9 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## LAN-INSTALLER-01 ALEX 自动联合备份与异机恢复（2026-11-17）
+
+按 ALEX 本地时间每日 03:00 安排数据库与附件加密归档，目标 D:\ERP备份。ALEX 管理员运行一次安装入口后，先执行首份自动任务，随后把该归档在开发电脑的隔离 PostgreSQL 17 实例恢复。当前已交付安装及恢复入口，线上任务和异机验收待首次运行。按本任务要求暂缓 GitHub Actions。
+
 ## LAN-INSTALLER-01 ALEX HTTPS 证书维护（2026-11-17）
 
 ISS-136 已完成修复证书签发、OpenSSL 严格校验及 IP 不匹配拒绝校验。原 CA 和服务器密钥继续使用。ALEX 已更新。开发机使用新版公开 CA 通过严格 TLS 1.3 校验，核对线上指纹和发布 SHA。Chrome 使用原有 Windows CA 信任直接打开登录页。新版客户端启动入口已发布。按本任务要求暂缓 GitHub Actions。

@@ -4,7 +4,19 @@ umask 077
 base="$HOME/sjerp-build"
 pg=/usr/lib/postgresql/17/bin
 work=$(mktemp -d "$base/runtime-role.XXXXXX")
-trap 'if [ -s "$work/db/postmaster.pid" ]; then "$pg/pg_ctl" -D "$work/db" -m fast -w stop >/dev/null; fi' EXIT
+unit_name="sjerp-build-smoke-${work##*.}.service"
+unit=
+cleanup() {
+    if [ -n "$unit" ]; then
+        systemctl --user stop "$unit_name" >/dev/null 2>&1 || :
+        rm -f -- "$unit" "$work/runtime.env"
+        systemctl --user daemon-reload
+    fi
+    if [ -s "$work/db/postmaster.pid" ]; then
+        "$pg/pg_ctl" -D "$work/db" -m fast -w stop >/dev/null
+    fi
+}
+trap cleanup EXIT
 port=18219
 "$pg/initdb" --no-locale --encoding=UTF8 --auth-local=trust --auth-host=scram-sha-256 -D "$work/db" >"$work/init.log"
 "$pg/pg_ctl" -D "$work/db" -l "$work/pg.log" -o "-h 127.0.0.1 -p $port -k $work" -w start
@@ -43,3 +55,34 @@ if SJERP_EXPECTED_DB_NAME=sjerp_wrong "$python" manage.py check_local_runtime >"
 fi
 grep -F 'Configured database NAME differs' "$work/reject.log"
 printf '运行角色与目标库校验通过。日志：%s\n' "$work"
+unit="$HOME/.config/systemd/user/$unit_name"
+mkdir -p "$(dirname "$unit")"
+for name in APP_STAGE DJANGO_ALLOWED_HOSTS DJANGO_SECRET_KEY DATABASE_URL MEDIA_ROOT SJERP_EXPECTED_MEDIA_ROOT SJERP_EXPECTED_DB_HOST SJERP_EXPECTED_DB_PORT SJERP_EXPECTED_DB_NAME SJERP_EXPECTED_DB_USER; do
+    printenv "$name" | sed "s/^/$name=/" >> "$work/runtime.env"
+done
+printf '%s\n' 'SJERP_HTTP_HOST=localhost' 'SJERP_HTTP_PORT=18182' >> "$work/runtime.env"
+template="$backend/../docs/deployment/sjerp-local@.service.example"
+sed -e '/^User=/d' -e '/^Group=/d' \
+    -e "s|/srv/sjerp/%i/release/backend|$backend|g" \
+    -e "s|/srv/sjerp/%i/venv|$base/offline-check|g" \
+    -e "s|/etc/sjerp/%i/runtime.env|$work/runtime.env|g" \
+    -e "s|/etc/sjerp/%i/gunicorn.conf.py|$backend/../docs/deployment/sjerp-local-gunicorn.conf.py.example|g" \
+    -e '/^\[Service\]/a Restart=on-failure\nRestartSec=1' "$template" > "$unit"
+systemctl --user daemon-reload
+systemctl --user start "$unit_name"
+first=$(systemctl --user show --property=MainPID --value "$unit_name")
+test "$first" != 0
+systemctl --user start "$unit_name"
+test "$(systemctl --user show --property=MainPID --value "$unit_name")" = "$first"
+systemctl --user kill --kill-whom=main --signal=KILL "$unit_name"
+for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+    second=$(systemctl --user show --property=MainPID --value "$unit_name")
+    if [ "$second" != 0 ] && [ "$second" != "$first" ] && systemctl --user is-active --quiet "$unit_name"; then
+        break
+    fi
+    sleep 1
+done
+test "$second" != 0 && test "$second" != "$first" && systemctl --user is-active --quiet "$unit_name"
+systemctl --user stop "$unit_name"
+test "$(systemctl --user show --property=ActiveState --value "$unit_name")" = inactive
+printf '%s\n' 'systemd 生命周期通过：启动、重复启动、崩溃重启、主动停止。'

@@ -12,14 +12,14 @@ report 'SJERP business acceptance setup in progress'
 address=$(ip -4 -o addr show scope global dev eth0 | awk 'NR == 1 {split($4, a, "/"); print a[1]}')
 test -n "$address"
 nginx=/etc/nginx/conf.d/sjerp-a.conf
-sed -i -E "s/listen 172\.20\.[0-9]+\.[0-9]+:18443 ssl;/listen $address:18443 ssl;/" "$nginx"
+sed -i -E "s/listen 172\.20\.[0-9]+\.[0-9]+:18443 ssl;/listen 0.0.0.0:18443 ssl;/; /listen 127\.0\.0\.1:18443 ssl;/d" "$nginx"
 nginx -t
 systemctl restart nginx
 base=/srv/sjerp/current
-install -d -m 0700 -o erpverify -g erpverify /run/sjerp-lan-verify
-test ! -e /run/sjerp-lan-verify/credentials.json
+install -d -m 0700 -o erpverify -g erpverify /var/lib/sjerp-lan-verify
+test ! -e /var/lib/sjerp-lan-verify/credentials.json
 # Django reads the same isolated runtime target. Do not print or put the password in command arguments.
-export SJERP_CAPTURE_CREDENTIALS=/run/sjerp-lan-verify/credentials.json
+export SJERP_CAPTURE_CREDENTIALS=/var/lib/sjerp-lan-verify/credentials.json
 set -a
 . /etc/sjerp/a/runtime.env
 set +a
@@ -47,22 +47,24 @@ with os.fdopen(fd, "w") as output:
     account = pwd.getpwnam("erpverify")
     os.fchown(output.fileno(), account.pw_uid, account.pw_gid)
 '
-cat > /run/systemd/system/sjerp-lan-test-restart.path <<'EOF'
+cat > /etc/systemd/system/sjerp-lan-test-restart.path <<'EOF'
 [Unit]
 Description=One-shot ERP restart for isolated LAN acceptance
 [Path]
-PathExists=/run/sjerp-lan-verify/restart.request
+PathExists=/var/lib/sjerp-lan-verify/restart.request
 Unit=sjerp-lan-test-restart.service
+[Install]
+WantedBy=multi-user.target
 EOF
-cat > /run/systemd/system/sjerp-lan-test-restart.service <<'EOF'
+cat > /etc/systemd/system/sjerp-lan-test-restart.service <<'EOF'
 [Unit]
 Description=One-shot ERP restart for isolated LAN acceptance
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/systemctl stop sjerp-lan-test-restart.path
-ExecStart=/usr/bin/rm -f -- /run/sjerp-lan-verify/restart.request
+ExecStart=/usr/bin/systemctl disable --now sjerp-lan-test-restart.path
+ExecStart=/usr/bin/rm -f -- /var/lib/sjerp-lan-verify/restart.request
 ExecStart=/usr/bin/systemctl restart sjerp-local@a.service
 EOF
 systemctl daemon-reload
-systemctl start sjerp-lan-test-restart.path
+systemctl enable --now sjerp-lan-test-restart.path
 report "SJERP BUSINESS SETUP READY: IPv4=$address"

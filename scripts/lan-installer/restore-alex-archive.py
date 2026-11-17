@@ -83,7 +83,13 @@ def main(seed):
 
     report("SJERP ISOLATED RESTORE IN PROGRESS")
     parent = Path("/var/lib/sjerp-recovery")
-    parent.mkdir(mode=0o711, exist_ok=True)
+    parent.mkdir(mode=0o700, exist_ok=True)
+    if parent.is_symlink() or not parent.is_dir() or parent.stat().st_uid != 0:
+        raise RuntimeError("Unsafe recovery parent")
+    # postgres needs traversal to reach its own data and socket directories.
+    # Archive, receipt and key subdirectories stay private.
+    parent.chmod(0o711)
+    report("SJERP ISOLATED RESTORE IN PROGRESS: target cluster and source checkout")
     work = Path(tempfile.mkdtemp(prefix="alex-", dir=parent))
     work.chmod(0o711)
     media = work / "media"

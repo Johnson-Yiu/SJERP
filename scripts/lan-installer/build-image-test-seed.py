@@ -18,6 +18,7 @@ def main():
     parser.add_argument("output", type=Path)
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--upgrade", nargs=6, metavar="INPUT", help="rehearsal script, Git pack, target ZIP, staging script, upgrade driver, backup driver")
+    modes.add_argument("--business-test", type=Path, help="isolated test account and restart check")
     modes.add_argument("--lan-test", type=Path, help="isolated guest LAN HTTPS configuration")
     modes.add_argument("--activate", type=Path, help="isolated test activation script")
     modes.add_argument("--offline", nargs=6, metavar="INPUT",
@@ -121,6 +122,14 @@ def main():
         ]
         config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-test-lan",
                             "/usr/local/sbin/sjerp-enable-test-lan"]]
+    if args.business_test:
+        config["ssh_deletekeys"] = False
+        config["write_files"] = [
+            {"path": "/usr/local/sbin/sjerp-prepare-test-business", "permissions": "0700",
+             "content": args.business_test.read_text(encoding="utf-8")},
+        ]
+        config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-test-business",
+                            "/usr/local/sbin/sjerp-prepare-test-business"]]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",

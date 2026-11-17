@@ -23,6 +23,7 @@ def main():
     modes.add_argument("--lan-test", type=Path, help="isolated guest LAN HTTPS configuration")
     modes.add_argument("--encrypted-admin", nargs=2, metavar=("SCRIPT", "ENVELOPE"))
     modes.add_argument("--admin-console", type=Path, help="one-shot interactive administrator setup")
+    modes.add_argument("--restore-test", nargs=3, metavar=("SCRIPT", "ARCHIVE", "PACK"))
     modes.add_argument("--activate", type=Path, help="isolated test activation script")
     modes.add_argument("--offline", nargs=6, metavar="INPUT",
                         help="system tar, ERP zip, install script, stage script, bootstrap, APT manifest SHA")
@@ -193,6 +194,22 @@ def main():
         ]
         config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-team-https",
                             "/usr/local/sbin/sjerp-enable-team-https"]]
+    if args.restore_test:
+        config["ssh_deletekeys"] = False
+        payload = dict(zip(("restore.py", "archive.gpg", "source.pack"), map(Path, args.restore_test), strict=True))
+        wrapper = (
+            "#!/bin/sh\nset -eu\n"
+            "d=$(mktemp -d)\n"
+            "trap 'if mountpoint -q \"$d\"; then umount \"$d\"; fi; rmdir \"$d\"' EXIT\n"
+            'mount -o ro,nosuid,nodev,noexec /dev/disk/by-label/CIDATA "$d"\n'
+            'python3 "$d/restore.py" "$d"\n'
+        )
+        config["write_files"] = [{"path": "/usr/local/sbin/sjerp-isolated-restore", "permissions": "0700",
+                                  "content": wrapper}]
+        config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-isolated-restore",
+                            "--property=Requires=sjerp-local@a.service",
+                            "--property=After=sjerp-local@a.service",
+                            "/usr/local/sbin/sjerp-isolated-restore"]]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",

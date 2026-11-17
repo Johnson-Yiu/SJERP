@@ -23,7 +23,18 @@ EOF
 chmod 0600 /etc/netplan/91-sjerp-service.yaml
 netplan generate
 netplan apply
-ip -4 -o addr show | grep -F '10.253.247.2/30'
+ready=false
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+    if ip -4 -o addr show | grep -Fq '10.253.247.2/30'; then
+        ready=true
+        break
+    fi
+    sleep 1
+done
+if [ "$ready" != true ]; then
+    echo 'Netplan 已应用，但固定 IPv4 地址未在时限内就绪。' >&2
+    exit 1
+fi
 nginx=/etc/nginx/conf.d/sjerp-a.conf
 grep -Fq 'listen 0.0.0.0:18443 ssl;' "$nginx"
 sed -i 's/proxy_set_header Host \$host;/proxy_set_header Host $http_host;/' "$nginx"

@@ -6,6 +6,7 @@ import json
 from contextlib import ExitStack
 from pathlib import Path
 import re
+import shlex
 import uuid
 
 import pycdlib
@@ -49,7 +50,21 @@ def main():
                    "trap 'umount \"$d\"; rmdir \"$d\"' EXIT; "
                    f"echo '{hashes['boot.sh']}  '\"$d/boot.sh\" | sha256sum -c -; "
                    'sh "$d/boot.sh" ' + " ".join([*(hashes[name] for name in list(payload)[:4]), apt_digest])]
-        config["runcmd"] = [command]
+        config["write_files"] = [
+            {"path": "/usr/local/sbin/sjerp-offline-firstboot", "permissions": "0700",
+             "content": "#!/bin/sh\nexec " + shlex.join(command) + "\n"},
+            {"path": "/etc/systemd/system/sjerp-offline-firstboot.service", "permissions": "0644",
+             "content": (
+                 "[Unit]\nDescription=Resume SJERP offline installation\n"
+                 "After=cloud-final.service\n"
+                 "ConditionPathExists=!/srv/sjerp/versions/96276dffa07c11fb60720a439269df8c36031f7a/READY\n"
+                 "[Service]\nType=oneshot\nExecStart=/usr/local/sbin/sjerp-offline-firstboot\n"
+                 "TimeoutStartSec=30min\n"
+                 "[Install]\nWantedBy=multi-user.target\n"
+             )},
+        ]
+        config["runcmd"] = [["systemctl", "daemon-reload"],
+                            ["systemctl", "--no-block", "enable", "--now", "sjerp-offline-firstboot.service"]]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",

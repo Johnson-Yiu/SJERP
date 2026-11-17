@@ -19,7 +19,7 @@ if ($WhatIfPreference) {
     & (Join-Path $dir 'Install-SjerpClientTrust.ps1') -WhatIf
     return
 }
-curl.exe --noproxy '*' --cacert $ca --connect-timeout 5 --max-time 10 --silent --fail --output NUL $url
+curl.exe --noproxy '*' --ssl-revoke-best-effort --cacert $ca --connect-timeout 5 --max-time 10 --silent --fail --output NUL $url
 if ($LASTEXITCODE) {
     throw 'ERP 未通过团队证书连接验证。请确认服务器已经启用团队证书且本机已获准访问。'
 }

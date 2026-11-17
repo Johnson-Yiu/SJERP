@@ -54,7 +54,7 @@ if ($dvd[0].Path -ne $iso) {
 if ((Get-VM -Id $vm.Id).State -eq 'Off') { Start-VM -VM $vm | Out-Null }
 $until = (Get-Date).AddMinutes(4)
 do {
-    curl.exe --noproxy '*' --cacert $ca --connect-timeout 2 --max-time 4 --silent --fail --connect-to '192.168.1.36:443:10.253.247.2:18443' 'https://192.168.1.36/api/session/csrf/' --output NUL
+    curl.exe --noproxy '*' --ssl-revoke-best-effort --cacert $ca --connect-timeout 2 --max-time 4 --silent --fail --connect-to '192.168.1.36:443:10.253.247.2:18443' 'https://192.168.1.36/api/session/csrf/' --output NUL
     $ready = $LASTEXITCODE -eq 0
     if (!$ready) { Start-Sleep -Seconds 3 }
 } while (!$ready -and (Get-Date) -lt $until)

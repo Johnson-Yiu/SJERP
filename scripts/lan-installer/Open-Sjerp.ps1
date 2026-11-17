@@ -3,16 +3,16 @@
 param()
 $ErrorActionPreference = 'Stop'
 $dir = Split-Path -Parent $PSCommandPath
-$ca = Join-Path $dir 'sjerp-alex-ca.pem'
-$der = Join-Path $dir 'sjerp-alex-ca.cer'
+$ca = Join-Path $dir 'sjerp-alex-ca-v3.pem'
+$der = Join-Path $dir 'sjerp-alex-ca-v3.cer'
 $url = 'https://192.168.1.36/'
 function Get-CertificateFileDigest($file) {
     $sha = [Security.Cryptography.SHA256]::Create()
     try { [BitConverter]::ToString($sha.ComputeHash([IO.File]::ReadAllBytes($file))).Replace('-', '') }
     finally { $sha.Dispose() }
 }
-if ((Get-CertificateFileDigest $ca) -ne '7B89346A0E01D3AF55885BB5D12F8B6B6327BFBAC1AA71F267646BAAFC25C922' -or
-    (Get-CertificateFileDigest $der) -ne 'B613AEBE0C104001D5359AD11DC03FD39A5D63D0C577D16EA8824B4763B6A8AA') {
+if ((Get-CertificateFileDigest $ca) -ne '9E03526B4A45ABC29531394C2EDC9D04AC6671ACD8C2B1EF0AE6329281EEAD6B' -or
+    (Get-CertificateFileDigest $der) -ne '8F7C12615C449DF14F21D5BF7F9858FF09958A731EC05CCA2F990D742E82E7A9') {
     throw '交付证书摘要不匹配。'
 }
 if ($WhatIfPreference) {

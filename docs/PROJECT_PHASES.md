@@ -1,5 +1,9 @@
 # SUNJACK-ERP 阶段计划与验收状态
 
+## LAN-INSTALLER-01 ALEX HTTPS 证书维护（2026-11-17）
+
+ISS-136 已完成修复证书签发、OpenSSL 严格校验及 IP 不匹配拒绝校验。原 CA 和服务器密钥继续使用。更新介质就绪，待 ALEX 管理员安排虚拟机短暂重启并执行，随后从局域网核对线上指纹、发布 SHA 和浏览器入口。按本任务要求暂缓 GitHub Actions。
+
 ## SJERP PRELAUNCH-REPAIR-BATCH-02（2026-11-14，统一候选验收）
 
 在独立 `codex/prelaunch-repair-integration-02` 接入 UI `e5ce789459b2499189bc9b0b5e922e8722847da1` 和取消退款 `c8a06892579bf586d1a674750902c27943fa69d4`；共同基线 `d7d155b994b652f6f4f777edde22a257a8ed7a2e`。A 财务、B 成本、C 草稿均已按源码来源正常 merge，D 收拢公共弹窗与原 22 项 UI，保留 SEC1 及并行业务成果。没有新增迁移，既有多来源迁移汇合与 0130 叶节点保留。

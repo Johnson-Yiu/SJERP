@@ -1,5 +1,13 @@
 # SUNJACK-ERP 项目问题台账
 
+## ALEX 局域网 HTTPS 严格校验（2026-11-17）
+
+| Issue | 优先级／状态 | 来源、核实与影响 | 下一步与复审依据 |
+| --- | --- | --- | --- |
+| ISS-136 ALEX HTTPS 证书缺少密钥标识 | P2 / FIXED_PENDING_REVIEW | 2026-11-17 ALEX 恢复验收后复测 HTTPS，Python 严格校验发现服务器证书缺 AKI，OpenSSL 复现并确认 CA 也缺 SKI。严格校验客户端不能连接。 | LAN-INSTALLER-01。保留 CA 和服务器公钥，重新签发并通过本地严格链校验和错误 IP 拒绝测试。待 ALEX 管理员执行更新后，用开发机严格校验线上证书和发布 SHA，复核浏览器入口。 |
+
+本轮新增 1 项，修复待复审 1 项，新增关闭 0 项。台账唯一编号增至 136。既有未关闭、阻塞、延期及业务待决项沿用原证据。
+
 ## SJERP PRELAUNCH-REPAIR-BATCH-02（2026-11-14）
 
 共同基线 `d7d155b994b652f6f4f777edde22a257a8ed7a2e` 完整接收 UI 和取消退款来源，再按 A/B/C/D 函数与组件归属集成。以下为已实现、定向验证后待独立复审项；最终集成全量与精确 HEAD CI 见[本批验收](uat-evidence/prelaunch-repair-batch-02/acceptance.md)，阶段性成功不替代交付门槛。

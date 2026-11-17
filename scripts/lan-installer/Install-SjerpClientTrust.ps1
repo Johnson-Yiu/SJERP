@@ -2,8 +2,8 @@
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact='High')]
 param()
 $ErrorActionPreference = 'Stop'
-$path = Join-Path (Split-Path -Parent $PSCommandPath) 'sjerp-alex-ca.cer'
-$expected = 'B613AEBE0C104001D5359AD11DC03FD39A5D63D0C577D16EA8824B4763B6A8AA'
+$path = Join-Path (Split-Path -Parent $PSCommandPath) 'sjerp-alex-ca-v3.cer'
+$expected = '8F7C12615C449DF14F21D5BF7F9858FF09958A731EC05CCA2F990D742E82E7A9'
 $bytes = [IO.File]::ReadAllBytes($path)
 $sha = [Security.Cryptography.SHA256]::Create()
 try { $actual = [BitConverter]::ToString($sha.ComputeHash($bytes)).Replace('-', '') }

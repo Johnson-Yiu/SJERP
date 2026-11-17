@@ -17,6 +17,7 @@ def main():
     parser.add_argument("public_key", type=Path)
     parser.add_argument("output", type=Path)
     modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--upgrade", nargs=6, metavar="INPUT", help="rehearsal script, Git pack, target ZIP, staging script, upgrade driver, backup driver")
     modes.add_argument("--activate", type=Path, help="isolated test activation script")
     modes.add_argument("--offline", nargs=6, metavar="INPUT",
                         help="system tar, ERP zip, install script, stage script, bootstrap, APT manifest SHA")
@@ -75,6 +76,22 @@ def main():
         ]
         config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-test-activation",
                             "/usr/local/sbin/sjerp-activate-offline-test"]]
+    if args.upgrade:
+        config["ssh_deletekeys"] = False
+        payload = dict(zip(("rehearse.py", "source.pack", "target.zip", "stage.py",
+                            "upgrade-pilot-release.py", "backup-before-upgrade.py"),
+                           map(Path, args.upgrade), strict=True))
+        wrapper = (
+            "#!/bin/sh\nset -eu\n"
+            "d=$(mktemp -d)\n"
+            "trap 'if mountpoint -q \"$d\"; then umount \"$d\"; fi; rmdir \"$d\"' EXIT\n"
+            'mount -o ro,nosuid,nodev,noexec /dev/disk/by-label/CIDATA "$d"\n'
+            'python3 "$d/rehearse.py" "$d"\n'
+        )
+        config["write_files"] = [{"path": "/usr/local/sbin/sjerp-test-upgrade", "permissions": "0700",
+                                  "content": wrapper}]
+        config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-test-upgrade",
+                            "/usr/local/sbin/sjerp-test-upgrade"]]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",
@@ -87,9 +104,9 @@ def main():
             iso.add_fp(BytesIO(content), len(content), iso_path=f"/{filename.upper().replace('-', '_')};1",
                        joliet_path=f"/{filename}")
         with ExitStack() as sources:
-            for name, path in payload.items():
+            for file_number, (name, path) in enumerate(payload.items()):
                 handle = sources.enter_context(path.open("rb"))
-                iso.add_fp(handle, path.stat().st_size, iso_path=f"/{name.upper()};1",
+                iso.add_fp(handle, path.stat().st_size, iso_path=f"/FILE{file_number:05d}.BIN;1",
                            joliet_path=f"/{name}")
             with args.output.open("xb") as handle:
                 iso.write_fp(handle)

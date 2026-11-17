@@ -4,7 +4,7 @@
 
 | Issue | 优先级／状态 | 来源、核实与影响 | 下一步与复审依据 |
 | --- | --- | --- | --- |
-| ISS-136 ALEX HTTPS 证书缺少密钥标识 | P2 / FIXED_PENDING_REVIEW | 2026-11-17 ALEX 恢复验收后复测 HTTPS，Python 严格校验发现服务器证书缺 AKI，OpenSSL 复现并确认 CA 也缺 SKI。严格校验客户端不能连接。 | LAN-INSTALLER-01。保留 CA 和服务器公钥，重新签发并通过本地严格链校验和错误 IP 拒绝测试。待 ALEX 管理员执行更新后，用开发机严格校验线上证书和发布 SHA，复核浏览器入口。 |
+| ISS-136 ALEX HTTPS 证书缺少密钥标识 | P2 / FIXED_PENDING_REVIEW | 2026-11-17 ALEX 恢复验收后复测 HTTPS，Python 严格校验发现服务器证书缺 AKI，OpenSSL 复现并确认 CA 也缺 SKI。严格校验客户端不能连接。 | LAN-INSTALLER-01。保留 CA 和服务器公钥，重新签发并通过本地严格链校验和错误 IP 拒绝测试。ALEX 已更新。开发机 Python 强制严格校验并核对线上指纹、首页和会话接口 HTTP 200 及发布 SHA，Chrome 用原 CA 打开登录页。待独立复审该证据。 |
 
 本轮新增 1 项，修复待复审 1 项，新增关闭 0 项。台账唯一编号增至 136。既有未关闭、阻塞、延期及业务待决项沿用原证据。
 

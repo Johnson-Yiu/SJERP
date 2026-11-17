@@ -25,6 +25,6 @@ D 盘归档属于 ALEX 本机副本。独立位置、独立恢复演练、日常
 
 ## HTTPS 证书维护
 
-ALEX 原服务器证书缺少 AKI，原 CA 缺少 SKI。修复版沿用原 CA 和服务器公钥，补齐两个标识。严格校验的客户端使用新版公开 CA `sjerp-alex-ca-v3.pem`。Windows 团队终端通过 `Open-Sjerp.cmd` 评估并确认导入新版公开 CA。此操作保留已经导入的原 CA。
+ALEX 原服务器证书缺少 AKI，原 CA 缺少 SKI。修复版沿用原 CA 和服务器公钥，补齐两个标识。严格校验的客户端使用新版公开 CA `sjerp-alex-ca-v3.pem`。新 Windows 终端可双击 `Open-Sjerp.cmd` 并确认导入新版公开 CA。开发机 Chrome 已用原有 CA 信任直接打开 ERP 登录页。
 
-修复入口 `Repair-AlexTeamTls.ps1` 在 ALEX 的管理员 PowerShell 运行。它验证镜像摘要与当前证书，短暂重启 ERP 来宾，再检查 HTTPS 接口和实际送出的证书指纹。来宾先严格验证证书及服务器公钥，验证失败时恢复原证书。当前修复版已通过本地严格证书链校验，线上换装结果待核对。
+修复入口 `Repair-AlexTeamTls.ps1` 在 ALEX 的管理员 PowerShell 运行。它验证镜像摘要与当前证书，短暂重启 ERP 来宾，再检查 HTTPS 接口和实际送出的证书指纹。来宾先严格验证证书及服务器公钥，验证失败时恢复原证书。2026-11-17 已确认线上证书 SHA-256 指纹为 08323823f84dafc9cb24edf9bfeb5f876b4f9159c0b0ff2414b37f179ad6e0e4。开发机以新版公开 CA 完成 Python 严格 TLS 1.3 校验，首页、会话与发布接口返回 HTTP 200。发布版本仍为 3bb0970148ff98025d44d6c5ee42e17bfe180002。

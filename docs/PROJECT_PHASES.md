@@ -2,7 +2,7 @@
 
 ## LAN-INSTALLER-01 ALEX HTTPS 证书维护（2026-11-17）
 
-ISS-136 已完成修复证书签发、OpenSSL 严格校验及 IP 不匹配拒绝校验。原 CA 和服务器密钥继续使用。更新介质就绪，待 ALEX 管理员安排虚拟机短暂重启并执行，随后从局域网核对线上指纹、发布 SHA 和浏览器入口。按本任务要求暂缓 GitHub Actions。
+ISS-136 已完成修复证书签发、OpenSSL 严格校验及 IP 不匹配拒绝校验。原 CA 和服务器密钥继续使用。ALEX 已更新。开发机使用新版公开 CA 通过严格 TLS 1.3 校验，核对线上指纹和发布 SHA。Chrome 使用原有 Windows CA 信任直接打开登录页。新版客户端启动入口已发布。按本任务要求暂缓 GitHub Actions。
 
 ## SJERP PRELAUNCH-REPAIR-BATCH-02（2026-11-14，统一候选验收）
 

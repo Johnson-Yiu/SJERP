@@ -16,7 +16,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("public_key", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--offline", nargs=6, metavar="INPUT",
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--activate", type=Path, help="isolated test activation script")
+    modes.add_argument("--offline", nargs=6, metavar="INPUT",
                         help="system tar, ERP zip, install script, stage script, bootstrap, APT manifest SHA")
     args = parser.parse_args()
     key = args.public_key.read_text(encoding="ascii").strip()
@@ -65,6 +67,14 @@ def main():
         ]
         config["runcmd"] = [["systemctl", "daemon-reload"],
                             ["systemctl", "--no-block", "enable", "--now", "sjerp-offline-firstboot.service"]]
+    if args.activate:
+        config["ssh_deletekeys"] = False
+        config["write_files"] = [
+            {"path": "/usr/local/sbin/sjerp-activate-offline-test", "permissions": "0700",
+             "content": args.activate.read_text(encoding="utf-8")},
+        ]
+        config["runcmd"] = [["/usr/bin/systemd-run", "--unit=sjerp-test-activation",
+                            "/usr/local/sbin/sjerp-activate-offline-test"]]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",

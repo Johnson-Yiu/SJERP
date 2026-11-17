@@ -19,7 +19,7 @@ cleanup() {
             install -m 0644 "$rollback" "$config"
             nginx -t && systemctl reload nginx || :
         fi
-        report "SJERP TEAM TLS FAILED (exit $rc)"
+        if [ "$rc" -ne 60 ]; then report "SJERP TEAM TLS FAILED (exit $rc)"; fi
     fi
     rm -f "$rollback"
 }
@@ -34,7 +34,22 @@ changed=true
 sed -i 's|ssl_certificate /etc/sjerp/a/lan-https.crt;|ssl_certificate /etc/sjerp/a/team-https.crt;|' "$config"
 nginx -t
 systemctl reload nginx
-curl -fsS --retry 5 --retry-delay 1 --max-time 8 --cacert "$root" \
-    --connect-to 192.168.1.36:443:127.0.0.1:18443 https://192.168.1.36/api/session/csrf/ >/dev/null
+# A successful reload request can return before replacement workers start.
+# Recheck the full certificate chain on each attempt, including TLS failures.
+ready=false
+for attempt in $(seq 1 20); do
+    if diagnostic=$(curl --noproxy '*' -fsS --connect-timeout 2 --max-time 4 --cacert "$root" \
+        --connect-to 192.168.1.36:443:127.0.0.1:18443 \
+        https://192.168.1.36/api/session/csrf/ 2>&1); then
+        ready=true
+        break
+    fi
+    sleep 1
+done
+if [ "$ready" != true ]; then
+    printf 'Team TLS probe failed: %s\n' "$diagnostic" >&2
+    report "SJERP TEAM TLS FAILED: $diagnostic"
+    exit 60
+fi
 install -m 0644 "$root" /etc/sjerp-a-test-ca.crt
 report 'SJERP TEAM TLS READY'

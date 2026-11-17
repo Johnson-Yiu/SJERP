@@ -32,9 +32,9 @@ if ($LASTEXITCODE -or !($proxy -match '^\s*192\.168\.1\.36\s+443\s+10\.253\.247\
 $rule = 'SJERP-Team-HTTPS'
 if (Get-NetFirewallRule -Name $rule -ErrorAction SilentlyContinue) { throw '团队访问规则已存在，未覆盖。' }
 $dir = Split-Path -Parent $PSCommandPath
-$iso = Join-Path $dir 'sjerp-team-https.iso'
+$iso = Join-Path $dir 'sjerp-team-https-v2.iso'
 $ca = Join-Path $dir 'sjerp-alex-ca.pem'
-if ((Get-FileHash -LiteralPath $iso).Hash -ne '2694D0A356079DF40BA83F8795AA86AD260010FCC7AAF38BA14B5D158804DB06') {
+if ((Get-FileHash -LiteralPath $iso).Hash -ne '28DFBDE8F78B1CC9D0846F4EB45A5A9E794BCEDF6A94AFF48B7912FA96F32491') {
     throw '团队 HTTPS 配置 ISO 摘要不匹配。'
 }
 if ((Get-FileHash -LiteralPath $ca).Hash -ne '7B89346A0E01D3AF55885BB5D12F8B6B6327BFBAC1AA71F267646BAAFC25C922') {

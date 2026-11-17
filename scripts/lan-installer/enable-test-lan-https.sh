@@ -25,6 +25,7 @@ install -m 0644 "$config/lan-https.crt" /etc/sjerp-a-test-ca.crt
 sed -i "s/^DJANGO_ALLOWED_HOSTS=localhost$/DJANGO_ALLOWED_HOSTS=localhost,$host/" "$config/runtime.env"
 sed -i -e "s/listen 127.0.0.1:18443 ssl;/listen 127.0.0.1:$port ssl;\n    listen $address:$port ssl;/" \
     -e "s/server_name localhost;/server_name localhost $host;/" \
+    -e 's/proxy_set_header Host \$host;/proxy_set_header Host $http_host;/' \
     -e 's|/https.crt;|/lan-https.crt;|' -e 's|/https.key;|/lan-https.key;|' "$nginx"
 nginx -t
 systemctl restart sjerp-local@a.service

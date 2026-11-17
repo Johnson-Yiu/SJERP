@@ -90,7 +90,12 @@ def main(seed):
     media.mkdir()
     recovery = work / "checkout"
     recovery.mkdir()
-    shutil.copyfile(archive, work / ARCHIVE)
+    inputs = work / "archive-input"
+    inputs.mkdir(mode=0o700)
+    restore_archive = inputs / ARCHIVE
+    shutil.copyfile(archive, restore_archive)
+    secrets_dir = work / "signing"
+    secrets_dir.mkdir(mode=0o700)
     run("git", "-C", recovery, "init", "-q")
     with (seed / "source.pack").open("rb") as pack:
         run("git", "-C", recovery, "index-pack", "--stdin", stdin=pack)
@@ -121,7 +126,7 @@ def main(seed):
                         f"GRANT EXECUTE ON FUNCTION pg_control_system() TO {role};\n")
         pgpass = work / "pgpass"
         pgpass.write_text(f"127.0.0.1:{PORT}:*:{role}:{password}\n")
-        signing = work / "receipt.key"
+        signing = secrets_dir / "receipt.key"
         run("openssl", "genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:3072", "-out", signing,
             stderr=subprocess.DEVNULL)
         receipt = work / "receipt.json"
@@ -130,7 +135,7 @@ def main(seed):
             "connection": {"host":"127.0.0.1","port":PORT,"user":role,"dbname":"postgres",
                            "passfile":str(pgpass),"sslmode":"disable"},
             "pg_bin": str(PG),"expected_database":"postgres","expected_system_identifier":cluster_id,
-            "app_sha":SOURCE,"archive":str(work / ARCHIVE),"expected_sha256":record["plaintext_sha256"],
+            "app_sha":SOURCE,"archive":str(restore_archive),"expected_sha256":record["plaintext_sha256"],
             "encrypted_sha256":SHA,"media_parent":str(media),
             "encryption":{"key_file":str(key),"executable":"/usr/bin/gpg"},
             "receipt_signing":{"private_key":str(signing),"executable":"/usr/bin/openssl"},
@@ -141,8 +146,17 @@ def main(seed):
                "DATABASE_URL":f"postgresql://{role}@127.0.0.1:{PORT}/postgres","PGPASSFILE":str(pgpass),
                "PYTHONDONTWRITEBYTECODE":"1"}
         backend = recovery / "backend"
-        result = json.loads(run(PYTHON, backend / "operations_backup.py", "restore-encrypted-verify",
-                                "--config", conf, cwd=recovery, env=env, capture_output=True).stdout)
+        report("SJERP ISOLATED RESTORE IN PROGRESS: archive and signature")
+        process = subprocess.run(
+            [PYTHON, backend / "operations_backup.py", "restore-encrypted-verify", "--config", conf],
+            cwd=recovery, env=env, capture_output=True, text=True, check=False,
+        )
+        result = json.loads(process.stdout)
+        if process.returncode:
+            error_type = str(result.get("error_type", "Unknown"))[:48]
+            report(f"SJERP ISOLATED RESTORE FAILED: archive/signature ({error_type})")
+            raise RuntimeError(f"Recovery CLI error: {error_type}")
+        report("SJERP ISOLATED RESTORE IN PROGRESS: application readback")
         if result["status"] != "VERIFIED" or not result["database"].startswith("sunjack_restore_"):
             raise RuntimeError("Recovery result not verified")
         env["DATABASE_URL"] = f"postgresql://{role}@127.0.0.1:{PORT}/{result['database']}"
@@ -161,5 +175,8 @@ if __name__ == "__main__":
         main(Path(sys.argv[1]))
     except BaseException:
         if os.geteuid() == 0 and os.uname().nodename.split(".")[0] == "sjerp-image-test":
-            report("SJERP ISOLATED RESTORE FAILED: see sjerp-isolated-restore.service")
+            last = STATUS.read_text(encoding="utf-8").strip() if STATUS.exists() else ""
+            if not last.startswith("SJERP ISOLATED RESTORE FAILED:"):
+                stage = last.partition(": ")[2] or "preflight or target cluster"
+                report(f"SJERP ISOLATED RESTORE FAILED: {stage}")
         raise

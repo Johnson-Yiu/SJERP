@@ -2,8 +2,8 @@
 #Requires -RunAsAdministrator
 $ErrorActionPreference = 'Stop'
 if ($env:COMPUTERNAME -ne 'ALEX') { throw '请在 ALEX 本机运行。' }
-$iso = Join-Path (Split-Path -Parent $PSCommandPath) 'sjerp-isolated-restore.iso'
-if ((Get-FileHash -LiteralPath $iso).Hash -ne '2BDF9F58F93A7E8562A2FCB15F5A0916A79DC5CA3BD7E337B3E45081DD5B80B2') {
+$iso = Join-Path (Split-Path -Parent $PSCommandPath) 'sjerp-isolated-restore-v2.iso'
+if ((Get-FileHash -LiteralPath $iso).Hash -ne '71D699C95BEE3830F23CEBCB88061E13756D05450490B68AB4813ADD6F5E20C3') {
     throw '恢复演练 ISO 摘要不符。'
 }
 $vm = Get-VM -Name 'SJERP-Linux-CombinedTest'

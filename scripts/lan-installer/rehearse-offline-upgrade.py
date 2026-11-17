@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import re
 import socket
 import subprocess
 import tempfile
@@ -15,7 +16,6 @@ TARGET = "3b156502472478f47ae015ae51d3ac92c1edc42a"
 PACK_SHA = "23dbd427ccc21ceb1c350779b50d6a22cafa8073a060439ba359f557518a2322"
 PAYLOAD_SHA = "28e13c1a0bbccdbfb5cb0a60b1c8d789d9d047c44f194de6cecdefe330213022"
 ROOT = Path("/srv/sjerp")
-VERSION = ROOT / "versions" / SOURCE
 MEDIA = Path("/var/lib/sjerp/a/private-media")
 UNIT = "sjerp-local@a.service"
 CONFIG = Path("/etc/sjerp/a")
@@ -60,9 +60,21 @@ def report(text):
 def main(seed):
     if os.geteuid() != 0 or socket.gethostname().split(".")[0] != "sjerp-image-test":
         raise RuntimeError("仅支持隔离的 ALEX 验收来宾")
-    if (ROOT / "current").resolve(strict=True) != VERSION:
+    plan = seed / "release.json"
+    if plan.exists():
+        settings = json.loads(plan.read_text())
+        source, target_sha = settings["source"], settings["target"]
+        pack_sha, payload_sha = settings["pack_sha256"], settings["payload_sha256"]
+        if not all(re.fullmatch(r"[0-9a-f]{40}", value) for value in (source, target_sha)):
+            raise ValueError("Invalid release commit")
+        if not all(re.fullmatch(r"[0-9a-f]{64}", value) for value in (pack_sha, payload_sha)):
+            raise ValueError("Invalid release artifact digest")
+    else:
+        source, target_sha, pack_sha, payload_sha = SOURCE, TARGET, PACK_SHA, PAYLOAD_SHA
+    version = ROOT / "versions" / source
+    if (ROOT / "current").resolve(strict=True) != version:
         raise RuntimeError("当前版本与演练源版本不一致")
-    if digest(seed / "source.pack") != PACK_SHA or digest(seed / "target.zip") != PAYLOAD_SHA:
+    if digest(seed / "source.pack") != pack_sha or digest(seed / "target.zip") != payload_sha:
         raise ValueError("维护源码或目标载荷摘要不符")
     run("systemctl", "is-active", "--quiet", UNIT)
     if run("findmnt", "-n", "-o", "FSTYPE", "--mountpoint", MEDIA, capture_output=True).stdout.strip() != "ext4":
@@ -70,9 +82,9 @@ def main(seed):
     report("SJERP TEST UPGRADE IN PROGRESS")
     values = dict(line.split("=", 1) for line in (CONFIG / "runtime.env").read_text().splitlines() if line)
     env = {**os.environ, **values, "PYTHONDONTWRITEBYTECODE": "1"}
-    python = VERSION / "venv/bin/python"
-    target = ROOT / "versions" / TARGET
-    run(python, seed / "stage.py", seed / "target.zip", PAYLOAD_SHA, ROOT / "versions", env=env)
+    python = version / "venv/bin/python"
+    target = ROOT / "versions" / target_sha
+    run(python, seed / "stage.py", seed / "target.zip", payload_sha, ROOT / "versions", env=env)
     run("chmod", "0755", target)
     run("chmod", "-R", "a+rX", target / "release", target / "venv")
     exercise = Path(tempfile.mkdtemp(prefix="upgrade-rehearsal-", dir=CONFIG))
@@ -81,9 +93,9 @@ def main(seed):
     run("git", "-C", checkout, "init", "-q")
     with (seed / "source.pack").open("rb") as pack:
         run("git", "-C", checkout, "index-pack", "--stdin", stdin=pack)
-    (checkout / ".git/shallow").write_text(SOURCE + "\n")
+    (checkout / ".git/shallow").write_text(source + "\n")
     run("git", "-C", checkout, "sparse-checkout", "set", "--no-cone", "/backend/", "/templates/", "/.gitignore")
-    run("git", "-C", checkout, "update-ref", "HEAD", SOURCE)
+    run("git", "-C", checkout, "update-ref", "HEAD", source)
     run("git", "-C", checkout, "read-tree", "-mu", "HEAD")
 
     archive_dir = exercise / "archives"
@@ -96,9 +108,10 @@ def main(seed):
     migration.update(DATABASE_URL="postgresql://sjerp_a_migrate@127.0.0.1:5432/sjerp_a",
                      PGPASSFILE=str(CONFIG / "migration.pgpass"))
     migration_env.write_text(json.dumps(migration))
-    marker = MEDIA / ("upgrade-rehearsal-" + secrets.token_hex(8) + ".txt")
-    marker.write_text("Synthetic SJERP upgrade rehearsal attachment\n")
-    marker_sha = digest(marker)
+    if not plan.exists():
+        marker = MEDIA / ("upgrade-rehearsal-" + secrets.token_hex(8) + ".txt")
+        marker.write_text("Synthetic SJERP upgrade rehearsal attachment\n")
+        medium = {marker: digest(marker)}
     archive_info = ROOT / "upgrade-backup.json"
 
     with subprocess.Popen(["runuser", "-u", "postgres", "--", python, "-u", "-c", PG_ADMIN],
@@ -110,15 +123,18 @@ def main(seed):
             "connection": {"host": "127.0.0.1", "port": 5432, "user": "sjerp_a_migrate",
                            "dbname": "sjerp_a", "passfile": str(CONFIG / "migration.pgpass"), "sslmode": "disable"},
             "pg_bin": "/usr/lib/postgresql/17/bin", "expected_database": "sjerp_a",
-            "expected_system_identifier": cluster, "app_sha": SOURCE,
+            "expected_system_identifier": cluster, "app_sha": source,
             "media_root": str(MEDIA), "destination_directory": str(archive_dir),
             "encryption": {"key_file": str(key), "executable": "/usr/bin/gpg"},
         }))
-        common = [ROOT, TARGET, "--instance", "a", "--database", "sjerp_a",
+        common = [ROOT, target_sha, "--instance", "a", "--database", "sjerp_a",
                   "--system-identifier", cluster, "--maintenance-role", "sjerp_a_migrate", "--media", MEDIA]
         run("systemctl", "stop", UNIT)
         run("mount", "-o", "remount,ro", MEDIA)
         try:
+            if plan.exists():
+                medium = {file: digest(file) for file in MEDIA.rglob("*")
+                          if file.is_file() and not file.is_symlink()}
             admin.stdin.write("FENCE\n")
             admin.stdin.flush()
             if admin.stdout.readline().strip() != "FENCED":
@@ -135,7 +151,7 @@ def main(seed):
             finally:
                 run("mount", "-o", "remount,rw", MEDIA)
     run(python, seed / "upgrade-pilot-release.py", "activate", *common, "--migration-env", migration_env, env=env)
-    if (ROOT / "current").resolve(strict=True) != target or digest(marker) != marker_sha:
+    if (ROOT / "current").resolve(strict=True) != target or any(digest(file) != saved for file, saved in medium.items()):
         raise RuntimeError("目标版本或原媒体复核失败")
     run("curl", "-fsS", "--cacert", "/etc/sjerp-a-test-ca.crt",
         "https://localhost:18443/api/session/csrf/", stdout=subprocess.DEVNULL)

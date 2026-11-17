@@ -27,7 +27,10 @@ def main():
     modes.add_argument("--offline", nargs=6, metavar="INPUT",
                         help="system tar, ERP zip, install script, stage script, bootstrap, APT manifest SHA")
     parser.add_argument("--activate-after", type=Path, help="activation script to run after offline staging")
+    parser.add_argument("--upgrade-plan", type=Path, help="pinned source, target and file digests")
     args = parser.parse_args()
+    if args.upgrade_plan and not args.upgrade:
+        parser.error("--upgrade-plan requires --upgrade")
     if args.activate_after and not args.offline:
         parser.error("--activate-after requires --offline")
     key = args.public_key.read_text(encoding="ascii").strip()
@@ -106,6 +109,8 @@ def main():
         payload = dict(zip(("rehearse.py", "source.pack", "target.zip", "stage.py",
                             "upgrade-pilot-release.py", "backup-before-upgrade.py"),
                            map(Path, args.upgrade), strict=True))
+        if args.upgrade_plan:
+            payload["release.json"] = args.upgrade_plan
         wrapper = (
             "#!/bin/sh\nset -eu\n"
             "d=$(mktemp -d)\n"

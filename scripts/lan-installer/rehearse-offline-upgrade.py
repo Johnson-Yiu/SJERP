@@ -1,11 +1,13 @@
 """Run an encrypted backup and same-schema release switch on the ALEX test guest."""
 import argparse
+import grp
 import hashlib
 import json
 import os
 from pathlib import Path
 import secrets
 import re
+import shutil
 import socket
 import subprocess
 import tempfile
@@ -150,6 +152,25 @@ def main(seed):
                     raise RuntimeError("数据库登录隔离清理失败")
             finally:
                 run("mount", "-o", "remount,rw", MEDIA)
+    if plan.exists() and settings.get("export_encrypted_archive") is True:
+        export = Path("/var/lib/sjerp-upgrade-export")
+        export.mkdir(mode=0o700)
+        group = grp.getgrnam("erpverify").gr_gid
+        os.chown(export, 0, group)
+        export.chmod(0o750)
+        archive = Path(record["archive"])
+        target_archive = export / archive.name
+        with archive.open("rb") as source_archive, target_archive.open("xb") as output:
+            shutil.copyfileobj(source_archive, output)
+        if digest(target_archive) != record["sha256"]:
+            raise RuntimeError("Encrypted backup export digest mismatch")
+        os.chown(target_archive, 0, group)
+        target_archive.chmod(0o640)
+        receipt = export / "backup.json"
+        receipt.write_text(json.dumps({"archive": archive.name, "sha256": record["sha256"],
+                                       "source": source, "target": target_sha}))
+        os.chown(receipt, 0, group)
+        receipt.chmod(0o640)
     run(python, seed / "upgrade-pilot-release.py", "activate", *common, "--migration-env", migration_env, env=env)
     if (ROOT / "current").resolve(strict=True) != target or any(digest(file) != saved for file, saved in medium.items()):
         raise RuntimeError("目标版本或原媒体复核失败")

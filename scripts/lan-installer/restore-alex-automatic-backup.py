@@ -18,10 +18,23 @@ PORT = 18291
 APP_CHECK = """
 import hashlib
 import json
+import os
 import secrets
+from pathlib import Path
 from django.contrib.auth import get_user_model
 from django.test import Client
 from crm.models import FinanceVoucher
+from crm.services.operations_receipt import public_key_fingerprint, verify_receipt
+options = json.loads(os.environ["SJERP_RESTORE_RECEIPT_CHECK"])
+verification_key = Path(options["public_key"])
+receipt = json.loads(Path(options["receipt"]).read_text(encoding="utf-8"))
+fingerprint = public_key_fingerprint(options["openssl"], verification_key)
+payload = verify_receipt(
+    receipt, encrypted_sha256=options["encrypted_sha256"], executable=options["openssl"],
+    public_key=verification_key, pinned_fingerprint=fingerprint, max_age_seconds=3600,
+)
+for field in ("source_system_identifier", "target_system_identifier", "restored_database", "app_sha"):
+    assert str(payload[field]) == options[field], field
 
 users = get_user_model()
 assert users.objects.filter(username="johnson", is_superuser=True, is_active=True).exists()
@@ -46,7 +59,7 @@ for voucher in FinanceVoucher.objects.order_by("pk"):
 assert files and downloads, "Acceptance archive must contain the LAN verification attachments"
 response = client.get("/api/reports/data/", {"source": "sales", "export": "csv"}, secure=True)
 assert response.status_code == 200 and "text/csv" in response.headers["Content-Type"]
-print(json.dumps({"login": True, "hashed_attachments": files, "downloaded_attachments": downloads, "csv": True}))
+print(json.dumps({"signed_receipt": True, "login": True, "hashed_attachments": files, "downloaded_attachments": downloads, "csv": True}))
 """
 
 
@@ -155,6 +168,12 @@ def restore(args):
                 raise RuntimeError(f"Restore verification failed ({result.get('error_type', 'unknown')})")
             env["DATABASE_URL"] = f"postgresql://postgres@127.0.0.1:{PORT}/{result['database']}"
             env["MEDIA_ROOT"] = str(Path(result["media_root"]).resolve(strict=True))
+            env["SJERP_RESTORE_RECEIPT_CHECK"] = json.dumps({
+                "public_key": str(public_receipt), "receipt": str(receipt), "openssl": str(args.openssl),
+                "encrypted_sha256": archive_manifest["encrypted_sha256"],
+                "source_system_identifier": archive_manifest["source_system_identifier"],
+                "target_system_identifier": target_id, "restored_database": result["database"], "app_sha": commit,
+            })
             probe = run(sys.executable, backend / "manage.py", "shell", "-c", APP_CHECK, cwd=backend,
                         env=env, capture_output=True).stdout.splitlines()
             evidence = json.loads(probe[-1])

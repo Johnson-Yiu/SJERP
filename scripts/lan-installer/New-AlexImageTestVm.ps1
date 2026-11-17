@@ -6,7 +6,8 @@ param(
     [Parameter(Mandatory)][ValidatePattern('^[a-fA-F0-9]{64}$')][string]$BaseDiskSha256,
     [Parameter(Mandatory)][string]$SeedIso,
     [Parameter(Mandatory)][ValidatePattern('^[a-fA-F0-9]{64}$')][string]$SeedIsoSha256,
-    [Parameter(Mandatory)][string]$SwitchName
+    [Parameter(Mandatory)][string]$SwitchName,
+    [switch]$OfflineInstall
 )
 $ErrorActionPreference = 'Stop'
 if ($env:COMPUTERNAME -ne 'ALEX') { throw '请在 ALEX 本机运行。' }
@@ -23,7 +24,8 @@ foreach ($entry in @(
     }
 }
 $name = 'SJERP-Linux-ImageTest'
-$root = 'D:\ERP\SJERP-Linux-ImageTest'
+if ($OfflineInstall) { $name = 'SJERP-Linux-OfflineTest' }
+$root = Join-Path 'D:\ERP' $name
 $existing = Get-CimInstance -Namespace 'root\virtualization\v2' -ClassName Msvm_ComputerSystem -Filter "ElementName = '$name'"
 if ($existing -or (Test-Path -LiteralPath $root)) { throw '镜像验收虚拟机或目录已存在。' }
 $switch = @(Get-VMSwitch | Where-Object Name -eq $SwitchName)
@@ -38,6 +40,7 @@ if ((Get-FileHash -LiteralPath $disk).Hash -ne $BaseDiskSha256 -or
     (Get-FileHash -LiteralPath $localSeed).Hash -ne $SeedIsoSha256) {
     throw '验收目录副本摘要校验失败，尚未创建虚拟机。'
 }
+if ($OfflineInstall) { Resize-VHD -Path $disk -SizeBytes 24GB }
 $vm = New-VM -Name $name -Path $root -Generation 2 -MemoryStartupBytes 2GB -VHDPath $disk -SwitchName $switch[0].Name
 Set-VMProcessor -VM $vm -Count 2
 Set-VM -VM $vm -AutomaticStartAction Nothing -AutomaticStopAction ShutDown

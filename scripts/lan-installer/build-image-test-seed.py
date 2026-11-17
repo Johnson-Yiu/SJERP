@@ -1,7 +1,9 @@
 """Generate a NoCloud seed ISO for a disposable ALEX image boot test."""
 import argparse
+import hashlib
 from io import BytesIO
 import json
+from contextlib import ExitStack
 from pathlib import Path
 import re
 import uuid
@@ -13,6 +15,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("public_key", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--offline", nargs=6, metavar="INPUT",
+                        help="system tar, ERP zip, install script, stage script, bootstrap, APT manifest SHA")
     args = parser.parse_args()
     key = args.public_key.read_text(encoding="ascii").strip()
     if not re.fullmatch(r"ssh-ed25519 [A-Za-z0-9+/]+=*(?: [^\r\n]+)?", key):
@@ -29,6 +33,23 @@ def main():
         "package_update": False,
         "package_upgrade": False,
     }
+    payload = {}
+    if args.offline:
+        *paths, apt_digest = args.offline
+        if not re.fullmatch(r"[a-f0-9]{64}", apt_digest):
+            parser.error("invalid APT manifest SHA")
+        payload = dict(zip(("system.tar", "erp.zip", "install.sh", "stage.py", "boot.sh"),
+                           (Path(path) for path in paths), strict=True))
+        hashes = {}
+        for name, path in payload.items():
+            with path.open("rb") as handle:
+                hashes[name] = hashlib.file_digest(handle, "sha256").hexdigest()
+        command = ["sh", "-ec",
+                   "d=$(mktemp -d); mount -o ro,nosuid,nodev,noexec /dev/disk/by-label/CIDATA \"$d\"; "
+                   "trap 'umount \"$d\"; rmdir \"$d\"' EXIT; "
+                   f"echo '{hashes['boot.sh']}  '\"$d/boot.sh\" | sha256sum -c -; "
+                   'sh "$d/boot.sh" ' + " ".join([*(hashes[name] for name in list(payload)[:4]), apt_digest])]
+        config["runcmd"] = [command]
     files = {
         "meta-data": f"instance-id: sjerp-image-test-{uuid.uuid4()}\nlocal-hostname: sjerp-image-test\n",
         "user-data": "#cloud-config\n" + json.dumps(config) + "\n",
@@ -40,8 +61,13 @@ def main():
             content = text.encode("utf-8")
             iso.add_fp(BytesIO(content), len(content), iso_path=f"/{filename.upper().replace('-', '_')};1",
                        joliet_path=f"/{filename}")
-        with args.output.open("xb") as handle:
-            iso.write_fp(handle)
+        with ExitStack() as sources:
+            for name, path in payload.items():
+                handle = sources.enter_context(path.open("rb"))
+                iso.add_fp(handle, path.stat().st_size, iso_path=f"/{name.upper()};1",
+                           joliet_path=f"/{name}")
+            with args.output.open("xb") as handle:
+                iso.write_fp(handle)
     finally:
         iso.close()
     iso.open(str(args.output))
@@ -51,6 +77,10 @@ def main():
             iso.get_file_from_iso_fp(extracted, joliet_path=f"/{filename}")
             if extracted.getvalue() != expected.encode("utf-8"):
                 raise ValueError(f"Seed verification failed: {filename}")
+        for name, path in payload.items():
+            with path.open("rb") as expected, iso.open_file_from_iso(joliet_path=f"/{name}") as actual:
+                if hashlib.file_digest(expected, "sha256").digest() != hashlib.file_digest(actual, "sha256").digest():
+                    raise ValueError(f"Seed payload verification failed: {name}")
     finally:
         iso.close()
 

@@ -138,7 +138,10 @@ def restore(args):
             "--auth=scram-sha-256", f"--pwfile={init_pass}", stdout=subprocess.DEVNULL)
         init_pass.unlink()
         service = (pg / "pg_ctl.exe", "-D", cluster, "-w")
-        run(*service, "-l", target / "postgres.log", "-o", f"-h 127.0.0.1 -p {PORT}", "start", stdout=subprocess.DEVNULL)
+        # The ALEX source serializes PostgreSQL timestamp values in UTC.
+        # Keep the restore-side row digests independent of Windows local time.
+        run(*service, "-l", target / "postgres.log", "-o", f"-h 127.0.0.1 -p {PORT} -c timezone=UTC",
+            "start", stdout=subprocess.DEVNULL)
         try:
             env = {**os.environ, "APP_STAGE": "staging", "DJANGO_ALLOWED_HOSTS": "testserver",
                    "DJANGO_SECRET_KEY": secrets.token_hex(48), "PGPASSFILE": str(pgpass),

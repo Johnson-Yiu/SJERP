@@ -29,6 +29,7 @@ class HistoricalCustomerTests(TestCase):
         for _ in range(2):
             self.assertEqual(self.client.post(self.endpoint, payload, format="json").status_code, 200)
         source, target = Customer.objects.order_by("pk")
+        Customer.objects.filter(pk=source.pk).update(next_follow_up="2026-01-07")
         for customer in [source, target]:
             Order.objects.create(customer=customer, customer_name_snapshot=customer.name, order_no=customer.code,
                                  order_date="2026-01-01", historical_only=True, status="historical")
@@ -50,6 +51,8 @@ class HistoricalCustomerTests(TestCase):
         self.assertEqual(response.status_code, 200)
         results = response.data["results"] if isinstance(response.data, dict) else response.data
         self.assertEqual([row["id"] for row in results], [target.pk])
+        self.assertEqual(results[0]["next_follow_up"], "2026-01-07")
+        self.assertEqual(results[0]["status"], "customer")
         self.assertEqual(results[0]["order_count"], 1)
         self.assertEqual(float(results[0]["sales_amount"]), 17)
         with self.assertRaises(ValidationError):
@@ -64,7 +67,22 @@ class HistoricalCustomerTests(TestCase):
         self.assertEqual(list(Order.objects.order_by("pk").values()), before)
         self.assertEqual(self.client.post(self.endpoint, payload, format="json").data[0]["code"], target.code)
         self.assertEqual(self.client.post(url, dict(data, undo=True), format="json").status_code, 200)
+        target.refresh_from_db()
+        source.refresh_from_db()
+        self.assertEqual((target.status, source.status), ("lead", "customer"))
+        self.assertIsNone(target.next_follow_up)
         self.assertEqual(list(CustomerMergeEvent.objects.order_by("pk").values_list("merged", flat=True)), [True, False])
+
+    def test_completion_requires_reason_and_is_audited_once(self):
+        customer = Customer.objects.create(name="张三", code="S", history_pending=True)
+        url = f"/api/customers/{customer.pk}/complete-history/"
+        self.assertEqual(self.client.post(url, {"reason": ""}).status_code, 400)
+        self.assertEqual(self.client.post(url, {"reason": "核对资料"}).status_code, 200)
+        self.assertEqual(self.client.post(url, {"reason": "重复"}).status_code, 400)
+        customer.refresh_from_db()
+        self.assertEqual((customer.name, customer.code, customer.history_pending), ("张三", "S", False))
+        self.assertEqual((customer.history_completed_by, customer.history_completion_reason), (self.user, "核对资料"))
+        self.assertIsNotNone(customer.history_completed_at)
 
     def test_failed_event_rolls_back(self):
         source = Customer.objects.create(name="来源", code="S")
@@ -86,6 +104,24 @@ class HistoricalCustomerTests(TestCase):
 
 
 class TakeoverCustomerTests(HistoryTakeoverFixtureMixin, TestCase):
+    def test_same_name_different_codes_require_individual_resolution(self):
+        rows = self.source_rows()
+        first = rows["销售订单"][0]
+        first.update(customer_code="OLD-A", customer_name_snapshot="张三")
+        rows["销售订单"].append(dict(first, source_record_id="OTHER", order_no="OTHER", customer_code="OLD-B"))
+        app, group, _ = self.application_and_group(rows)
+        root = f"/api/import/history-takeovers/{app.pk}/groups/{group.pk}/"
+        response = self.client.post(root + "history-customers/", {"names": ["张三"], "confirm": True}, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        group.refresh_from_db()
+        self.assertFalse(group.resolution_map)
+        self.assertTrue(response.data[0]["needs_review"])
+        resolve = {"sheet": "销售订单", "row": 2, "field": "customer_code", "target_code": response.data[0]["code"], "note": "凭证核实"}
+        self.assertEqual(self.client.post(root + "resolve-master/", resolve, format="json").status_code, 200)
+        group.refresh_from_db()
+        self.assertNotIn("销售订单:3:customer_code", group.resolution_map)
+        self.assertEqual(group.source_rows["销售订单"][1]["data"]["customer_code"], "OLD-B")
+
     def test_group_confirmation_rechecks_and_maps_multiple_source_rows(self):
         rows = self.source_rows()
         first = rows["销售订单"][0]

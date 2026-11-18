@@ -495,6 +495,10 @@ class Customer(TimestampedModel):
         ("company", "公司客户"),
     ]
     history_pending = models.BooleanField("历史待整理", default=False)
+    history_completed_at = models.DateTimeField(null=True, editable=False)
+    history_completed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, editable=False, on_delete=models.PROTECT)
+    history_completion_reason = models.TextField(blank=True, editable=False)
+    history_completed_as_developer = models.BooleanField(default=False, editable=False)
     merged_into = models.ForeignKey("self", null=True, blank=True, on_delete=models.PROTECT, related_name="merged_customers")
     name = models.CharField("客户名称", max_length=200, unique=True)
     code = models.CharField("客户编号", max_length=30, unique=True)
@@ -519,11 +523,21 @@ class Customer(TimestampedModel):
         return self.name
 
 
+def quote_matches_order_customer(quote, customer):
+    return bool(customer and not customer.merged_into_id and
+                customer.pk == (quote.customer.merged_into_id or quote.customer_id))
+
+
 def require_principal_for_new_document(document):
     if document._state.adding and document.customer_id:
         # Serialize new documents with merge/undo. The caller holds an atomic block.
         principal = Customer.objects.select_for_update().only("merged_into_id").get(pk=document.customer_id)
         if principal.merged_into_id:
+            # A revision belongs to its original quote's legal identity, even after undo.
+            if isinstance(document, Quote) and document.parent_quote_id and Quote.objects.filter(
+                pk=document.parent_quote_id, customer_id=document.customer_id
+            ).exists():
+                return
             from rest_framework.exceptions import ValidationError as RequestValidationError
             raise RequestValidationError({"customer": "客户已归并，请使用主客户建立新单据。"})
 

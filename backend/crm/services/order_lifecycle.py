@@ -21,7 +21,8 @@ def _validate_order_for_confirmation(order):
         raise ValidationError("订单至少需要一条商品明细。")
     if order.exchange_rate <= 0:
         raise ValidationError("汇率必须大于零。")
-    if order.quote_id and order.quote.customer_id != order.customer_id:
+    from crm.models import quote_matches_order_customer
+    if order.quote_id and not quote_matches_order_customer(order.quote, order.customer):
         raise ValidationError("来源报价必须属于当前客户。")
     for item in items:
         if not item.sku.active:

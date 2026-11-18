@@ -587,6 +587,29 @@ class QuoteOrderConversionGuardTests(TestCase):
     def order_draft(self, quote):
         return self.client.get(f"/api/quotes/{quote.id}/order-draft/")
 
+    def test_merged_quote_converts_with_original_legal_snapshot(self):
+        quote = self.create_quote("sent")
+        legal_name = quote.buyer_company_name
+        principal = Customer.objects.create(code="HQ", name="新主档")
+        unrelated = Customer.objects.create(code="OTHER", name="其他客户")
+        self.customer.merged_into = principal
+        self.customer.save(update_fields=["merged_into"])
+        draft = self.order_draft(quote).data
+        self.assertEqual(draft["customer"], principal.pk)
+        self.assertEqual(self.client.post("/api/orders/", dict(draft, customer=unrelated.pk), format="json").status_code, 400)
+        draft["notes"] = "测试报价修订"
+        created = self.client.post("/api/orders/", draft, format="json")
+        self.assertEqual(created.status_code, 201, created.data)
+        result = self.client.post(f"/api/orders/{created.data['id']}/confirm/", {}, format="json")
+        self.assertEqual(result.status_code, 200, result.data)
+        order = Order.objects.get(pk=created.data["id"])
+        self.assertEqual(order.customer_id, principal.pk)
+        self.assertEqual(order.customer_name_snapshot, legal_name)
+        self.assertEqual(order.quote.parent_quote_id, quote.pk)
+        self.assertEqual(order.quote.customer_id, self.customer.pk)
+        quote.refresh_from_db()
+        self.assertEqual((quote.customer_id, quote.buyer_company_name), (self.customer.pk, legal_name))
+
     def test_only_draft_sent_and_accepted_quotes_can_create_and_confirm_orders(self):
         for quote_status in ("draft", "sent", "accepted"):
             with self.subTest(quote_status=quote_status):

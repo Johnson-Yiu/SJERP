@@ -221,13 +221,24 @@ class HistoryTakeoverGroupActionView(APIView):
                     names = {row["data"]["customer_name_snapshot"].strip() for row in sources}
                     if any(item["name"] not in names for item in rows):
                         raise TakeoverRuleError("客户清单已变化，请重新预览。")
-                    if data.get("confirm") is True:
-                        codes = {item["name"]: item["code"] for item in rows}
-                        for row in sources:
-                            code = codes.get(row["data"]["customer_name_snapshot"].strip())
-                            if code:
-                                group = resolve_master(group, request.user, sheet="销售订单", row_number=row["row"],
-                                                       field="customer_code", target_code=code, note="已人工确认历史客户名称与编号")
+                    sources_by_name = {}
+                    for entry in sources:
+                        name = entry["data"]["customer_name_snapshot"].strip()
+                        sources_by_name.setdefault(name, []).append(entry)
+                    for item in rows:
+                        entries = sources_by_name[item["name"]]
+                        item["sources"] = [
+                            {"system": group.source_system, "row": entry["row"],
+                             "record": entry["data"].get("source_record_id"), "code": entry["data"].get("customer_code")}
+                            for entry in entries
+                        ]
+                        identities = {(src["system"], "code", src["code"]) if src["code"] else
+                                      (src["system"], "record", src["record"] or src["row"]) for src in item["sources"]}
+                        item["needs_review"] = item["existing"] or len(identities) != 1
+                        if data.get("confirm") is True and not item["needs_review"]:
+                            for entry in entries:
+                                group = resolve_master(group, request.user, sheet="销售订单", row_number=entry["row"],
+                                                       field="customer_code", target_code=item["code"], note="已核对来源资料并确认创建客户")
                     return Response(rows)
             if operation == "operational-status":
                 return Response({**history_operational_contracts.status(group, request.user), "overall": overall_status(group)})

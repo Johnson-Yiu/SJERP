@@ -809,6 +809,29 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         from .historical_customers import historical_customer_rows
         return Response(historical_customer_rows(request))
 
+    @action(detail=True, methods=["post"], url_path="complete-history")
+    @transaction.atomic
+    def complete_history(self, request, pk=None):
+        if not user_can(request.user, "customers", "update") or not user_can(request.user, "customers", "view"):
+            raise PermissionDenied()
+        row = scope_customer_queryset(Customer.objects.all(), request.user).select_for_update().filter(pk=pk).first()
+        if not row:
+            raise NotFound(CUSTOMER_NOT_FOUND_MESSAGE)
+        reason = request.data.get("reason")
+        if not isinstance(reason, str) or not reason.strip():
+            raise DRFValidationError("请填写整理依据。")
+        if not row.history_pending or row.merged_into_id:
+            raise DRFValidationError("仅待整理的主客户可确认完成。")
+        from .permissions import development_superadmin_enabled
+        row.history_pending = False
+        row.history_completed_at = timezone.now()
+        row.history_completed_by = request.user if request.user.is_authenticated else None
+        row.history_completed_as_developer = not request.user.is_authenticated and development_superadmin_enabled()
+        row.history_completion_reason = reason.strip()
+        row.save(update_fields=["history_pending", "history_completed_at", "history_completed_by",
+                                "history_completed_as_developer", "history_completion_reason", "updated_at"])
+        return Response({"history_pending": False})
+
     def _customer_pair(self, request):
         source_id, target_id = self.kwargs["pk"], request.data.get("target")
         if not user_can(request.user, "customers", "update") or not user_can(request.user, "customers", "view"):
@@ -854,6 +877,9 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         before = snapshot(source)
         source.merged_into = None if undo else target
         source.save(update_fields=["merged_into", "updated_at"])
+        from .signals import refresh_customer_stage
+        refresh_customer_stage(source.pk)
+        refresh_customer_stage(target.pk)
         CustomerMergeEvent.objects.create(source=source, target=target, merged=not undo, reason=reason.strip(),
                                           operator=request.user if request.user.is_authenticated else None,
                                           development_identity=not request.user.is_authenticated and development_superadmin_enabled())
@@ -910,7 +936,11 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         contact_count = Contact.objects.filter(customer_id__in=visible_ids).annotate(
             principal_id=Coalesce("customer__merged_into_id", "customer_id")
         ).filter(principal_id=OuterRef("pk")).order_by().values("principal_id").annotate(total=Count("id")).values("total")
+        due = Customer.objects.filter(pk__in=visible_ids, next_follow_up__isnull=False).annotate(
+            principal=Coalesce("merged_into_id", "id")
+        ).filter(principal=OuterRef("pk")).order_by("next_follow_up").values("next_follow_up")[:1]
         queryset = Customer.objects.annotate(
+            effective_follow_up=Subquery(due),
             contact_count=Coalesce(Subquery(contact_count, output_field=IntegerField()), 0),
             order_count=Coalesce(Subquery(order_count, output_field=IntegerField()), 0),
             sales_amount=Coalesce(Subquery(sales, output_field=MONEY), Decimal("0"), output_field=MONEY),

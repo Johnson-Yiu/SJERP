@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 import { useAccessControl } from '../accessControl'
-const props = defineProps({ customerId: { type: [Number, String], required: true } })
+const props = defineProps({ historyPending: Boolean, customerId: { type: [Number, String], required: true } })
 const emit = defineEmits(['changed'])
 const { api, listAll } = useWorkspaceApi()
 const { can } = useAccessControl()
@@ -18,6 +18,16 @@ const expanded = ref(false)
 async function load() {
   try { aliases.value = (await api.get('/customers/' + props.customerId + '/historical-names/')).data }
   catch { message.value = '历史名称加载失败' }
+}
+const completionReason = ref('')
+async function completeHistory() {
+  busy.value = true
+  try {
+    await api.post('/customers/' + props.customerId + '/complete-history/', { reason: completionReason.value })
+    message.value = '已确认整理完成'
+    emit('changed')
+  } catch (error) { message.value = String(error.response?.data?.detail || error.response?.data || '确认失败，请重试。') }
+  finally { busy.value = false }
 }
 onMounted(load)
 async function open() {
@@ -47,6 +57,10 @@ async function submit(confirm) {
 </script>
 <template>
   <section class="detail-info">
+    <fieldset v-if="historyPending && can('customers', 'update')" :disabled="busy">
+      <label>整理依据<input v-model.trim="completionReason" /></label>
+      <button class="btn btn-secondary" :disabled="!completionReason" @click="completeHistory">确认整理完成</button>
+    </fieldset>
     <h3>历史名称</h3>
     <p v-if="!aliases.length">暂无归并记录</p>
     <div v-for="item in aliases" :key="item.id">{{ item.name }} · {{ item.code }}

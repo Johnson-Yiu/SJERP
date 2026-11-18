@@ -145,9 +145,9 @@ def _customer_context(pk, user=None):
         "unit_price": item.unit_price, "currency": item.order.currency, "amount": item.amount,
     } for item in valid_items.select_related("order", "sku__product").order_by("-order__order_date")], "orders")
     return {
-        "entity": "customers", "title": obj.name, "subtitle": f"{obj.code} · {display_country(obj.country) or '未填写国家/地区'}", "badge": customer_status_display(obj.status),
+        "entity": "customers", "history_pending": obj.history_pending and not obj.merged_into_id, "title": obj.name, "subtitle": f"{obj.code} · {display_country(obj.country) or '未填写国家/地区'}", "badge": customer_status_display(obj.status),
         "info": [*([["资料状态", "历史待整理"]] if obj.history_pending else []), ["负责人", obj.owner or "—"], ["业务区域", obj.region or "—"], ["来源", obj.source or "—"], ["网站", obj.website or "—"], ["地址", obj.address or "—"], ["备注", obj.notes or "—"]],
-        "metrics": [["累计销售额", sales_rmb, "rmb"], ["订单", len(formal_orders), "number"], ["报价", len(quotes), "number"], ["下次跟进", obj.next_follow_up or "未安排", "date"]],
+        "metrics": [["累计销售额", sales_rmb, "rmb"], ["订单", len(formal_orders), "number"], ["报价", len(quotes), "number"], ["下次跟进", members.exclude(next_follow_up=None).order_by("next_follow_up").values_list("next_follow_up", flat=True).first() or "未安排", "date"]],
         "sections": [
             _section("followups", "跟进记录", "follow-ups", [["followed_at", "时间", "datetime"], ["subject", "主题"], ["content", "跟进记录 / 解决方案", "excerpt"], ["result", "客户回复 / 客户疑问", "excerpt"], ["type_display", "方式"], ["next_follow_up", "下次跟进", "date"]], followups),
             _section("quotes", "报价记录", "quotes", [["quote_no", "报价单号"], ["quote_date", "日期", "date"], ["status_display", "状态", "status"], ["total_amount", "金额", "money"], ["currency", "币种"]], quotes),

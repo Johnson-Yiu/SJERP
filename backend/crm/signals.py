@@ -11,20 +11,24 @@ def refresh_customer_stage(customer_id):
     if not customer:
         return
 
-    order_count = customer.orders.filter(status__in=["confirmed", "production", "shipped", "completed"]).count()
+    if customer.merged_into_id:
+        customer = customer.merged_into
+    from django.db.models import Q
+    members = Customer.objects.filter(Q(pk=customer.pk) | Q(merged_into=customer)).values("pk")
+    order_count = Order.objects.filter(customer_id__in=members).filter(status__in=["confirmed", "production", "shipped", "completed"]).count()
     if order_count > 1:
         stage = "company"
     elif order_count == 1:
         stage = "customer"
-    elif customer.quotes.exclude(status="draft").exists():
+    elif Quote.objects.filter(customer_id__in=members).exclude(status="draft").exists():
         stage = "opportunity"
-    elif customer.follow_ups.exists():
+    elif FollowUp.objects.filter(customer_id__in=members).exists():
         stage = "contact"
     else:
         stage = "lead"
 
     if customer.status != stage:
-        Customer.objects.filter(pk=customer_id).update(status=stage)
+        Customer.objects.filter(pk=customer.pk).update(status=stage)
 
 
 @receiver(pre_save, sender=Quote)

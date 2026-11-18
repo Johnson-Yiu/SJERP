@@ -17,7 +17,7 @@ async function submit(confirm) {
     const { data } = await api.post(props.endpoint, { names, confirm })
     if (confirm) {
       rows.value = []
-      message.value = data.map(row => row.name + ' · ' + row.code).join('，')
+      message.value = data.map(row => row.name + ' · ' + row.code + (row.needs_review ? '（请按来源行核实关联）' : '')).join('，')
       emit('created', data)
     } else rows.value = data
   } catch (error) {
@@ -33,6 +33,8 @@ async function submit(confirm) {
     <button type="button" class="btn btn-secondary" :disabled="busy || !input.trim()" @click="submit(false)">预览客户</button>
     <ul v-if="rows.length"><li v-for="row in rows" :key="row.name">
       <strong>{{ row.name }}</strong> · {{ row.existing ? '已有客户 ' + row.code : '将创建为历史待整理客户' }}
+      <div v-for="source in row.sources || []" :key="source.row">{{ source.system }} · 第 {{ source.row }} 行 · {{ source.record }} · {{ source.code || '缺少原客户编号' }}</div>
+      <div v-if="row.needs_review">请逐行核实后关联主客户</div>
       <div v-if="row.similar_inputs?.length">清单内相近名称：{{ row.similar_inputs.join('、') }}</div>
       <div v-if="row.candidates.length">相近名称：{{ row.candidates.map(item => item.name + ' ' + item.code).join('，') }}</div>
     </li></ul>

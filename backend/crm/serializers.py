@@ -1044,6 +1044,8 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        if hasattr(instance, "effective_follow_up"):
+            data["next_follow_up"] = instance.effective_follow_up.isoformat() if instance.effective_follow_up else None
         if not user_can(serializer_user(self.context), "orders", "view"):
             data["order_count"] = None
             data["sales_amount"] = None
@@ -2284,7 +2286,8 @@ class OrderSerializer(PrincipalCustomerMixin, serializers.ModelSerializer):
             raise PermissionDenied("关联来源报价需要报价查看权限。")
         if request and attrs.get("items") and not user_can(request.user, "skus", "view"):
             raise PermissionDenied("订单明细需要 SKU 查看权限。")
-        if source_quote and customer and customer.pk not in (source_quote.customer_id, source_quote.customer.merged_into_id):
+        from .models import quote_matches_order_customer
+        if source_quote and customer and not quote_matches_order_customer(source_quote, customer):
             raise serializers.ValidationError({"customer": "从报价创建订单时，客户必须与来源报价一致。"})
         # A terminal quote is historical context only.  It cannot seed a new
         # order or replace the source quote of an existing draft order.

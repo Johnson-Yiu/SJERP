@@ -42,3 +42,5 @@ Windows 任务经 Hyper-V 专用网络请求联合备份，核对发布信息、
 同日从原件对应的加密归档恢复到开发电脑的独立 PostgreSQL 17.12 实例，验证数据库内容、媒体、审计保护、签名回执、测试登录、两份附件下载与 SHA-256、CSV 导出。目标实例仅监听本机回环，验证完成后已关闭。Windows 恢复入口将 PostgreSQL 时区设为 UTC，与源库匹配，避免带时区日期的数据库行摘要产生差异。公开验收记录与签名回执位于共享目录 `SJERP-AutomaticBackup-Recovery\verification-20261118`。
 
 2026-11-18 备份任务接收端修复可在 ALEX 的管理员 PowerShell 运行 `SJERP-AutomaticBackup-Recovery\Repair-AlexAutomaticBackup.ps1`。它保留全部既有归档，显示本机 SSH 诊断，更新受限目录的接收端，并在确认后从现有任务重试一次。成功后导出加密归档和校验清单。无需重启虚拟机，联合备份执行期间仍会短暂停止 ERP。成功记录另存为 `last-verified.json`，后续失败只更新 `last-run.json`。
+
+从开发机可运行共享目录中的 `SJERP-AutomaticBackup-Recovery\Test-AlexBackupArchive.ps1`，验证 D 盘原件、加密内容和密钥信封的摘要。传入 `-ScheduledDate yyyy-MM-dd` 时，脚本检查当日北京时间 03:00 到 03:35 生成的归档。若要确认由计划时间触发，同时核对 ALEX 计划任务的运行记录。2026-11-18 已用真实归档及损坏的测试副本验证只读检查，首次夜间自动执行仍待观察。

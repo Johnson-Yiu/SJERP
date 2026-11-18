@@ -5,6 +5,25 @@ from django.conf import settings
 from django.db import migrations, models
 
 
+def reconcile_existing_principals(apps, schema_editor):
+    db = schema_editor.connection.alias
+    customers = apps.get_model("crm", "Customer").objects.using(db)
+    principal_ids = customers.exclude(merged_into_id=None).order_by().values_list("merged_into_id", flat=True).distinct()
+    for pk in principal_ids:
+        members = customers.filter(models.Q(pk=pk) | models.Q(merged_into_id=pk)).values("pk")
+        orders = apps.get_model("crm", "Order").objects.using(db).filter(customer_id__in=members,
+                    status__in=["confirmed", "production", "shipped", "completed"]).count()
+        if orders:
+            stage = "company" if orders > 1 else "customer"
+        elif apps.get_model("crm", "Quote").objects.using(db).filter(customer_id__in=members).exclude(status="draft").exists():
+            stage = "opportunity"
+        elif apps.get_model("crm", "FollowUp").objects.using(db).filter(customer_id__in=members).exists():
+            stage = "contact"
+        else:
+            stage = "lead"
+        customers.filter(pk=pk).exclude(status=stage).update(status=stage)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -33,4 +52,5 @@ class Migration(migrations.Migration):
             name='history_completion_reason',
             field=models.TextField(blank=True, editable=False),
         ),
+        migrations.RunPython(reconcile_existing_principals, migrations.RunPython.noop),
     ]

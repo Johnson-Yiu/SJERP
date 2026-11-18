@@ -4,7 +4,7 @@ import { useWorkspaceApi } from '../composables/useWorkspaceApi'
 import { useAccessControl } from '../accessControl'
 const props = defineProps({ historyPending: Boolean, customerId: { type: [Number, String], required: true } })
 const emit = defineEmits(['changed'])
-const { api, listAll } = useWorkspaceApi()
+const workspace = useWorkspaceApi()
 const { can } = useAccessControl()
 const aliases = ref([])
 const options = ref([])
@@ -16,14 +16,14 @@ const message = ref('')
 const busy = ref(false)
 const expanded = ref(false)
 async function load() {
-  try { aliases.value = (await api.get('/customers/' + props.customerId + '/historical-names/')).data }
+  try { aliases.value = (await workspace.api.get('/customers/' + props.customerId + '/historical-names/')).data }
   catch { message.value = '历史名称加载失败' }
 }
 const completionReason = ref('')
 async function completeHistory() {
   busy.value = true
   try {
-    await api.post('/customers/' + props.customerId + '/complete-history/', { reason: completionReason.value })
+    await workspace.api.post('/customers/' + props.customerId + '/complete-history/', { reason: completionReason.value })
     message.value = '已确认整理完成'
     emit('changed')
   } catch (error) { message.value = String(error.response?.data?.detail || error.response?.data || '确认失败，请重试。') }
@@ -32,7 +32,7 @@ async function completeHistory() {
 onMounted(load)
 async function open() {
   expanded.value = true
-  try { options.value = (await listAll('/customers/')).filter(item => String(item.id) !== String(props.customerId)) }
+  try { options.value = (await workspace.listAll('/customers/')).filter(item => String(item.id) !== String(props.customerId)) }
   catch { message.value = '主客户列表加载失败' }
 }
 async function submit(confirm) {
@@ -41,7 +41,7 @@ async function submit(confirm) {
   const source = undoId.value || props.customerId
   const body = { target: undoId.value ? props.customerId : target.value, undo: Boolean(undoId.value), reason: reason.value }
   try {
-    const { data } = await api.post('/customers/' + source + (confirm ? '/merge/' : '/merge-preview/'), body)
+    const { data } = await workspace.api.post('/customers/' + source + (confirm ? '/merge/' : '/merge-preview/'), body)
     if (confirm) {
       preview.value = null
       message.value = undoId.value ? '已解除归并' : '已归并客户'

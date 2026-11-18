@@ -408,9 +408,15 @@ test('browser CI invokes the isolated suite and keeps run evidence under an isol
   const jobs = Object.fromEntries(jobHeaders.map((header, index) => [
     header[1], jobsText.slice(header.index, jobHeaders[index + 1]?.index),
   ]))
-  assert.deepEqual(Object.keys(jobs), ['backend', 'backend-postgres', 'frontend'])
+  assert.deepEqual(Object.keys(jobs), ['release-source', 'backend', 'backend-postgres', 'frontend'])
+  const releaseSource = jobs['release-source']
+  assert.match(releaseSource, /fetch-depth: 0/, 'release source check requires full Git history')
+  assert.match(releaseSource, /run: python scripts\/check_pilot_release_source\.py/, 'release source inventory is enforced')
+  assert.match(releaseSource, /run: python -m unittest discover -s scripts\/tests -p 'test_release_source_inventory\.py' -v/, 'release inventory regression tests are required')
   assert.equal((workflow.match(/pip install -r backend\/requirements\.lock/g) || []).length, 3)
-  for (const [name, job] of Object.entries(jobs)) {
+  for (const name of ['backend', 'backend-postgres', 'frontend']) {
+    const job = jobs[name]
+    assert.match(job, /^    needs: release-source$/m, `${name} must depend on the release source gate`)
     assert.match(job, /uses: actions\/setup-python@v5\s+with:\s+python-version: '3\.12'/, `${name} requires Python 3.12`)
     assert.equal((job.match(/run: pip install -r backend\/requirements\.lock/g) || []).length, 1, `${name} installs all locked Python dependencies`)
     assert.ok(job.indexOf('actions/setup-python@v5') < job.indexOf('run: pip install -r backend/requirements.lock'))

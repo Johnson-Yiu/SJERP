@@ -12,6 +12,11 @@ import subprocess
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 
+if __package__:
+    from .check_pilot_release_source import verify_source
+else:
+    from check_pilot_release_source import verify_source
+
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = "RELEASE.json"
@@ -71,10 +76,24 @@ def file_records(directory):
     return records
 
 
-def verify(directory):
-    manifest = json.loads((directory / MANIFEST).read_text(encoding="utf-8"))
+def verify(directory, expected_commit=None, manifest_sha256=None):
+    manifest_path = directory / MANIFEST
+    if manifest_sha256 is not None:
+        if not re.fullmatch(r"[0-9a-fA-F]{64}", manifest_sha256):
+            raise ValueError("Provide the trusted manifest SHA-256 digest.")
+        with manifest_path.open("rb") as handle:
+            if file_digest(handle, "sha256").hexdigest() != manifest_sha256.lower():
+                raise ValueError("Release manifest differs from the trusted SHA-256 digest.")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not re.fullmatch(r"[0-9a-f]{40}", manifest.get("commit", "")):
+        raise ValueError("Release manifest has no valid source commit.")
+    if expected_commit is not None and manifest["commit"] != expected_commit:
+        raise ValueError("Release source differs from the expected deployment commit.")
     if manifest["files"] != file_records(directory):
         raise ValueError("Release file list or SHA-256 digest differs from the manifest.")
+    release_info = json.loads((directory / "frontend/dist/release-info.json").read_text(encoding="utf-8"))
+    if release_info.get("commit") != manifest["commit"]:
+        raise ValueError("Browser release information differs from the release manifest.")
     print(f'{manifest["commit"]}: {len(manifest["files"])} files verified')
 
 
@@ -86,6 +105,13 @@ def build(commit, output, offline):
         raise ValueError("Provide the full lowercase commit SHA.")
     if output.exists() or output.is_symlink():
         raise ValueError("Output directory must be new.")
+    if git("rev-parse", "HEAD").decode().strip() != commit:
+        raise ValueError("Check out the exact requested source commit before building.")
+    if git("status", "--porcelain", "--untracked-files=no").strip():
+        raise ValueError("Build from a clean checkout; tracked files have local changes.")
+    # Check the committed policy before exporting files or installing dependencies.
+    # A locally edited policy cannot silently weaken this release's checks.
+    verify_source(commit, repo=ROOT)
     tracked = git("ls-tree", "-rz", "--name-only", commit).decode("utf-8").split("\0")
     paths = [path for path in tracked if runtime_input(path) or build_input(path)]
     if not (BACKEND | FRONTEND_BUILD).issubset(paths):
@@ -135,7 +161,7 @@ def build(commit, output, offline):
         output.mkdir()
         for entry in sorted(release.iterdir(), key=lambda item: item.name == MANIFEST):
             entry.rename(output / entry.name)
-    verify(output)
+    verify(output, expected_commit=commit)
 
 
 def main():
@@ -147,9 +173,11 @@ def main():
     build_command.add_argument("--offline", action="store_true", help="Use the existing npm cache.")
     verify_command = commands.add_parser("verify")
     verify_command.add_argument("directory", type=Path)
+    verify_command.add_argument("--expected-commit", help="the approved deployment source SHA")
+    verify_command.add_argument("--manifest-sha256", help="the trusted RELEASE.json SHA-256 digest")
     args = parser.parse_args()
     if args.command == "verify":
-        verify(args.directory)
+        verify(args.directory, args.expected_commit, args.manifest_sha256)
     else:
         build(args.commit, args.directory.absolute(), args.offline)
 

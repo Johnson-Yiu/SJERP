@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 /workspace/scratch/845e333a0b4f/candidate_review/source/frontend
+
+
+ Test Files  4 passed (4)
+      Tests  76 passed (76)
+   Start at  03:05:01
+   Duration  4.13s (transform 3.72s, setup 887ms, import 4.68s, tests 2.17s, environment 3.18s)
+

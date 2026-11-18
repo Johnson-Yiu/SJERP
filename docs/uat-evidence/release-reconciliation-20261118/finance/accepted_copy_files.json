@@ -1,0 +1,23 @@
+[
+  {
+    "path": "frontend/src/views/FinanceDashboardPage.vue",
+    "baseline_blob": "e2b9e5535c62b1fa052e603e6cc062fbf881513c",
+    "candidate_blob": "f4dd4ef501bc8a841610900166f8507cf834f074",
+    "original_bytes": 24992,
+    "candidate_bytes": 25016
+  },
+  {
+    "path": "frontend/src/views/FinanceLedgerPage.vue",
+    "baseline_blob": "e3e203027b50f5eab980533866268a694de03259",
+    "candidate_blob": "5b5c077097e7e6b2540e2e6c20c2da26f7d33642",
+    "original_bytes": 31701,
+    "candidate_bytes": 31734
+  },
+  {
+    "path": "frontend/tests/finance-closeout.spec.js",
+    "baseline_blob": "1493e6193ea289a805588074c9a87205438d8812",
+    "candidate_blob": "66405986b4bba808a47f077aede4b92eb41bea29",
+    "original_bytes": 2785,
+    "candidate_bytes": 2791
+  }
+]

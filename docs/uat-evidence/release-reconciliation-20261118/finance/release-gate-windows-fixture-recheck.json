@@ -1,0 +1,6 @@
+{
+  "scenario": "Windows CRLF writes plus core.autocrlf=true, after expected blob uses Git",
+  "result": "PASS",
+  "expected_blob": "3deb1f59fbbf4d595721b0cc70494dd3e1616805",
+  "git_blob": "3deb1f59fbbf4d595721b0cc70494dd3e1616805"
+}

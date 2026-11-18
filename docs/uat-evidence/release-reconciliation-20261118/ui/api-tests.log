@@ -1,0 +1,16 @@
+✔ formatApiError preserves field and nested item context (1.607831ms)
+✔ apiErrorMessage uses understandable network and server fallbacks (0.283448ms)
+✔ API errors retain status, parsed data and the original response (4.093027ms)
+✔ API parses Blob JSON errors before formatting (8.145504ms)
+✔ aggregated lists include subsequent pages and keep filters (1.100384ms)
+✔ listAll handles non-paginated array actions in one request (0.286072ms)
+✔ failed later pages never return a misleading partial total (0.362549ms)
+✔ responses from a previous workspace identity are rejected before publishing data (1.702594ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 225.603927

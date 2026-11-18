@@ -1,0 +1,21 @@
+Creating test database for alias 'default'...
+...F.Bad Request: /api/import/history-preflight/
+Bad Request: /api/import/history-preflight/
+.........Request Entity Too Large: /api/import/history-preflight/
+......Request Entity Too Large: /api/import/history-preflight/
+....
+======================================================================
+FAIL: test_delivered_template_headers_match_parser_and_empty_template_is_safely_rejected (crm.tests.test_history_import_preflight.HistoryImportPreflightTests.test_delivered_template_headers_match_parser_and_empty_template_is_safely_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/845e333a0b4f/candidate_review/source/backend/crm/tests/test_history_import_preflight.py", line 214, in test_delivered_template_headers_match_parser_and_empty_template_is_safely_rejected
+    self.assertTrue(template_path.is_file(), template_path)
+AssertionError: False is not true : /workspace/scratch/845e333a0b4f/candidate_review/source/docs/uat-evidence/r1-iss121-history-import-preflight-20261103/ISS-121-history-import-template.xlsx
+
+----------------------------------------------------------------------
+Ran 24 tests in 5.602s
+
+FAILED (failures=1)
+Destroying test database for alias 'default'...
+Found 24 test(s).
+System check identified no issues (0 silenced).

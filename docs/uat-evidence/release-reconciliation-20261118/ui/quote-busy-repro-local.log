@@ -1,0 +1,36 @@
+
+ RUN  v4.1.12 /workspace/scratch/845e333a0b4f/candidate_review/source/frontend
+
+ ❯ tests/release-audit-quote-busy.spec.js (1 test | 1 failed) 123ms
+   × pending quote save must not let the parent editor close even if discard is accepted 122ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/release-audit-quote-busy.spec.js > pending quote save must not let the parent editor close even if discard is accepted
+AssertionError: expected [ [] ] to be undefined
+
+- Expected:
+undefined
+
++ Received:
+[
+  [],
+  [],
+]
+
+ ❯ tests/release-audit-quote-busy.spec.js:51:38
+     49|   try {
+     50|     await wrapper.get('[aria-label="关闭报价编辑器"]').trigger('click'); awai…
+     51|     expect(wrapper.emitted('close')).toBeUndefined()
+       |                                      ^
+     52|     expect(mocks.confirmDialog).not.toHaveBeenCalled()
+     53|   } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  03:02:59
+   Duration  3.75s (transform 2.22s, setup 186ms, import 2.51s, tests 123ms, environment 729ms)
+

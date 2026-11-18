@@ -66,7 +66,7 @@ describe('Purchase Phase B draft editor',()=>{
   expect(first.text()).toContain('LIGHT-3')
   expect(first.get('select:not([aria-label])').element.value).toBe('20')
   await first.get('input[placeholder="采购数量"]').setValue('2')
-  expect(first.text()).toContain('折合 20 m')
+  expect(first.text()).toContain('折合 20.00 m')
   expect(first.get('.line-total').text()).toContain('USD 40.00')
   await click('增加同 SKU 规格行')
   const cards=wrapper.findAll('.purchase-line')

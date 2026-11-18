@@ -1,0 +1,686 @@
+[
+  {
+    "sha": "1e45e42cc4fa38afbf856143228dada7c8a2e86f",
+    "root": "16948768dd2cec2693c7c020843d3d501c417430",
+    "rootEntries": [
+      {
+        "path": ".github",
+        "sha": "18e8169d8811fe665292303ce5895f571bf18320",
+        "type": "tree"
+      },
+      {
+        "path": ".gitignore",
+        "sha": "413f3a69df01d7df8f8bc5b79a183df4aa05587e",
+        "type": "blob"
+      },
+      {
+        "path": "AGENTS.md",
+        "sha": "ebc1ee89ae078fbbd17b6471f9189c4bb27ec6c5",
+        "type": "blob"
+      },
+      {
+        "path": "README.md",
+        "sha": "c9f08ab9f484cff9f6753b963e9c493c4bd6b672",
+        "type": "blob"
+      },
+      {
+        "path": "SKU_MODULE_AUDIT.md",
+        "sha": "e59f2ff8a6ea2ded6a271781cbed9817234dfb42",
+        "type": "blob"
+      },
+      {
+        "path": "SKU_REFACTOR_REPORT.md",
+        "sha": "7853777f89ab972c146151b47b3558ec72eaf91e",
+        "type": "blob"
+      },
+      {
+        "path": "SUPPLIER_SKU_IMPLEMENTATION_REPORT.md",
+        "sha": "07f385280f80e9976d1dae4722b7161651320656",
+        "type": "blob"
+      },
+      {
+        "path": "backend",
+        "sha": "c918cd9285fd816c2ce07a01c39701f9196b7af7",
+        "type": "tree"
+      },
+      {
+        "path": "docs",
+        "sha": "6d712b22188949157da69c5b19caeb317a203db5",
+        "type": "tree"
+      },
+      {
+        "path": "frontend",
+        "sha": "ef5b510a52c3e9faa9a66eb245a301e2911d0c82",
+        "type": "tree"
+      },
+      {
+        "path": "scripts",
+        "sha": "8966eac65d4bbe80ce7583560576ba13f0d73def",
+        "type": "tree"
+      },
+      {
+        "path": "start-main-worktree.ps1",
+        "sha": "fd6edbbcd58edf9832bc4329cdf0ec40be3d8cec",
+        "type": "blob"
+      },
+      {
+        "path": "templates",
+        "sha": "535566cc881d16b650af62663f9c6195a42823ad",
+        "type": "tree"
+      },
+      {
+        "path": "启动主工作树.bat",
+        "sha": "076cc148dee5b956ba37f7598f059bc8756e0e30",
+        "type": "blob"
+      },
+      {
+        "path": "报价单导出重构.txt",
+        "sha": "c6363cce1ef9974d340b8ea2a1a4e5e1896d6e50",
+        "type": "blob"
+      },
+      {
+        "path": "文档",
+        "sha": "5fafa8661f15fc99e10811ef65d4e5960397e13f",
+        "type": "tree"
+      }
+    ],
+    "frontendEntries": [
+      {
+        "path": "browser-tests",
+        "sha": "9a6704120ee13028dbaa85a6d8f31369b977090e",
+        "type": "tree"
+      },
+      {
+        "path": "index.html",
+        "sha": "552dbcda66abd00bd0ee25ea2d2e74794d03b287",
+        "type": "blob"
+      },
+      {
+        "path": "infrastructure-tests",
+        "sha": "86b00772039c7ed92998a9c995a292f2ed11c906",
+        "type": "tree"
+      },
+      {
+        "path": "package-lock.json",
+        "sha": "1a5ce188e997ee6cd9d989e32320c42f312eef8a",
+        "type": "blob"
+      },
+      {
+        "path": "package.json",
+        "sha": "c8412f6b10eb533591f7d172adcd5dea82d26523",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.config.js",
+        "sha": "cfd14f1d6e5c81a272a4983f84512e3ea303db11",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.finp1.config.js",
+        "sha": "38328b9ed13c964580a1395b3661192101902498",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.fix01.config.js",
+        "sha": "c32746b36b66121ab753728b015ecece6a5d2ba6",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.fup01.config.js",
+        "sha": "0938ab08f1e00520a6e8a10310499dc219af62bb",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.fup02.config.js",
+        "sha": "f350d3e65555bffe8991f89a226d7407e2fb8ca3",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.isolated.config.js",
+        "sha": "d091fd72fcc9b8eb865605d08a6277488f543be4",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss007.config.js",
+        "sha": "bb1d961e8b18e073a0fd4a263012048ce5324ec7",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss017.config.js",
+        "sha": "595192e4f6d04ae4c5f6a9e8ee4f3d92ce56d37c",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss022.config.js",
+        "sha": "8cb9aea45b6f0fca7bee47384dd33108f9f5b2fd",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss029.config.js",
+        "sha": "41de9cf8e63d471dad63bbc45ac40d7c4f2b5d1e",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss055.config.js",
+        "sha": "306a3dc2fca535915f1dcf4e512d7320c9cb301d",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss075.config.js",
+        "sha": "9532cc9ec87c8caf4ca457d87efcd483680ba51d",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.p2a.config.js",
+        "sha": "13dc5dfd5b99e65191f1b060745024141403d063",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.r1-repair-03.config.js",
+        "sha": "41be7c8dcd771b24b5623f50fafc68e9e8dea40d",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.r1a.config.js",
+        "sha": "d63b2fc4c32281bc7ac6eb88376c9bf1510d8422",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.workspace.config.js",
+        "sha": "37cbd805bbf4c2499369f89f1b63d6818d04c877",
+        "type": "blob"
+      },
+      {
+        "path": "scripts",
+        "sha": "0f7cb381e16b0a5d50982dc15edc2dbb7d816199",
+        "type": "tree"
+      },
+      {
+        "path": "src",
+        "sha": "6d80b1fd18043e1a127c01208eeced5519efe3c4",
+        "type": "tree"
+      },
+      {
+        "path": "tests",
+        "sha": "53a774cd6611e8c81fcaf32d1788c7cf08c1d0bd",
+        "type": "tree"
+      },
+      {
+        "path": "vite.config.js",
+        "sha": "2bd00a26f656b2820ca083d7afc29c5ada05213b",
+        "type": "blob"
+      },
+      {
+        "path": "vite.isolated.config.js",
+        "sha": "f02c5f8d5fa3fc5d0d22221ee8cc2ac11d07fb53",
+        "type": "blob"
+      },
+      {
+        "path": "vite.iss022.config.js",
+        "sha": "d8bf295a9f3adc023dcfc7d078ff59e2b88f2578",
+        "type": "blob"
+      },
+      {
+        "path": "vite.iss075.config.js",
+        "sha": "90b083619893803761c212452e5ae4f5986c437e",
+        "type": "blob"
+      }
+    ]
+  },
+  {
+    "sha": "9dd721723422b45b1fabf1d97d1ad492488b7437",
+    "root": "c68b54b4593dc6126649a46212a9cd66922eba0b",
+    "rootEntries": [
+      {
+        "path": ".github",
+        "sha": "18e8169d8811fe665292303ce5895f571bf18320",
+        "type": "tree"
+      },
+      {
+        "path": ".gitignore",
+        "sha": "413f3a69df01d7df8f8bc5b79a183df4aa05587e",
+        "type": "blob"
+      },
+      {
+        "path": "AGENTS.md",
+        "sha": "ebc1ee89ae078fbbd17b6471f9189c4bb27ec6c5",
+        "type": "blob"
+      },
+      {
+        "path": "README.md",
+        "sha": "c9f08ab9f484cff9f6753b963e9c493c4bd6b672",
+        "type": "blob"
+      },
+      {
+        "path": "SKU_MODULE_AUDIT.md",
+        "sha": "e59f2ff8a6ea2ded6a271781cbed9817234dfb42",
+        "type": "blob"
+      },
+      {
+        "path": "SKU_REFACTOR_REPORT.md",
+        "sha": "7853777f89ab972c146151b47b3558ec72eaf91e",
+        "type": "blob"
+      },
+      {
+        "path": "SUPPLIER_SKU_IMPLEMENTATION_REPORT.md",
+        "sha": "07f385280f80e9976d1dae4722b7161651320656",
+        "type": "blob"
+      },
+      {
+        "path": "backend",
+        "sha": "c918cd9285fd816c2ce07a01c39701f9196b7af7",
+        "type": "tree"
+      },
+      {
+        "path": "docs",
+        "sha": "49ad31a8c15616856e809a0c9b2d46abdb8f68d6",
+        "type": "tree"
+      },
+      {
+        "path": "frontend",
+        "sha": "fb6212b30aaddc4dc20b15bbbeca5fa0db8f3944",
+        "type": "tree"
+      },
+      {
+        "path": "scripts",
+        "sha": "8966eac65d4bbe80ce7583560576ba13f0d73def",
+        "type": "tree"
+      },
+      {
+        "path": "start-main-worktree.ps1",
+        "sha": "fd6edbbcd58edf9832bc4329cdf0ec40be3d8cec",
+        "type": "blob"
+      },
+      {
+        "path": "templates",
+        "sha": "535566cc881d16b650af62663f9c6195a42823ad",
+        "type": "tree"
+      },
+      {
+        "path": "启动主工作树.bat",
+        "sha": "076cc148dee5b956ba37f7598f059bc8756e0e30",
+        "type": "blob"
+      },
+      {
+        "path": "报价单导出重构.txt",
+        "sha": "c6363cce1ef9974d340b8ea2a1a4e5e1896d6e50",
+        "type": "blob"
+      },
+      {
+        "path": "文档",
+        "sha": "5fafa8661f15fc99e10811ef65d4e5960397e13f",
+        "type": "tree"
+      }
+    ],
+    "frontendEntries": [
+      {
+        "path": "browser-tests",
+        "sha": "f6c6b5563950d8df367446e5dc551086f1d5640a",
+        "type": "tree"
+      },
+      {
+        "path": "index.html",
+        "sha": "552dbcda66abd00bd0ee25ea2d2e74794d03b287",
+        "type": "blob"
+      },
+      {
+        "path": "infrastructure-tests",
+        "sha": "86b00772039c7ed92998a9c995a292f2ed11c906",
+        "type": "tree"
+      },
+      {
+        "path": "package-lock.json",
+        "sha": "1a5ce188e997ee6cd9d989e32320c42f312eef8a",
+        "type": "blob"
+      },
+      {
+        "path": "package.json",
+        "sha": "c8412f6b10eb533591f7d172adcd5dea82d26523",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.config.js",
+        "sha": "cfd14f1d6e5c81a272a4983f84512e3ea303db11",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.finp1.config.js",
+        "sha": "38328b9ed13c964580a1395b3661192101902498",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.fix01.config.js",
+        "sha": "c32746b36b66121ab753728b015ecece6a5d2ba6",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.fup01.config.js",
+        "sha": "0938ab08f1e00520a6e8a10310499dc219af62bb",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.fup02.config.js",
+        "sha": "f350d3e65555bffe8991f89a226d7407e2fb8ca3",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.isolated.config.js",
+        "sha": "d091fd72fcc9b8eb865605d08a6277488f543be4",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss007.config.js",
+        "sha": "bb1d961e8b18e073a0fd4a263012048ce5324ec7",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss017.config.js",
+        "sha": "595192e4f6d04ae4c5f6a9e8ee4f3d92ce56d37c",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss022.config.js",
+        "sha": "8cb9aea45b6f0fca7bee47384dd33108f9f5b2fd",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss029.config.js",
+        "sha": "41de9cf8e63d471dad63bbc45ac40d7c4f2b5d1e",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss055.config.js",
+        "sha": "306a3dc2fca535915f1dcf4e512d7320c9cb301d",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss075.config.js",
+        "sha": "9532cc9ec87c8caf4ca457d87efcd483680ba51d",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.p2a.config.js",
+        "sha": "13dc5dfd5b99e65191f1b060745024141403d063",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.r1-repair-03.config.js",
+        "sha": "41be7c8dcd771b24b5623f50fafc68e9e8dea40d",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.r1a.config.js",
+        "sha": "d63b2fc4c32281bc7ac6eb88376c9bf1510d8422",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.workspace.config.js",
+        "sha": "37cbd805bbf4c2499369f89f1b63d6818d04c877",
+        "type": "blob"
+      },
+      {
+        "path": "scripts",
+        "sha": "0f7cb381e16b0a5d50982dc15edc2dbb7d816199",
+        "type": "tree"
+      },
+      {
+        "path": "src",
+        "sha": "6d80b1fd18043e1a127c01208eeced5519efe3c4",
+        "type": "tree"
+      },
+      {
+        "path": "tests",
+        "sha": "53a774cd6611e8c81fcaf32d1788c7cf08c1d0bd",
+        "type": "tree"
+      },
+      {
+        "path": "vite.config.js",
+        "sha": "2bd00a26f656b2820ca083d7afc29c5ada05213b",
+        "type": "blob"
+      },
+      {
+        "path": "vite.isolated.config.js",
+        "sha": "f02c5f8d5fa3fc5d0d22221ee8cc2ac11d07fb53",
+        "type": "blob"
+      },
+      {
+        "path": "vite.iss022.config.js",
+        "sha": "d8bf295a9f3adc023dcfc7d078ff59e2b88f2578",
+        "type": "blob"
+      },
+      {
+        "path": "vite.iss075.config.js",
+        "sha": "90b083619893803761c212452e5ae4f5986c437e",
+        "type": "blob"
+      }
+    ]
+  },
+  {
+    "sha": "67410d72c0d4dabca1a6c374e2d9600ba6f9aee6",
+    "root": "d5e09b8298556013be0b444142a43dc8b2ea5b05",
+    "rootEntries": [
+      {
+        "path": ".github",
+        "sha": "18e8169d8811fe665292303ce5895f571bf18320",
+        "type": "tree"
+      },
+      {
+        "path": ".gitignore",
+        "sha": "413f3a69df01d7df8f8bc5b79a183df4aa05587e",
+        "type": "blob"
+      },
+      {
+        "path": "AGENTS.md",
+        "sha": "ebc1ee89ae078fbbd17b6471f9189c4bb27ec6c5",
+        "type": "blob"
+      },
+      {
+        "path": "README.md",
+        "sha": "c9f08ab9f484cff9f6753b963e9c493c4bd6b672",
+        "type": "blob"
+      },
+      {
+        "path": "SKU_MODULE_AUDIT.md",
+        "sha": "e59f2ff8a6ea2ded6a271781cbed9817234dfb42",
+        "type": "blob"
+      },
+      {
+        "path": "SKU_REFACTOR_REPORT.md",
+        "sha": "7853777f89ab972c146151b47b3558ec72eaf91e",
+        "type": "blob"
+      },
+      {
+        "path": "SUPPLIER_SKU_IMPLEMENTATION_REPORT.md",
+        "sha": "07f385280f80e9976d1dae4722b7161651320656",
+        "type": "blob"
+      },
+      {
+        "path": "backend",
+        "sha": "c918cd9285fd816c2ce07a01c39701f9196b7af7",
+        "type": "tree"
+      },
+      {
+        "path": "docs",
+        "sha": "9fb7a84147c89c2ecf90b519a3fe31cc91f5da04",
+        "type": "tree"
+      },
+      {
+        "path": "frontend",
+        "sha": "d741b48019024caace45443e3b8ab11c28372906",
+        "type": "tree"
+      },
+      {
+        "path": "scripts",
+        "sha": "8966eac65d4bbe80ce7583560576ba13f0d73def",
+        "type": "tree"
+      },
+      {
+        "path": "start-main-worktree.ps1",
+        "sha": "fd6edbbcd58edf9832bc4329cdf0ec40be3d8cec",
+        "type": "blob"
+      },
+      {
+        "path": "templates",
+        "sha": "535566cc881d16b650af62663f9c6195a42823ad",
+        "type": "tree"
+      },
+      {
+        "path": "启动主工作树.bat",
+        "sha": "076cc148dee5b956ba37f7598f059bc8756e0e30",
+        "type": "blob"
+      },
+      {
+        "path": "报价单导出重构.txt",
+        "sha": "c6363cce1ef9974d340b8ea2a1a4e5e1896d6e50",
+        "type": "blob"
+      },
+      {
+        "path": "文档",
+        "sha": "5fafa8661f15fc99e10811ef65d4e5960397e13f",
+        "type": "tree"
+      }
+    ],
+    "frontendEntries": [
+      {
+        "path": "browser-tests",
+        "sha": "b8f39b1c649d68bbf5284633f273dece6c009611",
+        "type": "tree"
+      },
+      {
+        "path": "index.html",
+        "sha": "552dbcda66abd00bd0ee25ea2d2e74794d03b287",
+        "type": "blob"
+      },
+      {
+        "path": "infrastructure-tests",
+        "sha": "86b00772039c7ed92998a9c995a292f2ed11c906",
+        "type": "tree"
+      },
+      {
+        "path": "package-lock.json",
+        "sha": "1a5ce188e997ee6cd9d989e32320c42f312eef8a",
+        "type": "blob"
+      },
+      {
+        "path": "package.json",
+        "sha": "c8412f6b10eb533591f7d172adcd5dea82d26523",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.config.js",
+        "sha": "cfd14f1d6e5c81a272a4983f84512e3ea303db11",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.finp1.config.js",
+        "sha": "38328b9ed13c964580a1395b3661192101902498",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.fix01.config.js",
+        "sha": "c32746b36b66121ab753728b015ecece6a5d2ba6",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.fup01.config.js",
+        "sha": "0938ab08f1e00520a6e8a10310499dc219af62bb",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.fup02.config.js",
+        "sha": "f350d3e65555bffe8991f89a226d7407e2fb8ca3",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.isolated.config.js",
+        "sha": "d091fd72fcc9b8eb865605d08a6277488f543be4",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss007.config.js",
+        "sha": "bb1d961e8b18e073a0fd4a263012048ce5324ec7",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss017.config.js",
+        "sha": "595192e4f6d04ae4c5f6a9e8ee4f3d92ce56d37c",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss022.config.js",
+        "sha": "8cb9aea45b6f0fca7bee47384dd33108f9f5b2fd",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss029.config.js",
+        "sha": "41de9cf8e63d471dad63bbc45ac40d7c4f2b5d1e",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss055.config.js",
+        "sha": "306a3dc2fca535915f1dcf4e512d7320c9cb301d",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.iss075.config.js",
+        "sha": "9532cc9ec87c8caf4ca457d87efcd483680ba51d",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.p2a.config.js",
+        "sha": "13dc5dfd5b99e65191f1b060745024141403d063",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.r1-repair-03.config.js",
+        "sha": "41be7c8dcd771b24b5623f50fafc68e9e8dea40d",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.r1a.config.js",
+        "sha": "d63b2fc4c32281bc7ac6eb88376c9bf1510d8422",
+        "type": "blob"
+      },
+      {
+        "path": "playwright.workspace.config.js",
+        "sha": "37cbd805bbf4c2499369f89f1b63d6818d04c877",
+        "type": "blob"
+      },
+      {
+        "path": "scripts",
+        "sha": "0f7cb381e16b0a5d50982dc15edc2dbb7d816199",
+        "type": "tree"
+      },
+      {
+        "path": "src",
+        "sha": "6d80b1fd18043e1a127c01208eeced5519efe3c4",
+        "type": "tree"
+      },
+      {
+        "path": "tests",
+        "sha": "53a774cd6611e8c81fcaf32d1788c7cf08c1d0bd",
+        "type": "tree"
+      },
+      {
+        "path": "vite.config.js",
+        "sha": "2bd00a26f656b2820ca083d7afc29c5ada05213b",
+        "type": "blob"
+      },
+      {
+        "path": "vite.isolated.config.js",
+        "sha": "f02c5f8d5fa3fc5d0d22221ee8cc2ac11d07fb53",
+        "type": "blob"
+      },
+      {
+        "path": "vite.iss022.config.js",
+        "sha": "d8bf295a9f3adc023dcfc7d078ff59e2b88f2578",
+        "type": "blob"
+      },
+      {
+        "path": "vite.iss075.config.js",
+        "sha": "90b083619893803761c212452e5ae4f5986c437e",
+        "type": "blob"
+      }
+    ]
+  }
+]

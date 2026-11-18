@@ -29,7 +29,7 @@ async function open(page, summary, button) {
 }
 async function choose(label, value) { await label.locator('select').selectOption(value) }
 async function optionValue(label, text) { return await label.locator('option').filter({ hasText: text }).first().getAttribute('value') }
-async function refreshFinance(page) { return open(page, '历史资金接续', '读取资金来源、账户和凭证') }
+async function refreshFinance(page) { return open(page, '历史资金接续', '加载资金来源、账户和凭证') }
 
 try {
   const maker = await session('session.json')
@@ -54,7 +54,7 @@ try {
     await panel.locator('.takeover-remainder-item').filter({ hasText: source }).getByRole('button', { name: '核对凭证并记账' }).click()
     await expect(panel.locator('.takeover-remainder-item').filter({ hasText: source })).toContainText('资金事实 #')
   }
-  let panel = await open(maker, '库存盘点基准', '读取盘点来源')
+  let panel = await open(maker, '库存盘点基准', '加载盘点来源')
   if (!await panel.getByRole('button', { name: '启用盘点基准' }).count() && !(await panel.innerText()).includes('基准记录 1 条')) {
   await panel.getByLabel('货物所有权').selectOption('own')
   await panel.getByLabel('核实单位成本').fill('3.25')
@@ -62,15 +62,15 @@ try {
   await panel.getByLabel('已核实这些 SKU 的盘点范围完整').check()
   await panel.getByLabel('盘点与成本依据').fill('合成盘点与成本凭证')
   await panel.getByRole('button', { name: '保存基准申请' }).click()
-  panel = await open(reviewer, '库存盘点基准', '读取盘点来源')
+  panel = await open(reviewer, '库存盘点基准', '加载盘点来源')
   await panel.getByLabel('复核或撤销依据').fill('复核合成盘点')
   await panel.getByRole('button', { name: '复核基准' }).click()
   await expect(panel.getByRole('button', { name: '启用盘点基准' })).toBeVisible()
-  panel = await open(maker, '库存盘点基准', '读取盘点来源')
+  panel = await open(maker, '库存盘点基准', '加载盘点来源')
   }
   if (await panel.getByRole('button', { name: '启用盘点基准' }).count()) await panel.getByRole('button', { name: '启用盘点基准' }).click()
   await expect(panel).toContainText('基准记录 1 条')
-  panel = await open(maker, '未结余额与剩余业务', '读取合同与未结来源')
+  panel = await open(maker, '未结余额与剩余业务', '加载合同与未结来源')
   await panel.getByLabel('启用日期').fill('2025-01-01')
   await panel.getByLabel('接续核实依据').fill('合成合同与余额核验')
   const sale = panel.locator('section.takeover-remainder').filter({ has: maker.locator('h4').filter({ hasText: '销售订单 ·' }) })
@@ -93,11 +93,11 @@ try {
   await purchase.getByLabel('费用核实依据').fill('合成合同')
   await panel.getByRole('button', { name: '保存接续申请' }).click()
   await expect(panel.getByRole('button', { name: '复核接续申请' })).toBeVisible()
-  panel = await open(reviewer, '未结余额与剩余业务', '读取合同与未结来源')
+  panel = await open(reviewer, '未结余额与剩余业务', '加载合同与未结来源')
   await panel.getByLabel('复核依据').fill('合成合同、余额与成本复核')
   await panel.getByRole('button', { name: '复核接续申请' }).click()
   await expect(panel.getByRole('button', { name: '启用未结并建立草稿' })).toBeVisible()
-  panel = await open(maker, '未结余额与剩余业务', '读取合同与未结来源')
+  panel = await open(maker, '未结余额与剩余业务', '加载合同与未结来源')
   await panel.getByRole('button', { name: '启用未结并建立草稿' }).click()
   await expect(panel.getByRole('button', { name: '确认销售接续单' })).toBeVisible()
   await panel.getByRole('button', { name: '确认销售接续单' }).click()

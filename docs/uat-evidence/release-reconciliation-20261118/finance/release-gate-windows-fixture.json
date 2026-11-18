@@ -1,0 +1,7 @@
+{
+  "scenario": "Windows CRLF writes plus core.autocrlf=true",
+  "worktree_digest": "0ce0641d694d27cfa2a6b3fb4af2647d330c4923",
+  "git_blob": "3deb1f59fbbf4d595721b0cc70494dd3e1616805",
+  "verifier_result": "page.txt: content differs from the reviewed version",
+  "finding": "Test fixture computes expected Git blob from working-tree bytes, which is environment-sensitive."
+}

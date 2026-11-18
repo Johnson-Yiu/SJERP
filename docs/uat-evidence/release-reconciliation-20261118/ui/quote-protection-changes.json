@@ -1,0 +1,35 @@
+{
+  "path": "frontend/src/components/QuoteEditorModal.vue",
+  "classification": "newly confirmed existing defect; historical omission unproven",
+  "changes": [
+    {
+      "old": "const initialized = ref(false)\r\nconst editorScope",
+      "new": "const initialized = ref(false)\r\nconst saving = ref(false), packagingSaving = ref(false)\r\nconst editorScope"
+    },
+    {
+      "old": "const guard = useUnsavedChangesGuard({ data: () => draft, scope: editorScope })",
+      "new": "const guard = useUnsavedChangesGuard({ data: () => draft, busy: () => saving.value || packagingSaving.value, scope: editorScope })"
+    },
+    {
+      "old": "const saving = ref(false)\r\n",
+      "new": ""
+    },
+    {
+      "old": "const packingOpen = ref(false), packagingSku = ref(null), packagingSaving = ref(false)",
+      "new": "const packingOpen = ref(false), packagingSku = ref(null)"
+    },
+    {
+      "old": "const packagingGuard = useUnsavedChangesGuard({ data: () => packagingForm, enabled: () => Boolean(packagingSku.value), routeGuard: false, scope: editorScope })",
+      "new": "const packagingGuard = useUnsavedChangesGuard({ data: () => packagingForm, enabled: () => Boolean(packagingSku.value), busy: () => packagingSaving.value, routeGuard: false, scope: editorScope })"
+    },
+    {
+      "old": "aria-label=\"关闭报价编辑器\" @click=\"requestClose\"",
+      "new": "aria-label=\"关闭报价编辑器\" :disabled=\"saving || packagingSaving\" @click=\"requestClose\""
+    },
+    {
+      "old": "class=\"btn btn-secondary quote-action-cancel\" @click=\"requestClose\"",
+      "new": "class=\"btn btn-secondary quote-action-cancel\" :disabled=\"saving || packagingSaving\" @click=\"requestClose\""
+    }
+  ],
+  "behavior": "Close, cancel, route and beforeunload protection remain active while quote save or child packaging save is pending. No changes to validation rules, endpoint, payload, save/export ordering or retry persistence."
+}

@@ -207,7 +207,7 @@ watch(() => props.refreshKey, () => { void load() })
 
 <template>
  <section class="sku-management" aria-label="SKU 参数与供应商管理">
-  <div class="management-head"><div><h3>{{ initialTab === 'rules' ? '供应能力规则' : 'SKU 档案与供应商分配' }}</h3><p>一份 SKU 清单管理规格与供货候选；实际采购供应商在销售订单或采购单中确认。</p></div></div>
+  <div class="management-head"><div><h3>{{ initialTab === 'rules' ? '供应能力规则' : 'SKU 档案与供应商分配' }}</h3><p>在 SKU 清单中管理规格和候选供应商；实际采购供应商在销售订单或采购单中确认。</p></div></div>
   <div v-if="lifecycleResult?.failures.length" class="error" role="alert">
     <strong>{{ lifecycleResult.action }}结果：成功 {{ lifecycleResult.succeeded }} 项，失败 {{ lifecycleResult.failures.length }} 项</strong>
     <ul><li v-for="item in lifecycleResult.failures" :key="item.id">{{ item.code }}：{{ item.message }}</li></ul>

@@ -274,7 +274,7 @@ describe('controlled history takeover UI', () => {
       } }],
     } } : { data: {} })
     const wrapper = await mountPage(value)
-    await wrapper.findAll('button').find(item => item.text().includes('读取盘点来源')).trigger('click')
+    await wrapper.findAll('button').find(item => item.text().includes('加载盘点来源')).trigger('click')
     await flushPromises()
     expect(wrapper.text()).toContain('SKU 合成灯具样本 · SYN-SKU-1')
     await wrapper.findAll('button').find(item => item.text() === '打开历史商品关联').trigger('click')
@@ -291,7 +291,7 @@ describe('controlled history takeover UI', () => {
     expect(wrapper.text()).toContain('预检通过不代表已批准或已入账')
     expect(wrapper.text()).toContain('合成或待核实资料留在申请区')
     expect(wrapper.text()).toContain('下载承接模板')
-    expect(wrapper.text()).toContain('还没有历史承接申请')
+    expect(wrapper.text()).toContain('暂无可显示的申请记录')
     wrapper.unmount()
   })
 
@@ -315,7 +315,7 @@ describe('controlled history takeover UI', () => {
     expect(mocks.post).toHaveBeenCalledWith('/import/history-takeovers/31/groups/41/review/', {
       decision: 'approve', note: '已核对合成来源凭证与全部依赖。', confirm_manual: true,
     })
-    const execute = wrapper.findAll('button').find(button => button.text().includes('逐组执行'))
+    const execute = wrapper.findAll('button').find(button => button.text().includes('承接本组'))
     expect(execute).toBeTruthy()
     await execute.trigger('click')
     await flushPromises()
@@ -353,7 +353,7 @@ describe('controlled history takeover UI', () => {
       : { data: { instruction_id: 17, status: 'pending' } })
     const wrapper = mount(HistoryTakeoverPage)
     await flushPromises()
-    await wrapper.findAll('button').find(button => button.text() === '读取资金来源、账户和凭证').trigger('click')
+    await wrapper.findAll('button').find(button => button.text() === '加载资金来源、账户和凭证').trigger('click')
     await flushPromises()
     const field = label => wrapper.findAll('label').find(item => item.text().includes(label))
     await field('历史收付款来源').find('select').setValue('9')
@@ -387,7 +387,7 @@ describe('controlled history takeover UI', () => {
       } }] } } : { data: { status: 'pending_review' } })
     const wrapper = mount(HistoryTakeoverPage)
     await flushPromises()
-    await wrapper.findAll('button').find(button => button.text() === '读取盘点来源').trigger('click')
+    await wrapper.findAll('button').find(button => button.text() === '加载盘点来源').trigger('click')
     await flushPromises()
     const field = label => wrapper.findAll('label').find(item => item.text().includes(label))
     await field('货物所有权').find('select').setValue('own')

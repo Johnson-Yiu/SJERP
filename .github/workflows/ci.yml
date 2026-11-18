@@ -7,7 +7,22 @@ on:
       - master
 
 jobs:
+  release-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify committed release source inventory
+        run: python scripts/check_pilot_release_source.py "${{ github.sha }}"
+      - name: Release inventory regression tests
+        run: python -m unittest discover -s scripts/tests -p 'test_release_source_inventory.py' -v
+
   backend:
+    needs: release-source
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +42,7 @@ jobs:
         run: python manage.py test
 
   backend-postgres:
+    needs: release-source
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -79,6 +95,7 @@ jobs:
         run: python manage.py test --verbosity 2
 
   frontend:
+    needs: release-source
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

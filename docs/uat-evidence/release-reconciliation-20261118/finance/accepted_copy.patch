@@ -1,0 +1,86 @@
+--- a/frontend/src/views/FinanceDashboardPage.vue
++++ b/frontend/src/views/FinanceDashboardPage.vue
+@@ -62,7 +62,7 @@
+     if (version !== drillVersion) return
+     drill.value = response.data
+   } catch (err) {
+-    if (version === drillVersion) drillError.value = apiErrorMessage(err) || '构成明细加载失败，请刷新后重试。'
++    if (version === drillVersion) drillError.value = apiErrorMessage(err) || '明细加载失败，请刷新后重试。'
+   } finally {
+     if (version === drillVersion) drillLoading.value = false
+   }
+@@ -160,7 +160,7 @@
+ 
+ <template>
+   <section class="finance-page">
+-    <header><div><p class="page-lede">合同、应收应付与两种资金口径分开列示。合同按订单日期，账面收支按流水发生日期，银行实际资金按银行实际日期；当前待结与未核销是当前余额。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>
++    <header><div><p class="page-lede">合同、应收应付和两种资金数据分开显示。合同按订单日期统计，账面收支按流水发生日期统计，银行实际资金按银行实际日期统计；待结与未核销显示当前余额。</p></div><button class="secondary" :disabled="loading" @click="load">刷新数据</button></header>
+     <form class="report-filters" aria-label="概览日期范围" @submit.prevent="applyPeriod"><label>开始日期<input v-model="dateFrom" type="date" required></label><label>结束日期<input v-model="dateTo" type="date" required></label><button :disabled="loading || !!rangeError">查询</button><button type="button" class="secondary" @click="resetPeriod">本月至今</button><button v-if="can('finance', 'export')" type="button" class="secondary" :disabled="loading || exporting || !data.period || !!error" @click="exportReport">{{ exporting ? '正在导出…' : '导出 CSV' }}</button></form>
+     <p v-if="rangeError" class="error" role="alert">{{ rangeError }}</p>
+     <p v-if="exportError" class="error" role="alert">{{ exportError }}</p>
+@@ -194,7 +194,7 @@
+       <p v-if="actualCashError" class="error" role="alert">{{ actualCashError }} <button type="button" class="secondary" @click="loadActualCash">重新加载</button></p>
+       <p v-else-if="actualCashLoading" class="definition-note" role="status">正在加载已确认银行资金…</p>
+       <template v-else-if="actualCash">
+-        <p class="definition-note">既有银行事实仅统计系统中已登记并人工确认的银行资金事件；新增账户事实须核实自有归属、实际日期和私有凭证。基准与已核实内部本金不计公司毛流量。</p>
++        <p class="definition-note">既有银行事实只统计系统中已登记并人工确认的银行资金事件；新增账户事实时，须核实账户是否自有、实际日期和私有凭证。基准与已核实内部本金不计入公司毛流量。</p>
+         <div v-if="actualCash.by_account_type" class="cards actual-cash-cards"><article v-for="row in actualCash.by_account_type" :key="row.account_type"><span>{{ row.label }}净变动</span><strong>¥{{ money(row.net) }}</strong><p>流入 ¥{{ money(row.inflow) }} / 流出 ¥{{ money(row.outflow) }}</p></article></div>
+         <p class="definition-note">{{ actualCash.note }} 未设置统计启用日期；本区域不推测未登记资金、期初余额、期末余额或公司全部银行余额。</p>
+         <div class="cards actual-cash-cards"><article><span>实际流入</span><strong>¥{{ money(actualCash.totals.inflow) }}</strong></article><article><span>实际流出</span><strong>¥{{ money(actualCash.totals.outflow) }}</strong></article><article><span>净流入 / 净流出</span><strong>¥{{ money(actualCash.totals.net) }}</strong></article><article><span>已确认银行事件</span><strong>{{ actualCash.totals.count }} 笔</strong></article></div>
+--- a/frontend/src/views/FinanceLedgerPage.vue
++++ b/frontend/src/views/FinanceLedgerPage.vue
+@@ -79,7 +79,7 @@
+ function formatTime(value) { return value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '—' }
+ function storeIdentity() {
+   try { window.sessionStorage.setItem(storageKey, JSON.stringify({ key: draft.request_key, attempted: attempted.value })); storageError.value = false; return true }
+-  catch { storageError.value = true; error.value = '无法保存请求身份，已阻止提交。请恢复浏览器存储后重试。'; return false }
++  catch { storageError.value = true; error.value = '无法保存请求标识，暂不能提交。请恢复浏览器存储后重试。'; return false }
+ }
+ function newDraft() {
+   if (attempted.value && !state.instructions.some(i => i.payload.request_key === draft.request_key)) { error.value = '上次请求结果未知，请先刷新核查，暂不能更换请求标识。'; return }
+@@ -124,7 +124,7 @@
+ async function submit() {
+   if (returnLoading.value) return
+   if (returnLookupFailed.value) { error.value = returnNote.value; return }
+-  if (storageError.value || recoveredKey.value) { error.value = '请求身份需核查，暂不能提交新内容。'; return }
++  if (storageError.value || recoveredKey.value) { error.value = '请先核查请求标识，暂不能提交新内容。'; return }
+   attempted.value = true
+   if (!storeIdentity()) return
+   await run(async () => { await api.post('/finance-ledger/instructions/', payload()) }, '指令已保存；需要复核的操作请由另一名授权人员处理。', true, draft)
+@@ -153,7 +153,7 @@
+     const saved = JSON.parse(window.sessionStorage.getItem(storageKey) || 'null')
+     if (saved?.key) { draft.request_key = saved.key; draft.source_system = 'manual'; draft.source_key = saved.key; attempted.value = saved.attempted === true; if (attempted.value) recoveredKey.value = saved.key }
+     else newDraft()
+-  } catch { storageError.value = true; error.value = '无法恢复请求身份，已阻止提交；请核查历史指令。' }
++  } catch { storageError.value = true; error.value = '无法恢复请求标识，暂不能提交。请核查历史指令。' }
+   await run(async () => {
+     let fact
+     if (route?.query?.fact) {
+@@ -210,7 +210,7 @@
+       <label class="ledger-check"><input v-model="checked" type="checkbox">已核对实际日期、人民币金额及文件凭证</label>
+       <div class="ledger-cards"><article v-for="i in state.instructions" :key="i.id"><strong>{{ kinds[i.kind] }} · {{ statuses[i.status] }}</strong><p>{{ i.payload.actual_date }} · ¥{{ i.payload.amount }} · {{ i.payload.reason }}</p><p v-if="i.payload.return_currency">原币退回 {{ i.payload.return_currency }} · {{ i.payload.return_allocations.map(row => row.amount).join(' + ') }}</p><p>发起：{{ i.created_actor_name }} · {{ formatTime(i.created_at) }}；复核：{{ i.approved_actor_name }}<template v-if="i.approved_at"> · {{ formatTime(i.approved_at) }}</template></p><div class="ledger-actions"><button v-if="i.status === 'pending'" :disabled="busy || !can('finance', 'update')" @click="instructionAction('approve', i)">另一人复核</button><button v-if="['pending', 'approved'].includes(i.status) && i.kind !== 'refund_approval' && (!i.payload.return_currency || i.status === 'approved')" :disabled="busy || !can('finance', 'update')" @click="instructionAction('post', i)">确认实际记账</button><button v-if="['pending', 'approved'].includes(i.status)" :disabled="busy || !can('finance', 'update')" @click="instructionAction('cancel', i)">取消并留痕</button><button v-if="['pending', 'approved'].includes(i.status)" :disabled="busy || !can('finance', 'update')" @click="instructionAction('fail', i)">记录失败（未扣款）</button></div></article></div>
+     </div>
+-    <div v-if="tab === 'reviews'"><h2>逐账户核对</h2><p>基准及实际变动可复算；差异未清不得完成核对。迟到记录或更正进入已核对期间后，将重新标记需核对。</p><form class="ledger-form" @submit.prevent="run(() => api.post('/finance-ledger/reviews/', review), '核对记录已保存。', true, review)"><label>账户<select aria-label="核对账户" v-model="review.account" required><option value="">请选择</option><option v-for="a in ownAccounts" :key="a.id" :value="a.id">{{ a.name }}</option></select></label><label>核对开始<input v-model="review.date_from" type="date" required></label><label>核对结束<input v-model="review.date_to" type="date" required></label><label>对账单凭证<select aria-label="对账单凭证" v-model="review.voucher" required><option value="">请选择</option><option v-for="v in state.vouchers" :key="v.id" :value="v.id">{{ v.name }}</option></select></label><label>对账单期末余额<input v-model="review.statement_balance" required inputmode="decimal"></label><label>差异及处理依据<input v-model="review.reason" required></label><label class="ledger-check"><input v-model="review.completed" type="checkbox">确认差异为零并完成核对</label><button :disabled="busy || !can('finance', 'update')">保存核对</button></form><div class="ledger-cards"><article v-for="r in state.reviews" :key="r.id"><strong>{{ state.accounts.find(a => a.id === r.account)?.name || '账户待核实' }} · {{ r.status === 'completed' ? '核对完成' : r.status === 'needs_review' ? '需重新核对' : '差异待处理' }}</strong><p>{{ r.date_from }} 至 {{ r.date_to }}</p><p>对账单 ¥{{ r.statement_balance }}；复算 ¥{{ r.calculated_balance }}；差异 ¥{{ r.difference }}</p><p>{{ r.reason }} · {{ formatTime(r.created_at) }} · {{ r.actor_name }}</p></article></div></div>
++    <div v-if="tab === 'reviews'"><h2>逐账户核对</h2><p>可以重新计算基准和实际变动；差异未归零前不能完成核对。如果已核对期间增加了迟到记录或更正，系统会标记为需重新核对。</p><form class="ledger-form" @submit.prevent="run(() => api.post('/finance-ledger/reviews/', review), '核对记录已保存。', true, review)"><label>账户<select aria-label="核对账户" v-model="review.account" required><option value="">请选择</option><option v-for="a in ownAccounts" :key="a.id" :value="a.id">{{ a.name }}</option></select></label><label>核对开始<input v-model="review.date_from" type="date" required></label><label>核对结束<input v-model="review.date_to" type="date" required></label><label>对账单凭证<select aria-label="对账单凭证" v-model="review.voucher" required><option value="">请选择</option><option v-for="v in state.vouchers" :key="v.id" :value="v.id">{{ v.name }}</option></select></label><label>对账单期末余额<input v-model="review.statement_balance" required inputmode="decimal"></label><label>差异及处理依据<input v-model="review.reason" required></label><label class="ledger-check"><input v-model="review.completed" type="checkbox">确认差异为零并完成核对</label><button :disabled="busy || !can('finance', 'update')">保存核对</button></form><div class="ledger-cards"><article v-for="r in state.reviews" :key="r.id"><strong>{{ state.accounts.find(a => a.id === r.account)?.name || '账户待核实' }} · {{ r.status === 'completed' ? '核对完成' : r.status === 'needs_review' ? '需重新核对' : '差异待处理' }}</strong><p>{{ r.date_from }} 至 {{ r.date_to }}</p><p>对账单 ¥{{ r.statement_balance }}；复算 ¥{{ r.calculated_balance }}；差异 ¥{{ r.difference }}</p><p>{{ r.reason }} · {{ formatTime(r.created_at) }} · {{ r.actor_name }}</p></article></div></div>
+     <div v-if="tab === 'controls'"><h2>核实内部转账</h2><p>须分别保存两端真实事实。允许跨日，差额不能直接认定为手续费；手续费另行登记。</p><form class="ledger-form" @submit.prevent="run(() => api.post('/finance-ledger/transfers/', transfer), '两端本金核实已保存。', true, transfer)"><FinanceBusinessSelector v-model="transfer.outgoing" type="transfer_fact" direction="expense" label="流出记录" required/><FinanceBusinessSelector v-model="transfer.incoming" type="transfer_fact" direction="income" label="流入记录" required/><label>两端核实依据<input v-model="transfer.reason" required></label><button :disabled="busy || !can('finance', 'update')">核实两端</button></form><p v-for="t in state.transfers" :key="t.id">{{ t.outgoing_label }} → {{ t.incoming_label }} · {{ t.reason }}</p><h2>待分类处理</h2><form class="ledger-form" @submit.prevent="run(() => api.post('/finance-ledger/classifications/', classification), '分类核实已追加，原事实保留。', true, classification)"><FinanceBusinessSelector v-model="classification.fact" type="fact" label="资金记录" required/><label>资金性质<select aria-label="分类资金性质" v-model="classification.nature"><option v-for="(label, key) in natures" :key="key" :value="key">{{ label }}</option></select></label><label>核实依据<input v-model="classification.reason" required></label><button :disabled="busy || !can('finance', 'update')">追加分类核实</button></form></div>
+     <div v-if="tab === 'controls'"><h2>既有银行事实的转账核实</h2><p>请选择已核实的转账两端，并分别提供凭证。既有银行账户须先完成映射。</p><form class="ledger-form" @submit.prevent="run(() => api.post('/finance-ledger/transfers/', historicalTransfer), '既有两端本金已留痕核实。', true, historicalTransfer)"><FinanceBusinessSelector v-model="historicalTransfer.outgoing" type="transfer_any" direction="expense" label="流出记录" required/><FinanceBusinessSelector v-model="historicalTransfer.incoming" type="transfer_any" direction="income" label="流入记录" required/><label>流出文件凭证<select v-model="historicalTransfer.outgoing_voucher" aria-label="流出文件凭证" required><option value="">请选择</option><option v-for="v in state.vouchers" :key="v.id" :value="v.id">{{ v.name }}</option></select></label><label>流入文件凭证<select v-model="historicalTransfer.incoming_voucher" aria-label="流入文件凭证" required><option value="">请选择</option><option v-for="v in state.vouchers" :key="v.id" :value="v.id">{{ v.name }}</option></select></label><label>历史两端核实依据<input v-model="historicalTransfer.reason" required></label><button :disabled="busy || !can('finance', 'update')">核实既有银行两端</button></form><p v-for="t in state.historical_transfers" :key="t.id">流出 {{ t.outgoing_label }} → 流入 {{ t.incoming_label }} · {{ t.reason }}</p></div>
+   </section>
+--- a/frontend/tests/finance-closeout.spec.js
++++ b/frontend/tests/finance-closeout.spec.js
+@@ -28,7 +28,7 @@
+     const form = await openInstructions()
+     await form.trigger('submit'); await flushPromises()
+     expect(api.post).not.toHaveBeenCalled()
+-    expect(wrapper.text()).toContain('请求身份需核查')
++    expect(wrapper.text()).toContain('请先核查请求标识')
+   })
+   it('retains a failed request key and prevents an unknown outcome becoming a new operation', async () => {
+     const form = await openInstructions()
+@@ -46,6 +46,6 @@
+     const form = await openInstructions()
+     await form.trigger('submit'); await flushPromises()
+     expect(api.post).not.toHaveBeenCalled()
+-    expect(wrapper.text()).toContain('请求身份需核查')
++    expect(wrapper.text()).toContain('请先核查请求标识')
+   })
+ })

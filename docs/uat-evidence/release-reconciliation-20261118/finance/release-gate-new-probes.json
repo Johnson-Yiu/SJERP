@@ -1,0 +1,30 @@
+[
+  {
+    "check": "staged tracked changes are rejected",
+    "result": "PASS",
+    "details": "Build from a clean checkout; tracked files have local changes."
+  },
+  {
+    "check": "ordinary untracked evidence is allowed",
+    "result": "PASS",
+    "details": "Untracked evidence does not trigger the dirty-checkout rejection; mandatory inventory is reached before export."
+  },
+  {
+    "check": "verify CLI compatibility and new flags",
+    "result": "PASS",
+    "details": [
+      {
+        "mode": "default package verification",
+        "exit": 0
+      },
+      {
+        "mode": "trusted version and manifest",
+        "exit": 0
+      },
+      {
+        "mode": "wrong version rejection",
+        "exit": 1
+      }
+    ]
+  }
+]

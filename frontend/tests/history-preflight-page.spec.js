@@ -12,7 +12,7 @@ const result = {
   preflight_only: true,
   approval_or_migration: false,
   business_write_performed: false,
-  notice: '预检通过仅表示当前规则检查通过，不代表已审批或已迁移。',
+  notice: '预检通过表示符合当前检查规则；仍需提交申请并通过审核，才能承接。',
   summary: { total_rows: 3, passed: 1, warnings: 1, blocked: 1, manual_review: 0, overall_status: '阻断' },
   groups: [{ group_id: 'SYN-G1', status: '阻断', coverage_status: 'complete' }],
   results: [
@@ -89,7 +89,7 @@ describe('history preflight page', () => {
     expect(wrapper.text()).toContain('数据行')
     expect(wrapper.text()).toContain('存在重复来源记录。')
     expect(wrapper.text()).toContain('核对原始编号和凭证。')
-    expect(wrapper.text()).not.toContain('当前没有行级问题。')
+    expect(wrapper.text()).not.toContain('本次预检未发现需要处理的问题。')
     expect(wrapper.get('a[href="/history-takeover"]').text()).toContain('进入历史资料承接')
 
     await wrapper.get('button.preflight-text-button').trigger('click')

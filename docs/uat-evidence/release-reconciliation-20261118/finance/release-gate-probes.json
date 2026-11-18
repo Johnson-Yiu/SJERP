@@ -1,0 +1,35 @@
+[
+  {
+    "check": "target policy is isolated from a different committed HEAD policy",
+    "status": "PASS",
+    "details": "An older self-consistent commit still passes against its own policy; HEAD policy is not the acceptance policy."
+  },
+  {
+    "check": "absent target policy fails closed",
+    "status": "PASS",
+    "details": "The selected commit has no release inventory: docs/deployment/alex-source-inventory.json"
+  },
+  {
+    "check": "required text failure is independent of blob equality",
+    "status": "PASS",
+    "details": "page.txt: missing required release behavior"
+  },
+  {
+    "check": "CLI default/external/branch compatibility",
+    "status": "PASS",
+    "details": [
+      {
+        "mode": "target committed policy",
+        "exit": 0
+      },
+      {
+        "mode": "external policy",
+        "exit": 0
+      },
+      {
+        "mode": "reject branch",
+        "exit": 1
+      }
+    ]
+  }
+]

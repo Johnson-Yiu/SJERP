@@ -49,7 +49,7 @@ try {
   await writeFile(path.join(evidence, 'chrome-fulfillment.json'), JSON.stringify(summary, null, 2) + '\n')
   await page.reload({ waitUntil: 'networkidle' })
   await page.getByText('未结余额与剩余业务', { exact: true }).click()
-  await page.getByRole('button', { name: '读取合同与未结来源' }).click()
+  await page.getByRole('button', { name: '加载合同与未结来源' }).click()
   await page.locator('.takeover-execution').scrollIntoViewIfNeeded()
   await page.screenshot({ path: path.join(evidence, 'history-operational-settled-1440.png'), fullPage: true })
   await page.setViewportSize({ width: 390, height: 844 }); await page.waitForTimeout(700)

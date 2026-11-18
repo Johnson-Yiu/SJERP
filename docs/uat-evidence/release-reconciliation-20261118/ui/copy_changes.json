@@ -1,0 +1,402 @@
+[
+  {
+    "path": "frontend/src/views/HistoryPreflightPage.vue",
+    "old": "上传 XLSX 查看检查结果，再按需下载行级问题清单。",
+    "new": "上传 .xlsx 文件查看检查结果，按需下载问题清单。",
+    "count": 1,
+    "reason": "恢复只读预检的自然操作说明；提交、审核和承接边界不变。",
+    "source": "a5869a50ed3a853b9a481a728af02f6c14de6bdb"
+  },
+  {
+    "path": "frontend/src/views/HistoryPreflightPage.vue",
+    "old": "仅支持 .xlsx 文件，大小按系统限制。",
+    "new": "请选择 .xlsx 文件，文件大小需符合系统限制。",
+    "count": 1,
+    "reason": "恢复只读预检的自然操作说明；提交、审核和承接边界不变。",
+    "source": "a5869a50ed3a853b9a481a728af02f6c14de6bdb"
+  },
+  {
+    "path": "frontend/src/views/HistoryPreflightPage.vue",
+    "old": "预检通过不代表已批准或已承接。",
+    "new": "预检通过后，仍需提交申请并通过审核，才能承接。",
+    "count": 1,
+    "reason": "恢复只读预检的自然操作说明；提交、审核和承接边界不变。",
+    "source": "a5869a50ed3a853b9a481a728af02f6c14de6bdb"
+  },
+  {
+    "path": "frontend/src/views/HistoryPreflightPage.vue",
+    "old": "当前没有行级问题。",
+    "new": "本次预检未发现需要处理的问题。",
+    "count": 1,
+    "reason": "恢复只读预检的自然操作说明；提交、审核和承接边界不变。",
+    "source": "a5869a50ed3a853b9a481a728af02f6c14de6bdb"
+  },
+  {
+    "path": "frontend/src/views/HistoryPreflightPage.vue",
+    "old": "<th>建议动作</th>",
+    "new": "<th>建议处理方式</th>",
+    "count": 1,
+    "reason": "恢复只读预检的自然操作说明；提交、审核和承接边界不变。",
+    "source": "a5869a50ed3a853b9a481a728af02f6c14de6bdb"
+  },
+  {
+    "path": "frontend/src/views/HistoryPreflightPage.vue",
+    "old": ">行级问题</h3>",
+    "new": ">预检明细</h3>",
+    "count": 1,
+    "reason": "明细可切换显示全部行；保留较新的编号说明。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "old": "还没有历史承接申请",
+    "new": "暂无可显示的申请记录。提交申请后可在这里查看。",
+    "count": 1,
+    "reason": "恢复历史承接展示文案；保留当前按组批准、真实资料审核、自有库存与正式修订规则。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "old": "展示核实履约后的剩余数量；审核并启用后可建立接续草稿。",
+    "new": "这里显示核实履约后的剩余数量；审核并启用后，可以建立接续草稿。",
+    "count": 1,
+    "reason": "恢复历史承接展示文案；保留当前按组批准、真实资料审核、自有库存与正式修订规则。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "old": "逐组执行",
+    "new": "承接本组",
+    "count": 1,
+    "reason": "恢复历史承接展示文案；保留当前按组批准、真实资料审核、自有库存与正式修订规则。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "old": "读取资金来源、账户和凭证",
+    "new": "加载资金来源、账户和凭证",
+    "count": 1,
+    "reason": "恢复历史承接展示文案；保留当前按组批准、真实资料审核、自有库存与正式修订规则。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "old": "读取盘点来源",
+    "new": "加载盘点来源",
+    "count": 1,
+    "reason": "恢复历史承接展示文案；保留当前按组批准、真实资料审核、自有库存与正式修订规则。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "old": "读取合同与未结来源",
+    "new": "加载合同与未结来源",
+    "count": 1,
+    "reason": "恢复历史承接展示文案；保留当前按组批准、真实资料审核、自有库存与正式修订规则。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "old": "盘点基准不会重放历史出入库。仓库归属和货物所有权分别核实；只有自有货物计入可用库存。已有库存流水或预留的 SKU 需先人工核对。",
+    "new": "盘点基准不会重新登记历史出入库。请分别核实仓库归属和货物所有权；只有自有货物计入可用库存。已有库存流水或预留的 SKU 需先人工核对。",
+    "count": 1,
+    "reason": "恢复历史承接展示文案；保留当前按组批准、真实资料审核、自有库存与正式修订规则。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "old": "原单保留历史记录，未结计划只反映启用时仍欠金额；后续金额变更走正式修订。",
+    "new": "原单保留为历史记录，未结计划只反映启用时仍欠的金额；之后如需更改金额，请通过正式修订办理。",
+    "count": 1,
+    "reason": "恢复历史承接展示文案；保留当前按组批准、真实资料审核、自有库存与正式修订规则。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/components/ProductSkuManagement.vue",
+    "old": "一份 SKU 清单管理规格与供货候选；实际采购供应商在销售订单或采购单中确认。",
+    "new": "在 SKU 清单中管理规格和候选供应商；实际采购供应商在销售订单或采购单中确认。",
+    "count": 1,
+    "reason": "候选供应商与实际采购供应商的区别不变。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/components/SupplierAllocationModal.vue",
+    "old": "当前没有候选供应商",
+    "new": "暂无候选供应商",
+    "count": 1,
+    "reason": "候选空态，保留现有供应商选择和保存规则。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/components/SupplierAllocationModal.vue",
+    "old": "请先在产品管理的供应商页维护能力规则或人工加入候选。",
+    "new": "请先到产品管理的供应商页设置能力规则，或手动添加候选供应商。",
+    "count": 1,
+    "reason": "说明候选来源，不改变能力匹配或采购供应商。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/components/WorkspaceTabs.vue",
+    "old": "相关数据已更新。请先保存或取消当前编辑，再重新载入。",
+    "new": "数据已更新。请先保存或取消当前编辑，再重新载入。",
+    "count": 1,
+    "reason": "保留跨标签失效提示、保存/取消及重载保护。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/components/reports/ReportDetailPanel.vue",
+    "old": "当前筛选范围内，该分组暂无可展示的原始业务记录。",
+    "new": "所选范围内，这个分组暂无原始业务记录。",
+    "count": 1,
+    "reason": "仅自然化筛选分组空态，不改变筛选/权限/明细。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/components/OrderDetailModal.vue",
+    "old": "历史主体未记录，以下不使用当前主档补造历史事实。",
+    "new": "未记录历史主体资料，不会使用当前主档补填。",
+    "count": 1,
+    "reason": "保留历史主体未知，不从当前主档补填的边界；不改较新的主体版本说明。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/components/OrderDetailModal.vue",
+    "old": "按当前 SKU 包装配置生成箱规快照。",
+    "new": "根据当前 SKU 包装配置生成箱规快照。",
+    "count": 1,
+    "reason": "仅装箱空态用词，保留包装快照与实际出库区别。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/components/PurchaseDetailModal.vue",
+    "old": "历史主体未记录，以下不使用当前主档补造历史事实。",
+    "new": "未记录历史主体资料，不会使用当前主档补填。",
+    "count": 1,
+    "reason": "保留历史主体未知，不从当前主档补填的边界。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/Dashboard.vue",
+    "old": "去年同期为零，暂不计算变化率",
+    "new": "去年同期为零，无法计算变化率",
+    "count": 1,
+    "reason": "仅零分母说明，不改时间范围或计算。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/views/HistoryOrdersPage.vue",
+    "old": "历史成本未必完整，避免虚构利润",
+    "new": "历史成本可能不完整，因此不计算利润",
+    "count": 1,
+    "reason": "保留历史成本未知不计算利润的规则及较新筛选功能。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "backend/crm/history_import_preflight.py",
+    "old": "预检通过仅表示当前规则检查通过，不代表已审批或已迁移。",
+    "new": "预检通过表示符合当前检查规则；仍需提交申请并通过审核，才能承接。",
+    "count": 1,
+    "reason": "只改变预检面向用户的说明及已有 schema 的中文字段名；分组、重复判定、阻断级别、关系和只读行为不变。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "backend/crm/history_import_preflight.py",
+    "old": "\"单位历史快照不完整。\", \"从原单据或交易单位快照补齐；不得按当前 SKU 单位推断。\"",
+    "new": "\"历史单位快照不完整。\", \"请根据原单据或交易单位快照补齐，不要按当前 SKU 单位推断。\"",
+    "count": 1,
+    "reason": "只改变预检面向用户的说明及已有 schema 的中文字段名；分组、重复判定、阻断级别、关系和只读行为不变。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "backend/crm/history_import_preflight.py",
+    "old": "\"基础数量与交易数量×历史换算系数不守恒。\", \"按原始交易单位和数量核对后修正。\"",
+    "new": "\"历史换算系数须大于 0，且基础数量须等于交易数量乘以历史换算系数。\", \"请按原始交易单位和数量核对后修正。\"",
+    "count": 1,
+    "reason": "只改变预检面向用户的说明及已有 schema 的中文字段名；分组、重复判定、阻断级别、关系和只读行为不变。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "backend/crm/history_import_preflight.py",
+    "old": "                        _issue(results[(sheet, record[\"row\"])], \"阻断\", f\"同一来源关联组内 {key} 重复。\", \"核对原系统记录编号；不同来源组允许编号相同，相同业务字段不代表可以自动合并。\", [_row_relation(sheet, item) for item in duplicates if item is not record])",
+    "new": "                        label = next(column[\"label\"] for column in SHEET_SCHEMAS[sheet] if column[\"key\"] == key)\n                        _issue(results[(sheet, record[\"row\"])], \"阻断\", f\"同一来源关联组内的{label}重复。\", \"请核对原系统记录编号；不同来源组可以使用相同编号，但业务字段相同不代表可以自动合并。\", [_row_relation(sheet, item) for item in duplicates if item is not record])",
+    "count": 1,
+    "reason": "只改变预检面向用户的说明及已有 schema 的中文字段名；分组、重复判定、阻断级别、关系和只读行为不变。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "backend/crm/tests/test_history_import_preflight.py",
+    "old": "        self.assertTrue(any(\"重复\" in reason[\"message\"] for item in order_rows for reason in item[\"reasons\"]))",
+    "new": "        self.assertTrue(any(\"重复\" in reason[\"message\"] for item in order_rows for reason in item[\"reasons\"]))\n        self.assertTrue(any(\"原系统记录编号重复\" in reason[\"message\"] for item in order_rows for reason in item[\"reasons\"]))\n        self.assertFalse(any(\"source_record_id\" in reason[\"message\"] for item in order_rows for reason in item[\"reasons\"]))",
+    "count": 1,
+    "reason": "恢复来源提交的真实重复预检回归，原业务快照不变断言完整保留。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/utils/apiErrors.js",
+    "old": "    if (formatted) return formatted",
+    "new": "    if (formatted === '身份认证信息未提供。') return '请登录后再继续。'\n    if (formatted) return formatted",
+    "count": 1,
+    "reason": "只把DRF未登录中文消息换成可操作提示，不改变HTTP状态、路由或鉴权。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/src/api.test.js",
+    "old": "  assert.equal(apiErrorMessage({ isApiError: true, status: 503, data: { detail: 'traceback' } }), '服务器暂时不可用，请稍后重试。')",
+    "new": "  assert.equal(apiErrorMessage({ isApiError: true, status: 503, data: { detail: 'traceback' } }), '服务器暂时不可用，请稍后重试。')\n  assert.equal(apiErrorMessage({ isApiError: true, status: 403, data: { detail: '身份认证信息未提供。' } }), '请登录后再继续。')",
+    "count": 1,
+    "reason": "恢复来源提交的未登录展示回归，保留网络和服务端错误断言。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/tests/history-takeover.spec.js",
+    "old": "逐组执行",
+    "new": "承接本组",
+    "count": 1,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/tests/history-takeover.spec.js",
+    "old": "读取资金来源、账户和凭证",
+    "new": "加载资金来源、账户和凭证",
+    "count": 1,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/tests/history-takeover.spec.js",
+    "old": "读取盘点来源",
+    "new": "加载盘点来源",
+    "count": 2,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/scripts/history-operational-chrome-uat.mjs",
+    "old": "逐组执行",
+    "new": "承接本组",
+    "count": 2,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/scripts/history-operational-chrome-uat.mjs",
+    "old": "读取资金来源、账户和凭证",
+    "new": "加载资金来源、账户和凭证",
+    "count": 1,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/scripts/history-operational-chrome-uat.mjs",
+    "old": "读取盘点来源",
+    "new": "加载盘点来源",
+    "count": 1,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/scripts/history-operational-chrome-uat.mjs",
+    "old": "读取合同与未结来源",
+    "new": "加载合同与未结来源",
+    "count": 1,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/scripts/history-operational-fulfillment-uat.mjs",
+    "old": "读取合同与未结来源",
+    "new": "加载合同与未结来源",
+    "count": 1,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/scripts/history-operational-workflow-uat.mjs",
+    "old": "读取资金来源、账户和凭证",
+    "new": "加载资金来源、账户和凭证",
+    "count": 1,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/scripts/history-operational-workflow-uat.mjs",
+    "old": "读取盘点来源",
+    "new": "加载盘点来源",
+    "count": 3,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/scripts/history-operational-workflow-uat.mjs",
+    "old": "读取合同与未结来源",
+    "new": "加载合同与未结来源",
+    "count": 3,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/scripts/history-takeover-chrome-uat.mjs",
+    "old": "逐组执行",
+    "new": "承接本组",
+    "count": 2,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/browser-tests/cost-currency-integrity-02.spec.js",
+    "old": "读取合同与未结来源",
+    "new": "加载合同与未结来源",
+    "count": 2,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/browser-tests/sales-order-import-real.spec.js",
+    "old": "读取资金来源、账户和凭证",
+    "new": "加载资金来源、账户和凭证",
+    "count": 2,
+    "reason": "只同步可见操作名称，API载荷、业务结果、拒绝路径及数据断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/tests/history-takeover.spec.js",
+    "old": "toContain('还没有历史承接申请')",
+    "new": "toContain('暂无可显示的申请记录')",
+    "count": 1,
+    "reason": "同步空态断言，保留预检不代表批准及合成资料隔离断言。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/tests/history-preflight-page.spec.js",
+    "old": "预检通过仅表示当前规则检查通过，不代表已审批或已迁移。",
+    "new": "预检通过表示符合当前检查规则；仍需提交申请并通过审核，才能承接。",
+    "count": 1,
+    "reason": "同步固定后端notice夹具，现有请求/文件切换/旧响应防护断言保留。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/tests/history-preflight-page.spec.js",
+    "old": "not.toContain('当前没有行级问题。')",
+    "new": "not.toContain('本次预检未发现需要处理的问题。')",
+    "count": 1,
+    "reason": "有阻断结果时不显示成功空态的反例断言保持。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/browser-tests/workspace-tabs-real.spec.js",
+    "old": "getByRole('status')).toContainText('相关数据已更新')",
+    "new": "getByRole('status')).toContainText('数据已更新')",
+    "count": 1,
+    "reason": "仅同步页签失效提示；另一个提交确认对话框标题不改。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  },
+  {
+    "path": "frontend/browser-tests/party-order-purchase-real.spec.js",
+    "old": "kind === 'order' ? '历史主体未记录'",
+    "new": "kind === 'order' ? '未记录历史主体资料'",
+    "count": 1,
+    "reason": "仅同步历史主体未知提示；真实主体快照与导出断言不改。",
+    "source": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a"
+  }
+]

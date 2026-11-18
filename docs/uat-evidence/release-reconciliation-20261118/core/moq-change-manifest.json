@@ -1,0 +1,75 @@
+{
+  "baseline_sha": "3bb0970148ff98025d44d6c5ee42e17bfe180002",
+  "source_patch": "60f75a0294d32951efe6555ef2361d7a024b8295",
+  "files": [
+    {
+      "path": "frontend/src/views/PurchaseOrderPage.vue",
+      "baseline_blob": "d5962d0368cf6cca952eed6e70455dba40ce3692",
+      "candidate_blob": "8a1896063e578cb729d19ae058e7c9ebb7ee7d6b",
+      "sha256": "7ead4ad25b594c75f3c72a738c434407ae09c6facd06d0f194a8de55ddb34034",
+      "bytes": 66475,
+      "crlf_count": 627,
+      "lf_only_count": 61
+    },
+    {
+      "path": "backend/seed_iss022_browser.py",
+      "baseline_blob": "7a5dbf19661619b1db4362b564808760aada58df",
+      "candidate_blob": "8ae56bd8db2e3bfb420f8bef93c400b158ed0afc",
+      "sha256": "6b529cdae7cdd8d8ea1211c71e5997a867c5ed7e814dab442646d4d642b4f628",
+      "bytes": 3497,
+      "crlf_count": 0,
+      "lf_only_count": 118
+    },
+    {
+      "path": "frontend/browser-tests/iss022-moq-real.spec.js",
+      "baseline_blob": "382f95814119b8c917b8be4674257d280c29061d",
+      "candidate_blob": "46749446fe60e6301eeb967f9de375dea8dceea0",
+      "sha256": "f35fe9460cdd074b5379d396932092b55eb1fa2cb09a87e68149785043fd5bbf",
+      "bytes": 8458,
+      "crlf_count": 0,
+      "lf_only_count": 136
+    },
+    {
+      "path": "frontend/tests/purchase-moq-precision.spec.js",
+      "baseline_blob": null,
+      "candidate_blob": "96aa4e233c875178249894a5eda11ed02d06d235",
+      "sha256": "af084022915e84c4690fe846d40ea67348eb174696d2a8301487bc877a7dc38a",
+      "bytes": 5884,
+      "crlf_count": 0,
+      "lf_only_count": 125
+    },
+    {
+      "path": "frontend/tests/purchase-editor-receipt.spec.js",
+      "baseline_blob": "407bb3a213ab1311074cbbf48a0358557967bb79",
+      "candidate_blob": "45042cf6721e4a53d1d03b4fd29d95fd7f294a65",
+      "sha256": "6bba46d81238bdc15a89309e6bcfae562072dc7cebec96e856411caf132f940b",
+      "bytes": 22718,
+      "crlf_count": 0,
+      "lf_only_count": 281
+    }
+  ],
+  "verification": {
+    "component_tests": {
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0,
+      "log": "frontend-purchase-tests.log"
+    },
+    "node_static_tests": {
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0
+    },
+    "backend_tests": {
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "log": "backend-moq-tests.log"
+    },
+    "unpatched_component_tests": {
+      "passed": 6,
+      "failed": 2
+    },
+    "browser": "root integration pending"
+  }
+}

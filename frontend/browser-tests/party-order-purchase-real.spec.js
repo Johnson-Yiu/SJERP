@@ -29,7 +29,7 @@ for (const width of [1440, 390]) {
     await page.goto(`/${route}?detail=${fixture[kind]}`)
     const detail = page.getByRole('dialog', { name: label })
     await expect(detail).toBeVisible()
-    await expect(detail).toContainText(kind === 'order' ? '历史主体未记录' : data.supplier_name_snapshot)
+    await expect(detail).toContainText(kind === 'order' ? '未记录历史主体资料' : data.supplier_name_snapshot)
     await page.screenshot({ path: path.join(evidence, `${kind}-${width}.png`) })
     fs.writeFileSync(path.join(evidence, `${kind}-${width}.json`), JSON.stringify({ status: response.status(), snapshot: kind === 'order' ? data.customer_name_snapshot : data.supplier_name_snapshot }, null, 2))
   })

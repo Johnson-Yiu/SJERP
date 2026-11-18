@@ -118,7 +118,7 @@ test('saved customer drafts adopt the object and related dirty edits receive an 
  await page.getByRole('tab',{name:/Workspace Alpha/}).click()
  await expect(active(page)).toHaveAttribute('data-workspace',editTab)
  await expect(editName).toHaveValue('Workspace Alpha pending edit')
- await expect(page.getByRole('status')).toContainText('相关数据已更新')
+ await expect(page.getByRole('status')).toContainText('数据已更新')
  let puts=0;page.on('request',r=>{if(r.method()==='PUT')puts++})
  await active(page).getByRole('button',{name:'保存客户',exact:true}).click()
  await expect(page.getByRole('dialog',{name:'相关数据已更新'})).toBeVisible()

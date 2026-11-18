@@ -1,0 +1,19 @@
+✔ quote detail exposes only valid status actions for draft and sent quotes (6.312556ms)
+✔ status actions call the API, reload quote workbench, and refresh the quote list (2.857762ms)
+✔ terminal quote states render no status transition controls (2.159769ms)
+✔ only non-terminal quotes expose the conversion-to-order actions (4.105535ms)
+✔ saved and revised PI previews use the currency in the official totals DTO (6.114601ms)
+✔ SKU picker synchronizes multi-selection into quote line items (10.905911ms)
+✔ SKU picker keeps a fixed height while search results scroll (3.445059ms)
+✔ quote editor lets users save without exporting the Excel file (1.804142ms)
+✔ quote editor keeps every footer action and gives save actions full rows on narrow screens (1.84226ms)
+✔ quote editor blocks a validity date earlier than the quote date (1.267042ms)
+✔ quote status is read-only and cannot be selected while creating or revising (2.77013ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 161.807293

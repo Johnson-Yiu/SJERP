@@ -1,0 +1,20 @@
+[
+  {
+    "path": "scripts/lan-installer/Test-ErpRelease.ps1",
+    "blob": "421f08527dd033c5511bb5cb4090e8cbcc9a71d1",
+    "source_commit": "252d7234bd138101b387f4612b389cba5a990af1",
+    "local_execution": "NOT_RUN"
+  },
+  {
+    "path": "scripts/lan-installer/Check-Alex.ps1",
+    "blob": "c1a97120fdd57dbe83547ef63f9c47d144f81435",
+    "source_commit": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
+    "local_execution": "NOT_RUN"
+  },
+  {
+    "path": "frontend/browser-tests/quote-risk-closeout-02.spec.js",
+    "blob": "7dcc56b7ec573942b06d624cee32c6b1d2770fec",
+    "source_commit": "252d7234bd138101b387f4612b389cba5a990af1",
+    "local_execution": "NOT_RUN"
+  }
+]

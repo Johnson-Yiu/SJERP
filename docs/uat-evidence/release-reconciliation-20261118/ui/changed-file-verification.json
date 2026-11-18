@@ -1,0 +1,238 @@
+[
+  {
+    "path": "backend/crm/history_import_preflight.py",
+    "before_git_blob": "5e524487c490560d434332dc3bac7ea5cc6ee93e",
+    "after_git_blob": "a13c8b6b36cf6bc576f3fd98d56ab9e6ccddda85",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 1341,
+    "after_LF": 1342
+  },
+  {
+    "path": "backend/crm/tests/test_history_import_preflight.py",
+    "before_git_blob": "43afe7362c6b300b8c5e7dc2c36c444b45f29371",
+    "after_git_blob": "11edcc95393402381f273ca5d9c849d317fd0e04",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 815,
+    "after_LF": 817
+  },
+  {
+    "path": "frontend/browser-tests/cost-currency-integrity-02.spec.js",
+    "before_git_blob": "ab95d256d730a32e710f91bb4437cb1b690c36d8",
+    "after_git_blob": "ee501ab911dfb21e83c15df4a807a25e9507e5fe",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 60,
+    "after_LF": 60
+  },
+  {
+    "path": "frontend/browser-tests/party-order-purchase-real.spec.js",
+    "before_git_blob": "a1f990bbfbab8ee865f443e486cc00455a9f6abe",
+    "after_git_blob": "bbabe449cad28047be744aa83b6195c2965e5da4",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 36,
+    "after_LF": 36
+  },
+  {
+    "path": "frontend/browser-tests/sales-order-import-real.spec.js",
+    "before_git_blob": "2cca0dd791de45d0f0325cb66715b5c5c1d04d95",
+    "after_git_blob": "6b07fa09a3b13f61c0103084e43ed0fd6f36b790",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 787,
+    "after_LF": 787
+  },
+  {
+    "path": "frontend/browser-tests/workspace-tabs-real.spec.js",
+    "before_git_blob": "9481c99e3d1a29b84469c82c6656487c11aff1e5",
+    "after_git_blob": "763ef76f53808cb93258ccf954ffa9b5a6e23a94",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 244,
+    "after_LF": 244
+  },
+  {
+    "path": "frontend/scripts/history-operational-chrome-uat.mjs",
+    "before_git_blob": "c8575b4aeb286e7093c0a7530d6dccf55b5bd9cb",
+    "after_git_blob": "220f01ae206c2b5459fd88e75712690d45984abc",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 54,
+    "after_LF": 54
+  },
+  {
+    "path": "frontend/scripts/history-operational-fulfillment-uat.mjs",
+    "before_git_blob": "8965d037133d666cf89fb68aaff0019282138234",
+    "after_git_blob": "db2614e01ee22c35b067f2f0ffaa4730b3a491da",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 58,
+    "after_LF": 58
+  },
+  {
+    "path": "frontend/scripts/history-operational-workflow-uat.mjs",
+    "before_git_blob": "1151781b10de3b77346b00bc97311a0d116a5e7b",
+    "after_git_blob": "5ba06b18dd4d6dc1ac50257489b79c6e4bd65545",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 115,
+    "after_LF": 115
+  },
+  {
+    "path": "frontend/scripts/history-takeover-chrome-uat.mjs",
+    "before_git_blob": "db80444992708e3b0b38c05643b4f4a394892492",
+    "after_git_blob": "3269cf598ce95c4310f47081c4d90333be958f9e",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 83,
+    "after_LF": 83
+  },
+  {
+    "path": "frontend/src/api.test.js",
+    "before_git_blob": "d50052b595543b8cdd26ad290433c054fe1a456b",
+    "after_git_blob": "221c084826c788d4d41e58ae3128795b3601fa53",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 94,
+    "after_LF": 95
+  },
+  {
+    "path": "frontend/src/components/OrderDetailModal.vue",
+    "before_git_blob": "16b95a983d13cc9c5b14026879a4f418cca97e81",
+    "after_git_blob": "b659cc6ab155bad8788e9b3d7dc7a2d31f9006bc",
+    "before_CRLF": 720,
+    "after_CRLF": 720,
+    "before_LF": 0,
+    "after_LF": 0,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/src/components/ProductSkuManagement.vue",
+    "before_git_blob": "f4599ef883f6aad1d62dc2868c9e2f86bfb0d4bb",
+    "after_git_blob": "c23dcf759a84e974f3ef44efffc0e7d0c724a1f5",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 303,
+    "after_LF": 303,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/src/components/PurchaseDetailModal.vue",
+    "before_git_blob": "190e57f9139aa7484ad52e46f3c0897383cb41eb",
+    "after_git_blob": "6ff83178b17888155ec21a5cfc8072dadfae3993",
+    "before_CRLF": 116,
+    "after_CRLF": 116,
+    "before_LF": 7,
+    "after_LF": 7,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/src/components/SupplierAllocationModal.vue",
+    "before_git_blob": "5756ebac693a0d5c20a672ed4f66b8153a63597f",
+    "after_git_blob": "d8023f88007410dbf8d4aeb6add9955e28b78d0e",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 84,
+    "after_LF": 84,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/src/components/WorkspaceTabs.vue",
+    "before_git_blob": "25bbca8cf4753f5e0f27178a1f50af37a8261144",
+    "after_git_blob": "a21c4d57fb3897921b469b3f3db393d8796d4b8c",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 49,
+    "after_LF": 49,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/src/components/reports/ReportDetailPanel.vue",
+    "before_git_blob": "d7ce21492d3fc310c69b7dd592ae5d8316d1a2fe",
+    "after_git_blob": "4f2cfaf7dabb53d72557ceffcc33130265c47b21",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 100,
+    "after_LF": 100,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/src/utils/apiErrors.js",
+    "before_git_blob": "e2af6fe16a1400e21caabdea19fe7575bc2e3cb6",
+    "after_git_blob": "491d4e1c449b64513aaee2d8e7b9f14578bf2810",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 55,
+    "after_LF": 56
+  },
+  {
+    "path": "frontend/src/views/Dashboard.vue",
+    "before_git_blob": "506174a1e6508083b3f49ffb2a3e1e13c0823ea5",
+    "after_git_blob": "fef56c50f3e50473cdba7469ca133bb550ec97c2",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 94,
+    "after_LF": 94,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/src/views/HistoryOrdersPage.vue",
+    "before_git_blob": "e92c5e23b5b6d97fe677aebaf71dc1b8e5f13fbf",
+    "after_git_blob": "a367e753539bc725dbb57a201d8036ebe92a7e51",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 187,
+    "after_LF": 187,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/src/views/HistoryPreflightPage.vue",
+    "before_git_blob": "cf65beffd27473140a3bc875e6d26c2808db2ff2",
+    "after_git_blob": "01df8a9f3072736072faaf2b5aa88721be2a44a0",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 195,
+    "after_LF": 195,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "before_git_blob": "6edce8d41afa0a912e2fefaebe6448645335be6a",
+    "after_git_blob": "f2038dd4df5d9bf2386dc27c0fe85187566c539f",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 927,
+    "after_LF": 927,
+    "script_byte_identical": true,
+    "style_byte_identical": true
+  },
+  {
+    "path": "frontend/tests/history-preflight-page.spec.js",
+    "before_git_blob": "046c3fd30ba1175fa1b7dae8deea292bb0782e6f",
+    "after_git_blob": "37311f9fbb28d55e24de3a67fc608047d270c2f2",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 214,
+    "after_LF": 214
+  },
+  {
+    "path": "frontend/tests/history-takeover.spec.js",
+    "before_git_blob": "3f8949108b24d2f9c07721c8c7780b9be65ab32f",
+    "after_git_blob": "ffd8b9a2a6dfc5add90bfc75f1e78a07e7e4b153",
+    "before_CRLF": 0,
+    "after_CRLF": 0,
+    "before_LF": 408,
+    "after_LF": 408
+  }
+]

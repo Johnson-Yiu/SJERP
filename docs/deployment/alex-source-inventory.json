@@ -10,15 +10,71 @@
     "运行交接": "6d13301e7c8b5b8a2470988850cfceff559d1d6e",
     "恢复交接": "e0169499d4a0a70922859558c00446fc9ef1d5a8",
     "发布打包": "3d067d659be70e1db0e4d6b0c44ac45454d26f5f",
-    "用户交接": "406b56f6e370b180857bb58b8a45866bccd7aa38"
+    "用户交接": "406b56f6e370b180857bb58b8a45866bccd7aa38",
+    "本轮整理父基线与财务流水修复": "3bb0970148ff98025d44d6c5ee42e17bfe180002"
   },
   "reviewed_blobs": {
-    "frontend/src/components/ProductSkuManagement.vue": "f4599ef883f6aad1d62dc2868c9e2f86bfb0d4bb",
-    "frontend/src/components/OrderDetailModal.vue": "16b95a983d13cc9c5b14026879a4f418cca97e81",
-    "frontend/src/composables/useUnsavedChangesGuard.js": "99d47ae2717eac62a35ecc7935c4497c14eb6604",
+    ".github/workflows/ci.yml": "51513830d4b9678cc91c1100d415d795a2a134ad",
+    "backend/crm/history_import_preflight.py": "a13c8b6b36cf6bc576f3fd98d56ab9e6ccddda85",
+    "backend/crm/history_operational_contracts.py": "11311d3479f61e29470fd63ef2a829d196935fb5",
+    "backend/crm/history_product_models.py": "e795c3a52886f32de794e215a9ed43a63c86bc61",
+    "backend/crm/history_products.py": "f68eec1eb13f085c12f4a874a38d76d907806840",
+    "backend/crm/history_takeover.py": "05ef79d4c3fe30968cd742254e6e3b34e3a50ffe",
+    "backend/crm/sales_order_import.py": "fd0907e4c3f980f74da4e45befae1aac3514a7fd",
+    "backend/crm/services/cash_events.py": "d847f10b7edf06d45c72f25cdd636f17ff1fbd52",
+    "backend/crm/services/finance.py": "9c11133e56667db1749b371ddadd7f2a7f356990",
+    "backend/crm/services/fulfillment.py": "0c1a7247093d85fa0695e1441439a86c5956af8d",
     "backend/crm/services/operations_postgres.py": "fc6d1bd435c0e93130f52e62fc3dc04fa21b9590",
-    "frontend/src/views/FinanceLedgerPage.vue": "e3e203027b50f5eab980533866268a694de03259",
-    "frontend/src/views/CashEventPage.vue": "8170a945efba88538fd75a2b98e42091e469b807"
+    "backend/crm/services/order_lifecycle.py": "66cf9ab3fc4ef3364f614a6c8c18d4ee3c1a45e4",
+    "backend/crm/services/order_quantity_adjustments.py": "c7bea6acfe8d6faa1edddfb3dcd7f1d56549f8a5",
+    "backend/crm/services/purchase_costs.py": "284229d62b5de9b3d7294cb1783418b0c80f7dc0",
+    "backend/crm/services/purchase_lifecycle.py": "43a64006fe98599c5545fc36de3bb6b70bb1bddd",
+    "backend/crm/services/sku_costs.py": "8299a2a38aecbb4cde23b528bbe8393cf106e61c",
+    "backend/crm/services/sku_plans.py": "e1a127dc6fb6fb32afa9fd1916d4900735d4e9ac",
+    "backend/crm/tests/test_history_import_preflight.py": "11edcc95393402381f273ca5d9c849d317fd0e04",
+    "backend/crm/trade_units.py": "8914738da55764b82546d795e949b45791328114",
+    "backend/seed_iss022_browser.py": "8ae56bd8db2e3bfb420f8bef93c400b158ed0afc",
+    "frontend/browser-tests/cost-currency-integrity-02.spec.js": "ee501ab911dfb21e83c15df4a807a25e9507e5fe",
+    "frontend/browser-tests/iss022-moq-real.spec.js": "46749446fe60e6301eeb967f9de375dea8dceea0",
+    "frontend/browser-tests/party-order-purchase-real.spec.js": "bbabe449cad28047be744aa83b6195c2965e5da4",
+    "frontend/browser-tests/quote-risk-closeout-02.spec.js": "7dcc56b7ec573942b06d624cee32c6b1d2770fec",
+    "frontend/browser-tests/sales-order-import-real.spec.js": "6b07fa09a3b13f61c0103084e43ed0fd6f36b790",
+    "frontend/browser-tests/workspace-tabs-real.spec.js": "763ef76f53808cb93258ccf954ffa9b5a6e23a94",
+    "frontend/scripts/history-operational-chrome-uat.mjs": "220f01ae206c2b5459fd88e75712690d45984abc",
+    "frontend/scripts/history-operational-fulfillment-uat.mjs": "db2614e01ee22c35b067f2f0ffaa4730b3a491da",
+    "frontend/scripts/history-operational-workflow-uat.mjs": "5ba06b18dd4d6dc1ac50257489b79c6e4bd65545",
+    "frontend/scripts/history-takeover-chrome-uat.mjs": "3269cf598ce95c4310f47081c4d90333be958f9e",
+    "frontend/src/api.test.js": "221c084826c788d4d41e58ae3128795b3601fa53",
+    "frontend/src/components/OrderDetailModal.vue": "b659cc6ab155bad8788e9b3d7dc7a2d31f9006bc",
+    "frontend/src/components/ProductSkuManagement.vue": "c23dcf759a84e974f3ef44efffc0e7d0c724a1f5",
+    "frontend/src/components/PurchaseDetailModal.vue": "6ff83178b17888155ec21a5cfc8072dadfae3993",
+    "frontend/src/components/QuoteEditorModal.vue": "00a8b9ed036b37aaab2a8587be6e96fd58506e87",
+    "frontend/src/components/SummaryCards.vue": "fe17a5dde53abcd80daf958eb1ce5ffa57d6f0e6",
+    "frontend/src/components/SupplierAllocationModal.vue": "d8023f88007410dbf8d4aeb6add9955e28b78d0e",
+    "frontend/src/components/WorkspaceTabs.vue": "a21c4d57fb3897921b469b3f3db393d8796d4b8c",
+    "frontend/src/components/reports/ReportDetailPanel.vue": "4f2cfaf7dabb53d72557ceffcc33130265c47b21",
+    "frontend/src/composables/useUnsavedChangesGuard.js": "99d47ae2717eac62a35ecc7935c4497c14eb6604",
+    "frontend/src/utils/apiErrors.js": "491d4e1c449b64513aaee2d8e7b9f14578bf2810",
+    "frontend/src/views/CashEventPage.vue": "8170a945efba88538fd75a2b98e42091e469b807",
+    "frontend/src/views/Dashboard.vue": "fef56c50f3e50473cdba7469ca133bb550ec97c2",
+    "frontend/src/views/FinanceDashboardPage.vue": "f4dd4ef501bc8a841610900166f8507cf834f074",
+    "frontend/src/views/FinanceLedgerPage.vue": "5b5c077097e7e6b2540e2e6c20c2da26f7d33642",
+    "frontend/src/views/HistoryOrdersPage.vue": "a367e753539bc725dbb57a201d8036ebe92a7e51",
+    "frontend/src/views/HistoryPreflightPage.vue": "01df8a9f3072736072faaf2b5aa88721be2a44a0",
+    "frontend/src/views/HistoryTakeoverPage.vue": "f2038dd4df5d9bf2386dc27c0fe85187566c539f",
+    "frontend/src/views/PurchaseOrderPage.vue": "8a1896063e578cb729d19ae058e7c9ebb7ee7d6b",
+    "frontend/src/views/TransactionPage.vue": "90c70973fbbac3836fe272fcf98c20f38a37f517",
+    "frontend/tests/finance-closeout.spec.js": "66405986b4bba808a47f077aede4b92eb41bea29",
+    "frontend/tests/history-preflight-page.spec.js": "37311f9fbb28d55e24de3a67fc608047d270c2f2",
+    "frontend/tests/history-takeover.spec.js": "ffd8b9a2a6dfc5add90bfc75f1e78a07e7e4b153",
+    "frontend/tests/purchase-editor-receipt.spec.js": "45042cf6721e4a53d1d03b4fd29d95fd7f294a65",
+    "frontend/tests/purchase-moq-precision.spec.js": "96aa4e233c875178249894a5eda11ed02d06d235",
+    "frontend/tests/quote-editor-save-protection.spec.js": "8728195f9708a4e0865c9cf97c30457cf30da876",
+    "scripts/build_pilot_release.py": "07ec2f4095c0c009bad4e5817f85f0fcefc8269a",
+    "scripts/check_pilot_release_source.py": "15158860cc460dd3f3f8fb1008ec6683356ec3c2",
+    "scripts/lan-installer/Check-Alex.ps1": "c1a97120fdd57dbe83547ef63f9c47d144f81435",
+    "scripts/lan-installer/Test-ErpRelease.ps1": "421f08527dd033c5511bb5cb4090e8cbcc9a71d1",
+    "scripts/tests/test_release_source_inventory.py": "b9e8774fe958b0c9d1336ebf177554199b97409d"
   },
   "required_text": {
     "frontend/src/views/TransactionPage.vue": [
@@ -27,7 +83,46 @@
       "width: 100%;"
     ],
     "scripts/build_pilot_release.py": [
-      "frontend/dist/release-info.json"
+      "frontend/dist/release-info.json",
+      "verify_source(commit, repo=ROOT)",
+      "Check out the exact requested source commit before building.",
+      "--expected-commit",
+      "--manifest-sha256"
+    ],
+    "frontend/src/views/PurchaseOrderPage.vue": [
+      "Math.round(Number(source?.moq) * 100)",
+      "Math.round(baseQuantity(item) * 100)",
+      "quantity(baseQuantity(item))"
+    ],
+    "frontend/src/components/QuoteEditorModal.vue": [
+      "busy: () => saving.value || packagingSaving.value",
+      "busy: () => packagingSaving.value"
+    ],
+    ".github/workflows/ci.yml": [
+      "release-source:",
+      "fetch-depth: 0",
+      "needs: release-source",
+      "python scripts/check_pilot_release_source.py"
+    ]
+  },
+  "review_metadata": {
+    "review_date": "2026-11-18",
+    "baseline": "3bb0970148ff98025d44d6c5ee42e17bfe180002",
+    "report": "docs/uat-evidence/release-reconciliation-20261118/README.md",
+    "scope": "Reviewed content locks and source ancestry; not a claim of all requirements or deployment acceptance.",
+    "selective_sources": {
+      "MOQ calculation and direct browser fixture/tests": "60f75a0294d32951efe6555ef2361d7a024b8295",
+      "History and finance copy": "a5869a50ed3a853b9a481a728af02f6c14de6bdb",
+      "Business copy closeout": "01b6fe73f77c2294a17d1b4e001d8e3afe83e27a",
+      "Quote risk browser coverage and Windows bundle verifier": "252d7234bd138101b387f4612b389cba5a990af1"
+    },
+    "selective_source_note": "These are provenance references, not whole-commit merge requirements.",
+    "pending_gates": [
+      "exact-commit CI",
+      "real Chrome",
+      "release package build",
+      "Windows verification",
+      "ALEX deployment"
     ]
   }
 }

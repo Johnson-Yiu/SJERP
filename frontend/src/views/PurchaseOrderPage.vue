@@ -349,8 +349,10 @@ const moqWarnings = computed(() => {
     const key = supplierSourceKey(item)
     if (supplierSkuLoading.value[key] || supplierSkuErrors.value[key]) return
     const source = supplierSourcesFor(item).find(row => Number(row.id) === Number(item.supplier_sku))
-    const moq = Number(source?.moq)
-    const actual = baseQuantity(item)
+    // The server accepts base quantities and MOQ to two decimal places.
+    // Sum and compare hundredths so binary conversion errors cannot warn at equality.
+    const moq = Math.round(Number(source?.moq) * 100)
+    const actual = Math.round(baseQuantity(item) * 100)
     if (!source || !Number.isFinite(moq) || moq <= 0 || !Number.isFinite(actual)) return
     const group = groups.get(String(source.id)) || {
       source_id: source.id,
@@ -364,7 +366,12 @@ const moqWarnings = computed(() => {
   })
   return [...groups.values()]
     .filter(item => item.actual_quantity < item.moq)
-    .map(item => ({ ...item, shortage: item.moq - item.actual_quantity }))
+    .map(item => ({
+      ...item,
+      actual_quantity: item.actual_quantity / 100,
+      moq: item.moq / 100,
+      shortage: (item.moq - item.actual_quantity) / 100,
+    }))
 })
 const moqCheckUnavailable = computed(() => {
   const seen = new Set()
@@ -374,7 +381,7 @@ const moqCheckUnavailable = computed(() => {
     if (seen.has(key)) return []
     seen.add(key)
     if (supplierSkuLoading.value[key]) return [{ key, message: '供应商供货档案正在加载，暂无法判断 MOQ。' }]
-    if (supplierSkuErrors.value[key]) return [{ key, message: '供应商供货档案加载失败，暂无法判断 MOQ；请重试加载。' }]
+    if (supplierSkuErrors.value[key]) return [{ key, message: '供应商供货档案加载失败，暂时无法判断 MOQ。请重新加载。' }]
     return []
   })
 })
@@ -578,7 +585,7 @@ watch(() => route.query.detail, id => {
               </div>
               <p v-if="supplierPriceWarning(item)" class="supplier-price-warning">{{ supplierPriceWarning(item) }}</p>
               <div class="line-business-grid">
-                <label class="line-field">采购数量 *<input v-model="item.quantity" type="number" min="0.01" step="0.01" placeholder="采购数量" required /><small v-if="item.trade_unit">折合 {{ baseQuantity(item) }} {{ itemBaseUnit(item) }}</small></label>
+                <label class="line-field">采购数量 *<input v-model="item.quantity" type="number" min="0.01" step="0.01" placeholder="采购数量" required /><small v-if="item.trade_unit">折合 {{ quantity(baseQuantity(item)) }} {{ itemBaseUnit(item) }}</small></label>
                 <label class="line-field">采购单价（{{ draft.currency }}） *<input v-model="item.unit_price" v-money-input type="number" min="0" step="any" placeholder="采购单价" required /></label>
                 <div class="line-field line-total"><span>本行金额</span><strong>{{ draft.currency }} {{ money(lineAmount(item)) }}</strong></div>
               </div>

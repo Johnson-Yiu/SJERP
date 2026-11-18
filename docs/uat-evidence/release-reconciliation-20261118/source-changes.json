@@ -1,0 +1,248 @@
+[
+  {
+    "path": ".github/workflows/ci.yml",
+    "before": "a1a66d2dc282bdcb401946c8429b367d98578388",
+    "after": "51513830d4b9678cc91c1100d415d795a2a134ad",
+    "mode": "100644"
+  },
+  {
+    "path": "backend/crm/history_import_preflight.py",
+    "before": "5e524487c490560d434332dc3bac7ea5cc6ee93e",
+    "after": "a13c8b6b36cf6bc576f3fd98d56ab9e6ccddda85",
+    "mode": "100644"
+  },
+  {
+    "path": "backend/crm/tests/test_history_import_preflight.py",
+    "before": "43afe7362c6b300b8c5e7dc2c36c444b45f29371",
+    "after": "11edcc95393402381f273ca5d9c849d317fd0e04",
+    "mode": "100644"
+  },
+  {
+    "path": "backend/seed_iss022_browser.py",
+    "before": "7a5dbf19661619b1db4362b564808760aada58df",
+    "after": "8ae56bd8db2e3bfb420f8bef93c400b158ed0afc",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/browser-tests/cost-currency-integrity-02.spec.js",
+    "before": "ab95d256d730a32e710f91bb4437cb1b690c36d8",
+    "after": "ee501ab911dfb21e83c15df4a807a25e9507e5fe",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/browser-tests/iss022-moq-real.spec.js",
+    "before": "382f95814119b8c917b8be4674257d280c29061d",
+    "after": "46749446fe60e6301eeb967f9de375dea8dceea0",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/browser-tests/party-order-purchase-real.spec.js",
+    "before": "a1f990bbfbab8ee865f443e486cc00455a9f6abe",
+    "after": "bbabe449cad28047be744aa83b6195c2965e5da4",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/browser-tests/quote-risk-closeout-02.spec.js",
+    "before": null,
+    "after": "7dcc56b7ec573942b06d624cee32c6b1d2770fec",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/browser-tests/sales-order-import-real.spec.js",
+    "before": "2cca0dd791de45d0f0325cb66715b5c5c1d04d95",
+    "after": "6b07fa09a3b13f61c0103084e43ed0fd6f36b790",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/browser-tests/workspace-tabs-real.spec.js",
+    "before": "9481c99e3d1a29b84469c82c6656487c11aff1e5",
+    "after": "763ef76f53808cb93258ccf954ffa9b5a6e23a94",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/scripts/history-operational-chrome-uat.mjs",
+    "before": "c8575b4aeb286e7093c0a7530d6dccf55b5bd9cb",
+    "after": "220f01ae206c2b5459fd88e75712690d45984abc",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/scripts/history-operational-fulfillment-uat.mjs",
+    "before": "8965d037133d666cf89fb68aaff0019282138234",
+    "after": "db2614e01ee22c35b067f2f0ffaa4730b3a491da",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/scripts/history-operational-workflow-uat.mjs",
+    "before": "1151781b10de3b77346b00bc97311a0d116a5e7b",
+    "after": "5ba06b18dd4d6dc1ac50257489b79c6e4bd65545",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/scripts/history-takeover-chrome-uat.mjs",
+    "before": "db80444992708e3b0b38c05643b4f4a394892492",
+    "after": "3269cf598ce95c4310f47081c4d90333be958f9e",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/api.test.js",
+    "before": "d50052b595543b8cdd26ad290433c054fe1a456b",
+    "after": "221c084826c788d4d41e58ae3128795b3601fa53",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/components/OrderDetailModal.vue",
+    "before": "16b95a983d13cc9c5b14026879a4f418cca97e81",
+    "after": "b659cc6ab155bad8788e9b3d7dc7a2d31f9006bc",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/components/ProductSkuManagement.vue",
+    "before": "f4599ef883f6aad1d62dc2868c9e2f86bfb0d4bb",
+    "after": "c23dcf759a84e974f3ef44efffc0e7d0c724a1f5",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/components/PurchaseDetailModal.vue",
+    "before": "190e57f9139aa7484ad52e46f3c0897383cb41eb",
+    "after": "6ff83178b17888155ec21a5cfc8072dadfae3993",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/components/QuoteEditorModal.vue",
+    "before": "f846df45a23e8a4912d6945c135352381d681523",
+    "after": "00a8b9ed036b37aaab2a8587be6e96fd58506e87",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/components/SupplierAllocationModal.vue",
+    "before": "5756ebac693a0d5c20a672ed4f66b8153a63597f",
+    "after": "d8023f88007410dbf8d4aeb6add9955e28b78d0e",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/components/WorkspaceTabs.vue",
+    "before": "25bbca8cf4753f5e0f27178a1f50af37a8261144",
+    "after": "a21c4d57fb3897921b469b3f3db393d8796d4b8c",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/components/reports/ReportDetailPanel.vue",
+    "before": "d7ce21492d3fc310c69b7dd592ae5d8316d1a2fe",
+    "after": "4f2cfaf7dabb53d72557ceffcc33130265c47b21",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/utils/apiErrors.js",
+    "before": "e2af6fe16a1400e21caabdea19fe7575bc2e3cb6",
+    "after": "491d4e1c449b64513aaee2d8e7b9f14578bf2810",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/views/Dashboard.vue",
+    "before": "506174a1e6508083b3f49ffb2a3e1e13c0823ea5",
+    "after": "fef56c50f3e50473cdba7469ca133bb550ec97c2",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/views/FinanceDashboardPage.vue",
+    "before": "e2b9e5535c62b1fa052e603e6cc062fbf881513c",
+    "after": "f4dd4ef501bc8a841610900166f8507cf834f074",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/views/FinanceLedgerPage.vue",
+    "before": "e3e203027b50f5eab980533866268a694de03259",
+    "after": "5b5c077097e7e6b2540e2e6c20c2da26f7d33642",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/views/HistoryOrdersPage.vue",
+    "before": "e92c5e23b5b6d97fe677aebaf71dc1b8e5f13fbf",
+    "after": "a367e753539bc725dbb57a201d8036ebe92a7e51",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/views/HistoryPreflightPage.vue",
+    "before": "cf65beffd27473140a3bc875e6d26c2808db2ff2",
+    "after": "01df8a9f3072736072faaf2b5aa88721be2a44a0",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/views/HistoryTakeoverPage.vue",
+    "before": "6edce8d41afa0a912e2fefaebe6448645335be6a",
+    "after": "f2038dd4df5d9bf2386dc27c0fe85187566c539f",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/src/views/PurchaseOrderPage.vue",
+    "before": "d5962d0368cf6cca952eed6e70455dba40ce3692",
+    "after": "8a1896063e578cb729d19ae058e7c9ebb7ee7d6b",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/tests/finance-closeout.spec.js",
+    "before": "1493e6193ea289a805588074c9a87205438d8812",
+    "after": "66405986b4bba808a47f077aede4b92eb41bea29",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/tests/history-preflight-page.spec.js",
+    "before": "046c3fd30ba1175fa1b7dae8deea292bb0782e6f",
+    "after": "37311f9fbb28d55e24de3a67fc608047d270c2f2",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/tests/history-takeover.spec.js",
+    "before": "3f8949108b24d2f9c07721c8c7780b9be65ab32f",
+    "after": "ffd8b9a2a6dfc5add90bfc75f1e78a07e7e4b153",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/tests/purchase-editor-receipt.spec.js",
+    "before": "407bb3a213ab1311074cbbf48a0358557967bb79",
+    "after": "45042cf6721e4a53d1d03b4fd29d95fd7f294a65",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/tests/purchase-moq-precision.spec.js",
+    "before": null,
+    "after": "96aa4e233c875178249894a5eda11ed02d06d235",
+    "mode": "100644"
+  },
+  {
+    "path": "frontend/tests/quote-editor-save-protection.spec.js",
+    "before": null,
+    "after": "8728195f9708a4e0865c9cf97c30457cf30da876",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/build_pilot_release.py",
+    "before": "bf82fb549a270d1e628f934d673cbb573c603e72",
+    "after": "07ec2f4095c0c009bad4e5817f85f0fcefc8269a",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/check_pilot_release_source.py",
+    "before": "82e2974bc5fa40ff881bc30515f23a2127e3d663",
+    "after": "15158860cc460dd3f3f8fb1008ec6683356ec3c2",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/lan-installer/Check-Alex.ps1",
+    "before": null,
+    "after": "c1a97120fdd57dbe83547ef63f9c47d144f81435",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/lan-installer/Test-ErpRelease.ps1",
+    "before": null,
+    "after": "421f08527dd033c5511bb5cb4090e8cbcc9a71d1",
+    "mode": "100644"
+  },
+  {
+    "path": "scripts/tests/test_release_source_inventory.py",
+    "before": null,
+    "after": "b9e8774fe958b0c9d1336ebf177554199b97409d",
+    "mode": "100644"
+  }
+]

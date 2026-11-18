@@ -417,7 +417,7 @@ async function openHistoricalFinance(page, baseURL) {
   const summary = page.getByText('历史资金接续', { exact: true })
   await summary.click()
   const section = page.locator('details').filter({ has: summary })
-  await section.getByRole('button', { name: '读取资金来源、账户和凭证' }).click()
+  await section.getByRole('button', { name: '加载资金来源、账户和凭证' }).click()
   await expect(section.getByText(/原系统记录 SYNTH-HISTORY-RECEIPT/)).toBeVisible()
   return section
 }
@@ -629,7 +629,7 @@ test('Chrome native page zoom keeps long finance and history records usable', as
           await capture(candidate, `${stem}.png`)
           const action = name === 'finance' ? orderRow.getByRole('link', { name: '查看订单' })
             : name === 'history-preflight' ? history.getByRole('button', { name: /下载 CSV/ })
-              : takeoverFinance.getByRole('button', { name: '读取资金来源、账户和凭证' })
+              : takeoverFinance.getByRole('button', { name: '加载资金来源、账户和凭证' })
           await action.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }))
           const bounds = await action.boundingBox()
           expect(bounds.x).toBeGreaterThanOrEqual(0)

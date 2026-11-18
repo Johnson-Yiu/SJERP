@@ -590,7 +590,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
       <aside class="takeover-list panel">
         <div class="takeover-list-head"><h3><History :size="18" />申请记录</h3><button class="takeover-text-button" :disabled="loading || openingApplication" @click="loadApplications()">刷新</button></div>
         <p v-if="loading && !applications.length" class="takeover-empty">正在读取申请…</p>
-        <p v-else-if="!applications.length" class="takeover-empty">还没有历史承接申请</p>
+        <p v-else-if="!applications.length" class="takeover-empty">暂无可显示的申请记录。提交申请后可在这里查看。</p>
         <button v-for="application in applications" :key="application.id" class="takeover-list-item" :class="{ active: selected?.id === application.id }" @click="openApplication(application.id)">
           <strong>{{ application.source_file_name }}</strong><span>{{ statusLabel(application.status) }} · {{ application.groups?.length || 0 }} 组</span>
         </button>
@@ -647,7 +647,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 
           <div v-if="selectedGroup.remainder_snapshot?.sales_orders?.length || selectedGroup.remainder_snapshot?.purchase_orders?.length" class="takeover-remainder">
             <h4>未结业务测算</h4>
-            <p>展示核实履约后的剩余数量；审核并启用后可建立接续草稿。</p>
+            <p>这里显示核实履约后的剩余数量；审核并启用后，可以建立接续草稿。</p>
             <div v-for="order in openOrders" :key="order.source_record_id" class="takeover-remainder-item">
               <strong>原系统单据 {{ order.source_document_no }}</strong><span>{{ lifecycleLabel(order.source_lifecycle_state) }}</span>
               <small v-for="line in order.lines" :key="line.source_line_id">行 {{ line.source_line_id }}：已履约 {{ line.verified_net_fulfilled_quantity_base }} / {{ line.ordered_quantity_base }}，剩余 {{ line.remaining_quantity_base }} {{ line.unit_snapshot }}</small>
@@ -662,7 +662,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             <div class="takeover-actions">
               <button class="takeover-secondary" :disabled="saving || !note.trim()" @click="review(selectedGroup, 'reject')">拒绝本组</button>
               <button class="takeover-primary" :disabled="saving || !note.trim()" @click="review(selectedGroup, 'approve')"><Check :size="16" />批准本组</button>
-              <button v-if="selectedGroup.status === 'approved'" class="takeover-primary" :disabled="saving" @click="groupAction(selectedGroup, 'execute')">逐组执行</button>
+              <button v-if="selectedGroup.status === 'approved'" class="takeover-primary" :disabled="saving" @click="groupAction(selectedGroup, 'execute')">承接本组</button>
               <button class="takeover-text-button" :disabled="saving" @click="groupAction(selectedGroup, 'withdraw', { reason: note })"><RotateCcw :size="15" />撤回</button>
             </div>
           </div>
@@ -674,7 +674,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             <details v-if="canReview" class="takeover-resolution">
               <summary>历史资金接续</summary>
               <p>先在资金管理中建立自有账户并上传实际凭证。填写实际人民币金额和实际日期；保存后须由另一名授权人员复核，再核对凭证记账。</p>
-              <button class="takeover-secondary" :disabled="saving" @click="loadFinance">读取资金来源、账户和凭证</button>
+              <button class="takeover-secondary" :disabled="saving" @click="loadFinance">加载资金来源、账户和凭证</button>
               <div v-for="item in financeSources" :key="item.source_id" class="takeover-remainder-item">
                 <strong>原系统记录 {{ item.source_record_id }} · {{ directionLabel(item.source.direction) }} {{ item.source.amount }} {{ item.source.currency }}</strong>
                 <span>{{ handoffLabel(item.status) }}</span>
@@ -708,8 +708,8 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             </details>
             <details v-if="canReview" class="takeover-resolution">
               <summary>库存盘点基准</summary>
-              <p>盘点基准不会重放历史出入库。仓库归属和货物所有权分别核实；只有自有货物计入可用库存。已有库存流水或预留的 SKU 需先人工核对。</p>
-              <button class="takeover-secondary" :disabled="saving" @click="loadInventory">读取盘点来源</button>
+              <p>盘点基准不会重新登记历史出入库。请分别核实仓库归属和货物所有权；只有自有货物计入可用库存。已有库存流水或预留的 SKU 需先人工核对。</p>
+              <button class="takeover-secondary" :disabled="saving" @click="loadInventory">加载盘点来源</button>
               <button v-if="inventoryRows.length && can('skus', 'view')" type="button" class="takeover-secondary" @click="openInventoryProductLinking">打开历史商品关联</button>
               <p v-if="inventoryStatus">当前状态：{{ handoffLabel(inventoryStatus.status) }}；基准记录 {{ inventoryStatus.baselines?.length || 0 }} 条。</p>
               <div v-for="row in inventoryRows" :key="row.source_id" class="takeover-remainder-item">
@@ -736,7 +736,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
             <details v-if="canReview" class="takeover-resolution">
               <summary>未结余额与剩余业务</summary>
               <p>逐项核实原币未结余额、剩余明细和依据。历史收付款不会再次产生资金流水；剩余业务先生成草稿，再通过正常确认、下单和履约办理。</p>
-              <button class="takeover-secondary" :disabled="saving" @click="loadOperational">读取合同与未结来源</button>
+              <button class="takeover-secondary" :disabled="saving" @click="loadOperational">加载合同与未结来源</button>
               <p v-if="operationalStatus">当前状态：{{ handoffLabel(operationalStatus.status) }}。</p>
               <template v-if="operationalStatus && !['drafts_created', 'reversed'].includes(operationalStatus.status)">
                 <div class="takeover-form-grid">
@@ -787,7 +787,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
                 </div>
               </template>
               <template v-if="operationalStatus?.links?.length">
-                <p>原单保留历史记录，未结计划只反映启用时仍欠金额；后续金额变更走正式修订。</p>
+                <p>原单保留为历史记录，未结计划只反映启用时仍欠的金额；之后如需更改金额，请通过正式修订办理。</p>
                 <div v-for="link in operationalStatus.links" :key="link.id" class="takeover-remainder-item">
                   <strong>{{ link.archived_no }} · 未结 {{ link.outstanding_balance }} {{ link.currency }}</strong><span>{{ handoffLabel(link.continuation_status) }}</span>
                   <small v-if="link.continuation_no">接续单：{{ link.continuation_no }}</small><small v-else>没有剩余履约</small>

@@ -1,0 +1,7 @@
+{
+  "path": "frontend/src/components/QuoteEditorModal.vue",
+  "unchanged_function_count": 31,
+  "changedFunctions": [],
+  "styles_identical": true,
+  "comment": "All named function bodies, including validate, payload, save, savePackaging and export lifecycle, are unchanged. Only reactive busy wiring, declaration order and explicit close-button disable attributes change."
+}

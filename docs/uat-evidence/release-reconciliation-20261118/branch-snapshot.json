@@ -1,0 +1,1622 @@
+{
+  "date": "2026-11-18",
+  "baseline": "3bb0970148ff98025d44d6c5ee42e17bfe180002",
+  "counts": {
+    "identical": 1,
+    "diverged": 154,
+    "behind": 75
+  },
+  "meaning": "Ancestry only; diverged does not mean missing product functionality.",
+  "branches": [
+    {
+      "name": "codex/alex-release-layout-01",
+      "head": "3bb0970148ff98025d44d6c5ee42e17bfe180002",
+      "comparison_to_baseline": "identical",
+      "ahead": 0,
+      "behind": 0
+    },
+    {
+      "name": "codex/attachments-recovery-hardening-01",
+      "head": "905945f241795f5353e5a25fe1834af0c639938e",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 316
+    },
+    {
+      "name": "codex/audit-business-closure-20261029",
+      "head": "4404fdb98b1fde615f25bcf183eb64d5f34e8ca9",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/audit-integration-lineage-20261029",
+      "head": "9eadf441e3bc548def0c2e90c81c48f4977035d1",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/audit-iss002-dependency-security",
+      "head": "4e4ca504ee398da85fe23cc53d534c6008807e5c",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 667
+    },
+    {
+      "name": "codex/audit-iss045-legacy-test-scripts",
+      "head": "966deaa209cd5b115704a67e58aeb12783b9a60a",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 631
+    },
+    {
+      "name": "codex/audit-security-readiness-20261029",
+      "head": "995058cb2e386c86ab2b8559c1e3a3595c1d7532",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/audit-ux-visual-20261029",
+      "head": "d3b9be06da578b988a78d595eab21fccb2983520",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/branch-coverage-closeout-01",
+      "head": "0bc7ad307c50ebae1c54269348bd941705d136ff",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 175
+    },
+    {
+      "name": "codex/cancel-refund-closeout-02",
+      "head": "a4b2ff4c53e117b2efffeb5af54813121887ce5f",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 73
+    },
+    {
+      "name": "codex/ci-resume-certification-01",
+      "head": "f3b7242e77752b6cc5b72425bcc3df2fa938de61",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 175
+    },
+    {
+      "name": "codex/clean-env-cutover-06",
+      "head": "868b3210ad8c0d7aaca3a50d325694f77460c9fb",
+      "comparison_to_baseline": "diverged",
+      "ahead": 6,
+      "behind": 1
+    },
+    {
+      "name": "codex/core-business-closeout-20261105",
+      "head": "78bcedb217d3d6ca0a05c9348e72d37c35801312",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 407
+    },
+    {
+      "name": "codex/core-workspace-ux-batch-20261104",
+      "head": "e302199f7890c686a309f54aebe8cc31b6202f52",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 514
+    },
+    {
+      "name": "codex/cost-currency-integrity-02",
+      "head": "79530615a24292d2a87198032d2a85420e630fd7",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 60
+    },
+    {
+      "name": "codex/disk-recovery-deep-audit-07",
+      "head": "684733f7cb19dd7fb2a4bc53b8f027fbc1dedeeb",
+      "comparison_to_baseline": "diverged",
+      "ahead": 9,
+      "behind": 1
+    },
+    {
+      "name": "codex/export-stability-closeout-20261105",
+      "head": "dc57b06e856f4640c804e5d14659e40b4093c4e4",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 413
+    },
+    {
+      "name": "codex/finance-adversarial-review-20261104",
+      "head": "e301a86044ffe56b72172a94dc3b00ae09401b05",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 444
+    },
+    {
+      "name": "codex/finance-closeout-batch-20261104",
+      "head": "3a07e7ef1a9e63c98077d45492ba23b798c7fcdd",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 507
+    },
+    {
+      "name": "codex/finance-completion-fixes-02",
+      "head": "96ad680c7b0cd154914046bcbe63de23fb8e64e3",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 288
+    },
+    {
+      "name": "codex/finance-inventory-consistency-01",
+      "head": "bfd217ae5c8ca8dccb734af842564bd46111d739",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 308
+    },
+    {
+      "name": "codex/finance-list-flex-01",
+      "head": "75a6ff0843bc0b7c4a849fc3b61fd018486bdc84",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 336
+    },
+    {
+      "name": "codex/finance-receipt-optimization-02",
+      "head": "c978758f37db8b8acf5e751fc7aa836287163a6b",
+      "comparison_to_baseline": "diverged",
+      "ahead": 6,
+      "behind": 325
+    },
+    {
+      "name": "codex/finance-transactions-unified-entry-01",
+      "head": "52d924b05085e67bf97dc5a5cfac01b6ba48ed70",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 407
+    },
+    {
+      "name": "codex/first-release-independent-review-02",
+      "head": "11c964897afb7558db8e3cd41c4539571aead5eb",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 316
+    },
+    {
+      "name": "codex/fix-finance-summary-card-truncation-20261029",
+      "head": "0f440a784130be326357cdf569ccb8959a560771",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/fix-iss006-request-idempotency-20261029",
+      "head": "083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/fix-iss008-chinese-aliases",
+      "head": "80dc73ae4ae47f9e04969f39b441af206d34306b",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 631
+    },
+    {
+      "name": "codex/fix-iss018-backup-safety",
+      "head": "a73273f49aa32d8be8040d1c444045ff51a67c65",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 688
+    },
+    {
+      "name": "codex/fix-iss018-restore-edge-cases",
+      "head": "21812b7c1190540a7214d4b77518ede31221180a",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 686
+    },
+    {
+      "name": "codex/fix-iss036-factor-one",
+      "head": "6db1ef53e4b78c20156e66071b37b7e6f29a6476",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 687
+    },
+    {
+      "name": "codex/fix-iss036-invalid-snapshot",
+      "head": "80a93559852d9d679c86d71250549261c7c2bbd1",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 685
+    },
+    {
+      "name": "codex/fix-iss052-csv-import-audit-20261029",
+      "head": "dc2bbbb2b29fbc8ffc26c392659e79319c86d592",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/fix-playwright-suite-stability-20261029",
+      "head": "68ceb2953b19f1831e06f7d161e8364902308e4b",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/fix-quote-editor-mobile-actions-20261029",
+      "head": "776d90bcc050bc6ab3ae96a3c8c994e0064e7291",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/fix-unified-ci-env-20261101",
+      "head": "cd479ea5ad7cd923f5b1798c0f296f960ae46dae",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 560
+    },
+    {
+      "name": "codex/global-numeric-wheel-guard-01",
+      "head": "568105bd220185ae95e9f0d7b8b1c32081d445c3",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 325
+    },
+    {
+      "name": "codex/history-completion-fixes-02",
+      "head": "3e925910d43647e58c1f0512c2ccc6371adeb874",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 287
+    },
+    {
+      "name": "codex/history-data-readiness-01",
+      "head": "4d205ece04204e2f8d915ca9ba7707ac86532be7",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 316
+    },
+    {
+      "name": "codex/history-import-delivery-01",
+      "head": "1dfde3a597c3051b18696c14f8745a5ad4b3bcd1",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 157
+    },
+    {
+      "name": "codex/history-operational-closeout-20261104",
+      "head": "ba4274742727a6794608dc8581a49b3692d865a6",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 444
+    },
+    {
+      "name": "codex/history-preflight-web-01",
+      "head": "4c29837f42697596c8c67e8c2d34379a5939eebd",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 351
+    },
+    {
+      "name": "codex/history-preflight-web-fix-01",
+      "head": "ecb38a7869ebff35ac76a876ee1f801616a64db0",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 351
+    },
+    {
+      "name": "codex/history-product-sku-linking-01",
+      "head": "43067137d0fba04b0be055e449e55a06dba6d208",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 268
+    },
+    {
+      "name": "codex/history-takeover-batch-20261104",
+      "head": "a0729a0965850028fe52f5b6fcc3e825f23b1289",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 513
+    },
+    {
+      "name": "codex/history-upload-readiness-01",
+      "head": "188a1ad5303ee694686cb837203b42d2b1c25bec",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 351
+    },
+    {
+      "name": "codex/integration-021-029-027",
+      "head": "28ba758388429f57c2e3516e12385a88ce6646a3",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 709
+    },
+    {
+      "name": "codex/integration-047-097-080",
+      "head": "7951ecb8c6196f773128ad5978bfcd0a5b30c6b5",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 692
+    },
+    {
+      "name": "codex/integration-049-053-067",
+      "head": "54925e0a10a48c16ba3b66bbab9e433f48a0e2d7",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 737
+    },
+    {
+      "name": "codex/integration-pre-pilot-01",
+      "head": "54e715bdc568b80ba624186fecd866550676cf38",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 623
+    },
+    {
+      "name": "codex/integration-pre-pilot-02",
+      "head": "d189084554a2a2da0d701b488a34ebc50723fa17",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 604
+    },
+    {
+      "name": "codex/integration-r1-iss006-052-ux-pw-auth",
+      "head": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 615
+    },
+    {
+      "name": "codex/integration-r1-repairs-20261028",
+      "head": "bcb2f4a0c27e200be3fc2c05e0791e7cec499dbb",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 631
+    },
+    {
+      "name": "codex/integration-validation-04",
+      "head": "b7ce265833320cc62a7b9aa57e08880f6013203f",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 351
+    },
+    {
+      "name": "codex/internal-workspace-tabs-20261105",
+      "head": "f5bdf4e75add5d7c16f81eb234cf3b9db1d54be0",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 357
+    },
+    {
+      "name": "codex/internal-workspace-tabs-integration-01",
+      "head": "aa15c9ba7584599e918c1dd14723d31e31158b3d",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 336
+    },
+    {
+      "name": "codex/iss-008-country-select",
+      "head": "a14d3d929e0c64dbb06d375d9a0ffa832526af92",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 726
+    },
+    {
+      "name": "codex/iss-017-private-files",
+      "head": "c5fc1c11b9728655a363a4f2a5ba0544584a8d07",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 732
+    },
+    {
+      "name": "codex/iss-018-backup-recovery",
+      "head": "ad64eed9e00810beb2734e23f4e58cb6b4533bb8",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 690
+    },
+    {
+      "name": "codex/iss-019-report-csv",
+      "head": "2776fecfadcdf6992ef52e69af8c36697c620b51",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 726
+    },
+    {
+      "name": "codex/iss-020-quote-export",
+      "head": "13b453de019193ae45c4fa1e15724040329da594",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 709
+    },
+    {
+      "name": "codex/iss-022-procurement-moq",
+      "head": "6e7aaedd2cccef3150a5c7ee3135fd5f37dcee47",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 709
+    },
+    {
+      "name": "codex/iss-023-sales-model",
+      "head": "c6a1415437fb2a020ec31d655fe8ce274aa93912",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 699
+    },
+    {
+      "name": "codex/iss-024-supplier-recommendation",
+      "head": "1d576e961dc021d194e0ec2f9fd7dd6fc629535d",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 726
+    },
+    {
+      "name": "codex/iss-025-customer-status-labels",
+      "head": "1fac93f09e3b5c578a030df5c0736e5d0552e4cc",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 690
+    },
+    {
+      "name": "codex/iss-026-supplier-lifecycle",
+      "head": "3625f472b028146c062823990322de32a98759a1",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 732
+    },
+    {
+      "name": "codex/iss-027-followup-date",
+      "head": "5a05a8b0c4d856c9378cad452b1e98307bd135c0",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 716
+    },
+    {
+      "name": "codex/iss-029-quote-recipient-snapshot",
+      "head": "bb68ead4fd248fc446c259a5a142b798b4cd124a",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 716
+    },
+    {
+      "name": "codex/iss-036-carton-units",
+      "head": "3fe05aa1fe08f859cd6b737150d67b4c1066b248",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 689
+    },
+    {
+      "name": "codex/iss-043-audit-protection",
+      "head": "dea057ce0c98fc32da44b72999beb4af78a58176",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 699
+    },
+    {
+      "name": "codex/iss-047-private-storage",
+      "head": "5ab3ed6dd740ba7331abb258118882d7c96e39b5",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 698
+    },
+    {
+      "name": "codex/iss-048-finance-drill",
+      "head": "c356e57014d28295485d52df23612c2fe6c02444",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 744
+    },
+    {
+      "name": "codex/iss-051-environment-isolation",
+      "head": "8a3c8a0a0a67f896f62483ece5551f7d32fb868b",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 709
+    },
+    {
+      "name": "codex/iss-053-purchase-status",
+      "head": "caf0aadf5f7305d5c0d69020a07d2aeab71e4f34",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 743
+    },
+    {
+      "name": "codex/iss-075-payment-terms",
+      "head": "771307b19667256453c7c22ebf60256ffd2a26dd",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 699
+    },
+    {
+      "name": "codex/iss-080-contact-duplicates",
+      "head": "9fe9f479bc47fd7470c80822c89fa59d7d71cbf5",
+      "comparison_to_baseline": "diverged",
+      "ahead": 9,
+      "behind": 699
+    },
+    {
+      "name": "codex/iss-097-admin-permissions",
+      "head": "9ee4bd4b1eb14f45e08a4b83f0b1cd1b294cde37",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 698
+    },
+    {
+      "name": "codex/iss-107-finance-labels",
+      "head": "60df1b045c06c7f2146b44e4a60866b1786024cc",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 732
+    },
+    {
+      "name": "codex/lan-installer-01",
+      "head": "3b9decf7eb84942581161d15a1645e4222e360b6",
+      "comparison_to_baseline": "diverged",
+      "ahead": 59,
+      "behind": 11
+    },
+    {
+      "name": "codex/lan-pilot-readiness-01",
+      "head": "6d13301e7c8b5b8a2470988850cfceff559d1d6e",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 10
+    },
+    {
+      "name": "codex/linux-operations-acceptance-20261104",
+      "head": "4a4f338b09e9a464f1e66c24a905c35c970729bf",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 440
+    },
+    {
+      "name": "codex/local-operations-closeout-20261105",
+      "head": "250c3b7f55585acccb73b2efc1b0993605be0b0b",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 413
+    },
+    {
+      "name": "codex/local-pilot-deploy-02",
+      "head": "3bbbc96b1bf42c645835f46d28ffecbbc7b113db",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 1
+    },
+    {
+      "name": "codex/local-pilot-prep-01",
+      "head": "9420f1cf66d2c74df971945dfa03bd6511cfadcd",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 1
+    },
+    {
+      "name": "codex/local-runtime-delivery-01",
+      "head": "49410f0226df7625c22665f1f84597f2b5e5d6a0",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 170
+    },
+    {
+      "name": "codex/measure-iss058-frontend-performance",
+      "head": "742692a6e4887e4b8352736e69a52b1ebe8d066f",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 668
+    },
+    {
+      "name": "codex/new-product-reminders-20261105",
+      "head": "f63e984f33b86fb00c0de1daeb6a66fd4d42fc78",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 365
+    },
+    {
+      "name": "codex/next-iss-021-integration",
+      "head": "a662500c06807151bb39ca990ebe17ae8d05ef54",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 716
+    },
+    {
+      "name": "codex/next-iss-037-integration",
+      "head": "6d3496d0cc45213f4aab26950cd5ab8629996de8",
+      "comparison_to_baseline": "diverged",
+      "ahead": 5,
+      "behind": 737
+    },
+    {
+      "name": "codex/next-iss-039-integration",
+      "head": "1d976d8dd1d1b827d9ab9122c4d07be8c816a14d",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 737
+    },
+    {
+      "name": "codex/next-iss-040-integration",
+      "head": "a4fc6d4f01f8c32a4a89f0d46557500a34566e98",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 737
+    },
+    {
+      "name": "codex/operations-readiness-batch-20261104",
+      "head": "d289de36a3da3e4bd6531c812ec21a05f046d570",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 500
+    },
+    {
+      "name": "codex/party-version-closeout-20261105",
+      "head": "7cc8c4bf0249a3de53809836b7b3f233476a1648",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 412
+    },
+    {
+      "name": "codex/party-version-integration-01",
+      "head": "f5a91a5ff0b75f2e5b45a6efcf04a36f57da37f0",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 345
+    },
+    {
+      "name": "codex/pilot-delivery-closeout-04",
+      "head": "0b0654de5b079d244b74d752ed4b78710ec4881b",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 1
+    },
+    {
+      "name": "codex/pilot-delivery-final-evidence-01",
+      "head": "ad207b0e759396fd2eb484727b5bcb8f9fa343d2",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 1
+    },
+    {
+      "name": "codex/pilot-handoff-alignment-01",
+      "head": "406b56f6e370b180857bb58b8a45866bccd7aa38",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 10
+    },
+    {
+      "name": "codex/pilot-recovery-readiness-01",
+      "head": "e0169499d4a0a70922859558c00446fc9ef1d5a8",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 11
+    },
+    {
+      "name": "codex/pre-uat-iss006-inventory-safety",
+      "head": "dfa36058206fe7021ff6e6192fbbd247fb471947",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 630
+    },
+    {
+      "name": "codex/prelaunch-repair-integration-02",
+      "head": "96276dffa07c11fb60720a439269df8c36031f7a",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 12
+    },
+    {
+      "name": "codex/product-draft-protection-01",
+      "head": "9d5dd253bf30e0785cb70b14246902811233a08f",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 73
+    },
+    {
+      "name": "codex/product-state-closeout-06",
+      "head": "8ac8fab5a08f7c170adb3514108dd3ba01a56ff3",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 130
+    },
+    {
+      "name": "codex/project-consolidation-rebuild-05",
+      "head": "dfe6a22025d0f5c1fb2bee283525a901a806608a",
+      "comparison_to_baseline": "diverged",
+      "ahead": 6,
+      "behind": 1
+    },
+    {
+      "name": "codex/public-delivery-safety-01",
+      "head": "c7cdf3103d47d06bf8998b9098b2348fd94d1d79",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 98
+    },
+    {
+      "name": "codex/publish-local-20261031/integration-043-075-023",
+      "head": "9900ef54311e93836f1113f66943462b3cdacd62",
+      "comparison_to_baseline": "diverged",
+      "ahead": 7,
+      "behind": 699
+    },
+    {
+      "name": "codex/publish-local-20261031/r1-iss008-aliases-bd324-20261031",
+      "head": "bca4d5794afacc505d443afc03e151ab7ee5c5a2",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 615
+    },
+    {
+      "name": "codex/publish-local-20261031/r1-iss028-035-category-verify-bd324-20261031",
+      "head": "ae78826ef9906d56f8211ee983c2a01132551165",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/publish-local-20261031/r1-iss-037-audit-01",
+      "head": "4d3032b914cde951bae1d1da669e0d737e4b8d52",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 757
+    },
+    {
+      "name": "codex/publish-local-20261031/r1-iss-039",
+      "head": "ac52d3d126a6dbeb9225e6044fa8da234c72db8f",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-csv-audit-truncate-test-20261102",
+      "head": "aeab244b7475f95d0c1d8069af546529e735e90f",
+      "comparison_to_baseline": "diverged",
+      "ahead": 10,
+      "behind": 560
+    },
+    {
+      "name": "codex/r1-fix-shared-report-timeout-20261029",
+      "head": "74e0f90c33add755731f521dcad23c92d95cbb1c",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-hist-01",
+      "head": "b5e46be7863c9756f010df972870bfd0ec154a62",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 751
+    },
+    {
+      "name": "codex/r1-inv-03",
+      "head": "d82643907f2886ecc412fdfa8839d2b8cc165751",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-iss002-dependency-audit-retry-20261031",
+      "head": "04ff4effb17ed1f87ef5feb263a63c060e6b0b72",
+      "comparison_to_baseline": "diverged",
+      "ahead": 6,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss002-ledger-refresh-20261101",
+      "head": "486775839413ac2e174378f0e1898b4e8dd67909",
+      "comparison_to_baseline": "diverged",
+      "ahead": 6,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss002-python312-verify-20261031",
+      "head": "8c5840651ab4d40132a1470972ff966340ff1461",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss002-python-audit-complete-20261101",
+      "head": "709b8d4c6fa0769173498693586b8dc286b54122",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss002-python-security-bd324-20261031",
+      "head": "fe4245f20ec19ca22db0adeaacf5e8e6d7920061",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss002-security-audit-final-20261101",
+      "head": "427d2a2c38516a52d460f50e60e0fb635f23a4c2",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss006-audit-atomicity-20261029",
+      "head": "dfa36058206fe7021ff6e6192fbbd247fb471947",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 630
+    },
+    {
+      "name": "codex/r1-iss006-frontend-idempotency-20261029",
+      "head": "74b1ac29e85a80efbc0ed2200a1653ad19b4bfae",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 623
+    },
+    {
+      "name": "codex/r1-iss006-frontend-storage-chrome-verify",
+      "head": "bf3d4e4fb1d8bf3e5f944071f4336929ff68beae",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 614
+    },
+    {
+      "name": "codex/r1-iss006-po-locking-20261029",
+      "head": "083b99d1f3be5ed6796b71f7dfd5108b2fc12b3a",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/r1-iss006-postgres-concurrency-20261031",
+      "head": "4b43ed561952381bd96dc11abe87392375fb5abd",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss006-postgresql-concurrency-uat-20261101",
+      "head": "10ba6e38a03c955e20be13f303799b30000e6ce3",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss007-followup-files-uat-20261031",
+      "head": "e3b1eeb6cff69b7b77bc35c83661df052e028b41",
+      "comparison_to_baseline": "diverged",
+      "ahead": 6,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss007-image-snapshot-uat-20261031",
+      "head": "d48df222271059721bfa6b9f5f61f395e57db45b",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss007-ledger-evidence-update-20261101",
+      "head": "8d80fc0c082a3792a27d60677f9c55c86288c2fe",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss008-aliases-bd324-20261031",
+      "head": "cffee7e1031f495031f2a4f5040261a398344021",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss018-backup-restore-drill-20261103",
+      "head": "0692f4db292bd6fdeea1997562fb79c662f03ae7",
+      "comparison_to_baseline": "diverged",
+      "ahead": 12,
+      "behind": 542
+    },
+    {
+      "name": "codex/r1-iss018-postgres-boundary-20261102",
+      "head": "704b0df6cc7fa18ce8ed29567afa8d13d605557e",
+      "comparison_to_baseline": "diverged",
+      "ahead": 10,
+      "behind": 560
+    },
+    {
+      "name": "codex/r1-iss018-postgres-ci-boundary-20261101",
+      "head": "ac0d5a22ebecead70cf479fdee09d2f40335600d",
+      "comparison_to_baseline": "diverged",
+      "ahead": 7,
+      "behind": 560
+    },
+    {
+      "name": "codex/r1-iss028-035-category-verify-20261031",
+      "head": "5da8d351129e775563aced753fd05efbfc39d893",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss028-035-category-verify-bd324-20261031",
+      "head": "1d546d494d820f793b336aed8ffbc7afd8f2af21",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss037-seller-template-freeze-20261103",
+      "head": "b00981200eb01af4bfa8351c4bd636ab1a678b71",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 542
+    },
+    {
+      "name": "codex/r1-iss037-snapshot-audit-20261103",
+      "head": "c88a121298465fcb04e11f9b65ef9ad251eadf3f",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 549
+    },
+    {
+      "name": "codex/r1-iss037-unknown-buyer-revision-fix-20261103",
+      "head": "1a9666010c370dda08e2719e2c70caf6ee6c1b11",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 549
+    },
+    {
+      "name": "codex/r1-iss039-amount-allocation-fix-20261103",
+      "head": "aadd2ff3a7a15bc2a6601238ac6cea58d921c741",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 549
+    },
+    {
+      "name": "codex/r1-iss039-reservation-concurrency-20261103",
+      "head": "087f6098c27050a1d7180fe9c85eef6417063c0b",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 542
+    },
+    {
+      "name": "codex/r1-iss039-shared-cost-audit-20261103",
+      "head": "2d5164287672d9a57a6496761c3ea0d026088072",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 549
+    },
+    {
+      "name": "codex/r1-iss045-python312-verify-20261031",
+      "head": "a2aaf7d53e73bba8bb4414f8f9c2f8020c88ffb1",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss045-qa-tools-bd324-20261031",
+      "head": "4ddaa6b7bdd1a9f21443f687e4ff90f46aa02629",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss052-audit-hardening-20261031",
+      "head": "70fe8ee1d4ffbd7786f1908804ea7142461d5286",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 609
+    },
+    {
+      "name": "codex/r1-iss052-csv-limit-bd324-20261030",
+      "head": "d08ca625ac6beeec51ecc14eb92c97da0ea6f63b",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss052-csv-limit-failure-audit-20261029",
+      "head": "bd324a8c3fb64af245c3afcabbd4301c84f7711c",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss052-http-413-20261031",
+      "head": "18a18035d1021d5306f5c47d3d55e333f2ea719d",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss052-http-413-bd324-20261031",
+      "head": "8cff96af9f1f2e09dcbc0a29f361017ee23ffb75",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss052-import-audit-fix-20261031",
+      "head": "f2b7fd6487459be69be687ccfeab09e7947df995",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss052-pg-audit-appendonly-20261029",
+      "head": "315d50cb2a80c882ea901181da1d5910bc6a80f3",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss052-pg-truncate-bd324-20261030",
+      "head": "bbbb7169e21233fd691af246db722875989d9453",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss052-postgresql-uat-20261101",
+      "head": "a34bed75edd4e4b07c7a7780f6821a650b06f68c",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 610
+    },
+    {
+      "name": "codex/r1-iss105-actual-cash-audit-20261103",
+      "head": "1cad93d0cb0297c33f764f6cb68d5c610512d9e4",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 549
+    },
+    {
+      "name": "codex/r1-iss105-bank-duplicate-detection-20261103",
+      "head": "8e99dc1abcf1f4f9fbd9d6cac57258990c12d3e8",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 542
+    },
+    {
+      "name": "codex/r1-iss105-financial-audit-20261031",
+      "head": "7f00efd8a019d1a273675287f53fa73783d73695",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-iss105-independent-bank-fee-fix-20261103",
+      "head": "321cb77d0179888a4788408d32c77d789504fbdd",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 549
+    },
+    {
+      "name": "codex/r1-iss121-history-import-preflight-20261103",
+      "head": "951adda34b5c60b303725702514cdacac17cc58d",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 542
+    },
+    {
+      "name": "codex/r1-iss-021-audit-01",
+      "head": "12c0ea9d60537d202393266f7850fcc188276860",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-iss-021-dev",
+      "head": "92d32ad856fdd056fab0be56a70a9af52fbb99f2",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-iss-037-audit-01",
+      "head": "22055e34eda0343ffa3aa3826f71087645f63d38",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-iss-037-p1",
+      "head": "ff59be7a8c49f3a7a33a1702e74e0e29f742aa1f",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-iss-039",
+      "head": "372221c0b4a1ea23e9a022b3bbec9eb2ec9775c0",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-iss-040-dev",
+      "head": "f308502362fc8bbee1a57d3905b5c12278719a05",
+      "comparison_to_baseline": "diverged",
+      "ahead": 5,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-issue-ledger-update-20261031",
+      "head": "dd3b31445ab9dddb42c7ac8d095692df45efde24",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-ledger-consolidation-20261031",
+      "head": "4e762070f825f4545f454a542365ea085f06f2e0",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-ledger-review-accept-20261031",
+      "head": "c8eb1efa2399768ef8933ca402120bee21ebe7f6",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-ledger-sync-20261101",
+      "head": "bbf98726b550bdb6753d4c72ed7cbd58203e0c20",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-moq-02",
+      "head": "aa35db2a49b6152e35f57b74edff95914735864d",
+      "comparison_to_baseline": "diverged",
+      "ahead": 7,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-po-04",
+      "head": "2dde7c6b5b8ba29df56eb1a3e771a82739859277",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-postgres-auth-contract-20261102",
+      "head": "784b9230906eccdd99fb2ba8ea618e78ea4e863a",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 554
+    },
+    {
+      "name": "codex/r1-postgres-integration-validation-20261102",
+      "head": "8d3ca5faa16fb74de95dbc716f5556a5d51bbe79",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 549
+    },
+    {
+      "name": "codex/r1-postgres-supplier-fixtures-20261101",
+      "head": "e2e7e017a5a2675af44b47fc93650b3837971755",
+      "comparison_to_baseline": "diverged",
+      "ahead": 8,
+      "behind": 560
+    },
+    {
+      "name": "codex/r1-postgres-supplier-fixtures-full-20261102",
+      "head": "644f6a908a755f9d2293dba74c609471f86fcd5d",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 554
+    },
+    {
+      "name": "codex/r1-postgres-test-isolation-20261101",
+      "head": "e280e5d140b5255bd51f5d0be428f36e87336139",
+      "comparison_to_baseline": "diverged",
+      "ahead": 8,
+      "behind": 560
+    },
+    {
+      "name": "codex/r1-prelaunch-consolidation-20261104",
+      "head": "2536efe1a97dec0597ab7c5c28750eea25f47d68",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 368
+    },
+    {
+      "name": "codex/r1-review-iss006-idempotency-20261029",
+      "head": "4bd1da3f096186fbf0ac192e836b4590f915741f",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-review-iss052-csv-audit-20261029",
+      "head": "27734334833395196ae9951c5409f87c3574655d",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/r1-rule-gap-fix-integration-20261103",
+      "head": "a55469c1b07e4f13037c6644c69d8a35ef0496a0",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 542
+    },
+    {
+      "name": "codex/r1-sku-01-fix-01",
+      "head": "450476355ffe03b9a32e69226d8b3c2e179ea155",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-sku-01-fix-02",
+      "head": "fed49cd2b25524d79715d8c241a9ff7f0536218c",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-sku-01",
+      "head": "57d8c2df573b11621a940a756ef7ed34531e7af6",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 757
+    },
+    {
+      "name": "codex/r1-status-reconcile-bd324-20261031",
+      "head": "ae0f7e073d2ef6cb8b98164920697ecd4bac73be",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 615
+    },
+    {
+      "name": "codex/reconcile-issue-ledger-20261028",
+      "head": "2bb9d1746d13ce7b1c70e13dee1b8d3b48aaed2e",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 631
+    },
+    {
+      "name": "codex/release-completion-acceptance-02",
+      "head": "baf6bb875b28586932bfc9b6ed88827356ef0041",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 277
+    },
+    {
+      "name": "codex/release-integration-acceptance-03",
+      "head": "dd019e98f932668ae851dc0c4c7f602f888d51f9",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 205
+    },
+    {
+      "name": "codex/release-integration-repair-01",
+      "head": "1e45e42cc4fa38afbf856143228dada7c8a2e86f",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 288
+    },
+    {
+      "name": "codex/release-slim-prep-01",
+      "head": "3d067d659be70e1db0e4d6b0c44ac45454d26f5f",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 11
+    },
+    {
+      "name": "codex/repair-browser-navigation-timeouts",
+      "head": "e20f8a7bc506c299644b6c828c9b5574ee688f46",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 650
+    },
+    {
+      "name": "codex/repair-iss002-python-security",
+      "head": "85adec7d99d725c7c920c728385172d6517730ce",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 631
+    },
+    {
+      "name": "codex/repair-orders-390-layout",
+      "head": "58541e94918e2d912c2b75d2371a8d625e1fc9d4",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 651
+    },
+    {
+      "name": "codex/repair-supplier-purchase-ux",
+      "head": "3945123376d08256787ff1796ca0a9fc416c1668",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 652
+    },
+    {
+      "name": "codex/repair-supplier-purchase-ux-20261028",
+      "head": "fe1cc16c3950e256fa564ea4508e08414ae8810b",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 652
+    },
+    {
+      "name": "codex/review-iss025-status-consistency",
+      "head": "d5d0d15c03d55a718f11a298e08f29a9b9d0c4b0",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 688
+    },
+    {
+      "name": "codex/review-iss051-business-auth-design-20261029",
+      "head": "be0a0a392b27efbbcf41a8feed82fb493d52d2a7",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/sales-order-import-01",
+      "head": "2bff4790f67b81b35a449f143b8cddb6b24e1821",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 336
+    },
+    {
+      "name": "codex/sjerp-branch-audit-and-cleanup-01",
+      "head": "82a9225c7ef6816319084982208cf85a04584890",
+      "comparison_to_baseline": "diverged",
+      "ahead": 8,
+      "behind": 1
+    },
+    {
+      "name": "codex/sjerp-branch-cleanup-02",
+      "head": "24d4a72bdada27eb430995339fccd043ff7ac744",
+      "comparison_to_baseline": "diverged",
+      "ahead": 9,
+      "behind": 1
+    },
+    {
+      "name": "codex/sjerp-feature-consolidation-closeout-02",
+      "head": "252d7234bd138101b387f4612b389cba5a990af1",
+      "comparison_to_baseline": "diverged",
+      "ahead": 7,
+      "behind": 1
+    },
+    {
+      "name": "codex/sjerp-feature-implementation-consolidation-01",
+      "head": "3978a6faf8ea09b79a4a2f50c3e29a2d2d0d3f36",
+      "comparison_to_baseline": "diverged",
+      "ahead": 10,
+      "behind": 1
+    },
+    {
+      "name": "codex/small-team-cancel-refund-01",
+      "head": "c8a06892579bf586d1a674750902c27943fa69d4",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 89
+    },
+    {
+      "name": "codex/small-team-finance-closeout-02",
+      "head": "00f7753dfc40b417983335be05135cb76a945ee0",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 102
+    },
+    {
+      "name": "codex/small-team-launch-guide-01",
+      "head": "e45f39aa727d72ff62c4dee51740d5c14e069a5b",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 102
+    },
+    {
+      "name": "codex/small-team-purchase-cost-01",
+      "head": "72ffff52434a6573eff9b0113a0902423267b031",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 108
+    },
+    {
+      "name": "codex/small-team-quantity-finance-01",
+      "head": "7e1d0376648ed084ee1c228a3a4e5acdef110f16",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 107
+    },
+    {
+      "name": "codex/sunjack-finance-integration-review-fix-01",
+      "head": "0a3418d7c35bfd006ea70816c71a866646b73aa2",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 324
+    },
+    {
+      "name": "codex/sunjack-first-release-consolidation-02",
+      "head": "f9dfcd4c5792c4b0f213aeb0940e7e66efecd33a",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 327
+    },
+    {
+      "name": "codex/sunjack-first-release-core-uat-01",
+      "head": "1a2ec0f5c940386e445e59967d498ca1187aa6be",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 336
+    },
+    {
+      "name": "codex/sunjack-first-release-integration-01",
+      "head": "b223c052902463b59e149409cf9941503aeab31f",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 329
+    },
+    {
+      "name": "codex/sunjack-sales-order-import-01",
+      "head": "37520998e347afb34b00d725014d0137a49a6920",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 325
+    },
+    {
+      "name": "codex/ui-copy-optimization-02",
+      "head": "945c2ae41ce59d55051bbab4664f3d7a4df0fbba",
+      "comparison_to_baseline": "diverged",
+      "ahead": 7,
+      "behind": 336
+    },
+    {
+      "name": "codex/ui-delivery-closeout-04",
+      "head": "30b3579a579174de5f3e4336619dcdb4c8502470",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 109
+    },
+    {
+      "name": "codex/ui-final-state-closeout-03",
+      "head": "dbec86c9d620002157c0f18bfedb5251204dd3ea",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 197
+    },
+    {
+      "name": "codex/ui-prelaunch-polish-01",
+      "head": "e5ce789459b2499189bc9b0b5e922e8722847da1",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 85
+    },
+    {
+      "name": "codex/ui-product-operations-completion-02",
+      "head": "958421df61a2ac6dd9e66b685f2d0101e13321c5",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 259
+    },
+    {
+      "name": "codex/ui-product-operations-state-evidence-01",
+      "head": "67410d72c0d4dabca1a6c374e2d9600ba6f9aee6",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 288
+    },
+    {
+      "name": "codex/ui-sales-completion-02",
+      "head": "6242c5c3b85efdb3f904c8a4de7b8909a2bedcba",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 258
+    },
+    {
+      "name": "codex/ui-sales-state-evidence-01",
+      "head": "9dd721723422b45b1fabf1d97d1ad492488b7437",
+      "comparison_to_baseline": "diverged",
+      "ahead": 3,
+      "behind": 288
+    },
+    {
+      "name": "codex/unified-github-ci-post-oct20-20261101",
+      "head": "3093c22c6e0a623499a98d5a602f7b1cb5758e8e",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 560
+    },
+    {
+      "name": "codex/verify-candidate-regression-20261029",
+      "head": "90f622528a7d534983313220d0824f3d461c03a3",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 623
+    },
+    {
+      "name": "codex/verify-iss028-035-category-schema",
+      "head": "901b762fba20ed558f554cfba37175b303f83db9",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 631
+    },
+    {
+      "name": "codex/worktree-consolidation-cleanup-02",
+      "head": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
+      "comparison_to_baseline": "diverged",
+      "ahead": 5,
+      "behind": 1
+    },
+    {
+      "name": "codex-r0-f5-contacts-followups",
+      "head": "b916fab613806a9fd00636cc87496803557d45a8",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 784
+    },
+    {
+      "name": "master",
+      "head": "7b4e666758ba31a2afd36a7ef81635085a27ff24",
+      "comparison_to_baseline": "diverged",
+      "ahead": 5,
+      "behind": 1
+    },
+    {
+      "name": "phase-01-bugfix",
+      "head": "54cbcd44c5850ecd490ed33d082e22a0abb7acf1",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 1012
+    },
+    {
+      "name": "phase-02a-receipt-reversal",
+      "head": "e0697eee363a57b4edf958b331b0557056549870",
+      "comparison_to_baseline": "diverged",
+      "ahead": 1,
+      "behind": 1011
+    },
+    {
+      "name": "phase-02b-shipment-reversal",
+      "head": "fe949dfe3974e2c6ea3822311a8162b283814a76",
+      "comparison_to_baseline": "diverged",
+      "ahead": 2,
+      "behind": 1010
+    },
+    {
+      "name": "phase-02c-finance-void-consistency",
+      "head": "9150fcb31b1fc8aed86b4a131420b84d5bf3de50",
+      "comparison_to_baseline": "diverged",
+      "ahead": 5,
+      "behind": 1009
+    },
+    {
+      "name": "phase-03-business-invariant-uat",
+      "head": "d54329e4f74ad013959eb30454acd6dc3e634a66",
+      "comparison_to_baseline": "diverged",
+      "ahead": 4,
+      "behind": 1004
+    },
+    {
+      "name": "phase-03b-real-ui-uat",
+      "head": "9160b2a81e4ce822675fd293bb02e5e4f05790aa",
+      "comparison_to_baseline": "diverged",
+      "ahead": 22,
+      "behind": 999
+    },
+    {
+      "name": "phase-04a-production-readiness-audit",
+      "head": "1759c02a66353d2db6f709fd3b3ab27b46e2fc1b",
+      "comparison_to_baseline": "behind",
+      "ahead": 0,
+      "behind": 997
+    },
+    {
+      "name": "ux-review-evidence",
+      "head": "ea49e24b1b78c78b9efe64ded460ccfe7049d754",
+      "comparison_to_baseline": "diverged",
+      "ahead": 30,
+      "behind": 876
+    }
+  ]
+}

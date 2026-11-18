@@ -1,0 +1,22 @@
+[
+  {
+    "path": "scripts/check_pilot_release_source.py",
+    "blob": "15158860cc460dd3f3f8fb1008ec6683356ec3c2",
+    "sha256": "e81434e94493feef3ed3dd8e738de4769b1c4990a78ec78fff01085fc298608a"
+  },
+  {
+    "path": "scripts/build_pilot_release.py",
+    "blob": "07ec2f4095c0c009bad4e5817f85f0fcefc8269a",
+    "sha256": "7975193c7874d1aa1758333a4fcf76ed581fa1e7838dd5f11a6acb84001d3f81"
+  },
+  {
+    "path": ".github/workflows/ci.yml",
+    "blob": "51513830d4b9678cc91c1100d415d795a2a134ad",
+    "sha256": "59aecf628856f6a84cfe5eb36ff81673536e5ddb89738b46bdb15cbba6251f59"
+  },
+  {
+    "path": "scripts/tests/test_release_source_inventory.py",
+    "blob": "b9e8774fe958b0c9d1336ebf177554199b97409d",
+    "sha256": "5e4c19c18fded7c5dfc7e43a83ee14adc5e3e05380e5fae0226c908cd33830aa"
+  }
+]

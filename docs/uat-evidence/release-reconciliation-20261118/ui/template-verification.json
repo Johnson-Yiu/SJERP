@@ -1,0 +1,8 @@
+{
+  "source_commit": "3bb0970148ff98025d44d6c5ee42e17bfe180002",
+  "path": "docs/uat-evidence/r1-iss121-history-import-preflight-20261103/ISS-121-history-import-template.xlsx",
+  "github_blob": "71346c5bc4f97f10e8b57bca5c83b7e5aff07399",
+  "bytes": 58347,
+  "verified_by": "GitHub directory contents at exact source SHA; cached bytes independently Git-blob hashed",
+  "note": "First target suite failed because the partial local materialization omitted this unchanged binary, not because candidate code failed."
+}

@@ -8,7 +8,9 @@ if ($env:COMPUTERNAME -ne 'ALEX') { throw '请在 ALEX 本机运行。' }
 $dir = Split-Path -Parent $PSCommandPath
 $iso = Join-Path $dir 'sjerp-automatic-backup-template.iso'
 $receive = Join-Path $dir 'Receive-AlexAutomaticBackup.ps1'
+$protect = Join-Path $dir 'Protect-AlexBackupCollectorKey.ps1'
 $pins = @{
+    $protect = '6957A27ADE54FB8EB12C0C986521C40706E7EF37657A63F1E7F89D6904579165'
     $iso = '022CBC29B9B009C112C3998B90CAC9186BC12555A72DACBE0EEE93AE2546D579'
     $receive = '1BC465DC67490462E431BF2F7B50E20DEE6EBFA5EA86A1DAF5F694CDBA5BB646'
 }
@@ -46,10 +48,7 @@ $identity = Join-Path $base 'collector'
 $arguments = '-q -t ed25519 -N "" -C sjerp-backup -f "{0}"' -f $identity
 $keygenResult = Start-Process -FilePath $keygen -ArgumentList $arguments -WindowStyle Hidden -PassThru -Wait
 if ($keygenResult.ExitCode -ne 0) { throw '无法生成备份连接密钥。' }
-& icacls.exe $identity '/inheritance:r' '/grant:r' '*S-1-5-18:F' | Out-Null
-if ($LASTEXITCODE) { throw '无法限制备份连接私钥权限。' }
-& icacls.exe $identity '/setowner' '*S-1-5-18' | Out-Null
-if ($LASTEXITCODE) { throw '无法将备份连接私钥交给系统任务。' }
+& $protect
 
 $public = (Get-Content -LiteralPath "$identity.pub" -Raw).Trim()
 if ($public -cnotmatch '^ssh-ed25519 [A-Za-z0-9+/]{68} sjerp-backup$') { throw '不支持的备份连接公钥。' }

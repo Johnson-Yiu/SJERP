@@ -10,6 +10,7 @@ $taskName = 'SJERP-AutomaticJointBackup'
 $task = Get-ScheduledTask -TaskName $taskName
 $installed = Join-Path $base 'Receive-AlexAutomaticBackup.ps1'
 if ($task.State -ne 'Ready' -or $task.Actions.Count -ne 1 -or
+    $task.Principal.UserId -notin @('SYSTEM','NT AUTHORITY\SYSTEM','S-1-5-18') -or
     $task.Actions[0].Arguments -cnotlike "*`"$installed`"*" -or !(Test-Path -LiteralPath $installed -PathType Leaf)) {
     throw '现有自动备份任务未就绪或任务入口与交付记录不符。'
 }
@@ -40,6 +41,11 @@ if ((Get-FileHash -LiteralPath $installed -Algorithm SHA256).Hash -ne $sha) {
         if (Test-Path -LiteralPath $temp) { Remove-Item -LiteralPath $temp -Force }
     }
 }
+$protect = Join-Path (Split-Path -Parent $PSScriptRoot) 'Protect-AlexBackupCollectorKey.ps1'
+if ((Get-FileHash -LiteralPath $protect -Algorithm SHA256).Hash -ne '6957A27ADE54FB8EB12C0C986521C40706E7EF37657A63F1E7F89D6904579165') {
+    throw '私钥权限修复脚本摘要不符。'
+}
+& $protect
 if ((Read-Host '接收脚本已修复。选择 ERP 无人使用时输入 YES，重试一次联合备份') -cne 'YES') { return }
 
 $start = [DateTimeOffset]::UtcNow.AddSeconds(-1)

@@ -25,7 +25,7 @@
     "backend/crm/services/finance.py": "9c11133e56667db1749b371ddadd7f2a7f356990",
     "backend/crm/services/fulfillment.py": "0c1a7247093d85fa0695e1441439a86c5956af8d",
     "backend/crm/services/operations_postgres.py": "fc6d1bd435c0e93130f52e62fc3dc04fa21b9590",
-    "backend/crm/services/order_lifecycle.py": "66cf9ab3fc4ef3364f614a6c8c18d4ee3c1a45e4",
+    "backend/crm/services/order_lifecycle.py": "eee3005d274aa3340aa380eea895234f57bc2f0f",
     "backend/crm/services/order_quantity_adjustments.py": "c7bea6acfe8d6faa1edddfb3dcd7f1d56549f8a5",
     "backend/crm/services/purchase_costs.py": "284229d62b5de9b3d7294cb1783418b0c80f7dc0",
     "backend/crm/services/purchase_lifecycle.py": "43a64006fe98599c5545fc36de3bb6b70bb1bddd",

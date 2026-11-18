@@ -385,6 +385,8 @@ def _match_group(group, request):
 
     customer_code = group["header"]["customer_code"]
     customer = scope_customer_queryset(Customer.objects.all(), request.user).filter(code=customer_code).first()
+    if customer and customer.merged_into_id:
+        customer = scope_customer_queryset(Customer.objects.all(), request.user).filter(pk=customer.merged_into_id).first()
     if customer is None:
         _add_error(errors, group["rows"][0][0], source_order_no, "客户编号不存在或不在当前数据范围内。")
         return errors

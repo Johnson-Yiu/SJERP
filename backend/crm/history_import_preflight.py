@@ -573,6 +573,9 @@ def _master_candidate(model, *, key_field, code, name, name_field, queryset=None
     if code:
         direct = list(queryset.filter(**{key_field: code})[:2])
         if len(direct) == 1:
+            if model is Customer and direct[0].merged_into_id:
+                principal = queryset.filter(pk=direct[0].merged_into_id).first()
+                return ("name_candidate", principal, [principal]) if principal else ("missing", None, [])
             return "exact", direct[0], direct
     else:
         direct = []
@@ -584,6 +587,9 @@ def _master_candidate(model, *, key_field, code, name, name_field, queryset=None
                 candidates = list(queryset.filter(product__name__iexact=name).select_related("product")[:3])
         else:
             candidates = list(queryset.filter(**{f"{name_field}__iexact": name})[:3])
+    if model is Customer:
+        ids = {item.merged_into_id or item.pk for item in candidates}
+        candidates = list(queryset.filter(pk__in=ids))
     if len(candidates) == 1:
         return "name_candidate", candidates[0], candidates
     if len(candidates) > 1:

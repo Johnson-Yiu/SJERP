@@ -2,7 +2,7 @@ from io import BytesIO
 
 from django.http import Http404
 from django.conf import settings
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -200,8 +200,35 @@ class HistoryTakeoverGroupActionView(APIView):
 
         data = request.data
         try:
-            if operation in {"review", "execute", "resolve-master", "correction-review", "finance-status", "finance-preview", "finance-submit", "finance-replace", "finance-approve", "finance-post", "finance-cancel", "finance-fail", "inventory-status", "inventory-propose", "inventory-approve", "inventory-execute", "inventory-reverse", "operational-status", "operational-propose", "operational-approve", "operational-execute", "operational-reverse"} and not _admin_required(request):
+            if operation in {"review", "execute", "resolve-master", "history-customers", "correction-review", "finance-status", "finance-preview", "finance-submit", "finance-replace", "finance-approve", "finance-post", "finance-cancel", "finance-fail", "inventory-status", "inventory-propose", "inventory-approve", "inventory-execute", "inventory-reverse", "operational-status", "operational-propose", "operational-approve", "operational-execute", "operational-reverse"} and not _admin_required(request):
                 return Response({"detail": "仅管理员可以审核、关联主档或执行历史承接。"}, status=403)
+            if operation == "history-customers":
+                from .historical_customers import historical_customer_rows
+                with transaction.atomic():
+                    group = HistoryTakeoverGroup.objects.select_for_update().get(pk=group.pk)
+                    if group.status in {"executed", "rejected", "withdrawn"}:
+                        raise TakeoverRuleError("当前状态不能修改客户关联。")
+                    eligible = {
+                        (result["sheet"], result["row"]) for result in group.preflight_result.get("results", [])
+                        if result["sheet"] == "销售订单" and not any(
+                            item.get("type") == "客户" and item.get("match") == "编码精确匹配"
+                            for item in result.get("related_records", [])
+                        )
+                    }
+                    sources = [row for row in group.source_rows.get("销售订单", [])
+                               if ("销售订单", row["row"]) in eligible and row["data"].get("customer_name_snapshot")]
+                    rows = historical_customer_rows(request)
+                    names = {row["data"]["customer_name_snapshot"].strip() for row in sources}
+                    if any(item["name"] not in names for item in rows):
+                        raise TakeoverRuleError("客户清单已变化，请重新预览。")
+                    if data.get("confirm") is True:
+                        codes = {item["name"]: item["code"] for item in rows}
+                        for row in sources:
+                            code = codes.get(row["data"]["customer_name_snapshot"].strip())
+                            if code:
+                                group = resolve_master(group, request.user, sheet="销售订单", row_number=row["row"],
+                                                       field="customer_code", target_code=code, note="已人工确认历史客户名称与编号")
+                    return Response(rows)
             if operation == "operational-status":
                 return Response({**history_operational_contracts.status(group, request.user), "overall": overall_status(group)})
             if operation == "operational-propose":

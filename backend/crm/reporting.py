@@ -70,13 +70,21 @@ _CURRENT_COUNTRY = object()
 _CURRENT_CUSTOMER_NAME = object()
 
 
-def customer_dims(customer, *, country_snapshot=_CURRENT_COUNTRY, name_snapshot=_CURRENT_CUSTOMER_NAME):
+def reporting_principal(customer, user):
+    if customer and customer.merged_into_id:
+        visible = scope_customer_queryset(Customer.objects.all(), user) if user is not None else Customer.objects.all()
+        return visible.filter(pk=customer.merged_into_id).first() or customer
+    return customer
+
+
+def customer_dims(customer, *, user=None, country_snapshot=_CURRENT_COUNTRY, name_snapshot=_CURRENT_CUSTOMER_NAME):
     country = getattr(customer, "country", "") if country_snapshot is _CURRENT_COUNTRY else str(country_snapshot or "")
     country_label = country or ("未填写" if country_snapshot is _CURRENT_COUNTRY else "待核实")
     name = getattr(customer, "name", "") if name_snapshot is _CURRENT_CUSTOMER_NAME else str(name_snapshot or "")
     name_label = name or ("未填写" if name_snapshot is _CURRENT_CUSTOMER_NAME else "待核实")
+    principal = reporting_principal(customer, user)
     return {
-        "customer": identity(customer, name_label),
+        "customer": identity(principal, principal.name if principal != customer else name_label),
         "country": (country, country_label),
         **{key: (getattr(customer, key, ""), getattr(customer, key, "") or "未填写") for key in ["region", "owner", "source"]},
     }
@@ -131,8 +139,10 @@ def records(source, date_field, start, end, user=None):
         # This source is intentionally independent from the legacy book cash source.
         from .services.finance_closeout import corrected_ids, historical_transfer_ids, matched_legacy_ids
         qs = qs.filter(status="confirmed").exclude(pk__in=historical_transfer_ids() | corrected_ids()[1] | matched_legacy_ids(user))
-    elif source == "customers" and user is not None:
-        qs = scope_customer_queryset(qs, user)
+    elif source == "customers":
+        qs = qs.filter(merged_into__isnull=True)
+        if user is not None:
+            qs = scope_customer_queryset(qs, user)
     elif source == "inventory": qs = qs.select_related("sku__product__category")
     for obj in qs.iterator(chunk_size=500):
         day = getattr(obj, date_field)
@@ -146,11 +156,11 @@ def records(source, date_field, start, end, user=None):
             dims[key] = (value, display or "未填写")
         if source in ["sales", "profit"]:
             dims.update(customer_dims(
-                obj.customer, country_snapshot=obj.customer_country_snapshot,
+                obj.customer, user=user, country_snapshot=obj.customer_country_snapshot,
                 name_snapshot=obj.customer_name_snapshot,
             ))
         elif source in ["customers", "cash"]:
-            dims.update(customer_dims(obj if source == "customers" else obj.customer))
+            dims.update(customer_dims(obj if source == "customers" else obj.customer, user=user))
         if source in ["purchase", "cash"]:
             supplier = obj.supplier
             dims["supplier"] = identity(supplier, supplier.name if supplier else "")
@@ -303,8 +313,9 @@ def historical_analysis(request):
             order_amount = order.total_amount * order.exchange_rate
             total += order_amount
             if can_sales_customer:
-                customer_key = str(order.customer_id)
-                customer_rows.setdefault(customer_key, {"id": order.customer_id, "label": order.customer_name_snapshot or "待核实", "amount": Decimal("0"), "count": 0})
+                principal = reporting_principal(order.customer, request.user)
+                customer_key = str(principal.pk)
+                customer_rows.setdefault(customer_key, {"id": principal.pk, "label": principal.name if principal != order.customer else order.customer_name_snapshot or "待核实", "amount": Decimal("0"), "count": 0})
                 customer_rows[customer_key]["amount"] += order_amount
                 customer_order_ids.setdefault(customer_key, set()).add(order.pk)
                 country_key = order.customer_country_snapshot or ""
@@ -530,7 +541,7 @@ def _detail_rows(source, date_field, start, end, group, group_2, grain, filters,
             base_dims[key] = (value, display or "未填写")
         if source == "sales":
             base_dims.update(customer_dims(
-                document.customer, country_snapshot=document.customer_country_snapshot,
+                document.customer, user=user, country_snapshot=document.customer_country_snapshot,
                 name_snapshot=document.customer_name_snapshot,
             ))
             party_name = document.customer_name_snapshot or "待核实"

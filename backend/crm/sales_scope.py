@@ -91,6 +91,15 @@ def scope_customer_queryset(queryset, user):
     return queryset.none()
 
 
+def customer_member_ids(customer_id, user):
+    from django.db.models import Q
+    from .models import Customer
+
+    visible = scope_customer_queryset(Customer.objects.all(), user)
+    principal = visible.filter(pk=customer_id).values("pk")
+    return visible.filter(Q(pk__in=principal) | Q(merged_into_id__in=principal)).values("pk")
+
+
 def scope_customer_related_queryset(queryset, user, relation="customer"):
     """Apply customer ownership through a related sales record."""
     scoped_customers = scope_customer_queryset(Customer.objects.all(), user)

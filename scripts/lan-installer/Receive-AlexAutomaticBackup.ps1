@@ -6,12 +6,16 @@ $target = 'D:\ERP备份'
 $scratch = Join-Path $target ('.sjerp-' + [Guid]::NewGuid().ToString('N') + '.partial')
 $errors = Join-Path $base 'ssh-error.log'
 $last = Join-Path $base 'last-run.json'
-function Write-Status([hashtable]$State) {
+function Write-Status([hashtable]$State, [string]$Path = $last) {
     $State['updated_utc'] = [DateTime]::UtcNow.ToString('o')
     $json = $State | ConvertTo-Json -Compress
-    $tmp = "$last.tmp"
-    [IO.File]::WriteAllText($tmp,$json)
-    Move-Item -LiteralPath $tmp -Destination $last -Force
+    $tmp = "$Path.tmp"
+    [IO.File]::WriteAllText($tmp,$json,[Text.UTF8Encoding]::new($false))
+    if ([IO.File]::Exists($Path)) {
+        [IO.File]::Replace($tmp,$Path,[System.Management.Automation.Language.NullString]::Value)
+    } else {
+        [IO.File]::Move($tmp,$Path)
+    }
 }
 Write-Status @{ status = 'RUNNING' }
 try {
@@ -23,13 +27,36 @@ try {
     $ssh = Join-Path $env:SystemRoot 'System32\OpenSSH\ssh.exe'
     $sshArgs = '-T -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=3'
     $sshArgs += (' -o UserKnownHostsFile="{0}" -i "{1}" sjerpbackup@10.253.247.2 backup' -f (Join-Path $base 'known_hosts'),(Join-Path $base 'collector'))
-    $process = Start-Process -FilePath $ssh -ArgumentList $sshArgs -RedirectStandardOutput $scratch -RedirectStandardError $errors -WindowStyle Hidden -PassThru
-    if (!$process.WaitForExit(1950000)) {
-        $process.Kill()
-        $process.WaitForExit()
-        throw '备份连接已超时。'
+    $info = [Diagnostics.ProcessStartInfo]::new($ssh,$sshArgs)
+    $info.UseShellExecute = $false
+    $info.CreateNoWindow = $true
+    $info.RedirectStandardOutput = $true
+    $info.RedirectStandardError = $true
+    $info.RedirectStandardInput = $true
+    $process = [Diagnostics.Process]::new()
+    $process.StartInfo = $info
+    $stdout = [IO.File]::Open($scratch,[IO.FileMode]::CreateNew)
+    $stderr = $null
+    try {
+        $stderr = [IO.File]::Create($errors)
+        if (!$process.Start()) { throw '无法启动 OpenSSH 客户端。' }
+        $process.StandardInput.Close()
+        $copies = [Threading.Tasks.Task[]]@(
+            $process.StandardOutput.BaseStream.CopyToAsync($stdout),
+            $process.StandardError.BaseStream.CopyToAsync($stderr)
+        )
+        if (!$process.WaitForExit(1950000)) {
+            $process.Kill()
+            $null = $process.WaitForExit(10000)
+            throw '备份连接已超时。'
+        }
+        if (![Threading.Tasks.Task]::WaitAll($copies,10000)) { throw '未完整读取备份连接输出。' }
+        if ($process.ExitCode -ne 0) { throw ("OpenSSH 退出码 {0}。请查看本机 SSH 诊断日志。" -f $process.ExitCode) }
+    } finally {
+        $process.Dispose()
+        $stdout.Dispose()
+        if ($stderr) { $stderr.Dispose() }
     }
-    if ($process.ExitCode -ne 0) { throw '来宾未完成联合备份。请检查受限目录内的 SSH 和来宾 systemd 日志。' }
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $bundle = [IO.Compression.ZipFile]::OpenRead($scratch)
     try {
@@ -60,7 +87,9 @@ try {
     $file = 'SJERP-auto-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ') + '-' + $manifest.encrypted_sha256.Substring(0,12) + '.zip'
     $digest = (Get-FileHash -LiteralPath $scratch -Algorithm SHA256).Hash
     [IO.File]::Move($scratch,(Join-Path $target $file))
-    Write-Status @{ status='VERIFIED'; archive=$file; sha256=$digest; commit=$manifest.commit }
+    $verified = @{ status='VERIFIED'; archive=$file; sha256=$digest; commit=$manifest.commit }
+    Write-Status $verified (Join-Path $base 'last-verified.json')
+    Write-Status $verified
 } catch {
     Write-Status @{ status='FAILED'; reason=$_.Exception.Message }
     throw

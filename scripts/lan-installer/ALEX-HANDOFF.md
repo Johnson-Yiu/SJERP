@@ -38,3 +38,5 @@ Windows 任务经 Hyper-V 专用网络请求联合备份，核对发布信息、
 归档使用逐次随机口令。归档只含由恢复公钥加密的口令信封。对应私钥保存在独立开发电脑当前 Windows 用户的 DPAPI 保护文件；恢复时需要该 Windows 用户或后来另行建立的密钥托管。从备份归档恢复时，使用归档对应发布提交的干净维护源码和独立 PG17。开发机入口为 `restore-alex-automatic-backup.py`，参数见 `--help`。它验证归档及信封，使用现有 `restore-encrypted-verify` 恢复到新数据库和附件目录，保留签名回执和应用验证记录，并关闭独立 PostgreSQL 实例。新输出目录应置于访问受限的本机路径。升级到新 SHA 后，需要同步更新来宾的维护源码包，旧包会拒绝备份新发布。
 
 部署状态仍待首份自动归档及独立电脑的应用回读实测。D 盘归档仍属于 ALEX 本机，异机恢复演练与持续保存异机备份副本分别管理。
+
+2026-11-18 备份任务接收端修复可在 ALEX 的管理员 PowerShell 运行 `SJERP-AutomaticBackup-Recovery\Repair-AlexAutomaticBackup.ps1`。它保留全部既有归档，显示本机 SSH 诊断，更新受限目录的接收端，并在确认后从现有任务重试一次。成功后导出加密归档和校验清单。无需重启虚拟机，联合备份执行期间仍会短暂停止 ERP。成功记录另存为 `last-verified.json`，后续失败只更新 `last-run.json`。

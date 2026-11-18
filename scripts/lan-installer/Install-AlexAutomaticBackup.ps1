@@ -10,7 +10,7 @@ $iso = Join-Path $dir 'sjerp-automatic-backup-template.iso'
 $receive = Join-Path $dir 'Receive-AlexAutomaticBackup.ps1'
 $pins = @{
     $iso = '022CBC29B9B009C112C3998B90CAC9186BC12555A72DACBE0EEE93AE2546D579'
-    $receive = '2B875328DAFC9246852300AA910400A19C0E38575A5924C1D4276CF0F75B16F8'
+    $receive = '1BC465DC67490462E431BF2F7B50E20DEE6EBFA5EA86A1DAF5F694CDBA5BB646'
 }
 foreach ($file in $pins.Keys) {
     if ((Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash -ne $pins[$file]) { throw "交付文件校验失败：$file" }
@@ -93,7 +93,7 @@ $last = Join-Path $base 'last-run.json'
 $deadline = (Get-Date).AddMinutes(35)
 do {
     if (Test-Path -LiteralPath $last) {
-        $status = Get-Content -LiteralPath $last -Raw | ConvertFrom-Json
+        $status = Get-Content -LiteralPath $last -Raw -Encoding UTF8 | ConvertFrom-Json
         if ($status.status -eq 'VERIFIED') {
             Write-Host "自动联合备份已验证。归档：$($status.archive)"
             return

@@ -6,7 +6,10 @@ param()
 $ErrorActionPreference = 'Stop'
 if ($env:COMPUTERNAME -ne 'ALEX') { throw '请在 ALEX 本机运行。' }
 $record = Join-Path $env:ProgramData 'SJERP-AutoBackup\last-run.json'
-$latest = Get-Content -LiteralPath $record -Raw | ConvertFrom-Json
+$verifiedRecord = Join-Path (Split-Path -Parent $record) 'last-verified.json'
+if (Test-Path -LiteralPath $verifiedRecord -PathType Leaf) { $record = $verifiedRecord }
+$latest = Get-Content -LiteralPath $record -Raw -Encoding UTF8 | ConvertFrom-Json
+if ($latest.status -eq 'FAILED') { throw ("最近一次自动任务失败。{0}" -f $latest.reason) }
 if ($latest.status -ne 'VERIFIED' -or $latest.archive -cnotmatch '^SJERP-auto-[0-9]{8}T[0-9]{6}Z-[a-f0-9]{12}\.zip$' -or
     $latest.sha256 -notmatch '^[a-f0-9]{64}$') {
     throw '最近一次自动任务未提供有效的已验证归档记录。'

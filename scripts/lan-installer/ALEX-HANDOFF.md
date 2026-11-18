@@ -11,7 +11,7 @@
 | 管理账号 | johnson，显示姚战森，超级管理员。密码通过私有加密凭据单独交接 |
 | 首次访问 | 团队终端双击共享目录的 Open-Sjerp.cmd，并确认安装公开 CA 证书。之后可直接访问 HTTPS |
 | 服务验收 | 离线首装、加密备份后升级、Chrome 登录、附件上传下载、报表导出及服务重启后附件读回均有实测。升级后的 22 个前端文件与发布清单一致 |
-| 临时路径 | 升级备份临时端口 22223 已关闭。原构建工具仅供后续验收使用 |
+| 临时路径 | 2026-11-18 确认 22223 仍能从开发机进入 ERP 来宾，待在 ALEX 核对并关闭。构建机入口单独维护 |
 
 当前为局域网内测部署。按用户要求暂时跳过候选提交的 GitHub Actions。开发电脑已复核新证书的 HTTPS 和会话接口。其他团队电脑尚待各自确认首次信任与登录。员工名册若需显示姚战森，另按实际部门和岗位建立档案。
 
@@ -44,3 +44,9 @@ Windows 任务经 Hyper-V 专用网络请求联合备份，核对发布信息、
 2026-11-18 备份任务接收端修复可在 ALEX 的管理员 PowerShell 运行 `SJERP-AutomaticBackup-Recovery\Repair-AlexAutomaticBackup.ps1`。它保留全部既有归档，显示本机 SSH 诊断，更新受限目录的接收端，并在确认后从现有任务重试一次。成功后导出加密归档和校验清单。无需重启虚拟机，联合备份执行期间仍会短暂停止 ERP。成功记录另存为 `last-verified.json`，后续失败只更新 `last-run.json`。
 
 从开发机可运行共享目录中的 `SJERP-AutomaticBackup-Recovery\Test-AlexBackupArchive.ps1`，验证 D 盘原件、加密内容和密钥信封的摘要。传入 `-ScheduledDate yyyy-MM-dd` 时，脚本检查当日北京时间 03:00 到 03:35 生成的归档。若要确认由计划时间触发，同时核对 ALEX 计划任务的运行记录。2026-11-18 已用真实归档及损坏的测试副本验证只读检查，首次夜间自动执行仍待观察。
+
+## 日常操作
+
+双击共享目录的 `Manage-AlexSjerp.cmd` 可查看 HTTPS、当前发布版本和最新联合归档。ALEX 管理员从管理员 PowerShell 运行 `Manage-AlexSjerp.ps1` 可启动、正常关闭或重启 ERP 来宾，运行联合备份，查看计划任务和备份日志，或打开来宾控制台。来宾内查看应用日志使用 `journalctl --no-pager -n 100 -u sjerp-local@a.service`，需要有对应的 Linux 运维权限。升级继续使用已有固定 SHA 的离线升级包和 `UPGRADE.md` 流程。
+
+验收完成后，在 ALEX 管理员 PowerShell 运行 `Manage-AlexSjerp.ps1 -Action CloseDiagnostics`。入口只移除与既有部署记录吻合的 22223 转发与专用规则，核对 443 和 ERP HTTPS 后报告结果。当前开发机已确认 22223 可达，实际关闭仍待 ALEX 执行和局域网复核。

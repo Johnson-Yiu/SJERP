@@ -1034,7 +1034,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = "__all__"
         # Customer status is a persisted projection of follow-ups, quotes and
         # formal orders, rather than a manually maintained customer attribute.
-        read_only_fields = ["code", "status", "owner"]
+        read_only_fields = ["code", "status", "owner", "merged_into", "history_pending"]
 
     def get_country_display(self, obj):
         return display_country(obj.country)
@@ -1053,6 +1053,8 @@ class CustomerSerializer(serializers.ModelSerializer):
         from .sales_scope import allowed_employee_ids, effective_data_scope, employee_profile_for
         from .permissions import user_can
 
+        if self.instance and self.instance.merged_into_id:
+            raise serializers.ValidationError("请在主客户记录中维护资料。")
         if "country" in attrs:
             raw_country = str(attrs.get("country") or "").strip()
             if raw_country:
@@ -1100,6 +1102,13 @@ class CustomerSerializer(serializers.ModelSerializer):
         return attrs
 
     @transaction.atomic
+    def update(self, instance, validated_data):
+        current = Customer.objects.select_for_update().get(pk=instance.pk)
+        if current.merged_into_id:
+            raise serializers.ValidationError("请在主客户记录中维护资料。")
+        return super().update(current, validated_data)
+
+    @transaction.atomic
     def create(self, validated_data):
         contacts = validated_data.pop("contacts", [])
         imported_code = validated_data.pop("imported_code", None) if self.context.get("allow_import_code") else None
@@ -1111,7 +1120,14 @@ class CustomerSerializer(serializers.ModelSerializer):
         return customer
 
 
-class ContactSerializer(serializers.ModelSerializer):
+class PrincipalCustomerMixin:
+    def validate_customer(self, customer):
+        if customer and customer.merged_into_id and getattr(self.instance, "customer_id", None) != customer.pk:
+            raise serializers.ValidationError("请选择有效主客户。")
+        return customer
+
+
+class ContactSerializer(PrincipalCustomerMixin, serializers.ModelSerializer):
     customer_name = serializers.CharField(source="customer.name", read_only=True)
 
     class Meta:
@@ -1126,6 +1142,7 @@ class ContactSerializer(serializers.ModelSerializer):
 
 
     def validate_customer(self, customer):
+        super().validate_customer(customer)
         from .sales_scope import customer_in_scope
         request = self.context.get("request")
         user = request.user if request else serializer_user(self.context)
@@ -1135,7 +1152,7 @@ class ContactSerializer(serializers.ModelSerializer):
             raise PermissionDenied("所选客户不在当前账号的数据范围内。")
         return customer
 
-class FollowUpSerializer(serializers.ModelSerializer):
+class FollowUpSerializer(PrincipalCustomerMixin, serializers.ModelSerializer):
     next_follow_up_mode_display = serializers.CharField(source="get_next_follow_up_mode_display", read_only=True)
     customer_name = serializers.CharField(source="customer.name", read_only=True)
     contact_name = serializers.CharField(source="contact.name", read_only=True, default="")
@@ -2013,7 +2030,7 @@ def validate_sales_exchange_rate(attrs, source=None):
         raise serializers.ValidationError({"exchange_rate": "人民币单据的对人民币汇率必须为 1。"})
 
 
-class QuoteSerializer(serializers.ModelSerializer):
+class QuoteSerializer(PrincipalCustomerMixin, serializers.ModelSerializer):
     items = QuoteItemSerializer(many=True)
     buyer_tax_id = serializers.CharField(max_length=200, allow_blank=True, allow_null=True, required=False, trim_whitespace=False)
     # Lists and relationship filters must follow the live customer master record.
@@ -2163,7 +2180,7 @@ class OrderItemSerializer(TradeLineSerializerMixin, serializers.ModelSerializer)
         return data
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderSerializer(PrincipalCustomerMixin, serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
     customer_name = serializers.CharField(source="customer.name", read_only=True)
     customer_country = serializers.CharField(source="customer.country", read_only=True, default="")
@@ -2267,7 +2284,7 @@ class OrderSerializer(serializers.ModelSerializer):
             raise PermissionDenied("关联来源报价需要报价查看权限。")
         if request and attrs.get("items") and not user_can(request.user, "skus", "view"):
             raise PermissionDenied("订单明细需要 SKU 查看权限。")
-        if source_quote and customer and source_quote.customer_id != customer.id:
+        if source_quote and customer and customer.pk not in (source_quote.customer_id, source_quote.customer.merged_into_id):
             raise serializers.ValidationError({"customer": "从报价创建订单时，客户必须与来源报价一致。"})
         # A terminal quote is historical context only.  It cannot seed a new
         # order or replace the source quote of an existing draft order.
@@ -2513,7 +2530,7 @@ class OrderSerializer(serializers.ModelSerializer):
         return instance
 
 
-class TransactionSerializer(serializers.ModelSerializer):
+class TransactionSerializer(PrincipalCustomerMixin, serializers.ModelSerializer):
     supplier_name = serializers.CharField(source="supplier.name", read_only=True, default="")
     purchase_no = serializers.CharField(source="purchase_order.purchase_no", read_only=True, default="")
     allocations = serializers.SerializerMethodField()
@@ -2794,10 +2811,14 @@ class TransactionSerializer(serializers.ModelSerializer):
         customer = attrs.get("customer", getattr(self.instance, "customer", None))
         purchase_order = attrs.get("purchase_order", getattr(self.instance, "purchase_order", None))
         supplier = attrs.get("supplier", getattr(self.instance, "supplier", None))
-        if order and customer and order.customer_id != customer.id:
+        if order and customer and customer.pk not in (order.customer_id, order.customer.merged_into_id):
             raise serializers.ValidationError("流水选择的客户必须与订单客户一致。")
         if order and not customer:
-            attrs["customer"] = order.customer
+            principal = order.customer.merged_into if not self.instance and order.customer.merged_into_id else order.customer
+            from .sales_scope import customer_in_scope
+            if principal != order.customer and not customer_in_scope(principal.pk, serializer_user(self.context)):
+                raise PermissionDenied("主客户不在当前账号的数据范围内。")
+            attrs["customer"] = principal
         if purchase_order and supplier and purchase_order.supplier_id != supplier.id:
             raise serializers.ValidationError("流水选择的供应商必须与采购单供应商一致。")
         if purchase_order and not supplier:

@@ -1,4 +1,5 @@
 <script setup>
+import HistoryCustomerCreate from '../components/HistoryCustomerCreate.vue'
 import { downloadBlob } from '../utils/downloadBlob.js'
 import HistoryProductLinking from "../components/HistoryProductLinking.vue"
 import { useWorkspaceApi } from '../composables/useWorkspaceApi'
@@ -503,6 +504,13 @@ function review(group, decision) {
   groupAction(group, 'review', { decision, note: note.value, confirm_manual: confirmManual.value })
 }
 
+const unmatchedCustomerNames = computed(() => {
+  const unresolved = new Set(reviewResults.value.filter(result => result.sheet === '销售订单' &&
+    !result.related_records?.some(item => item.type === '客户' && item.match === '编码精确匹配')).map(result => Number(result.row)))
+  return [...new Set(sourceItems.value.filter(item => item.sheet === '销售订单' && unresolved.has(Number(item.row)))
+    .map(item => item.data.customer_name_snapshot?.trim()).filter(Boolean))]
+})
+
 function addMasterResolution(clear = false) {
   if (!ownsMapping.value || !mapping.value.note.trim() || (!clear && !mapping.value.target_code)) return
   groupAction(selectedGroup.value, 'resolve-master', {
@@ -631,7 +639,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
 
           <details ref="mappingPanel" class="takeover-resolution" v-if="canReview && !openingApplication && !['executed', 'rejected', 'withdrawn'].includes(selectedGroup.status)">
             <summary><span class="takeover-step-number">03</span>修正问题 · 关联现有主档</summary>
-            <p>仅选择已存在的客户、供应商或 SKU；不会自动新建主档。修正后需重新审核。</p>
+            <p>选择主档后，保存关联并重新预检。</p>
             <div class="takeover-form-grid">
               <label>工作表<input v-model="mapping.sheet" list="takeover-sheets" /></label>
               <datalist id="takeover-sheets"><option v-for="item in sourceItems" :key="item.sheet" :value="item.sheet" /></datalist>
@@ -641,6 +649,10 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
               <label class="wide">选择现有对象<select v-model="mapping.target_code" :disabled="saving || !mappingIdentity || masterLoading || !masterOptions.length" @change="mappingOwner = mappingIdentity"><option value="">{{ masterLoading ? '正在查找…' : masterOptions.length ? '请选择匹配对象' : '先搜索现有对象' }}</option><option v-for="item in masterOptions" :key="item.id" :value="item.code || item.sku">{{ masterLabel(item) }}</option></select></label>
               <label class="wide">关联依据<input v-model="mapping.note" :disabled="saving || !mappingIdentity" @input="mappingOwner = mappingIdentity" /></label>
             </div>
+            <HistoryCustomerCreate v-if="mappingKind === 'customer' && unmatchedCustomerNames.length && can('customers', 'create')"
+              :key="selectedGroup.id" :initial-names="unmatchedCustomerNames"
+              :endpoint="`/import/history-takeovers/${selected.id}/groups/${selectedGroup.id}/history-customers/`"
+              @created="loadApplications(selected.id, selectedGroup.id)" />
             <button class="takeover-secondary" :disabled="saving || !ownsMapping || !mapping.target_code || !mapping.note.trim()" @click="addMasterResolution()">保存关联并重新预检</button>
             <button class="takeover-secondary" :disabled="saving || !ownsMapping || !mapping.note.trim() || !selectedGroup.resolution_map?.[`${mapping.sheet}:${Number(mapping.row)}:${mapping.field}`]" @click="addMasterResolution(true)">清除关联并重新预检</button>
           </details>

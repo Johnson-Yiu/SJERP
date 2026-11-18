@@ -37,6 +37,7 @@ from .error_messages import CUSTOMER_NOT_FOUND_MESSAGE
 from .money import CURRENT_AMOUNT_CALCULATION_VERSION
 from .querysets import current_due_follow_ups, prefetch_purchase_related_orders
 from .permissions import HSCodeMaintenancePermission, ModuleActionPermission, OrganizationOverviewPermission, PermissionAdminOnly, QuoteExportPermission, _profile_for, effective_permission_matrix, has_all_permissions, is_permission_admin, user_can
+from .sales_scope import customer_member_ids
 from .sales_scope import allowed_employee_ids, data_scope_display, effective_data_scope, employee_profile_for, scope_customer_queryset, scope_customer_related_queryset
 from .quote_numbers import allocate_revision_quote_no
 from .quote_export import QuoteExportError, build_pi_export_payload
@@ -800,6 +801,81 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     search_fields = ["name", "code", "country", "owner", "source"]
     ordering_fields = ["name", "created_at", "updated_at", "next_follow_up"]
 
+    permission_action_map = {"history_customers": "create", "merge_preview": "update"}
+
+    @action(detail=False, methods=["post"], url_path="history-customers")
+    @transaction.atomic
+    def history_customers(self, request):
+        from .historical_customers import historical_customer_rows
+        return Response(historical_customer_rows(request))
+
+    def _customer_pair(self, request):
+        source_id, target_id = self.kwargs["pk"], request.data.get("target")
+        if not user_can(request.user, "customers", "update") or not user_can(request.user, "customers", "view"):
+            raise PermissionDenied()
+        try:
+            source_id, target_id = int(source_id), int(target_id)
+        except (TypeError, ValueError):
+            raise DRFValidationError("请选择来源客户和主客户。")
+        if source_id == target_id:
+            raise DRFValidationError("请选择其他客户。")
+        rows = scope_customer_queryset(Customer.objects.all(), request.user).filter(pk__in=[source_id, target_id])
+        pair = {row.pk: row for row in rows.select_for_update().order_by("pk")}
+        if len(pair) != 2:
+            raise NotFound(CUSTOMER_NOT_FOUND_MESSAGE)
+        return pair[source_id], pair[target_id]
+
+    @action(detail=True, methods=["post"], url_path="merge-preview")
+    @transaction.atomic
+    def merge_preview(self, request, pk=None):
+        source, target = self._customer_pair(request)
+        def describe(row):
+            return {"name": row.name, "code": row.code, "order_count": Order.objects.filter(customer=row).count() if user_can(request.user, "orders", "view") else None}
+        conflicts = [label for key, label in (("country", "国家/地区"), ("owner_profile_id", "负责人"), ("address", "地址"))
+                     if getattr(source, key) and getattr(target, key) and getattr(source, key) != getattr(target, key)]
+        return Response({"source": describe(source), "target": describe(target), "conflicts": conflicts})
+
+    @action(detail=True, methods=["post"], url_path="merge")
+    @transaction.atomic
+    def merge(self, request, pk=None):
+        from .models import CustomerMergeEvent
+        from .permissions import development_superadmin_enabled
+
+        source, target = self._customer_pair(request)
+        reason = request.data.get("reason")
+        if not isinstance(reason, str) or not reason.strip():
+            raise DRFValidationError("请填写归并或解除依据。")
+        undo = request.data.get("undo") is True
+        if undo:
+            if source.merged_into_id != target.pk:
+                raise DRFValidationError("当前归并关系已变化。")
+        elif source.merged_into_id or target.merged_into_id or source.merged_customers.exists():
+            raise DRFValidationError("请选择尚未归并的客户，来源客户不能包含其他已归并客户。")
+        before = snapshot(source)
+        source.merged_into = None if undo else target
+        source.save(update_fields=["merged_into", "updated_at"])
+        CustomerMergeEvent.objects.create(source=source, target=target, merged=not undo, reason=reason.strip(),
+                                          operator=request.user if request.user.is_authenticated else None,
+                                          development_identity=not request.user.is_authenticated and development_superadmin_enabled())
+        record_operation(request=request, instance=source, before=before, action_label="解除客户归并" if undo else "归并客户",
+                         metadata={"target_id": target.pk, "target_code": target.code, "target_name": target.name, "reason": reason.strip()})
+        return Response({"merged_into": source.merged_into_id})
+
+    def filter_queryset(self, queryset):
+        term = self.request.query_params.get("search", "").strip()
+        filtered = super().filter_queryset(queryset)
+        if self.action != "list" or not term:
+            return filtered
+        aliases = scope_customer_queryset(Customer.objects.filter(merged_into__isnull=False), self.request.user)
+        aliases = aliases.filter(Q(name__icontains=term) | Q(code__icontains=term))
+        return queryset.filter(Q(pk__in=filtered.values("pk")) | Q(pk__in=aliases.values("merged_into_id")))
+
+    @action(detail=True, methods=["get"], url_path="historical-names")
+    def historical_names(self, request, pk=None):
+        principal = self.get_object()
+        records = scope_customer_queryset(principal.merged_customers.all(), request.user)
+        return Response(list(records.order_by("name").values("id", "name", "code")))
+
     def get_object(self):
         try:
             return super().get_object()
@@ -816,7 +892,11 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         approved_changes = ContractChangeRequest.objects.filter(
             order_id=OuterRef("pk"), status="approved",
         ).values("order_id").annotate(total=Sum("amount_delta")).values("total")
-        formal_orders = Order.objects.filter(customer_id=OuterRef("pk"), status__in=formal_statuses).annotate(
+        visible_ids = scope_customer_queryset(Customer.objects.all(), self.request.user).values("pk")
+        grouped_orders = Order.objects.filter(customer_id__in=visible_ids, status__in=formal_statuses).annotate(
+            principal_id=Coalesce("customer__merged_into_id", "customer_id")
+        ).filter(principal_id=OuterRef("pk")).order_by()
+        formal_orders = grouped_orders.annotate(
             item_amount=Coalesce(Subquery(item_amount, output_field=MONEY), Decimal("0"), output_field=MONEY),
             approved_change_amount=Coalesce(Subquery(approved_changes, output_field=MONEY), Decimal("0"), output_field=MONEY),
         ).annotate(
@@ -825,15 +905,19 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 output_field=MONEY,
             ),
         )
-        sales = formal_orders.values("customer_id").annotate(total=Sum("sales_rmb")).values("total")
-        order_count = Order.objects.filter(customer_id=OuterRef("pk"), status__in=formal_statuses).values("customer_id").annotate(total=Count("id")).values("total")
-        contact_count = Contact.objects.filter(customer=OuterRef("pk")).values("customer").annotate(total=Count("id")).values("total")
+        sales = formal_orders.values("principal_id").annotate(total=Sum("sales_rmb")).values("total")
+        order_count = grouped_orders.values("principal_id").annotate(total=Count("id")).values("total")
+        contact_count = Contact.objects.filter(customer_id__in=visible_ids).annotate(
+            principal_id=Coalesce("customer__merged_into_id", "customer_id")
+        ).filter(principal_id=OuterRef("pk")).order_by().values("principal_id").annotate(total=Count("id")).values("total")
         queryset = Customer.objects.annotate(
             contact_count=Coalesce(Subquery(contact_count, output_field=IntegerField()), 0),
             order_count=Coalesce(Subquery(order_count, output_field=IntegerField()), 0),
             sales_amount=Coalesce(Subquery(sales, output_field=MONEY), Decimal("0"), output_field=MONEY),
         )
         queryset = scope_customer_queryset(queryset, self.request.user)
+        if self.action == "list":
+            queryset = queryset.filter(merged_into__isnull=True)
         for key in ("status", "country", "owner_profile"):
             value = self.request.query_params.get(key)
             if value:
@@ -895,6 +979,7 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def insights(self, request, pk=None):
         customer = self.get_object()
+        members = customer_member_ids(customer.pk, request.user)
         can_view_orders = user_can(request.user, "orders", "view")
         can_view_followups = user_can(request.user, "followups", "view")
         can_view_products = user_can(request.user, "products", "view")
@@ -902,13 +987,13 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         formal_statuses = ["confirmed", "production", "shipped", "completed"]
         yearly = []
         for target in ([year - 1, year] if can_view_orders else []):
-            orders = list(customer.orders.filter(status__in=formal_statuses, order_date__year=target).prefetch_related("items", "contract_changes"))
+            orders = list(Order.objects.filter(customer_id__in=members, status__in=formal_statuses, order_date__year=target).prefetch_related("items", "contract_changes"))
             yearly.append({
                 "year": target,
                 "orders": len(orders),
                 "sales": sum((order.total_amount * order.exchange_rate for order in orders), Decimal("0")),
             })
-        products = OrderItem.objects.filter(order__customer=customer, order__status__in=formal_statuses).values(
+        products = OrderItem.objects.filter(order__customer_id__in=members, order__status__in=formal_statuses).values(
             "sku__product__id", "sku__product__name"
         ).annotate(
             sales=Sum(ExpressionWrapper(amount_expression("") * F("order__exchange_rate"), output_field=MONEY)),
@@ -918,12 +1003,14 @@ class CustomerViewSet(AuditTrailMixin, viewsets.ModelViewSet):
             "customer": CustomerSerializer(customer, context={"request": request}).data,
             "yearly": yearly,
             "top_products": list(products) if can_view_orders and can_view_products else [],
-            "recent_orders": OrderSerializer(customer.orders.exclude(status="cancelled").order_by("-order_date", "-id").prefetch_related("items__sku__product")[:5], many=True, context={"request": request}).data if can_view_orders else [],
-            "recent_follow_ups": FollowUpSerializer(customer.follow_ups.select_related("contact")[:5], many=True, context={"request": request}).data if can_view_followups else [],
+            "recent_orders": OrderSerializer(Order.objects.filter(customer_id__in=members).exclude(status="cancelled").order_by("-order_date", "-id").prefetch_related("items__sku__product")[:5], many=True, context={"request": request}).data if can_view_orders else [],
+            "recent_follow_ups": FollowUpSerializer(FollowUp.objects.filter(customer_id__in=members).select_related("contact")[:5], many=True, context={"request": request}).data if can_view_followups else [],
         })
 
     def destroy(self, request, *args, **kwargs):
         customer = self.get_object()
+        if customer.merge_events.exists() or customer.incoming_merge_events.exists():
+            return Response({"detail": "该客户有归并审计记录，须保留客户档案。"}, status=400)
         if customer.new_product_reminders.exists() or customer.follow_ups.exists() or customer.quotes.exists() or customer.orders.exists() or customer.transactions.exists():
             return Response({"detail": "该客户已有业务历史，不能删除；请保留客户档案。"}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)
@@ -941,7 +1028,7 @@ class ContactViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
         if self.request.query_params.get("customer"):
             require_finance_permission(self.request.user, "customers", "view")
-            return qs.filter(customer_id=self.request.query_params["customer"])
+            return qs.filter(customer_id__in=customer_member_ids(self.request.query_params["customer"], self.request.user))
         return qs
 
     def destroy(self, request, *args, **kwargs):
@@ -986,7 +1073,7 @@ class FollowUpViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
         if self.request.query_params.get("customer"):
             require_finance_permission(self.request.user, "customers", "view")
-            qs = qs.filter(customer_id=self.request.query_params["customer"])
+            qs = qs.filter(customer_id__in=customer_member_ids(self.request.query_params["customer"], self.request.user))
         if self.request.query_params.get("due") == "true":
             qs = current_due_follow_ups(qs, today=timezone.localdate())
         for key in ("type", "owner"):
@@ -1768,7 +1855,7 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         qs = scope_customer_related_queryset(super().get_queryset(), self.request.user)
         if self.request.query_params.get("customer"):
-            qs = qs.filter(customer_id=self.request.query_params["customer"])
+            qs = qs.filter(customer_id__in=customer_member_ids(self.request.query_params["customer"], self.request.user))
         if self.request.query_params.get("status"):
             qs = qs.filter(status=self.request.query_params["status"])
         return qs.order_by("-updated_at", "-id")
@@ -1999,9 +2086,12 @@ class QuoteViewSet(AuditTrailMixin, viewsets.ModelViewSet):
                 {"detail": "该报价已拒绝或过期，请先创建新的修订版后再转为订单。"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        customer_id = quote.customer.merged_into_id or quote.customer_id
+        if not scope_customer_queryset(Customer.objects.all(), request.user).filter(pk=customer_id).exists():
+            raise PermissionDenied("主客户不在当前账号的数据范围内。")
         order_date = timezone.localdate()
         return Response({
-            "customer": quote.customer_id,
+            "customer": customer_id,
             "quote": quote.id,
             "order_date": order_date,
             "expected_ship_date": order_date + timedelta(days=quote.lead_time_days) if quote.lead_time_days is not None else None,
@@ -2342,7 +2432,7 @@ class OrderViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         if self.action == "list":
             qs = qs.filter(historical_only=True, status="historical") if historical_requested else qs.filter(historical_only=False)
         if self.request.query_params.get("customer"):
-            qs = qs.filter(customer_id=self.request.query_params["customer"])
+            qs = qs.filter(customer_id__in=customer_member_ids(self.request.query_params["customer"], self.request.user))
         if self.request.query_params.get("quote"):
             qs = qs.filter(quote_id=self.request.query_params["quote"])
         if self.request.query_params.get("product"):
@@ -3067,7 +3157,7 @@ class TransactionViewSet(AuditTrailMixin, viewsets.ModelViewSet):
         qs = scope_transaction_queryset(super().get_queryset(), self.request.user)
         if self.request.query_params.get("customer"):
             require_finance_permission(self.request.user, "customers", "view")
-            qs = qs.filter(customer_id=self.request.query_params["customer"])
+            qs = qs.filter(customer_id__in=customer_member_ids(self.request.query_params["customer"], self.request.user))
         if self.request.query_params.get("order"):
             require_finance_permission(self.request.user, "orders", "view")
             qs = qs.filter(order_id=self.request.query_params["order"])
@@ -4644,6 +4734,8 @@ def _import_row(entity, row, user=None):
         require_finance_permission(user, "customers", "update" if instance else "create")
         if instance and user is not None and not scope_customer_queryset(Customer.objects.filter(pk=instance.pk), user).exists():
             raise DjangoValidationError("该客户不在当前账号的数据范围内。")
+        if instance and instance.merged_into_id:
+            raise DjangoValidationError("该编号已归并，请使用主客户编号更新资料。")
         fields = ("name", "country", "source", "website", "address", "notes")
         payload = {field: row.get(field, "") for field in fields}
         serializer = CustomerSerializer(

@@ -327,7 +327,11 @@ def resolve_master(group, user, *, sheet, row_number, field, target_code, note, 
         raise TakeoverRuleError("请输入有效的来源行号。") from exc
     if clear == bool(target_code):
         raise TakeoverRuleError("请选择目标编码，或明确清除当前映射。")
-    if target_code and model.objects.filter(**{lookup: target_code}).count() != 1:
+    choices = model.objects.all()
+    if model is Customer:
+        from .sales_scope import scope_customer_queryset
+        choices = scope_customer_queryset(choices.filter(merged_into__isnull=True), user)
+    if target_code and choices.filter(**{lookup: target_code}).count() != 1:
         raise TakeoverRuleError("目标编码不存在或不唯一；本流程不会自动创建主档。")
     with transaction.atomic():
         group = HistoryTakeoverGroup.objects.select_for_update().select_related("application").get(pk=group.pk)

@@ -125,16 +125,19 @@ def _customer_context(pk, user=None):
     obj = queryset.filter(pk=pk).first()
     if obj is None:
         raise NotFound(CUSTOMER_NOT_FOUND_MESSAGE)
+    from django.db.models import Q
+    members = queryset.filter(Q(pk=obj.pk) | Q(merged_into=obj))
+    member_ids = members.values("pk")
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
-    formal_orders = list(obj.orders.filter(status__in=formal_statuses).prefetch_related("items", "contract_changes"))
+    formal_orders = list(Order.objects.filter(customer_id__in=member_ids).filter(status__in=formal_statuses).prefetch_related("items", "contract_changes"))
     sales_rmb = sum((order.total_amount * order.exchange_rate for order in formal_orders), Decimal("0"))
-    valid_items = OrderItem.objects.filter(order__customer=obj, order__status__in=formal_statuses)
+    valid_items = OrderItem.objects.filter(order__customer_id__in=member_ids, order__status__in=formal_statuses)
     context = {"user": user}
-    contacts = _target(ContactSerializer(obj.contacts.all(), many=True, context=context).data, "contacts")
-    orders = _target(OrderSerializer(obj.orders.prefetch_related("items__sku__product", "transactions"), many=True, context=context).data, "orders")
-    quotes = _target(QuoteSerializer(obj.quotes.prefetch_related("items__sku__product"), many=True, context=context).data, "quotes")
-    followups = _target(FollowUpSerializer(obj.follow_ups.select_related("contact"), many=True, context=context).data, "follow-ups")
-    cash = _target(TransactionSerializer(obj.transactions.select_related("order"), many=True, context=context).data, "transactions")
+    contacts = _target(ContactSerializer(Contact.objects.filter(customer_id__in=member_ids), many=True, context=context).data, "contacts")
+    orders = _target(OrderSerializer(Order.objects.filter(customer_id__in=member_ids).prefetch_related("items__sku__product", "transactions"), many=True, context=context).data, "orders")
+    quotes = _target(QuoteSerializer(Quote.objects.filter(customer_id__in=member_ids).prefetch_related("items__sku__product"), many=True, context=context).data, "quotes")
+    followups = _target(FollowUpSerializer(FollowUp.objects.filter(customer_id__in=member_ids).select_related("contact"), many=True, context=context).data, "follow-ups")
+    cash = _target(TransactionSerializer(Transaction.objects.filter(customer_id__in=member_ids).select_related("order"), many=True, context=context).data, "transactions")
     purchases = _target([{
         "id": item.order_id, "order_no": item.order.order_no, "order_date": item.order.order_date,
         "sku_code": item.sku.sku if user_can(user, "skus", "view") else "",
@@ -143,7 +146,7 @@ def _customer_context(pk, user=None):
     } for item in valid_items.select_related("order", "sku__product").order_by("-order__order_date")], "orders")
     return {
         "entity": "customers", "title": obj.name, "subtitle": f"{obj.code} · {display_country(obj.country) or '未填写国家/地区'}", "badge": customer_status_display(obj.status),
-        "info": [["负责人", obj.owner or "—"], ["业务区域", obj.region or "—"], ["来源", obj.source or "—"], ["网站", obj.website or "—"], ["地址", obj.address or "—"], ["备注", obj.notes or "—"]],
+        "info": [*([["资料状态", "历史待整理"]] if obj.history_pending else []), ["负责人", obj.owner or "—"], ["业务区域", obj.region or "—"], ["来源", obj.source or "—"], ["网站", obj.website or "—"], ["地址", obj.address or "—"], ["备注", obj.notes or "—"]],
         "metrics": [["累计销售额", sales_rmb, "rmb"], ["订单", len(formal_orders), "number"], ["报价", len(quotes), "number"], ["下次跟进", obj.next_follow_up or "未安排", "date"]],
         "sections": [
             _section("followups", "跟进记录", "follow-ups", [["followed_at", "时间", "datetime"], ["subject", "主题"], ["content", "跟进记录 / 解决方案", "excerpt"], ["result", "客户回复 / 客户疑问", "excerpt"], ["type_display", "方式"], ["next_follow_up", "下次跟进", "date"]], followups),

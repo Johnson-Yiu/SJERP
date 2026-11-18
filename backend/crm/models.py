@@ -494,6 +494,8 @@ class Customer(TimestampedModel):
         ("customer", "正式客户"),
         ("company", "公司客户"),
     ]
+    history_pending = models.BooleanField("历史待整理", default=False)
+    merged_into = models.ForeignKey("self", null=True, blank=True, on_delete=models.PROTECT, related_name="merged_customers")
     name = models.CharField("客户名称", max_length=200, unique=True)
     code = models.CharField("客户编号", max_length=30, unique=True)
     country = models.CharField("国家/地区", max_length=100, blank=True)
@@ -515,6 +517,36 @@ class Customer(TimestampedModel):
 
     def __str__(self):
         return self.name
+
+
+def require_principal_for_new_document(document):
+    if document._state.adding and document.customer_id:
+        # Serialize new documents with merge/undo. The caller holds an atomic block.
+        principal = Customer.objects.select_for_update().only("merged_into_id").get(pk=document.customer_id)
+        if principal.merged_into_id:
+            from rest_framework.exceptions import ValidationError as RequestValidationError
+            raise RequestValidationError({"customer": "客户已归并，请使用主客户建立新单据。"})
+
+
+class CustomerMergeEvent(models.Model):
+    objects = OperationLogQuerySet.as_manager()
+
+    source = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="merge_events")
+    target = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name="incoming_merge_events")
+    merged = models.BooleanField()
+    reason = models.TextField()
+    operator = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.PROTECT)
+    development_identity = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+    def save(self, *args, **kwargs):
+        if not self._state.adding:
+            raise ValidationError("归并审计只允许追加。")
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError("归并审计不可删除。")
 
 
 class CustomerCodeSequence(models.Model):
@@ -1049,6 +1081,7 @@ class Quote(TimestampedModel):
     @transaction.atomic
     def save(self, *args, **kwargs):
         from .party_snapshot_guard import guard_formal_party_snapshot
+        require_principal_for_new_document(self)
         guard_formal_party_snapshot(self, ('customer_id', 'buyer_company_name', 'recipient_name',
             'buyer_address', 'buyer_email', 'buyer_phone'), kwargs.get('update_fields'))
         if self._state.adding and not self._pi_template_supplied:
@@ -1259,6 +1292,7 @@ class Order(TimestampedModel):
     @transaction.atomic
     def save(self, *args, **kwargs):
         from .party_snapshot_guard import guard_formal_party_snapshot
+        require_principal_for_new_document(self)
         guard_formal_party_snapshot(self, ('customer_id', 'customer_name_snapshot', 'customer_country_snapshot',
             'customer_address_snapshot', 'customer_contact_name_snapshot', 'customer_phone_snapshot',
             'customer_email_snapshot'), kwargs.get('update_fields'))
@@ -2178,6 +2212,11 @@ class Transaction(TimestampedModel):
 
     class Meta:
         ordering = ["-transaction_date", "-id"]
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        require_principal_for_new_document(self)
+        return super().save(*args, **kwargs)
 
     @property
     def rmb_reference_amount(self):

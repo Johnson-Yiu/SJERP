@@ -291,7 +291,7 @@ class HistoryTakeoverGroupActionView(APIView):
                     group, request.user, sheet=str(data.get("sheet") or ""),
                     row_number=data.get("row"), field=str(data.get("field") or ""),
                     target_code=str(data.get("target_code") or ""), note=str(data.get("note") or ""),
-                    clear=data.get("clear") is True,
+                    clear=data.get("clear") is True, equivalence_evidence=str(data.get("equivalence_evidence") or "").strip(),
                 )
             elif operation == "execute":
                 group, reused = execute_group(group, request.user)

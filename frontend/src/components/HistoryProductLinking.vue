@@ -23,6 +23,8 @@ const operation = ref('link')
 const target = ref('')
 const reason = ref('')
 const verifiedSpecification = ref('')
+const confirmEquivalence = ref(false)
+const evidence = ref('')
 const saveRule = ref(false)
 const preview = ref(null)
 const conflicts = ref([])
@@ -33,6 +35,8 @@ const notice = ref('')
 const dialog = ref(null)
 const dialogOpen = ref(false)
 const targetRequired = computed(() => ['link', 'change'].includes(operation.value))
+const selectedHistory = computed(() => selected.value.length === 1 ? rows.value.find(row => row.id === selected.value[0]) : null)
+const selectedSku = computed(() => targets.value.find(sku => sku.id === target.value))
 const targetLabel = sku => [sku.code, sku.name, sku.specification, ...Object.values(sku.parameters || {}), sku.unit].filter(Boolean).join(' · ')
 let session = 0
 let searchVersion = 0
@@ -77,13 +81,15 @@ async function openDialog() {
   target.value = ''
   reason.value = ''
   verifiedSpecification.value = ''
+  confirmEquivalence.value = false
+  evidence.value = ''
   saveRule.value = false
   operation.value = 'link'
   dialog.value.showModal()
   dialogOpen.value = true
   if (targetRequired.value) await searchTargets()
 }
-watch([operation, target, reason, saveRule, verifiedSpecification], () => { preview.value = null; conflicts.value = [] })
+watch([operation, target, reason, saveRule, verifiedSpecification, confirmEquivalence, evidence], () => { preview.value = null; conflicts.value = [] })
 
 async function run(action) {
   if (busy.value) return
@@ -93,7 +99,7 @@ async function run(action) {
   conflicts.value = []
   try {
     const payload = action === 'preview'
-      ? { ids: selected.value, operation: operation.value, target: targetRequired.value ? target.value : null, reason: reason.value, save_rule: targetRequired.value && saveRule.value, ...(targetRequired.value && verifiedSpecification.value ? { verified_specification: verifiedSpecification.value } : {}) }
+      ? { ids: selected.value, operation: operation.value, target: targetRequired.value ? target.value : null, reason: reason.value, save_rule: targetRequired.value && saveRule.value && !confirmEquivalence.value, ...(targetRequired.value && confirmEquivalence.value ? { equivalence_evidence: evidence.value } : {}), ...(targetRequired.value && !confirmEquivalence.value && verifiedSpecification.value ? { verified_specification: verifiedSpecification.value } : {}) }
       : { token: preview.value.token }
     const { data } = await api.post(root + action + '/', payload)
     if (generation !== session) return
@@ -170,7 +176,7 @@ onBeforeUnmount(() => { session++; searchVersion++ })
         <label class="check"><input v-model="selected" type="checkbox" :value="row.id" /><strong>{{ row.name }}</strong></label>
         <span>{{ [row.code, row.specification, row.quantity + ' ' + row.unit, row.currency && row.currency + ' ' + formatMoney(row.amount)].filter(Boolean).join(' · ') }}</span>
         <span>{{ row.source_system }} · {{ row.order_number }} · {{ row.source_number }}</span>
-        <span>{{ labels[row.status] }}<RouterLink v-if="row.sku" :to="{ path: '/skus', query: { detail: row.sku.id } }"> · {{ row.sku.code }} {{ row.sku.name }}</RouterLink></span>
+        <span>{{ row.equivalence_status === 'verified' ? '已人工核实关联' : row.equivalence_status === 'stale' ? 'SKU 资料已变更，须重新核实' : labels[row.status] }}<RouterLink v-if="row.sku" :to="{ path: '/skus', query: { detail: row.sku.id } }"> · {{ row.sku.code }} {{ row.sku.name }}</RouterLink></span>
         <button type="button" @click="emit('open-source', row.application, row.group)">查看原资料</button>
       </li>
     </ul>
@@ -186,14 +192,25 @@ onBeforeUnmount(() => { session++; searchVersion++ })
       <template v-if="targetRequired">
         <form class="actions" @submit.prevent="searchTargets"><label>搜索正式 SKU<input v-model.trim="targetSearch" /></label><button type="submit" :disabled="busy">搜索</button></form>
         <label>正式 SKU<select v-model="target" aria-label="正式 SKU" :disabled="busy"><option value="">请选择</option><option v-for="sku in targets" :key="sku.id" :value="sku.id">{{ targetLabel(sku) }}</option></select></label>
-        <label class="check"><input v-model="saveRule" type="checkbox" :disabled="busy" />保存为本来源的下次匹配候选</label>
+        <div v-if="selectedSku && selectedHistory">
+          <p>历史商品 · {{ selectedHistory.code }} {{ selectedHistory.name }}</p>
+          <p>正式 SKU · {{ selectedSku.code }} {{ selectedSku.name }}</p>
+          <p>规格 · {{ selectedHistory.specification || '缺失' }} → {{ selectedSku.specification || '缺失' }}<strong v-if="selectedHistory.specification !== selectedSku.specification"> · 原文不同</strong></p>
+          <p>基础单位 · {{ selectedHistory.unit || '缺失' }} → {{ selectedSku.unit }}<strong v-if="selectedHistory.unit !== selectedSku.unit"> · 单位不同</strong></p>
+          <p v-if="Object.keys(selectedSku.parameters || {}).length">正式 SKU 参数 · {{ Object.values(selectedSku.parameters).join(' · ') }}</p>
+        </div>
+        <label class="check"><input v-model="saveRule" type="checkbox" :disabled="busy || confirmEquivalence" />保存为本来源的下次匹配候选</label>
       </template>
-      <label v-if="targetRequired">补核规格（仅原规格缺失时）<input v-model.trim="verifiedSpecification" maxlength="1000" :disabled="busy" /></label>
-      <label>原因{{ operation === 'link' && !verifiedSpecification ? '（选填）' : '（必填）' }}<textarea v-model.trim="reason" :disabled="busy" maxlength="1000" rows="2" /></label>
+      <label v-if="targetRequired && selected.length === 1" class="check"><input v-model="confirmEquivalence" type="checkbox" :disabled="busy" />人工核实为同一产品</label>
+      <label v-if="targetRequired && confirmEquivalence">凭证或资料引用<input v-model.trim="evidence" maxlength="1000" :disabled="busy" /></label>
+      <label v-if="targetRequired && !confirmEquivalence">补核规格（仅原规格缺失时）<input v-model.trim="verifiedSpecification" maxlength="1000" :disabled="busy" /></label>
+      <label>原因{{ operation === 'link' && !verifiedSpecification && !confirmEquivalence ? '（选填）' : '（必填）' }}<textarea v-model.trim="reason" :disabled="busy" maxlength="1000" rows="2" /></label>
       <p v-if="error" role="alert">{{ error }}</p>
-      <ul v-if="conflicts.length"><li v-for="(row, index) in conflicts" :key="index">{{ row.source_number }} {{ row.reason }}</li></ul>
+      <ul v-if="conflicts.length"><li v-for="(row, index) in conflicts" :key="index">{{ row.source_number }} {{ row.reason }}
+      </li></ul>
       <section v-if="preview" aria-label="关联预览">
         <h4>影响 {{ preview.count }} 条明细</h4>
+        <p v-if="confirmEquivalence">将保存人工核实依据与凭证引用。</p>
         <p v-if="preview.target">目标 SKU　{{ targetLabel(preview.target) }}</p>
         <p v-for="(value, unit) in preview.quantities" :key="unit">数量 {{ value }} {{ unit || '单位待核实' }}</p>
         <p v-for="(value, currency) in preview.amounts" :key="currency">商品金额 {{ currency }} {{ formatMoney(value) }}</p>
@@ -202,7 +219,7 @@ onBeforeUnmount(() => { session++; searchVersion++ })
       </div>
       <div class="actions dialog-actions">
         <button type="button" :disabled="busy" @click="dialog.close()">关闭</button>
-        <button type="button" :disabled="busy || (targetRequired && !target) || ((operation !== 'link' || Boolean(verifiedSpecification)) && !reason)" @click="run('preview')">生成预览</button>
+        <button type="button" :disabled="busy || (targetRequired && !target) || ((operation !== 'link' || Boolean(verifiedSpecification)) && !reason) || (targetRequired && confirmEquivalence && (!reason || !evidence || selected.length !== 1))" @click="run('preview')">生成预览</button>
         <button v-if="preview" class="confirm" type="button" :disabled="busy" @click="run('apply')">{{ busy ? '处理中…' : '确认保存' }}</button>
       </div>
     </dialog>

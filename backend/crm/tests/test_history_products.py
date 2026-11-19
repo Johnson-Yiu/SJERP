@@ -24,6 +24,7 @@ ROOT = "/api/import/history-products/"
 
 class HistoryProductFixture(HistoryTakeoverFixtureMixin):
     long_product_name = False
+    historical_specification = "24W"
 
     def setUp(self):
         super().setUp()
@@ -36,7 +37,7 @@ class HistoryProductFixture(HistoryTakeoverFixtureMixin):
         rows["销售明细"] = [
             {**original, "source_line_id": str(number), "sku_code": name, "sku_name_snapshot": name,
              "quantity_base": "2", "unit_price": price, "product_category_snapshot": "旧分类",
-             "specification_snapshot": "24W", "cost_price_snapshot": "9", "cost_currency_snapshot": "CNY"}
+             "specification_snapshot": self.historical_specification, "cost_price_snapshot": "9", "cost_currency_snapshot": "CNY"}
             for number, name, price in ((1, "A", "50"), (2, "A1", "25"), (3, "A2灯", "25"))
         ]
         if self.long_product_name:
@@ -281,6 +282,76 @@ class HistoricalProductLinkingTests(HistoryProductFixture, TestCase):
         else:
             self.assertEqual(reviewed.status_code, 400)
         self.assertEqual(ArchivedHistoryLine.objects.count(), 4)
+
+
+class HistoricalSkuEquivalenceTests(HistoryProductFixture, TestCase):
+    historical_specification = "24V 暖白"
+
+    def test_review_is_row_specific_audited_and_invalidated_on_sku_change(self):
+        from crm.history_products import link_specification_is_current
+
+        target = self.target()
+        target.specification = "DC24V 3000K"
+        target.save(update_fields=["specification"])
+        initial = self.report("original")
+        rows = self.sales_ids[:1]
+        options = {"reason": "合成产品检验报告", "equivalence_evidence": "REF-SKU-24"}
+        self.assertEqual(self.preview(rows, target).status_code, 409)
+        self.assertEqual(self.preview(self.sales_ids, target, **options).status_code, 400)
+        for value, unit in [("DC12V 3000K", "pcs"), ("DC24V 3000K", "m")]:
+            target.specification, target.unit = value, unit
+            target.save(update_fields=["specification", "unit"])
+            self.assertEqual(self.preview(rows, target, **options).status_code, 409)
+        target.specification, target.unit = "DC24V 3000K", "pcs"
+        target.save(update_fields=["specification", "unit"])
+        preview = self.preview(rows, target, **options)
+        self.assertEqual(preview.status_code, 200, preview.data)
+        for _ in range(2):
+            self.assertEqual(self.submit(preview).data, {"updated": 1})
+        source = self.sources.get(pk=rows[0])
+        self.assertTrue(link_specification_is_current(source, target, "pcs", self.historical_specification, source.product_link.version))
+        current = self.report("original")
+        self.assertEqual(current["by_category"], initial["by_category"])
+        self.assertEqual(current["by_sku"], initial["by_sku"])
+        self.assertEqual(self.report("linked")["pending_count"], 2)
+        target.parameter_values = {"功率": "10W"}
+        target.save(update_fields=["parameter_values"])
+        self.assertFalse(link_specification_is_current(source, target, "pcs", self.historical_specification, source.product_link.version))
+        response = self.client.get(ROOT)
+        line = next(row for row in response.data["results"] if row["id"] == source.pk)
+        self.assertEqual(line["equivalence_status"], "stale")
+        self.assertEqual(line["specification"], self.historical_specification)
+
+    def test_explicit_dc_prefix_matches_plain_voltage(self):
+        from crm.history_products import specification_matches
+
+        target = self.target()
+        target.specification = "24V 3000K"
+        self.assertTrue(specification_matches(target, "pcs", "DC24V 3000K"))
+
+
+class TakeoverSkuEquivalenceTests(HistoryTakeoverFixtureMixin, TestCase):
+    def test_preimport_evidence_keeps_original_specification(self):
+        rows = self.source_rows(order_state="open", supplier_order_state="open")
+        for sheet in ("履约记录", "库存盘点", "收付款计划", "收付款流水"):
+            rows[sheet] = []
+        rows["销售明细"][0].update(sku_code="LEGACY-24", specification_snapshot="24V 暖白")
+        self.sku.specification = "DC24V 3000K"
+        self.sku.save(update_fields=["specification"])
+        application, group, _ = self.application_and_group(rows)
+        root = f"/api/import/history-takeovers/{application.pk}/groups/{group.pk}/"
+        resolution = {"sheet": "销售明细", "row": 2, "field": "sku_code", "target_code": self.sku.sku, "note": "原检验报告"}
+        self.assertEqual(self.client.post(root + "resolve-master/", resolution, format="json").status_code, 400)
+        response = self.client.post(root + "resolve-master/", dict(resolution, equivalence_evidence="REF-24"), format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        approved = self.client.post(root + "review/", {"decision": "approve", "note": "原单核实", "confirm_manual": True}, format="json")
+        self.assertEqual(approved.status_code, 200, (approved.data, group.preflight_result))
+        executed = self.client.post(root + "execute/", {}, format="json")
+        self.assertEqual(executed.status_code, 200, executed.data)
+        source = group.source_records.get(record_type="销售明细")
+        self.assertEqual(source.source_snapshot["source"]["sku_code"], "LEGACY-24")
+        self.assertEqual(source.source_snapshot["source"]["specification_snapshot"], "24V 暖白")
+        self.assertEqual(source.product_link.sku_id, self.sku.pk)
 
 
 @skipUnless(connection.vendor == "postgresql", "Requires PostgreSQL row locks")

@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 from .history_products import SOURCE_MODELS, apply_links, filter_source_lines, line_summary, load_source_lines, preview_links, sku_summary
 from .history_takeover_api import HistoryTakeoverPermission, _visible_applications
-from .models import HistoryTakeoverSourceRecord, SKU
+from .models import HistoryTakeoverSourceRecord, SKU, HistoryTakeoverEvent
 from .permissions import user_can
 from .reporting import safe_csv
 
@@ -19,6 +19,7 @@ class PreviewInput(serializers.Serializer):
     operation = serializers.ChoiceField(choices=["link", "change", "unlink", "review"])
     target = serializers.IntegerField(min_value=1, required=False, allow_null=True)
     reason = serializers.CharField(max_length=1000, required=False, allow_blank=True)
+    equivalence_evidence = serializers.CharField(max_length=1000, required=False, allow_blank=True)
     verified_specification = serializers.CharField(max_length=1000, required=False, allow_blank=True)
     save_rule = serializers.BooleanField(default=False)
 
@@ -75,7 +76,21 @@ class HistoryProductsView(APIView):
             sources = sources[offset:offset + 50]
         sources = list(sources)
         lines = load_source_lines(sources)
-        rows = [line_summary(source, lines.get((source.target_model, source.target_id))) for source in sources]
+        links = {source.pk: source.product_link for source in sources if hasattr(source, "product_link")}
+        audits = {}
+        if links:
+            events = HistoryTakeoverEvent.objects.filter(
+                group_id__in={source.group_id for source in sources}, event_type="history_product_linked",
+                details__source_id__in=list(links),
+            ).values_list("details", flat=True)
+            for audit in events:
+                link = links[audit["source_id"]]
+                if audit.get("version") == link.version and audit.get("after") == link.sku_id:
+                    audits[audit["source_id"]] = audit
+        rows = [
+            line_summary(source, lines.get((source.target_model, source.target_id)), audit=audits.get(source.pk))
+            for source in sources
+        ]
         if operation == "export":
             return self.export(rows)
         return Response({"count": count, "results": rows})
@@ -106,7 +121,7 @@ class HistoryProductsView(APIView):
             payload = PreviewInput(data=request.data)
             payload.is_valid(raise_exception=True)
             data = payload.validated_data
-            result = preview_links(sources, request.user, sorted(set(data["ids"])), data["operation"], data.get("target"), data.get("reason", ""), data["save_rule"], data.get("verified_specification", ""))
+            result = preview_links(sources, request.user, sorted(set(data["ids"])), data["operation"], data.get("target"), data.get("reason", ""), data["save_rule"], data.get("verified_specification", ""), data.get("equivalence_evidence", ""))
         elif operation == "apply":
             payload = SubmitInput(data=request.data)
             payload.is_valid(raise_exception=True)

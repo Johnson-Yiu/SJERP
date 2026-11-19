@@ -14,7 +14,7 @@ from django.utils import timezone
 
 from .history_import_preflight import SHEET_SCHEMAS, _read_workbook, _related_master, _storage_limit_errors, preflight_rows
 from .history_product_models import ArchivedHistoryLine, HistoryProductLink
-from .history_products import sku_summary, specification_matches
+from .history_products import equivalence_is_current, sku_summary, specification_conflict, specification_matches
 from .models import (
     Customer,
     HistoryTakeoverApplication,
@@ -27,7 +27,7 @@ from .models import (
     SKU,
     Supplier,
 )
-from .permissions import development_superadmin_enabled
+from .permissions import development_superadmin_enabled, user_can
 
 
 class TakeoverRuleError(ValueError):
@@ -127,6 +127,17 @@ def _fingerprint(group_rows, preflight_payload):
     return _json_hash({"rows": group_rows, "results": group_results, "masters": _master_ids(preflight_payload)})
 
 
+def _sku_resolution(value):
+    return (value["code"], value) if isinstance(value, dict) else (value, {})
+
+
+def _resolution_matches(sku, data, audit):
+    unit, specification = data.get("base_unit_snapshot"), data.get("specification_snapshot")
+    if audit:
+        return equivalence_is_current(sku, unit, specification, audit)
+    return specification_matches(sku, unit, specification)
+
+
 def _group_preflight(group, user):
     rows = copy.deepcopy(group.source_rows)
     for key, target_code in (group.resolution_map or {}).items():
@@ -141,6 +152,7 @@ def _group_preflight(group, user):
         if target is None:
             raise TakeoverRuleError("主档关联修正行不存在。")
         if field == "sku_code":
+            target_code, _audit = _sku_resolution(target_code)
             target["original_sku_code"] = target["data"].get(field)
             target["confirmed_sku_code"] = str(target_code).strip()
         if sheet not in {"销售明细", "采购明细"} or field != "sku_code":
@@ -151,11 +163,14 @@ def _group_preflight(group, user):
         if sheet not in {"销售明细", "采购明细"} or f"{sheet}:{number}:sku_code" not in group.resolution_map:
             continue
         data = next(item["data"] for item in rows[sheet] if item["row"] == number)
-        sku = SKU.objects.filter(sku=group.resolution_map[f"{sheet}:{number}:sku_code"], active=True).first()
-        if not sku or not specification_matches(sku, data.get("base_unit_snapshot"), data.get("specification_snapshot")):
+        code, audit = _sku_resolution(group.resolution_map[f"{sheet}:{number}:sku_code"])
+        sku = SKU.objects.filter(sku=code, active=True).first()
+        if not sku or not _resolution_matches(sku, data, audit):
             raise TakeoverRuleError("已选 SKU 不可用或与历史基础单位、规格不一致，请重新核实。")
         result["product_link_status"] = "已确认"
         result["confirmed_sku_id"] = sku.pk
+        if audit:
+            result["sku_equivalence_fingerprint"] = _json_hash(audit)
         result["related_records"].append(_related_master("SKU", sku, "导入前人工确认"))
     return payload, rows
 
@@ -304,7 +319,7 @@ def _refresh_application_status(application):
     application.save(update_fields=["status", "updated_at"])
 
 
-def resolve_master(group, user, *, sheet, row_number, field, target_code, note, clear=False):
+def resolve_master(group, user, *, sheet, row_number, field, target_code, note, clear=False, equivalence_evidence=""):
     if sheet not in {"销售订单", "采购订单", "销售明细", "采购明细", "履约记录", "库存盘点", "收付款流水"}:
         raise TakeoverRuleError("该工作表不支持主档关联修正。")
     expected = {
@@ -343,8 +358,23 @@ def resolve_master(group, user, *, sheet, row_number, field, target_code, note, 
         key = f"{sheet}:{int(row_number)}:{field}"
         mapping = dict(group.resolution_map or {})
         before = mapping.get(key) or rows["data"].get(field)
+        audit = {}
+        if equivalence_evidence:
+            if not user_can(user, "skus", "view"):
+                raise TakeoverRuleError("核实规格需要 SKU 查看权限。")
+            if clear or field != "sku_code" or sheet not in {"销售明细", "采购明细"} or len(equivalence_evidence) > 1000:
+                raise TakeoverRuleError("请逐条填写适用的规格核实凭证。")
+            sku = SKU.objects.select_for_update().filter(sku=target_code, active=True).first()
+            original = rows["data"].get("specification_snapshot")
+            if not sku:
+                raise TakeoverRuleError("目标 SKU 已停用或不存在。")
+            conflict = specification_conflict(sku, rows["data"].get("base_unit_snapshot"), original)
+            if conflict:
+                raise TakeoverRuleError(conflict)
+            audit = {"code": target_code, "equivalence_evidence": equivalence_evidence,
+                     "reason": str(note).strip(), "original_specification": original, "after_sku": sku_summary(sku)}
         if target_code:
-            mapping[key] = target_code
+            mapping[key] = audit or target_code
         elif key in mapping:
             mapping.pop(key)
         else:
@@ -358,7 +388,7 @@ def resolve_master(group, user, *, sheet, row_number, field, target_code, note, 
         group.preflight_result = _json_safe({"status": preflight_status, "results": result_rows})
         group.source_fingerprint = _fingerprint(group.source_rows, payload)
         group.save(update_fields=["resolution_map", "status", "approved_fingerprint", "review_note", "preflight_result", "source_fingerprint", "updated_at"])
-        _event(group.application, group, "master_resolution_added" if target_code else "master_resolution_cleared", user, {"sheet": sheet, "row": int(row_number), "field": field, "before": before, "target_code": str(target_code).strip(), "note": str(note).strip()})
+        _event(group.application, group, "master_resolution_added" if target_code else "master_resolution_cleared", user, {"sheet": sheet, "row": int(row_number), "field": field, "before": before, "target_code": str(target_code).strip(), "note": str(note).strip(), **audit})
         _refresh_application_status(group.application)
     return group
 
@@ -609,16 +639,16 @@ def execute_group(group, user):
         entry = next(item for item in rows[record.record_type] if _record_source_id(record.record_type, item["data"]) == record.source_record_id)
         if f"{record.record_type}:{entry['row']}:sku_code" not in group.resolution_map:
             continue
-        sku = SKU.objects.select_for_update().filter(
-            sku=group.resolution_map[f"{record.record_type}:{entry['row']}:sku_code"], active=True,
-        ).first()
-        if not sku or not specification_matches(sku, original.get("base_unit_snapshot"), original.get("specification_snapshot")):
+        code, audit = _sku_resolution(group.resolution_map[f"{record.record_type}:{entry['row']}:sku_code"])
+        sku = SKU.objects.select_for_update().filter(sku=code, active=True).first()
+        if not sku or not _resolution_matches(sku, original, audit):
             raise TakeoverRuleError("已选 SKU 停用或基础单位与历史资料不一致，请重新核实。")
         HistoryProductLink.objects.create(source=record, sku=sku)
         _event(group.application, group, "history_product_linked", user, {
             "source_id": record.pk, "source_system": record.source_system, "source_number": record.source_record_id,
             "before": None, "after": sku.pk, "after_sku": sku_summary(sku), "version": 1,
             "operation": "archive", "reason": resolution_notes.get((record.record_type, entry["row"], "sku_code"), ""),
+            "equivalence_evidence": audit.get("equivalence_evidence", ""),
             "original_specification": original.get("specification_snapshot"), "request": _json_hash([group.pk, group.approved_fingerprint]),
         })
 

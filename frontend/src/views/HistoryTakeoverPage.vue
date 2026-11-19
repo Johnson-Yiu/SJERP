@@ -37,10 +37,10 @@ const templateLoading = ref(false)
 const error = ref('')
 const note = ref('')
 const confirmManual = ref(false)
-const emptyMapping = () => ({ sheet: '销售订单', row: '', field: 'customer_code', target_code: '', note: '' })
+const emptyMapping = () => ({ sheet: '销售订单', row: '', field: 'customer_code', target_code: '', note: '', equivalence_evidence: '' })
 const mapping = ref(emptyMapping())
 const mappingOwner = ref(null)
-const mappingGuard = useUnsavedChangesGuard({ data: () => [mapping.value.target_code, mapping.value.note] })
+const mappingGuard = useUnsavedChangesGuard({ data: () => [mapping.value.target_code, mapping.value.note, mapping.value.equivalence_evidence] })
 mappingGuard.markClean()
 const mappingKind = ref('customer')
 const masterSearch = ref('')
@@ -184,6 +184,8 @@ const mappingIdentity = computed(() => {
   return JSON.stringify([selected.value.id, selected.value.source_sha256, selectedGroup.value.id,
     source.sheet, Number(source.row), source.data, mapping.value.field])
 })
+const mappingSource = computed(() => sourceItems.value.find(item => item.sheet === mapping.value.sheet && Number(item.row) === Number(mapping.value.row))?.data)
+const mappingSku = computed(() => mappingKind.value === 'sku' ? masterOptions.value.find(item => (item.code || item.sku) === mapping.value.target_code) : null)
 const ownsMapping = computed(() => Boolean(mappingIdentity.value && mappingOwner.value === mappingIdentity.value))
 
 function clearMasterSearch() {
@@ -197,6 +199,7 @@ watch(mappingIdentity, () => {
   mappingOwner.value = null
   mapping.value.target_code = ''
   mapping.value.note = ''
+  mapping.value.equivalence_evidence = ''
   clearMasterSearch()
   mappingGuard.markClean()
 }, { flush: 'sync' })
@@ -514,7 +517,7 @@ const unmatchedCustomerNames = computed(() => {
 function addMasterResolution(clear = false) {
   if (!ownsMapping.value || !mapping.value.note.trim() || (!clear && !mapping.value.target_code)) return
   groupAction(selectedGroup.value, 'resolve-master', {
-    ...mapping.value, row: Number(mapping.value.row), ...(clear === true ? { target_code: '', clear: true } : {}),
+    ...mapping.value, row: Number(mapping.value.row), ...(clear === true ? { target_code: '', clear: true, equivalence_evidence: '' } : {}),
   })
 }
 function chooseProductCandidate(result, candidate) {
@@ -647,6 +650,13 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
               <label>对象类型<select v-model="mappingKind" @change="changeMappingKind"><option value="customer">客户</option><option value="supplier">供应商</option><option value="sku">SKU</option></select></label>
               <label>搜索现有对象<input v-model="masterSearch" :placeholder="mappingKind === 'sku' ? '输入 SKU 编号或名称' : '输入名称或业务编号'" @input="searchMasters" /></label>
               <label class="wide">选择现有对象<select v-model="mapping.target_code" :disabled="saving || !mappingIdentity || masterLoading || !masterOptions.length" @change="mappingOwner = mappingIdentity"><option value="">{{ masterLoading ? '正在查找…' : masterOptions.length ? '请选择匹配对象' : '先搜索现有对象' }}</option><option v-for="item in masterOptions" :key="item.id" :value="item.code || item.sku">{{ masterLabel(item) }}</option></select></label>
+              <div v-if="mappingSource && mappingSku" class="wide">
+                <p>历史商品 · {{ skuBusinessLabel(mappingSource) }} · {{ mappingSource.specification_snapshot || '规格缺失' }} · {{ mappingSource.base_unit_snapshot || '单位缺失' }}</p>
+                <p>正式 SKU · {{ masterLabel(mappingSku) }} · {{ mappingSku.specification || '规格缺失' }} · {{ mappingSku.unit }}</p>
+                <p v-if="mappingSource.specification_snapshot !== mappingSku.specification">规格原文不同</p>
+                <p v-if="mappingSource.base_unit_snapshot !== mappingSku.unit">基础单位不同，请先核实单位</p>
+              </div>
+              <label v-if="mappingKind === 'sku' && ['销售明细', '采购明细'].includes(mapping.sheet)" class="wide">人工核实为同一产品时填写凭证或资料引用<input v-model.trim="mapping.equivalence_evidence" maxlength="1000" :disabled="saving || !mappingIdentity" @input="mappingOwner = mappingIdentity" /></label>
               <label class="wide">关联依据<input v-model="mapping.note" :disabled="saving || !mappingIdentity" @input="mappingOwner = mappingIdentity" /></label>
             </div>
             <HistoryCustomerCreate v-if="mappingKind === 'customer' && unmatchedCustomerNames.length && can('customers', 'create')"
@@ -845,6 +855,7 @@ function formatCount(value) { return Number(value || 0).toLocaleString('zh-CN') 
               <template v-if="event.event_type === 'history_product_linked'">
                 <p>来源 {{ event.details?.source_system }} · {{ event.details?.source_number }}</p>
                 <p>正式 SKU {{ auditedSku(event.details?.before_sku, event.details?.before) }} → {{ auditedSku(event.details?.after_sku, event.details?.after) }}</p>
+                <p v-if="event.details?.equivalence_evidence">规格等价凭证 · {{ event.details.equivalence_evidence }}</p>
                 <p v-if="event.details?.verified_specification">补核规格 {{ event.details.verified_specification }}</p>
                 <p>原因 {{ event.details?.reason || '未记录' }}</p>
               </template>

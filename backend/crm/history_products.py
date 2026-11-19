@@ -157,12 +157,17 @@ def inventory_source_summary(source):
     }
 
 
-def line_summary(source, line, *, include_sku=True):
+def line_summary(source, line, *, include_sku=True, audit=None):
     if line is None and source and source.record_type == "库存盘点":
         return inventory_source_summary(source)
     facts = source_fields(source, line)
     sku, version, state = link_state(source, line) if include_sku else (None, 0, None)
     document = getattr(line, "order", None) or line.purchase_order
+    equivalence_status = ""
+    if sku and state == "linked" and audit and audit.get("equivalence_evidence"):
+        equivalence_status = "verified" if sku.active and equivalence_is_current(
+            sku, facts.get("base_unit_snapshot"), facts.get("specification_snapshot"), audit
+        ) else "stale"
     return {
         "id": source.pk if source else None,
         "source_system": source.source_system if source else "",
@@ -170,6 +175,7 @@ def line_summary(source, line, *, include_sku=True):
         "batch": source.group.source_group_id if source else "",
         "group": source.group_id if source else None,
         "application": source.group.application_id if source else None,
+        "equivalence_status": equivalence_status,
         "kind": "sales" if hasattr(document, "order_no") else "purchase",
         "order_number": getattr(document, "order_no", None) or document.purchase_no,
         "date": document.order_date.isoformat(),
@@ -225,6 +231,7 @@ def rule_key(source_system, record_type, code, specification, unit):
 def _normalize_specification(value):
     # Normalize only whitespace before a Latin unit suffix. Preserve case and
     # separators, so e.g. 24 W never matches 24 kW or 24 w.
+    value = re.sub(r"(?<![A-Za-z0-9])DC[ \t]*(?=\d+(?:\.\d+)?[ \t]*V(?![A-Za-z]))", "", str(value or ""))
     return re.sub(r"(?<=\d)[ \t]+(?=(?:kW|W|mA|A|V|Hz|lm|mm|cm|m|kg|g)(?![A-Za-z]))", "", str(value or "").strip())
 
 
@@ -241,18 +248,59 @@ def specification_matches(sku, unit, specification, verified_specification=""):
     return bool(candidate and current and candidate == _normalize_specification(current))
 
 
+def specification_conflict(sku, unit, original):
+    if not unit or sku.unit != unit:
+        return "基础单位不一致或缺失，请先核实单位。"
+    if not str(original or "").strip() or not (sku.specification.strip() or sku.parameter_values):
+        return "规格资料不足，请先补核。"
+    # Compare only quantities whose units are explicit and whose context is unambiguous.
+    pattern = r"(?<![A-Za-z0-9./+-])((?i:DC|AC))?\s*(\d+(?:\.\d+)?)\s*(mV|kV|V|mA|A|kW|W|K)(?![A-Za-z]|\s*/)"
+    units = {"mV": ("电压", ".001"), "V": ("电压", "1"), "kV": ("电压", "1000"),
+             "mA": ("电流", ".001"), "A": ("电流", "1"), "W": ("功率", "1"),
+             "kW": ("功率", "1000"), "K": ("色温", "1")}
+
+    def quantities(values):
+        found = defaultdict(set)
+        for value in values:
+            for kind, number, suffix in re.findall(pattern, str(value)):
+                name, factor = units[suffix]
+                found[name].add(Decimal(number) * Decimal(factor))
+                if kind and name == "电压":
+                    found["供电类型"].add(kind.upper())
+        return found
+
+    left = quantities([original])
+    right = quantities([sku.specification, *sku.parameter_values.values()])
+    for key in left:
+        if key in right and left[key] != right[key]:
+            return f"{key}存在明确差异，请走追溯更正流程。"
+    return ""
+
+
+def equivalence_is_current(sku, unit, original, audit):
+    evidence = audit.get("equivalence_evidence")
+    return bool(evidence and audit.get("reason") and audit.get("original_specification") == original
+                and audit.get("after_sku") == sku_summary(sku)
+                and not specification_conflict(sku, unit, original))
+
+
+def _link_audit(source, sku, version):
+    if not source or not version:
+        return {}
+    return HistoryTakeoverEvent.objects.filter(
+        group_id=source.group_id, event_type="history_product_linked",
+        details__source_id=source.pk, details__after=sku.pk, details__version=version,
+    ).values_list("details", flat=True).first() or {}
+
+
 def link_specification_is_current(source, sku, unit, original_specification, version):
-    verified_specification = ""
-    if not str(original_specification or "").strip():
-        details = HistoryTakeoverEvent.objects.filter(
-            group_id=source.group_id, event_type="history_product_linked",
-            details__source_id=source.pk, details__after=sku.pk, details__version=version,
-        ).values_list("details", flat=True).first()
-        verified_specification = (details or {}).get("verified_specification", "")
-    return specification_matches(sku, unit, original_specification, verified_specification)
+    details = _link_audit(source, sku, version)
+    if details.get("equivalence_evidence"):
+        return equivalence_is_current(sku, unit, original_specification, details)
+    return specification_matches(sku, unit, original_specification, details.get("verified_specification", ""))
 
 
-def _preview_rows(sources, target, operation, verified_specification=""):
+def _preview_rows(sources, target, operation, verified_specification="", equivalence_evidence=""):
     rows, conflicts = [], []
     lines = load_source_lines(sources)
     for source in sources:
@@ -267,8 +315,13 @@ def _preview_rows(sources, target, operation, verified_specification=""):
             conflicts.append({**row, "reason": "已有其他关联，请使用修改关联。"})
         elif operation in {"change", "unlink"} and not row["sku"]:
             conflicts.append({**row, "reason": "该明细当前没有关联。"})
-        elif target and not specification_matches(target, row["unit"], row["specification"], verified_specification):
-            conflicts.append({**row, "reason": "基础单位或规格资料不足或不一致，请先标记待核实。"})
+        elif target and (equivalence_evidence or not specification_matches(target, row["unit"], row["specification"], verified_specification)):
+            conflict = specification_conflict(target, row["unit"], row["specification"])
+            if equivalence_evidence and not conflict:
+                rows.append(row)
+            else:
+                conflicts.append({**row, "target": sku_summary(target), "can_verify_equivalence": not conflict,
+                                  "reason": conflict or "规格不同，须人工核实并填写依据和凭证引用。"})
         else:
             rows.append(row)
     return rows, conflicts
@@ -286,7 +339,7 @@ def _target(target_id, *, lock=False):
     return sku
 
 
-def preview_links(sources, user, ids, operation, target_id, reason, save_rule=False, verified_specification=""):
+def preview_links(sources, user, ids, operation, target_id, reason, save_rule=False, verified_specification="", equivalence_evidence=""):
     if operation not in {"link", "change", "unlink", "review"}:
         raise ValidationError("请选择关联操作。")
     if operation in {"link", "change"} and target_id is None:
@@ -301,7 +354,9 @@ def preview_links(sources, user, ids, operation, target_id, reason, save_rule=Fa
     target = _target(target_id)
     if verified_specification and (not target or not reason):
         raise ValidationError("人工补核需要填写正式 SKU、核实规格和依据。")
-    rows, conflicts = _preview_rows(selected, target, operation, verified_specification)
+    if equivalence_evidence and (not target or not reason or verified_specification or len(selected) != 1 or save_rule):
+        raise ValidationError("人工确认规格等价须逐条核实，并填写依据和凭证引用。")
+    rows, conflicts = _preview_rows(selected, target, operation, verified_specification, equivalence_evidence)
     if save_rule and not conflicts:
         if not target:
             raise ValidationError("请选择要保存为候选的 SKU。")
@@ -317,7 +372,7 @@ def preview_links(sources, user, ids, operation, target_id, reason, save_rule=Fa
             amounts[row["currency"]] += Decimal(row["amount"])
     preview = {
         "user": user.pk, "operation": operation, "target": sku_summary(target), "reason": reason,
-        "rows": rows, "save_rule": save_rule, "verified_specification": verified_specification,
+        "rows": rows, "save_rule": save_rule, "verified_specification": verified_specification, "equivalence_evidence": equivalence_evidence,
     }
     return {
         "rows": rows, "count": len(rows), "quantities": quantities, "amounts": amounts,
@@ -355,7 +410,8 @@ def apply_links(sources, user, token):
     if sku_summary(target) != old_target:
         return {"conflicts": [{"reason": "目标 SKU 资料已变化，请重新预览。"}]}
     verified_specification = preview.get("verified_specification", "")
-    rows, conflicts = _preview_rows(selected, target, operation, verified_specification)
+    equivalence_evidence = preview.get("equivalence_evidence", "")
+    rows, conflicts = _preview_rows(selected, target, operation, verified_specification, equivalence_evidence)
     conflicts.extend({**row, "reason": "原关联或来源资料已变化。"} for row in rows if row != expected[row["id"]])
     if conflicts:
         return {"conflicts": conflicts}
@@ -375,7 +431,7 @@ def apply_links(sources, user, token):
             )
             if rule.sku_id != target.pk:
                 raise ValidationError("此来源已有不同的候选规则，请取消保存候选后重新预览。")
-        if before == after and needs_review == (row["status"] == "review") and not saved_rule and not verified_specification:
+        if before == after and needs_review == (row["status"] == "review") and not saved_rule and not verified_specification and not equivalence_evidence:
             continue
         version = row["version"] + 1
         if source.record_type == "库存盘点":
@@ -393,6 +449,7 @@ def apply_links(sources, user, token):
                 "saved_candidate_rule": saved_rule, "before_sku": row["sku"],
                 "after_sku": sku_summary(target) if target else row["sku"] if needs_review else None,
                 "original_specification": row["specification"], "verified_specification": verified_specification,
+                "equivalence_evidence": equivalence_evidence,
             })
         count += 1
     for group_id, source_ids in changed_sources.items():

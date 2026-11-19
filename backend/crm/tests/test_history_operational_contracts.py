@@ -27,6 +27,9 @@ from crm.tests.test_history_takeover import HistoryTakeoverFixtureMixin
 class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
     def source_rows(self, **kwargs):
         rows = super().source_rows(**kwargs)
+        if self._testMethodName == "test_equivalence_revalidated_before_execution":
+            for sheet in ("销售明细", "采购明细"):
+                rows[sheet][0]["specification_snapshot"] = "24 W 暖白"
         if self._testMethodName.startswith("test_snapshot_quantity_"):
             fractional = self._testMethodName.endswith("_fractional")
             rows["销售明细"][0].update(quantity_base="60", unit_price="0.335", trade_quantity="6",
@@ -109,13 +112,20 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
         self.addCleanup(media_settings.disable)
         self.sources = {(item.record_type, item.source_record_id): item for item in self.group.source_records.all()}
         ids = [item.pk for item in self.sources.values() if item.record_type in {"销售明细", "采购明细"}]
-        preview = self.client.post("/api/import/history-products/preview/", {
-            "ids": ids, "target": self.sku.pk, "operation": "link",
-            "verified_specification": "24 W", "reason": "合成旧检验单上的规格",
-        }, format="json")
-        self.assertEqual(preview.status_code, 200, preview.data)
-        saved = self.client.post("/api/import/history-products/apply/", {"token": preview.data["token"]}, format="json")
-        self.assertEqual(saved.status_code, 200, saved.data)
+        if self._testMethodName == "test_equivalence_revalidated_before_execution":
+            confirmations = [
+                {"ids": [source_id], "equivalence_evidence": f"合成检验报告 ITEM-{source_id}"}
+                for source_id in ids
+            ]
+        else:
+            confirmations = [{"ids": ids, "verified_specification": "24 W"}]
+        for confirmation in confirmations:
+            preview = self.client.post("/api/import/history-products/preview/", {
+                "target": self.sku.pk, "operation": "link", "reason": "合成旧检验单上的规格", **confirmation,
+            }, format="json")
+            self.assertEqual(preview.status_code, 200, preview.data)
+            saved = self.client.post("/api/import/history-products/apply/", {"token": preview.data["token"]}, format="json")
+            self.assertEqual(saved.status_code, 200, saved.data)
         sale = self.sources[("销售订单", "SO-HT-1")]
         purchase = self.sources[("采购订单", "PO-HT-1")]
         self.payload = {"cutover_date": "2025-01-01", "reason": "核对合成合同、履约和未结款",
@@ -212,6 +222,14 @@ class HistoricalOperationalContractTests(HistoryTakeoverFixtureMixin, TestCase):
             contracts.execute(self.group.pk, self.maker)
         report = inspect_cost_integrity()
         self.assertEqual(report["counts"], {"confirmed_mismatch": 1, "needs_review": 0})
+
+    def test_equivalence_revalidated_before_execution(self):
+        self.approve_contracts()
+        self.sku.parameter_values = {"色温": "3000K"}
+        self.sku.save(update_fields=["parameter_values"])
+        with self.assertRaisesMessage(APIException, "请重新核实历史商品关联"):
+            contracts.execute(self.group.pk, self.maker)
+        self.assertFalse(self.group.operational_contracts.exists())
 
     def test_unlink_invalidates_unexecuted_contract_approval(self):
         self.approve_contracts()

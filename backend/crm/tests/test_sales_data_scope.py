@@ -693,6 +693,26 @@ class SalesDataScopeTests(TestCase):
         self.assertEqual(response.data["unit_id"], self.sales.pk)
         self.assertEqual(response.data["unit_name"], self.sales.name)
 
+    def test_merged_entry_preserves_customer_scope(self):
+        from crm.sales_scope import customer_member_ids
+
+        self.customer_a.merged_into = self.customer_c
+        self.customer_a.save(update_fields=["merged_into"])
+        self.login(self.employee_a)
+        path = f"/api/context/customers/{self.customer_a.pk}/"
+        response = self.client.get(path)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["is_merged"])
+        self.assertIsNone(response.data["principal_customer"])
+        self.assertEqual(list(customer_member_ids(self.customer_a.pk, self.employee_a.user)), [self.customer_a.pk])
+        self.assertFalse(customer_member_ids(self.customer_c.pk, self.employee_a.user).exists())
+
+        self.login(self.all_user)
+        response = self.client.get(path)
+        self.assertEqual(response.data["principal_customer"]["id"], self.customer_c.pk)
+        self.assertEqual(set(customer_member_ids(self.customer_a.pk, self.all_user.user)),
+                         {self.customer_a.pk, self.customer_c.pk})
+
     def test_customer_detail_and_context_share_safe_not_found_semantics(self):
         expected = {"detail": "客户不存在或当前账号无权访问。"}
         scoped_cases = [

@@ -87,7 +87,7 @@ const hasManagement = (entity) => Boolean(resourceConfigs[entity] || documentEnt
 const canManage = computed(() => canCreateRelated(currentEntity.value, activeSection.value))
 const relatedCreateModules = { contacts: 'contacts', 'follow-ups': 'followups', quotes: 'quotes', orders: 'orders', 'purchase-orders': 'purchases', skus: 'skus', 'product-parameters': 'parameters', 'product-certificates': 'certificates' }
 const isRoot = computed(() => currentEntity.value === props.entity && String(currentId.value) === String(props.id))
-const showRelatedCreate = computed(() => canManage.value && can(relatedCreateModules[activeSection.value?.entity], 'create') && !(isRoot.value && currentEntity.value === 'customers' && ['followups', 'quotes'].includes(activeSection.value?.key)))
+const showRelatedCreate = computed(() => !data.value?.is_merged && canManage.value && can(relatedCreateModules[activeSection.value?.entity], 'create') && !(isRoot.value && currentEntity.value === 'customers' && ['followups', 'quotes'].includes(activeSection.value?.key)))
 const isCustomerRoot = computed(() => isRoot.value && currentEntity.value === 'customers' && route.path === '/customers')
 const analysisDimensions = { customers: 'customer', products: 'product', skus: 'sku' }
 const analysisModules = { customers: 'customers', products: 'products', skus: 'skus' }
@@ -490,7 +490,7 @@ watch(() => data.value?.title, title => { if (!props.nestedProductDetail && work
               <span v-if="currentEntity === 'follow-ups'">跟进详情</span><span v-else-if="isContactDetail">联系人详情</span>
               <span v-else-if="isProduct">产品管理 / 产品详情</span><span v-else-if="isMovementDetail">库存流水详情</span><span v-else-if="isSupplierDetail">供应商详情</span><span v-else-if="isCustomerRoot">客户详情</span><span v-else-if="!stack.length">关联详情</span>
             </div>
-            <div class="detail-actions">
+            <div v-if="!data.is_merged" class="detail-actions">
               <button v-if="isRoot && currentEntity === 'customers' && can('followups', 'create')" class="btn btn-secondary" @click="openCustomerFollowUp"><Plus :size="14" /> 新增跟进</button>
               <button v-if="isRoot && currentEntity === 'customers' && hasRelationCustomerId && can('quotes', 'create')" class="btn btn-secondary" @click="openQuoteForCustomer(relationCustomerId)"><Plus :size="14" /> 新建报价</button>
               <RouterLink v-if="canViewBusinessAnalysis" class="btn btn-secondary" :to="analysisTarget"><ExternalLink :size="14" /> 查看经营分析</RouterLink>
@@ -508,7 +508,14 @@ watch(() => data.value?.title, title => { if (!props.nestedProductDetail && work
             <RouterLink v-if="can('inventory', 'view')" class="btn btn-secondary" :to="{ path: '/inventory', query: { detail: String(currentId) } }">打开库存工作台</RouterLink>
             <span>在库存工作台查看库存、采购与销售关联记录。</span>
           </nav>
-          <CustomerMerge v-if="currentEntity === 'customers'" :key="currentId" :customer-id="currentId" :history-pending="data.history_pending" @changed="emit('changed')" />
+          <section v-if="currentEntity === 'customers' && data.is_merged" class="detail-info">
+            <h3>客户已归并</h3>
+            <RouterLink v-if="data.principal_customer" :to="{ path: '/customers', query: { detail: data.principal_customer.id } }">
+              查看主客户 · {{ data.principal_customer.name }}
+            </RouterLink>
+            <p v-else>当前账号无法查看主客户。</p>
+          </section>
+          <CustomerMerge v-if="currentEntity === 'customers' && !data.is_merged" :key="currentId" :customer-id="currentId" :history-pending="data.history_pending" @changed="emit('changed')" />
           <p v-if="currentEntity === 'product-certificates' && certificateRecord" class="certificate-detail-status"><CertificateExpiryBadge :certificate="certificateRecord" /> <span>按系统日期和有效期判断；不代替证书真实性核验。</span></p><section v-if="!isProduct" class="detail-info"><h3>基础信息</h3><div class="info-grid"><div v-for="item in detailInfo" :key="item[0]"><small>{{ item[0] }}</small><div v-if="item[2] === 'richtext'" class="richtext-view" v-html="richText(item[1])" /><a v-else-if="isSupplierDetail && item[0] === '店铺链接' && supplierStoreUrl(item[1])" :href="supplierStoreUrl(item[1])" target="_blank" rel="noopener noreferrer">{{ item[1] }}</a><template v-else-if="currentEntity === 'product-certificates' && item[0] === '文件链接'"><a v-if="certificateFileUrl(item[1])" :href="certificateFileUrl(item[1])" target="_blank" rel="noopener noreferrer">查看文件链接</a><span v-else>{{ item[1] === '—' ? '未提供文件' : '链接格式不可用' }}</span><small>文件内容与访问权限需另行核验</small></template><span v-else>{{ item[1] }}</span><small v-if="currentEntity === 'customers' && item[0] === '下次跟进'" class="computed-field-note">随最新跟进自动更新</small></div></div></section>
           <section v-if="isSupplierDetail" class="supplier-payment-info" aria-label="供应商付款条款"><article v-for="item in supplierPaymentInfo" :key="item[0]" :class="{ execution: item[0] === '系统执行付款规则' }"><h3>{{ item[0] }}</h3><p>{{ item[1] }}</p><small>{{ item[0] === '系统执行付款规则' ? '用于新采购的付款计划；已保存采购保留原快照。' : '仅供沟通参考，不生成付款计划。' }}</small></article></section><details v-if="isSupplierDetail && supplierNotes && supplierNotes !== '—'" class="supplier-notes"><summary>其他备注</summary><p>{{ supplierNotes }}</p></details><nav v-if="isSupplierDetail" class="supplier-relations" aria-label="供应商关联入口"><button v-if="can('purchases','view') && data.sections.some(s=>s.key==='purchases')" class="btn btn-secondary" @click="selectSection('purchases')">采购单</button><button v-if="data.sections.some(s=>s.key==='supplier-skus')" class="btn btn-secondary" @click="selectSection('supplier-skus')">供应商 SKU 档案</button><p>具体 SKU 的供应来源在供货档案中维护。</p></nav><div :class="{ 'sku-create-workspace': isSkuSection && skuCreateOpen }">
           <SKUPage v-if="isSkuSection && skuCreateOpen" embedded inline :initial-product="currentId" @close="skuCreateOpen = false" @saved="skuCreated" />

@@ -127,6 +127,7 @@ def _customer_context(pk, user=None):
         raise NotFound(CUSTOMER_NOT_FOUND_MESSAGE)
     from django.db.models import Q
     members = queryset.filter(Q(pk=obj.pk) | Q(merged_into=obj))
+    principal = queryset.filter(pk=obj.merged_into_id, merged_into__isnull=True).first() if obj.merged_into_id else None
     member_ids = members.values("pk")
     formal_statuses = ["confirmed", "production", "shipped", "completed"]
     formal_orders = list(Order.objects.filter(customer_id__in=member_ids).filter(status__in=formal_statuses).prefetch_related("items", "contract_changes"))
@@ -137,7 +138,7 @@ def _customer_context(pk, user=None):
     orders = _target(OrderSerializer(Order.objects.filter(customer_id__in=member_ids).prefetch_related("items__sku__product", "transactions"), many=True, context=context).data, "orders")
     quotes = _target(QuoteSerializer(Quote.objects.filter(customer_id__in=member_ids).prefetch_related("items__sku__product"), many=True, context=context).data, "quotes")
     followups = _target(FollowUpSerializer(FollowUp.objects.filter(customer_id__in=member_ids).select_related("contact"), many=True, context=context).data, "follow-ups")
-    cash = _target(TransactionSerializer(Transaction.objects.filter(customer_id__in=member_ids).select_related("order"), many=True, context=context).data, "transactions")
+    cash = _target(TransactionSerializer(scope_transaction_queryset(Transaction.objects.filter(customer_id__in=member_ids).select_related("order"), user), many=True, context=context).data, "transactions")
     purchases = _target([{
         "id": item.order_id, "order_no": item.order.order_no, "order_date": item.order.order_date,
         "sku_code": item.sku.sku if user_can(user, "skus", "view") else "",
@@ -145,6 +146,8 @@ def _customer_context(pk, user=None):
         "unit_price": item.unit_price, "currency": item.order.currency, "amount": item.amount,
     } for item in valid_items.select_related("order", "sku__product").order_by("-order__order_date")], "orders")
     return {
+        "is_merged": bool(obj.merged_into_id),
+        "principal_customer": {"id": principal.pk, "name": principal.name} if principal else None,
         "entity": "customers", "history_pending": obj.history_pending and not obj.merged_into_id, "title": obj.name, "subtitle": f"{obj.code} · {display_country(obj.country) or '未填写国家/地区'}", "badge": customer_status_display(obj.status),
         "info": [*([["资料状态", "历史待整理"]] if obj.history_pending else []), ["负责人", obj.owner or "—"], ["业务区域", obj.region or "—"], ["来源", obj.source or "—"], ["网站", obj.website or "—"], ["地址", obj.address or "—"], ["备注", obj.notes or "—"]],
         "metrics": [["累计销售额", sales_rmb, "rmb"], ["订单", len(formal_orders), "number"], ["报价", len(quotes), "number"], ["下次跟进", members.exclude(next_follow_up=None).order_by("next_follow_up").values_list("next_follow_up", flat=True).first() or "未安排", "date"]],

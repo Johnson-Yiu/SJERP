@@ -96,8 +96,13 @@ def customer_member_ids(customer_id, user):
     from .models import Customer
 
     visible = scope_customer_queryset(Customer.objects.all(), user)
-    principal = visible.filter(pk=customer_id).values("pk")
-    return visible.filter(Q(pk__in=principal) | Q(merged_into_id__in=principal)).values("pk")
+    entry = visible.filter(pk=customer_id)
+    eligible_target = visible.filter(pk__in=entry.values("merged_into_id"), merged_into__isnull=True)
+    principal = visible.filter(
+        Q(pk__in=eligible_target.values("pk")) |
+        Q(pk__in=entry.exclude(merged_into_id__in=eligible_target.values("pk")).values("pk"))
+    ).values("pk")
+    return visible.filter(Q(pk__in=principal) | Q(merged_into_id__in=principal)).values_list("pk", flat=True)
 
 
 def scope_customer_related_queryset(queryset, user, relation="customer"):

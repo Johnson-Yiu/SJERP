@@ -320,7 +320,51 @@ class HistoricalSkuEquivalenceTests(HistoryProductFixture, TestCase):
         response = self.client.get(ROOT)
         line = next(row for row in response.data["results"] if row["id"] == source.pk)
         self.assertEqual(line["equivalence_status"], "stale")
+        self.assertEqual(line["status"], "review")
+        self.assertEqual(self.client.get(ROOT, {"status": "linked"}).data["count"], 0)
+        self.assertEqual(self.client.get(ROOT, {"status": "review"}).data["count"], 1)
+        export = self.client.get(ROOT + "export/", {"status": "review"})
+        entries = list(csv.DictReader(io.StringIO(export.content.decode("utf-8-sig"))))
+        self.assertEqual([(row["原编码"], row["关联状态"]) for row in entries], [(line["code"], "需要重新核实")])
+        self.assertTrue(all(row["id"] != target.pk for row in self.report("linked")["by_sku"]))
+        before = self.report("linked")["merchandise_rmb"]
+        renewed = self.preview(rows, target, operation="change", **options)
+        self.assertEqual(renewed.status_code, 200, renewed.data)
+        self.assertEqual(self.submit(renewed).data, {"updated": 1})
+        report = self.report("linked")
+        self.assertEqual(report["merchandise_rmb"], before)
+        self.assertTrue(any(row["id"] == target.pk for row in report["by_sku"]))
+        self.assertEqual(self.client.get(ROOT, {"status": "review"}).data["count"], 0)
         self.assertEqual(line["specification"], self.historical_specification)
+
+    def test_electrical_compounds_are_checked_as_complete_values(self):
+        from crm.history_products import specification_conflict
+
+        sku = self.target()
+        cases = [
+            ("12W/m", "18W/m", "功率密度"),
+            ("12W/m", "12W", "计量口径"),
+            ("24V/12W", "12V/12W", "电压"),
+            ("DC12/24V", "DC24V", "电压"),
+            ("DC12–24V", "DC24V", "电压"),
+            ("12-24V", "DC24V", "电压"),
+            ("AC/DC24V", "DC24V", "供电类型"),
+            ("DC??V 暖白", "DC24V", "资料不足"),
+            ("24V/12", "24V", "资料不足"),
+            ("12VA", "12W", "资料不足"),
+            ("24V/12W/m²", "24V/12W/m", "资料不足"),
+            ("DC12–24V", "12-24V", ""),
+            ("DC12/24V", "DC24/12V", ""),
+            ("24V 暖白", "DC24V 3000K", ""),
+        ]
+        for original, current, expected in cases:
+            with self.subTest(original=original, current=current):
+                sku.specification = current
+                reason = specification_conflict(sku, "pcs", original)
+                if expected:
+                    self.assertIn(expected, reason)
+                else:
+                    self.assertEqual(reason, "")
 
     def test_explicit_dc_prefix_matches_plain_voltage(self):
         from crm.history_products import specification_matches

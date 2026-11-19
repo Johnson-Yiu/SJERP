@@ -67,6 +67,43 @@ describe('HistoryProductLinking', () => {
     wrapper.unmount()
   })
 
+  it('shows a retained stale link in the review filter and refreshes after reconfirming', async () => {
+    let result = { ...line, sku: target, status: 'review', equivalence_status: 'stale' }
+    api.get.mockImplementation(path => Promise.resolve({
+      data: path.endsWith('/targets/') ? [target] : { count: 1, results: [result] },
+    }))
+    const wrapper = mount(HistoryProductLinking, { global: { stubs: ['RouterLink'] } })
+    await flushPromises()
+    expect(wrapper.text()).toContain('须重新核实')
+    await wrapper.findAll('select').find(select => select.find('option[value=review]').exists()).setValue('review')
+    await wrapper.get('form').trigger('submit')
+    await flushPromises()
+    expect(api.get).toHaveBeenLastCalledWith('/import/history-products/', { params: { status: 'review', page: 1 } })
+
+    await wrapper.get('input[type="checkbox"]').setValue(true)
+    await button(wrapper, '处理所选商品').trigger('click')
+    await flushPromises()
+    const dialog = wrapper.get('dialog')
+    await dialog.findAll('select')[0].setValue('change')
+    await dialog.get('select[aria-label="正式 SKU"]').setValue('2')
+    await dialog.findAll('input[type="checkbox"]')[1].setValue(true)
+    await dialog.get('textarea').setValue('重新核对原凭证')
+    expect(button(wrapper, '生成预览').attributes('disabled')).toBeDefined()
+    await dialog.findAll('input[type="text"], input:not([type])').at(-1).setValue('REF-24')
+    await button(wrapper, '生成预览').trigger('click')
+    await flushPromises()
+    expect(api.post).toHaveBeenLastCalledWith('/import/history-products/preview/', expect.objectContaining({
+      operation: 'change', equivalence_evidence: 'REF-24',
+    }))
+    result = { ...result, status: 'linked', equivalence_status: 'verified' }
+    api.get.mockResolvedValueOnce({ data: { count: 0, results: [] } })
+    api.post.mockResolvedValueOnce({ data: { updated: 1 } })
+    await button(wrapper, '确认保存').trigger('click')
+    await flushPromises()
+    expect(wrapper.text()).toContain('没有符合条件的历史商品')
+    wrapper.unmount()
+  })
+
   it('discards an old account response and its selection', async () => {
     const wrapper = mount(HistoryProductLinking, { global: { stubs: ['RouterLink'] } })
     await open(wrapper)

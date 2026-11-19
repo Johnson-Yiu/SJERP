@@ -6,7 +6,7 @@ from hashlib import sha256
 
 from django.core import signing
 from django.db import transaction
-from django.db.models import Case, CharField, F, OuterRef, Q, Subquery, Value, When
+from django.db.models import Case, CharField, Exists, F, OuterRef, Q, Subquery, Value, When
 from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast, Coalesce
 from rest_framework.exceptions import ValidationError
@@ -99,14 +99,18 @@ def filter_source_lines(sources, filters):
             default=legacy_sku, output_field=CharField(),
         )).filter(history_sku__iexact=filters["target"])
 
-    if filters.get("status") == "review":
-        return sources.filter(product_link__needs_review=True)
+    if not filters.get("status"):
+        return sources
+    stale = Q(pk__in=stale_equivalence_ids(sources)) if filters["status"] in {"linked", "review"} else Q(pk__in=[])
+    review = Q(product_link__needs_review=True) | stale
+    if filters["status"] == "review":
+        return sources.filter(review)
     legacy = Q(product_link__isnull=True, target_model__in=LEGACY_MODELS)
     linked = Q(product_link__needs_review=False, product_link__sku__isnull=False) | legacy
     if filters.get("status") == "linked":
-        return sources.filter(linked)
+        return sources.filter(linked).exclude(stale)
     if filters.get("status") == "pending":
-        return sources.exclude(linked | Q(product_link__needs_review=True))
+        return sources.exclude(linked | review)
     return sources
 
 
@@ -141,6 +145,38 @@ def source_fields(source, line):
     }
 
 
+def current_link_audits(sources):
+    links = {source.pk: source.product_link for source in sources if hasattr(source, "product_link")}
+    if not links:
+        return {}
+    events = HistoryTakeoverEvent.objects.filter(
+        group_id__in={source.group_id for source in sources}, event_type="history_product_linked",
+        details__source_id__in=list(links), details__equivalence_evidence__isnull=False,
+    ).exclude(details__equivalence_evidence="").values_list("details", flat=True)
+    return {
+        audit["source_id"]: audit for audit in events
+        if audit.get("version") == links[audit["source_id"]].version
+        and audit.get("after") == links[audit["source_id"]].sku_id
+    }
+
+
+def stale_equivalence_ids(sources):
+    evidence_sources = HistoryTakeoverEvent.objects.alias(
+        evidence_source=KeyTextTransform("source_id", "details"),
+    ).filter(
+        group_id=OuterRef("group_id"), event_type="history_product_linked",
+        evidence_source=Cast(OuterRef("pk"), CharField()), details__equivalence_evidence__isnull=False,
+    ).exclude(details__equivalence_evidence="")
+    candidates = list(sources.filter(product_link__needs_review=False).filter(Exists(evidence_sources)))
+    audits = current_link_audits(candidates)
+    candidates = [source for source in candidates if source.pk in audits]
+    lines = load_source_lines(candidates)
+    return [
+        source.pk for source in candidates
+        if line_summary(source, lines.get((source.target_model, source.target_id)), audit=audits[source.pk])["equivalence_status"] == "stale"
+    ]
+
+
 def inventory_source_summary(source):
     original = source.source_snapshot.get("source", {})
     sku, version, state = link_state(source, None)
@@ -168,6 +204,8 @@ def line_summary(source, line, *, include_sku=True, audit=None):
         equivalence_status = "verified" if sku.active and equivalence_is_current(
             sku, facts.get("base_unit_snapshot"), facts.get("specification_snapshot"), audit
         ) else "stale"
+        if equivalence_status == "stale":
+            state = "review"
     return {
         "id": source.pk if source else None,
         "source_system": source.source_system if source else "",
@@ -209,7 +247,11 @@ def document_product_rows(document, *, include_sku=True, include_source=True):
             target_model__in=(ARCHIVED, legacy_model), target_id__in=[pk for _, pk in pairs],
         ).select_related("group", "product_link__sku__product"):
             sources[(source.target_model, source.target_id)] = source
-    rows = [line_summary(sources.get(key), line, include_sku=include_sku) for key, line in zip(pairs, lines)]
+    audits = current_link_audits(list(sources.values())) if include_sku else {}
+    rows = []
+    for key, line in zip(pairs, lines):
+        source = sources.get(key)
+        rows.append(line_summary(source, line, include_sku=include_sku, audit=audits.get(source.pk) if source else None))
     if not include_sku:
         for row in rows:
             for key in ("code", "name", "specification", "description", "category", "category_reference"):
@@ -248,32 +290,83 @@ def specification_matches(sku, unit, specification, verified_specification=""):
     return bool(candidate and current and candidate == _normalize_specification(current))
 
 
+_ELECTRICAL_UNITS = {
+    "mv": ("电压", ".001"), "v": ("电压", "1"), "kv": ("电压", "1000"),
+    "ma": ("电流", ".001"), "a": ("电流", "1"),
+    "w": ("功率", "1"), "kw": ("功率", "1000"),
+    "w/m": ("功率密度", "1"), "kw/m": ("功率密度", "1000"), "k": ("色温", "1"),
+}
+_NUMBER = r"[0-9]+(?:\.[0-9]+)?"
+_ELECTRICAL = re.compile(
+    rf"(?<![A-Za-z0-9.])(?P<supply>(?:AC\s*/\s*DC|DC\s*/\s*AC|AC|DC)\s*)?"
+    rf"(?P<values>{_NUMBER}(?:\s*[-–—~～至/]\s*{_NUMBER})*)\s*"
+    r"(?P<unit>k?W\s*/\s*m|mV|kV|V|mA|A|kW|W|K)"
+    r"(?![A-Za-z0-9²³^]|\s*/\s*(?:[A-Za-z]|$))", re.IGNORECASE,
+)
+_ELECTRICAL_REMAINDER = re.compile(
+    r"(?<![A-Za-z])(?:AC|DC)(?![A-Za-z])|\d\s*(?:[mk]?V(?:AC|DC|A)?|[mk]?A|[mk]?W|K)(?![A-Za-z])",
+    re.IGNORECASE,
+)
+
+
+def _electrical_facts(values):
+    facts = defaultdict(set)
+    supplies = defaultdict(set)
+    for value in values:
+        raw = str(value)
+        if re.search(r"(?:\d,\d|(?<![\d\s])[-+]\d+)\s*(?:[.,]\d+)?\s*(?:mV|kV|V|mA|A|kW|W|K)\b", raw, re.IGNORECASE):
+            return None
+        seen = set()
+        for match in _ELECTRICAL.finditer(raw):
+            unit = re.sub(r"\s+", "", match["unit"]).lower()
+            field, factor = _ELECTRICAL_UNITS[unit]
+            expression = match["values"]
+            separators = re.findall(r"[-–—~～至/]", expression)
+            numbers = tuple(Decimal(number) * Decimal(factor) for number in re.findall(_NUMBER, expression))
+            if separators and any(sep != "/" for sep in separators):
+                if len(numbers) != 2 or numbers[0] >= numbers[1]:
+                    return None
+                fact = ("range", numbers)
+            else:
+                fact = ("values", tuple(sorted(set(numbers))))
+            if match["supply"]:
+                if field != "电压":
+                    return None
+                supplies[field].add((fact, tuple(sorted(re.findall(r"AC|DC", match["supply"].upper())))))
+            facts[field].add(fact)
+            seen.add(field)
+        remainder = _ELECTRICAL.sub(" ", raw)
+        if _ELECTRICAL_REMAINDER.search(remainder) or (seen and re.search(r"[/–—~～至-]\s*\d", remainder)):
+            return None
+        if any(label in raw and label not in seen for label in ("电压", "电流", "功率", "功率密度", "色温")
+               if label != "功率" or "功率密度" not in raw):
+            return None
+    return facts, supplies
+
+
 def specification_conflict(sku, unit, original):
     if not unit or sku.unit != unit:
         return "基础单位不一致或缺失，请先核实单位。"
     if not str(original or "").strip() or not (sku.specification.strip() or sku.parameter_values):
         return "规格资料不足，请先补核。"
-    # Compare only quantities whose units are explicit and whose context is unambiguous.
-    pattern = r"(?<![A-Za-z0-9./+-])((?i:DC|AC))?\s*(\d+(?:\.\d+)?)\s*(mV|kV|V|mA|A|kW|W|K)(?![A-Za-z]|\s*/)"
-    units = {"mV": ("电压", ".001"), "V": ("电压", "1"), "kV": ("电压", "1000"),
-             "mA": ("电流", ".001"), "A": ("电流", "1"), "W": ("功率", "1"),
-             "kW": ("功率", "1000"), "K": ("色温", "1")}
-
-    def quantities(values):
-        found = defaultdict(set)
-        for value in values:
-            for kind, number, suffix in re.findall(pattern, str(value)):
-                name, factor = units[suffix]
-                found[name].add(Decimal(number) * Decimal(factor))
-                if kind and name == "电压":
-                    found["供电类型"].add(kind.upper())
-        return found
-
-    left = quantities([original])
-    right = quantities([sku.specification, *sku.parameter_values.values()])
-    for key in left:
-        if key in right and left[key] != right[key]:
-            return f"{key}存在明确差异，请走追溯更正流程。"
+    left = _electrical_facts([original])
+    right = _electrical_facts([sku.specification, *(
+        f"{key}：{value}" for key, value in sku.parameter_values.items()
+    )])
+    if left is None or right is None:
+        return "关键电气规格资料不足，请核对完整参数或走追溯更正流程。"
+    source, source_supply = left
+    target, target_supply = right
+    power_types = {"功率", "功率密度"}
+    source_power = source.keys() & power_types
+    target_power = target.keys() & power_types
+    if source_power and target_power and source_power != target_power:
+        return "功率与功率密度的计量口径不同，请走追溯更正流程。"
+    for field in source:
+        if field in target and source[field] != target[field]:
+            return f"{field}存在明确差异，请走追溯更正流程。"
+    if source_supply and target_supply and source_supply != target_supply:
+        return "供电类型存在明确差异，请走追溯更正流程。"
     return ""
 
 

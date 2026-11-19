@@ -7,9 +7,9 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .history_products import SOURCE_MODELS, apply_links, filter_source_lines, line_summary, load_source_lines, preview_links, sku_summary
+from .history_products import SOURCE_MODELS, apply_links, current_link_audits, filter_source_lines, line_summary, load_source_lines, preview_links, sku_summary
 from .history_takeover_api import HistoryTakeoverPermission, _visible_applications
-from .models import HistoryTakeoverSourceRecord, SKU, HistoryTakeoverEvent
+from .models import HistoryTakeoverSourceRecord, SKU
 from .permissions import user_can
 from .reporting import safe_csv
 
@@ -76,17 +76,7 @@ class HistoryProductsView(APIView):
             sources = sources[offset:offset + 50]
         sources = list(sources)
         lines = load_source_lines(sources)
-        links = {source.pk: source.product_link for source in sources if hasattr(source, "product_link")}
-        audits = {}
-        if links:
-            events = HistoryTakeoverEvent.objects.filter(
-                group_id__in={source.group_id for source in sources}, event_type="history_product_linked",
-                details__source_id__in=list(links),
-            ).values_list("details", flat=True)
-            for audit in events:
-                link = links[audit["source_id"]]
-                if audit.get("version") == link.version and audit.get("after") == link.sku_id:
-                    audits[audit["source_id"]] = audit
+        audits = current_link_audits(sources)
         rows = [
             line_summary(source, lines.get((source.target_model, source.target_id)), audit=audits.get(source.pk))
             for source in sources
@@ -108,7 +98,7 @@ class HistoryProductsView(APIView):
             writer.writerow([safe_csv(value) for value in [
                 "历史原文明细", row["source_system"], row["batch"], row["order_number"], row["source_number"],
                 row["date"], row["code"], row["name"], row["specification"], row["category"], row["quantity"],
-                row["unit"], row["amount"], row["currency"], states[row["status"]], sku.get("code", ""), sku.get("name", ""),
+                row["unit"], row["amount"], row["currency"], ("需要重新核实" if row.get("equivalence_status") == "stale" else states[row["status"]]), sku.get("code", ""), sku.get("name", ""),
             ]])
         return response
 

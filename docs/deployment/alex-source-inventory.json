@@ -61,7 +61,7 @@
     "frontend/src/views/FinanceLedgerPage.vue": "5b5c077097e7e6b2540e2e6c20c2da26f7d33642",
     "frontend/src/views/HistoryOrdersPage.vue": "a367e753539bc725dbb57a201d8036ebe92a7e51",
     "frontend/src/views/HistoryPreflightPage.vue": "01df8a9f3072736072faaf2b5aa88721be2a44a0",
-    "frontend/src/views/HistoryTakeoverPage.vue": "cd0da8fff616e8754efbd09505a93e06e6cb8719",
+    "frontend/src/views/HistoryTakeoverPage.vue": "39d3afc266a8bac20f3bf8aed1a09272c7a7bd77",
     "frontend/src/views/PurchaseOrderPage.vue": "8a1896063e578cb729d19ae058e7c9ebb7ee7d6b",
     "frontend/src/views/TransactionPage.vue": "90c70973fbbac3836fe272fcf98c20f38a37f517",
     "frontend/tests/finance-closeout.spec.js": "66405986b4bba808a47f077aede4b92eb41bea29",

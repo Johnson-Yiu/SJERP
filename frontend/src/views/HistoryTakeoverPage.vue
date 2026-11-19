@@ -516,9 +516,14 @@ const unmatchedCustomerNames = computed(() => {
 
 function addMasterResolution(clear = false) {
   if (!ownsMapping.value || !mapping.value.note.trim() || (!clear && !mapping.value.target_code)) return
-  groupAction(selectedGroup.value, 'resolve-master', {
-    ...mapping.value, row: Number(mapping.value.row), ...(clear === true ? { target_code: '', clear: true, equivalence_evidence: '' } : {}),
-  })
+  const { equivalence_evidence: evidence, ...fields } = mapping.value
+  const payload = { ...fields, row: Number(fields.row) }
+  if (clear === true) {
+    Object.assign(payload, { target_code: '', clear: true })
+  } else if (evidence && fields.field === 'sku_code' && ['销售明细', '采购明细'].includes(fields.sheet)) {
+    payload.equivalence_evidence = evidence
+  }
+  groupAction(selectedGroup.value, 'resolve-master', payload)
 }
 function chooseProductCandidate(result, candidate) {
   if (openingApplication.value || saving.value || !reviewResults.value.includes(result)) return

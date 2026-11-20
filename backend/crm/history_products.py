@@ -371,9 +371,14 @@ def specification_conflict(sku, unit, original):
 
 
 def equivalence_is_current(sku, unit, original, audit):
-    evidence = audit.get("equivalence_evidence")
-    return bool(evidence and audit.get("reason") and audit.get("original_specification") == original
-                and audit.get("after_sku") == sku_summary(sku)
+    snapshot = audit.get("after_sku") or {}
+    current = sku_summary(sku)
+    # Display names may change without invalidating the audited SKU identity or specification.
+    validity_fields = ("id", "code", "active", "unit", "specification", "parameters")
+    return bool(audit.get("equivalence_evidence") and audit.get("reason")
+                and audit.get("original_specification") == original
+                and sku.active
+                and all(key in snapshot and snapshot[key] == current[key] for key in validity_fields)
                 and not specification_conflict(sku, unit, original))
 
 

@@ -18,7 +18,7 @@
     "backend/crm/history_import_preflight.py": "af29bd2058d5adf0b946404615e9d832597964cb",
     "backend/crm/history_operational_contracts.py": "11311d3479f61e29470fd63ef2a829d196935fb5",
     "backend/crm/history_product_models.py": "e795c3a52886f32de794e215a9ed43a63c86bc61",
-    "backend/crm/history_products.py": "aa21725462fae6e099013af1884e63bb7803c6f7",
+    "backend/crm/history_products.py": "77a7e2873b01693f065e8cdfdd704ed3d3c69cba",
     "backend/crm/history_takeover.py": "92ef905887ce4145bf65de93ecd3b1084d778924",
     "backend/crm/sales_order_import.py": "9dd4b88ecbc9da2ddcd7a8b905e6f61e95c04c6c",
     "backend/crm/services/cash_events.py": "d847f10b7edf06d45c72f25cdd636f17ff1fbd52",

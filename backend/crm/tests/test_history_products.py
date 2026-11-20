@@ -314,6 +314,26 @@ class HistoricalSkuEquivalenceTests(HistoryProductFixture, TestCase):
         self.assertEqual(current["by_category"], initial["by_category"])
         self.assertEqual(current["by_sku"], initial["by_sku"])
         self.assertEqual(self.report("linked")["pending_count"], 2)
+        for display_name in ("更新显示名称", ""):
+            # Existing imported rows can have no display name, even if save generates one.
+            SKU.objects.filter(pk=target.pk).update(display_name_cn=display_name)
+            if not display_name:
+                target.product.name = "更新回退产品名称"
+                target.product.save(update_fields=["name"])
+            linked = self.client.get(ROOT, {"status": "linked"}).data["results"]
+            self.assertEqual([(row["id"], row["equivalence_status"]) for row in linked], [(source.pk, "verified")])
+            grouped = self.report("linked")
+            self.assertEqual(grouped["pending_count"], 2)
+            sku_row = next(row for row in grouped["by_sku"] if row["id"] == target.pk)
+            self.assertEqual(sku_row["label"], f"{target.sku} · {display_name or target.product.name}")
+        for field, changed in (("unit", "m"), ("specification", "DC12V 3000K"), ("active", False)):
+            original = getattr(target, field)
+            setattr(target, field, changed)
+            target.save(update_fields=[field])
+            self.assertEqual(self.client.get(ROOT, {"status": "review"}).data["count"], 1)
+            self.assertFalse(any(row["id"] == target.pk for row in self.report("linked")["by_sku"]))
+            setattr(target, field, original)
+            target.save(update_fields=[field])
         target.parameter_values = {"功率": "10W"}
         target.save(update_fields=["parameter_values"])
         self.assertFalse(link_specification_is_current(source, target, "pcs", self.historical_specification, source.product_link.version))
@@ -388,8 +408,22 @@ class TakeoverSkuEquivalenceTests(HistoryTakeoverFixtureMixin, TestCase):
         self.assertEqual(self.client.post(root + "resolve-master/", resolution, format="json").status_code, 400)
         response = self.client.post(root + "resolve-master/", dict(resolution, equivalence_evidence="REF-24"), format="json")
         self.assertEqual(response.status_code, 200, response.data)
-        approved = self.client.post(root + "review/", {"decision": "approve", "note": "原单核实", "confirm_manual": True}, format="json")
-        self.assertEqual(approved.status_code, 200, (approved.data, group.preflight_result))
+        review = {"decision": "approve", "note": "原单核实", "confirm_manual": True}
+        self.sku.display_name_cn = "归档前改名"
+        self.sku.save(update_fields=["display_name_cn"])
+        self.sku.specification = "DC12V 3000K"
+        self.sku.save(update_fields=["specification"])
+        self.assertEqual(self.client.post(root + "review/", review, format="json").status_code, 400)
+        self.sku.specification = "DC24V 3000K"
+        self.sku.save(update_fields=["specification"])
+        approved = self.client.post(root + "review/", review, format="json")
+        self.assertEqual(approved.status_code, 200, approved.data)
+        self.sku.display_name_cn = "批准后再次改名"
+        self.sku.save(update_fields=["display_name_cn"])
+        stopped = self.client.post(root + "execute/", {}, format="json")
+        self.assertEqual(stopped.status_code, 200, stopped.data)
+        self.assertEqual(stopped.data["group"]["status"], "needs_reapproval")
+        self.assertEqual(self.client.post(root + "review/", review, format="json").status_code, 200)
         executed = self.client.post(root + "execute/", {}, format="json")
         self.assertEqual(executed.status_code, 200, executed.data)
         source = group.source_records.get(record_type="销售明细")

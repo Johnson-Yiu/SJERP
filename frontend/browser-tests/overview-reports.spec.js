@@ -95,3 +95,41 @@ test('two-level groups show separate columns, drill either dimension and return 
 test('cross-group result opens paginated raw detail and links to the original order',async({page})=>{
  const state=await mockApi(page);await page.goto('/reports');await page.getByRole('combobox',{name:'统计维度',exact:true}).selectOption('country');await page.getByRole('combobox',{name:'第二统计维度（可选）',exact:true}).selectOption('customer');await page.getByRole('button',{name:'查询报表',exact:true}).click();await page.getByRole('button',{name:'查看构成明细',exact:true}).first().click();await expect(page.locator('.report-detail-panel')).toContainText('SO-DETAIL-1');await expect(page.locator('.report-detail-panel')).toContainText('历史商品名称');await expect(page.locator('.report-detail-panel')).toContainText('明细记录 3 条');await expect(page.locator('.report-detail-panel a[href*="/orders"]')).toHaveCount(1);expect(state.detailRequests.at(-1).get('group_by_2')).toBe('customer');await page.getByRole('button',{name:'收起明细',exact:true}).click();await expect(page.locator('.report-detail-panel')).toHaveCount(0)
 })
+
+test('chart tooltips are reachable by mouse and focus and stay within a narrow chart', async ({ page }, info) => {
+  await page.setViewportSize({ width: 390, height: 850 })
+  await mockApi(page)
+  await page.goto('/reports')
+  const block = page.locator('.report-block').first()
+  const chart = block.locator('.report-chart')
+  const tooltip = chart.getByRole('tooltip')
+  const view = block.getByRole('combobox', { name: '图表显示方式' })
+  const assertInsideChart = async name => {
+    const bounds = await chart.boundingBox()
+    const popup = await tooltip.boundingBox()
+    expect(popup.x).toBeGreaterThanOrEqual(bounds.x - 1)
+    expect(popup.y).toBeGreaterThanOrEqual(bounds.y - 1)
+    expect(popup.x + popup.width).toBeLessThanOrEqual(bounds.x + bounds.width + 1)
+    expect(popup.y + popup.height).toBeLessThanOrEqual(bounds.y + bounds.height + 1)
+    await tooltip.screenshot({ path: info.outputPath(name + '.png') })
+  }
+
+  await view.selectOption('line')
+  await chart.locator('.line-hit').first().hover()
+  await expect(tooltip).toContainText('123,456,789,012.12')
+  await assertInsideChart('line-tooltip')
+  await block.locator('.chart-caption').hover()
+  await expect(tooltip).toHaveCount(0)
+
+  await view.selectOption('bar')
+  await chart.locator('.bar-track').first().hover()
+  await expect(tooltip).toContainText('人民币')
+  await assertInsideChart('bar-tooltip')
+
+  await view.selectOption('donut')
+  await chart.locator('circle[tabindex]').first().focus()
+  await expect(tooltip).toContainText('占比')
+  await assertInsideChart('donut-tooltip')
+  await page.keyboard.press('Escape')
+  await expect(tooltip).toHaveCount(0)
+})

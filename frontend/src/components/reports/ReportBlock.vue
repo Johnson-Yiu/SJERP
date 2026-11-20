@@ -3,7 +3,7 @@ import { downloadBlob } from '../../utils/downloadBlob.js'
 import { useWorkspaceApi } from '../../composables/useWorkspaceApi'
 const { api } = useWorkspaceApi()
 import { BOOK_RMB_NOTE } from '../../utils/financeBasis.js'
-import { computed, ref, watch, onBeforeUnmount } from 'vue'
+import { computed, nextTick, ref, watch, onBeforeUnmount } from 'vue'
 
 import { resolveBlock, canViewReportConfig, reportDimensionLabels } from '../../reports/registry'
 import { apiErrorMessage } from '../../utils/apiErrors'
@@ -47,12 +47,67 @@ const quantityText = quantities => Object.entries(quantities || {}).map(([key, v
 const metric = computed(() => definition.value.metric)
 const metricLabel = computed(() => metric.value === 'amount' ? (definition.value.source === 'cash' ? '金额（人民币折算参考）' : definition.value.source === 'actual_cash' ? '金额（银行实际人民币净额）' : '金额（人民币）') : metric.value === 'quantity' ? `数量（${unit.value || '无单位数据'}）` : '去重单据 / 档案数')
 const valueOf = row => Number(metric.value === 'quantity' ? row.quantities?.[unit.value] || 0 : row[metric.value] || 0)
+const chart = ref(null)
+const tooltip = ref(null)
+const tooltipBox = ref(null)
+const tooltipPosition = ref({ left: '0px', top: '0px' })
+let tooltipTarget
+const tooltipNumber = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 20 })
+const tooltipCount = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 0 })
+const tooltipGroup = row => row.groups?.map(group => group.label).join(' · ') || row.label
+function tooltipValue(row) {
+  const raw = metric.value === 'quantity' ? row.quantities?.[unit.value] : row[metric.value]
+  if (raw == null || raw === '' || !Number.isFinite(Number(raw))) {
+    return metric.value === 'amount' && raw === null ? '金额待核实' : '暂无数据'
+  }
+  if (metric.value === 'amount') return `¥ ${tooltipNumber.format(raw)}`
+  if (metric.value === 'quantity') return `${tooltipNumber.format(raw)} ${unit.value}`.trim()
+  return tooltipCount.format(raw)
+}
+function clearTooltip(target) {
+  if (target && tooltipTarget !== target) return
+  tooltipTarget = null
+  tooltip.value = null
+}
+async function showTooltip(event, row, percent) {
+  const target = event.currentTarget
+  const keyboard = event.type === 'focus'
+  const anchor = target.getBoundingClientRect()
+  const x = keyboard ? anchor.left + anchor.width / 2 : event.clientX
+  const y = keyboard ? anchor.top + anchor.height / 2 : event.clientY
+  if (tooltipTarget !== target) {
+    tooltipTarget = target
+    tooltip.value = { row, percent }
+    await nextTick()
+  }
+  if (tooltipTarget !== target || !chart.value || !tooltipBox.value) return
+  const bounds = chart.value.getBoundingClientRect()
+  const box = tooltipBox.value.getBoundingClientRect()
+  const left = Math.max(0, Math.min(x - bounds.left + 10, bounds.width - box.width))
+  const above = y - bounds.top - box.height - 10
+  const top = Math.max(0, Math.min(above >= 0 ? above : y - bounds.top + 10, bounds.height - box.height))
+  tooltipPosition.value = { left: `${left}px`, top: `${top}px` }
+}
+function tooltipEvents(row, percent) {
+  return {
+    tabindex: 0,
+    'aria-label': `${tooltipGroup(row)} · ${metricLabel.value} · ${tooltipValue(row)}${percent == null ? '' : ` · 占比 ${numeric(percent)}%`}`,
+    onPointerenter: event => { if (event.pointerType !== 'touch') showTooltip(event, row, percent) },
+    onPointermove: event => { if (event.pointerType !== 'touch' && tooltipTarget === event.currentTarget) showTooltip(event, row, percent) },
+    onPointerleave: event => { if (event.pointerType !== 'touch' && !event.currentTarget.matches(':focus-visible')) clearTooltip(event.currentTarget) },
+    onFocus: event => showTooltip(event, row, percent),
+    onBlur: event => clearTooltip(event.currentTarget),
+    onClick: event => showTooltip(event, row, percent),
+    onKeydown: event => { if (event.key === 'Escape') clearTooltip(event.currentTarget) },
+  }
+}
 const rows = computed(() => data.value?.rows || [])
 const multiDimensional = computed(() => Boolean(definition.value.group_by_2))
 const chartRows = computed(() => definition.value.group_by === 'time' && !multiDimensional.value ? rows.value : [...rows.value].sort((a, b) => Math.abs(valueOf(b)) - Math.abs(valueOf(a))).slice(0, 12))
 const chartView = computed(() => viewOverride.value || definition.value.view)
 const hasNegative = computed(() => chartRows.value.some(row => valueOf(row) < 0))
 const effectiveView = computed(() => multiDimensional.value && chartView.value === 'line' ? 'bar' : chartView.value === 'donut' && hasNegative.value ? 'bar' : chartView.value)
+watch([effectiveView, unit, data], () => clearTooltip())
 const maxValue = computed(() => Math.max(1, ...chartRows.value.map(row => Math.abs(valueOf(row)))))
 const positiveTotal = computed(() => chartRows.value.reduce((sum, row) => sum + Math.max(0, valueOf(row)), 0))
 const colors = ['#237969', '#4e91bd', '#c29143', '#8e79b2', '#d37869', '#7c9d57']
@@ -62,7 +117,15 @@ const slices = computed(() => {
 })
 const yRange = computed(() => { const values = chartRows.value.map(valueOf); return { min: Math.min(0, ...values), max: Math.max(1, ...values) } })
 const y = value => 170 - (value - yRange.value.min) / (yRange.value.max - yRange.value.min) * 140
-const points = computed(() => chartRows.value.map((row, index) => ({ row, x: 130 + index / Math.max(1, chartRows.value.length - 1) * 560, y: y(valueOf(row)) })))
+const points = computed(() => {
+  const step = 560 / Math.max(1, chartRows.value.length - 1)
+  return chartRows.value.map((row, index) => {
+    const x = 130 + index * step
+    const left = index ? step / 2 : 20
+    const right = chartRows.value.length === 1 ? step : index < chartRows.value.length - 1 ? step / 2 : 20
+    return { row, x, y: y(valueOf(row)), hitX: x - left, hitWidth: left + right }
+  })
+})
 const line = computed(() => points.value.map(point => `${point.x},${point.y}`).join(' '))
 const visibleRows = computed(() => rows.value.slice((page.value - 1) * 15, page.value * 15))
 const monetary = computed(() => !['customers', 'inventory'].includes(definition.value.source))
@@ -116,9 +179,16 @@ async function exportCsv() {
         <div class="chart-caption"><strong>{{ metricLabel }}</strong><label v-if="metric === 'quantity'">单位 <select v-model="unit"><option v-for="key in Object.keys(data.totals.quantities)" :key="key">{{ key }}</option></select></label><span v-if="definition.group_by !== 'time' || multiDimensional">图表按绝对值显示前 12 项；表格及导出包含全部 {{ rows.length }} 项，点击分组可继续下钻</span></div>
         <p v-if="hasNegative && chartView === 'donut'" class="report-caption">含负值，自动使用条形图以保留收支 / 出入库方向。</p>
         <p v-if="metric === 'amount' && data.totals.amount === null">部分订单成本待核实，请查看下方明细。</p>
-        <div v-else-if="effectiveView === 'bar'" class="report-bars" role="img" :aria-label="`${definition.title}，详细数值见下方表格`"><div v-for="row in chartRows" :key="row.key" class="report-bar-row"><button v-if="definition.group_by !== 'time'" class="bar-label" :title="row.label" @click="drill(row)">{{ row.label }}</button><span v-else class="bar-label">{{ row.label }}</span><div class="bar-track"><div :class="{ negative: valueOf(row) < 0 }" :style="{ width: `${Math.abs(valueOf(row)) / maxValue * 100}%` }" /></div><span>{{ numeric(valueOf(row)) }}</span></div></div>
-        <div v-else-if="effectiveView === 'line'" class="report-line"><svg viewBox="0 0 720 220" role="img" :aria-label="`${definition.title}，详细数值见下方表格`"><text x="4" y="23">{{ axisNumeric(yRange.max) }}</text><text x="4" y="180">{{ axisNumeric(yRange.min) }}</text><line x1="130" :y1="y(0)" x2="690" :y2="y(0)" stroke="#cad7d2" /><polyline :points="line" fill="none" stroke="#237969" stroke-width="3" /><circle v-for="point in points" :key="point.row.key" :cx="point.x" :cy="point.y" r="3" fill="#237969"><title>{{ point.row.label }}：{{ numeric(valueOf(point.row)) }}</title></circle><text x="130" y="207">{{ chartRows[0]?.label }}</text><text x="690" y="207" text-anchor="end">{{ chartRows.at(-1)?.label }}</text></svg></div>
-        <div v-else-if="effectiveView === 'donut'" class="report-donut"><svg viewBox="0 0 42 42" role="img" :aria-label="`${definition.title}，占显示项目合计比例`"><circle cx="21" cy="21" r="15.9155" fill="none" stroke="#edf1ee" stroke-width="6" /><circle v-for="slice in slices" :key="slice.row.key" cx="21" cy="21" r="15.9155" fill="none" :stroke="slice.color" stroke-width="6" :stroke-dasharray="`${slice.percent} ${100 - slice.percent}`" :stroke-dashoffset="25 - slice.offset"><title>{{ slice.row.label }}：{{ numeric(valueOf(slice.row)) }}</title></circle></svg><div><p v-for="slice in slices" :key="slice.row.key"><i :style="{ background: slice.color }" />{{ slice.row.label }} · {{ numeric(slice.percent) }}%</p><small>占图中显示项目的比例；全零时不显示扇区。</small></div></div>
+        <div v-else-if="effectiveView !== 'table'" ref="chart" class="report-chart">
+        <div v-if="effectiveView === 'bar'" class="report-bars" role="group" :aria-label="`${definition.title}，详细数值见下方表格`"><div v-for="row in chartRows" :key="row.key" class="report-bar-row"><button v-if="definition.group_by !== 'time'" class="bar-label" :title="row.label" @click="drill(row)">{{ row.label }}</button><span v-else class="bar-label">{{ row.label }}</span><div class="bar-track" v-bind="tooltipEvents(row)"><div :class="{ negative: valueOf(row) < 0 }" :style="{ width: `${Math.abs(valueOf(row)) / maxValue * 100}%` }" /></div><span>{{ numeric(valueOf(row)) }}</span></div></div>
+        <div v-else-if="effectiveView === 'line'" class="report-line"><svg viewBox="0 0 720 220" role="group" :aria-label="`${definition.title}，详细数值见下方表格`"><text x="4" y="23">{{ axisNumeric(yRange.max) }}</text><text x="4" y="180">{{ axisNumeric(yRange.min) }}</text><line x1="130" :y1="y(0)" x2="690" :y2="y(0)" stroke="#cad7d2" /><polyline :points="line" fill="none" stroke="#237969" stroke-width="3" /><circle v-for="point in points" :key="point.row.key" :cx="point.x" :cy="point.y" r="3" fill="#237969" /><rect v-for="point in points" :key="`hit-${point.row.key}`" class="line-hit" :x="point.hitX" y="20" :width="point.hitWidth" height="165" fill="transparent" v-bind="tooltipEvents(point.row)" /><text x="130" y="207">{{ chartRows[0]?.label }}</text><text x="690" y="207" text-anchor="end">{{ chartRows.at(-1)?.label }}</text></svg></div>
+        <div v-else-if="effectiveView === 'donut'" class="report-donut"><svg viewBox="0 0 42 42" role="group" :aria-label="`${definition.title}，占显示项目合计比例`"><circle cx="21" cy="21" r="15.9155" fill="none" stroke="#edf1ee" stroke-width="6" /><circle v-for="slice in slices.filter(item => item.percent > 0)" :key="slice.row.key" cx="21" cy="21" r="15.9155" fill="none" :stroke="slice.color" stroke-width="6" :stroke-dasharray="`${slice.percent} ${100 - slice.percent}`" :stroke-dashoffset="25 - slice.offset" v-bind="tooltipEvents(slice.row, slice.percent)" /></svg><div><p v-for="slice in slices" :key="slice.row.key" v-bind="tooltipEvents(slice.row, slice.percent)"><i :style="{ background: slice.color }" />{{ slice.row.label }} · {{ numeric(slice.percent) }}%</p><small>占图中显示项目的比例；全零时不显示扇区。</small></div></div>
+          <div v-if="tooltip" ref="tooltipBox" role="tooltip" class="chart-tooltip" :style="tooltipPosition">
+            <strong>{{ tooltipGroup(tooltip.row) }}</strong>
+            <span>{{ metricLabel }} · {{ tooltipValue(tooltip.row) }}</span>
+            <span v-if="tooltip.percent != null">占比 {{ numeric(tooltip.percent) }}%</span>
+          </div>
+        </div>
         <div class="report-table"><table><thead><tr><th v-for="dimension in groupColumns" :key="dimension">{{ groupLabel(dimension) }}</th><th v-if="monetary">{{ definition.source === 'cash' ? '金额（人民币折算参考）' : definition.source === 'actual_cash' ? '金额（银行实际人民币净额）' : '金额（人民币）' }}</th><th>去重单据 / 档案数</th><th v-if="['sales', 'purchase', 'inventory'].includes(definition.source)">数量（按单位）</th><th v-if="['sales', 'purchase'].includes(definition.source)">操作</th></tr></thead><tbody><tr v-for="row in visibleRows" :key="row.key"><td v-for="(group,index) in rowGroups(row)" :key="group.dimension"><button v-if="group.dimension !== 'time'" class="report-link" @click="drill(row,index)">{{ group.label }}</button><span v-else>{{ group.label }}</span></td><td v-if="monetary">{{ row.amount === null ? '成本待核实' : numeric(row.amount) }}</td><td>{{ row.count }}</td><td v-if="['sales', 'purchase', 'inventory'].includes(definition.source)">{{ quantityText(row.quantities) }}</td><td v-if="['sales', 'purchase'].includes(definition.source)"><button type="button" class="detail-link" @click.stop="openDetails(row)">查看构成明细</button></td></tr></tbody></table></div>
         <footer class="report-pagination"><span>共 {{ rows.length }} 项<span v-if="definition.group_by !== 'time' || multiDimensional"> · 点击分组继续下钻</span></span><button :disabled="page <= 1" @click="page--">上一页</button><span>{{ page }} / {{ Math.max(1, Math.ceil(rows.length / 15)) }}</span><button :disabled="page * 15 >= rows.length" @click="page++">下一页</button></footer>
         <ReportDetailPanel v-if="detailSelection" :key="detailKey" :query="detailQuery" :selection="detailSelection" :source-label="definition.source === 'purchase' ? '采购 / 供应商报表' : '销售报表'" @close="detailSelection = null" />
@@ -133,4 +203,10 @@ async function exportCsv() {
 .report-block{background:white;border:1px solid #dfe7e2;border-radius:16px;padding:24px;min-width:0}.block-header,.block-actions,.chart-caption,.report-pagination{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.block-header{justify-content:space-between}.block-header h2{font-size:var(--text-section);margin:6px 0 18px}.block-header small,.report-caption,.chart-caption span,.report-pagination,.report-donut small{color:#697d74;font-size:var(--text-caption)}.report-block select,.report-block button{padding:7px 10px;border:1px solid #d7e2db;border-radius:7px;background:#fff;color:#265d4d;cursor:pointer}.report-block button:disabled{opacity:.45;cursor:default}.block-kpis{display:flex;gap:30px;flex-wrap:wrap;padding:18px;background:#f5f8f5;border-radius:10px}.block-kpis small{display:block;color:#687b71;font-size:var(--text-caption)}.block-kpis strong{display:block;font-size:var(--text-metric);margin-top:8px}.block-kpis .quantity-kpi{font-size:var(--text-dialog);max-width:360px}.report-caption{line-height:1.8}.report-note{font-size:var(--text-caption);color:#627066;background:#faf9f4;padding:12px;line-height:1.8;border-radius:8px}.report-empty{padding:40px;text-align:center;color:#77877e}.chart-caption{margin:24px 0 18px;font-size:var(--text-caption);justify-content:space-between}.report-bar-row{display:grid;grid-template-columns:minmax(90px,180px) 1fr 100px;align-items:center;gap:12px;margin:9px 0;font-size:var(--text-caption)}.report-bar-row .bar-label{border:0;padding:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar-track{height:14px;background:#f1f5f2;border-radius:3px;overflow:hidden}.bar-track div{height:100%;background:#358a75;border-radius:3px}.bar-track div.negative{background:#c37764}.report-bar-row>span{text-align:right}.report-line svg{width:100%;max-height:280px}.report-line text{font-size:var(--text-caption);fill:#75857a}.report-donut{display:flex;align-items:center;gap:24px;flex-wrap:wrap}.report-donut svg{width:210px;height:210px}.report-donut p{font-size:var(--text-caption);margin:8px 0}.report-donut i{display:inline-block;width:9px;height:9px;margin-right:8px;border-radius:50%}.report-table{overflow:auto;margin-top:24px}.report-table table{width:100%;border-collapse:collapse;font-size:var(--text-body)}.report-table th,.report-table td{padding:12px;text-align:left;border-bottom:1px solid #edf1ed;white-space:nowrap}.report-table th{background:#f6f8f5;color:#68776c}.report-table .report-link{border:0;background:none;padding:0;text-align:left}.report-pagination{justify-content:flex-end;margin-top:15px}.report-pagination>span:first-child{margin-right:auto}.report-error{color:#a34636;padding:24px}@media(max-width:650px){.report-block{padding:16px}.block-kpis{gap:18px}.block-kpis strong{font-size:var(--text-dialog)}.report-bar-row{grid-template-columns:90px 1fr 70px}}
 
 .block-header>div:first-child{min-width:0;flex:1}.block-header h2{overflow-wrap:anywhere;margin:5px 0 8px}.block-header small{letter-spacing:0}.block-kpis{margin-top:16px;gap:18px}.block-kpis>div{min-width:0;flex:1 1 180px}.block-kpis strong{font-size:clamp(22px,2vw,30px);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.report-note{overflow-wrap:anywhere}.report-bar-row{grid-template-columns:minmax(90px,1.2fr) minmax(50px,2fr) minmax(100px,1fr)}.report-bar-row>span{overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.report-table th:first-child,.report-table td:first-child{white-space:normal;min-width:160px;max-width:320px;overflow-wrap:anywhere}.report-table .report-link{overflow-wrap:anywhere;max-width:100%}.report-table .detail-link{border:1px solid #cfe0d4;background:#f7fbf8;padding:6px 8px;font-size:var(--text-caption);white-space:nowrap}.report-donut>div{flex:1;min-width:160px}.report-donut p{overflow-wrap:anywhere}.report-error{overflow-wrap:anywhere;border:1px solid #edcbc5;border-radius:8px;background:#fff8f5;margin:14px 0 0;padding:14px}.export-notice{color:#28634a;font-size:var(--text-caption)}.report-caption{overflow-wrap:anywhere}.report-pagination>span:first-child{min-width:0;overflow-wrap:anywhere}@media(max-width:1024px){.report-block{padding:18px}.block-header{align-items:flex-start}.block-actions{justify-content:flex-end;gap:8px}.report-bar-row{grid-template-columns:minmax(90px,1fr) minmax(35px,1fr) minmax(100px,1fr)}}
+.report-chart { position: relative; min-width: 0; min-height: 72px }
+.chart-tooltip { position: absolute; z-index: 2; box-sizing: border-box; max-width: min(250px, 100%); max-height: 100%; overflow: hidden; padding: 8px 12px; border-radius: 8px; background: #153d35; color: #fff; pointer-events: none; overflow-wrap: anywhere; font-size: var(--text-caption); box-shadow: 0 3px 12px #18352c33 }
+.chart-tooltip > * { display: block }
+.report-chart [tabindex]:focus-visible { outline: 2px solid #237969; outline-offset: 2px }
+.line-hit:focus-visible { stroke: #237969; stroke-width: 1; outline: none }
+.report-donut circle[tabindex] { pointer-events: stroke }
 </style>
